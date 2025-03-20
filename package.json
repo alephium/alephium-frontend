@@ -30,13 +30,12 @@
     },
     "overrides": {
       "ip@<=2.0.0": ">=2.0.1",
-      "undici@<=5.28.2": ">=5.28.3",
+      "undici@<6.21.1": ">=6.21.1",
       "tar@<6.2.1": ">=6.2.1",
       "braces@<3.0.3": ">=3.0.3",
       "ws@<8.17.1": ">=8.17.1",
       "app-builder-lib@<24.13.2": ">=24.13.2",
       "follow-redirects@<=1.15.5": ">=1.15.6",
-      "undici@>=6.0.0 <6.11.1": ">=6.11.1",
       "ejs@<3.1.10": ">=3.1.10",
       "fast-loops@<1.1.4": ">=1.1.4",
       "fast-xml-parser@<4.4.1": ">=4.4.1",
@@ -50,7 +49,10 @@
       "cross-spawn@<7.0.5": ">=7.0.5",
       "happy-dom@<15.10.2": ">=15.10.2",
       "phin@<3.7.1": ">=3.7.1",
-      "elliptic@<=6.6.0": ">=6.6.1"
+      "elliptic@<=6.6.0": ">=6.6.1",
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "@babel/runtime@<7.26.10": ">=7.26.10",
+      "@babel/helpers@<7.26.10": ">=7.26.10"
     }
   },
   "manypkg": {
@@ -61,7 +63,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@changesets/cli": "^2.26.2",
+    "@changesets/cli": "^2.28.1",
     "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
     "turbo": "1.13.4"

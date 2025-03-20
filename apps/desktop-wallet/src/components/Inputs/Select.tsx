@@ -1,4 +1,5 @@
 import { colord } from 'colord'
+import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { SearchIcon } from 'lucide-react'
 import {
@@ -297,31 +298,17 @@ export function SelectOptionsModal<T extends OptionValue>({
         ) : emptySearchResults ? (
           <OptionItem selected={false}>{t('No options match the search criteria.')}</OptionItem>
         ) : null}
-        {filteredOptions.map((option) => {
+        {filteredOptions.map((option, index) => {
           const isSelected = option.value === selectedOption?.value
           return (
-            <OptionItem
+            <Option
               key={option.value}
-              tabIndex={0}
-              role="listitem"
-              onClick={() => handleOptionSelect(option.value as T)}
-              selected={isSelected}
-              focusable
-              aria-label={option.label}
-              hasCustomOptionRender={!!optionRender}
-            >
-              {optionRender ? (
-                <CustomOptionContainer isSelected={isSelected}>
-                  {optionRender(option, isSelected)}
-                  {isSelected && <CheckMark />}
-                </CustomOptionContainer>
-              ) : (
-                <>
-                  {option.label}
-                  {isSelected && <CheckMark />}
-                </>
-              )}
-            </OptionItem>
+              option={option}
+              index={index}
+              isSelected={isSelected}
+              optionRender={optionRender}
+              handleOptionSelect={handleOptionSelect}
+            />
           )
         })}
         {ListBottomComponent && <div onClick={onClose}>{ListBottomComponent}</div>}
@@ -331,6 +318,51 @@ export function SelectOptionsModal<T extends OptionValue>({
 }
 
 export default Select
+
+interface OptionProps<T extends OptionValue> {
+  option: SelectOption<T>
+  index: number
+  isSelected: boolean
+  handleOptionSelect: (value: T) => void
+  optionRender?: (option: SelectOption<T>, isSelected: boolean) => ReactNode
+}
+
+const Option = <T extends OptionValue>({
+  option,
+  index,
+  isSelected,
+  optionRender,
+  handleOptionSelect
+}: OptionProps<T>) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
+  return (
+    <OptionItem
+      key={option.value}
+      tabIndex={0}
+      role="listitem"
+      onClick={() => handleOptionSelect(option.value as T)}
+      selected={isSelected}
+      focusable
+      aria-label={option.label}
+      hasCustomOptionRender={!!optionRender}
+      ref={ref}
+    >
+      {optionRender ? (
+        <CustomOptionContainer isSelected={isSelected}>
+          {(index < 20 || isInView) && optionRender(option, isSelected)}
+          {isSelected && <CheckMark />}
+        </CustomOptionContainer>
+      ) : (
+        <>
+          {option.label}
+          {isSelected && <CheckMark />}
+        </>
+      )}
+    </OptionItem>
+  )
+}
 
 const InputContainer = styled(InputArea)`
   padding: 0;

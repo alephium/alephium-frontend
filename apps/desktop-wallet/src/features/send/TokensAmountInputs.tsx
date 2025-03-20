@@ -1,6 +1,8 @@
 import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +12,7 @@ import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressB
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
-import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
+import { addressTokensSearchStringsQuery } from '@/api/queries/addressQueries'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -57,7 +59,7 @@ const TokensAmountInputs = ({
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
   const {
     data: { nftIds }
-  } = useFetchAddressTokensByType({ addressHash: address.hash, includeAlph: true })
+  } = useFetchAddressTokensByType({ addressHash: address.hash })
 
   const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
@@ -280,28 +282,24 @@ const TokensAmountInputs = ({
 export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
+  const networkId = useCurrentlyOnlineNetworkId()
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
   const {
     data: { nftIds, nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  } = useFetchAddressTokensByType({ addressHash })
   const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
-  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
 
-  const allTokensOptions = useMemo(() => {
-    const fts = [...listedFts, ...unlistedFts]
+  const { data: tokensSearchStrings } = useQuery(addressTokensSearchStringsQuery({ addressHash, networkId }))
 
-    return sortedTokenIds.map((id) => {
-      const ft = fts.find((ft) => ft.id === id)
-
-      return {
+  const allTokensOptions = useMemo(
+    () =>
+      sortedTokenIds.map((id) => ({
         value: id,
         label: id,
-        searchString: `${id.toLowerCase()} ${ft?.name.toLowerCase()} ${ft?.symbol.toLowerCase()} ${
-          nftsSearchStringsByNftId[id]?.toLowerCase() ?? ''
-        }`
-      }
-    })
-  }, [sortedTokenIds, listedFts, unlistedFts, nftsSearchStringsByNftId])
+        searchString: tokensSearchStrings?.[id] ?? ''
+      })),
+    [sortedTokenIds, tokensSearchStrings]
+  )
 
   return allTokensOptions
 }

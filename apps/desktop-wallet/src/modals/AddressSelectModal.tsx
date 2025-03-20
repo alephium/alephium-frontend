@@ -4,7 +4,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { addressTokensSearchStringQuery, AddressTokensSearchStringQueryFnData } from '@/api/queries/addressQueries'
+import { addressSearchStringQuery, AddressSearchStringQueryFnData } from '@/api/queries/addressQueries'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
@@ -70,7 +70,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: addressesSearchStrings } = useQueries({
-    queries: addressOptions.map((hash) => addressTokensSearchStringQuery({ addressHash: hash, networkId })),
+    queries: addressOptions.map((hash) => addressSearchStringQuery({ addressHash: hash, networkId })),
     combine: combineAddressesSearchStrings
   })
 
@@ -92,7 +92,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   )
 }
 
-const combineAddressesSearchStrings = (results: UseQueryResult<AddressTokensSearchStringQueryFnData, Error>[]) => ({
+const combineAddressesSearchStrings = (results: UseQueryResult<AddressSearchStringQueryFnData, Error>[]) => ({
   data: results.reduce(
     (acc, { data }) => {
       if (!data) return acc

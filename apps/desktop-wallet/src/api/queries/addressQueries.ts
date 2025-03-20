@@ -1,12 +1,15 @@
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
 import { getQueryConfig } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { tokenQuery } from '@/api/queries/tokenQueries'
+import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { getFulfilledValues } from '@/api/apiUtils'
+import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { ApiBalances, isFT, isNFT, Token, TokenApiBalances } from '@/types/tokens'
+import { ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -86,49 +89,92 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
         : skipToken
   })
 
-export type AddressTokensSearchStringQueryFnData = {
+export type AddressSearchStringQueryFnData = {
   addressHash: AddressHash
   searchString: string
 }
 
-// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses
-export const addressTokensSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+// Generates a map of token IDs to search strings that include the name, symbol, and ID of each token, useful for
+// filtering tokens.
+export const addressTokensSearchStringsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'tokensSearchString', { networkId }],
-    queryFn: async (): Promise<AddressTokensSearchStringQueryFnData> => {
-      let searchString = ''
+    queryKey: ['address', addressHash, 'computedData', 'tokensSearchStrings', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async (): Promise<Record<TokenId, string>> => {
+      const tokensSearchStrings = {} as Record<TokenId, string>
 
       const addressTokensBalances = await queryClient.fetchQuery(addressTokensBalancesQuery({ addressHash, networkId }))
       const hasTokens = addressTokensBalances.balances.length > 0
       let hasAlph = hasTokens
 
       if (hasTokens) {
-        const tokenResults = await Promise.allSettled(
+        const tokenPromiseResults = await Promise.allSettled(
           addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
         )
 
-        searchString = tokenResults
-          .filter((result): result is PromiseFulfilledResult<Token> => result.status === 'fulfilled')
-          .map(({ value: token }) =>
-            isFT(token)
-              ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
-              : isNFT(token)
-                ? `${token.name.toLowerCase()} ${token.id}`
-                : token.id
-          )
-          .join(' ')
+        getFulfilledValues(tokenPromiseResults).forEach((token) => {
+          tokensSearchStrings[token.id] = isFT(token)
+            ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
+            : isNFT(token)
+              ? `${token.name.toLowerCase()} ${token.id}`
+              : token.id
+        })
       } else {
         const addressAlphBalances = await queryClient.fetchQuery(addressAlphBalancesQuery({ addressHash, networkId }))
         hasAlph = addressAlphBalances.balances.totalBalance !== '0'
       }
 
       if (hasAlph) {
-        searchString += ' alph alephium'
+        tokensSearchStrings[ALPH.id] = 'alph alephium'
       }
+
+      return tokensSearchStrings
+    }
+  })
+
+// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses.
+export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'searchString', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async (): Promise<AddressSearchStringQueryFnData> => {
+      const tokensSearchStrings = await queryClient.fetchQuery(
+        addressTokensSearchStringsQuery({ addressHash, networkId })
+      )
 
       return {
         addressHash,
-        searchString
+        searchString: Object.values(tokensSearchStrings).join(' ')
       }
+    }
+  })
+
+export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'tokensByType', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () => {
+      const { balances: addressAlphBalances } = await queryClient.fetchQuery(
+        addressAlphBalancesQuery({ addressHash, networkId })
+      )
+      const { balances: addressTokensBalances } = await queryClient.fetchQuery(
+        addressTokensBalancesQuery({ addressHash, networkId })
+      )
+      const allTokensBalances =
+        addressAlphBalances && addressAlphBalances.totalBalance !== '0'
+          ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
+          : addressTokensBalances
+
+      const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+      const { listedFts, unlistedTokens } = separateTokensByListing(allTokensBalances, ftList)
+
+      const tokenTypesPromiseResults = await Promise.allSettled(
+        unlistedTokens.map(({ id }) => queryClient.fetchQuery(tokenTypeQuery({ id, networkId })))
+      )
+      const tokenTypes = getFulfilledValues(tokenTypesPromiseResults)
+
+      const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(tokenTypes)
+
+      return { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }
     }
   })

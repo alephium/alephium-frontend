@@ -1,6 +1,8 @@
 import {
   matchesNFTTokenUriMetaDataSchema,
   NetworkPreset,
+  NFTDataType,
+  NFTDataTypes,
   ONE_DAY_MS,
   ONE_HOUR_MS,
   ONE_MINUTE_MS,
@@ -22,15 +24,6 @@ import {
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
-
-enum NFTDataTypes {
-  image = 'image',
-  video = 'video',
-  audio = 'audio',
-  other = 'other'
-}
-
-type NFTDataType = keyof typeof NFTDataTypes
 
 // Batched calls
 const tokensInfo = create({

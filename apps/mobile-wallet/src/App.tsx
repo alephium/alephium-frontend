@@ -1,10 +1,10 @@
 import {
+  DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
   syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens,
-  TRANSACTIONS_REFRESH_INTERVAL
+  syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
@@ -195,7 +195,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useInterval(
     checkForNewTransactions,
-    TRANSACTIONS_REFRESH_INTERVAL,
+    DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL, // TODO: Replace with FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL and INFREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL after Tanstack migration
     !dataResyncNeeded || addressesStatus === 'uninitialized'
   )
 

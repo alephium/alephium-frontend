@@ -373,11 +373,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize = walletConnectClientStatus !== 'initialized'
+  const shouldInitialize = walletConnectClientStatus !== 'initialized' && walletConnectClientStatus !== 'initializing'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
-    if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
+    if (!walletConnectClient || shouldInitialize) return
 
     console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
@@ -433,7 +433,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionRequest,
     onSessionUpdate,
     walletConnectClient,
-    walletConnectClientStatus
+    walletConnectClientStatus,
+    shouldInitialize
   ])
 
   const unpairFromDapp = useCallback(

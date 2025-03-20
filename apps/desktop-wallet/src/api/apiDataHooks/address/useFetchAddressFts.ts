@@ -10,7 +10,7 @@ const useFetchAddressFts = ({ addressHash, sort = true, skip }: UseAddressFTsPro
   const {
     data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, skip, includeAlph: true })
+  } = useFetchAddressTokensByType({ addressHash })
 
   const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,

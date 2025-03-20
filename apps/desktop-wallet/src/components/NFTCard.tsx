@@ -1,6 +1,7 @@
 import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 import styled from 'styled-components'
 
 import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
@@ -17,35 +18,44 @@ interface NFTCardProps {
 }
 
 const NFTCard = ({ nftId }: NFTCardProps) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
   const dispatch = useAppDispatch()
-  const { data: token, isLoading } = useFetchToken(nftId)
-
-  if (!token || !isNFT(token)) return null
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
-    <NFTCardStyled onClick={openNFTDetailsModal}>
-      <CardContent>
-        <NFTPictureContainer>
-          <NFTThumbnail nftId={nftId} size="100%" playOnHover showPlayIconIfVideo />
-        </NFTPictureContainer>
-
-        <NFTNameContainer>
-          {isLoading ? (
-            <SkeletonLoader height="15px" />
-          ) : token.name ? (
-            <NFTName>{token.name}</NFTName>
-          ) : (
-            <EllipsedStyled text={token.id} />
-          )}
-        </NFTNameContainer>
-      </CardContent>
+    <NFTCardStyled onClick={openNFTDetailsModal} ref={ref}>
+      {isInView && <NftCardContent nftId={nftId} />}
     </NFTCardStyled>
   )
 }
 
 export default NFTCard
+
+const NftCardContent = ({ nftId }: NFTCardProps) => {
+  const { data: token, isLoading } = useFetchToken(nftId)
+
+  if (!token || !isNFT(token)) return null
+
+  return (
+    <CardContent>
+      <NFTPictureContainer>
+        <NFTThumbnail nftId={nftId} size="100%" playOnHover showPlayIconIfVideo />
+      </NFTPictureContainer>
+
+      <NFTNameContainer>
+        {isLoading ? (
+          <SkeletonLoader height="15px" />
+        ) : token.name ? (
+          <NFTName>{token.name}</NFTName>
+        ) : (
+          <EllipsedStyled text={token.id} />
+        )}
+      </NFTNameContainer>
+    </CardContent>
+  )
+}
 
 const NFTPictureContainer = styled(motion.div)`
   flex: 1;

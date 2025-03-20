@@ -1,4 +1,10 @@
-import { AddressHash, FIVE_MINUTES_MS, throttledClient, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
+import {
+  AddressHash,
+  FIVE_MINUTES_MS,
+  ONE_MINUTE_MS,
+  throttledClient,
+  TRANSACTIONS_PAGE_DEFAULT_LIMIT
+} from '@alephium/shared'
 import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
@@ -20,16 +26,23 @@ export interface AddressLatestTransactionQueryFnData {
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
-    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    ...getQueryConfig({ staleTime: ONE_MINUTE_MS, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
-            const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-              page: 1,
-              limit: 1
-            })
+            let latestTx = undefined
 
-            const latestTx = transactions.length > 0 ? transactions[0] : undefined
+            // Backend returns 404 if the address has no transactions and Tanstack will consider it an error. This will
+            // result in isLoading to be set to true more often than needed, leading to unnecessary re-renders. By
+            // catching the error and setting latestTx to undefined, we can avoid this issue.
+            try {
+              latestTx = await throttledClient.explorer.addresses.getAddressesAddressLatestTransaction(addressHash)
+            } catch (error) {
+              if (!(error instanceof Error && error.message.includes('Status code: 404'))) {
+                throw error
+              }
+            }
+
             const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
             const cachedLatestTx = cachedData?.latestTx
 
@@ -41,6 +54,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
               await sleep(2000)
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
+              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
               queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
             }
 
