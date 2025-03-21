@@ -33,7 +33,3 @@ export type AddressTokensSyncResult = {
   tokenBalances: e.AddressTokenBalance[]
 }
 
-export type BalanceHistory = {
-  date: string // CHART_DATE_FORMAT
-  balance: string
-}

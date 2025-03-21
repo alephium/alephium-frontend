@@ -1,7 +1,6 @@
-import { AddressHash, AddressIndex, AddressMetadata, AddressSettings, BalanceHistory } from '@alephium/shared'
+import { AddressHash, AddressIndex, AddressMetadata, AddressSettings } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { EntityState } from '@reduxjs/toolkit'
 
 import { TimeInMs } from '~/types/numbers'
 import { PendingTransaction } from '~/types/transactions'
@@ -15,7 +14,6 @@ export type Address = Omit<explorer.AddressInfo, 'txNumber'> & {
   allTransactionPagesLoaded: boolean
   tokens: AddressTokenBalance[]
   lastUsed: TimeInMs
-  balanceHistory: EntityState<BalanceHistory>
 }
 
 export type AddressPartial = {
@@ -34,10 +32,5 @@ export type AddressTransactionsSyncResult = {
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
 }
-
-export type AddressesHistoricalBalanceResult = {
-  address: AddressHash
-  balances: BalanceHistory[]
-}[]
 
 export type AddressMetadataWithHash = AddressMetadata & { hash: string }

@@ -1,6 +1,5 @@
 import {
   appReset,
-  balanceHistoryAdapter,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -188,8 +187,7 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
   balance: '0',
   lockedBalance: '0',
   lastUsed: 0,
-  tokens: [],
-  balanceHistory: balanceHistoryAdapter.getInitialState()
+  tokens: []
 })
 
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
