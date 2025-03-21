@@ -1,6 +1,6 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
+import { AddressBase } from '@alephium/shared'
 
-import { AddressBase } from '@/types/addresses'
 import { TimeInMs } from '@/types/numbers'
 
 export type ActiveWallet = {

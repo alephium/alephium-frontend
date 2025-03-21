@@ -6,7 +6,7 @@ import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 const useCanDeleteAddress = (addressHash: AddressHash) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
-  return address && !address.settings.isDefault
+  return address && !address.isDefault
 }
 
 export default useCanDeleteAddress

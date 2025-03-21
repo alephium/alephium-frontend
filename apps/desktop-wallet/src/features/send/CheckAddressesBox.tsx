@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { Address, AddressHash } from '@alephium/shared'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -8,7 +8,6 @@ import AddressBadge from '@/components/AddressBadge'
 import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { useAppSelector } from '@/hooks/redux'
-import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface CheckAddressesBoxProps extends BoxProps {

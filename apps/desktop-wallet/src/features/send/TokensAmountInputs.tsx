@@ -1,4 +1,10 @@
-import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import {
+  Address,
+  AddressHash,
+  fromHumanReadableAmount,
+  getNumberOfDecimals,
+  toHumanReadableAmount
+} from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
@@ -28,7 +34,6 @@ import InputsSection from '@/features/send/InputsSection'
 import SelectOptionAddressToken from '@/features/send/SelectOptionAddressToken'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import { Address } from '@/types/addresses'
 import { AssetAmountInputType } from '@/types/assets'
 import { onEnterOrSpace } from '@/utils/misc'
 

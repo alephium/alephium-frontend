@@ -1,3 +1,4 @@
+import { Address } from '@alephium/shared'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -10,7 +11,6 @@ import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { Address } from '@/types/addresses'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 

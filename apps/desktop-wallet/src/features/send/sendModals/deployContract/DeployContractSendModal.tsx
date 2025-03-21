@@ -1,3 +1,4 @@
+import { keyring } from '@alephium/keyring'
 import { throttledClient } from '@alephium/shared'
 import { binToHex, contractIdFromAddress, SignDeployContractTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
@@ -25,7 +26,7 @@ export const buildDeployContractTransaction = async (data: DeployContractTxData,
   const initialAttoAlphAmount =
     data.initialAlphAmount !== undefined ? data.initialAlphAmount.amount?.toString() : undefined
   const response = await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
-    fromPublicKey: data.fromAddress.publicKey,
+    fromPublicKey: keyring.exportPublicKeyOfAddress(data.fromAddress.hash),
     bytecode: data.bytecode,
     initialAttoAlphAmount,
     issueTokenAmount: data.issueTokenAmount?.toString(),

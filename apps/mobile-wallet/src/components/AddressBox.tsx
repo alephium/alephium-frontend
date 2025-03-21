@@ -84,7 +84,7 @@ const AddressBox = ({
     sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
   }
 
-  const hasLabel = !!address?.settings.label
+  const hasLabel = !!address?.label
 
   return (
     <AddressBoxStyled
@@ -126,7 +126,7 @@ const AddressBox = ({
                   includeFontPadding: false
                 }}
               >
-                {address?.settings.label || addressHash}
+                {address?.label || addressHash}
               </AppText>
             </AddressLabel>
             <AddressAmount addressHash={addressHash} tokenId={tokenId} />
@@ -137,9 +137,7 @@ const AddressBox = ({
                 truncate
                 ellipsizeMode="middle"
                 style={{ maxWidth: 100 }}
-                color={
-                  isSelected ? theme.global.accent : address.settings.label ? theme.font.secondary : theme.font.primary
-                }
+                color={isSelected ? theme.global.accent : address.label ? theme.font.secondary : theme.font.primary}
               >
                 {address.hash}
               </AppText>

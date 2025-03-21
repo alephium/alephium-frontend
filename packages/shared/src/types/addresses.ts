@@ -1,4 +1,5 @@
 import { explorer as e, Optional } from '@alephium/web3'
+import { EntityState } from '@reduxjs/toolkit'
 
 import { StringAlias } from '@/types/utils'
 
@@ -20,8 +21,31 @@ export type AddressSettings = {
 
 export type AddressIndex = number
 
+// index: number
+// isDefault: boolean
+// color: string
+// label?: string
 export type AddressMetadata = AddressSettings & {
   index: AddressIndex
+}
+
+// hash: AddressHash
+// index: number
+// isDefault: boolean
+// color: string
+// label?: string
+export type AddressBase = AddressMetadata & {
+  hash: AddressHash
+}
+
+// hash: AddressHash
+// index: number
+// group: number
+// isDefault: boolean
+// color: string
+// label?: string
+export type Address = AddressBase & {
+  group: number
 }
 
 export type AddressBalancesSyncResult = Omit<e.AddressInfo, 'txNumber'> & {
@@ -33,3 +57,12 @@ export type AddressTokensSyncResult = {
   tokenBalances: e.AddressTokenBalance[]
 }
 
+export type AddressesState = EntityState<Address>
+
+export type DEPRECATED_Address = Omit<e.AddressInfo, 'txNumber'> &
+  Address & {
+    transactions: e.Transaction['hash'][]
+    allTransactionPagesLoaded: boolean
+    tokens: e.AddressTokenBalance[]
+    lastUsed: number
+  }

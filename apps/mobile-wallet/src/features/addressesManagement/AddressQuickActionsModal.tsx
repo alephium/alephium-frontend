@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, addressSettingsSaved } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -18,7 +18,6 @@ import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
-import { addressSettingsSaved } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -101,18 +100,18 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
 
   if (!address) return
 
-  const isDefaultAddress = address.settings.isDefault
+  const isDefaultAddress = address.isDefault
 
   const handleDefaultPress = async () => {
-    if (!address || address.settings.isDefault) return
+    if (!address || address.isDefault) return
 
     setDefaultAddressIsChanging(true)
 
     try {
-      const newSettings = { ...address.settings, isDefault: true }
+      const newSettings = { ...address, isDefault: true }
 
-      await persistAddressSettings({ ...address, settings: newSettings })
-      dispatch(addressSettingsSaved({ ...address, settings: newSettings }))
+      await persistAddressSettings({ ...address, ...newSettings })
+      dispatch(addressSettingsSaved({ addressHash: address.hash, settings: newSettings }))
 
       showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
 
@@ -134,7 +133,7 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
       loading={defaultAddressIsChanging}
-      color={address?.settings.isDefault ? address.settings.color : undefined}
+      color={address?.isDefault ? address.color : undefined}
       disabled={isDefaultAddress}
     />
   )

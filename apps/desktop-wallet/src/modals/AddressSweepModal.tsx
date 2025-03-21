@@ -1,4 +1,4 @@
-import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { Address, AddressHash, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
@@ -25,7 +25,6 @@ import {
   transactionSendFailed,
   transactionSent
 } from '@/storage/transactions/transactionsActions'
-import { Address } from '@/types/addresses'
 import { getName } from '@/utils/addresses'
 
 export interface AddressSweepModalProps extends AddressModalBaseProp {
@@ -62,7 +61,7 @@ const AddressSweepModal = memo(
         if (!sweepAddresses.from || !sweepAddresses.to) return
         setIsLoading(true)
         try {
-          const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from, sweepAddresses.to.hash)
+          const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from.hash, sweepAddresses.to.hash)
 
           setBuiltUnsignedTxs(unsignedTxs)
           setFee(fees)

@@ -14,9 +14,9 @@ export const importAddresses = async (walletId: WalletMetadata['id'], addressesM
   try {
     await initializeKeyringWithStoredWallet()
 
-    for (const { index, label, color, isDefault } of addressesMetadata) {
-      const newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
-      const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
+    for (const { index, ...addressMetadata } of addressesMetadata) {
+      const newAddressNonSensitiveData = keyring.generateAndCacheAddress({ addressIndex: index })
+      const newAddress = { ...newAddressNonSensitiveData, ...addressMetadata }
 
       await persistAddressesSettings([newAddress], walletId)
       store.dispatch(newAddressGenerated(newAddress))

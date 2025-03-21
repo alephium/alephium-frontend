@@ -67,7 +67,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       dispatch(activateAppLoading(t('Importing wallet')))
 
       const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
-      const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
+      const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData // TODO: Verify JSON data
 
       try {
         const wallet = await generateAndStoreWallet(name, mnemonic)
