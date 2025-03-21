@@ -36,7 +36,6 @@ import {
   systemRegionMatchFailed,
   systemRegionMatchSucceeded,
   themeSettingsChanged,
-  themeToggled,
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
@@ -59,9 +58,6 @@ const settingsSlice = createSlice({
         state.region = 'en-US'
       })
       .addCase(themeSettingsChanged, (state, action) => {
-        state.theme = action.payload
-      })
-      .addCase(themeToggled, (state, action) => {
         state.theme = action.payload
       })
       .addCase(discreetModeToggled, (state) => {
@@ -102,7 +98,6 @@ export const settingsListenerMiddleware = createListenerMiddleware()
 settingsListenerMiddleware.startListening({
   matcher: isAnyOf(
     themeSettingsChanged,
-    themeToggled,
     discreetModeToggled,
     passwordRequirementToggled,
     devToolsToggled,
