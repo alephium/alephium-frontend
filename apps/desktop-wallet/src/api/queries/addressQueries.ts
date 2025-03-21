@@ -6,7 +6,13 @@ import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { getFulfilledValues } from '@/api/apiUtils'
-import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import {
+  combineTokenTypes,
+  ftListQuery,
+  fungibleTokenMetadataQuery,
+  tokenQuery,
+  tokenTypeQuery
+} from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import { ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@/types/tokens'
 
@@ -200,5 +206,24 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
       const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(tokenTypes)
 
       return { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }
+    }
+  })
+
+export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'fts', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () => {
+      const { listedFts, unlistedFtIds } = await queryClient.fetchQuery(
+        addressTokensByTypeQuery({ addressHash, networkId })
+      )
+
+      const ftMetadataPromiseResults = await Promise.allSettled(
+        unlistedFtIds.map((id) => queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId })))
+      )
+
+      const unlistedFts = getFulfilledValues(ftMetadataPromiseResults).filter((ftMetadata) => ftMetadata !== null)
+
+      return { listedFts, unlistedFts }
     }
   })

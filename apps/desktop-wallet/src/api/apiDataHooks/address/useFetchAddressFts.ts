@@ -1,23 +1,19 @@
 import { AddressHash } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchSortedFts from '@/api/apiDataHooks/utils/useFetchSortedFts'
+import useFetchSortFtsByWorth from '@/api/apiDataHooks/utils/useFetchSortFtsByWorth'
+import { addressFtsQuery } from '@/api/queries/addressQueries'
 
 const useFetchAddressFts = (addressHash: AddressHash) => {
-  const {
-    data: { listedFts, unlistedFtIds },
-    isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType(addressHash)
+  const { data: addressFts, isLoading: isLoadingAddressFts } = useQuery(addressFtsQuery({ addressHash }))
 
-  const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
-    listedFts,
-    unlistedFtIds
-  })
+  const prop = addressFts ?? { listedFts: [], unlistedFts: [] }
+  const { sortedListedFts, sortedUnlistedFts, isLoading: isLoadingSortFts } = useFetchSortFtsByWorth(prop)
 
   return {
     listedFts: sortedListedFts,
     unlistedFts: sortedUnlistedFts,
-    isLoading: isLoading || isLoadingTokensByType
+    isLoading: isLoadingAddressFts || isLoadingSortFts
   }
 }
 
