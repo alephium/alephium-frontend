@@ -3,9 +3,18 @@ import { BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { isIpcSenderValid } from './utils'
 
 export const setupNativeThemeListeners = (mainWindow: BrowserWindow) => {
-  nativeTheme.on('updated', () =>
-    mainWindow.webContents.send('theme:shouldUseDarkColors', nativeTheme.shouldUseDarkColors)
-  )
+  const themeUpdateHandler = () => {
+    if (!mainWindow.isDestroyed() && mainWindow.webContents) {
+      mainWindow.webContents.send('theme:shouldUseDarkColors', nativeTheme.shouldUseDarkColors)
+    }
+  }
+
+  nativeTheme.on('updated', themeUpdateHandler)
+
+  // Return a cleanup function to remove the listener
+  return () => {
+    nativeTheme.removeListener('updated', themeUpdateHandler)
+  }
 }
 
 export const handleNativeThemeUserActions = () => {
