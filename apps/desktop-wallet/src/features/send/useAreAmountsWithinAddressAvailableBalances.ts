@@ -8,10 +8,7 @@ const useAreAmountsWithinAddressAvailableBalances = (
   amounts: AssetAmountInputType[]
 ): boolean => {
   const amountsWithBalance = amounts.filter(({ amount }) => !!amount)
-  const { data: addressTokensBalances } = useFetchAddressBalances({
-    addressHash,
-    skip: amountsWithBalance.length === 0
-  })
+  const { data: addressTokensBalances } = useFetchAddressBalances(addressHash)
 
   return amountsWithBalance.every(({ id, amount }) => {
     const balances = addressTokensBalances.find((token) => token.id === id)

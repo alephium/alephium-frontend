@@ -57,9 +57,7 @@ const TokensAmountInputs = ({
   const theme = useTheme()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances({
-    addressHash: address.hash
-  })
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances(address.hash)
 
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
   const {

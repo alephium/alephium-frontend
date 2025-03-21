@@ -5,7 +5,7 @@ import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWo
 import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 
 const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances({ addressHash })
+  const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances(addressHash)
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByListing

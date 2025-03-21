@@ -38,7 +38,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTx
 
   const { fromAddress, toAddress } = data
 
-  const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
+  const { data: tokensBalances } = useFetchAddressBalances(fromAddress.hash)
 
   const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
     data.assetAmounts ?? (data.tokenId ? [{ id: data.tokenId }] : [])
