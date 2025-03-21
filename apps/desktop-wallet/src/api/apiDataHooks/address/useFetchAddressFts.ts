@@ -1,21 +1,17 @@
-import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
+import { AddressHash } from '@alephium/shared'
+
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchSortedFts from '@/api/apiDataHooks/utils/useFetchSortedFts'
 
-interface UseAddressFTsProps extends UseFetchAddressProps {
-  sort?: boolean
-}
-
-const useFetchAddressFts = ({ addressHash, sort = true, skip }: UseAddressFTsProps) => {
+const useFetchAddressFts = (addressHash: AddressHash) => {
   const {
     data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash })
+  } = useFetchAddressTokensByType(addressHash)
 
   const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,
-    unlistedFtIds,
-    skip: skip || !sort
+    unlistedFtIds
   })
 
   return {

@@ -24,11 +24,11 @@ import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
 export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
+  const { listedFts, unlistedFts, isLoading } = useFetchAddressFts(addressHash)
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
   const {
     data: { nstIds }
-  } = useFetchAddressTokensByType({ addressHash })
+  } = useFetchAddressTokensByType(addressHash)
 
   return (
     <>

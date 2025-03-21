@@ -59,10 +59,10 @@ const TokensAmountInputs = ({
   const selectedValueRef = useRef<HTMLDivElement>(null)
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances(address.hash)
 
-  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
+  const { listedFts, unlistedFts } = useFetchAddressFts(address.hash)
   const {
     data: { nftIds }
-  } = useFetchAddressTokensByType({ addressHash: address.hash })
+  } = useFetchAddressTokensByType(address.hash)
 
   const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
@@ -286,10 +286,10 @@ export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const networkId = useCurrentlyOnlineNetworkId()
-  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
+  const { listedFts, unlistedFts } = useFetchAddressFts(addressHash)
   const {
     data: { nftIds, nstIds }
-  } = useFetchAddressTokensByType({ addressHash })
+  } = useFetchAddressTokensByType(addressHash)
   const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
 
   const { data: tokensSearchStrings } = useQuery(addressTokensSearchStringsQuery({ addressHash, networkId }))
