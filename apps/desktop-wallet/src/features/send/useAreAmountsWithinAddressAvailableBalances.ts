@@ -11,7 +11,7 @@ const useAreAmountsWithinAddressAvailableBalances = (
   const { data: addressTokensBalances } = useFetchAddressBalances(addressHash)
 
   return amountsWithBalance.every(({ id, amount }) => {
-    const balances = addressTokensBalances.find((token) => token.id === id)
+    const balances = addressTokensBalances?.find((token) => token.id === id)
 
     return !amount ? true : !balances ? false : amount <= BigInt(balances.availableBalance)
   })

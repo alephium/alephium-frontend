@@ -103,7 +103,7 @@ const TokensAmountInputs = ({
   const handleTokenAmountChange = useCallback(
     (tokenRowIndex: number, amountInput: string) => {
       const selectedTokenId = assetAmounts[tokenRowIndex].id
-      const selectedTokenBalances = tokensBalances.find(({ id }) => selectedTokenId === id)
+      const selectedTokenBalances = tokensBalances?.find(({ id }) => selectedTokenId === id)
 
       if (!selectedTokenBalances || nftIds.includes(selectedTokenId)) return
 
@@ -175,7 +175,7 @@ const TokensAmountInputs = ({
   }
 
   const renderOption = (option: SelectOption<string>) => {
-    const token = tokensBalances.find((token) => token.id === option.value)
+    const token = tokensBalances?.find((token) => token.id === option.value)
     return token && <SelectOptionAddressToken tokenId={token.id} addressHash={address.hash} />
   }
 
@@ -184,7 +184,7 @@ const TokensAmountInputs = ({
       <InputsSection className={className}>
         <AssetAmounts ref={selectedValueRef}>
           {assetAmounts.map(({ id, amountInput = '' }, index) => {
-            const tokenBalances = tokensBalances.find((token) => token.id === id)
+            const tokenBalances = tokensBalances?.find((token) => token.id === id)
 
             const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 

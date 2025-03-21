@@ -1,25 +1,17 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 
-import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import useFetchAddressBalancesTokens from '@/api/apiDataHooks/address/useFetchAddressBalancesTokens'
-import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
+import { addressBalancesQuery } from '@/api/queries/addressQueries'
 
 const useFetchAddressBalances = (addressHash: AddressHash) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
-    addressHash
-  })
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalancesTokens({
-    addressHash
-  })
-  const allTokensBalances = useMergeAllTokensBalances({
-    includeAlph: true,
-    alphBalances,
-    tokensBalances
-  })
+  const networkId = useCurrentlyOnlineNetworkId()
+
+  const { data, isLoading } = useQuery(addressBalancesQuery({ addressHash, networkId }))
 
   return {
-    data: allTokensBalances,
-    isLoading: isLoadingTokensBalances || isLoadingAlphBalances
+    data: data?.balances,
+    isLoading
   }
 }
 

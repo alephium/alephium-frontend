@@ -88,6 +88,31 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
         : skipToken
   })
 
+export const addressBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const { balances: addressAlphBalances } = await queryClient.fetchQuery(
+              addressAlphBalancesQuery({ addressHash, networkId })
+            )
+            const { balances: addressTokensBalances } = await queryClient.fetchQuery(
+              addressTokensBalancesQuery({ addressHash, networkId })
+            )
+
+            return {
+              addressHash,
+              balances:
+                addressAlphBalances.totalBalance !== '0'
+                  ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
+                  : addressTokensBalances
+            }
+          }
+        : skipToken
+  })
+
 export type AddressSearchStringQueryFnData = {
   addressHash: AddressHash
   searchString: string

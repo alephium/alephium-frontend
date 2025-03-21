@@ -70,7 +70,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTx
     atLeastOneAssetWithAmountIsSet &&
     allAssetAmountsAreWithinAvailableBalance
 
-  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances)
+  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances ?? [])
 
   return (
     <>
