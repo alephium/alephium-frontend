@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +10,6 @@ import { DeployContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface DeployContractAddressesTxModalContentProps {
   data: DeployContractTxModalData

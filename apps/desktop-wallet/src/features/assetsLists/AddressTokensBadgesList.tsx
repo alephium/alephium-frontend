@@ -1,8 +1,8 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressTokensByType } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
 

@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -7,7 +8,6 @@ import { CallContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface CallContractAddressesTxModalContentProps {
   data: CallContractTxModalData

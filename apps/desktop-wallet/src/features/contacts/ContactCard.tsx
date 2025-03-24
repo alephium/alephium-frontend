@@ -1,4 +1,4 @@
-import { AddressHash, Contact } from '@alephium/shared'
+import { AddressHash, Contact, selectDefaultAddressHash } from '@alephium/shared'
 import { colord } from 'colord'
 import { Pencil, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,7 @@ import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectContactByHash, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
+import { selectContactByHash } from '@/storage/addresses/addressesSelectors'
 import { useHashToColor } from '@/utils/colors'
 import { getInitials } from '@/utils/misc'
 
@@ -27,12 +27,10 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
   const contactColor = useHashToColor(contactId) || theme.global.complementary
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
 
-  if (!defaultAddressHash) return null
+  if (!contact || !defaultAddressHash) return null
 
   const openEditContactModal = (contact: Contact) =>
     dispatch(openModal({ name: 'ContactFormModal', props: { contact } }))
-
-  if (!contact) return
 
   return (
     <Card>

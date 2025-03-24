@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressBalances } from '@alephium/shared-react'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import { AssetAmountInputType } from '@/types/assets'
 
 const useAreAmountsWithinAddressAvailableBalances = (

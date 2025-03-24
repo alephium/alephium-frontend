@@ -1,12 +1,15 @@
-import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
-import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
-import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
+import { isFT } from '@alephium/shared'
+import {
+  useFetchAddressSingleTokenBalances,
+  useFetchToken,
+  useFetchTokenPrices,
+  useFetchWalletSingleTokenBalances
+} from '@alephium/shared-react'
+
 import FTWorthAmount from '@/components/amounts/FTWorthAmount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { AddressTokenBalancesRowProps, TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
-import { isFT } from '@/types/tokens'
 
 interface FTAddressWorthCellProps extends AddressTokenBalancesRowProps {
   noBorder?: boolean

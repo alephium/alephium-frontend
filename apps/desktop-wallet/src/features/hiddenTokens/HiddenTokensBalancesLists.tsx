@@ -1,10 +1,10 @@
+import { isFT, isNFT } from '@alephium/shared'
+import { useFetchAddressHiddenTokens, useFetchToken } from '@alephium/shared-react'
 import { ChevronUp, EyeOff } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressHiddenTokens from '@/api/apiDataHooks/address/useFetchAddressHiddenTokens'
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Button from '@/components/Button'
 import Table from '@/components/Table'
 import {
@@ -18,7 +18,6 @@ import {
 } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
-import { isFT, isNFT } from '@/types/tokens'
 
 export const HiddenWalletTokensBalancesListSection = () => {
   const hiddenTokenIds = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)

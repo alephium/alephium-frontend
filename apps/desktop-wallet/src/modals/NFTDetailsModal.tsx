@@ -1,12 +1,11 @@
 import { NFT } from '@alephium/shared'
-import { useFetchNftCollection } from '@alephium/shared-react'
+import { useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
 import { AxiosError } from 'axios'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'

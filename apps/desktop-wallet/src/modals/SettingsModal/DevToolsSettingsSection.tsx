@@ -1,4 +1,5 @@
-import { Address, AddressHash, getHumanReadableError } from '@alephium/shared'
+import { Address, AddressHash, getHumanReadableError, selectDefaultAddress } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { getSecp259K1Path } from '@alephium/web3-wallet'
 import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -19,56 +20,19 @@ import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { devToolsToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveFaucetTokens } from '@/storage/global/globalActions'
 
 const DevToolsSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const addresses = useUnsortedAddresses()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-  const currentNetwork = useAppSelector((s) => s.network)
-  const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
-  const devTools = useAppSelector((state) => state.settings.devTools)
-  const { isLedger } = useLedger()
   const { sendAnalytics } = useAnalytics()
-
-  if (!defaultAddress) return null
+  const devTools = useAppSelector((state) => state.settings.devTools)
 
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 
     sendAnalytics({ event: 'Enabled dev tools' })
   }
-
-  const openCopyPrivateKeyConfirmationModal = (addressHash: AddressHash) =>
-    dispatch(openModal({ name: 'CopyPrivateKeyConfirmationModal', props: { addressHash } }))
-
-  const copyPublicKey = async (address: Address) => {
-    try {
-      await navigator.clipboard.writeText(address.publicKey)
-      dispatch(copiedToClipboard(t('Public key copied.')))
-
-      sendAnalytics({ event: 'Copied address public key' })
-    } catch (error) {
-      dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
-      sendAnalytics({ type: 'error', message: 'Could not copy public key' })
-    }
-  }
-
-  const handleFaucetCall = () => {
-    defaultAddress && dispatch(receiveFaucetTokens(defaultAddress.hash))
-    sendAnalytics({ event: 'Requested testnet tokens' })
-  }
-
-  const openCallContractModal = () =>
-    dispatch(openModal({ name: 'CallContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
-
-  const openDeployContractModal = () =>
-    dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
-
-  const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
 
   return (
     <>
@@ -85,66 +49,11 @@ const DevToolsSettingsSection = () => {
       </Section>
       {devTools && (
         <>
-          <Section align="flex-start" inList>
-            <h2 tabIndex={0} role="label">
-              {t('Token faucet')}
-            </h2>
-            <Paragraph>{t('Receive test tokens in your default address.')}</Paragraph>
-            {!isOnTestNetwork && (
-              <InfoBox
-                importance="accent"
-                Icon={AlertOctagon}
-                text={t(
-                  'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.',
-                  { currentNetwork: currentNetwork.name }
-                )}
-              />
-            )}
-            {isOnTestNetwork && (
-              <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
-                {t('Receive test tokens')}
-              </Button>
-            )}
-          </Section>
-          <Section align="flex-start" inList>
-            <h2 tabIndex={0} role="label">
-              {t('Smart contracts')}
-            </h2>
-            <ButtonsRow>
-              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
-                {t('Deploy contract')}
-              </Button>
-              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
-                {t('Call contract')}
-              </Button>
-            </ButtonsRow>
-          </Section>
-          <PrivateKeySection align="flex-start" role="list">
-            <h2 tabIndex={0} role="label">
-              {t('Address keys export')}
-            </h2>
-            <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
-            <Table>
-              {addresses.map((address) => (
-                <AddressRow addressHash={address.hash} key={address.hash} subtitle={getSecp259K1Path(address.index)}>
-                  <Buttons>
-                    <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
-                      {t('Public key')}
-                    </ButtonStyled>
-                    {!isLedger && (
-                      <ButtonStyled
-                        role="secondary"
-                        short
-                        onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
-                      >
-                        {t('Private key')}
-                      </ButtonStyled>
-                    )}
-                  </Buttons>
-                </AddressRow>
-              ))}
-            </Table>
-          </PrivateKeySection>
+          <FaucetSection />
+
+          <SmartContractsSection />
+
+          <KeyPairsSection />
         </>
       )}
     </>
@@ -152,6 +61,124 @@ const DevToolsSettingsSection = () => {
 }
 
 export default DevToolsSettingsSection
+
+const FaucetSection = () => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const { sendAnalytics } = useAnalytics()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const currentNetwork = useAppSelector((s) => s.network)
+  const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
+
+  const handleFaucetCall = () => {
+    defaultAddress && dispatch(receiveFaucetTokens(defaultAddress.hash))
+    sendAnalytics({ event: 'Requested testnet tokens' })
+  }
+
+  const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
+
+  return (
+    <Section align="flex-start" inList>
+      <h2 tabIndex={0} role="label">
+        {t('Token faucet')}
+      </h2>
+      <Paragraph>{t('Receive test tokens in your default address.')}</Paragraph>
+      {!isOnTestNetwork && (
+        <InfoBox
+          importance="accent"
+          Icon={AlertOctagon}
+          text={t(
+            'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.',
+            { currentNetwork: currentNetwork.name }
+          )}
+        />
+      )}
+      {isOnTestNetwork && (
+        <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
+          {t('Receive test tokens')}
+        </Button>
+      )}
+    </Section>
+  )
+}
+
+const SmartContractsSection = () => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+
+  if (!defaultAddress) return null
+
+  const openCallContractModal = () =>
+    dispatch(openModal({ name: 'CallContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  const openDeployContractModal = () =>
+    dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  return (
+    <Section align="flex-start" inList>
+      <h2 tabIndex={0} role="label">
+        {t('Smart contracts')}
+      </h2>
+      <ButtonsRow>
+        <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
+          {t('Deploy contract')}
+        </Button>
+        <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
+          {t('Call contract')}
+        </Button>
+      </ButtonsRow>
+    </Section>
+  )
+}
+
+const KeyPairsSection = () => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const addresses = useUnsortedAddresses()
+  const { isLedger } = useLedger()
+  const { sendAnalytics } = useAnalytics()
+
+  const openCopyPrivateKeyConfirmationModal = (addressHash: AddressHash) =>
+    dispatch(openModal({ name: 'CopyPrivateKeyConfirmationModal', props: { addressHash } }))
+
+  const copyPublicKey = async (address: Address) => {
+    try {
+      await navigator.clipboard.writeText(address.publicKey)
+      dispatch(copiedToClipboard(t('Public key copied.')))
+
+      sendAnalytics({ event: 'Copied address public key' })
+    } catch (error) {
+      dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
+      sendAnalytics({ type: 'error', message: 'Could not copy public key' })
+    }
+  }
+
+  return (
+    <PrivateKeySection align="flex-start" role="list">
+      <h2 tabIndex={0} role="label">
+        {t('Address keys export')}
+      </h2>
+      <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
+      <Table>
+        {addresses.map((address) => (
+          <AddressRow addressHash={address.hash} key={address.hash} subtitle={getSecp259K1Path(address.index)}>
+            <Buttons>
+              <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
+                {t('Public key')}
+              </ButtonStyled>
+              {!isLedger && (
+                <ButtonStyled role="secondary" short onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}>
+                  {t('Private key')}
+                </ButtonStyled>
+              )}
+            </Buttons>
+          </AddressRow>
+        ))}
+      </Table>
+    </PrivateKeySection>
+  )
+}
 
 const ButtonsRow = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectDefaultAddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import useConfirmDeleteAddresses from '@/features/addressDeletion/useConfirmDeleteAddresses'
@@ -7,7 +7,6 @@ import { closeModal } from '@/features/modals/modalActions'
 import { ModalInstance } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton } from '@/modals/CenteredModal'
-import { selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 
 interface ForgetMulitpleAddressesButtonProps {
   addressHashes: AddressHash[]

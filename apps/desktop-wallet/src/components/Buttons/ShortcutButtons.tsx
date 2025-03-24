@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash, selectDefaultAddressHash, TokenId } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
@@ -9,8 +9,6 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
-import { TokenId } from '@/types/tokens'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {

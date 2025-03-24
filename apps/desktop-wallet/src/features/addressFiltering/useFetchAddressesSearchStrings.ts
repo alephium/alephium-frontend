@@ -1,9 +1,11 @@
 import { Address, AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import {
+  addressSearchStringQuery,
+  AddressSearchStringQueryFnData,
+  useCurrentlyOnlineNetworkId,
+  useUnsortedAddresses
+} from '@alephium/shared-react'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
-
-import { addressSearchStringQuery, AddressSearchStringQueryFnData } from '@/api/queries/addressQueries'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 const useFetchAddressesSearchStrings = (addressHashes: AddressHash[]) => {
   const addresses = useUnsortedAddresses()

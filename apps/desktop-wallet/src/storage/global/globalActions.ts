@@ -1,4 +1,10 @@
-import { AddressHash, exponentialBackoffFetchRetry, throttledClient } from '@alephium/shared'
+import {
+  AddressHash,
+  exponentialBackoffFetchRetry,
+  SentTransaction,
+  throttledClient,
+  transactionSent
+} from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
@@ -6,7 +12,6 @@ import i18n from '@/features/localization/i18n'
 import { ThemeType } from '@/features/theme/themeTypes'
 import { OptionalMessage, SnackbarMessage } from '@/features/toastMessages/toastMessagesTypes'
 import { RootState } from '@/storage/store'
-import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
 
@@ -42,7 +47,7 @@ export const appDataClearFailed = createAction('app/appDataClearFailed')
 
 export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveFaucetTokens',
-  async (destinationAddress: AddressHash, { getState, rejectWithValue, fulfillWithValue }) => {
+  async (destinationAddress: AddressHash, { getState, rejectWithValue, fulfillWithValue, dispatch }) => {
     const state = getState() as RootState
     const currentNetwork = state.network
 
@@ -106,6 +111,13 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
     const responseURL = (await response.text()).trim()
 
     const hash = responseURL.match(/\/([a-fA-F0-9]+)$/)?.[1] || ''
+
+    dispatch(
+      transactionSent({
+        ...txBoilerplate,
+        hash: hash
+      })
+    )
 
     return fulfillWithValue({
       ...txBoilerplate,

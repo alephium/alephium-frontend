@@ -1,4 +1,4 @@
-import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
+import { localStorageNetworkSettingsLoaded, NetworkSettings, storedSharedSettingsLoaded } from '@alephium/shared'
 import { useEffect } from 'react'
 
 import { hiddenAssetsLoadedFromStorage } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
@@ -20,6 +20,7 @@ const useLoadStoredSettings = () => {
     const loadStoredSettingsIntoState = async () => {
       const generalSettings = (await loadSettings('general')) as GeneralSettings
       dispatch(storedGeneralSettingsLoaded(generalSettings))
+      dispatch(storedSharedSettingsLoaded({ fiatCurrency: generalSettings.currency }))
 
       await migrateNetworkSettings()
       const networkSettings = (await loadSettings('network')) as NetworkSettings

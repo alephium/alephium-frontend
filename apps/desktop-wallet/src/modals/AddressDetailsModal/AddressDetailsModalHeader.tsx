@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -8,7 +9,6 @@ import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
 const Header = ({ addressHash }: AddressModalBaseProp) => {

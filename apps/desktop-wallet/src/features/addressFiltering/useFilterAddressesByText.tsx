@@ -1,7 +1,7 @@
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useMemo } from 'react'
 
 import useAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddressHashes = useUnsortedAddressesHashes()

@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, throttledClient } from '@alephium/shared'
+import { fromHumanReadableAmount, throttledClient, transactionSent } from '@alephium/shared'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -10,7 +10,6 @@ import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal
 import { CallContractTxData, CallContractTxModalData, TxContext } from '@/features/send/sendTypes'
 import { getOptionalTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { store } from '@/storage/store'
-import { transactionSent } from '@/storage/transactions/transactionsActions'
 
 export type CallContractSendModalProps = ConfigurableSendModalProps<CallContractTxModalData>
 

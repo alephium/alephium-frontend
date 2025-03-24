@@ -5,7 +5,14 @@ import {
   getNumberOfDecimals,
   toHumanReadableAmount
 } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import {
+  addressTokensSearchStringsQuery,
+  useCurrentlyOnlineNetworkId,
+  useFetchAddressBalances,
+  useFetchAddressFtsSorted,
+  useFetchAddressTokensByType,
+  useSortedTokenIds
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
@@ -14,11 +21,6 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import useFetchAddressFtsSorted from '@/api/apiDataHooks/address/useFetchAddressFtsSorted'
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
-import { addressTokensSearchStringsQuery } from '@/api/queries/addressQueries'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'

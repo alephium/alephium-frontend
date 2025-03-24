@@ -1,7 +1,7 @@
 import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/features/localization/i18n'
 
-import { PersistQueryClientContextProvider } from '@alephium/shared-react'
+import { ApiContextProvider, PersistQueryClientContextProvider } from '@alephium/shared-react'
 import isPropValid from '@emotion/is-prop-valid'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
@@ -10,7 +10,6 @@ import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
 
-import ApiContextProvider from '@/api/context/apiContext'
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'

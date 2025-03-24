@@ -1,4 +1,4 @@
-import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
+import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared'
 import { useInitializeThrottledClient, usePersistQueryClientContext } from '@alephium/shared-react'
 import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -132,6 +132,7 @@ const useMigrateStoredSettings = () => {
       migrateWalletData()
 
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(storedSharedSettingsLoaded({ fiatCurrency: generalSettings.fiatCurrency }))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
     } catch {
       sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })

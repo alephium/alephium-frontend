@@ -1,6 +1,6 @@
+import { useFetchWalletWorth } from '@alephium/shared-react'
 import { memo } from 'react'
 
-import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
 import WorthOverview from '@/components/WorthOverview'
 
 const WalletWorth = memo(() => {

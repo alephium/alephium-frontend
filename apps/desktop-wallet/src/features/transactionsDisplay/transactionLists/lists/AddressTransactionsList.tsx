@@ -1,8 +1,8 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressInfiniteTransactions } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressInfiniteTransactions from '@/api/apiDataHooks/address/useFetchAddressInfiniteTransactions'
 import Table, { TableHeader } from '@/components/Table'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { openModal } from '@/features/modals/modalActions'

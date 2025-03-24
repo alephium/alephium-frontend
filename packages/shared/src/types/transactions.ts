@@ -1,4 +1,5 @@
 import { explorer as e, Optional } from '@alephium/web3'
+import { EntityState } from '@reduxjs/toolkit'
 
 import { Asset, AssetAmount } from '@/types/assets'
 
@@ -23,3 +24,17 @@ export type AmountDeltas = {
     amount: bigint
   }[]
 }
+
+export type SentTransaction = {
+  hash: string
+  fromAddress: string
+  toAddress: string
+  timestamp: number
+  type: 'consolidation' | 'transfer' | 'sweep' | 'contract' | 'faucet'
+  amount?: string
+  tokens?: e.Token[]
+  lockTime?: number
+  status: 'sent' | 'mempooled' | 'confirmed'
+}
+
+export type SentTransactionsState = EntityState<SentTransaction>

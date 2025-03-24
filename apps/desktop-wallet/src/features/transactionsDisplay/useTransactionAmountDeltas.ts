@@ -1,8 +1,12 @@
-import { AddressHash, AmountDeltas, calcTxAmountsDeltaForAddress } from '@alephium/shared'
+import {
+  AddressHash,
+  AmountDeltas,
+  calcTxAmountsDeltaForAddress,
+  selectPendingSentTransactionByHash
+} from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
 const useTransactionAmountDeltas = (

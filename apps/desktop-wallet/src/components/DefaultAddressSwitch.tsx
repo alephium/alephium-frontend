@@ -1,4 +1,5 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectDefaultAddress } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -7,8 +8,6 @@ import AddressBadge from '@/components/AddressBadge'
 import Button from '@/components/Button'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { changeDefaultAddress } from '@/storage/addresses/addressesStorageUtils'
 
 interface AddressOption {

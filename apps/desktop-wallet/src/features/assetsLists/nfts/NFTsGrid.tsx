@@ -1,11 +1,11 @@
+import { TokenId } from '@alephium/shared'
+import { useFetchAddressTokensByType, useFetchWalletTokensByType } from '@alephium/shared-react'
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
@@ -13,7 +13,6 @@ import Spinner from '@/components/Spinner'
 import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { TokenId } from '@/types/tokens'
 
 export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()

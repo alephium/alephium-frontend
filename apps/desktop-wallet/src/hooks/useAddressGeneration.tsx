@@ -1,5 +1,6 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressBase, AddressMetadata } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,6 @@ import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
