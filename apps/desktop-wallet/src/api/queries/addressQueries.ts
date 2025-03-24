@@ -229,6 +229,9 @@ export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransac
 
       const unlistedFts = getFulfilledValues(ftMetadataPromiseResults).filter((ftMetadata) => ftMetadata !== null)
 
-      return { listedFts, unlistedFts }
+      return {
+        listedFts,
+        unlistedFts
+      }
     }
   })

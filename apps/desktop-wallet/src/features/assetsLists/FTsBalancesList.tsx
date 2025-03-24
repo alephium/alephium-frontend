@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import useFetchAddressFtsSorted from '@/api/apiDataHooks/address/useFetchAddressFtsSorted'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import useFetchWalletFtsSorted from '@/api/apiDataHooks/wallet/useFetchWalletFtsSorted'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import SkeletonLoader from '@/components/SkeletonLoader'
@@ -55,7 +55,7 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
 
 export const WalletFTsBalancesList = () => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
+  const { listedFts, unlistedFts, isLoading } = useFetchWalletFtsSorted()
   const {
     data: { nstIds }
   } = useFetchWalletTokensByType({ includeHidden: false })

@@ -11,7 +11,7 @@ const useFetchTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkIsOffline = useCurrentlyOnlineNetworkId() === undefined
 
-  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSymbols()
+  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
   const { data, isLoading } = useQuery(
     tokensPriceQuery({
@@ -33,7 +33,7 @@ export const useFetchTokenPrice = (symbol: string) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkIsOffline = useCurrentlyOnlineNetworkId() === undefined
 
-  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSymbols()
+  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
   const { data, isLoading } = useQuery({
     ...tokensPriceQuery({ symbols, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
@@ -46,7 +46,7 @@ export const useFetchTokenPrice = (symbol: string) => {
   }
 }
 
-const useFetchWalletFtsSymbols = () => {
+const useFetchWalletFtsSortedSymbols = () => {
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByType
