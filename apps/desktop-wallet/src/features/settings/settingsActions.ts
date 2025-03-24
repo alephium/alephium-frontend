@@ -1,15 +1,12 @@
 import { createAction } from '@reduxjs/toolkit'
 
 import { Settings } from '@/features/settings/settingsTypes'
-import { ThemeType } from '@/features/theme/themeTypes'
 
 export const systemRegionMatchSucceeded = createAction<string>('settings/systemRegionMatchSucceeded')
 
 export const systemRegionMatchFailed = createAction('settings/systemRegionMatchFailed')
 
 export const themeSettingsChanged = createAction<Settings['general']['theme']>('settings/themeSettingsChanged')
-
-export const themeToggled = createAction<ThemeType>('settings/themeToggled')
 
 export const discreetModeToggled = createAction('settings/discreetModeToggled')
 

@@ -8,7 +8,7 @@ import {
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { languageChangeFinished, languageChangeStarted } from '@/features/localization/localizationActions'
-import { themeSettingsChanged, themeToggled } from '@/features/settings/settingsActions'
+import { themeSettingsChanged } from '@/features/settings/settingsActions'
 import { ThemeType } from '@/features/theme/themeTypes'
 import { getThemeType } from '@/features/theme/themeUtils'
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
@@ -89,9 +89,6 @@ const globalSlice = createSlice({
       .addCase(themeSettingsChanged, (state, action) => {
         const theme = action.payload
         if (theme !== 'system') state.theme = theme
-      })
-      .addCase(themeToggled, (state, action) => {
-        state.theme = action.payload
       })
       .addCase(localStorageNetworkSettingsMigrated, refreshWalletList)
       .addCase(newWalletNameStored, refreshWalletList)
