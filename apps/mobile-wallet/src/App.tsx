@@ -6,9 +6,14 @@ import {
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
-import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
+import {
+  PersistQueryClientContextProvider,
+  queryClient,
+  useInitializeClient,
+  useInterval,
+  usePersistQueryClientContext
+} from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
-import { QueryClientProvider } from '@tanstack/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
@@ -27,6 +32,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
@@ -64,7 +70,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientContextProvider createPersister={createTanstackAsyncStoragePersister}>
         <Main>
           <ThemeProvider theme={theme}>
             <StatusBar animated translucent style="light" />
@@ -83,7 +89,7 @@ const App = () => {
             <LoadingManager />
           </ThemeProvider>
         </Main>
-      </QueryClientProvider>
+      </PersistQueryClientContextProvider>
     </Provider>
   )
 }
@@ -123,6 +129,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
   const currency = useRef(settings.currency)
+  const { restoreQueryCache } = usePersistQueryClientContext()
 
   const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokensIds(), [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -136,8 +143,11 @@ const Main = ({ children, ...props }: ViewProps) => {
   useSystemRegion()
 
   useEffect(() => {
-    if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
-  }, [dispatch, walletMetadata])
+    if (walletMetadata) {
+      dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+      restoreQueryCache(walletMetadata.id)
+    }
+  }, [dispatch, restoreQueryCache, walletMetadata])
 
   useEffect(() => {
     if (

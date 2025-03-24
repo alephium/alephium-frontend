@@ -5,12 +5,11 @@ import {
   throttledClient,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { getQueryConfig } from '@alephium/shared-react'
+import { getQueryConfig, queryClient } from '@alephium/shared-react'
 import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import queryClient from '@/api/queryClient'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash

@@ -19,6 +19,7 @@ import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
 import RegionSettingsRow from '~/features/settings/regionSettings/RegionSettingsRow'
 import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
+import SettingsDevSection from '~/features/settings/settingsScreen/SettingsDevSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import {
   analyticsToggled,
@@ -180,6 +181,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Ionicons name="trash" size={18} color={theme.global.alert} />
           </Row>
         </ScreenSection>
+
+        {__DEV__ && <SettingsDevSection />}
+
         <ScreenSection>
           <AppText style={{ textAlign: 'center' }} color="secondary">
             {t('Version')} {Application.nativeApplicationVersion} build {Application.nativeBuildVersion}

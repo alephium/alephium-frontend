@@ -1,8 +1,8 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
 
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { hiddenTokensLoadedFromStorage } from '@/features/hiddenTokens/hiddenTokensActions'
 import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'

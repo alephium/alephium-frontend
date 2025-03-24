@@ -1,10 +1,10 @@
 import { keyring } from '@alephium/keyring'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'

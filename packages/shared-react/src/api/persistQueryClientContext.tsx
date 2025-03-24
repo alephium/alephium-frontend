@@ -11,10 +11,10 @@ import {
   QueryClientProvider,
   QueryClientProviderProps
 } from '@tanstack/react-query'
+import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import queryClient from '@/api/queryClient'
-import { createTanstackIndexedDBPersister } from '@/storage/tanstackIndexedDBPersister'
+import { queryClient } from '@/api/queryClient'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
@@ -34,8 +34,16 @@ export const initialPersistQueryClientContext: PersistQueryClientContextType = {
 
 export const PersistQueryClientContext = createContext<PersistQueryClientContextType>(initialPersistQueryClientContext)
 
+interface PersistQueryClientContextProviderProps {
+  children: ReactNode
+  createPersister: (key: string) => Persister
+}
+
 // Inspired by https://github.com/TanStack/query/blob/1adaf3ff86fa2bf720dbc958714c60553c4aae08/packages/react-query-persist-client/src/PersistQueryClientProvider.tsx
-export const PersistQueryClientContextProvider = ({ children }: { children: ReactNode }) => {
+export const PersistQueryClientContextProvider = ({
+  children,
+  createPersister
+}: PersistQueryClientContextProviderProps) => {
   const [isRestoring, setIsRestoring] = useState(true)
   const [unsubscribeFromQueryClientFn, setUnsubscribeFromQueryClientFn] = useState(() => () => {})
 
@@ -45,37 +53,43 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
     queryClient.clear()
   }, [unsubscribeFromQueryClientFn])
 
-  const restoreQueryCache = useCallback(async (walletId: string, isPassphraseUsed?: boolean) => {
-    setIsRestoring(true)
+  const restoreQueryCache = useCallback(
+    async (walletId: string, isPassphraseUsed?: boolean) => {
+      setIsRestoring(true)
 
-    if (!isPassphraseUsed) {
-      const options: PersistQueryClientOptions = {
-        queryClient,
-        maxAge: Infinity,
-        persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
-        dehydrateOptions: {
-          shouldDehydrateQuery: (query) =>
-            query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+      if (!isPassphraseUsed) {
+        const options: PersistQueryClientOptions = {
+          queryClient,
+          maxAge: Infinity,
+          persister: createPersister('tanstack-cache-for-wallet-' + walletId),
+          dehydrateOptions: {
+            shouldDehydrateQuery: (query) =>
+              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+          }
         }
+
+        await persistQueryClientRestore(options)
+
+        const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
+
+        setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
+      } else {
+        // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
+        // then to `false` to make sure the useQuery instances are reset.
+        await sleep(500)
       }
 
-      await persistQueryClientRestore(options)
+      setIsRestoring(false)
+    },
+    [createPersister]
+  )
 
-      const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
-
-      setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
-    } else {
-      // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
-      // then to `false` to make sure the useQuery instances are reset.
-      await sleep(500)
-    }
-
-    setIsRestoring(false)
-  }, [])
-
-  const deletePersistedCache = useCallback((walletId: string) => {
-    createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
-  }, [])
+  const deletePersistedCache = useCallback(
+    (walletId: string) => {
+      createPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
+    },
+    [createPersister]
+  )
 
   return (
     <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache, deletePersistedCache }}>
