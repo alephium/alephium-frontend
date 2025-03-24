@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
+import useFetchAddressFtsSorted from '@/api/apiDataHooks/address/useFetchAddressFtsSorted'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
 import { addressTokensSearchStringsQuery } from '@/api/queries/addressQueries'
@@ -59,7 +59,7 @@ const TokensAmountInputs = ({
   const selectedValueRef = useRef<HTMLDivElement>(null)
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances(address.hash)
 
-  const { listedFts, unlistedFts } = useFetchAddressFts(address.hash)
+  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(address.hash)
   const {
     data: { nftIds }
   } = useFetchAddressTokensByType(address.hash)
@@ -286,7 +286,7 @@ export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const networkId = useCurrentlyOnlineNetworkId()
-  const { listedFts, unlistedFts } = useFetchAddressFts(addressHash)
+  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
   const {
     data: { nftIds, nstIds }
   } = useFetchAddressTokensByType(addressHash)
