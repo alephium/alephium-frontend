@@ -454,7 +454,6 @@
   "All UTXOs are already consolidated for this address. No consolidation is needed.": "所有UTXO已经合并到此地址。无需合并。",
   "No addresses match the search criteria.": "没有匹配的地址",
   "walletConnectSwitchNetwork": "您当前连接到 <1>{{ currentNetworkName }}</1>，但 dApp 要求连接到 <3>{{ network }}</3>。",
-  "walletConnectNewAddress": "dApp 要求输入地址组别 <1>{{ currentNetworkName }}</1> 中的地址。点击下方生成一个地址！",
   "ALPH only": "仅限ALPH",
   "This address doesn't have any tokens yet.": "此地址还没有任何代币。",
   "This address doesn't have any NFTs yet.": "此地址还没有任何NFT。",
