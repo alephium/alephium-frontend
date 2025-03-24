@@ -1,16 +1,16 @@
-import { calculateAmountWorth } from '@alephium/shared'
-import { isNumber, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { TokenPrice } from '@/api/queries/priceQueries'
+import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
 import { ApiBalances, ListedFT } from '@/types/tokens'
 
 const useFetchSortListedFtsByWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
   const { data: tokenPrices, isLoading } = useFetchTokenPrices({ skip: listedFts.length === 0 })
 
   const sortedListedFts = useMemo(
-    () => orderBy(listedFts, [(token) => getTokenWorth(token, tokenPrices), 'name', 'id'], ['desc', 'asc', 'asc']),
+    () =>
+      orderBy(listedFts, [(token) => getTokenWorth(token, tokenPrices) ?? -1, 'name', 'id'], ['desc', 'asc', 'asc']),
     [listedFts, tokenPrices]
   )
 
@@ -21,9 +21,3 @@ const useFetchSortListedFtsByWorth = (listedFts: (ListedFT & ApiBalances)[]) => 
 }
 
 export default useFetchSortListedFtsByWorth
-
-const getTokenWorth = (token: ListedFT & ApiBalances, tokenPrices?: TokenPrice[]) => {
-  const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
-
-  return isNumber(tokenPrice) ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals) : -1
-}

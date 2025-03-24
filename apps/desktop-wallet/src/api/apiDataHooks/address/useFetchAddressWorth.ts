@@ -10,7 +10,7 @@ const useFetchAddressWorth = (addressHash: AddressHash) => {
     data: { listedFts },
     isLoading: isLoadingTokensByListing
   } = useFetchTokensSeparatedByListing(allTokensBalances)
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
+  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth(listedFts)
 
   return {
     data: worth,
