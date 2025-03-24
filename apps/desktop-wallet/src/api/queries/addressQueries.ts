@@ -119,6 +119,21 @@ export const addressBalancesQuery = ({ addressHash, networkId, skip }: AddressLa
         : skipToken
   })
 
+export const addressBalancesByListingQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', 'by-listing', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const { balances } = await queryClient.fetchQuery(addressBalancesQuery({ addressHash, networkId }))
+            const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+
+            return separateTokensByListing(balances, ftList)
+          }
+        : skipToken
+  })
+
 export type AddressSearchStringQueryFnData = {
   addressHash: AddressHash
   searchString: string
@@ -184,19 +199,9 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
     queryKey: ['address', addressHash, 'computedData', 'tokensByType', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
-      const { balances: addressAlphBalances } = await queryClient.fetchQuery(
-        addressAlphBalancesQuery({ addressHash, networkId })
+      const { listedFts, unlistedTokens } = await queryClient.fetchQuery(
+        addressBalancesByListingQuery({ addressHash, networkId })
       )
-      const { balances: addressTokensBalances } = await queryClient.fetchQuery(
-        addressTokensBalancesQuery({ addressHash, networkId })
-      )
-      const allTokensBalances =
-        addressAlphBalances && addressAlphBalances.totalBalance !== '0'
-          ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
-          : addressTokensBalances
-
-      const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const { listedFts, unlistedTokens } = separateTokensByListing(allTokensBalances, ftList)
 
       const tokenTypesPromiseResults = await Promise.allSettled(
         unlistedTokens.map(({ id }) => queryClient.fetchQuery(tokenTypeQuery({ id, networkId })))
