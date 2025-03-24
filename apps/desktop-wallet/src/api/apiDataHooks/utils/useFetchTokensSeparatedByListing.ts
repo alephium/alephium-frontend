@@ -1,8 +1,9 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
+import { ftListQuery } from '@/api/queries/tokenQueries'
 import { FtListMap, ListedFT, UnlistedToken } from '@/types/tokens'
-
 interface TokensByListing<T> {
   data: {
     listedFts: (ListedFT & T)[]
@@ -12,7 +13,9 @@ interface TokensByListing<T> {
 }
 
 const useFetchTokensSeparatedByListing = <T extends UnlistedToken>(tokens: T[] = []): TokensByListing<T> => {
-  const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
+  const networkId = useCurrentlyOnlineNetworkId()
+
+  const { data: ftList, isLoading } = useQuery(ftListQuery({ networkId }))
 
   const data = useMemo(() => separateTokensByListing(tokens, ftList), [ftList, tokens])
 
