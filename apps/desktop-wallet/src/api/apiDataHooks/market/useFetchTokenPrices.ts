@@ -9,7 +9,7 @@ import { useAppSelector } from '@/hooks/redux'
 
 const useFetchTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const networkIsOffline = useCurrentlyOnlineNetworkId() === undefined
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
@@ -17,7 +17,7 @@ const useFetchTokenPrices = (props?: SkipProp) => {
     tokensPriceQuery({
       symbols,
       currency: fiatCurrency.toLowerCase(),
-      skip: props?.skip || networkIsOffline
+      networkId: networkId
     })
   )
 
@@ -31,12 +31,12 @@ export default useFetchTokenPrices
 
 export const useFetchTokenPrice = (symbol: string) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const networkIsOffline = useCurrentlyOnlineNetworkId() === undefined
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
   const { data, isLoading } = useQuery({
-    ...tokensPriceQuery({ symbols, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
+    ...tokensPriceQuery({ symbols, currency: fiatCurrency.toLowerCase(), networkId }),
     select: (data) => data.find((tokenPrice) => tokenPrice.symbol === symbol)?.price
   })
 
