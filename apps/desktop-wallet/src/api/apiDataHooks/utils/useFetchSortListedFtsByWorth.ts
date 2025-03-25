@@ -6,7 +6,7 @@ import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
 import { ApiBalances, ListedFT } from '@/types/tokens'
 
 const useFetchSortListedFtsByWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
-  const { data: tokenPrices, isLoading } = useFetchTokenPrices({ skip: listedFts.length === 0 })
+  const { data: tokenPrices, isLoading } = useFetchTokenPrices()
 
   const sortedListedFts = useMemo(
     () =>
