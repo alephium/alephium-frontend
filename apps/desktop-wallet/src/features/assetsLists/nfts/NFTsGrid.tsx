@@ -1,4 +1,3 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,11 +10,10 @@ import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
+import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { TokenId } from '@/types/tokens'
-
-const PAGE_SIZE = 12
 
 export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
@@ -59,14 +57,14 @@ interface NFTsGridProps {
 }
 
 const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => {
-  const { data, fetchNextPage, hasNextPage } = useFetchPaginatedNFTs({ nftIds })
+  const { data, fetchNextPage, hasNextPage } = usePaginatedNFTs({ nftIds })
 
-  const ref = useRef(null)
-  const isInView = useInView(ref)
+  const gridBottomRef = useRef(null)
+  const isGridBottomInView = useInView(gridBottomRef)
 
   useEffect(() => {
-    if (isInView && hasNextPage) fetchNextPage()
-  }, [isInView, fetchNextPage, hasNextPage])
+    if (isGridBottomInView && hasNextPage) fetchNextPage()
+  }, [isGridBottomInView, fetchNextPage, hasNextPage])
 
   return (
     <motion.div {...fadeIn}>
@@ -82,35 +80,12 @@ const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps
             )}
           </Grid>
 
-          <GridBottom ref={ref}>{hasNextPage && <Spinner size="15px" />}</GridBottom>
+          <GridBottom ref={gridBottomRef}>{hasNextPage && <Spinner size="15px" />}</GridBottom>
         </>
       )}
     </motion.div>
   )
 }
-
-interface UseFetchPaginatedNFTsProps {
-  nftIds: TokenId[]
-  pageSize?: number
-}
-
-const useFetchPaginatedNFTs = ({ nftIds, pageSize = PAGE_SIZE }: UseFetchPaginatedNFTsProps) =>
-  useInfiniteQuery({
-    queryKey: ['paginatedNFTs', { nftIds, pageSize }],
-    queryFn: ({ pageParam = 0 }) => {
-      const start = pageParam * pageSize
-      const end = start + pageSize
-      const nfts = nftIds.slice(start, end)
-
-      return {
-        nfts,
-        nextCursor: end < nftIds.length ? pageParam + 1 : undefined
-      }
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    enabled: nftIds.length > 0
-  })
 
 const NFTsLoader = () => (
   <>
