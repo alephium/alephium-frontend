@@ -2,12 +2,11 @@ import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-const useFetchTokenPrices = (props?: SkipProp) => {
+const useFetchTokenPrices = () => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkId = useCurrentlyOnlineNetworkId()
 
