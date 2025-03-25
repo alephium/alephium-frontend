@@ -1,8 +1,7 @@
-import { AddressHash, contactsAdapter } from '@alephium/shared'
+import { addressesAdapter, AddressHash, contactsAdapter } from '@alephium/shared'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
 
 export const {

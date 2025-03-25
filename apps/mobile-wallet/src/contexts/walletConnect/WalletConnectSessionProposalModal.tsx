@@ -1,5 +1,10 @@
 import { keyring } from '@alephium/keyring'
-import { isNetworkValid, networkSettingsPresets, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import {
+  DEPRECATED_Address as Address,
+  isNetworkValid,
+  networkSettingsPresets,
+  WalletConnectSessionProposalModalProps
+} from '@alephium/shared'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
 import { SessionTypes } from '@walletconnect/types'
@@ -33,7 +38,6 @@ import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { selectAddressesInGroup, selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { newAddressGenerated } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { Address } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast } from '~/utils/layout'
 
@@ -69,9 +73,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
 
     useEffect(() => {
       setSignerAddress(
-        addressesInGroup.length > 0
-          ? addressesInGroup.find((a) => a.settings.isDefault) ?? addressesInGroup[0]
-          : undefined
+        addressesInGroup.length > 0 ? addressesInGroup.find((a) => a.isDefault) ?? addressesInGroup[0] : undefined
       )
     }, [addressesInGroup])
 
@@ -82,7 +84,9 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         await initializeKeyringWithStoredWallet()
         const newAddress = {
           ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
-          settings: { label: '', color: getRandomLabelColor(), isDefault: false }
+          label: '',
+          color: getRandomLabelColor(),
+          isDefault: false
         }
 
         await persistAddressSettings(newAddress)

@@ -33,7 +33,7 @@ const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>
   ...combineError(results)
 })
 
-const { useData: useFetchWalletBalancesAlph, DataContextProvider: UseFetchWalletBalancesAlphArrayContextProvider } =
+const { useData: useFetchWalletBalancesAlph, DataContextProvider: UseFetchWalletBalancesAlphContextProvider } =
   createDataContext<AddressAlphBalancesQueryFnData, ApiBalances>({
     useDataHook: useFetchWalletBalancesAlphBase,
     combineFn: combineBalances,
@@ -45,4 +45,4 @@ const { useData: useFetchWalletBalancesAlph, DataContextProvider: UseFetchWallet
   })
 
 export default useFetchWalletBalancesAlph
-export { UseFetchWalletBalancesAlphArrayContextProvider }
+export { UseFetchWalletBalancesAlphContextProvider }

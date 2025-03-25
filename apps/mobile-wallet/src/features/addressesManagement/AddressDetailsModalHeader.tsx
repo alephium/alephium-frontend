@@ -87,7 +87,7 @@ const FungibleTokensBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProp
   const theme = useTheme()
   const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
-  const color = useAppSelector((s) => selectAddressByHash(s, addressHash)?.settings.color)
+  const color = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
 
   const editableColor = colord(color || theme.bg.contrast)
   const isLightTheme = theme.name === 'light'
@@ -154,7 +154,7 @@ const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHead
 
   if (!address) return null
 
-  return <AnimatedBackground shade={address.settings.color} />
+  return <AnimatedBackground shade={address.color} />
 }
 
 const AddressDetailsModalHeaderStyled = styled.View`

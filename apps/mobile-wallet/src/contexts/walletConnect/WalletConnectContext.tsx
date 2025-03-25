@@ -745,9 +745,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         }
       }
     },
-    // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
-    // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
-    // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     [addressIds, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
   )
 

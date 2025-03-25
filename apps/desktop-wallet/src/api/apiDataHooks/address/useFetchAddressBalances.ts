@@ -1,30 +1,17 @@
-import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
-import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import useFetchAddressBalancesTokens from '@/api/apiDataHooks/address/useFetchAddressBalancesTokens'
-import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
+import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 
-interface UseFetchAddressBalancesProps extends UseFetchAddressProps {
-  includeAlph?: boolean
-}
+import { addressBalancesQuery } from '@/api/queries/addressQueries'
 
-const useFetchAddressBalances = ({ addressHash, skip, includeAlph = true }: UseFetchAddressBalancesProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
-    addressHash,
-    skip
-  })
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalancesTokens({
-    addressHash,
-    skip
-  })
-  const allTokensBalances = useMergeAllTokensBalances({
-    includeAlph,
-    alphBalances,
-    tokensBalances
-  })
+const useFetchAddressBalances = (addressHash: AddressHash) => {
+  const networkId = useCurrentlyOnlineNetworkId()
+
+  const { data, isLoading } = useQuery(addressBalancesQuery({ addressHash, networkId }))
 
   return {
-    data: allTokensBalances,
-    isLoading: isLoadingTokensBalances || (includeAlph ? isLoadingAlphBalances : false)
+    data: data?.balances,
+    isLoading
   }
 }
 

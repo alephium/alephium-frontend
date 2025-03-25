@@ -53,10 +53,10 @@ const AddressBadge = ({
       {address ? (
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
-          {address.settings.label ? (
+          {address.label ? (
             <>
               <Label truncate style={textStyle} color={textColor} size={fontSize}>
-                {address.settings.label}
+                {address.label}
               </Label>
               {showHash && <View style={{ opacity: 0.5 }}>{Hash}</View>}
             </>

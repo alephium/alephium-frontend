@@ -1,7 +1,7 @@
+import { Address } from '@alephium/shared'
 import { SignMessageParams } from '@alephium/web3'
 
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
-import { Address } from '@/types/addresses'
 
 export enum TxType {
   TRANSFER,

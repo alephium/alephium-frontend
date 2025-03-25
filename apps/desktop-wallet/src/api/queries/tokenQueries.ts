@@ -8,7 +8,7 @@ import axios, { AxiosError } from 'axios'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
-import { NonStandardToken, Token, TokenId } from '@/types/tokens'
+import { FtListMap, NonStandardToken, Token, TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 
@@ -36,9 +36,13 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
         ? skipToken
         : () =>
             network === 'devnet'
-              ? [ALPH]
-              : axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
-    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
+              ? { [ALPH.id]: ALPH }
+              : axios
+                  .get(getTokensURL(network))
+                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || [])),
+    placeholderData: convertTokenListToRecord(
+      network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
+    )
   })
 }
 
@@ -156,6 +160,7 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
 
 export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ['token', id, { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async (): Promise<Token> => {
@@ -163,7 +168,7 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
 
       // 1. First check if the token is in the token list
       const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const listedFT = fTList.find((t) => t.id === id)
+      const listedFT = fTList[id]
 
       if (listedFT) return listedFT
 
@@ -207,3 +212,6 @@ export const nftQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     },
     enabled: !skip
   })
+
+const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap =>
+  tokenList.reduce((acc, token) => ({ ...acc, [token.id]: token }), {} as FtListMap)

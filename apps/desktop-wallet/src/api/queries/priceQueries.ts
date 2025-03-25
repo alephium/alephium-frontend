@@ -9,8 +9,13 @@ interface TokensPriceQueryProps extends SkipProp {
   currency: string
 }
 
+export type TokenPrice = {
+  price: number
+  symbol: string
+}
+
 export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryProps) =>
-  queryOptions({
+  queryOptions<TokenPrice[]>({
     queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
     refetchInterval: ONE_MINUTE_MS,
     // When the user changes currency settings we don't want to keep the previous cache for too long.

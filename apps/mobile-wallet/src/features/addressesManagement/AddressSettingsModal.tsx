@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, addressSettingsSaved } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -16,7 +16,6 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
-import { addressSettingsSaved } from '~/store/addressesSlice'
 import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
@@ -40,18 +39,26 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
     }
   })
 
-  const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
+  const initialSettings = address
+    ? {
+        isDefault: address.isDefault,
+        color: address.color,
+        label: address.label
+      }
+    : undefined
+
+  const [settings, setSettings] = useState<AddressFormData | undefined>(initialSettings)
 
   const handleSavePress = async () => {
     if (!settings || !address) return
 
-    if (address.settings.isDefault && !settings.isDefault) return
+    if (address.isDefault && !settings.isDefault) return
 
     dispatch(activateAppLoading(t('Saving')))
 
     try {
-      await persistAddressSettings({ ...address, settings })
-      dispatch(addressSettingsSaved({ ...address, settings }))
+      await persistAddressSettings({ ...address, ...settings })
+      dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 
       sendAnalytics({ event: 'Address: Edited address settings' })
     } catch (error) {
@@ -68,10 +75,10 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   return (
     <BottomModal modalId={id} title={t('Address settings')}>
       <AddressForm
-        initialValues={address?.settings}
+        initialValues={initialSettings}
         onValuesChange={setSettings}
         buttonText="Save"
-        disableIsMainToggle={address?.settings.isDefault}
+        disableIsMainToggle={address?.isDefault}
         screenTitle={t('Address settings')}
       />
       {canDeleteAddress && (

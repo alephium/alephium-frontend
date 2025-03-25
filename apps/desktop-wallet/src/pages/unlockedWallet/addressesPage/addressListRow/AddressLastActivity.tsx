@@ -12,7 +12,7 @@ interface AddressListRowLastUsedProps {
 
 const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
   const { t } = useTranslation()
-  const { data } = useFetchAddressLatestTransaction({ addressHash })
+  const { data } = useFetchAddressLatestTransaction(addressHash)
 
   return (
     <AddressListRowLastUsedStyled>

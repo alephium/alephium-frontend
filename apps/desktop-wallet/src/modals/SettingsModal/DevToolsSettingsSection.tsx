@@ -1,4 +1,5 @@
-import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { keyring } from '@alephium/keyring'
+import { Address, AddressHash, getHumanReadableError } from '@alephium/shared'
 import { getSecp259K1Path } from '@alephium/web3-wallet'
 import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +23,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveFaucetTokens } from '@/storage/global/globalActions'
-import { Address } from '@/types/addresses'
 
 const DevToolsSettingsSection = () => {
   const { t } = useTranslation()
@@ -46,7 +46,7 @@ const DevToolsSettingsSection = () => {
 
   const copyPublicKey = async (address: Address) => {
     try {
-      await navigator.clipboard.writeText(address.publicKey)
+      await navigator.clipboard.writeText(keyring.exportPublicKeyOfAddress(address.hash))
       dispatch(copiedToClipboard(t('Public key copied.')))
 
       sendAnalytics({ event: 'Copied address public key' })

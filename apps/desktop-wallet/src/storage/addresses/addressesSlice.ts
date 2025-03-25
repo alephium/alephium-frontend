@@ -1,16 +1,24 @@
-import { AddressHash, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import {
+  Address,
+  AddressBase,
+  addressesAdapter,
+  AddressesState,
+  AddressHash,
+  addressSettingsSaved,
+  addressSettingsSavedReducer,
+  customNetworkSettingsSaved,
+  networkPresetSwitched,
+  updateOldDefaultAddress
+} from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   addressDeleted,
   addressesRestoredFromMetadata,
-  addressRestorationStarted,
-  addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved
 } from '@/storage/addresses/addressesActions'
-import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import {
   activeWalletDeleted,
   walletLocked,
@@ -18,13 +26,10 @@ import {
   walletSwitched,
   walletUnlocked
 } from '@/storage/wallets/walletActions'
-import { Address, AddressBase, AddressesState } from '@/types/addresses'
 import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
-const initialState: AddressesState = addressesAdapter.getInitialState({
-  isRestoringAddressesFromMetadata: false
-})
+const initialState: AddressesState = addressesAdapter.getInitialState()
 
 const addressesSlice = createSlice({
   name: 'addresses',
@@ -32,16 +37,7 @@ const addressesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(addressSettingsSaved, (state, action) => {
-        const { addressHash, settings } = action.payload
-
-        if (settings.isDefault) updateOldDefaultAddress(state)
-
-        addressesAdapter.updateOne(state, {
-          id: addressHash,
-          changes: settings
-        })
-      })
+      .addCase(addressSettingsSaved, addressSettingsSavedReducer)
       .addCase(defaultAddressChanged, (state, action) => {
         const address = action.payload
 
@@ -66,10 +62,6 @@ const addressesSlice = createSlice({
 
         addressesAdapter.setAll(state, [])
         addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
-        state.isRestoringAddressesFromMetadata = false
-      })
-      .addCase(addressRestorationStarted, (state) => {
-        state.isRestoringAddressesFromMetadata = true
       })
       .addCase(addressDeleted, (state, { payload: addressHash }) => {
         addressesAdapter.removeOne(state, addressHash)
@@ -97,19 +89,6 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   ...address,
   group: groupOfAddress(address.hash)
 })
-
-const updateOldDefaultAddress = (state: AddressesState) => {
-  const oldDefaultAddress = getAddresses(state).find((address) => address.isDefault)
-
-  if (oldDefaultAddress) {
-    addressesAdapter.updateOne(state, {
-      id: oldDefaultAddress.hash,
-      changes: {
-        isDefault: false
-      }
-    })
-  }
-}
 
 const clearAddressesNetworkData = (state: AddressesState) => {
   addressesAdapter.updateMany(

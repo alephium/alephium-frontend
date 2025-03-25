@@ -1,7 +1,6 @@
-import { AssetAmount } from '@alephium/shared'
+import { Address, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 
-import { Address } from '@/types/addresses'
 import { TokenId } from '@/types/tokens'
 
 export interface TransferTxData {

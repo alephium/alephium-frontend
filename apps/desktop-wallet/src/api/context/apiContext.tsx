@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { UseFetchWalletBalancesAlphArrayContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { UseFetchWalletBalancesAlphContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import { UseFetchWalletBalancesByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import { UseFetchWalletBalancesTokensArrayContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 import { UseFetchWalletTokensByTypeContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
@@ -10,7 +10,7 @@ type ProviderComponent = FC<ProviderProps>
 
 const providers: Array<ProviderComponent> = [
   UseFetchWalletBalancesTokensArrayContextProvider,
-  UseFetchWalletBalancesAlphArrayContextProvider,
+  UseFetchWalletBalancesAlphContextProvider,
   UseFetchWalletTokensByTypeContextProvider,
   UseFetchWalletBalancesByAddressContextProvider
 ]

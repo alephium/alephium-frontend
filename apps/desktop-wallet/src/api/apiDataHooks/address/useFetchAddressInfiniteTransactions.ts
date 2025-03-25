@@ -13,7 +13,7 @@ interface UseFetchAddressInfiniteTransactionsProps {
 const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAddressInfiniteTransactionsProps) => {
   const networkId = useCurrentlyOnlineNetworkId()
 
-  const { data: addressLatestTx, isLoading: isLoadingLatestTx } = useFetchAddressLatestTransaction({ addressHash })
+  const { data: addressLatestTx, isLoading: isLoadingLatestTx } = useFetchAddressLatestTransaction(addressHash)
 
   const query = addressTransactionsInfiniteQuery({ addressHash, networkId, skip: isLoadingLatestTx })
 

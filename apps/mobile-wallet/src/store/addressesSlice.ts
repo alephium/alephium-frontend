@@ -1,7 +1,10 @@
 import {
+  AddressBase,
+  addressSettingsSaved,
+  addressSettingsSavedReducer,
   appReset,
-  balanceHistoryAdapter,
   customNetworkSettingsSaved,
+  DEPRECATED_Address as Address,
   extractNewTransactions,
   getTransactionsOfAddress,
   networkPresetSwitched
@@ -24,7 +27,6 @@ import {
   walletDeleted,
   walletUnlocked
 } from '~/store/wallet/walletActions'
-import { Address, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const sliceName = 'addresses'
@@ -43,41 +45,40 @@ const addressesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    addressesImported: (state, action: PayloadAction<AddressPartial[]>) => {
+    addressesImported: (state, action: PayloadAction<AddressBase[]>) => {
       const addresses = action.payload
 
-      const newDefaultAddress = addresses.find((address) => address.settings?.isDefault)
+      const newDefaultAddress = addresses.find((address) => address.isDefault)
       if (newDefaultAddress) updateOldDefaultAddress(state)
 
       addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
     },
-    newAddressGenerated: (state, action: PayloadAction<AddressPartial>) => {
+    newAddressGenerated: (state, action: PayloadAction<AddressBase>) => {
       const address = action.payload
 
-      if (address.settings.isDefault) updateOldDefaultAddress(state)
+      if (address.isDefault) updateOldDefaultAddress(state)
 
       addressesAdapter.addOne(state, getInitialAddressState(address))
     },
-    addressSettingsSaved: (state, action: PayloadAction<AddressPartial>) => {
+    addressSettingsSaved: (state, action: PayloadAction<AddressBase>) => {
       const address = action.payload
 
-      if (address.settings.isDefault) updateOldDefaultAddress(state)
+      if (address.isDefault) updateOldDefaultAddress(state)
 
       addressesAdapter.updateOne(state, {
         id: address.hash,
-        changes: { settings: address.settings }
+        changes: address
       })
     }
   },
   extraReducers: (builder) => {
     builder
+      .addCase(addressSettingsSaved, addressSettingsSavedReducer)
       .addCase(newWalletGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,
-          settings: {
-            isDefault: true,
-            color: getRandomLabelColor()
-          }
+          isDefault: true,
+          color: getRandomLabelColor()
         })
 
         addressesAdapter.setAll(state, [])
@@ -159,48 +160,39 @@ const addressesSlice = createSlice({
       if (addressesToInitialize.length > 0) {
         addressesAdapter.addMany(
           state,
-          addressesToInitialize.filter(addressMetadataIncludesHash).map(({ index, hash, ...settings }) =>
-            getInitialAddressState({
-              index,
-              hash,
-              settings
-            })
-          )
+          addressesToInitialize.filter(addressMetadataIncludesHash).map(getInitialAddressState)
         )
       }
     })
   }
 })
 
-export const { newAddressGenerated, addressesImported, addressSettingsSaved } = addressesSlice.actions
+export const { newAddressGenerated, addressesImported } = addressesSlice.actions
 
 export default addressesSlice
 
-const getInitialAddressState = (addressData: AddressPartial): Address => ({
+const getInitialAddressState = (addressData: AddressBase): Address => ({
   ...addressData,
-  settings: addressData.settings || {
-    isDefault: false,
-    color: getRandomLabelColor()
-  },
   group: groupOfAddress(addressData.hash),
   transactions: [],
   allTransactionPagesLoaded: false,
   balance: '0',
   lockedBalance: '0',
   lastUsed: 0,
-  tokens: [],
-  balanceHistory: balanceHistoryAdapter.getInitialState()
+  tokens: []
 })
 
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
 
 const updateOldDefaultAddress = (state: AddressesState) => {
-  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isDefault)
+  const oldDefaultAddress = getAddresses(state).find((address) => address.isDefault)
 
   if (oldDefaultAddress) {
     addressesAdapter.updateOne(state, {
       id: oldDefaultAddress.hash,
-      changes: { settings: { ...oldDefaultAddress.settings, isDefault: false } }
+      changes: {
+        isDefault: false
+      }
     })
   }
 }
@@ -212,6 +204,4 @@ const clearAddressesNetworkData = (state: AddressesState) => {
     state,
     reinitializedAddresses.map((address) => ({ id: address.hash, changes: address }))
   )
-
-  state.status = 'uninitialized'
 }

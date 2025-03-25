@@ -1,0 +1,11 @@
+import { calculateAmountWorth } from '@alephium/shared'
+import { isNumber } from 'lodash'
+
+import { TokenPrice } from '@/api/queries/priceQueries'
+import { ApiBalances, ListedFT } from '@/types/tokens'
+
+export const getTokenWorth = (token: ListedFT & ApiBalances, tokenPrices?: TokenPrice[]) => {
+  const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
+
+  return isNumber(tokenPrice) ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals) : undefined
+}
