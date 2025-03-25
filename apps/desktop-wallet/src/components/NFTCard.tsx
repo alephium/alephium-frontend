@@ -1,7 +1,7 @@
 import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 import styled from 'styled-components'
 
 import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
@@ -17,7 +17,7 @@ interface NFTCardProps {
   nftId: NFT['id']
 }
 
-const NFTCard = ({ nftId }: NFTCardProps) => {
+const NFTCard = memo(({ nftId }: NFTCardProps) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
   const dispatch = useAppDispatch()
@@ -29,7 +29,7 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
       {isInView && <NftCardContent nftId={nftId} />}
     </NFTCardStyled>
   )
-}
+})
 
 export default NFTCard
 

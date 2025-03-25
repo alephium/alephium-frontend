@@ -37,10 +37,11 @@ import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TokenDetailsModal from '@/modals/tokenDetails/TokenDetailsModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsSideModal'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
-  const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
 
   return (
     <AnimatePresenceModalWrapper>

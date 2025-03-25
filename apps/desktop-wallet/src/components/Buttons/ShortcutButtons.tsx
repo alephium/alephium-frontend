@@ -9,7 +9,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 import { TokenId } from '@/types/tokens'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
@@ -20,9 +20,11 @@ interface ShortcutButtonBaseProps {
 }
 
 export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonBaseProps) => {
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
   const color = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette, 'vivid')
+
+  if (!defaultAddressHash) return null
 
   return (
     <ButtonsContainer>
@@ -56,7 +58,9 @@ interface ShortcutButtonsGroupTokenProps extends ShortcutButtonBaseProps {
 }
 
 export const ShortcutButtonsGroupToken = ({ tokenId, ...buttonProps }: ShortcutButtonsGroupTokenProps) => {
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+
+  if (!defaultAddressHash) return null
 
   return (
     <ButtonsContainer>

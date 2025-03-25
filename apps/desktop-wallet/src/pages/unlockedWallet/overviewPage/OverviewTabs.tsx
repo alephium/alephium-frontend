@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import Tabs from '@/components/tabs/Tabs'
 import { WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
-import { WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
+import { WalletNFTsGrid } from '@/features/assetsLists/nfts/NFTsGrid'
 
 const OverviewTabs = () => {
   const { t } = useTranslation()

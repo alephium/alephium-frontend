@@ -14,6 +14,7 @@ import WalletQRCodeExportButton from '@/features/walletExport/qrCodeExport/Walle
 import WalletSecretPhraseExportButton from '@/features/walletExport/secretPhraseExport/WalletSecretPhraseExportButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 const WalletsSettingsSection = () => {
@@ -23,7 +24,8 @@ const WalletsSettingsSection = () => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const { isWalletUnlocked, lockWallet } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
+  const { lockWallet } = useWalletLock()
   const { isLedger } = useLedger()
 
   const openWalletRemoveModal = (walletId: string, walletName: string) => {

@@ -7,7 +7,7 @@ import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import useConfirmDeleteAddresses from '@/features/addressDeletion/useConfirmDeleteAddresses'
 import useDeleteAddress from '@/features/addressDeletion/useDeleteAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 
 interface ForgetAddressSectionProps {
   addressHash: AddressHash
@@ -16,7 +16,7 @@ interface ForgetAddressSectionProps {
 
 const ForgetAddressSection = ({ addressHash, addressName }: ForgetAddressSectionProps) => {
   const { t } = useTranslation()
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const isDefault = addressHash === defaultAddressHash
 
   const deleteAddress = useDeleteAddress()

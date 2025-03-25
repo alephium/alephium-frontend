@@ -29,8 +29,10 @@ export const makeSelectAddresses = () =>
 
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
-  (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
+  (addresses) => addresses.find((address) => address.isDefault) || addresses.at(0)
 )
+
+export const selectDefaultAddressHash = createSelector(selectDefaultAddress, (defaultAddress) => defaultAddress?.hash)
 
 export const selectInitialAddress = createSelector(selectAllAddresses, (addresses) =>
   addresses.find((address) => address.index === 0)

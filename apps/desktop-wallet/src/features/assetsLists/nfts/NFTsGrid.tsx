@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -8,6 +9,8 @@ import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWallet
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import Spinner from '@/components/Spinner'
+import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { TokenId } from '@/types/tokens'
@@ -53,18 +56,36 @@ interface NFTsGridProps {
   placeholderText: string
 }
 
-const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
-  <motion.div {...fadeIn}>
-    {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
+const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => {
+  const { data, fetchNextPage, hasNextPage } = usePaginatedNFTs({ nftIds })
 
-    {isLoading ||
-      (nftIds.length > 0 && (
-        <Grid columns={columns}>
-          {isLoading ? <NFTsLoader /> : nftIds.map((nftId) => <NFTCard key={nftId} nftId={nftId} />)}
-        </Grid>
-      ))}
-  </motion.div>
-)
+  const gridBottomRef = useRef(null)
+  const isGridBottomInView = useInView(gridBottomRef)
+
+  useEffect(() => {
+    if (isGridBottomInView && hasNextPage) fetchNextPage()
+  }, [isGridBottomInView, fetchNextPage, hasNextPage])
+
+  return (
+    <motion.div {...fadeIn}>
+      {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
+
+      {(isLoading || nftIds.length > 0) && (
+        <>
+          <Grid columns={columns}>
+            {isLoading ? (
+              <NFTsLoader />
+            ) : (
+              data?.pages.map((page) => page.nfts.map((nftId) => <NFTCard key={nftId} nftId={nftId} />))
+            )}
+          </Grid>
+
+          <GridBottom ref={gridBottomRef}>{hasNextPage && <Spinner size="15px" />}</GridBottom>
+        </>
+      )}
+    </motion.div>
+  )
+}
 
 const NFTsLoader = () => (
   <>
@@ -90,4 +111,12 @@ const Grid = styled.div<{ columns: number }>`
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     `}
+`
+
+const GridBottom = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
 `

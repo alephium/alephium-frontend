@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { hiddenTokensLoadedFromStorage } from '@/features/hiddenTokens/hiddenTokensActions'
 import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
@@ -26,7 +26,6 @@ interface UnlockWalletProps {
 }
 
 const useWalletLock = () => {
-  const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
   const { restoreAddressesFromMetadata } = useAddressGeneration()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
@@ -131,7 +130,6 @@ const useWalletLock = () => {
   }
 
   return {
-    isWalletUnlocked,
     lockWallet,
     unlockWallet
   }

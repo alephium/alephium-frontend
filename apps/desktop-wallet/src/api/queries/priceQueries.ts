@@ -7,6 +7,7 @@ import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]
   currency: string
+  networkId?: number
 }
 
 export type TokenPrice = {
@@ -14,17 +15,18 @@ export type TokenPrice = {
   symbol: string
 }
 
-export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryProps) =>
+export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensPriceQueryProps) =>
   queryOptions<TokenPrice[]>({
-    queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
+    queryKey: ['tokenPrices', 'currentPrice', symbols, { currency, networkId }],
     refetchInterval: ONE_MINUTE_MS,
     // When the user changes currency settings we don't want to keep the previous cache for too long.
-    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS }),
-    queryFn: !skip
-      ? async () => {
-          const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
 
-          return prices.map((price, i) => ({ price, symbol: symbols[i] }))
-        }
-      : skipToken
+            return prices.map((price, i) => ({ price, symbol: symbols[i] }))
+          }
+        : skipToken
   })

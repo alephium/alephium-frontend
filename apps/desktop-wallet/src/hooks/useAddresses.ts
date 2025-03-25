@@ -10,7 +10,7 @@ import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchW
 import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 import { TokenId } from '@/types/tokens'
 
 export const useFetchAddressesHashesSortedByPreference = () => {
@@ -96,7 +96,7 @@ export const useFetchAddressesHashesSplitByUseFrequency = () => {
 }
 
 export const useFetchAddressesHashesSortedByLastUseWithLatestTx = (props?: SkipProp) => {
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress(props)
 
   return {
@@ -139,7 +139,7 @@ export const useFetchAddressesHashesWithBalance = (tokenId: TokenId = ALPH.id) =
 export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => {
   const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const { data: tokensBalances, isLoading } = useFetchWalletBalancesByAddress()
 
   const sortedAddresses = useMemo(() => {
@@ -170,7 +170,7 @@ export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => 
 
 export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const addressEntities = useAppSelector((s) => s.addresses.entities)
 
   return useMemo(
@@ -197,7 +197,7 @@ export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
 
 export const useAddressesHashesSortedByIndex = (): AddressHash[] => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const addressEntities = useAppSelector((s) => s.addresses.entities)
 
   return useMemo(

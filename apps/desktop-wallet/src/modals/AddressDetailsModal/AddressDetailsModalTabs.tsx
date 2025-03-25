@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import Tabs from '@/components/tabs/Tabs'
 import { AddressFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
-import { AddressNFTsGrid } from '@/features/assetsLists/NFTsGrid'
+import { AddressNFTsGrid } from '@/features/assetsLists/nfts/NFTsGrid'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
 
