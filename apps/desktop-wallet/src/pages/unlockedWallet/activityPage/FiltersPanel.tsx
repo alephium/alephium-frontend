@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import useFetchWalletFtsSorted from '@/api/apiDataHooks/wallet/useFetchWalletFtsSorted'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
@@ -36,7 +36,7 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
 
-  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts({ sort: true, includeHidden: false })
+  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFtsSorted()
   const {
     data: { nftIds, nstIds },
     isLoading: isLoadingTokensByType

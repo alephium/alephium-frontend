@@ -23,7 +23,7 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
   const dispatch = useAppDispatch()
   const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
-  const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddressHash })
+  const { data: tokensBalances } = useFetchAddressBalances(fromAddressHash)
   const currentNetwork = useCurrentlyOnlineNetworkId()
 
   const isOffline = currentNetwork === undefined

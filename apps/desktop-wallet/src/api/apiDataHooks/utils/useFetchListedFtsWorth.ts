@@ -1,27 +1,14 @@
-import { calculateAmountWorth } from '@alephium/shared'
-import { isNumber } from 'lodash'
 import { useMemo } from 'react'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
 import { ApiBalances, ListedFT } from '@/types/tokens'
 
-interface UseListedFtsWorthProps {
-  listedFts: (ListedFT & ApiBalances)[]
-}
-
-const useFetchListedFtsWorth = ({ listedFts }: UseListedFtsWorthProps) => {
+const useFetchListedFtsWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
   const worth = useMemo(
-    () =>
-      listedFts.reduce((totalWorth, token) => {
-        const tokenPrice = tokenPrices?.find(({ symbol }) => symbol === token.symbol)?.price
-        const tokenWorth = isNumber(tokenPrice)
-          ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals)
-          : 0
-
-        return totalWorth + tokenWorth
-      }, 0),
+    () => listedFts.reduce((totalWorth, token) => totalWorth + (getTokenWorth(token, tokenPrices) ?? 0), 0),
     [tokenPrices, listedFts]
   )
 

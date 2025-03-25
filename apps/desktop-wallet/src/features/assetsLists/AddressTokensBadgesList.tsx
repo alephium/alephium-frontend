@@ -20,7 +20,7 @@ const AddressTokensBadgesList = ({
   const {
     data: { listedFts, unlistedFtIds, nftIds, nstIds },
     isLoading: isLoadingTokens
-  } = useFetchAddressTokensByType({ addressHash })
+  } = useFetchAddressTokensByType(addressHash)
 
   const { displayedStandardTokenIds, hiddenStandardTokensIds } = useMemo(() => {
     const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds]

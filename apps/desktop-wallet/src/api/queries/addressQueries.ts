@@ -6,7 +6,13 @@ import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { getFulfilledValues } from '@/api/apiUtils'
-import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import {
+  combineTokenTypes,
+  ftListQuery,
+  fungibleTokenMetadataQuery,
+  tokenQuery,
+  tokenTypeQuery
+} from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import { ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@/types/tokens'
 
@@ -88,6 +94,46 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
         : skipToken
   })
 
+export const addressBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const { balances: addressAlphBalances } = await queryClient.fetchQuery(
+              addressAlphBalancesQuery({ addressHash, networkId })
+            )
+            const { balances: addressTokensBalances } = await queryClient.fetchQuery(
+              addressTokensBalancesQuery({ addressHash, networkId })
+            )
+
+            return {
+              addressHash,
+              balances:
+                addressAlphBalances.totalBalance !== '0'
+                  ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
+                  : addressTokensBalances
+            }
+          }
+        : skipToken
+  })
+
+export const addressBalancesByListingQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', 'by-listing', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const { balances } = await queryClient.fetchQuery(addressBalancesQuery({ addressHash, networkId }))
+            const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+
+            return separateTokensByListing(balances, ftList)
+          }
+        : skipToken
+  })
+
 export type AddressSearchStringQueryFnData = {
   addressHash: AddressHash
   searchString: string
@@ -153,19 +199,9 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
     queryKey: ['address', addressHash, 'computedData', 'tokensByType', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
-      const { balances: addressAlphBalances } = await queryClient.fetchQuery(
-        addressAlphBalancesQuery({ addressHash, networkId })
+      const { listedFts, unlistedTokens } = await queryClient.fetchQuery(
+        addressBalancesByListingQuery({ addressHash, networkId })
       )
-      const { balances: addressTokensBalances } = await queryClient.fetchQuery(
-        addressTokensBalancesQuery({ addressHash, networkId })
-      )
-      const allTokensBalances =
-        addressAlphBalances && addressAlphBalances.totalBalance !== '0'
-          ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
-          : addressTokensBalances
-
-      const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const { listedFts, unlistedTokens } = separateTokensByListing(allTokensBalances, ftList)
 
       const tokenTypesPromiseResults = await Promise.allSettled(
         unlistedTokens.map(({ id }) => queryClient.fetchQuery(tokenTypeQuery({ id, networkId })))
@@ -175,5 +211,27 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
       const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(tokenTypes)
 
       return { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }
+    }
+  })
+
+export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'fts', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () => {
+      const { listedFts, unlistedFtIds } = await queryClient.fetchQuery(
+        addressTokensByTypeQuery({ addressHash, networkId })
+      )
+
+      const ftMetadataPromiseResults = await Promise.allSettled(
+        unlistedFtIds.map((id) => queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId })))
+      )
+
+      const unlistedFts = getFulfilledValues(ftMetadataPromiseResults).filter((ftMetadata) => ftMetadata !== null)
+
+      return {
+        listedFts,
+        unlistedFts
+      }
     }
   })

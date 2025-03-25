@@ -1,20 +1,19 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
-import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { addressBalancesByListingQuery } from '@/api/queries/addressQueries'
 
 const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances({ addressHash })
-  const {
-    data: { listedFts },
-    isLoading: isLoadingTokensByListing
-  } = useFetchTokensSeparatedByListing(allTokensBalances)
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
+  const networkId = useCurrentlyOnlineNetworkId()
+
+  const { data, isLoading: isLoadingBalances } = useQuery(addressBalancesByListingQuery({ addressHash, networkId }))
+  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth(data?.listedFts ?? [])
 
   return {
     data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingBalances
+    isLoading: isLoadingWorth || isLoadingBalances
   }
 }
 
