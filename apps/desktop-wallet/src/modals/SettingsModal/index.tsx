@@ -11,8 +11,7 @@ import Scrollbar from '@/components/Scrollbar'
 import { TabItemSimple } from '@/components/tabs/tabsTypes'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import { useAppDispatch } from '@/hooks/redux'
-import useWalletLock from '@/hooks/useWalletLock'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import discordLogo from '@/images/brand-icon-discord.svg'
 import githubLogo from '@/images/brand-icon-github.svg'
 import twitterLogo from '@/images/brand-icon-twitter.svg'
@@ -21,6 +20,7 @@ import DevToolsSettingsSection from '@/modals/SettingsModal/DevToolsSettingsSect
 import GeneralSettingsSection from '@/modals/SettingsModal/GeneralSettingsSection'
 import NetworkSettingsSection from '@/modals/SettingsModal/NetworkSettingsSection'
 import WalletsSettingsSection from '@/modals/SettingsModal/WalletsSettingsSection'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
@@ -47,7 +47,7 @@ export interface SettingsModalProps {
 const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const { isWalletUnlocked } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
   const dispatch = useAppDispatch()
 
   const settingsModalTabs: SettingsTabItem[] = useMemo(

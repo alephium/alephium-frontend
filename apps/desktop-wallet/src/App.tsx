@@ -23,7 +23,6 @@ import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
-import useWalletLock from '@/hooks/useWalletLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import {
@@ -31,6 +30,7 @@ import {
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
@@ -244,7 +244,7 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
 `
 
 const LoginAnimatedBackground = () => {
-  const { isWalletUnlocked } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
 
   if (isWalletUnlocked) return null
 
