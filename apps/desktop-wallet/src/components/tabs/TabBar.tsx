@@ -15,8 +15,8 @@ export interface TabBarProps<T extends string> {
   justifyTabs?: 'left' | 'center'
   TabComponent?: typeof Tab
   className?: string
-  onMouseOverTabBar?: (tabValue: T) => void
-  onMouseLeaveTabBar?: (tabValue: T) => void
+  onMouseEnterTab?: (tabValue: T) => void
+  onMouseLeaveTab?: (tabValue: T) => void
 }
 
 const TabBar = <T extends string>({
@@ -28,8 +28,8 @@ const TabBar = <T extends string>({
   TabComponent = Tab,
   justifyTabs = 'center',
   className,
-  onMouseOverTabBar,
-  onMouseLeaveTabBar
+  onMouseEnterTab,
+  onMouseLeaveTab
 }: TabBarProps<T>) => {
   const { t } = useTranslation()
 
@@ -53,8 +53,8 @@ const TabBar = <T extends string>({
               tabIndex={0}
               aria-selected={isActive}
               isActive={isActive}
-              onMouseEnter={() => onMouseOverTabBar?.(item.value)}
-              onMouseLeave={() => onMouseLeaveTabBar?.(item.value)}
+              onMouseEnter={() => onMouseEnterTab?.(item.value)}
+              onMouseLeave={() => onMouseLeaveTab?.(item.value)}
             >
               <TabLabel isActive={isActive}>
                 {item.Icon && (

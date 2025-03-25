@@ -8,8 +8,8 @@ const Tabs = <T extends string>({ tabs }: TabsProps<T>) => {
   const [currentTab, setCurrentTab] = useState(tabs[0])
   const [mouseOverTab, setMouseOverTab] = useState<T | null>(null)
 
-  const onMouseOverTabBar = (tabValue: T) => setMouseOverTab(tabValue)
-  const onMouseLeaveTabBar = () => setMouseOverTab(null)
+  const onMouseEnterTab = (tabValue: T) => setMouseOverTab(tabValue)
+  const onMouseLeaveTab = () => setMouseOverTab(null)
 
   return (
     <>
@@ -17,8 +17,8 @@ const Tabs = <T extends string>({ tabs }: TabsProps<T>) => {
         items={tabs}
         onTabChange={setCurrentTab}
         activeTab={currentTab}
-        onMouseOverTabBar={onMouseOverTabBar}
-        onMouseLeaveTabBar={onMouseLeaveTabBar}
+        onMouseEnterTab={onMouseEnterTab}
+        onMouseLeaveTab={onMouseLeaveTab}
       />
 
       {tabs.map(({ value, renderContent }) => (
