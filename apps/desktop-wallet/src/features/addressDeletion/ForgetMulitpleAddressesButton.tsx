@@ -7,7 +7,7 @@ import { closeModal } from '@/features/modals/modalActions'
 import { ModalInstance } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton } from '@/modals/CenteredModal'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 
 interface ForgetMulitpleAddressesButtonProps {
   addressHashes: AddressHash[]
@@ -17,7 +17,7 @@ interface ForgetMulitpleAddressesButtonProps {
 
 const ForgetMulitpleAddressesButton = ({ addressHashes, isLoading, modalId }: ForgetMulitpleAddressesButtonProps) => {
   const { t } = useTranslation()
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const dispatch = useAppDispatch()
 
   const deleteAddress = useDeleteAddress()

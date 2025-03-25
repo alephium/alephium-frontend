@@ -35,6 +35,8 @@ const DevToolsSettingsSection = () => {
   const { isLedger } = useLedger()
   const { sendAnalytics } = useAnalytics()
 
+  if (!defaultAddress) return null
+
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 

@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { AddressHash, Contact } from '@alephium/shared'
 import { colord } from 'colord'
 import { Pencil, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,7 @@ import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectContactByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectContactByHash, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 import { useHashToColor } from '@/utils/colors'
 import { getInitials } from '@/utils/misc'
 
@@ -25,6 +25,9 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
   const { t } = useTranslation()
   const contact = useAppSelector((s) => selectContactByHash(s, contactId))
   const contactColor = useHashToColor(contactId) || theme.global.complementary
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+
+  if (!defaultAddressHash) return null
 
   const openEditContactModal = (contact: Contact) =>
     dispatch(openModal({ name: 'ContactFormModal', props: { contact } }))
@@ -39,7 +42,7 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
         <HashEllipsedStyled hash={contact.address} width={120} />
       </ContentRow>
       <ButtonsRow>
-        <ContactSendButton contactAddress={contact.address} />
+        <ContactSendButton contactAddressHash={contact.address} fromAddressHash={defaultAddressHash} />
         <Separator />
         <BottomButton transparent onClick={() => openEditContactModal(contact)}>
           <Pencil strokeWidth={1.5} />
@@ -52,12 +55,16 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
 
 export default ContactCard
 
-const ContactSendButton = ({ contactAddress }: { contactAddress: Contact['address'] }) => {
+interface ContactSendButtonProps {
+  contactAddressHash: Contact['address']
+  fromAddressHash: AddressHash
+}
+
+const ContactSendButton = ({ contactAddressHash, fromAddressHash }: ContactSendButtonProps) => {
   const { t } = useTranslation()
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const { tooltipContent, handleClick, cursor } = useSendButton({
-    fromAddressHash: defaultAddressHash,
-    toAddressHash: contactAddress,
+    fromAddressHash,
+    toAddressHash: contactAddressHash,
     analyticsOrigin: 'contact'
   })
 

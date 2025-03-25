@@ -38,6 +38,8 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const [isLoading, setIsLoading] = useState(false)
 
+  if (!defaultAddress) return null
+
   const onClose = () => dispatch(closeModal({ id }))
 
   const generateSingleAddress = async () => {

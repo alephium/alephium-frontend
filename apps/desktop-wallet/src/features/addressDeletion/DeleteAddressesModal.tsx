@@ -14,13 +14,13 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
-import { selectDefaultAddress, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddressHash, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } =
     useFetchAddressesHashesSortedByLastUseWithLatestTx()
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const initialAddress = useAppSelector(selectInitialAddress)
   const dispatch = useAppDispatch()
 

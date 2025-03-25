@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/unlockedWallet/addressesPage/OperationBox'
-import { selectAllAddressIndexes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressIndexes, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
 import { toggleAppLoading } from '@/storage/global/globalActions'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
@@ -22,7 +22,6 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
-  const defaultAddress = useAppSelector(selectDefaultAddress)
   const allAddressesIndexes = useAppSelector(selectAllAddressIndexes)
 
   const handleOneAddressPerGroupClick = async () => {
@@ -40,13 +39,6 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const handleDiscoverAddressesClick = () => {
     discoverAndSaveUsedAddresses({ skipIndexes: allAddressesIndexes })
     sendAnalytics({ event: 'Advanced operation to discover addresses clicked' })
-  }
-
-  const handleConsolidationClick = () => {
-    dispatch(
-      openModal({ name: 'AddressSweepModal', props: { addressHash: defaultAddress.hash, isUtxoConsolidation: true } })
-    )
-    sendAnalytics({ event: 'Advanced operation to consolidate UTXOs clicked' })
   }
 
   const handleTellUsIdeasClick = () => {
@@ -86,14 +78,9 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           onButtonClick={handleOneAddressPerGroupClick}
           infoLink={links.miningWallet}
         />
-        <OperationBox
-          title={t('Consolidate UTXOs')}
-          Icon={<Codesandbox color="#64f6c2" strokeWidth={1} size={46} />}
-          description={t('Consolidate (merge) your UTXOs into one.')}
-          buttonText={t('Start')}
-          onButtonClick={handleConsolidationClick}
-          infoLink={links.utxoConsolidation}
-        />
+
+        <ConsolidationOperationBox />
+
         <OperationBox
           $placeholder
           title={t('More to come...')}
@@ -108,6 +95,33 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
 })
 
 export default AdvancedOperationsSideModal
+
+const ConsolidationOperationBox = () => {
+  const { t } = useTranslation()
+  const { sendAnalytics } = useAnalytics()
+  const dispatch = useAppDispatch()
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+
+  if (!defaultAddressHash) return
+
+  const handleConsolidationClick = () => {
+    dispatch(
+      openModal({ name: 'AddressSweepModal', props: { addressHash: defaultAddressHash, isUtxoConsolidation: true } })
+    )
+    sendAnalytics({ event: 'Advanced operation to consolidate UTXOs clicked' })
+  }
+
+  return (
+    <OperationBox
+      title={t('Consolidate UTXOs')}
+      Icon={<Codesandbox color="#64f6c2" strokeWidth={1} size={46} />}
+      description={t('Consolidate (merge) your UTXOs into one.')}
+      buttonText={t('Start')}
+      onButtonClick={handleConsolidationClick}
+      infoLink={links.utxoConsolidation}
+    />
+  )
+}
 
 const AdvancedOperations = styled.div`
   display: flex;
