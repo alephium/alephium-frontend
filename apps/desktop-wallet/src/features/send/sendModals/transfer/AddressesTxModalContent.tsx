@@ -26,7 +26,11 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
 
   useEffect(() => {
     if (fromAddresses.length > 0 && !fromAddresses.find((a) => a === data.fromAddress.hash)) {
-      setFromAddressHash(fromAddresses[0])
+      const firstAddress = fromAddresses.at(0)
+
+      if (firstAddress) {
+        setFromAddressHash(firstAddress)
+      }
     }
   }, [data.fromAddress.hash, fromAddresses])
 

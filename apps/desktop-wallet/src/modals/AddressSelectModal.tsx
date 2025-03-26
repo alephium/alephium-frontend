@@ -43,7 +43,13 @@ const AddressSelectModal = ({
   useEffect(() => {
     const selectedOptionIsNotPartOfOptions = !addressOptions.some((option) => option === selectedOption?.value)
 
-    if (selectedOptionIsNotPartOfOptions) handleAddressSelect(addressSelectOptions[0])
+    if (selectedOptionIsNotPartOfOptions) {
+      const firstOption = addressSelectOptions.at(0)
+
+      if (firstOption) {
+        handleAddressSelect(firstOption)
+      }
+    }
   }, [addressSelectOptions, handleAddressSelect, addressOptions, selectedOption?.value])
 
   return (
