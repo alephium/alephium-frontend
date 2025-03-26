@@ -9,11 +9,14 @@ const useSignerAddress = (group: AddressGroup) => {
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
 
-  const initialSignerAddressHash = addressesInGroup.find((a) => a === defaultAddressHash) ?? addressesInGroup[0]
+  const initialSignerAddressHash = addressesInGroup.find((a) => a === defaultAddressHash) ?? addressesInGroup.at(0)
 
   const [signerAddressHash, setSignerAddressHash] = useState(initialSignerAddressHash)
 
-  const signerAddressPublicKey = useMemo(() => keyring.exportPublicKeyOfAddress(signerAddressHash), [signerAddressHash])
+  const signerAddressPublicKey = useMemo(
+    () => (signerAddressHash ? keyring.exportPublicKeyOfAddress(signerAddressHash) : undefined),
+    [signerAddressHash]
+  )
 
   return {
     signerAddressHash,
