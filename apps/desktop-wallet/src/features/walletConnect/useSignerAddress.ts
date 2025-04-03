@@ -1,9 +1,12 @@
-import { keyring } from '@alephium/keyring'
 import { AddressGroup } from '@alephium/walletconnect-provider'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressesInGroup, selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
+import {
+  selectAddressByHash,
+  selectAddressesInGroup,
+  selectDefaultAddressHash
+} from '@/storage/addresses/addressesSelectors'
 
 const useSignerAddress = (group: AddressGroup) => {
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
@@ -13,9 +16,8 @@ const useSignerAddress = (group: AddressGroup) => {
 
   const [signerAddressHash, setSignerAddressHash] = useState(initialSignerAddressHash)
 
-  const signerAddressPublicKey = useMemo(
-    () => (signerAddressHash ? keyring.exportPublicKeyOfAddress(signerAddressHash) : undefined),
-    [signerAddressHash]
+  const signerAddressPublicKey = useAppSelector((s) =>
+    signerAddressHash ? selectAddressByHash(s, signerAddressHash)?.publicKey : undefined
   )
 
   return {

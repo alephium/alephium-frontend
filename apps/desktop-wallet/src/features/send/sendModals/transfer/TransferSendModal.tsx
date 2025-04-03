@@ -1,4 +1,3 @@
-import { keyring } from '@alephium/keyring'
 import { fromHumanReadableAmount, throttledClient } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
@@ -29,14 +28,14 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
   context.setIsSweeping(shouldSweep)
 
   if (shouldSweep) {
-    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.hash, toAddress)
+    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, toAddress)
     context.setSweepUnsignedTxs(unsignedTxs)
     context.setFees(fees)
   } else {
     const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
     const data = await throttledClient.node.transactions.postTransactionsBuild({
-      fromPublicKey: keyring.exportPublicKeyOfAddress(fromAddress.hash),
+      fromPublicKey: fromAddress.publicKey,
       destinations: [
         {
           address: toAddress,

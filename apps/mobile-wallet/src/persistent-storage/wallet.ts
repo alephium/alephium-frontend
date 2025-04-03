@@ -1,7 +1,8 @@
 import {
   dangerouslyConvertUint8ArrayMnemonicToString,
   keyring,
-  mnemonicJsonStringifiedObjectToUint8Array
+  mnemonicJsonStringifiedObjectToUint8Array,
+  NonSensitiveAddressData
 } from '@alephium/keyring'
 import { AddressHash, AddressMetadata, resetArray } from '@alephium/shared'
 import * as SecureStore from 'expo-secure-store'
@@ -200,16 +201,13 @@ export const generateAndStoreWallet = async (
 
     await storeWalletMnemonic(mnemonicUint8Array)
 
-    const { id, firstAddressHash } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
+    const { id, firstAddress } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
 
     return {
       id,
       name,
       isMnemonicBackedUp,
-      firstAddress: {
-        index: 0,
-        hash: firstAddressHash
-      }
+      firstAddress
     }
   } finally {
     keyring.clear()
@@ -217,13 +215,13 @@ export const generateAndStoreWallet = async (
 }
 
 const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
-  const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
-  const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
+  const firstAddress = await generateAndStoreAddressKeypairForIndex(0)
+  const walletMetadata = generateWalletMetadata(name, firstAddress.hash, isMnemonicBackedUp)
   await storeWalletMetadata(walletMetadata)
 
   return {
     id: walletMetadata.id,
-    firstAddressHash
+    firstAddress
   }
 }
 
@@ -552,19 +550,19 @@ const deleteAddressPrivateKey = async (addressHash: AddressHash) =>
     'Could not delete address private key'
   )
 
-const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<AddressHash> => {
+const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<NonSensitiveAddressData> => {
   try {
     if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
 
-    const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex })
-    let privateKey = keyring.exportPrivateKeyOfAddress(hash)
+    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex })
+    let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
-    await storeAddressPublicKey(hash, publicKey)
-    await storeAddressPrivateKey(hash, privateKey)
+    await storeAddressPublicKey(nonSensitiveAddressData.hash, nonSensitiveAddressData.publicKey)
+    await storeAddressPrivateKey(nonSensitiveAddressData.hash, privateKey)
 
     privateKey = ''
 
-    return hash
+    return nonSensitiveAddressData
   } finally {
     keyring.clear()
   }

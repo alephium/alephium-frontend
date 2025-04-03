@@ -1,4 +1,3 @@
-import { keyring } from '@alephium/keyring'
 import { Address, AddressHash, getHumanReadableError } from '@alephium/shared'
 import { getSecp259K1Path } from '@alephium/web3-wallet'
 import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
@@ -48,7 +47,7 @@ const DevToolsSettingsSection = () => {
 
   const copyPublicKey = async (address: Address) => {
     try {
-      await navigator.clipboard.writeText(keyring.exportPublicKeyOfAddress(address.hash))
+      await navigator.clipboard.writeText(address.publicKey)
       dispatch(copiedToClipboard(t('Public key copied.')))
 
       sendAnalytics({ event: 'Copied address public key' })

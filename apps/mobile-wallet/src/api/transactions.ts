@@ -34,7 +34,7 @@ export const buildUnsignedTransactions = async (
     )
 
   if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress.hash, toAddressHash)
+    return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
   } else {
     const data = await buildTransferTransaction({
       fromAddress: fromAddress.hash,

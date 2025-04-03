@@ -1,4 +1,3 @@
-import { keyring } from '@alephium/keyring'
 import { fromHumanReadableAmount, throttledClient } from '@alephium/shared'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
@@ -27,7 +26,7 @@ export const buildCallContractTransaction = async (txData: CallContractTxData, c
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(txData.assetAmounts)
 
   const response = await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
-    fromPublicKey: keyring.exportPublicKeyOfAddress(txData.fromAddress.hash),
+    fromPublicKey: txData.fromAddress.publicKey,
     bytecode: txData.bytecode,
     attoAlphAmount,
     tokens,

@@ -1,4 +1,5 @@
-import { AddressHash, AddressMetadata, Contact, ContactFormData } from '@alephium/shared'
+import { NonSensitiveAddressData } from '@alephium/keyring'
+import { AddressMetadata, Contact, ContactFormData } from '@alephium/shared'
 
 import { AddressMetadataWithHash } from '~/types/addresses'
 
@@ -36,10 +37,7 @@ export interface DeprecatedWalletState extends WalletState {
 }
 
 export type GeneratedWallet = WalletStoredState & {
-  firstAddress: {
-    hash: AddressHash
-    index: number
-  }
+  firstAddress: NonSensitiveAddressData
 }
 
 export type WalletImportData = {
