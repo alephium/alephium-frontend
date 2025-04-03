@@ -6,6 +6,7 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
+import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import SelectAssetToHideModal from '~/features/assetsDisplay/hideAssets/SelectAssetToHideModal'
@@ -80,7 +81,8 @@ export const ModalComponents = {
   DAppQuickActionsModal,
   DAppDetailsModal,
   RegionSelectModal,
-  UnknownTokensModal
+  UnknownTokensModal,
+  AddressNftsGridModal
 }
 
 export type ModalName = keyof typeof ModalComponents
