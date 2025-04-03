@@ -1,4 +1,4 @@
-import { useFetchAddressBalances, useFetchAddressTokensByType } from '@alephium/shared-react'
+import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
@@ -30,25 +30,21 @@ interface AddressDetailsModalHeaderProps {
 
 const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
-  const { data: addressBalances } = useFetchAddressBalances(addressHash)
-  const hasTokens = !!addressBalances?.length
   const dispatch = useAppDispatch()
 
   const handleSettingsPress = () => {
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, parentModalId } }))
   }
 
-  const handleClose = () => dispatch(closeModal({ id: parentModalId }))
-
   return (
     <AddressDetailsModalHeaderStyled>
       <RoundedCard>
         <AddressAnimatedBackground addressHash={addressHash} />
-        <BalanceSummary addressHash={addressHash} />
+        <AddressBalanceSummary addressHash={addressHash} />
       </RoundedCard>
 
       <ActionButtons>
-        {hasTokens && <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />}
+        <AddressSendButton addressHash={addressHash} parentModalId={parentModalId} />
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
         <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
@@ -65,17 +61,43 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
         </Row>
       </AddressDetailsBox>
 
-      {hasTokens && (
-        <TokensBadges>
-          <FungibleTokensBadge addressHash={addressHash} />
-          <AddressNftsBadge addressHash={addressHash} />
-        </TokensBadges>
-      )}
+      <AddressTokensBadges addressHash={addressHash} />
     </AddressDetailsModalHeaderStyled>
   )
 }
 
 export default AddressDetailsModalHeader
+
+const AddressBalanceSummary = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
+  const { t } = useTranslation()
+  const { data: worth, isLoading } = useFetchAddressWorth(addressHash)
+
+  return <BalanceSummary label={t('Address worth')} worth={worth} isLoading={isLoading} />
+}
+
+const AddressSendButton = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
+  const dispatch = useAppDispatch()
+  const { data: addressBalances } = useFetchAddressBalances(addressHash)
+
+  if (!addressBalances?.length) return null
+
+  const handleClose = () => dispatch(closeModal({ id: parentModalId }))
+
+  return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />
+}
+
+const AddressTokensBadges = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
+  const { data: addressBalances } = useFetchAddressBalances(addressHash)
+
+  if (!addressBalances?.length) return null
+
+  return (
+    <TokensBadges>
+      <FungibleTokensBadge addressHash={addressHash} />
+      <AddressNftsBadge addressHash={addressHash} />
+    </TokensBadges>
+  )
+}
 
 const FungibleTokensBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const { t } = useTranslation()

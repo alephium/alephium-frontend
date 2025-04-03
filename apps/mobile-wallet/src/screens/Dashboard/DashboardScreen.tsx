@@ -1,4 +1,5 @@
 import { CURRENCIES } from '@alephium/shared'
+import { useFetchWalletWorth } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -94,7 +95,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <RoundedCardStyled>
           <ScreenAnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <DashboardSecondaryButtons />
-          <BalanceSummary />
+          <WalletBalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>
@@ -119,6 +120,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 }
 
 export default DashboardScreen
+
+const WalletBalanceSummary = () => {
+  const { t } = useTranslation()
+  const { data: worth, isLoading } = useFetchWalletWorth()
+
+  return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} />
+}
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
   gap: 15px;

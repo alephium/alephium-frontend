@@ -1,30 +1,22 @@
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
 import { colord } from 'colord'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth, selectAddressIds } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
-  addressHash?: AddressHash
+  worth: number
+  isLoading: boolean
+  label: string
 }
 
-const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
+const BalanceSummary = ({ worth, isLoading, label }: BalanceSummaryProps) => {
   const theme = useTheme()
-  const { t } = useTranslation()
   const currency = useAppSelector((s) => s.settings.currency)
-  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddressesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
-  const balanceInFiat = useAppSelector((s) => selectAddressesTokensWorth(s, addressHash || addressHashes))
-
-  const label = addressHash ? t('Address worth') : t('Wallet worth')
 
   return (
     <BalanceSummaryBox>
@@ -33,17 +25,10 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
           <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{label}</AppText>
         </View>
 
-        {addressesBalancesStatus === 'uninitialized' ? (
+        {isLoading ? (
           <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
-          <Amount
-            value={balanceInFiat}
-            isFiat
-            suffix={CURRENCIES[currency].symbol}
-            semiBold
-            size={44}
-            adjustsFontSizeToFit
-          />
+          <Amount value={worth} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={44} adjustsFontSizeToFit />
         )}
       </TextContainer>
     </BalanceSummaryBox>
