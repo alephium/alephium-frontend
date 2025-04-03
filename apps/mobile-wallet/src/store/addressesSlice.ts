@@ -160,7 +160,12 @@ const addressesSlice = createSlice({
       if (addressesToInitialize.length > 0) {
         addressesAdapter.addMany(
           state,
-          addressesToInitialize.filter(addressMetadataIncludesHash).map(getInitialAddressState)
+          addressesToInitialize.filter(addressMetadataIncludesHash).map((address) =>
+            getInitialAddressState({
+              ...address,
+              publicKey: '' // TODO: See https://github.com/alephium/alephium-frontend/issues/1317
+            })
+          )
         )
       }
     })

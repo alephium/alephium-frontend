@@ -4,9 +4,9 @@ import { Address, AddressHash, throttledClient } from '@alephium/shared'
 import { LedgerAlephium } from '@/features/ledger/utils'
 import { CsvExportQueryParams } from '@/types/transactions'
 
-export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
+export const buildSweepTransactions = async (fromPublicKey: Address['publicKey'], toAddressHash: AddressHash) => {
   const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey: keyring.exportPublicKeyOfAddress(fromAddressHash),
+    fromPublicKey,
     toAddress: toAddressHash
   })
 

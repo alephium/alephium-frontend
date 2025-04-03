@@ -36,6 +36,7 @@ export type AddressMetadata = AddressSettings & {
 // label?: string
 export type AddressBase = AddressMetadata & {
   hash: AddressHash
+  publicKey: string // TODO: Replace by NonSensitiveAddressData by moving it to shared?
 }
 
 // hash: AddressHash

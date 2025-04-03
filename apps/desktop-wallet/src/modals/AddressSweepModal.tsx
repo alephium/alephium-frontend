@@ -61,7 +61,10 @@ const AddressSweepModal = memo(
         if (!sweepAddresses.from || !sweepAddresses.to) return
         setIsLoading(true)
         try {
-          const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from.hash, sweepAddresses.to.hash)
+          const { unsignedTxs, fees } = await buildSweepTransactions(
+            sweepAddresses.from.publicKey,
+            sweepAddresses.to.hash
+          )
 
           setBuiltUnsignedTxs(unsignedTxs)
           setFee(fees)
