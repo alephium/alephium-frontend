@@ -7,6 +7,7 @@ import {
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import {
+  ApiContextProvider,
   PersistQueryClientContextProvider,
   queryClient,
   useInitializeClient,
@@ -71,24 +72,26 @@ const App = () => {
   return (
     <Provider store={store}>
       <PersistQueryClientContextProvider createPersister={createTanstackAsyncStoragePersister}>
-        <Main>
-          <ThemeProvider theme={theme}>
-            <StatusBar animated translucent style="light" />
-            {showAppContent ? (
-              <RootStackNavigation
-                initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
-              />
-            ) : (
-              // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
-              // splash screen to be show after the default one gets hidden, before we can show app content.
-              <View style={{ flex: 1, alignItems: 'center' }}>
-                <AlephiumLogo style={{ width: '15%' }} />
-              </View>
-            )}
-            <ToastAnchor />
-            <LoadingManager />
-          </ThemeProvider>
-        </Main>
+        <ApiContextProvider>
+          <Main>
+            <ThemeProvider theme={theme}>
+              <StatusBar animated translucent style="light" />
+              {showAppContent ? (
+                <RootStackNavigation
+                  initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
+                />
+              ) : (
+                // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+                // splash screen to be show after the default one gets hidden, before we can show app content.
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                  <AlephiumLogo style={{ width: '15%' }} />
+                </View>
+              )}
+              <ToastAnchor />
+              <LoadingManager />
+            </ThemeProvider>
+          </Main>
+        </ApiContextProvider>
       </PersistQueryClientContextProvider>
     </Provider>
   )

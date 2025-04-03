@@ -6,7 +6,6 @@ import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
 import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
 import AppText from '~/components/AppText'
@@ -30,6 +29,7 @@ import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
+import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import {
   makeSelectAddressesTokensWorth,
   selectDefaultAddress,
@@ -104,7 +104,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       </ButtonsRowContainer>
 
       <ScreenSection>
-        <AddressesTokensList />
+        <WalletTokensList />
       </ScreenSection>
 
       {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
