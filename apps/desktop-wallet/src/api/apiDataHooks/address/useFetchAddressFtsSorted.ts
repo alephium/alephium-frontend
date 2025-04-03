@@ -1,10 +1,10 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchSortListedFtsByWorth from '@/api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
 import useSortUnlistedFtsAlphabetically from '@/api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
 import { addressFtsQuery } from '@/api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 
 const useFetchAddressFtsSorted = (addressHash: AddressHash) => {
   const networkId = useCurrentlyOnlineNetworkId()
