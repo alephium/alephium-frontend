@@ -155,7 +155,7 @@ const AddressNftsBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 
   const theme = useTheme()
   const dispatch = useAppDispatch()
 
-  const handlePress = () => dispatch(openModal({ name: 'NftGridModal', props: { addressHash } }))
+  const handlePress = () => dispatch(openModal({ name: 'AddressNftsGridModal', props: { addressHash } }))
 
   return (
     <Pressable onPress={handlePress}>
