@@ -1,11 +1,14 @@
 import { AddressHash, selectAddressByHash, TokenId } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId, useFetchAddressBalances } from '@alephium/shared-react'
+import {
+  useCurrentlyOnlineNetworkId,
+  useFetchAddressBalances,
+  useFetchAddressesHashesWithBalance
+} from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 
 interface UseSendButtonProps {
   fromAddressHash: AddressHash

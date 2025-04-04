@@ -1,3 +1,4 @@
+import { useFetchAddressesHashesWithBalanceSortedByLastUse } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
@@ -20,6 +21,8 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const { screenScrollHandler } = useHeaderContext()
   const { t } = useTranslation()
 
+  const { data: addressesWithBalance } = useFetchAddressesHashesWithBalanceSortedByLastUse(params?.tokenId)
+
   useFocusEffect(
     useCallback(() => {
       if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
@@ -28,6 +31,7 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
 
   return (
     <AddressFlashListScreen
+      data={addressesWithBalance}
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
       headerTitleAlwaysVisible
@@ -35,7 +39,6 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
       screenIntro={t('Select the address from which to send the transaction.')}
       contentPaddingTop
       onScroll={screenScrollHandler}
-      hideEmptyAddresses
       bottomButtonsRender={() => (
         <Button
           title={t('Continue')}

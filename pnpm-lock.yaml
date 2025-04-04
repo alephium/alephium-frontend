@@ -1168,6 +1168,9 @@ importers:
       '@alephium/shared':
         specifier: workspace:*
         version: link:../shared
+      '@alephium/token-list':
+        specifier: ^0.0.19
+        version: 0.0.19
       '@alephium/web3':
         specifier: 1.11.3
         version: 1.11.3
@@ -1177,6 +1180,9 @@ importers:
       axios:
         specifier: ^1.8.2
         version: 1.9.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -4336,6 +4342,7 @@ packages:
 
   '@walletconnect/sign-client@2.17.1':
     resolution: {integrity: sha512-6rLw6YNy0smslH9wrFTbNiYrGsL3DrOsS5FcuU4gIN6oh8pGYOFZ5FiSyTTroc5tngOk3/Sd7dlGY9S7O4nveg==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/sign-client@2.17.2':
     resolution: {integrity: sha512-/wigdCIQjlBXSWY43Id0IPvZ5biq4HiiQZti8Ljvx408UYjmqcxcBitbj2UJXMYkid7704JWAB2mw32I1HgshQ==}
