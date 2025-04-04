@@ -8,21 +8,37 @@ import EmptyTokensListPlaceholders from '~/components/tokensLists/EmptyTokensLis
 import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDetailsModalHeader'
 import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
-import BottomModalFlashList, { FlashListRenderProps } from '~/features/modals/BottomModalFlashList'
+import BottomModalBase from '~/features/modals/BottomModalBase'
+import { FlashListRenderProps } from '~/features/modals/BottomModalFlashList'
 import { ModalInstance } from '~/features/modals/modalTypes'
+import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import withModal from '~/features/modals/withModal'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => (
-  <BottomModalFlashList
-    modalId={id}
-    title={<AddressBadge addressHash={addressHash} fontSize={17} />}
-    flashListRender={(props) => <AddressFtsFlashList addressHash={addressHash} parentModalId={id} {...props} />}
-  />
-))
+const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
+  const modalState = useBottomModalState({
+    modalId: id,
+    navHeight: 50
+  })
+
+  return (
+    <BottomModalBase modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={17} />} {...modalState}>
+      <AddressFtsFlashList
+        addressHash={addressHash}
+        parentModalId={id}
+        onContentSizeChange={modalState.handleContentSizeChange}
+        contentContainerStyle={{
+          paddingHorizontal: DEFAULT_MARGIN,
+          paddingBottom: VERTICAL_GAP
+        }}
+      />
+    </BottomModalBase>
+  )
+})
 
 export default AddressDetailsModal
 
