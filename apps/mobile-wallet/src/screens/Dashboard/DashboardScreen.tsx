@@ -1,7 +1,7 @@
-import { CURRENCIES } from '@alephium/shared'
-import { useFetchWalletWorth } from '@alephium/shared-react'
+import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
+import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -31,11 +31,6 @@ import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
-import {
-  makeSelectAddressesTokensWorth,
-  selectDefaultAddress,
-  selectTotalBalance
-} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -44,19 +39,12 @@ interface ScreenProps
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
-  const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
-  const currency = useAppSelector((s) => s.settings.currency)
-  const totalBalance = useAppSelector(selectTotalBalance)
-  const selectAddessesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
-  const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
-  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
+
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
-  const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
-
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
@@ -87,7 +75,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         headerLeft: () => <CameraScanButton />,
         headerRight: () => <WalletSettingsButton />,
         headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 40, height: 20 }} />,
-        headerTitleScrolled: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
+        headerTitleScrolled: () => <WalletWorth />
       }}
       {...props}
     >
@@ -98,28 +86,61 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <WalletBalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
+
       <ButtonsRowContainer>
-        {totalBalance > BigInt(0) && <SendButton origin="dashboard" />}
+        <WalletSendButton />
         <ActionCardReceiveButton origin="dashboard" />
-        <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
+        <WalletBuyButton />
       </ButtonsRowContainer>
 
       <ScreenSection>
         <WalletTokensList />
       </ScreenSection>
 
-      {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
-        <EmptyPlaceholder hasHorizontalMargin>
-          <AppText size={32}>🌈</AppText>
-          <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
-          <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
-        </EmptyPlaceholder>
-      )}
+      <WalletEmptyPlaceholder />
     </DashboardScreenStyled>
   )
 }
 
 export default DashboardScreen
+
+const WalletWorth = () => {
+  const currency = useAppSelector((s) => s.settings.currency)
+  const { data: worth } = useFetchWalletWorth()
+
+  return <Amount value={worth} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
+}
+
+const WalletSendButton = () => {
+  const { data: alphBalances } = useFetchWalletBalancesAlph()
+
+  if (alphBalances.availableBalance === '0') return null
+
+  return <SendButton origin="dashboard" />
+}
+
+const WalletBuyButton = () => {
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+
+  if (!defaultAddressHash) return null
+
+  return <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
+}
+
+const WalletEmptyPlaceholder = () => {
+  const { t } = useTranslation()
+  const { data: alphBalances, isLoading } = useFetchWalletBalancesAlph()
+
+  if (alphBalances.availableBalance !== '0' || isLoading) return null
+
+  return (
+    <EmptyPlaceholder hasHorizontalMargin>
+      <AppText size={32}>🌈</AppText>
+      <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
+      <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
+    </EmptyPlaceholder>
+  )
+}
 
 const WalletBalanceSummary = () => {
   const { t } = useTranslation()
