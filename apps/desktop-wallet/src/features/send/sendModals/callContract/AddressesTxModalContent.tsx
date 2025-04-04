@@ -1,4 +1,5 @@
 import { selectAddressByHash } from '@alephium/shared'
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -6,7 +7,6 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { CallContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
 interface CallContractAddressesTxModalContentProps {

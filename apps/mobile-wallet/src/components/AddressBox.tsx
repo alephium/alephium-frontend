@@ -152,9 +152,9 @@ const AddressBox = ({
 
             <TokensRow>
               {tokenId ? (
-                <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
+                <AddressTokenBalances tokenId={tokenId} addressHash={addressHash} />
               ) : (
-                <AddressAllTokensDetails addressHash={addressHash} />
+                <AddressTokensBadgesList addressHash={addressHash} />
               )}
               {showGroup && (
                 <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
@@ -188,7 +188,7 @@ const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxPro
   return <FtWorth tokenId={tokenId} balance={balance} semiBold size={17} adjustsFontSizeToFit />
 }
 
-const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
+const AddressTokensBadgesList = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
   const { t } = useTranslation()
 
   const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
@@ -219,7 +219,7 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
   )
 }
 
-const AddressTokenDetails = ({ addressHash, tokenId }: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {
+const AddressTokenBalances = ({ addressHash, tokenId }: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {
   const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
 
   const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined

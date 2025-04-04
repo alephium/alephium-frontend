@@ -6,7 +6,11 @@ import {
   selectDefaultAddress,
   transactionSent
 } from '@alephium/shared'
-import { useUnsortedAddresses } from '@alephium/shared-react'
+import {
+  useFetchAddressesHashesSortedByLastUse,
+  useFetchAddressesHashesWithBalance,
+  useUnsortedAddresses
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
@@ -24,7 +28,6 @@ import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesSortedByLastUse, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 import { getName } from '@/utils/addresses'
