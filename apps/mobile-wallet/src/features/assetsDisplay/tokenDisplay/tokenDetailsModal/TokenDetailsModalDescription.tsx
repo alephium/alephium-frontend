@@ -1,19 +1,16 @@
-import { useMemo } from 'react'
+import { isListedFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
-import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokens } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-const TokenDetailsModalDescription = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
-  const selectAddressesTokens = useMemo(() => makeSelectAddressesTokens(), [])
-  const tokens = useAppSelector((s) => selectAddressesTokens(s, addressHash))
-  const token = tokens.find((token) => token.id === tokenId)
+const TokenDetailsModalDescription = ({ tokenId }: TokenDetailsModalCommonProps) => {
+  const { data: token } = useFetchToken(tokenId)
 
-  if (!token || !token.description) return null
+  if (!token || !isListedFT(token) || !token.description) return null
 
   return (
     <TokenDetailsModalDescriptionStyled>
