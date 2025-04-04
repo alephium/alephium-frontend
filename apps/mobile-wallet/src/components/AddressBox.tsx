@@ -1,4 +1,5 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { useFetchAddressSingleTokenBalances, useFetchAddressWorth } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
@@ -15,12 +16,12 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import AnimatedPressable from '~/components/layout/AnimatedPressable'
+import FtWorth from '~/components/tokensLists/FtWorth'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
-  makeSelectAddressesTokensWorth,
   selectAddressByHash
 } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -129,7 +130,12 @@ const AddressBox = ({
                 {address?.label || addressHash}
               </AppText>
             </AddressLabel>
-            <AddressAmount addressHash={addressHash} tokenId={tokenId} />
+
+            {tokenId ? (
+              <AddressTokenWorth addressHash={addressHash} tokenId={tokenId} />
+            ) : (
+              <AddressTotalWorth addressHash={addressHash} />
+            )}
           </TopRow>
           <BottomRow>
             {hasLabel && (
@@ -164,24 +170,21 @@ const AddressBox = ({
 
 export default AddressBox
 
-const AddressAmount = ({
-  addressHash,
-  tokenId
-}: Pick<AddressBoxProps, 'addressHash'> & Pick<AddressBoxProps, 'tokenId'>) => {
-  const selectAddessesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+const AddressTotalWorth = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
   const currency = useAppSelector((s) => s.settings.currency)
+  const { data: addressWorth } = useFetchAddressWorth(addressHash)
 
-  // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const token = knownFungibleTokens.find((t) => t.id === tokenId)
-
-  return token ? (
-    <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
-  ) : (
-    <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
+  return (
+    <Amount isFiat value={addressWorth} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
   )
+}
+
+const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {
+  const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
+
+  const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
+  return <FtWorth tokenId={tokenId} balance={balance} semiBold size={17} adjustsFontSizeToFit />
 }
 
 const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
