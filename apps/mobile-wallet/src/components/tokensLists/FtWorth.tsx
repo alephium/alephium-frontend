@@ -4,10 +4,10 @@ import { isNumber } from 'lodash'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
-import Amount from '~/components/Amount'
+import Amount, { AmountProps } from '~/components/Amount'
 import { useAppSelector } from '~/hooks/redux'
 
-interface FtWorthProps {
+interface FtWorthProps extends AmountProps {
   tokenId: TokenId
   balance?: bigint
 }
@@ -27,7 +27,7 @@ interface AddressFtWorthAmountProps extends FtWorthProps {
   decimals: number
 }
 
-const FtWorthAmount = ({ symbol, decimals, balance }: AddressFtWorthAmountProps) => {
+const FtWorthAmount = ({ symbol, decimals, balance, ...props }: AddressFtWorthAmountProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
@@ -39,7 +39,7 @@ const FtWorthAmount = ({ symbol, decimals, balance }: AddressFtWorthAmountProps)
 
   if (worth === undefined) return null
 
-  return <FiatAmountStyled isFiat value={worth} suffix={CURRENCIES[currency].symbol} color="secondary" />
+  return <FiatAmountStyled isFiat value={worth} suffix={CURRENCIES[currency].symbol} {...props} />
 }
 
 const FiatAmountStyled = styled(Amount)`

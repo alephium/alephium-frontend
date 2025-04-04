@@ -43,7 +43,7 @@ const WalletFtListItem = (props: FtListItemProps) => {
       rightSideContent={
         <View>
           <FtBalance tokenId={tokenId} balance={balance} />
-          <FtWorth tokenId={tokenId} balance={balance} />
+          <FtWorth tokenId={tokenId} balance={balance} color="secondary" />
         </View>
       }
       {...props}
