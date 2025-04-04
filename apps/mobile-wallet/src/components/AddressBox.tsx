@@ -1,5 +1,10 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { useFetchAddressSingleTokenBalances, useFetchAddressWorth } from '@alephium/shared-react'
+import {
+  useFetchAddressFtsSorted,
+  useFetchAddressSingleTokenBalances,
+  useFetchAddressTokensByType,
+  useFetchAddressWorth
+} from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
@@ -19,11 +24,7 @@ import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import FtWorth from '~/components/tokensLists/FtWorth'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import {
-  makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesNFTs,
-  selectAddressByHash
-} from '~/store/addresses/addressesSelectors'
+import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
@@ -188,29 +189,29 @@ const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxPro
 }
 
 const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const { t } = useTranslation()
 
+  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
+  const fts = useMemo(() => [...listedFts, ...unlistedFts], [listedFts, unlistedFts])
+  const {
+    data: { nftIds }
+  } = useFetchAddressTokensByType(addressHash)
+
   return (
-    (knownFungibleTokens.length > 0 || nfts.length > 0) && (
+    (fts.length > 0 || nftIds.length > 0) && (
       <AssetsRow>
-        {knownFungibleTokens.length > 0 && (
+        {fts.length > 0 && (
           <AssetListContainer rounded border light compact>
-            {knownFungibleTokens.slice(0, maxNbOfTokenLogos).map(({ id }) => (
+            {fts.slice(0, maxNbOfTokenLogos).map(({ id }) => (
               <AssetLogo key={id} assetId={id} size={15} />
             ))}
-            {knownFungibleTokens.length > 5 && (
-              <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
-            )}
+            {fts.length > 5 && <NbOfAssetsText>+{fts.length - maxNbOfTokenLogos}</NbOfAssetsText>}
           </AssetListContainer>
         )}
 
-        {nfts.length > 0 && (
+        {nftIds.length > 0 && (
           <Badge border light compact>
-            <NbOfAssetsText>{t('nfts_in_addresses', { count: nfts.length })}</NbOfAssetsText>
+            <NbOfAssetsText>{t('nfts_in_addresses', { count: nftIds.length })}</NbOfAssetsText>
           </Badge>
         )}
       </AssetsRow>
@@ -218,25 +219,20 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
   )
 }
 
-const AddressTokenDetails = ({
-  addressHash,
-  tokenId
-}: Pick<AddressBoxProps, 'addressHash'> & Required<Pick<AddressBoxProps, 'tokenId'>>) => {
-  // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const token = knownFungibleTokens.find((t) => t.id === tokenId)
+const AddressTokenDetails = ({ addressHash, tokenId }: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {
+  const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
 
-  if (!token) return null
+  const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+  const lockedBalance = tokenBalances?.lockedBalance ? BigInt(tokenBalances.lockedBalance) : undefined
 
   return (
     <AssetsRow>
-      <AssetAmountWithLogo assetId={tokenId} amount={token.balance} />
+      {balance !== undefined && <AssetAmountWithLogo assetId={tokenId} amount={balance} />}
 
-      {token.lockedBalance > 0 && (
+      {!!lockedBalance && (
         <LockedAmount>
           <Lock size={16} />
-          <AssetAmountWithLogo assetId={tokenId} amount={token.lockedBalance} />
+          <AssetAmountWithLogo assetId={tokenId} amount={lockedBalance} />
         </LockedAmount>
       )}
     </AssetsRow>
