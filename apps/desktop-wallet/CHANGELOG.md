@@ -1,5 +1,17 @@
 # alephium-desktop-wallet
 
+## 3.0.1
+
+### Patch Changes
+
+- 542f185: Improve NFTs loading with infinite loading pagination
+- 542f185: Fix cached data loading on app launch
+- 542f185: Fix crash due to uninitialized address state
+- 8b6b1d1: Improve performance for large wallets
+- 542f185: Fix glitch in scrollable tabs contents
+- d3d7305: Fix display of locked wallets in settings
+- 069fb7f: Fix wallet selector in Linux and Windows
+
 ## 3.0.0
 
 ### Major Changes
