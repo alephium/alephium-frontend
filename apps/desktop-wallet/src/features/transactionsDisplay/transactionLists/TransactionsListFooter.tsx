@@ -8,54 +8,50 @@ import Spinner from '@/components/Spinner'
 import { TableCellPlaceholder, TableRow } from '@/components/Table'
 import { useAppSelector } from '@/hooks/redux'
 
-interface TransactionsListFooterBaseProps {
+interface InfiniteTransactionsListFooterProps {
   isDisplayingTxs: boolean
   showSpinner: boolean
   noTxsMsg: string
-}
-
-interface InfiniteTransactionsListFooterProps extends TransactionsListFooterBaseProps {
   showLoadMoreBtn: boolean
   onShowMoreClick: () => void
   allTxsLoadedMsg: string
   latestTxDate?: number
 }
 
-interface StaticTransactionsListFooterProps extends TransactionsListFooterBaseProps {
-  showLoadMoreBtn: false
-  onShowMoreClick?: undefined
-  allTxsLoadedMsg?: undefined
-  latestTxDate?: undefined
-}
-
-const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | StaticTransactionsListFooterProps) => {
+const TransactionsListFooter = ({
+  isDisplayingTxs,
+  showLoadMoreBtn,
+  latestTxDate,
+  onShowMoreClick,
+  showSpinner,
+  allTxsLoadedMsg,
+  noTxsMsg
+}: InfiniteTransactionsListFooterProps) => {
   const { t } = useTranslation()
   const region = useAppSelector((state) => state.settings.region)
-
-  if (isStaticTransactionsList(props) && props.isDisplayingTxs) return null
 
   return (
     <TableRow role="row" tabIndex={0}>
       <TableCellPlaceholder align="center">
-        {!props.isDisplayingTxs && props.showLoadMoreBtn && props.latestTxDate ? (
+        {!isDisplayingTxs && showLoadMoreBtn && latestTxDate ? (
           <NoTxsBeforeDate>
             <PlaceholderTextStyled emoji="🔎">
               {t('No transactions before {{ date }}', {
-                date: dayjs(props.latestTxDate).toDate().toLocaleString(region, { dateStyle: 'medium' })
+                date: dayjs(latestTxDate).toDate().toLocaleString(region, { dateStyle: 'medium' })
               })}
             </PlaceholderTextStyled>
-            <ActionLink onClick={props.onShowMoreClick}>{t('Show more')}</ActionLink>
+            <ActionLink onClick={onShowMoreClick}>{t('Show more')}</ActionLink>
           </NoTxsBeforeDate>
-        ) : props.isDisplayingTxs ? (
-          props.showSpinner ? (
+        ) : isDisplayingTxs ? (
+          showSpinner ? (
             <Spinner size="15px" />
-          ) : props.showLoadMoreBtn ? (
-            <ActionLink onClick={props.onShowMoreClick}>{t('Show more')}</ActionLink>
+          ) : showLoadMoreBtn ? (
+            <ActionLink onClick={onShowMoreClick}>{t('Show more')}</ActionLink>
           ) : (
-            props.allTxsLoadedMsg && <span>{props.allTxsLoadedMsg}</span>
+            allTxsLoadedMsg && <span>{allTxsLoadedMsg}</span>
           )
         ) : (
-          <PlaceholderText emoji="🔎">{props.noTxsMsg}</PlaceholderText>
+          <PlaceholderText emoji="🔎">{noTxsMsg}</PlaceholderText>
         )}
       </TableCellPlaceholder>
     </TableRow>
@@ -63,11 +59,6 @@ const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | Sta
 }
 
 export default TransactionsListFooter
-
-const isStaticTransactionsList = (
-  txList: InfiniteTransactionsListFooterProps | StaticTransactionsListFooterProps
-): txList is StaticTransactionsListFooterProps =>
-  (txList as StaticTransactionsListFooterProps).onShowMoreClick === undefined
 
 const NoTxsBeforeDate = styled.div`
   display: flex;
