@@ -1175,6 +1175,9 @@ importers:
       axios:
         specifier: ^1.8.2
         version: 1.8.3
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       react:
         specifier: ^18.2.0
         version: 18.2.0

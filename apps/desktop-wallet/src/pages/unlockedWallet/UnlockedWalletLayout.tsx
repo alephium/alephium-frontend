@@ -38,7 +38,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
           <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
           <ActivityNavItemStyled>
             <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
-            <ActivityIndicator />
+            <ActivityIndicator /> {/* Helps improve Activity page UX, see component for more details */}
           </ActivityNavItemStyled>
           <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
         </SideNavigation>
