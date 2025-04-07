@@ -1,20 +1,18 @@
 import { ReactNode } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
 import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
 import { platform } from '@/utils/platform'
 
 interface SideBarProps {
-  renderTopComponent?: () => ReactNode
-  noExpansion?: boolean
-  noBorder?: boolean
+  children?: ReactNode
   className?: string
 }
 
-const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
-  <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
-    <TopContainer>{renderTopComponent?.()}</TopContainer>
+const SideBar = ({ children, className }: SideBarProps) => (
+  <SideBarStyled className={className}>
+    <TopContainer>{children}</TopContainer>
     <BottomButtonsContainer>
       <BottomButtons>
         <SideBarSettingsButton />
@@ -25,7 +23,7 @@ const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, cl
 
 export default SideBar
 
-const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
+const SideBarStyled = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -37,21 +35,10 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   background-color: ${({ theme }) => theme.bg.background2};
   border-right: 1px solid ${({ theme }) => theme.border.secondary};
 
-  ${({ noExpansion }) =>
-    !noExpansion
-      ? css`
-          @media (min-width: ${sidebarExpandThresholdPx}px) {
-            width: ${walletSidebarWidthPx * 3}px;
-            align-items: normal;
-          }
-        `
-      : css`
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          top: 0;
-          z-index: 3;
-        `};
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    width: ${walletSidebarWidthPx * 3}px;
+    align-items: normal;
+  }
 `
 
 const TopContainer = styled.div`
