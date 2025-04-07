@@ -113,8 +113,8 @@ export const walletTransactionsInfiniteQuery = ({
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
-    // When the user navigates away from the Transfers page for 5 minutes or when addresses are generated/removed the
-    // cached data will be deleted.
+    // When there are no active instances of this query or when addresses are generated/removed the cached data will be
+    // deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
