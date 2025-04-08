@@ -1,9 +1,9 @@
+import { useFetchAddressBalances } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'

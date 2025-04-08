@@ -1,12 +1,12 @@
+import { isFT, isNFT, TokenId } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { memo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { isFT, isNFT, TokenId } from '@/types/tokens'
 
 export interface TokenBadgeStyleProps {
   withBorder?: boolean

@@ -1,4 +1,12 @@
-import { Address, AddressHash, getHumanReadableError } from '@alephium/shared'
+import {
+  Address,
+  AddressHash,
+  getHumanReadableError,
+  selectAddressByHash,
+  selectDefaultAddress,
+  transactionSent
+} from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
@@ -17,14 +25,8 @@ import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUse, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import {
-  transactionBuildFailed,
-  transactionSendFailed,
-  transactionSent
-} from '@/storage/transactions/transactionsActions'
+import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 import { getName } from '@/utils/addresses'
 
 export interface AddressSweepModalProps extends AddressModalBaseProp {

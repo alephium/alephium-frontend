@@ -1,8 +1,8 @@
+import { isListedFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components'
 
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
-import { isListedFT } from '@/types/tokens'
 
 const TokenDescription = ({ tokenId }: TokenDetailsModalProps) => {
   const { data: token } = useFetchToken(tokenId)

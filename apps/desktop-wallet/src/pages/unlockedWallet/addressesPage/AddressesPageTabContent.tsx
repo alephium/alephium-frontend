@@ -1,3 +1,4 @@
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { motion } from 'framer-motion'
 import { SearchIcon } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -6,7 +7,6 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 interface AddressesPageTabContentProps {
   searchPlaceholder: string

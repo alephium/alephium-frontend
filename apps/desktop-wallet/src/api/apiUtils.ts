@@ -1,7 +1,6 @@
+import { UnlistedFT } from '@alephium/shared'
 import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray } from 'lodash'
-
-import { UnlistedFT } from '@/types/tokens'
 
 export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
   typeof nft.name === 'string' &&

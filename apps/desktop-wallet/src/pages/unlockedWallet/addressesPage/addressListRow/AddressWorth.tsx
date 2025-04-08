@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressWorth } from '@alephium/shared-react'
 
-import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
 import Amount from '@/components/Amount'
 
 interface AddressWorthProps {

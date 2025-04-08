@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -6,7 +7,6 @@ import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import useAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 interface AddressSelectModalProps {
   title: string

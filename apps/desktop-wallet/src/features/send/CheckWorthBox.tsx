@@ -1,11 +1,10 @@
 import { AssetAmount, calculateAmountWorth } from '@alephium/shared'
+import { useFetchTokenPrices, useFetchTokensSeparatedByType } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import Amount from '@/components/Amount'
 import Box, { BoxProps } from '@/components/Box'
 import InfoRow from '@/features/send/InfoRow'

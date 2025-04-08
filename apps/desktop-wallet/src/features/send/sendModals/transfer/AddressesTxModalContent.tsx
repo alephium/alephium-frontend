@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -7,7 +8,6 @@ import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/fea
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
 interface TransferAddressesTxModalContentProps {

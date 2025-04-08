@@ -1,4 +1,4 @@
-import { throttledClient } from '@alephium/shared'
+import { throttledClient, transactionSent } from '@alephium/shared'
 import { binToHex, contractIdFromAddress, SignDeployContractTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -9,7 +9,6 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
 import { DeployContractTxData, DeployContractTxModalData, TxContext } from '@/features/send/sendTypes'
 import { store } from '@/storage/store'
-import { transactionSent } from '@/storage/transactions/transactionsActions'
 
 export type DeployContractSendModalProps = ConfigurableSendModalProps<DeployContractTxModalData>
 

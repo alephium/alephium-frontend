@@ -1,10 +1,9 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
-import useFetchAddressLatestTransaction from '@/api/apiDataHooks/address/useFetchAddressLatestTransaction'
 
 interface AddressListRowLastUsedProps {
   addressHash: AddressHash

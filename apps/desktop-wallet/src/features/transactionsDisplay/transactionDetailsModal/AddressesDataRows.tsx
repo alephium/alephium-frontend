@@ -1,4 +1,4 @@
-import { isConfirmedTx } from '@alephium/shared'
+import { isConfirmedTx, selectPendingSentTransactionByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -7,7 +7,6 @@ import AddressBadge from '@/components/AddressBadge'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
-import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'

@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError, selectAddressByHash } from '@alephium/shared'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,6 @@ import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed } from '@/storage/global/globalActions'
 
 const CopyPrivateKeyConfirmationModal = memo(({ id, addressHash }: AddressModalProps) => {

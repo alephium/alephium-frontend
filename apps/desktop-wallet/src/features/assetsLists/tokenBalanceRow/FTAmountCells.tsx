@@ -1,13 +1,11 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared'
+import { useFetchAddressSingleTokenBalances, useFetchWalletSingleTokenBalances } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
-import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import FTAmounts, { FTAmountsBaseProp } from '@/components/amounts/FTAmounts'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
-import { TokenId } from '@/types/tokens'
 
 interface FTAddressAmountCellProps {
   tokenId: TokenId

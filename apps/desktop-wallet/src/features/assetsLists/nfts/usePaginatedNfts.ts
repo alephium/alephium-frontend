@@ -1,6 +1,5 @@
+import { TokenId } from '@alephium/shared'
 import { useInfiniteQuery } from '@tanstack/react-query'
-
-import { TokenId } from '@/types/tokens'
 
 const PAGE_SIZE = 12
 

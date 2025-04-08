@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectDefaultAddressHash, selectInitialAddress } from '@alephium/shared'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
-import { selectDefaultAddressHash, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()

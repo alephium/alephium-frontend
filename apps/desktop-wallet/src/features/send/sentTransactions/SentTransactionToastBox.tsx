@@ -1,3 +1,4 @@
+import { removeSentTransaction, selectSentTransactionByHash, SentTransaction } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { t } from 'i18next'
@@ -11,11 +12,8 @@ import HashEllipsed from '@/components/HashEllipsed'
 import usePendingTxPolling from '@/features/dataPolling/usePendingTxPolling'
 import { openModal } from '@/features/modals/modalActions'
 import { selectTopModal } from '@/features/modals/modalSelectors'
-import { removeSentTransaction } from '@/features/send/sentTransactions/sentTransactionsActions'
-import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import ToastBox from '@/features/toastMessages/ToastBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { SentTransaction } from '@/types/transactions'
 
 interface SentTransactionSnackbarPopupProps {
   txHash: e.Transaction['hash']

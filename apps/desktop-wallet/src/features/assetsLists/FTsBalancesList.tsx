@@ -1,9 +1,11 @@
+import {
+  useFetchAddressFtsSorted,
+  useFetchAddressTokensByType,
+  useFetchWalletFtsSorted,
+  useFetchWalletTokensByType
+} from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressFtsSorted from '@/api/apiDataHooks/address/useFetchAddressFtsSorted'
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchWalletFtsSorted from '@/api/apiDataHooks/wallet/useFetchWalletFtsSorted'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Table, { TableRow } from '@/components/Table'

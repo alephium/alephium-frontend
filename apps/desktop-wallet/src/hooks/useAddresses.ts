@@ -1,17 +1,17 @@
-import { AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { AddressHash, selectDefaultAddressHash, TokenId } from '@alephium/shared'
+import {
+  SkipProp,
+  useCurrentlyOnlineNetworkId,
+  useFetchLatestTransactionOfEachAddress,
+  useFetchWalletBalancesByAddress,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
-import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectDefaultAddressHash } from '@/storage/addresses/addressesSelectors'
-import { TokenId } from '@/types/tokens'
 
 export const useFetchAddressesHashesSortedByPreference = () => {
   const orderPreference = useAppSelector((s) => s.settings.addressOrderPreference)
@@ -50,7 +50,7 @@ export const useFetchAddressesHashesSortedByPreference = () => {
 export const useFetchAddressesHashesSortedByLastUse = (props?: SkipProp) => {
   const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const { data: sortedAddresses, isLoading } = useFetchAddressesHashesSortedByLastUseWithLatestTx(props)
+  const { data: sortedAddresses, isLoading } = useFetchAddressesHashesSortedByLastUseWithLatestTx()
 
   const sortedAddressHashes = useMemo(() => sortedAddresses.map(({ addressHash }) => addressHash), [sortedAddresses])
 
@@ -95,9 +95,9 @@ export const useFetchAddressesHashesSplitByUseFrequency = () => {
   }
 }
 
-export const useFetchAddressesHashesSortedByLastUseWithLatestTx = (props?: SkipProp) => {
+export const useFetchAddressesHashesSortedByLastUseWithLatestTx = () => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
-  const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress(props)
+  const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress()
 
   return {
     data: useMemo(

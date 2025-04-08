@@ -1,10 +1,10 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { hiddenTokensLoadedFromStorage } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { hiddenTokensLoadedFromStorage } from '@/features/hiddenTokens/hiddenTokensActions'
 import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'
 import { useAppDispatch } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
@@ -15,6 +15,7 @@ import { toggleAppLoading, userDataMigrationFailed } from '@/storage/global/glob
 import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
+import { getInitialAddressSettings } from '@/utils/addresses'
 import { migrateUserData } from '@/utils/migration'
 
 interface UnlockWalletProps {
@@ -93,7 +94,10 @@ const useWalletLock = () => {
         isPassphraseUsed,
         isLedger: false
       },
-      initialAddress
+      initialAddress: {
+        ...initialAddress,
+        ...getInitialAddressSettings()
+      }
     }
 
     clearQueryCache()

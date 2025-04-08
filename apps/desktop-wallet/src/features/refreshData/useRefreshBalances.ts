@@ -1,8 +1,6 @@
-import { queryClient } from '@alephium/shared-react'
+import { queryClient, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useIsFetching } from '@tanstack/react-query'
 import { useCallback } from 'react'
-
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const useRefreshBalances = () => {
   const addressHashes = useUnsortedAddressesHashes()

@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -6,7 +7,7 @@ import AddressBadge from '@/components/AddressBadge'
 import { InputProps, inputStyling } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
+import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 
 type InputFieldMode = 'view' | 'edit'
 

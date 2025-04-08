@@ -1,6 +1,6 @@
+import { selectAllSentTransactions } from '@alephium/shared'
 import styled from 'styled-components'
 
-import { selectAllSentTransactions } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import SentTransactionToastBox from '@/features/send/sentTransactions/SentTransactionToastBox'
 import { StackedToast, StackedToastsContainer } from '@/features/toastMessages/StackedToasts'
 import { useAppSelector } from '@/hooks/redux'

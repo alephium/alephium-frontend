@@ -5,6 +5,7 @@ import {
   throttledClient,
   WALLETCONNECT_ERRORS
 } from '@alephium/shared'
+import { useFetchWalletBalancesByAddress, useUnsortedAddresses } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -19,7 +20,6 @@ import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { memo, useCallback, useEffect } from 'react'
 
-import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
@@ -28,7 +28,6 @@ import { useWalletConnectContext } from '@/features/walletConnect/walletConnectC
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import { toggleAppLoading } from '@/storage/global/globalActions'
 
 // The purpose of this component is to conditionally use the useFetch hooks only when a wallet is unlocked. That's why

@@ -1,14 +1,14 @@
+import { TokenId } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { map } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import FiltersPanel from '@/pages/unlockedWallet/activityPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
-import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
 interface ActivityPageProps {

@@ -1,12 +1,8 @@
+import { selectAddressByHash, selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { useState } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
-import {
-  selectAddressByHash,
-  selectAddressesInGroup,
-  selectDefaultAddressHash
-} from '@/storage/addresses/addressesSelectors'
 
 const useSignerAddress = (group: AddressGroup) => {
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))

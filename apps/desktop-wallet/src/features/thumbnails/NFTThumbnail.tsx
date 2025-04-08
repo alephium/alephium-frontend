@@ -1,10 +1,10 @@
 import { NFT } from '@alephium/shared'
+import { useFetchNft } from '@alephium/shared-react'
 import { CameraOff } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import VideoThumbnail from '@/features/thumbnails/VideoThumbnail'
 

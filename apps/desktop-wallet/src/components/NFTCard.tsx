@@ -1,17 +1,16 @@
-import { NFT } from '@alephium/shared'
+import { isNFT, NFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion, useInView } from 'framer-motion'
 import { memo, useRef } from 'react'
 import styled from 'styled-components'
 
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Ellipsed from '@/components/Ellipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { useAppDispatch } from '@/hooks/redux'
-import { isNFT } from '@/types/tokens'
 
 interface NFTCardProps {
   nftId: NFT['id']
