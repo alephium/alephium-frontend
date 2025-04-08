@@ -7,13 +7,13 @@ import {
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { useAppSelector } from '@/hooks/redux'
+import { useSharedSelector } from '@/redux'
 
-const useTransactionAmountDeltas = (
+export const useTransactionAmountDeltas = (
   tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash
 ): AmountDeltas => {
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const pendingSentTx = useSharedSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   return useMemo(
     () =>
@@ -26,5 +26,3 @@ const useTransactionAmountDeltas = (
     [addressHash, tx, pendingSentTx]
   )
 }
-
-export default useTransactionAmountDeltas

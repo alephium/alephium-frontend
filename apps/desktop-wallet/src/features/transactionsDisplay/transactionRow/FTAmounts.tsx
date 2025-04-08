@@ -1,7 +1,7 @@
+import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
+
 import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
-import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
 const FTAmounts = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const {

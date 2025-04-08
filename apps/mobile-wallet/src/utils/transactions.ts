@@ -12,7 +12,7 @@ import {
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT, explorer } from '@alephium/web3'
+import { DUST_AMOUNT, explorer as e } from '@alephium/web3'
 import { sortBy } from 'lodash'
 
 import { store } from '~/store/store'
@@ -64,10 +64,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     }
 
     lockTime = (tx.outputs ?? []).reduce(
-      (a, b) =>
-        a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
-          ? a
-          : new Date((b as explorer.AssetOutput).lockTime ?? 0),
+      (a, b) => (a > new Date((b as e.AssetOutput).lockTime ?? 0) ? a : new Date((b as e.AssetOutput).lockTime ?? 0)),
       new Date(0)
     )
     lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
