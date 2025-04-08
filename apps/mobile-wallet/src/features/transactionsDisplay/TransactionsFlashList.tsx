@@ -12,6 +12,7 @@ import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSectionTitle } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
+import { openModal } from '~/features/modals/modalActions'
 import TransactionListItem from '~/features/transactionsDisplay/TransactionListItem'
 import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -68,9 +69,10 @@ const TransactionsFlashList = forwardRef(
         key={tx.hash}
         tx={tx}
         isLast={isLast}
-        // onPress={() => {
-        //   dispatch(openModal({ name: 'TransactionModal', props: { txHash: tx.hash } }))
-        // }}
+        refAddressHash={forAddressHash}
+        onPress={() => {
+          dispatch(openModal({ name: 'TransactionModal', props: { txHash: tx.hash } }))
+        }}
       />
     )
 
@@ -121,7 +123,7 @@ const TransactionsFlashList = forwardRef(
         ListFooterComponent={
           <Footer>
             <InfiniteLoadingIndicator>
-              {!hasNextPage && (
+              {displayedConfirmedTransactions.length > 0 && !hasNextPage && (
                 <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
                   👏 {t('You reached the end of the transactions history.')}
                 </AppText>

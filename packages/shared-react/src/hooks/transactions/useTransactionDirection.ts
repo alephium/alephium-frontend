@@ -6,18 +6,18 @@ import {
   selectPendingSentTransactionByHash,
   TransactionDirection
 } from '@alephium/shared'
-import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useSharedSelector } from '@/redux'
 
-const useTransactionDirection = (
+export const useTransactionDirection = (
   tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash
 ): TransactionDirection => {
   const internalAddresses = useUnsortedAddressesHashes()
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const pendingSentTx = useSharedSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   return useMemo(() => {
     if (pendingSentTx) {
@@ -48,5 +48,3 @@ const useTransactionDirection = (
     }
   }, [addressHash, internalAddresses, pendingSentTx, tx])
 }
-
-export default useTransactionDirection

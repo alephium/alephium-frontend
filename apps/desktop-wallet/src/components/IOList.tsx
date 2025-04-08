@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface IOListProps {
-  currentAddress: string
+  currentAddress: AddressHash
   isOut: boolean
   timestamp?: number
   outputs?: e.Output[]
