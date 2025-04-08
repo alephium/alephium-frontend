@@ -1,11 +1,13 @@
 import { AddressHash, isFT, isNFT, ListedFT, NFT, NonStandardToken, UnlistedFT } from '@alephium/shared'
-import { combineIsLoading, tokenQuery, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { tokenQuery } from '@/api/queries/tokenQueries'
+import { useTransactionAmountDeltas } from '@/hooks/transactions/useTransactionAmountDeltas'
+import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT
@@ -23,7 +25,7 @@ type TransactionTokens = {
   isLoading: boolean
 }
 
-const useFetchTransactionTokens = (
+export const useFetchTransactionTokens = (
   tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash
 ): TransactionTokens => {
@@ -47,8 +49,6 @@ const useFetchTransactionTokens = (
     isLoading
   }
 }
-
-export default useFetchTransactionTokens
 
 const combineTokens = (
   results: UseQueryResult<NonStandardToken, Error>[],

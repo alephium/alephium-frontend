@@ -1,20 +1,17 @@
-import { TransactionInfoType } from '@alephium/shared'
+import { AddressHash, isConfirmedTx } from '@alephium/shared'
+import { useTransactionInfoType } from '@alephium/shared-react'
+import { explorer as e } from '@alephium/web3'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
-interface TransactionUIProps {
-  infoType: TransactionInfoType
-  isFailedScriptTx: boolean
-}
-
-// TODO: Delete
-export const useTransactionUI = ({ infoType, isFailedScriptTx }: TransactionUIProps) => {
+const useTransactionIconLabel = (tx: e.Transaction | e.PendingTransaction, addressHash: AddressHash) => {
   const theme = useTheme()
   const { t } = useTranslation()
+  const infoType = useTransactionInfoType(tx, addressHash)
 
-  return isFailedScriptTx
+  return isConfirmedTx(tx) && !tx.scriptExecutionOk
     ? {
         label: t('dApp'),
         Icon: Repeat2,
@@ -52,3 +49,5 @@ export const useTransactionUI = ({ infoType, isFailedScriptTx }: TransactionUIPr
         }[infoType]
       }
 }
+
+export default useTransactionIconLabel
