@@ -21,7 +21,7 @@ const HiddenTokensButton = ({ tokensCount, parentModalId }: HiddenTokensButtonPr
   const { t } = useTranslation()
 
   const handleHiddenAssetsPress = () => {
-    navigation.navigate('HiddenAssetsScreen')
+    navigation.navigate('HiddenTokensScreen')
 
     parentModalId && dispatch(closeModal({ id: parentModalId }))
   }

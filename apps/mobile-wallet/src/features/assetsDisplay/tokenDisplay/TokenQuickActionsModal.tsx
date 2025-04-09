@@ -9,7 +9,7 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
-import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
+import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
@@ -23,11 +23,11 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
-  const hideAsset = useHideAsset('quick_actions', id)
+  const hideToken = useHideToken('quick_actions', id)
 
   if (!token) return
 
-  const handleAssetHide = () => hideAsset(tokenId)
+  const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))

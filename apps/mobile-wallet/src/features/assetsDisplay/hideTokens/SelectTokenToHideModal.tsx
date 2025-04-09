@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next'
 
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
-import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
+import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
-const SelectAssetToHideModal = withModal(({ id }) => {
+const SelectTokenToHideModal = withModal(({ id }) => {
   const { t } = useTranslation()
   const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
-  const handleAssetSelection = useHideAsset('app_settings', id)
+  const handleTokenSelection = useHideToken('app_settings', id)
 
   return (
     <BottomModalFlashList
@@ -30,7 +30,7 @@ const SelectAssetToHideModal = withModal(({ id }) => {
               key={id}
               title={name}
               icon={<AssetLogo assetId={id} size={32} />}
-              onPress={() => handleAssetSelection(id)}
+              onPress={() => handleTokenSelection(id)}
             />
           )}
           {...props}
@@ -40,4 +40,4 @@ const SelectAssetToHideModal = withModal(({ id }) => {
   )
 })
 
-export default SelectAssetToHideModal
+export default SelectTokenToHideModal
