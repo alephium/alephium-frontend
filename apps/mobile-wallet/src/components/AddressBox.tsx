@@ -184,7 +184,7 @@ const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxPro
 
   const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
-  return <FtWorth tokenId={tokenId} balance={balance} semiBold size={17} adjustsFontSizeToFit />
+  return <FtWorth tokenId={tokenId} amount={balance} semiBold size={17} adjustsFontSizeToFit />
 }
 
 const AddressTokensBadgesList = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
