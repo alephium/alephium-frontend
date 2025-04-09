@@ -37,12 +37,12 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
 
-  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFtsSorted()
+  const { data: sortedFts, isLoading: isLoadingFts } = useFetchWalletFtsSorted()
   const {
     data: { nftIds, nstIds },
     isLoading: isLoadingTokensByType
   } = useFetchWalletTokensByType({ includeHidden: false })
-  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
+  const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
 
   const renderAddressesSelectedValue = () =>
     selectedAddresses.length === 0
@@ -58,8 +58,7 @@ const FiltersPanel = ({
         ? t('All selected')
         : selectedDirections.map((direction) => t(direction.label)).join(', ')
 
-  const getTokenName = (tokenId: TokenId) =>
-    (listedFts.find(({ id }) => id === tokenId) ?? unlistedFts.find(({ id }) => id === tokenId))?.symbol ?? tokenId
+  const getTokenName = (tokenId: TokenId) => sortedFts.find(({ id }) => id === tokenId)?.symbol ?? tokenId
 
   const renderAssetsSelectedValue = () => {
     if (!selectedTokensIds) return null
