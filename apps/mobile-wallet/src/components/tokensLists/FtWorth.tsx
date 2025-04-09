@@ -9,7 +9,7 @@ import { useAppSelector } from '~/hooks/redux'
 
 interface FtWorthProps extends AmountProps {
   tokenId: TokenId
-  balance?: bigint
+  amount?: bigint
 }
 
 const FtWorth = (props: FtWorthProps) => {
@@ -17,34 +17,34 @@ const FtWorth = (props: FtWorthProps) => {
 
   if (!token || !isFT(token)) return null
 
-  return <FtWorthAmount symbol={token.symbol} decimals={token.decimals} {...props} />
+  return <FtAmountWorth symbol={token.symbol} decimals={token.decimals} {...props} />
 }
 
 export default FtWorth
 
-interface AddressFtWorthAmountProps extends FtWorthProps {
+interface AddressFtAmountWorthProps extends FtWorthProps {
   symbol: string
   decimals: number
 }
 
-const FtWorthAmount = ({ symbol, decimals, balance, ...props }: AddressFtWorthAmountProps) => {
+const FtAmountWorth = ({ symbol, decimals, amount, ...props }: AddressFtAmountWorthProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
   const worth = useMemo(
     () =>
-      balance !== undefined && isNumber(tokenPrice)
-        ? calculateTokenAmountWorth(balance, tokenPrice, decimals)
+      amount !== undefined && isNumber(tokenPrice)
+        ? calculateTokenAmountWorth(amount, tokenPrice, decimals)
         : undefined,
-    [balance, tokenPrice, decimals]
+    [amount, tokenPrice, decimals]
   )
 
   if (worth === undefined) return null
 
-  return <FiatAmountStyled isFiat value={worth} suffix={CURRENCIES[currency].symbol} {...props} />
+  return <AmountStyled isFiat value={worth} suffix={CURRENCIES[currency].symbol} {...props} />
 }
 
-const FiatAmountStyled = styled(Amount)`
+const AmountStyled = styled(Amount)`
   flex-shrink: 0;
   align-self: flex-end;
   margin-top: 5px;
