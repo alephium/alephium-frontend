@@ -1,3 +1,4 @@
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,9 +19,12 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   const [addressHash, setAddressHash] = useState(defaultAddress.hash)
   const { t } = useTranslation()
 
+  const { data: sortedAddressesHashes } = useFetchAddressesHashesSortedByLastUse()
+
   return (
     <AddressFlashListScreen
-      onAddressPress={(hash) => setAddressHash(hash)}
+      data={sortedAddressesHashes}
+      onAddressPress={setAddressHash}
       selectedAddress={addressHash}
       screenTitle={t('To address')}
       screenIntro={t('Select the address which you want to receive funds to.')}

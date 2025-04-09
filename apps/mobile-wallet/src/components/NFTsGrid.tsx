@@ -1,4 +1,4 @@
-import { AddressHash, NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { chunk, groupBy } from 'lodash'
 import { ForwardedRef, forwardRef, useMemo } from 'react'
@@ -10,13 +10,11 @@ import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import NftsCollectionTitle from '~/features/assetsDisplay/nftsDisplay/NftsCollectionTitle'
-import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesNFTs } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT[] | NFT['collectionId']>>, 'contentContainerStyle'> {
-  addressHash?: AddressHash
   nfts?: NFT[]
+  isLoading?: boolean
   nftsPerRow?: number
   nftSize?: number
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
@@ -26,18 +24,19 @@ const containerHorizontalPadding = DEFAULT_MARGIN
 
 const NFTsGrid = forwardRef(
   (
-    { addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps,
+    { nfts, nftSize, nftsPerRow = 3, scrollEnabled, isLoading, ...props }: NFTsGridProps,
     ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
   ) => {
-    const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
-    const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-    const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
     const theme = useTheme()
     const { t } = useTranslation()
 
-    const data = Object.entries(groupBy(nftsProp ?? nfts, 'collectionId'))
-      .map(([collectionId, nfts]) => [collectionId, ...chunk(nfts, nftsPerRow)])
-      .flat()
+    const data = useMemo(
+      () =>
+        Object.entries(groupBy(nfts, 'collectionId'))
+          .map(([collectionId, nfts]) => [collectionId, ...chunk(nfts, nftsPerRow)])
+          .flat(),
+      [nfts, nftsPerRow]
+    )
 
     return (
       <FlashList
@@ -63,7 +62,7 @@ const NFTsGrid = forwardRef(
         contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
         estimatedItemSize={props.estimatedItemSize || 64}
         ListEmptyComponent={
-          isLoadingNfts ? (
+          isLoading ? (
             <EmptyPlaceholder>
               <AppText color={theme.font.tertiary}>👀</AppText>
               <ActivityIndicator />

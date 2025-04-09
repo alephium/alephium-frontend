@@ -30,7 +30,7 @@ export const HiddenWalletTokensBalancesListSection = () => {
 }
 
 export const HiddenAddressTokensBalancesListSection = ({ addressHash }: AddressModalBaseProp) => {
-  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash })
+  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens(addressHash)
 
   return (
     <HiddenTokensBalancesListSection count={hiddenTokenIds?.length ?? 0}>
@@ -81,9 +81,9 @@ const HiddenWalletTokensBalancesList = () => {
 }
 
 const HiddenAddressTokensBalancesList = ({ addressHash }: AddressModalBaseProp) => {
-  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash })
+  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens(addressHash)
 
-  if (!hiddenTokenIds || hiddenTokenIds.length === 0) return null
+  if (!hiddenTokenIds?.length) return null
 
   return (
     <TableStyled>
