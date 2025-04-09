@@ -15,7 +15,6 @@ import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
-import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
 import loadersSlice from '~/store/loadersSlice'
 import walletSlice from '~/store/wallet/walletSlice'
 import walletGenerationSlice from '~/store/walletGenerationSlice'
@@ -30,7 +29,6 @@ export const store = configureStore({
     [appSlice.name]: appSlice.reducer,
     [loaderSlice.name]: loaderSlice.reducer,
     [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,
-    [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [backupSlice.name]: backupSlice.reducer,
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
