@@ -12,7 +12,7 @@ import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import SendButton from '~/features/send/SendButton'
-import TransactionsFlashList from '~/features/transactionsDisplay/TransactionsFlashList'
+import WalletTransactionsFlashList from '~/features/transactionsDisplay/WalletTransactionsFlashList'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -70,8 +70,8 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
         onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
         scrollY={screenScrollY}
       />
-      <TransactionsFlashList
-        forAddressHash={contact.address}
+      <WalletTransactionsFlashList
+        forContactAddress={contact.address}
         onScroll={screenScrollHandler}
         ref={listRef}
         ListHeaderComponent={

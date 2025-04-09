@@ -2,12 +2,13 @@ import {
   FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL,
   INFREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
-import { addressLatestTransactionQuery, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
 
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useFetchAddressesHashesSplitByUseFrequency } from '@/hooks/useAddresses'
+import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
 
-const useAddressesDataPolling = () => {
+export const useAddressesDataPolling = () => {
   const { data: splitAddressHashes } = useFetchAddressesHashesSplitByUseFrequency()
   const networkId = useCurrentlyOnlineNetworkId()
 
@@ -26,5 +27,3 @@ const useAddressesDataPolling = () => {
     }))
   })
 }
-
-export default useAddressesDataPolling

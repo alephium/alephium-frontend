@@ -21,6 +21,7 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Badge from '~/components/Badge'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import IOList from '~/components/IOList'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
@@ -56,27 +57,35 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
 
 export default TransactionModal
 
-const TransactionModalContent = ({ txHash, refAddressHash }: { txHash: string; refAddressHash?: AddressHash }) => {
-  const { data: tx } = useFetchTransaction({ txHash })
+const TransactionModalContent = ({ txHash }: TransactionModalProps) => {
+  const { t } = useTranslation()
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  // TODO: Show loading state?
+  const { data: tx, isLoading } = useFetchTransaction({ txHash })
+
+  if (isLoading)
+    return (
+      <EmptyPlaceholder>
+        <AppText size={32}>⏳</AppText>
+        <AppText>{t('Loading transaction details...')}</AppText>
+      </EmptyPlaceholder>
+    )
+
   if (!tx) return null
 
-  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddress = findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddress) return null
 
   return <TransactionDetailRows tx={tx} refAddressHash={referenceAddress} />
 }
 
-const TransactionDetailRows = ({
-  tx,
-  refAddressHash
-}: {
+interface TransactionModalSubcomponentProps {
   tx: e.AcceptedTransaction | e.PendingTransaction
   refAddressHash: AddressHash
-}) => {
+}
+
+const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
   const { t } = useTranslation()
   const direction = useTransactionDirection(tx, refAddressHash)
 
@@ -130,7 +139,7 @@ const TransactionDetailRows = ({
   )
 }
 
-const TransactionStatus = ({ tx }: { tx: e.AcceptedTransaction | e.PendingTransaction }) => {
+const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
@@ -140,7 +149,7 @@ const TransactionStatus = ({ tx }: { tx: e.AcceptedTransaction | e.PendingTransa
       text: t('Confirmed')
     },
     pending: {
-      color: theme.bg.primary,
+      color: theme.bg.contrast,
       text: t('Pending')
     },
     scriptError: {
@@ -162,13 +171,7 @@ const TransactionStatus = ({ tx }: { tx: e.AcceptedTransaction | e.PendingTransa
   )
 }
 
-const TransactionAmounts = ({
-  tx,
-  refAddressHash
-}: {
-  tx: e.AcceptedTransaction | e.PendingTransaction
-  refAddressHash: AddressHash
-}) => {
+const TransactionAmounts = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
@@ -178,6 +181,7 @@ const TransactionAmounts = ({
   const infoType = useTransactionInfoType(tx, refAddressHash)
 
   const isMoved = infoType === 'move'
+  const isPending = infoType === 'pending'
   const groupedFtAmounts = useMemo(
     () => groupBy(fungibleTokens, (t) => (t.amount > 0 ? 'in' : 'out')),
     [fungibleTokens]
@@ -197,7 +201,7 @@ const TransactionAmounts = ({
         </Row>
       )}
       {!isMoved && groupedFtAmounts.out && (
-        <Row title={t('Sent')} transparent titleColor={theme.global.send}>
+        <Row title={t(isPending ? 'Sending' : 'Sent')} transparent titleColor={theme.global.send}>
           <AmountsContainer>
             {groupedFtAmounts.out.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />

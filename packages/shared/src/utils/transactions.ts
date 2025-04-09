@@ -7,10 +7,10 @@ import {
   isConsolidationTx
 } from '@/transactions'
 import { AddressHash } from '@/types/addresses'
-import { TransactionInfoType } from '@/types/transactions'
+import { SentTransaction, TransactionInfoType } from '@/types/transactions'
 
 export const getTransactionInfoType = (
-  tx: e.Transaction | e.PendingTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction,
   addressHash: AddressHash,
   isInternalTransfer: boolean,
   isInAddressDetailsModal?: boolean

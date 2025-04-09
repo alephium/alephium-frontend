@@ -77,3 +77,38 @@ export const useFetchAddressesHashesWithBalanceSortedByLastUse = (tokenId: Token
     isLoading: isLoadingSortedAddresses || isLoadingAddressesWithBalance
   }
 }
+
+const ONE_MONTH_IN_MS = 30 * 24 * 60 * 60 * 1000
+
+export const useFetchAddressesHashesSplitByUseFrequency = () => {
+  const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
+  const allAddressHashes = useUnsortedAddressesHashes()
+  const { data: latestTxs, isLoading: isLoading } = useFetchLatestTransactionOfEachAddress()
+
+  const splitAddressHashes = useMemo(() => {
+    const frequentlyUsedAddressHashes = []
+    let infrequentlyUsedAddressHashes = []
+
+    if (!isNetworkOffline) {
+      for (const { addressHash, latestTx } of latestTxs) {
+        if (latestTx?.timestamp && latestTx.timestamp > Date.now() - ONE_MONTH_IN_MS) {
+          frequentlyUsedAddressHashes.push(addressHash)
+        } else {
+          infrequentlyUsedAddressHashes.push(addressHash)
+        }
+      }
+    } else {
+      infrequentlyUsedAddressHashes = allAddressHashes
+    }
+
+    return {
+      frequentlyUsedAddressHashes,
+      infrequentlyUsedAddressHashes
+    }
+  }, [allAddressHashes, isNetworkOffline, latestTxs])
+
+  return {
+    data: splitAddressHashes,
+    isLoading
+  }
+}
