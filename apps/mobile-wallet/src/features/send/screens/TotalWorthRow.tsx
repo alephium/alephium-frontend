@@ -1,4 +1,4 @@
-import { AddressHash, AssetAmount, calculateAmountWorth, selectAllPrices } from '@alephium/shared'
+import { AddressHash, AssetAmount, calculateTokenAmountWorth, selectAllPrices } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +28,7 @@ const TotalWorthRow = ({ assetAmounts, fromAddress }: TotalWorthRowProps) => {
     const tokenInfo = knownFungibleTokens.find(({ id }) => id === token.id)
     const tokenPrice = tokenPrices.find(({ symbol }) => symbol === tokenInfo?.symbol)?.price
 
-    return totalWorth + calculateAmountWorth(BigInt(token.amount), tokenPrice ?? 0, tokenInfo?.decimals ?? 0)
+    return totalWorth + calculateTokenAmountWorth(BigInt(token.amount), tokenPrice ?? 0, tokenInfo?.decimals ?? 0)
   }, 0)
 
   if (!totalWorth) return null

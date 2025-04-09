@@ -2,7 +2,7 @@ import { NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray, orderBy } from 'lodash'
 import sanitize from 'sanitize-html'
 
-import { calculateAmountWorth } from '@/numbers'
+import { calculateTokenAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
 
 export const sortAssets = (assets: Asset[]) =>
@@ -35,7 +35,7 @@ export const calculateAssetsData = (
         : undefined
     const worth =
       tokenPrice !== undefined && tokenPrice.price !== null
-        ? calculateAmountWorth(balance, tokenPrice.price, decimals)
+        ? calculateTokenAmountWorth(balance, tokenPrice.price, decimals)
         : undefined
 
     acc.push({
