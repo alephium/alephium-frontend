@@ -1,4 +1,4 @@
-import { AddressHash, isConfirmedTx } from '@alephium/shared'
+import { AddressHash, isConfirmedTx, SentTransaction } from '@alephium/shared'
 import { useTransactionInfoType } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { colord } from 'colord'
@@ -6,7 +6,10 @@ import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } f
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
-const useTransactionIconLabel = (tx: e.Transaction | e.PendingTransaction, addressHash: AddressHash) => {
+const useTransactionIconLabel = (
+  tx: e.Transaction | e.PendingTransaction | SentTransaction,
+  addressHash: AddressHash
+) => {
   const theme = useTheme()
   const { t } = useTranslation()
   const infoType = useTransactionInfoType(tx, addressHash)

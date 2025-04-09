@@ -407,6 +407,8 @@
   "No assets here, yet.": "No assets here, yet.",
   "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data.",
   "Loading your balances...": "Loading your balances...",
+  "Loading transactions...": "Loading transactions...",
+  "Loading transaction details...": "Loading transaction details...",
   "Wallet worth": "Wallet worth",
   "Address worth": "Address worth",
   "Total worth": "Total worth",

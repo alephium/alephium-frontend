@@ -1,4 +1,13 @@
-import { AddressHash, isFT, isNFT, ListedFT, NFT, NonStandardToken, UnlistedFT } from '@alephium/shared'
+import {
+  AddressHash,
+  isFT,
+  isNFT,
+  ListedFT,
+  NFT,
+  NonStandardToken,
+  SentTransaction,
+  UnlistedFT
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
@@ -26,7 +35,7 @@ type TransactionTokens = {
 }
 
 export const useFetchTransactionTokens = (
-  tx: e.Transaction | e.PendingTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction,
   addressHash: AddressHash
 ): TransactionTokens => {
   const networkId = useCurrentlyOnlineNetworkId()

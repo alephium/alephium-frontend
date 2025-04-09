@@ -2,6 +2,7 @@ import {
   client,
   getHumanReadableError,
   SessionRequestEvent,
+  transactionSent,
   WALLETCONNECT_ERRORS,
   WalletConnectError
 } from '@alephium/shared'
@@ -50,7 +51,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
-import { transactionSent } from '~/store/transactions/transactionsActions'
 import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
@@ -106,7 +106,7 @@ const WalletConnectSessionRequestModal = withModal(
                 amount: attoAlphAmount,
                 tokens,
                 timestamp: new Date().getTime(),
-                status: 'pending',
+                status: 'sent',
                 type: 'transfer'
               })
             )
@@ -135,8 +135,9 @@ const WalletConnectSessionRequestModal = withModal(
                 amount: attoAlphAmount,
                 tokens,
                 timestamp: new Date().getTime(),
-                status: 'pending',
-                type: 'call-contract'
+                status: 'sent',
+                type: 'contract',
+                toAddress: ''
               })
             )
 
@@ -157,8 +158,9 @@ const WalletConnectSessionRequestModal = withModal(
                 hash: data.txId,
                 fromAddress: requestData.wcData.fromAddress,
                 timestamp: new Date().getTime(),
-                status: 'pending',
-                type: 'deploy-contract'
+                status: 'sent',
+                type: 'contract',
+                toAddress: ''
               })
             )
 

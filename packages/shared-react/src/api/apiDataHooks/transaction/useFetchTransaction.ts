@@ -18,10 +18,13 @@ export const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) 
   const { data: confirmedTx, isLoading: isLoadingConfirmedTx } = useQuery(
     confirmedTransactionQuery({ txHash, addressHashes, networkId, skip: skip || isPendingTx })
   )
-  const { data: pendingTx } = useFetchPendingTransaction({ txHash, skip: skip || !isPendingTx })
+  const { data: pendingTx, isLoading: isLoadingPendingTx } = useFetchPendingTransaction({
+    txHash,
+    skip: skip || !isPendingTx
+  })
 
   return {
     data: confirmedTx ?? pendingTx,
-    isLoading: isLoadingConfirmedTx
+    isLoading: isLoadingConfirmedTx || isLoadingPendingTx
   }
 }

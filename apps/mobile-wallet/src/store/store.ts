@@ -17,7 +17,6 @@ import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
 import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
 import loadersSlice from '~/store/loadersSlice'
-import pendingTransactionsSlice from '~/store/pendingTransactionsSlice'
 import walletSlice from '~/store/wallet/walletSlice'
 import walletGenerationSlice from '~/store/walletGenerationSlice'
 
@@ -32,7 +31,6 @@ export const store = configureStore({
     [loaderSlice.name]: loaderSlice.reducer,
     [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
-    [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
     [backupSlice.name]: backupSlice.reducer,
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
