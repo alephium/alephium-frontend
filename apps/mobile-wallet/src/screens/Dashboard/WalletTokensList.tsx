@@ -1,5 +1,4 @@
 import { useFetchWalletFtsSorted, useFetchWalletSingleTokenBalances } from '@alephium/shared-react'
-import { useMemo } from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -12,17 +11,16 @@ import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 // TODO: Should be converted to a flash list like the token list in the address details modal
 const WalletTokensList = () => {
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFtsSorted()
+  const { data: sortedFts, isLoading } = useFetchWalletFtsSorted()
 
-  const fts = useMemo(() => [...listedFts, ...unlistedFts], [listedFts, unlistedFts])
-  const hasFts = fts.length > 0
+  const hasFts = sortedFts.length > 0
 
   if (isLoading || !hasFts) return <EmptyTokensListPlaceholders isLoading={isLoading} isEmpty={!hasFts} />
 
   return (
     <WalletTokensListStyled>
-      {fts.map(({ id }, index) => (
-        <WalletFtListItem key={id} tokenId={id} hideSeparator={index === fts.length - 1} />
+      {sortedFts.map(({ id }, index) => (
+        <WalletFtListItem key={id} tokenId={id} hideSeparator={index === sortedFts.length - 1} />
       ))}
 
       <WalletTokensListFooter />

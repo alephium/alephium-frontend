@@ -10,6 +10,7 @@ import {
   useCurrentlyOnlineNetworkId,
   useFetchAddressBalances,
   useFetchAddressFtsSorted,
+  useFetchAddressFtsUnsorted,
   useFetchAddressTokensByType,
   useSortedTokenIds
 } from '@alephium/shared-react'
@@ -61,7 +62,7 @@ const TokensAmountInputs = ({
   const selectedValueRef = useRef<HTMLDivElement>(null)
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances(address.hash)
 
-  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(address.hash)
+  const { data: fts } = useFetchAddressFtsUnsorted(address.hash)
   const {
     data: { nftIds }
   } = useFetchAddressTokensByType(address.hash)
@@ -112,8 +113,7 @@ const TokensAmountInputs = ({
       const cleanedAmount = amountInput === '00' ? '0' : amountInput
       const amountValueAsFloat = parseFloat(cleanedAmount)
 
-      const ft =
-        listedFts.find(({ id }) => selectedTokenId === id) ?? unlistedFts.find(({ id }) => selectedTokenId === id)
+      const ft = fts.find(({ id }) => selectedTokenId === id)
       const availableAmount = toHumanReadableAmount(
         BigInt(selectedTokenBalances.availableBalance ?? 0),
         ft?.decimals ?? 0
@@ -141,7 +141,7 @@ const TokensAmountInputs = ({
       })
       onTokenAmountsChange(newTokenAmounts)
     },
-    [assetAmounts, errors, listedFts, minAmountInAlph, nftIds, onTokenAmountsChange, t, tokensBalances, unlistedFts]
+    [assetAmounts, errors, minAmountInAlph, nftIds, onTokenAmountsChange, fts, t, tokensBalances]
   )
 
   const handleAddAssetClick = () => {
@@ -188,7 +188,7 @@ const TokensAmountInputs = ({
           {assetAmounts.map(({ id, amountInput = '' }, index) => {
             const tokenBalances = tokensBalances?.find((token) => token.id === id)
 
-            const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
+            const ft = fts.find((token) => token.id === id)
 
             // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
             const availableHumanReadableAmount = toHumanReadableAmount(
@@ -288,11 +288,11 @@ export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const networkId = useCurrentlyOnlineNetworkId()
-  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
   const {
     data: { nftIds, nstIds }
   } = useFetchAddressTokensByType(addressHash)
-  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
+  const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
 
   const { data: tokensSearchStrings } = useQuery(addressTokensSearchStringsQuery({ addressHash, networkId }))
 
