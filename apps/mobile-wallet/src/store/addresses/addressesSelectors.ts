@@ -61,7 +61,7 @@ export const makeSelectAddressesTokens = () =>
       selectAllPrices,
       (_state: RootState, _addressHash?: AddressHash | AddressHash[], filterHiddenTokens?: boolean) =>
         filterHiddenTokens ?? false,
-      (state: RootState) => state.hiddenAssets.hiddenAssetsIds
+      (state: RootState) => state.hiddenTokens.hiddenTokensIds
     ],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices, filterHiddenTokens, hiddenAssetIds): Asset[] => {
       const tokenBalances = getAddressesTokenBalances(addresses)
@@ -89,7 +89,7 @@ export const makeSelectAddressesUnknownTokens = () =>
 
 export const makeSelectAddressesHiddenFungibleTokens = () =>
   createSelector(
-    [makeSelectAddressesTokens(), (state: RootState) => state.hiddenAssets.hiddenAssetsIds],
+    [makeSelectAddressesTokens(), (state: RootState) => state.hiddenTokens.hiddenTokensIds],
     (tokens, hiddenAssetIds): Asset[] =>
       tokens.filter((token): token is AddressFungibleToken => hiddenAssetIds.includes(token.id))
   )
@@ -162,19 +162,6 @@ export const makeSelectAddressesVerifiedFungibleTokens = () =>
 export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
   makeSelectAddressesVerifiedFungibleTokens(),
   (verifiedFungibleTokens) => verifiedFungibleTokens.map((token) => token.symbol)
-)
-
-export const selectAddressHiddenAssetIds = createSelector(
-  [
-    (state: RootState) => state.hiddenAssets.hiddenAssetsIds,
-    (_, addressHash: AddressHash) => addressHash,
-    (state: RootState) => state
-  ],
-  (hiddenAssetsIds, addressHash, state) => {
-    const address = selectAddressByHash(state, addressHash)
-
-    return hiddenAssetsIds.filter((id) => address?.tokens.some(({ tokenId }) => tokenId === id))
-  }
 )
 
 export const selectAddressesInGroup = createSelector(

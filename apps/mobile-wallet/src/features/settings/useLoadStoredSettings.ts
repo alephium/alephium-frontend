@@ -1,8 +1,12 @@
-import { localStorageNetworkSettingsLoaded, NetworkSettings, storedSharedSettingsLoaded } from '@alephium/shared'
+import {
+  hiddenTokensLoadedFromStorage,
+  localStorageNetworkSettingsLoaded,
+  NetworkSettings,
+  storedSharedSettingsLoaded
+} from '@alephium/shared'
 import { useEffect } from 'react'
 
-import { hiddenAssetsLoadedFromStorage } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
-import { getHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsStorage'
+import { getHiddenTokensIds } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'
 import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDAppsActions'
 import { getFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
@@ -32,8 +36,8 @@ const useLoadStoredSettings = () => {
       const favoriteDApps = await getFavoriteDApps()
       dispatch(favoriteDAppsLoadedFromStorage(favoriteDApps))
 
-      const hiddenAssetsIds = await getHiddenAssetsIds()
-      dispatch(hiddenAssetsLoadedFromStorage(hiddenAssetsIds))
+      const hiddenTokensIds = await getHiddenTokensIds()
+      dispatch(hiddenTokensLoadedFromStorage(hiddenTokensIds))
     }
 
     loadStoredSettingsIntoState()

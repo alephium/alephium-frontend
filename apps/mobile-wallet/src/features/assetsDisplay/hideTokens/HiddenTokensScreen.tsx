@@ -1,4 +1,4 @@
-import { selectFungibleTokenById } from '@alephium/shared'
+import { selectFungibleTokenById, unhideToken } from '@alephium/shared'
 import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useMemo } from 'react'
@@ -14,7 +14,6 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
-import { unhideAsset } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -22,16 +21,16 @@ import { makeSelectAddressesHiddenFungibleTokens } from '~/store/addresses/addre
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 
-interface HiddenAssetsScreenProps extends StackScreenProps<RootStackParamList, 'HiddenAssetsScreen'>, ScreenProps {}
+interface HiddenTokensScreenProps extends StackScreenProps<RootStackParamList, 'HiddenTokensScreen'>, ScreenProps {}
 
-const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) => {
+const HiddenTokensScreen = ({ navigation, ...props }: HiddenTokensScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
   const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
 
   const handleAddAssetPress = () => {
-    dispatch(openModal({ name: 'SelectAssetToHideModal' }))
+    dispatch(openModal({ name: 'SelectTokenToHideModal' }))
     sendAnalytics({ event: 'Clicked on button to add an asset to hidden list' })
   }
 
@@ -77,8 +76,8 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
 
   if (!token) return
 
-  const handleAssetUnhide = () => {
-    dispatch(unhideAsset(tokenId))
+  const handleTokenUnhide = () => {
+    dispatch(unhideToken(tokenId))
     showToast({ text1: t('Asset unhidden'), type: 'success' })
     sendAnalytics({ event: 'Clicked on button to unhide an asset' })
   }
@@ -92,14 +91,14 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
     <ListItem
       icon={<AssetLogo assetId={token.id} size={32} />}
       title={token.name}
-      rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleAssetUnhide} />}
+      rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleTokenUnhide} />}
       isLast={isLast}
       onPress={openTokenDetailsModal}
     />
   )
 }
 
-export default HiddenAssetsScreen
+export default HiddenTokensScreen
 
 const FungibleTokensList = styled.View`
   gap: ${VERTICAL_GAP / 2}px;

@@ -16,7 +16,7 @@ const WalletTokensListFooter = () => (
 export default WalletTokensListFooter
 
 const WalletHiddenTokensButton = () => {
-  const tokensCount = useAppSelector((s) => s.hiddenAssets.hiddenAssetsIds.length)
+  const tokensCount = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds.length)
 
   return <HiddenTokensButton tokensCount={tokensCount} />
 }

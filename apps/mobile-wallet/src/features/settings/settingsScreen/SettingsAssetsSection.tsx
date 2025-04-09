@@ -26,7 +26,7 @@ const SettingsAssetsSection = () => {
       <Row
         title="Hidden assets"
         subtitle={t("Hide assets you're not interested in")}
-        onPress={() => navigation.navigate('HiddenAssetsScreen')}
+        onPress={() => navigation.navigate('HiddenTokensScreen')}
         isLast
       >
         <Badge>{numberOfHiddenFungibleTokens}</Badge>
