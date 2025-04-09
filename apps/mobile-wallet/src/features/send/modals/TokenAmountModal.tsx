@@ -1,6 +1,6 @@
 import {
   AddressHash,
-  calculateAmountWorth,
+  calculateTokenAmountWorth,
   fromHumanReadableAmount,
   FungibleToken,
   getNumberOfDecimals,
@@ -153,7 +153,7 @@ const EnteredAmountWorth = ({ tokenId, amount }: EnteredAmountWorthProps) => {
 
   const tokenPrice = tokenPrices.find((p) => p.symbol === token?.symbol)?.price
   const tokenAmount = amount ? fromHumanReadableAmount(amount, token?.decimals) : BigInt(0)
-  const totalWorth = token ? calculateAmountWorth(tokenAmount, tokenPrice ?? 0, token?.decimals ?? 0) : undefined
+  const totalWorth = token ? calculateTokenAmountWorth(tokenAmount, tokenPrice ?? 0, token?.decimals ?? 0) : undefined
 
   if (!totalWorth) return null
 

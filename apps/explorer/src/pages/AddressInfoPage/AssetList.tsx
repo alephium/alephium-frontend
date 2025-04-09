@@ -1,4 +1,4 @@
-import { AddressHash, calculateAmountWorth, sortAssets } from '@alephium/shared'
+import { AddressHash, calculateTokenAmountWorth, sortAssets } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
@@ -51,7 +51,8 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
               balance: BigInt(balance.balance),
               lockedBalance: BigInt(balance.lockedBalance),
               worth:
-                (t.verified && calculateAmountWorth(BigInt(balance.balance), tokensPrices[t.symbol], t.decimals)) ||
+                (t.verified &&
+                  calculateTokenAmountWorth(BigInt(balance.balance), tokensPrices[t.symbol], t.decimals)) ||
                 undefined
             }
           ]
@@ -65,7 +66,8 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
         balance: BigInt(addressBalance.balance),
         lockedBalance: BigInt(addressBalance.lockedBalance),
         worth:
-          calculateAmountWorth(BigInt(addressBalance.balance), tokensPrices[ALPH.symbol], ALPH.decimals) || undefined
+          calculateTokenAmountWorth(BigInt(addressBalance.balance), tokensPrices[ALPH.symbol], ALPH.decimals) ||
+          undefined
       })
     }
 

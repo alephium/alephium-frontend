@@ -1,4 +1,4 @@
-import { ApiBalances, calculateAmountWorth, ListedFT, TokenId } from '@alephium/shared'
+import { ApiBalances, calculateTokenAmountWorth, ListedFT, TokenId } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 import { isNumber, orderBy } from 'lodash'
 import { useMemo } from 'react'
@@ -39,7 +39,7 @@ const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) 
                   const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
 
                   return isNumber(tokenPrice)
-                    ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals)
+                    ? calculateTokenAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals)
                     : -1
                 },
                 'name',
