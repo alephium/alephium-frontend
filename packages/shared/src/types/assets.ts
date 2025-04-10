@@ -5,7 +5,6 @@ import {
   NFTTokenUriMetaData,
   Optional
 } from '@alephium/web3'
-import { EntityState } from '@reduxjs/toolkit'
 
 import { StringAlias } from '@/types/utils'
 
@@ -55,18 +54,6 @@ export enum NFTDataTypes {
 export type NFTDataType = keyof typeof NFTDataTypes
 
 export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'> & { dataType: NFTDataType }
-
-export interface FungibleTokensState extends EntityState<FungibleToken> {
-  loadingVerified: boolean
-  loadingUnverified: boolean
-  loadingTokenTypes: boolean
-  status: 'initialized' | 'uninitialized' | 'initialization-failed'
-  checkedUnknownTokenIds: FungibleToken['id'][]
-}
-
-export interface NFTsState extends EntityState<NFT> {
-  loading: boolean
-}
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}

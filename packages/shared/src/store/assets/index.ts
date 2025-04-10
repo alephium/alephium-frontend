@@ -1,5 +1,0 @@
-export * from '@/store/assets/assetsActions'
-export * from '@/store/assets/assetsAdapter'
-export * from '@/store/assets/fungibleTokensSlice'
-export * from '@/store/assets/hiddenTokensActions'
-export * from '@/store/assets/hiddenTokensSelectors'
