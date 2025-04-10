@@ -1,4 +1,10 @@
-import { AddressHash, AddressSettings, DEPRECATED_Address as Address, getTransactionsOfAddress } from '@alephium/shared'
+import {
+  AddressHash,
+  AddressMetadataWithHash,
+  AddressSettings,
+  DEPRECATED_Address as Address,
+  getTransactionsOfAddress
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
@@ -6,7 +12,7 @@ import * as Clipboard from 'expo-clipboard'
 
 import i18n from '~/features/localization/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
-import { AddressDiscoveryGroupData, AddressMetadataWithHash } from '~/types/addresses'
+import { AddressDiscoveryGroupData } from '~/types/addresses'
 import {
   AddressConfirmedTransaction,
   AddressPendingTransaction,

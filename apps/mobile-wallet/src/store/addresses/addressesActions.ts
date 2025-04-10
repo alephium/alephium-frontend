@@ -1,12 +1,10 @@
 import { AddressHash, extractNewTransactions, getTransactionsOfAddress } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { RootState } from '~/store/store'
-
-export const addressDeleted = createAction<AddressHash>('addresses/addressDeleted')
 
 export const syncLatestTransactions = createAsyncThunk(
   'addresses/syncLatestTransactions',

@@ -1,5 +1,7 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
+  activeWalletDeleted,
+  addressesImported,
   AddressIndex,
   appReset,
   client,
@@ -18,9 +20,8 @@ import {
 } from '@reduxjs/toolkit'
 
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import { addressesImported } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
-import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
+import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,
@@ -184,7 +185,7 @@ const addressDiscoverySlice = createSlice({
         newWalletGenerated,
         newWalletImportedWithMetadata,
         appReset,
-        walletDeleted,
+        activeWalletDeleted,
         networkPresetSwitched,
         customNetworkSettingsSaved
       ),

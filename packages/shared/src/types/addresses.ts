@@ -29,6 +29,8 @@ export type AddressMetadata = AddressSettings & {
   index: AddressIndex
 }
 
+export type AddressMetadataWithHash = AddressMetadata & { hash: string }
+
 // hash: AddressHash
 // index: number
 // isDefault: boolean

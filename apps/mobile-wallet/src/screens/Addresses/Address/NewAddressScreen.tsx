@@ -1,4 +1,5 @@
 import { keyring } from '@alephium/keyring'
+import { newAddressesSaved } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,6 @@ import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
-import { newAddressGenerated } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
 
@@ -51,7 +51,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       }
 
       await persistAddressSettings(newAddress)
-      dispatch(newAddressGenerated(newAddress))
+      dispatch(newAddressesSaved([newAddress]))
       await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({

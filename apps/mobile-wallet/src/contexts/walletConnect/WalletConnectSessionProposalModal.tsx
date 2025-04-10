@@ -3,6 +3,7 @@ import {
   DEPRECATED_Address as Address,
   isNetworkValid,
   networkSettingsPresets,
+  newAddressesSaved,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
@@ -36,7 +37,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey, initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { selectAddressesInGroup, selectAllAddresses } from '~/store/addresses/addressesSelectors'
-import { newAddressGenerated } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast } from '~/utils/layout'
@@ -90,7 +90,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         }
 
         await persistAddressSettings(newAddress)
-        dispatch(newAddressGenerated(newAddress))
+        dispatch(newAddressesSaved([newAddress]))
         await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
 
         sendAnalytics({ event: 'WC: Generated new address' })
