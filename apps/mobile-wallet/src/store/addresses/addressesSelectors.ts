@@ -33,10 +33,6 @@ export const selectDefaultAddress = createSelector(
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
-export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
-  addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-)
-
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) => (group !== undefined ? addresses.filter((address) => address.group === group) : addresses)
