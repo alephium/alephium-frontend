@@ -1,11 +1,4 @@
-import {
-  AddressHash,
-  getTransactionInfoType,
-  isInternalTx,
-  isSentTx,
-  SentTransaction,
-  TransactionInfoType
-} from '@alephium/shared'
+import { AddressHash, getTransactionInfoType, SentTransaction, TransactionInfoType } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
@@ -17,10 +10,9 @@ export const useTransactionInfoType = (
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const isInternalTransfer = isSentTx(tx) ? false : isInternalTx(tx, allAddressHashes)
 
   return useMemo(
-    () => getTransactionInfoType(tx, addressHash, isInternalTransfer, isInAddressDetailsModal),
-    [addressHash, isInAddressDetailsModal, isInternalTransfer, tx]
+    () => getTransactionInfoType(tx, addressHash, allAddressHashes, isInAddressDetailsModal),
+    [addressHash, isInAddressDetailsModal, allAddressHashes, tx]
   )
 }
