@@ -1,61 +1,44 @@
+import { AddressHash, TokenId } from '@alephium/shared'
+import { useFetchAddressFtsSorted, useFetchAddressTokensByType, useSortedTokenIds } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { orderBy } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
-import FlashListScreen from '~/components/layout/FlashListScreen'
+import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
-import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
+import TokenRow from '~/features/send/screens/addressTokensScreen/TokenRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import {
-  makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesNFTs,
-  makeSelectAddressesUnknownTokens,
-  selectAddressByHash
-} from '~/store/addresses/addressesSelectors'
+import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 interface ScreenProps
-  extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>,
+  extends StackScreenProps<SendNavigationParamList, 'AddressTokensScreen'>,
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
-const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction, setAssetAmount } = useSendContext()
-  const { screenScrollHandler } = useHeaderContext()
+const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+  const { fromAddress, buildTransaction, setAssetAmount } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash, true))
-  const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokens(), [])
-  const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, address?.hash))
-  const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const [shouldOpenAmountModal, setShouldOpenAmountModal] = useState(!!params?.tokenId)
 
-  const isContinueButtonDisabled = assetAmounts.length < 1
-
-  const handleContinueButtonPress = async () => {
+  const handleContinueButtonPress = useCallback(async () => {
     dispatch(activateAppLoading(t('Building transaction')))
+
     await buildTransaction({
       onBuildSuccess: () => navigation.navigate('VerifyScreen'),
       onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
     })
     dispatch(deactivateAppLoading())
-  }
-
-  const assets = [...knownFungibleTokens, ...nfts, ...unknownTokens]
-  const orderedAssets = orderBy(assets, (a) => assetAmounts.find((assetWithAmount) => a.id === assetWithAmount.id))
-
-  const tokenName = params?.tokenId ? orderedAssets.find((t) => t.id === params.tokenId) : undefined
+  }, [buildTransaction, dispatch, navigation, t])
 
   useEffect(() => {
     const tokenId = params?.tokenId
@@ -68,10 +51,10 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         props: {
           tokenId,
           addressHash: fromAddress,
-          onAmountValidate: (amount) => {
+          onAmountValidate: (amount, tokenName) => {
             setAssetAmount(tokenId, amount)
             showToast({
-              text1: t('Added {{ tokenName }}', { tokenName: tokenName ?? tokenId }),
+              text1: t('Added {{ tokenName }}', { tokenName }),
               type: 'info',
               visibilityTime: ToastDuration.SHORT
             })
@@ -81,24 +64,56 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     )
 
     setShouldOpenAmountModal(false)
-  }, [dispatch, fromAddress, params?.isNft, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t, tokenName])
+  }, [dispatch, fromAddress, params?.isNft, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t])
 
   if (!address) return null
 
   return (
+    <AddressTokensFlashListScreen
+      addressHash={address.hash}
+      onContinueButtonPress={handleContinueButtonPress}
+      {...props}
+    />
+  )
+}
+
+export default AddressTokensScreen
+
+interface AddressTokensFlashListScreenProps extends Partial<FlashListScreenProps<TokenId>> {
+  addressHash: AddressHash
+  onContinueButtonPress: () => void
+}
+
+const AddressTokensFlashListScreen = ({
+  addressHash,
+  onContinueButtonPress,
+  ...props
+}: AddressTokensFlashListScreenProps) => {
+  const { t } = useTranslation()
+  const { screenScrollHandler } = useHeaderContext()
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
+  const {
+    data: { nftIds, nstIds }
+  } = useFetchAddressTokensByType(addressHash)
+  const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
+  const { assetAmounts } = useSendContext()
+
+  const isContinueButtonDisabled = assetAmounts.length < 1
+
+  return (
     <FlashListScreen
-      data={orderedAssets}
-      keyExtractor={({ id }) => id}
+      {...props}
+      data={sortedTokenIds}
       extraData={{ assetAmounts }}
-      renderItem={({ item: asset, index }) => (
-        <AssetRow
-          key={asset.id}
-          asset={asset}
-          isLast={index === orderedAssets.length - 1}
+      renderItem={({ item: tokenId, index }) => (
+        <TokenRow
+          key={tokenId}
+          tokenId={tokenId}
+          isLast={index === sortedTokenIds.length - 1}
           style={{ marginHorizontal: DEFAULT_MARGIN }}
+          addressHash={addressHash}
         />
       )}
-      verticalGap
       contentPaddingTop
       screenTitle={t('Assets')}
       screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
@@ -108,13 +123,10 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <Button
           title={t('Continue')}
           variant="highlight"
-          onPress={handleContinueButtonPress}
+          onPress={onContinueButtonPress}
           disabled={isContinueButtonDisabled}
         />
       )}
-      {...props}
     />
   )
 }
-
-export default AssetsScreen

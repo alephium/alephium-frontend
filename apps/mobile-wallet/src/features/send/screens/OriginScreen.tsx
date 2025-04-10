@@ -43,7 +43,7 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
         <Button
           title={t('Continue')}
           variant="highlight"
-          onPress={() => navigation.navigate('AssetsScreen', { tokenId: params?.tokenId })}
+          onPress={() => navigation.navigate('AddressTokensScreen', { tokenId: params?.tokenId })}
         />
       )}
       tokenId={params?.tokenId}

@@ -8,7 +8,7 @@ import { View } from 'react-native'
 import StackHeader from '~/components/headers/StackHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import { SendContextProvider } from '~/contexts/SendContext'
-import AssetsScreen from '~/features/send/screens/AssetsScreen'
+import AddressTokensScreen from '~/features/send/screens/addressTokensScreen/AddressTokensScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
 import OriginScreen from '~/features/send/screens/OriginScreen'
 import VerifyScreen from '~/features/send/screens/VerifyScreen'
@@ -19,11 +19,11 @@ import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoB
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { originAddressHash?: AddressHash }
   OriginScreen?: { tokenId?: Token['id'] }
-  AssetsScreen?: { tokenId?: Token['id']; isNft?: boolean }
+  AddressTokensScreen?: { tokenId?: Token['id']; isNft?: boolean }
   VerifyScreen: undefined
 }
 
-export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
+export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AddressTokensScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
@@ -39,7 +39,7 @@ const SendNavigation = ({
 
   const initialRouteName =
     params?.destinationAddressHash && originAddressHash
-      ? 'AssetsScreen'
+      ? 'AddressTokensScreen'
       : params?.destinationAddressHash
         ? 'OriginScreen'
         : 'DestinationScreen'
@@ -72,8 +72,8 @@ const SendNavigation = ({
                 initialParams={{ tokenId: params?.tokenId }}
               />
               <SendStack.Screen
-                name="AssetsScreen"
-                component={AssetsScreen}
+                name="AddressTokensScreen"
+                component={AddressTokensScreen}
                 initialParams={{ tokenId: params?.tokenId, isNft: params?.isNft }}
               />
               <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />

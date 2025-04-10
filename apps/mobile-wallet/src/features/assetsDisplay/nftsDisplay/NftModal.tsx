@@ -1,4 +1,4 @@
-import { selectNFTById } from '@alephium/shared'
+import { useFetchAddressesHashesWithBalance, useFetchNft } from '@alephium/shared-react'
 import { openBrowserAsync } from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
@@ -12,8 +12,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import SendButton from '~/features/send/SendButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type NftModalProps = Pick<NFTImageProps, 'nftId'>
@@ -22,10 +21,11 @@ const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
 const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
-  const originAddressHash = useAppSelector((s) => selectAddressesWithToken(s, nftId)[0]?.hash)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+
+  const { data: nft } = useFetchNft({ id: nftId })
+  const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
 
   if (!nft) return null
 
@@ -46,7 +46,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
           onPress={handleClose}
           tokenId={nftId}
           isNft
-          originAddressHash={originAddressHash}
+          originAddressHash={addressesWithToken.at(0)}
         />
         {canViewFullSize && (
           <ActionCardButton

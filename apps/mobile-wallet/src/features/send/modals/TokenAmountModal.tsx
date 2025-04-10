@@ -30,7 +30,7 @@ import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
-  onAmountValidate: (amount: bigint) => void
+  onAmountValidate: (amount: bigint, tokenName: string) => void
   addressHash?: AddressHash
   initialAmount?: bigint
 }
@@ -86,7 +86,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     }
 
     const handleAmountValidate = () => {
-      onAmountValidate(amount ? fromHumanReadableAmount(amount, token.decimals) : BigInt(0))
+      onAmountValidate(amount ? fromHumanReadableAmount(amount, token.decimals) : BigInt(0), token.name ?? token.id)
       dispatch(closeModal({ id }))
     }
 

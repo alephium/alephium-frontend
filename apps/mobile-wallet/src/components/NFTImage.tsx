@@ -1,5 +1,7 @@
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
+import { useFetchNft } from '@alephium/shared-react'
 import { Image } from 'expo-image'
+import { isNumber } from 'lodash'
 import { CameraOff, FileImage } from 'lucide-react-native'
 import { memo, useState } from 'react'
 import { DimensionValue, Platform } from 'react-native'
@@ -11,7 +13,6 @@ import NFTPlaceholder from '~/components/NFTPlaceholder'
 import NFTWebView from '~/components/NFTWebView'
 import useIsNftCached from '~/features/assetsDisplay/nftsDisplay/useIsNftCached'
 import useNftHeaderData from '~/features/assetsDisplay/nftsDisplay/useNftHeaderData'
-import { useAppSelector } from '~/hooks/redux'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 export interface NFTImageProps {
@@ -25,7 +26,7 @@ const maxFileSizeInMB = 1
 const maxFileSizeInBytes = 1024 * 1024 * maxFileSizeInMB
 
 const NFTImage = memo(({ nftId, size = '100%', play, sizeLimited = true }: NFTImageProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nft } = useFetchNft({ id: nftId })
   const isCached = useIsNftCached(nftId)
   const { contentType, isLargeFile } = useNftHeaderData({ nftId, maxFileSizeInBytes })
   const theme = useTheme()
@@ -64,7 +65,11 @@ const NFTImage = memo(({ nftId, size = '100%', play, sizeLimited = true }: NFTIm
     />
   )
 
-  return contentType === 'video' ? <NftVideoPlayIconOverlay>{image}</NftVideoPlayIconOverlay> : image
+  return contentType === 'video' ? (
+    <NftVideoPlayIconOverlay size={isNumber(size) ? size / 2 : undefined}>{image}</NftVideoPlayIconOverlay>
+  ) : (
+    image
+  )
 })
 
 export default NFTImage
