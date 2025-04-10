@@ -11,6 +11,7 @@ import {
   queryClient,
   useAddressesDataPolling,
   useInitializeClient,
+  useInitializeThrottledClient,
   useInterval,
   usePersistQueryClientContext
 } from '@alephium/shared-react'
@@ -129,7 +130,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   const { restoreQueryCache } = usePersistQueryClientContext()
 
   useLoadStoredSettings()
-  useInitializeClient()
+  useInitializeClient() // TODO: Delete
+  useInitializeThrottledClient()
   useLocalization()
   useSystemRegion()
   useAddressesDataPolling()
