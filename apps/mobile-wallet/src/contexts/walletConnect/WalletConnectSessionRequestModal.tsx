@@ -372,10 +372,7 @@ const WalletConnectSessionRequestModal = withModal(
                       </AssetAmounts>
                     </Row>
 
-                    <TotalWorthRow
-                      assetAmounts={requestData.wcData.assetAmounts}
-                      fromAddress={requestData.wcData.fromAddress}
-                    />
+                    <TotalWorthRow assetAmounts={requestData.wcData.assetAmounts} />
                   </>
                 )}
               <Row title={isSignRequest ? t('Signing with') : t('From')} titleColor="secondary">
