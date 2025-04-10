@@ -19,8 +19,4 @@ export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
     status === 'uninitialized'
 )
 
-export const {
-  selectAll: selectAllNFTs,
-  selectById: selectNFTById,
-  selectIds: selectNFTIds
-} = nftsAdapter.getSelectors<SharedRootState>((state) => state.nfts)
+export const { selectAll: selectAllNFTs } = nftsAdapter.getSelectors<SharedRootState>((state) => state.nfts)

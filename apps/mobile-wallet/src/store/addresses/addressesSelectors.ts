@@ -3,14 +3,11 @@ import {
   AddressHash,
   Asset,
   calculateAssetsData,
-  calculateTokenAmountWorth,
   contactsAdapter,
   DEPRECATED_Address as Address,
-  NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
   selectAllPrices,
-  selectNFTIds,
   sortAssets,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -87,52 +84,6 @@ export const makeSelectAddressesUnknownTokens = () =>
     tokens.filter((token): token is Asset => !token.name && !token.symbol && !token.verified && !token.logoURI)
   )
 
-export const makeSelectAddressesHiddenFungibleTokens = () =>
-  createSelector(
-    [makeSelectAddressesTokens(), (state: RootState) => state.hiddenTokens.hiddenTokensIds],
-    (tokens, hiddenAssetIds): Asset[] =>
-      tokens.filter((token): token is AddressFungibleToken => hiddenAssetIds.includes(token.id))
-  )
-
-// Same as in desktop wallet
-export const makeSelectAddressesUnknownTokensIds = () =>
-  createSelector(
-    [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
-    (fungibleTokens, nftIds, addresses): Asset['id'][] => {
-      const tokensWithoutMetadata = getAddressesTokenBalances(addresses).reduce(
-        (acc, token) => {
-          const hasTokenMetadata = !!fungibleTokens.find((t) => t.id === token.id)
-          const hasNFTMetadata = nftIds.includes(token.id)
-
-          if (!hasTokenMetadata && !hasNFTMetadata) {
-            acc.push(token.id)
-          }
-
-          return acc
-        },
-        [] as Asset['id'][]
-      )
-
-      return tokensWithoutMetadata
-    }
-  )
-
-// Same as in desktop wallet
-export const makeSelectAddressesCheckedUnknownTokens = () =>
-  createSelector(
-    [makeSelectAddressesUnknownTokensIds(), (state: RootState) => state.app.checkedUnknownTokenIds],
-    (tokensWithoutMetadata, checkedUnknownTokenIds) =>
-      tokensWithoutMetadata.filter((tokenId) => checkedUnknownTokenIds.includes(tokenId))
-  )
-
-// Same as in desktop wallet
-export const makeSelectAddressesNFTs = () =>
-  createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
-    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ tokenId }) => tokenId))
-
-    return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
-  })
-
 // Same as in desktop wallet
 export const makeSelectAddresses = () =>
   createSelector(
@@ -154,16 +105,6 @@ export const selectTotalBalance = createSelector([selectAllAddresses], (addresse
   addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
 )
 
-export const makeSelectAddressesVerifiedFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.verified)
-  )
-
-export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  makeSelectAddressesVerifiedFungibleTokens(),
-  (verifiedFungibleTokens) => verifiedFungibleTokens.map((token) => token.symbol)
-)
-
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) => (group !== undefined ? addresses.filter((address) => address.group === group) : addresses)
@@ -173,18 +114,6 @@ export const selectContactByHash = createSelector(
   [selectAllContacts, (_, addressHash: AddressHash) => addressHash],
   (contacts, addressHash) => contacts.find((contact) => contact.address === addressHash)
 )
-
-// Same as in desktop wallet
-export const makeSelectAddressesTokensWorth = () =>
-  createSelector([makeSelectAddressesKnownFungibleTokens(), selectAllPrices], (verifiedFungibleTokens, tokenPrices) =>
-    tokenPrices.reduce((totalWorth, { symbol, price }) => {
-      const verifiedFungibleToken = verifiedFungibleTokens.find((t) => t.symbol === symbol)
-
-      return verifiedFungibleToken
-        ? totalWorth + calculateTokenAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
-        : totalWorth
-    }, 0)
-  )
 
 export const selectAddressesWithToken = createSelector(
   [selectAllAddresses, (_, tokenId: Token['id']) => tokenId],
