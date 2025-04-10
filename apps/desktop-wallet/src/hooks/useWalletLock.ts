@@ -1,5 +1,11 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { hiddenTokensLoadedFromStorage } from '@alephium/shared'
+import {
+  hiddenTokensLoadedFromStorage,
+  passphraseInitialAddressGenerated,
+  walletLocked,
+  walletSwitchedDesktop,
+  walletUnlockedDesktop
+} from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
@@ -12,7 +18,6 @@ import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersi
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { toggleAppLoading, userDataMigrationFailed } from '@/storage/global/globalActions'
-import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -87,17 +92,11 @@ const useWalletLock = () => {
       return
     }
 
-    const payload = {
-      wallet: {
-        id: encryptedWallet.id,
-        name: encryptedWallet.name,
-        isPassphraseUsed,
-        isLedger: false
-      },
-      initialAddress: {
-        ...initialAddress,
-        ...getInitialAddressSettings()
-      }
+    const wallet = {
+      id: encryptedWallet.id,
+      name: encryptedWallet.name,
+      isPassphraseUsed,
+      isLedger: false
     }
 
     clearQueryCache()
@@ -116,9 +115,12 @@ const useWalletLock = () => {
           number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
         }
       })
+    } else {
+      const address = { ...initialAddress, ...getInitialAddressSettings() }
+      dispatch(passphraseInitialAddressGenerated(address))
     }
 
-    dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
+    dispatch(event === 'unlock' ? walletUnlockedDesktop(wallet) : walletSwitchedDesktop(wallet))
 
     afterUnlock()
 

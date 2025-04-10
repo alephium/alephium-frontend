@@ -1,4 +1,5 @@
 import { keyring } from '@alephium/keyring'
+import { newWalletInitialAddressGenerated } from '@alephium/shared'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
@@ -24,12 +25,11 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
   const initialAddressSettings = getInitialAddressSettings()
 
   try {
-    store.dispatch(
-      walletSaved({
-        wallet: storedWallet,
-        initialAddress: { ...keyring.generateAndCacheAddress({ addressIndex: 0 }), ...initialAddressSettings }
-      })
-    )
+    const address = keyring.generateAndCacheAddress({ addressIndex: 0 })
+    const initialAddress = { ...address, ...initialAddressSettings }
+
+    store.dispatch(newWalletInitialAddressGenerated(initialAddress))
+    store.dispatch(walletSaved(storedWallet))
   } catch {
     throw new Error('Could not generate initial address while saving new wallet')
   }

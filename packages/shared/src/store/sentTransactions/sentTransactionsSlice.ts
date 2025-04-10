@@ -6,7 +6,8 @@ import {
   transactionSent
 } from '@/store/sentTransactions/sentTransactionsActions'
 import { sentTransactionsAdapter } from '@/store/sentTransactions/sentTransactionsAdapter'
-import { activeWalletDeleted, walletLocked, walletSwitched } from '@/store/wallets/walletActions'
+import { activeWalletDeleted, walletLocked } from '@/store/wallets/walletActions'
+import { walletSwitchedDesktop, walletUnlockedDesktop } from '@/store/wallets/walletActionsDesktop'
 import { SentTransactionsState } from '@/types/transactions'
 
 const initialState: SentTransactionsState = sentTransactionsAdapter.getInitialState()
@@ -25,7 +26,10 @@ const sentTransactionsSlice = createSlice({
         sentTransactionsAdapter.removeOne(state, hash)
       })
 
-    builder.addMatcher(isAnyOf(walletLocked, walletSwitched, activeWalletDeleted), () => initialState)
+    builder.addMatcher(
+      isAnyOf(walletLocked, walletUnlockedDesktop, walletSwitchedDesktop, activeWalletDeleted),
+      () => initialState
+    )
   }
 })
 

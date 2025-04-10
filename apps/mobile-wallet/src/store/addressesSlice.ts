@@ -5,7 +5,8 @@ import {
   appReset,
   customNetworkSettingsSaved,
   DEPRECATED_Address as Address,
-  networkPresetSwitched
+  networkPresetSwitched,
+  newWalletInitialAddressGenerated
 } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
 import { createSlice, EntityState, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
@@ -18,12 +19,7 @@ import {
   syncLatestTransactions
 } from '~/store/addresses/addressesActions'
 import { addressesAdapter } from '~/store/addresses/addressesAdaptor'
-import {
-  appLaunchedWithLastUsedWallet,
-  newWalletGenerated,
-  walletDeleted,
-  walletUnlocked
-} from '~/store/wallet/walletActions'
+import { appLaunchedWithLastUsedWallet, walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const sliceName = 'addresses'
@@ -71,9 +67,9 @@ const addressesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addressSettingsSaved, addressSettingsSavedReducer)
-      .addCase(newWalletGenerated, (state, action) => {
+      .addCase(newWalletInitialAddressGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
-          ...action.payload.firstAddress,
+          ...action.payload,
           isDefault: true,
           color: getRandomLabelColor()
         })

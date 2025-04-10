@@ -1,3 +1,4 @@
+import { newWalletInitialAddressGenerated } from '@alephium/shared'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +20,7 @@ import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { getInitialAddressSettings } from '~/utils/addresses'
 import { showExceptionToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
 import { resetNavigation } from '~/utils/navigation'
@@ -54,8 +56,9 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         await sleep(0) // Allow react state to update to display loader before heavy operation
         const wallet = await generateAndStoreWallet(name)
 
+        dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
         dispatch(newWalletGenerated(wallet))
-        dispatch(syncLatestTransactions({ addresses: wallet.firstAddress.hash, areAddressesNew: true }))
+        dispatch(syncLatestTransactions({ addresses: wallet.initialAddress.hash, areAddressesNew: true }))
 
         sendAnalytics({ event: 'Created new wallet' })
         resetNavigation(

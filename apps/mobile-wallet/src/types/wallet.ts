@@ -37,7 +37,7 @@ export interface DeprecatedWalletState extends WalletState {
 }
 
 export type GeneratedWallet = WalletStoredState & {
-  firstAddress: NonSensitiveAddressData
+  initialAddress: NonSensitiveAddressData
 }
 
 export type WalletImportData = {
