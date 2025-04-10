@@ -1,11 +1,10 @@
-import { AddressHash } from '@alephium/shared'
+import { activeWalletDeleted, AddressHash, walletLocked, walletSwitchedDesktop } from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { modalAdapter } from '@/features/modals/modalAdapters'
 import { AddressModalBaseProp, ModalInstance } from '@/features/modals/modalTypes'
 import { addressDeleted } from '@/storage/addresses/addressesActions'
-import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 
 const initialState = modalAdapter.getInitialState()
 
@@ -32,7 +31,7 @@ const modalSlice = createSlice({
         modalAdapter.removeMany(state, openAddressModals)
       })
 
-    builder.addMatcher(isAnyOf(walletSwitched, walletLocked, activeWalletDeleted), (state) => {
+    builder.addMatcher(isAnyOf(walletSwitchedDesktop, walletLocked, activeWalletDeleted), (state) => {
       modalAdapter.removeAll(state)
     })
   }

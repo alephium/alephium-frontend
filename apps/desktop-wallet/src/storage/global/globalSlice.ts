@@ -1,9 +1,11 @@
 import {
+  activeWalletDeleted,
   apiClientInitFailed,
   apiClientInitSucceeded,
   customNetworkSettingsSaved,
   localStorageNetworkSettingsMigrated,
-  networkPresetSwitched
+  networkPresetSwitched,
+  walletLocked
 } from '@alephium/shared'
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
@@ -21,13 +23,7 @@ import {
   toggleAppLoading
 } from '@/storage/global/globalActions'
 import { RootState } from '@/storage/store'
-import {
-  activeWalletDeleted,
-  newWalletNameStored,
-  walletDeleted,
-  walletLocked,
-  walletSaved
-} from '@/storage/wallets/walletActions'
+import { newWalletNameStored, walletDeleted, walletSaved } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
@@ -80,7 +76,7 @@ const globalSlice = createSlice({
       .addCase(languageChangeFinished, (state) => toggleLoading(state, false, true))
       .addCase(toggleAppLoading, (state, action) => toggleLoading(state, action.payload))
       .addCase(walletSaved, (state, action) => {
-        const { id, name, encrypted, lastUsed } = action.payload.wallet
+        const { id, name, encrypted, lastUsed } = action.payload
 
         state.wallets.push({ id, name, encrypted, lastUsed, isLedger: false })
       })

@@ -1,4 +1,4 @@
-import { AddressHash, DEPRECATED_Address as Address, getTransactionsOfAddress } from '@alephium/shared'
+import { AddressHash, AddressSettings, DEPRECATED_Address as Address, getTransactionsOfAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
@@ -13,6 +13,7 @@ import {
   AddressTransaction,
   PendingTransaction
 } from '~/types/transactions'
+import { getRandomLabelColor } from '~/utils/colors'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 export const getAddressDisplayName = (address: Address): string => address.label || address.hash.substring(0, 6)
@@ -179,3 +180,8 @@ const associateTxsWithAddresses = (transactions: (explorer.Transaction | Pending
 
     return txs
   }, [] as AddressTransaction[])
+
+export const getInitialAddressSettings = (): AddressSettings => ({
+  isDefault: true,
+  color: getRandomLabelColor()
+})

@@ -1,18 +1,21 @@
 import {
+  activeWalletDeleted,
   Contact,
   contactDeletedFromPersistentStorage,
   contactsAdapter,
-  contactStoredInPersistentStorage
+  contactStoredInPersistentStorage,
+  walletLocked,
+  walletSwitchedDesktop
 } from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
-import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 
 type ContactsState = EntityState<Contact>
 
 const initialState: ContactsState = contactsAdapter.getInitialState()
 
+// TODO: Move to shared
 export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
@@ -20,7 +23,7 @@ export const contactsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(walletLocked, resetState)
-      .addCase(walletSwitched, resetState)
+      .addCase(walletSwitchedDesktop, resetState)
       .addCase(activeWalletDeleted, resetState)
       .addCase(contactStoredInPersistentStorage, contactsAdapter.upsertOne)
       .addCase(contactsLoadedFromPersistentStorage, contactsAdapter.setAll)

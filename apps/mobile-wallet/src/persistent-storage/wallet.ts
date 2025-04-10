@@ -201,13 +201,13 @@ export const generateAndStoreWallet = async (
 
     await storeWalletMnemonic(mnemonicUint8Array)
 
-    const { id, firstAddress } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
+    const { id, initialAddress } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
 
     return {
       id,
       name,
       isMnemonicBackedUp,
-      firstAddress
+      initialAddress
     }
   } finally {
     keyring.clear()
@@ -215,13 +215,13 @@ export const generateAndStoreWallet = async (
 }
 
 const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
-  const firstAddress = await generateAndStoreAddressKeypairForIndex(0)
-  const walletMetadata = generateWalletMetadata(name, firstAddress.hash, isMnemonicBackedUp)
+  const initialAddress = await generateAndStoreAddressKeypairForIndex(0)
+  const walletMetadata = generateWalletMetadata(name, initialAddress.hash, isMnemonicBackedUp)
   await storeWalletMetadata(walletMetadata)
 
   return {
     id: walletMetadata.id,
-    firstAddress
+    initialAddress
   }
 }
 
@@ -497,14 +497,14 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
   return key
 }
 
-const generateWalletMetadata = (name: string, firstAddressHash: string, isMnemonicBackedUp = false) => ({
+const generateWalletMetadata = (name: string, initialAddressHash: string, isMnemonicBackedUp = false) => ({
   id: nanoid(),
   name,
   isMnemonicBackedUp,
   addresses: [
     {
       index: 0,
-      hash: firstAddressHash,
+      hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
     }

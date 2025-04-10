@@ -1,5 +1,5 @@
 import { groupOfAddress } from '@alephium/web3'
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
   addressDeleted,
@@ -12,13 +12,11 @@ import { addressesAdapter } from '@/store/addresses/addressesAdapters'
 import { addressSettingsSavedReducer, updateOldDefaultAddress } from '@/store/addresses/addressesReducers'
 import {
   activeWalletDeleted,
-  walletLocked,
-  walletSaved,
-  walletSwitched,
-  walletUnlocked
+  newWalletInitialAddressGenerated,
+  passphraseInitialAddressGenerated,
+  walletLocked
 } from '@/store/wallets/walletActions'
 import { Address, AddressBase, AddressesState } from '@/types/addresses'
-import { UnlockedWallet } from '@/types/wallets'
 
 const initialState: AddressesState = addressesAdapter.getInitialState()
 
@@ -57,11 +55,12 @@ const addressesSlice = createSlice({
       .addCase(addressDeleted, (state, { payload: addressHash }) => {
         addressesAdapter.removeOne(state, addressHash)
       })
-      .addCase(walletSaved, (state, action) => addInitialAddress(state, action.payload.initialAddress))
-      .addCase(walletUnlocked, addPassphraseInitialAddress)
-      .addCase(walletSwitched, (_, action) => addPassphraseInitialAddress({ ...initialState }, action))
 
-    builder.addMatcher(isAnyOf(walletLocked, activeWalletDeleted), () => initialState)
+    builder
+      .addMatcher(isAnyOf(walletLocked, activeWalletDeleted), () => initialState)
+      .addMatcher(isAnyOf(newWalletInitialAddressGenerated, passphraseInitialAddressGenerated), (state, action) =>
+        addInitialAddress(state, action.payload)
+      )
   }
 })
 
@@ -77,14 +76,4 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
 const addInitialAddress = (state: AddressesState, address: AddressBase) => {
   addressesAdapter.removeAll(state)
   return addressesAdapter.addOne(state, getDefaultAddressState(address))
-}
-
-const addPassphraseInitialAddress = (state: AddressesState, action: PayloadAction<UnlockedWallet>) => {
-  const { wallet, initialAddress } = action.payload
-
-  if (wallet.isPassphraseUsed) {
-    addressesAdapter.removeAll(state)
-
-    return addressesAdapter.addOne(state, getDefaultAddressState(initialAddress))
-  }
 }
