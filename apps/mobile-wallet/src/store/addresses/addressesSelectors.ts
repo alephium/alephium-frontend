@@ -1,7 +1,5 @@
 import { AddressHash, contactsAdapter } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
-import { Token } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '~/store/addresses/addressesAdaptor'
@@ -47,12 +45,4 @@ export const selectAddressesInGroup = createSelector(
 export const selectContactByHash = createSelector(
   [selectAllContacts, (_, addressHash: AddressHash) => addressHash],
   (contacts, addressHash) => contacts.find((contact) => contact.address === addressHash)
-)
-
-export const selectAddressesWithToken = createSelector(
-  [selectAllAddresses, (_, tokenId: Token['id']) => tokenId],
-  (addresses, tokenId) =>
-    tokenId === ALPH.id
-      ? addresses.filter((address) => BigInt(address.balance) > 0)
-      : addresses.filter((address) => address.tokens.find((token) => token.tokenId === tokenId))
 )
