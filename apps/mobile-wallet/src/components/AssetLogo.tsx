@@ -1,4 +1,5 @@
-import { selectFungibleTokenById, selectNFTById } from '@alephium/shared'
+import { isFT, isListedFT, isNFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { TokenInfo } from '@alephium/token-list'
 import { Image } from 'expo-image'
 import { HelpCircle } from 'lucide-react-native'
@@ -7,7 +8,6 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import NFTImage from '~/components/NFTImage'
-import { useAppSelector } from '~/hooks/redux'
 
 interface AssetLogoProps {
   assetId: TokenInfo['id']
@@ -17,18 +17,19 @@ interface AssetLogoProps {
 
 const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
-  const token = useAppSelector((state) => selectFungibleTokenById(state, assetId))
-  const nft = useAppSelector((s) => selectNFTById(s, assetId))
+  const { data: token } = useFetchToken(assetId)
 
-  return nft?.image ? (
+  if (!token) return null
+
+  return isNFT(token) ? (
     <NFTImage nftId={assetId} size={size} />
   ) : (
-    <AssetLogoStyled {...{ assetId, style, size }} hasLogo={!!token?.logoURI}>
-      {token?.logoURI ? (
+    <AssetLogoStyled {...{ assetId, style, size }} hasLogo={isListedFT(token)}>
+      {isListedFT(token) ? (
         <LogoImageContainer>
           <LogoImage source={{ uri: token.logoURI }} transition={500} contentFit="contain" contentPosition="center" />
         </LogoImageContainer>
-      ) : token?.name ? (
+      ) : isFT(token) ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
       ) : (
         <HelpCircle size={size * 0.7} color={theme.font.secondary} />
