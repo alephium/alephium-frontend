@@ -4,13 +4,14 @@ import {
   fromHumanReadableAmount,
   FungibleToken,
   getNumberOfDecimals,
-  selectAllPrices,
-  selectFungibleTokenById,
+  isFT,
+  isNFT,
   toHumanReadableAmount
 } from '@alephium/shared'
+import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -21,18 +22,14 @@ import Button from '~/components/buttons/Button'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import {
-  makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesUnknownTokens
-} from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
   onAmountValidate: (amount: bigint, tokenName: string) => void
-  addressHash?: AddressHash
-  initialAmount?: bigint
+  addressHash: AddressHash
+  initialAmount?: string
 }
 
 const MAX_FONT_SIZE = 42
@@ -43,29 +40,30 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const dispatch = useAppDispatch()
     const theme = useTheme()
-    const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-    const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-    const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokens(), [])
-    const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, addressHash))
-    const token = knownFungibleTokens.find((t) => t.id === tokenId) ?? unknownTokens.find((t) => t.id === tokenId)
+
+    const { data: token } = useFetchToken(tokenId)
+    const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
 
     const { t } = useTranslation()
 
-    const [amount, setAmount] = useState(initialAmount ? toHumanReadableAmount(initialAmount, token?.decimals) : '')
+    const [amount, setAmount] = useState(initialAmount)
     const [error, setError] = useState('')
 
-    if (!token) return
+    if (!token || isNFT(token) || !tokenBalances) return
 
-    const maxAmount = useMemo(() => token.balance - token.lockedBalance, [token.balance, token.lockedBalance])
+    const maxAmount = BigInt(tokenBalances.availableBalance)
     const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
+    const tokenDecimals = isFT(token) ? token.decimals : undefined
+    const tokenName = isFT(token) ? token.name : token.id
+    const tokenSymbol = isFT(token) ? token.symbol : ''
 
     const handleAmountChange = (amount: string) => {
       let cleanedAmount = amount.replace(',', '.')
       cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
 
-      const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, token.decimals))
+      const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, tokenDecimals))
       const amountValueAsFloat = parseFloat(cleanedAmount)
-      const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (token.decimals ?? 0)
+      const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (tokenDecimals ?? 0)
 
       const newError = isAboveMaxAmount
         ? t('Amount exceeds available balance')
@@ -73,7 +71,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
           ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
           : tooManyDecimals
             ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
-                numberOfDecimals: token.decimals
+                numberOfDecimals: tokenDecimals
               })
             : ''
 
@@ -82,17 +80,17 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     }
 
     const handleUseMaxAmountPress = () => {
-      setAmount(toHumanReadableAmount(maxAmount, token.decimals))
+      setAmount(toHumanReadableAmount(maxAmount, tokenDecimals))
     }
 
     const handleAmountValidate = () => {
-      onAmountValidate(amount ? fromHumanReadableAmount(amount, token.decimals) : BigInt(0), token.name ?? token.id)
+      onAmountValidate(amount ? fromHumanReadableAmount(amount, tokenDecimals) : BigInt(0), tokenName)
       dispatch(closeModal({ id }))
     }
 
     const handleClearAmountPress = () => setAmount('')
 
-    const fontSize = getFontSize(`${amount}+${token.symbol}`)
+    const fontSize = getFontSize(`${amount}+${tokenSymbol}`)
     const amountIsSet = amount && amount !== '0'
 
     return (
@@ -101,9 +99,9 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
         titleAlign="left"
         title={
           <ModalHeader>
-            <AssetLogo size={18} assetId={token?.id} />
+            <AssetLogo size={18} assetId={token.id} />
             <AppText semiBold size={16}>
-              {token?.name}
+              {tokenName}
             </AppText>
           </ModalHeader>
         }
@@ -123,10 +121,10 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
                 color: error ? theme.global.alert : theme.font.primary
               }}
             />
-            <SuffixText fontSize={fontSize}>{token?.symbol}</SuffixText>
+            <SuffixText fontSize={fontSize}>{tokenSymbol}</SuffixText>
           </InputWrapper>
 
-          <EnteredAmountWorth tokenId={tokenId} amount={amount} />
+          {amount && <EnteredAmountWorth tokenId={tokenId} amount={amount} />}
 
           <Buttons>
             <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
@@ -148,12 +146,13 @@ interface EnteredAmountWorthProps {
 }
 
 const EnteredAmountWorth = ({ tokenId, amount }: EnteredAmountWorthProps) => {
-  const tokenPrices = useAppSelector(selectAllPrices)
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+  const { data: token } = useFetchToken(tokenId)
+  const { data: tokenPrice } = useFetchTokenPrice(tokenId)
 
-  const tokenPrice = tokenPrices.find((p) => p.symbol === token?.symbol)?.price
-  const tokenAmount = amount ? fromHumanReadableAmount(amount, token?.decimals) : BigInt(0)
-  const totalWorth = token ? calculateTokenAmountWorth(tokenAmount, tokenPrice ?? 0, token?.decimals ?? 0) : undefined
+  if (!token || !isFT(token)) return null
+
+  const tokenAmount = amount ? fromHumanReadableAmount(amount, token.decimals) : BigInt(0)
+  const totalWorth = calculateTokenAmountWorth(tokenAmount, tokenPrice ?? 0, token.decimals ?? 0)
 
   if (!totalWorth) return null
 

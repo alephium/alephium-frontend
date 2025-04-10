@@ -1,4 +1,5 @@
-import { selectFungibleTokenById } from '@alephium/shared'
+import { isFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +14,7 @@ import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
@@ -22,10 +23,11 @@ interface TokenQuickActionsModalProps {
 const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
   const hideToken = useHideToken('quick_actions', id)
 
-  if (!token) return
+  const { data: token } = useFetchToken(tokenId)
+
+  if (!token || !isFT(token)) return
 
   const handleAssetHide = () => hideToken(tokenId)
 

@@ -1,4 +1,5 @@
-import { AddressHash, selectFungibleTokenById } from '@alephium/shared'
+import { AddressHash, isFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -52,9 +53,9 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
 export default AddressesWithTokenModal
 
 const Header = ({ tokenId }: AddressesWithTokenModalProps) => {
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+  const { data: token } = useFetchToken(tokenId)
 
-  if (!token) return null
+  if (!token || !isFT(token)) return null
 
   return (
     <HeaderStyled>
@@ -73,10 +74,11 @@ const HeaderStyled = styled.View`
 `
 
 const IntroText = ({ tokenId }: AddressesWithTokenModalProps) => {
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
   const { t } = useTranslation()
 
-  if (!token) return null
+  const { data: token } = useFetchToken(tokenId)
+
+  if (!token || !isFT(token)) return null
 
   return (
     <IntroTextStyled>
