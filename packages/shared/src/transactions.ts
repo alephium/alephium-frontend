@@ -2,7 +2,7 @@ import { explorer as e } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
 import { Asset, AssetAmount } from '@/types/assets'
-import { AmountDeltas, TransactionDirection } from '@/types/transactions'
+import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
 export const calcTxAmountsDeltaForAddress = (
@@ -71,8 +71,13 @@ export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.M
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-export const isConfirmedTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): tx is e.Transaction =>
-  'blockHash' in tx
+export const isConfirmedTx = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+): tx is e.Transaction => 'blockHash' in tx
+
+export const isSentTx = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+): tx is SentTransaction => 'status' in tx
 
 export const isInternalTx = (tx: e.Transaction | e.PendingTransaction, internalAddresses: AddressHash[]): boolean =>
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
@@ -125,7 +130,7 @@ export const extractTokenIds = (tokenIds: Asset['id'][], ios: e.Transaction['inp
 export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: e.Transaction | e.PendingTransaction) =>
   addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
 
-const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.Transaction | e.PendingTransaction) =>
+export const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.Transaction | e.PendingTransaction) =>
   tx.inputs?.some((input) => input.address === addressHash) ||
   tx.outputs?.some((output) => output.address === addressHash)
 

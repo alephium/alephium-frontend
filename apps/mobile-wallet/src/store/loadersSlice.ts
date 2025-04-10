@@ -1,11 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import {
-  syncAddressesBalances,
-  syncAddressesTokens,
-  syncAllAddressesTransactionsNextPage,
-  syncLatestTransactions
-} from '~/store/addresses/addressesActions'
+import { syncAddressesBalances, syncAddressesTokens, syncLatestTransactions } from '~/store/addresses/addressesActions'
 
 const sliceName = 'loaders'
 
@@ -48,15 +43,6 @@ const loadersSlice = createSlice({
       })
       .addCase(syncLatestTransactions.rejected, (state) => {
         state.loadingLatestTransactions = false
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.pending, (state) => {
-        state.loadingTransactionsNextPage = true
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state) => {
-        state.loadingTransactionsNextPage = false
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.rejected, (state) => {
-        state.loadingTransactionsNextPage = false
       })
       .addCase(syncAddressesTokens.pending, (state) => {
         state.loadingTokens = true

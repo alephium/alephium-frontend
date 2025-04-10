@@ -24,7 +24,7 @@ const AddressFtListItem = (props: AddressFtListItemProps) => {
       rightSideContent={
         <View>
           <FtBalance tokenId={tokenId} balance={balance} />
-          <FtWorth tokenId={tokenId} balance={balance} color="secondary" />
+          <FtWorth tokenId={tokenId} amount={balance} color="secondary" />
         </View>
       }
       {...props}

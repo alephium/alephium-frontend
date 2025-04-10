@@ -5,8 +5,6 @@ import {
   appReset,
   customNetworkSettingsSaved,
   DEPRECATED_Address as Address,
-  extractNewTransactions,
-  getTransactionsOfAddress,
   networkPresetSwitched
 } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
@@ -17,7 +15,6 @@ import {
   addressDeleted,
   syncAddressesBalances,
   syncAddressesTokens,
-  syncAllAddressesTransactionsNextPage,
   syncLatestTransactions
 } from '~/store/addresses/addressesActions'
 import { addressesAdapter } from '~/store/addresses/addressesAdaptor'
@@ -124,26 +121,6 @@ const addressesSlice = createSlice({
         if (changes.length > 0) addressesAdapter.updateMany(state, changes)
 
         state.status = 'initialized'
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
-        const addresses = getAddresses(state)
-
-        const updatedAddresses = addresses.map((address) => {
-          const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-          const newTxHashes = extractNewTransactions(transactionsOfAddress, address.transactions).map(
-            ({ hash }) => hash
-          )
-
-          return {
-            id: address.hash,
-            changes: {
-              transactions: address.transactions.concat(newTxHashes),
-              allTransactionPagesLoaded: transactions.length === 0
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
       })
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)

@@ -1,8 +1,8 @@
+import { useAddressesDataPolling } from '@alephium/shared-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
-import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { useAppSelector } from '@/hooks/redux'
 import ActivityPage from '@/pages/unlockedWallet/activityPage/ActivityPage'
 import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'

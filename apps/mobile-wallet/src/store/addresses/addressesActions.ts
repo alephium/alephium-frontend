@@ -3,7 +3,7 @@ import { explorer as e } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
-import { selectAddressByHash, selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { RootState } from '~/store/store'
 
 export const addressDeleted = createAction<AddressHash>('addresses/addressDeleted')
@@ -74,39 +74,4 @@ export const syncAddressesBalances = createAsyncThunk(
 export const syncAddressesTokens = createAsyncThunk(
   'addresses/syncAddressesTokens',
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
-)
-
-export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
-  'addresses/syncAllAddressesTransactionsNextPage',
-  async (
-    payload: { minTxs: number } | undefined,
-    { getState }
-  ): Promise<{ pageLoaded: number; transactions: e.Transaction[] }> => {
-    const state = getState() as RootState
-    const addresses = selectAllAddresses(state)
-    const addressesHashes = addresses.map(({ hash }) => hash)
-    const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
-
-    let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
-    let enoughNewTransactionsFound = false
-    let newTransactions: e.Transaction[] = []
-
-    while (!enoughNewTransactionsFound) {
-      const nextPageTransactions = await fetchAddressesTransactionsPage(addressesHashes, nextPageToLoad)
-
-      if (nextPageTransactions.length === 0) break
-
-      newTransactions = newTransactions.concat(
-        nextPageTransactions.filter(
-          (newTx) =>
-            !addresses.some((address) => address.transactions.some((existingTxHash) => existingTxHash === newTx.hash))
-        )
-      )
-
-      enoughNewTransactionsFound = newTransactions.length >= minimumNewTransactionsNeeded
-      nextPageToLoad += 1
-    }
-
-    return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
-  }
 )

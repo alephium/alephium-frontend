@@ -1,24 +1,20 @@
+import { explorer as e } from '@alephium/web3'
+
 import {
-  AddressHash,
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
   isConfirmedTx,
-  isConsolidationTx,
-  isInternalTx,
-  TransactionInfoType
-} from '@alephium/shared'
-import { explorer as e } from '@alephium/web3'
-
-import { store } from '@/storage/store'
+  isConsolidationTx
+} from '@/transactions'
+import { AddressHash } from '@/types/addresses'
+import { SentTransaction, TransactionInfoType } from '@/types/transactions'
 
 export const getTransactionInfoType = (
-  tx: e.Transaction | e.PendingTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction,
   addressHash: AddressHash,
+  isInternalTransfer: boolean,
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {
-  const state = store.getState()
-  const internalAddresses = state.addresses.ids as AddressHash[]
-
   if (!isConfirmedTx(tx)) {
     return 'pending'
   } else if (isConsolidationTx(tx)) {
@@ -29,7 +25,6 @@ export const getTransactionInfoType = (
     if (hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)) {
       return 'swap'
     } else {
-      const isInternalTransfer = isInternalTx(tx, internalAddresses)
       const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
 
       if (

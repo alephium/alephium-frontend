@@ -26,8 +26,8 @@ import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
 export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchAddressFtsSorted(addressHash)
-  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
+  const { data: sortedFts, isLoading } = useFetchAddressFtsSorted(addressHash)
+  const isEmpty = !isLoading && sortedFts.length === 0
   const {
     data: { nstIds }
   } = useFetchAddressTokensByType(addressHash)
@@ -36,16 +36,13 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
     <>
       <Table>
         {!isEmpty && <TokensBalancesHeader />}
-        {listedFts.map(({ id }) => (
-          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-        ))}
-        {unlistedFts.map(({ id }) => (
+        {sortedFts.map(({ id }) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
         ))}
         {nstIds.map((tokenId) => (
           <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
         ))}
-        {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
+        {!isLoading && sortedFts.length === 0 && nstIds.length === 0 && (
           <EmptyPlaceholder emoji="👀">{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
         )}
         {isLoading && <TokensSkeletonLoader />}
@@ -57,21 +54,18 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
 
 export const WalletFTsBalancesList = () => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFtsSorted()
+  const { data: sortedFts, isLoading } = useFetchWalletFtsSorted()
   const {
     data: { nstIds }
   } = useFetchWalletTokensByType({ includeHidden: false })
 
-  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
+  const isEmpty = !isLoading && sortedFts.length === 0
 
   return (
     <>
       <Table>
         {!isEmpty && <TokensBalancesHeader showAllocation />}
-        {listedFts.map(({ id }) => (
-          <WalletFTBalancesRow tokenId={id} key={id} />
-        ))}
-        {unlistedFts.map(({ id }) => (
+        {sortedFts.map(({ id }) => (
           <WalletFTBalancesRow tokenId={id} key={id} />
         ))}
         {nstIds.map((tokenId) => (

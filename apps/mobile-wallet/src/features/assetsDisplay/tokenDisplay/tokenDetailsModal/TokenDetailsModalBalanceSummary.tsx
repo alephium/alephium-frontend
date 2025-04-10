@@ -46,7 +46,7 @@ const TokenDetailsModalBalanceSummary = ({
         adjustsFontSizeToFit
       />
       <AmountAndAddresses>
-        <FtWorth tokenId={tokenId} balance={balance} size={20} color={fontColor} />
+        <FtWorth tokenId={tokenId} amount={balance} size={20} color={fontColor} />
         <AddressesWithTokenBadge tokenId={tokenId} onPress={onPress} fontColor={fontColor} />
       </AmountAndAddresses>
     </BalanceSummaryBox>

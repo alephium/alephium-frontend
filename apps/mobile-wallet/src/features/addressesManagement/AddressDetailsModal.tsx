@@ -1,7 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressFtsSorted } from '@alephium/shared-react'
 import { FlashList } from '@shopify/flash-list'
-import { useMemo } from 'react'
 
 import AddressBadge from '~/components/AddressBadge'
 import EmptyTokensListPlaceholders from '~/components/tokensLists/EmptyTokensListPlaceholder'
@@ -32,13 +31,11 @@ interface AddressFtsListProps extends FlashListRenderProps {
 }
 
 const AddressFtsFlashList = ({ addressHash, parentModalId, ...props }: AddressFtsListProps) => {
-  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
-
-  const fts = useMemo(() => [...listedFts, ...unlistedFts], [listedFts, unlistedFts])
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
 
   return (
     <FlashList
-      data={fts}
+      data={sortedFts}
       estimatedItemSize={70}
       ListHeaderComponent={() => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={parentModalId} />}
       ListFooterComponent={() => <AddressTokensListFooter addressHash={addressHash} parentModalId={parentModalId} />}
@@ -47,7 +44,7 @@ const AddressFtsFlashList = ({ addressHash, parentModalId, ...props }: AddressFt
         <AddressFtListItem
           key={id}
           tokenId={id}
-          hideSeparator={index === fts.length - 1}
+          hideSeparator={index === sortedFts.length - 1}
           addressHash={addressHash}
           parentModalId={parentModalId}
         />

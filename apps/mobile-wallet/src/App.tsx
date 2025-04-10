@@ -3,13 +3,13 @@ import {
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
-  syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
   queryClient,
+  useAddressesDataPolling,
   useInitializeClient,
   useInterval,
   usePersistQueryClientContext
@@ -17,8 +17,7 @@ import {
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
-import { difference, union } from 'lodash'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -39,12 +38,8 @@ import {
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokensIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '~/store/addresses/addressesSelectors'
+import { selectAllAddressVerifiedFungibleTokenSymbols } from '~/store/addresses/addressesSelectors'
 import { store } from '~/store/store'
-import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
@@ -120,7 +115,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((s) => s.network)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
@@ -134,16 +128,11 @@ const Main = ({ children, ...props }: ViewProps) => {
   const currency = useRef(settings.currency)
   const { restoreQueryCache } = usePersistQueryClientContext()
 
-  const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokensIds(), [])
-  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
-  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.app.checkedUnknownTokenIds)
-  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
-
   useLoadStoredSettings()
   useInitializeClient()
   useLocalization()
   useSystemRegion()
+  useAddressesDataPolling()
 
   useEffect(() => {
     if (walletMetadata) {
@@ -151,17 +140,6 @@ const Main = ({ children, ...props }: ViewProps) => {
       restoreQueryCache(walletMetadata.id)
     }
   }, [dispatch, restoreQueryCache, walletMetadata])
-
-  useEffect(() => {
-    if (
-      network.status === 'online' &&
-      !verifiedFungibleTokensNeedInitialization &&
-      !isLoadingTokenTypes &&
-      newUnknownTokens.length > 0
-    ) {
-      dispatch(syncUnknownTokensInfo(newUnknownTokens))
-    }
-  }, [dispatch, isLoadingTokenTypes, network.status, newUnknownTokens, verifiedFungibleTokensNeedInitialization])
 
   // Fetch verified tokens from GitHub token-list
   useEffect(() => {

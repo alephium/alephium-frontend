@@ -4,21 +4,19 @@ import {
   selectSentTransactionByHash,
   sentTransactionStatusChanged
 } from '@alephium/shared'
-import {
-  queryClient,
-  useCurrentlyOnlineNetworkId,
-  useFetchPendingTransaction,
-  useUnsortedAddressesHashes
-} from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useEffect } from 'react'
 
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
+import { queryClient } from '@/api/queryClient'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { useSharedDispatch, useSharedSelector } from '@/redux'
 
-const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
-  const dispatch = useAppDispatch()
+export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
+  const dispatch = useSharedDispatch()
   const networkId = useCurrentlyOnlineNetworkId()
-  const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
+  const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
 
   const { data: tx } = useFetchPendingTransaction({ txHash, skip: !sentTx || sentTx.status === 'confirmed' })
@@ -37,5 +35,3 @@ const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
     }
   }, [allAddressHashes, dispatch, networkId, tx])
 }
-
-export default usePendingTxPolling

@@ -1,4 +1,4 @@
-import { calculateAmountWorth, isListedFT, ListedFT } from '@alephium/shared'
+import { calculateTokenAmountWorth, isListedFT, ListedFT } from '@alephium/shared'
 import {
   useFetchToken,
   useFetchTokenPrice,
@@ -48,7 +48,7 @@ const FTAllocationBar = ({ token, tokenAmount, walletWorth, isLoading }: FTAlloc
 
   if (!token || !tokenAmount || !walletWorth || !tokenPrice) return null
 
-  const tokenWorth = calculateAmountWorth(tokenAmount, tokenPrice, token.decimals)
+  const tokenWorth = calculateTokenAmountWorth(tokenAmount, tokenPrice, token.decimals)
 
   const ratio = tokenWorth / walletWorth
 

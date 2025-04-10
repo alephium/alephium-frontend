@@ -1,4 +1,4 @@
-import { addApostrophes, calculateAmountWorth, getHumanReadableError } from '@alephium/shared'
+import { addApostrophes, calculateTokenAmountWorth, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress, isValidAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -116,7 +116,7 @@ const AddressInfoPage = () => {
 
     const price = tokensPrices[token.symbol] || 0
 
-    return acc + calculateAmountWorth(BigInt(b.balance), price, token.decimals)
+    return acc + calculateTokenAmountWorth(BigInt(b.balance), price, token.decimals)
   }, 0)
 
   const addressLatestActivity =
@@ -127,7 +127,9 @@ const AddressInfoPage = () => {
 
   const addressWorth =
     knownTokensWorth +
-    (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN, ALPH.decimals) : 0)
+    (totalBalance
+      ? calculateTokenAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN, ALPH.decimals)
+      : 0)
 
   const totalNbOfAssets =
     tokenBalances.length +

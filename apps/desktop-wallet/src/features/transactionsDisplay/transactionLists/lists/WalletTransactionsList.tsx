@@ -3,6 +3,8 @@ import {
   Asset,
   calcTxAmountsDeltaForAddress,
   findTransactionReferenceAddress,
+  getTransactionInfoType,
+  isInternalTx,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
 import { useFetchWalletTransactionsInfinite, useUnsortedAddressesHashes } from '@alephium/shared-react'
@@ -16,7 +18,6 @@ import styled from 'styled-components'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
-import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
@@ -127,7 +128,8 @@ const applyFilters = ({
         if (!txRefAddress) return false
 
         const { tokenAmounts } = calcTxAmountsDeltaForAddress(tx, txRefAddress)
-        const infoType = getTransactionInfoType(tx, txRefAddress)
+        const isInternalTransfer = isInternalTx(tx, allAddressHashes)
+        const infoType = getTransactionInfoType(tx, txRefAddress, isInternalTransfer)
 
         const dir = infoType === 'pending' ? 'out' : infoType
         const tokenIds = [ALPH.id, ...tokenAmounts.map(({ id }) => id)]

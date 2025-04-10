@@ -1,4 +1,4 @@
-import { AddressHash, AssetAmount } from '@alephium/shared'
+import { AddressHash, AssetAmount, transactionSent } from '@alephium/shared'
 import { node, Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,6 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
-import { transactionSent } from '~/store/transactions/transactionsActions'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -132,7 +131,7 @@ export const SendContextProvider = ({
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
-              status: 'pending',
+              status: 'sent',
               type: 'transfer'
             })
           )

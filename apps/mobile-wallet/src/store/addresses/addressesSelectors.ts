@@ -2,8 +2,8 @@ import {
   AddressFungibleToken,
   AddressHash,
   Asset,
-  calculateAmountWorth,
   calculateAssetsData,
+  calculateTokenAmountWorth,
   contactsAdapter,
   DEPRECATED_Address as Address,
   NFT,
@@ -194,7 +194,7 @@ export const makeSelectAddressesTokensWorth = () =>
       const verifiedFungibleToken = verifiedFungibleTokens.find((t) => t.symbol === symbol)
 
       return verifiedFungibleToken
-        ? totalWorth + calculateAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
+        ? totalWorth + calculateTokenAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
         : totalWorth
     }, 0)
   )

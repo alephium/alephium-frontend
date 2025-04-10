@@ -7,7 +7,6 @@ import {
 } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent, PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
@@ -185,27 +184,26 @@ const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxPro
 
   const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
-  return <FtWorth tokenId={tokenId} balance={balance} semiBold size={17} adjustsFontSizeToFit />
+  return <FtWorth tokenId={tokenId} amount={balance} semiBold size={17} adjustsFontSizeToFit />
 }
 
 const AddressTokensBadgesList = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
   const { t } = useTranslation()
 
-  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
-  const fts = useMemo(() => [...listedFts, ...unlistedFts], [listedFts, unlistedFts])
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
   const {
     data: { nftIds }
   } = useFetchAddressTokensByType(addressHash)
 
   return (
-    (fts.length > 0 || nftIds.length > 0) && (
+    (sortedFts.length > 0 || nftIds.length > 0) && (
       <AssetsRow>
-        {fts.length > 0 && (
+        {sortedFts.length > 0 && (
           <AssetListContainer rounded border light compact>
-            {fts.slice(0, maxNbOfTokenLogos).map(({ id }) => (
+            {sortedFts.slice(0, maxNbOfTokenLogos).map(({ id }) => (
               <AssetLogo key={id} assetId={id} size={15} />
             ))}
-            {fts.length > 5 && <NbOfAssetsText>+{fts.length - maxNbOfTokenLogos}</NbOfAssetsText>}
+            {sortedFts.length > 5 && <NbOfAssetsText>+{sortedFts.length - maxNbOfTokenLogos}</NbOfAssetsText>}
           </AssetListContainer>
         )}
 

@@ -1,4 +1,4 @@
-import { AssetAmount, calculateAmountWorth } from '@alephium/shared'
+import { AssetAmount, calculateTokenAmountWorth } from '@alephium/shared'
 import { useFetchTokenPrices, useFetchTokensSeparatedByType } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
@@ -29,14 +29,14 @@ const CheckWorthBox = ({ assetAmounts, fee, ...props }: CheckWorthBoxProps) => {
     const tokenAmount = assetAmounts.find((asset) => asset.id === token.id)?.amount
     const tokenWorth =
       isNumber(tokenPrice) && tokenAmount !== undefined
-        ? calculateAmountWorth(tokenAmount, tokenPrice, token.decimals)
+        ? calculateTokenAmountWorth(tokenAmount, tokenPrice, token.decimals)
         : 0
 
     return totalWorth + tokenWorth
   }, 0)
 
   const alphPrice = tokenPrices?.find(({ symbol }) => symbol === ALPH.symbol)?.price
-  const feeWorth = alphPrice ? calculateAmountWorth(fee, alphPrice, ALPH.decimals) : 0
+  const feeWorth = alphPrice ? calculateTokenAmountWorth(fee, alphPrice, ALPH.decimals) : 0
   const tooSmallFee = feeWorth < 0.01
 
   return (
