@@ -1,7 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -10,12 +9,10 @@ import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesHiddenFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 const SettingsAssetsSection = () => {
   const { t } = useTranslation()
-  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
-  const numberOfHiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens).length
+  const numberOfHiddenFungibleTokens = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds.length)
   const theme = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 

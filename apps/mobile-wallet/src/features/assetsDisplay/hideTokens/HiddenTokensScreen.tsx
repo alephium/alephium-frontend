@@ -1,7 +1,6 @@
 import { selectFungibleTokenById, unhideToken } from '@alephium/shared'
 import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -17,7 +16,6 @@ import ListItem from '~/components/ListItem'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesHiddenFungibleTokens } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 
@@ -26,8 +24,7 @@ interface HiddenTokensScreenProps extends StackScreenProps<RootStackParamList, '
 const HiddenTokensScreen = ({ navigation, ...props }: HiddenTokensScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
-  const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
+  const hiddenFungibleTokens = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectTokenToHideModal' }))
@@ -51,7 +48,7 @@ const HiddenTokensScreen = ({ navigation, ...props }: HiddenTokensScreenProps) =
           </EmptyPlaceholder>
         ) : (
           <FungibleTokensList>
-            {hiddenFungibleTokens.map(({ id }, i) => (
+            {hiddenFungibleTokens.map((id, i) => (
               <FungibleTokensListItem key={id} tokenId={id} isLast={i === hiddenFungibleTokens.length - 1} />
             ))}
           </FungibleTokensList>
