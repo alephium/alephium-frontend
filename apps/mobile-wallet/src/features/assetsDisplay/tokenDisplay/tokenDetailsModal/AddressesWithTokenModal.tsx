@@ -1,5 +1,5 @@
 import { AddressHash, isFT } from '@alephium/shared'
-import { useFetchToken } from '@alephium/shared-react'
+import { useFetchAddressesHashesWithBalanceSortedByLastUse, useFetchToken } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -12,7 +12,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken, selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressesWithTokenModalProps {
@@ -20,7 +20,7 @@ interface AddressesWithTokenModalProps {
 }
 
 const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, tokenId }) => {
-  const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
+  const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
   const dispatch = useAppDispatch()
 
@@ -35,12 +35,12 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
     <BottomModal modalId={id} title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
-        {addresses.map((address, i) => (
+        {addresses.map((addressHash, i) => (
           <AddressBox
-            key={address.hash}
-            addressHash={address.hash}
+            key={addressHash}
+            addressHash={addressHash}
             isLast={i === addresses.length - 1}
-            onPress={() => handleAddressPress(address.hash)}
+            onPress={() => handleAddressPress(addressHash)}
             tokenId={tokenId}
             origin="selectAddressModal"
           />
