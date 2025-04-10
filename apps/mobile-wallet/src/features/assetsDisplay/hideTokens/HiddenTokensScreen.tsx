@@ -1,4 +1,5 @@
-import { selectFungibleTokenById, unhideToken } from '@alephium/shared'
+import { isFT, unhideToken } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
@@ -69,9 +70,10 @@ interface FungibleTokensListItemProps {
 const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
 
-  if (!token) return
+  const { data: token } = useFetchToken(tokenId)
+
+  if (!token || !isFT(token)) return
 
   const handleTokenUnhide = () => {
     dispatch(unhideToken(tokenId))

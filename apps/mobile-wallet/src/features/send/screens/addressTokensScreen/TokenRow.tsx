@@ -1,4 +1,4 @@
-import { AddressHash, isFT, isNFT, TokenId } from '@alephium/shared'
+import { AddressHash, isFT, isNFT, toHumanReadableAmount, TokenId } from '@alephium/shared'
 import { useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
@@ -41,11 +41,19 @@ const TokenRow = ({ tokenId, addressHash, ...props }: TokenRowProps) => {
   const handleRowPress = () => {
     vibrate(ImpactStyle.Medium)
 
-    if (!isNFT(token)) {
+    if (!isNFT(token) && fromAddress) {
+      const decimals = isFT(token) ? token.decimals : undefined
+      const initialAmount = amount ? toHumanReadableAmount(amount, decimals) : undefined
+
       dispatch(
         openModal({
           name: 'TokenAmountModal',
-          props: { tokenId, addressHash: fromAddress, onAmountValidate: onAmountSet, initialAmount: amount }
+          props: {
+            tokenId,
+            addressHash: fromAddress,
+            onAmountValidate: onAmountSet,
+            initialAmount
+          }
         })
       )
     } else {

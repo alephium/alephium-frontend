@@ -43,7 +43,7 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
   useEffect(() => {
     const tokenId = params?.tokenId
 
-    if (!tokenId || (tokenId && params.isNft) || !shouldOpenAmountModal) return
+    if (!tokenId || (tokenId && params.isNft) || !shouldOpenAmountModal || !fromAddress) return
 
     dispatch(
       openModal({
