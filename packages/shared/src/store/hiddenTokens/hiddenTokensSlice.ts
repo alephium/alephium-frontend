@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { hiddenTokensLoadedFromStorage, hideToken, unhideToken } from '@/store/assets/hiddenTokensActions'
 import { appReset } from '@/store/global'
+import { hiddenTokensLoadedFromStorage, hideToken, unhideToken } from '@/store/hiddenTokens/hiddenTokensActions'
 import { HiddenTokensState } from '@/types/assets'
 
 const sliceName = 'hiddenTokens'
