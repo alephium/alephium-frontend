@@ -1,24 +1,16 @@
 import { appReset } from '@alephium/shared'
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import {
-  appLaunchedWithLastUsedWallet,
-  newWalletGenerated,
-  newWalletImportedWithMetadata,
-  walletDeleted,
-  walletUnlocked
-} from '~/store/wallet/walletActions'
+import { walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'app'
 
 export interface AppMetadataState {
   isCameraOpen: boolean
-  wasJustLaunched: boolean
 }
 
 const initialState: AppMetadataState = {
-  isCameraOpen: false,
-  wasJustLaunched: false
+  isCameraOpen: false
 }
 
 const resetState = () => initialState
@@ -32,15 +24,7 @@ const appSlice = createSlice({
     }
   },
   extraReducers(builder) {
-    builder
-      .addCase(walletDeleted, resetState)
-      .addCase(appReset, resetState)
-      .addCase(appLaunchedWithLastUsedWallet, (state) => {
-        state.wasJustLaunched = true
-      })
-    builder.addMatcher(isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata), (state) => {
-      state.wasJustLaunched = false
-    })
+    builder.addCase(walletDeleted, resetState).addCase(appReset, resetState)
   }
 })
 
