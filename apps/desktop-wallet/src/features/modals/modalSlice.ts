@@ -1,10 +1,9 @@
-import { activeWalletDeleted, AddressHash, walletLocked, walletSwitchedDesktop } from '@alephium/shared'
+import { activeWalletDeleted, addressDeleted, AddressHash, walletLocked, walletSwitchedDesktop } from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { modalAdapter } from '@/features/modals/modalAdapters'
 import { AddressModalBaseProp, ModalInstance } from '@/features/modals/modalTypes'
-import { addressDeleted } from '@/storage/addresses/addressesActions'
 
 const initialState = modalAdapter.getInitialState()
 

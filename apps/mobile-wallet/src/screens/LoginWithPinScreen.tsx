@@ -1,3 +1,4 @@
+import { walletUnlockedMobile } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ import {
   isStoredWalletMetadataMigrated,
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/wallet'
-import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
+import { mnemonicMigrated } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -47,7 +48,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
         if (!isStoredWalletMetadataMigrated(wallet)) throw new Error('Wallet metadata is not migrated')
 
-        dispatch(walletUnlocked(wallet))
+        dispatch(walletUnlockedMobile(wallet))
         resetNavigation(navigation)
         sendAnalytics({
           event: 'Unlocked wallet',

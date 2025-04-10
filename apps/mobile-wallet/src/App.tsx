@@ -1,3 +1,4 @@
+import { appLaunchedWithLastUsedWallet } from '@alephium/shared'
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
@@ -31,7 +32,6 @@ import {
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
-import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 

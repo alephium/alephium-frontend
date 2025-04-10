@@ -1,4 +1,4 @@
-import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { addressDeleted, AddressHash, getHumanReadableError } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 
@@ -6,7 +6,6 @@ import { sendAnalytics } from '~/analytics'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import { useAppDispatch } from '~/hooks/redux'
 import { deleteAddress } from '~/persistent-storage/wallet'
-import { addressDeleted } from '~/store/addresses/addressesActions'
 import { showToast } from '~/utils/layout'
 
 interface UseForgetAddressProps {

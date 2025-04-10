@@ -3,6 +3,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
   addressDeleted,
+  addressesImported,
   addressesRestoredFromMetadata,
   addressSettingsSaved,
   defaultAddressChanged,
@@ -10,13 +11,17 @@ import {
 } from '@/store/addresses/addressesActions'
 import { addressesAdapter } from '@/store/addresses/addressesAdapters'
 import { addressSettingsSavedReducer, updateOldDefaultAddress } from '@/store/addresses/addressesReducers'
+import { appReset } from '@/store/global'
 import {
   activeWalletDeleted,
+  appLaunchedWithLastUsedWallet,
   newWalletInitialAddressGenerated,
   passphraseInitialAddressGenerated,
-  walletLocked
+  walletLocked,
+  walletUnlockedMobile
 } from '@/store/wallets/walletActions'
 import { Address, AddressBase, AddressesState } from '@/types/addresses'
+import { addressMetadataIncludesHash } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState()
 
@@ -39,13 +44,6 @@ const addressesSlice = createSlice({
           }
         })
       })
-      .addCase(newAddressesSaved, (state, action) => {
-        const addresses = action.payload
-
-        if (addresses.some((address) => address.isDefault)) updateOldDefaultAddress(state)
-
-        addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
-      })
       .addCase(addressesRestoredFromMetadata, (state, action) => {
         const addresses = action.payload
 
@@ -57,10 +55,34 @@ const addressesSlice = createSlice({
       })
 
     builder
-      .addMatcher(isAnyOf(walletLocked, activeWalletDeleted), () => initialState)
+      .addMatcher(isAnyOf(walletLocked, activeWalletDeleted, appReset), () => initialState)
       .addMatcher(isAnyOf(newWalletInitialAddressGenerated, passphraseInitialAddressGenerated), (state, action) =>
         addInitialAddress(state, action.payload)
       )
+      .addMatcher(isAnyOf(addressesImported, newAddressesSaved), (state, action) => {
+        const addresses = action.payload
+
+        if (addresses.some((address) => address.isDefault)) updateOldDefaultAddress(state)
+
+        addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
+      })
+      .addMatcher(isAnyOf(walletUnlockedMobile, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {
+        const addressesToInitialize = addresses.filter(
+          (address) => addressMetadataIncludesHash(address) && !state.entities[address.hash]
+        )
+
+        if (addressesToInitialize.length > 0) {
+          addressesAdapter.addMany(
+            state,
+            addressesToInitialize.filter(addressMetadataIncludesHash).map((address) =>
+              getDefaultAddressState({
+                ...address,
+                publicKey: '' // TODO: See https://github.com/alephium/alephium-frontend/issues/1317
+              })
+            )
+          )
+        }
+      })
   }
 })
 
