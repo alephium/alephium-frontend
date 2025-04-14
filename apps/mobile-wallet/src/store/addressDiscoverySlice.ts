@@ -6,7 +6,7 @@ import {
   appReset,
   client,
   customNetworkSettingsSaved,
-  DEPRECATED_Address as Address,
+  Address,
   networkPresetSwitched
 } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'

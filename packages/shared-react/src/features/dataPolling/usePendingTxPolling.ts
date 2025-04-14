@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 
 import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import { queryClient } from '@/api/queryClient'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
 import { useSharedDispatch, useSharedSelector } from '@/redux'
 

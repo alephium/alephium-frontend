@@ -1,9 +1,8 @@
-import { AddressHash, AssetAmount, client, DEPRECATED_Address as Address } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, client } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
-import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
@@ -21,18 +20,9 @@ export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAdd
 export const buildUnsignedTransactions = async (
   fromAddress: Address,
   toAddressHash: string,
-  assetAmounts: AssetAmount[]
+  assetAmounts: AssetAmount[],
+  shouldSweep: boolean
 ) => {
-  const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
-    (asset) => asset.availableBalance > 0
-  )
-
-  const shouldSweep =
-    assetsWithAvailableBalance.length === assetAmounts.length &&
-    assetsWithAvailableBalance.every(
-      (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
-    )
-
   if (shouldSweep) {
     return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
   } else {

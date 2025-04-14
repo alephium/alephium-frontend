@@ -18,7 +18,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { getInitialAddressSettings } from '~/utils/addresses'
@@ -94,7 +93,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncLatestTransactions({ addresses: wallet.initialAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({ event: 'Imported wallet', props: { note: 'Entered mnemonic manually' } })
 

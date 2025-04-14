@@ -1,13 +1,13 @@
+import { useRefreshAddressesBalances } from '@alephium/shared-react'
 import { RefreshCw } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
-import useRefreshBalances from '@/features/refreshData/useRefreshBalances'
 
 const RefreshButton = memo(() => {
-  const { refreshBalances, isFetchingBalances } = useRefreshBalances()
+  const { refreshBalances, isFetchingBalances } = useRefreshAddressesBalances()
 
   return <RefreshBtn onClick={refreshBalances} isLoading={isFetchingBalances} />
 })

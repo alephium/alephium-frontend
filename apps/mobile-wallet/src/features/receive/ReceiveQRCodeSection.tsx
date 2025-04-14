@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import styled from 'styled-components/native'
@@ -10,7 +11,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { copyAddressToClipboard } from '~/utils/addresses'
 

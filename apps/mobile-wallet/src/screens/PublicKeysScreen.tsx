@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { useTranslation } from 'react-i18next'
@@ -7,17 +8,15 @@ import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import FlatListScreen from '~/components/layout/FlatListScreen'
 import Row from '~/components/Row'
-import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'> {}
 
 const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddressesHashes()
   const { t } = useTranslation()
 
   const handleAddressPress = async (addressHash: AddressHash) => {
@@ -40,15 +39,14 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       headerOptions={{ headerTitle: t('Public keys'), type: 'stack' }}
       screenTitle={t('Public keys')}
       screenIntro={t('Tap on an address to copy its public key to the clipboard.')}
-      keyExtractor={(item) => item.hash}
       data={addresses}
-      renderItem={({ item: address }) => (
+      renderItem={({ item: addressHash }) => (
         <Row
-          key={address.hash}
-          onPress={() => handleAddressPress(address.hash)}
+          key={addressHash}
+          onPress={() => handleAddressPress(addressHash)}
           style={{ marginHorizontal: DEFAULT_MARGIN }}
         >
-          <AddressBadge addressHash={address.hash} canCopy={false} />
+          <AddressBadge addressHash={addressHash} canCopy={false} />
         </Row>
       )}
       {...props}

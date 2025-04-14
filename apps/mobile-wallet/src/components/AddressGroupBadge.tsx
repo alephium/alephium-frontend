@@ -1,8 +1,7 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 
 import Badge, { BadgeProps } from '~/components/Badge'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 
 interface AddressGroupBadgeProps extends Omit<BadgeProps, 'children'> {
   addressHash: AddressHash

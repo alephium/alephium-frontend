@@ -2,6 +2,7 @@ import {
   AssetAmount,
   getHumanReadableError,
   SessionRequestEvent,
+  shouldBuildSweepTransactions,
   throttledClient,
   WALLETCONNECT_ERRORS
 } from '@alephium/shared'
@@ -23,7 +24,6 @@ import { memo, useCallback, useEffect } from 'react'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
-import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'

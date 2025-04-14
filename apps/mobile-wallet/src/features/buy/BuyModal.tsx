@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useURL } from 'expo-linking'
 import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
 import { useEffect } from 'react'
@@ -14,7 +14,6 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 
 export interface BuyModalProps {
   receiveAddressHash: AddressHash

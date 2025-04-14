@@ -2,7 +2,6 @@ import { keyring } from '@alephium/keyring'
 import { AddressMetadata, newAddressesSaved, WalletMetadataMobile } from '@alephium/shared'
 
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { store } from '~/store/store'
 import { persistAddressesSettings } from '~/utils/addresses'
 
@@ -21,8 +20,6 @@ export const importAddresses = async (walletId: WalletMetadataMobile['id'], addr
 
       addressHashes.push(newAddress.hash)
     }
-
-    store.dispatch(syncLatestTransactions({ addresses: addressHashes, areAddressesNew: true }))
   } finally {
     keyring.clear()
   }

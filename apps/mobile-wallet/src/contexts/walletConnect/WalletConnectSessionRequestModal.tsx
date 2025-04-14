@@ -1,6 +1,7 @@
 import {
   client,
   getHumanReadableError,
+  selectAddressByHash,
   SessionRequestEvent,
   transactionSent,
   WALLETCONNECT_ERRORS,
@@ -50,7 +51,6 @@ import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
