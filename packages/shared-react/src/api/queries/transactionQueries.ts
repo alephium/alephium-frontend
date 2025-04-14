@@ -67,16 +67,6 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
         : skipToken
   })
 
-export const addressLatestTransactionsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
-  queryOptions({
-    queryKey: ['address', addressHash, 'transactions', 'latest', { networkId }],
-    // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed
-    // the cached data will be deleted.
-    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
-    queryFn: () =>
-      throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1, limit: 5 })
-  })
-
 interface TransactionsInfiniteQueryBaseProps {
   networkId?: number
   skip?: boolean

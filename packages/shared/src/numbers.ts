@@ -361,5 +361,3 @@ export const getNumberOfDecimals = (amount: string): number =>
   amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
 
 export const convertToPositive = (num: bigint): bigint => (num < 0 ? num * BigInt(-1) : num)
-
-export const convertToNegative = (num: bigint): bigint => (num > 0 ? num * BigInt(-1) : num)

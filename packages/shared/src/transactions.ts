@@ -1,7 +1,7 @@
 import { explorer as e } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
-import { Asset, AssetAmount } from '@/types/assets'
+import { AssetAmount } from '@/types/assets'
 import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
@@ -106,25 +106,6 @@ export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: R
   const allAmountsAreNegative = allAmounts.every((amount) => amount <= 0)
 
   return !allAmountsArePositive && !allAmountsAreNegative
-}
-
-export const getTransactionsOfAddress = (transactions: e.Transaction[], addressHash: AddressHash) =>
-  transactions.filter((tx) => isAddressPresentInInputsOutputs(addressHash, tx))
-
-export const extractNewTransactions = (
-  incomingTransactions: e.Transaction[],
-  existingTransactions: e.Transaction['hash'][]
-): e.Transaction[] =>
-  incomingTransactions.filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
-
-export const extractTokenIds = (tokenIds: Asset['id'][], ios: e.Transaction['inputs'] | e.Transaction['outputs']) => {
-  ios?.forEach((io) => {
-    io.tokens?.forEach((token) => {
-      if (!tokenIds.includes(token.id)) {
-        tokenIds.push(token.id)
-      }
-    })
-  })
 }
 
 export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: e.Transaction | e.PendingTransaction) =>
