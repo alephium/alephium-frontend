@@ -1,10 +1,10 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
-import { selectAddressByHash, selectContactByHash } from '~/store/addresses/addressesSelectors'
+import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 import { stringToColour } from '~/utils/colors'
 

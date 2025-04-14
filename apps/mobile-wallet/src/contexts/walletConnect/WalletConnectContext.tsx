@@ -1,7 +1,6 @@
 import '@walletconnect/react-native-compat'
 
 import {
-  AddressHash,
   AssetAmount,
   client,
   getHumanReadableError,
@@ -14,7 +13,7 @@ import {
   walletConnectClientInitializing,
   walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
-import { useInterval } from '@alephium/shared-react'
+import { useInterval, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -62,7 +61,6 @@ import {
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressIds } from '~/store/addresses/addressesSelectors'
 import {
   CallContractTxData,
   DeployContractTxData,
@@ -116,7 +114,7 @@ const core = new Core({
 })
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
-  const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
+  const addressHashes = useUnsortedAddressesHashes()
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
@@ -464,7 +462,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
             ]
 
-            const fromAddress = addressIds.find((address) => address === signerAddress)
+            const fromAddress = addressHashes.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -513,7 +511,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
               : undefined
 
-            const fromAddress = addressIds.find((address) => address === signerAddress)
+            const fromAddress = addressHashes.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -561,7 +559,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             let assetAmounts: AssetAmount[] = []
             let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
 
-            const fromAddress = addressIds.find((address) => address === signerAddress)
+            const fromAddress = addressHashes.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -619,7 +617,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           case 'alph_signMessage': {
             const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
 
-            const fromAddress = addressIds.find((address) => address === signerAddress)
+            const fromAddress = addressHashes.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -656,7 +654,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
               .params as SignUnsignedTxParams
 
-            const fromAddress = addressIds.find((address) => address === signerAddress)
+            const fromAddress = addressHashes.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -745,7 +743,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         }
       }
     },
-    [addressIds, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
+    [addressHashes, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
   )
 
   useEffect(() => {

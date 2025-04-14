@@ -9,7 +9,7 @@ import {
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 import { useSharedSelector } from '@/redux'
 
 export const useTransactionDirection = (

@@ -1,13 +1,14 @@
 import { keyring } from '@alephium/keyring'
 import {
-  DEPRECATED_Address as Address,
+  AddressHash,
   isNetworkValid,
   networkSettingsPresets,
   newAddressesSaved,
+  selectAddressesInGroup,
+  selectDefaultAddressHash,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
-import { useWalletConnectNetwork } from '@alephium/shared-react'
-import { isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
+import { useUnsortedAddresses, useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
@@ -35,8 +36,6 @@ import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey, initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import { selectAddressesInGroup, selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast } from '~/utils/layout'
@@ -54,17 +53,18 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
   }) => {
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
-    const addresses = useAppSelector(selectAllAddresses)
+    const addresses = useUnsortedAddresses()
     const dispatch = useAppDispatch()
     const group = chainInfo.addressGroup
     const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
+    const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
     const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
     const persistAddressSettings = usePersistAddressSettings()
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
 
-    const [signerAddress, setSignerAddress] = useState<Address>()
+    const [signerAddress, setSignerAddress] = useState<AddressHash>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
 
     const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId, () =>
@@ -73,9 +73,11 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
 
     useEffect(() => {
       setSignerAddress(
-        addressesInGroup.length > 0 ? addressesInGroup.find((a) => a.isDefault) ?? addressesInGroup[0] : undefined
+        addressesInGroup.length > 0
+          ? addressesInGroup.find((a) => a === defaultAddressHash) ?? addressesInGroup.at(0)
+          : undefined
       )
-    }, [addressesInGroup])
+    }, [addressesInGroup, defaultAddressHash])
 
     const handleAddressGeneratePress = async () => {
       dispatch(activateAppLoading(t('Generating new address')))
@@ -91,7 +93,6 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
 
         await persistAddressSettings(newAddress)
         dispatch(newAddressesSaved([newAddress]))
-        await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
 
         sendAnalytics({ event: 'WC: Generated new address' })
       } catch (error) {
@@ -103,31 +104,13 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       dispatch(deactivateAppLoading())
     }
 
-    const handleApproveProposal = async (signerAddress: Address) => {
+    const handleApproveProposal = async (signerAddressHash: AddressHash) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
 
       if (!walletConnectClient) {
         console.error('❌ Could not find WalletConnect client')
         return
-      }
-
-      if (!isCompatibleAddressGroup(signerAddress.group, chainInfo.addressGroup)) {
-        console.error(
-          `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${chainInfo.addressGroup})`
-        )
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t(
-            'The group of the selected address ({{ selectedAddressGroup }}) does not match the group required by WalletConnect ({{ requiredGroup }})',
-            {
-              selectedAddressGroup: signerAddress.group,
-              requiredGroup: chainInfo.addressGroup
-            }
-          ),
-          type: 'error',
-          autoHide: false
-        })
       }
 
       if (!isNetworkValid(chainInfo.networkId, currentNetworkId)) {
@@ -160,7 +143,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
           })
         }
 
-        const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+        const publicKey = await getAddressAsymetricKey(signerAddressHash, 'public')
 
         const namespaces: SessionTypes.Namespaces = {
           alephium: {
@@ -298,13 +281,13 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                   </SectionTitle>
                   <SectionSubtitle color="secondary">{t('Tap to select another one')}</SectionSubtitle>
                   <AddressList>
-                    {addressesInGroup.map((address, i) => (
+                    {addressesInGroup.map((addressHash, i) => (
                       <AddressBox
-                        key={address.hash}
-                        addressHash={address.hash}
-                        isSelected={address.hash === signerAddress?.hash}
+                        key={addressHash}
+                        addressHash={addressHash}
+                        isSelected={addressHash === signerAddress}
                         onPress={() => {
-                          setSignerAddress(address)
+                          setSignerAddress(addressHash)
                           setShowAlternativeSignerAddresses(false)
                           sendAnalytics({ event: 'WC: Switched signer address' })
                         }}
@@ -326,7 +309,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                   <SectionSubtitle color="secondary">{t('Tap to change the address to connect with.')}</SectionSubtitle>
                   <AddressList>
                     <AddressBox
-                      addressHash={signerAddress.hash}
+                      addressHash={signerAddress}
                       onPress={() => setShowAlternativeSignerAddresses(true)}
                       isSelected
                       isLast

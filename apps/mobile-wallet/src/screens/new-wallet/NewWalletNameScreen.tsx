@@ -16,7 +16,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -58,7 +57,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
 
         dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
         dispatch(newWalletGenerated(wallet))
-        dispatch(syncLatestTransactions({ addresses: wallet.initialAddress.hash, areAddressesNew: true }))
 
         sendAnalytics({ event: 'Created new wallet' })
         resetNavigation(

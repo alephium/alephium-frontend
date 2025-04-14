@@ -1,4 +1,4 @@
-import { AddressHash, addressSettingsSaved } from '@alephium/shared'
+import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -17,7 +17,6 @@ import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 

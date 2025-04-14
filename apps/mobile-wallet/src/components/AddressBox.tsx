@@ -1,4 +1,4 @@
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,
@@ -23,7 +23,6 @@ import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import FtWorth from '~/components/tokensLists/FtWorth'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 

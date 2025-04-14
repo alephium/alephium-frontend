@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
 import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 import { useCurrentlyOnlineNetworkId } from '@/network'
 import { useSharedSelector } from '@/redux'
 

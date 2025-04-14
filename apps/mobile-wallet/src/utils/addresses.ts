@@ -1,24 +1,10 @@
-import {
-  AddressHash,
-  AddressMetadataWithHash,
-  AddressSettings,
-  DEPRECATED_Address as Address,
-  getTransactionsOfAddress
-} from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import bigInteger from 'big-integer'
+import { Address, AddressHash, AddressMetadataWithHash, AddressSettings } from '@alephium/shared'
+import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as Clipboard from 'expo-clipboard'
 
 import i18n from '~/features/localization/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { AddressDiscoveryGroupData } from '~/types/addresses'
-import {
-  AddressConfirmedTransaction,
-  AddressPendingTransaction,
-  AddressTransaction,
-  PendingTransaction
-} from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -91,101 +77,6 @@ export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): Addr
 
   return groupsData
 }
-
-export const getAddressAvailableBalance = (address: Address): bigint =>
-  BigInt(bigInteger(address.balance).minus(bigInteger(address.lockedBalance)).toString())
-
-export const selectAddressPendingTransactions = (
-  allAddresses: Address[],
-  transactions: PendingTransaction[],
-  addressHashes?: AddressHash | AddressHash[]
-) => {
-  const addresses =
-    addressHashes !== undefined
-      ? Array.isArray(addressHashes)
-        ? allAddresses.filter((address) => addressHashes.includes(address.hash))
-        : allAddresses.filter((address) => addressHashes === address.hash)
-      : allAddresses
-
-  return transactions.reduce((acc, tx) => {
-    const address = addresses.find((address) => address.hash === tx.fromAddress)
-
-    if (address) {
-      acc.push({
-        ...tx,
-        address
-      })
-    }
-    return acc
-  }, [] as AddressPendingTransaction[])
-}
-
-export const selectAddressConfirmedTransactions = (
-  allAddresses: Address[],
-  transactions: explorer.Transaction[],
-  addressHashes?: AddressHash | AddressHash[]
-) => {
-  const addresses =
-    addressHashes !== undefined
-      ? Array.isArray(addressHashes)
-        ? allAddresses.filter((address) => addressHashes.includes(address.hash))
-        : allAddresses.filter((address) => addressHashes === address.hash)
-      : allAddresses
-  const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
-  const processedTxHashes: explorer.Transaction['hash'][] = []
-
-  return transactions.reduce((acc, tx) => {
-    const addressTxs = addressesTxs.filter(({ txHash }) => txHash === tx.hash)
-
-    addressTxs.forEach((addressTx) => {
-      if (!processedTxHashes.includes(tx.hash)) {
-        processedTxHashes.push(tx.hash)
-        acc.push({ ...tx, address: addressTx.address })
-      }
-    })
-
-    return acc
-  }, [] as AddressConfirmedTransaction[])
-}
-
-export const selectContactConfirmedTransactions = (
-  allAddresses: Address[],
-  transactions: explorer.Transaction[],
-  contactAddressHash: AddressHash
-) => associateTxsWithAddresses(getTransactionsOfAddress(transactions, contactAddressHash), allAddresses)
-
-export const selectContactPendingTransactions = (
-  allAddresses: Address[],
-  transactions: PendingTransaction[],
-  contactAddressHash: AddressHash
-) =>
-  associateTxsWithAddresses(
-    transactions.filter(
-      (tx) => tx.fromAddress === contactAddressHash || (tx.type === 'transfer' && tx.toAddress) === contactAddressHash
-    ),
-    allAddresses
-  )
-
-// Same as in desktop wallet
-export const getAddressAssetsAvailableBalance = (address: Address) => [
-  {
-    id: ALPH.id,
-    availableBalance: BigInt(address.balance) - BigInt(address.lockedBalance)
-  },
-  ...address.tokens.map((token) => ({
-    id: token.tokenId,
-    availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
-  }))
-]
-
-const associateTxsWithAddresses = (transactions: (explorer.Transaction | PendingTransaction)[], addresses: Address[]) =>
-  transactions.reduce((txs, tx) => {
-    const address = addresses.find((address) => address.transactions.includes(tx.hash))
-
-    if (address) txs.push({ ...tx, address })
-
-    return txs
-  }, [] as AddressTransaction[])
 
 export const getInitialAddressSettings = (): AddressSettings => ({
   isDefault: true,

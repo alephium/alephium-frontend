@@ -1,8 +1,10 @@
-import { queryClient, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useIsFetching } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-const useRefreshBalances = () => {
+import { queryClient } from '@/api/queryClient'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
+
+export const useRefreshAddressesBalances = () => {
   const addressHashes = useUnsortedAddressesHashes()
   const isFetchingBalances =
     useIsFetching({
@@ -28,5 +30,3 @@ const useRefreshBalances = () => {
     isFetchingBalances
   }
 }
-
-export default useRefreshBalances
