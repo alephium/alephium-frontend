@@ -1,8 +1,8 @@
 import {
-  client,
   getHumanReadableError,
   selectAddressByHash,
   SessionRequestEvent,
+  throttledClient,
   transactionSent,
   WALLETCONNECT_ERRORS,
   WalletConnectError
@@ -215,7 +215,7 @@ const WalletConnectSessionRequestModal = withModal(
           )
 
           if (requestData.submit) {
-            await client.node.transactions.postTransactionsSubmit({
+            await throttledClient.node.transactions.postTransactionsSubmit({
               unsignedTx: requestData.wcData.unsignedTx,
               signature
             })
