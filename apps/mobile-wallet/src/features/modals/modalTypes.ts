@@ -102,8 +102,6 @@ export type OpenModalParams = {
   [K in ModalName]: ModalParams<K>
 }[ModalName]
 
-export const getModalComponent = (name: ModalName) => ModalComponents[name]
-
 export type ModalInstance = {
   id: number
   params: OpenModalParams

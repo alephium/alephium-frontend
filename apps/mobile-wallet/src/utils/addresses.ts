@@ -8,8 +8,6 @@ import { AddressDiscoveryGroupData } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-export const getAddressDisplayName = (address: Address): string => address.label || address.hash.substring(0, 6)
-
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   try {
     await Clipboard.setStringAsync(addressHash)

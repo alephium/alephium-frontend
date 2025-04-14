@@ -1,12 +1,10 @@
-import { defaultNetworkSettings, NetworkNames } from '@alephium/shared'
+import { defaultNetworkSettings } from '@alephium/shared'
 import { Appearance } from 'react-native'
 
 import { getSecurelyWithReportableError, storeSecurelyWithReportableError } from '~/persistent-storage/utils'
 import { GeneralSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
-
-export const defaultNetwork = NetworkNames.mainnet
 
 export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
