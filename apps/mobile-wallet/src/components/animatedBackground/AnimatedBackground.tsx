@@ -17,8 +17,6 @@ import useCanvasDimensions, { CanvasDimensions } from '~/components/animatedBack
 // extend([/* plugins */])
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
-const AnimatedSkiaCanvas = Animated.createAnimatedComponent(SkiaCanvas)
-
 const AnimatedBackground = ({
   height,
   width,
@@ -78,7 +76,11 @@ const AnimatedCanvas = ({ children, canvasHeight, canvasWidth }: AnimatedCanvasP
     width: canvasWidth.value
   }))
 
-  return <AnimatedSkiaCanvas style={animatedCanvasStyle}>{children}</AnimatedSkiaCanvas>
+  return (
+    <Animated.View style={animatedCanvasStyle}>
+      <SkiaCanvas style={{ flex: 1 }}>{children}</SkiaCanvas>
+    </Animated.View>
+  )
 }
 
 const AnimatedContainer = styled(Animated.View)`
