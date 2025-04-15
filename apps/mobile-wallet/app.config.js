@@ -66,20 +66,19 @@ export default {
     web: {
       favicon: './assets/favicon.png'
     },
+    newArchEnabled: false,
     plugins: [
       [
         'expo-build-properties',
         {
           ios: {
             deploymentTarget: '15.1',
-            newArchEnabled: false,
             flipper: false // https://docs.expo.dev/guides/using-flipper/
           },
           android: {
             compileSdkVersion: 35,
             targetSdkVersion: 35,
-            buildToolsVersion: '35.0.0',
-            newArchEnabled: false
+            buildToolsVersion: '35.0.0'
           }
         }
       ],
