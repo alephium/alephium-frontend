@@ -91,13 +91,6 @@ export default {
         }
       ],
       [
-        'expo-barcode-scanner',
-        {
-          cameraPermission:
-            'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
-        }
-      ],
-      [
         'expo-font',
         {
           fonts: [
