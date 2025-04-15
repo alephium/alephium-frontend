@@ -118,7 +118,6 @@
     "redux-devtools-expo-dev-plugin": "^0.2.1",
     "styled-components": "^6.1.8",
     "stylis": "^4.0.0",
-    "text-encoding": "^0.7.0",
     "victory-native": "^36.6.10",
     "web3-validator": "^2.0.6"
   },
