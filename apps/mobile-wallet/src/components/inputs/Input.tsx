@@ -12,7 +12,7 @@ import { INPUTS_HEIGHT } from '~/style/globalStyle'
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
 
-export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'> {
+export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value' | 'style'> {
   value: T
   label: string
   onPress?: () => void
