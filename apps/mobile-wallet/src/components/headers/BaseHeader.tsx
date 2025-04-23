@@ -160,6 +160,7 @@ const HeaderGradient = styled(AnimatedHeaderGradient)`
   top: 0;
   left: 0;
   right: 0;
+  opacity: 0;
 `
 
 const HeaderContainer = styled(Animated.View)`
