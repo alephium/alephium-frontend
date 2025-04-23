@@ -19,8 +19,8 @@ const useCanvasDimensions = ({ height = 400, width, isFullScreen }: AnimatedBack
   const canvasWidth = useSharedValue(defaultCanvasWidth)
 
   useEffect(() => {
-    canvasHeight.value = withSpring(defaultCanvasHeight, { mass: 5, damping: 60 })
-    canvasWidth.value = withSpring(defaultCanvasWidth, { mass: 5, damping: 60 })
+    canvasHeight.set(withSpring(defaultCanvasHeight, { mass: 5, damping: 60 }))
+    canvasWidth.set(withSpring(defaultCanvasWidth, { mass: 5, damping: 60 }))
   }, [canvasHeight, canvasWidth, defaultCanvasHeight, defaultCanvasWidth])
 
   return { canvasHeight, canvasWidth }

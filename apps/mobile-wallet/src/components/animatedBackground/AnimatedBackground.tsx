@@ -58,7 +58,7 @@ const ParallaxAnimatedContainer = ({ children, scrollY }: ParallaxAnimatedContai
   const parallaxAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
+        translateY: interpolate(scrollY?.get() || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
       }
     ]
   }))
@@ -72,8 +72,8 @@ interface AnimatedCanvasProps extends CanvasDimensions {
 
 const AnimatedCanvas = ({ children, canvasHeight, canvasWidth }: AnimatedCanvasProps) => {
   const animatedCanvasStyle = useAnimatedStyle(() => ({
-    height: canvasHeight.value,
-    width: canvasWidth.value
+    height: canvasHeight.get(),
+    width: canvasWidth.get()
   }))
 
   return (

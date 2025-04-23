@@ -61,13 +61,13 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
+  const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.get() || 0, defaultScrollRange, [0, 1]))
 
   const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle && !headerTitleScrolled && !titleAlwaysVisible
       ? {
           opacity: interpolate(
-            scrollY?.value || 0,
+            scrollY?.get() || 0,
             [30 + scrollEffectOffset, 50 + scrollEffectOffset],
             [0, 1],
             Extrapolation.CLAMP
@@ -76,7 +76,7 @@ const BaseHeader = ({
       : headerTitle && headerTitleScrolled
         ? {
             opacity: interpolate(
-              scrollY?.value || 0,
+              scrollY?.get() || 0,
               [30 + scrollEffectOffset, 50 + scrollEffectOffset],
               [1, 0],
               Extrapolation.CLAMP
@@ -89,7 +89,7 @@ const BaseHeader = ({
     headerTitleScrolled
       ? {
           opacity: interpolate(
-            scrollY?.value || 0,
+            scrollY?.get() || 0,
             [40 + scrollEffectOffset, 60 + scrollEffectOffset],
             [0, 1],
             Extrapolation.CLAMP
