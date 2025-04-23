@@ -80,6 +80,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
     <ScrollScreen
       fill
       contentPaddingTop
+      hasKeyboard
       keyboardShouldPersistTaps="always"
       scrollEnabled={false}
       headerOptions={{

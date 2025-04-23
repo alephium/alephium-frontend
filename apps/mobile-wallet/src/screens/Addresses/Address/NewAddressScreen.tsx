@@ -75,6 +75,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   return (
     <ScrollScreen
       fill
+      hasKeyboard
       headerTitleAlwaysVisible
       headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
       contentPaddingTop
