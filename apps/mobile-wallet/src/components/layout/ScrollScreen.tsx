@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { ReactNode, RefObject, useRef, useState } from 'react'
+import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
@@ -71,6 +71,7 @@ const ScrollScreen = ({
   const insets = useSafeAreaInsets()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const [paddingBottom, setPaddingBottom] = useState(0)
+  const [canGoBack, setCanGoBack] = useState(false)
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     onScroll && onScroll(e)
@@ -85,11 +86,15 @@ const ScrollScreen = ({
 
   const hasHeaderButtons = headerOptions?.headerLeft || headerOptions?.headerRight || headerOptions?.type === 'stack'
 
+  useEffect(() => {
+    setCanGoBack(navigation.canGoBack())
+  }, [navigation])
+
   const content = (
     <ScrollViewContainer style={containerStyle}>
       {headerOptions && (
         <HeaderComponent
-          onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
+          onBackPress={canGoBack ? navigation.goBack : undefined}
           options={{ headerTitle: screenTitle, ...headerOptions }}
           scrollY={screenScrollY}
           scrollEffectOffset={headerScrollEffectOffset}
