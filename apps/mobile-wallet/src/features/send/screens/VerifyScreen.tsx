@@ -35,7 +35,9 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const onSendSuccess = () => {
     showToast({ type: 'success', text1: t('Transaction sent') })
-    parentNavigation?.navigate('ActivityScreen')
+    parentNavigation?.navigate('InWalletTabsNavigation', {
+      screen: 'ActivityScreen'
+    })
   }
 
   return (
