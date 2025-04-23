@@ -132,6 +132,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     <ScrollScreen
       verticalGap
       fill
+      hasKeyboard
       contentPaddingTop
       screenTitle={t('Fund password')}
       screenIntro={screenIntro}

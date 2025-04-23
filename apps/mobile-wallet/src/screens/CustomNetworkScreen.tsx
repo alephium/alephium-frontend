@@ -49,6 +49,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
   return (
     <ScrollScreen
       fill
+      hasKeyboard
       contentPaddingTop
       headerOptions={{ type: 'stack', headerTitle: t('Custom network') }}
       bottomButtonsRender={() => (
