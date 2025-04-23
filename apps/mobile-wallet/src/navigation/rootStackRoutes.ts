@@ -1,6 +1,8 @@
 import { AddressHash } from '@alephium/shared'
 import { Token } from '@alephium/web3'
 
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
+
 type RootStackParamList = {
   LandingScreen: undefined
   NewWalletIntroScreen: undefined
@@ -9,7 +11,9 @@ type RootStackParamList = {
   NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
-  InWalletTabsNavigation: undefined
+  InWalletTabsNavigation: {
+    screen?: keyof InWalletTabsParamList
+  }
   LoginWithPinScreen: undefined
   SwitchWalletScreen?: {
     disableBack?: boolean
