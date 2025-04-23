@@ -12,7 +12,7 @@ const useSceneProgressSharedValues = (progress?: SceneProgress) => {
     animatedValue?: Animated.AnimatedInterpolation<number>
   ) => {
     animatedValue?.addListener(({ value }) => {
-      sharedValue.value = value
+      sharedValue.set(value)
     })
   }
 

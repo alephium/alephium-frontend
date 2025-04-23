@@ -30,7 +30,7 @@ export const HeaderContextProvider = ({ children }: { children: ReactNode }) => 
   const parentNavigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    screenScrollY.value = e.nativeEvent.contentOffset.y
+    screenScrollY.set(e.nativeEvent.contentOffset.y)
   }
 
   return (
