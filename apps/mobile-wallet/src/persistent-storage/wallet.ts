@@ -22,11 +22,10 @@ import i18n from '~/features/localization/i18n'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import { wasAppUninstalled } from '~/persistent-storage/app'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
+import { storage } from '~/persistent-storage/storage'
 import {
   deleteSecurelyWithReportableError,
-  deleteWithReportableError,
   getSecurelyWithReportableError,
-  getWithReportableError,
   storeSecurelyWithReportableError,
   storeWithReportableError
 } from '~/persistent-storage/utils'
@@ -138,7 +137,7 @@ export const validateAndRepareStoredWalletData = async (
         // If we only have a deprecated mnemonic but no metadata we recreate deprecated metadata with sane defaults and
         // the migration flow will migrate both mnemonic and metadata
         try {
-          await storeWalletMetadataDeprecated({
+          storeWalletMetadataDeprecated({
             id: nanoid(),
             name: 'My wallet',
             isMnemonicBackedUp: false,
@@ -164,7 +163,7 @@ export const validateAndRepareStoredWalletData = async (
       } else {
         // If we have metadata but no mnemonic and no deprecated mnemonic, we should delete the metadata
         try {
-          await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
+          storage.delete(WALLET_METADATA_STORAGE_KEY)
         } finally {
           walletMetadata = await getWalletMetadata(false)
         }
@@ -217,7 +216,7 @@ export const generateAndStoreWallet = async (
 const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
   const initialAddress = await generateAndStoreAddressKeypairForIndex(0)
   const walletMetadata = generateWalletMetadata(name, initialAddress.hash, isMnemonicBackedUp)
-  await storeWalletMetadata(walletMetadata)
+  storeWalletMetadata(walletMetadata)
 
   return {
     id: walletMetadata.id,
@@ -232,7 +231,7 @@ export const getWalletMetadata = async (
   let walletMetadata = null
 
   try {
-    rawWalletMetadata = await getWithReportableError(WALLET_METADATA_STORAGE_KEY)
+    rawWalletMetadata = storage.getString(WALLET_METADATA_STORAGE_KEY)
   } catch (error) {
     if (throwError) throw error
   }
@@ -273,7 +272,7 @@ export const updateStoredWalletMetadata = async (partialMetadata: Partial<Wallet
   )
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
-  await storeWalletMetadata(updatedWalletMetadata)
+  storeWalletMetadata(updatedWalletMetadata)
 }
 
 export interface GetDeprecatedStoredWalletProps {
@@ -332,8 +331,8 @@ export const deleteWallet = async () => {
 
   await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
   await deleteFundPassword()
-  await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
-  await deleteWithReportableError(IS_NEW_WALLET)
+  storage.delete(WALLET_METADATA_STORAGE_KEY)
+  storage.delete(IS_NEW_WALLET)
 }
 
 export const deleteAddress = async (addressHash: AddressHash) => {
@@ -348,7 +347,7 @@ export const deleteAddress = async (addressHash: AddressHash) => {
     await deleteAddressKeyPair(addressHash)
   }
 
-  await storeWalletMetadata(wallet)
+  storeWalletMetadata(wallet)
 }
 
 const deleteAddressKeyPair = async (addressHash: AddressHash) => {
@@ -373,13 +372,12 @@ export const persistAddressesMetadata = async (walletId: string, addressesMetada
     console.log(`💽 Storing address index ${metadata.index} metadata in persistent storage`)
   }
 
-  await storeWalletMetadata(walletMetadata)
+  storeWalletMetadata(walletMetadata)
 }
 
-export const getIsNewWallet = async (): Promise<boolean | undefined> =>
-  (await getWithReportableError(IS_NEW_WALLET)) === 'true'
+export const getIsNewWallet = (): boolean | undefined => storage.getBoolean(IS_NEW_WALLET)
 
-export const storeIsNewWallet = async (isNew: boolean) => storeWithReportableError(IS_NEW_WALLET, isNew.toString())
+export const storeIsNewWallet = (isNew: boolean) => storeWithReportableError(IS_NEW_WALLET, isNew)
 
 export const deleteDeprecatedWallet = async () => {
   await deleteSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, '')
@@ -510,10 +508,10 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   contacts: []
 })
 
-export const storeWalletMetadata = async (metadata: WalletMetadataMobile | DeprecatedWalletMetadataMobile) =>
+export const storeWalletMetadata = (metadata: WalletMetadataMobile | DeprecatedWalletMetadataMobile) =>
   storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
-export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadataMobile) =>
+export const storeWalletMetadataDeprecated = (metadata: DeprecatedWalletMetadataMobile) =>
   storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
 export const storeWalletMnemonic = async (mnemonic: Uint8Array) =>

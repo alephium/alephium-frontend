@@ -21,7 +21,6 @@ import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
@@ -38,23 +37,16 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
-  const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
+    const isNewWallet = getIsNewWallet()
+
     if (needsBackupReminder && !isMnemonicBackedUp && isNewWallet !== undefined) {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
-  }, [dispatch, isMnemonicBackedUp, isNewWallet, needsBackupReminder])
 
-  useEffect(() => {
-    if (!isNewWallet) return
-
-    try {
-      storeIsNewWallet(false)
-    } catch (e) {
-      console.error(e)
-    }
-  }, [isNewWallet])
+    storeIsNewWallet(false)
+  }, [dispatch, isMnemonicBackedUp, needsBackupReminder])
 
   return (
     <DashboardScreenStyled
