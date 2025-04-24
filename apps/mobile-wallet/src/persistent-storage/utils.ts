@@ -1,32 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
+import { storage } from '~/persistent-storage/storage'
 
-export const getWithReportableError = async (key: string) => {
+export const storeWithReportableError = (key: string, value: string | number | boolean | ArrayBuffer) => {
   try {
-    return await AsyncStorage.getItem(key)
+    storage.set(key, value)
   } catch (error) {
-    sendAnalytics({ type: 'error', error, message: `Could not get ${key} from AsyncStorage` })
-    throw error
-  }
-}
-
-export const storeWithReportableError = async (key: string, value: string) => {
-  try {
-    await AsyncStorage.setItem(key, value)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: `Could not store ${key} in AsyncStorage` })
-    throw error
-  }
-}
-
-export const deleteWithReportableError = async (key: string) => {
-  try {
-    await AsyncStorage.removeItem(key)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: `Could not delete ${key} from AsyncStorage` })
+    sendAnalytics({ type: 'error', error, message: `Could not store ${key} in MMKV` })
     throw error
   }
 }
