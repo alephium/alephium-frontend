@@ -11,11 +11,12 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useState } from 'react'
-import { Platform, View, ViewProps } from 'react-native'
+import { ActivityIndicator, InteractionManager, Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
@@ -25,6 +26,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { hasMigratedFromAsyncStorage, migrateFromAsyncStorage } from '~/persistent-storage/storage'
 import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
 import {
   getStoredWalletMetadataWithoutThrowingError,
@@ -34,7 +36,40 @@ import { store } from '~/store/store'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 
+// TODO: Delete after everyone has migrated to MMKV
 const App = () => {
+  const [hasMigrated, setHasMigrated] = useState(hasMigratedFromAsyncStorage)
+
+  useEffect(() => {
+    if (!hasMigratedFromAsyncStorage) {
+      InteractionManager.runAfterInteractions(async () => {
+        try {
+          await migrateFromAsyncStorage()
+        } catch (e) {
+          sendAnalytics({
+            type: 'error',
+            message: 'Failed to migrate from AsyncStorage to MMKV',
+            error: e
+          })
+        }
+
+        setHasMigrated(true)
+      })
+    }
+  }, [])
+
+  if (!hasMigrated) {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    )
+  }
+
+  return <AppContent />
+}
+
+const AppContent = () => {
   const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
