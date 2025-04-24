@@ -21,7 +21,7 @@ import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
@@ -108,7 +108,6 @@ const ScrollScreen = ({
         alwaysBounceVertical={true}
         onScroll={handleScroll}
         onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: SCREEN_OVERFLOW }}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
           {
