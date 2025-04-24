@@ -66,7 +66,7 @@ export default {
     web: {
       favicon: './assets/favicon.png'
     },
-    newArchEnabled: false,
+    newArchEnabled: true,
     plugins: [
       [
         'expo-build-properties',
