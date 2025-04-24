@@ -33,10 +33,10 @@ const useLoadStoredSettings = () => {
       const isUsingFundPassword = await hasStoredFundPassword()
       dispatch(fundPasswordUseToggled(isUsingFundPassword))
 
-      const favoriteDApps = await getFavoriteDApps()
+      const favoriteDApps = getFavoriteDApps()
       dispatch(favoriteDAppsLoadedFromStorage(favoriteDApps))
 
-      const hiddenTokensIds = await getHiddenTokensIds()
+      const hiddenTokensIds = getHiddenTokensIds()
       dispatch(hiddenTokensLoadedFromStorage(hiddenTokensIds))
     }
 

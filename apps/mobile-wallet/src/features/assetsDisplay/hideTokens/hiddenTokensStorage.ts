@@ -1,15 +1,16 @@
 import { Token } from '@alephium/web3'
 
 import { sendAnalytics } from '~/analytics'
-import { getWithReportableError, storeWithReportableError } from '~/persistent-storage/utils'
+import { storage } from '~/persistent-storage/storage'
+import { storeWithReportableError } from '~/persistent-storage/utils'
 
 const HIDDEN_TOKENS_KEY = 'alephium_hidden_assets_ids'
 
-export const getHiddenTokensIds = async (): Promise<Token['id'][]> => {
+export const getHiddenTokensIds = (): Array<Token['id']> => {
   let hiddenTokensIds = null
 
   try {
-    const rawHiddenTokensIds = await getWithReportableError(HIDDEN_TOKENS_KEY)
+    const rawHiddenTokensIds = storage.getString(HIDDEN_TOKENS_KEY)
     hiddenTokensIds = rawHiddenTokensIds ? JSON.parse(rawHiddenTokensIds) : []
   } catch (error) {
     console.log('error', error)
