@@ -97,7 +97,7 @@ export default createGlobalStyle`
   /* Apex charts */
   .apexcharts-canvas {
     tspan {
-      font-family: 'Inter' !important;
+      font-family: 'Geist' !important;
     }
     font-feature-settings: "tnum";
   }

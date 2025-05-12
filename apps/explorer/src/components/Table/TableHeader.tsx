@@ -39,7 +39,6 @@ export default styled(TableHeader)`
 
   th {
     padding: 12px;
-    font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
 
