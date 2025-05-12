@@ -13,7 +13,7 @@ const useBlockListData = (currentPageNumber: number) => {
     manualFetch && setManualLoading(true)
 
     try {
-      const data = await client.explorer.blocks.getBlocks({ page: pageNumber, limit: 8 })
+      const data = await client.explorer.blocks.getBlocks({ page: pageNumber, limit: 10 })
 
       if (data) {
         console.log('Number of block fetched: ' + data.blocks?.length)
