@@ -53,12 +53,12 @@ const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => 
 }
 
 const TableWrapper = styled.div<TableProps>`
+  background-color: ${({ theme }) => theme.bg.primary};
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 9px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const StyledTable = styled.table<TableProps>`
@@ -98,11 +98,11 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tr td {
-    padding: 10px;
+    padding: 8px;
   }
 
   tr:not(.details) {
-    height: 55px;
+    height: 46px;
   }
 
   th,
@@ -167,8 +167,7 @@ const StyledTable = styled.table<TableProps>`
 `
 
 const FakeTableHeader = styled.th`
-  background-color: ${({ theme }) => theme.bg.background2};
-  height: 50px;
+  height: 40px;
 `
 
 export default Table
