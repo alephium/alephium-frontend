@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { useAppDispatch } from '~/hooks/redux'
@@ -38,18 +37,15 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   }
 
   return (
-    <BottomModal modalId={id}>
-      <ModalContent verticalGap>
-        <ScreenSection fill>
-          <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+    <BottomModal2 modalId={id} stackBehavior="replace">
+      <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+
+      {onVerifyPress && (
+        <ScreenSection>
+          <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
         </ScreenSection>
-        {onVerifyPress && (
-          <ScreenSection>
-            <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
-          </ScreenSection>
-        )}
-      </ModalContent>
-    </BottomModal>
+      )}
+    </BottomModal2>
   )
 })
 

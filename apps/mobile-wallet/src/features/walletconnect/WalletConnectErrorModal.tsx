@@ -7,7 +7,7 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
@@ -29,7 +29,7 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
   }
 
   return (
-    <BottomModal modalId={id}>
+    <BottomModal2 modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
@@ -56,7 +56,7 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
           </ButtonsRow>
         </ScreenSection>
       </ModalContent>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

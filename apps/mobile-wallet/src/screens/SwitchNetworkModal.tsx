@@ -6,7 +6,7 @@ import { View } from 'react-native'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
@@ -42,7 +42,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (
@@ -56,7 +56,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
           ))}
         </Surface>
       </View>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

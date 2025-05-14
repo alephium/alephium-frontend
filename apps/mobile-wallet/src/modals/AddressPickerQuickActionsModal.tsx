@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -33,7 +33,7 @@ const AddressPickerQuickActionsModal = withModal<AddressPickerQuickActionsModalP
     }
 
     return (
-      <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+      <BottomModal2 modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
         <ScreenSection>
           <ActionButtons>
             <QuickActionButton
@@ -48,7 +48,7 @@ const AddressPickerQuickActionsModal = withModal<AddressPickerQuickActionsModalP
             />
           </ActionButtons>
         </ScreenSection>
-      </BottomModal>
+      </BottomModal2>
     )
   }
 )

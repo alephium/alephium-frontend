@@ -4,7 +4,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
@@ -20,7 +20,7 @@ const SafePlaceWarningModal = withModal(({ id }) => {
   const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
 
   return (
-    <BottomModal modalId={id} title={t('Warning')}>
+    <BottomModal2 modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
@@ -59,7 +59,7 @@ const SafePlaceWarningModal = withModal(({ id }) => {
           />
         </ScreenSection>
       </ModalContent>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

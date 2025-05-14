@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import SendButton from '~/features/send/SendButton'
@@ -26,7 +26,7 @@ const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalPro
   const handleClose = () => dispatch(closeModal({ id }))
 
   return (
-    <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <SendButton
@@ -38,7 +38,7 @@ const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalPro
           {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
         </ActionButtons>
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

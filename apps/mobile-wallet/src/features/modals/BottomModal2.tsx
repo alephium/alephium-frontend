@@ -11,10 +11,20 @@ import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import { closeModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type BottomModal2Props = BottomSheetModalProps & BottomModalBaseProps
 
-const BottomModal2 = ({ children, title, titleAlign, navHeight, modalId, ...props }: BottomModal2Props) => {
+const BottomModal2 = ({
+  children,
+  title,
+  titleAlign,
+  navHeight,
+  modalId,
+  noPadding,
+  contentVerticalGap,
+  ...props
+}: BottomModal2Props) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const dispatch = useAppDispatch()
 
@@ -34,7 +44,12 @@ const BottomModal2 = ({ children, title, titleAlign, navHeight, modalId, ...prop
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
       {...props}
     >
-      <BottomSheetView>
+      <BottomSheetView
+        style={{
+          gap: contentVerticalGap ? VERTICAL_GAP : undefined,
+          padding: noPadding ? 0 : DEFAULT_MARGIN
+        }}
+      >
         <BottomModalHeader title={title} height={navHeight} onClose={handleClose} titleAlign={titleAlign} />
         {children}
       </BottomSheetView>

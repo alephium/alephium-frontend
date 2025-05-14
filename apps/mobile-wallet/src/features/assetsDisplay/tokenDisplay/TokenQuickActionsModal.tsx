@@ -11,7 +11,7 @@ import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -38,7 +38,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   }
 
   return (
-    <BottomModal
+    <BottomModal2
       modalId={id}
       title={
         <Title>
@@ -65,7 +65,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
           iconProps={{ name: 'more-horizontal' }}
         />
       </QuickActionButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 
