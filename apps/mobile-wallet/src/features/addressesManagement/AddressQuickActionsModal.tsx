@@ -12,7 +12,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -30,7 +30,7 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
   const handleClose = () => dispatch(closeModal({ id }))
 
   return (
-    <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />
@@ -39,7 +39,7 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
           <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
         </QuickActionButtons>
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 
