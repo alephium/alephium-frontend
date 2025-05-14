@@ -4,6 +4,7 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
 
@@ -52,9 +53,8 @@ const BottomModalBase = ({
       <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
       <Container>
         <ModalStyled style={modalAnimatedStyle}>
-          <HandleContainer>
-            <Handle style={handleAnimatedStyle} />
-          </HandleContainer>
+          <BottomModalHandle style={handleAnimatedStyle} />
+
           <GestureDetector gesture={panGesture}>
             <View style={{ flex: !isContentScrollable ? 1 : 0 }}>
               <BottomModalHeader
@@ -107,17 +107,4 @@ const ModalStyled = styled(Animated.View)`
   min-height: 80px;
   overflow: hidden;
   background-color: ${({ theme }) => theme.bg.back1};
-`
-
-const HandleContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  padding-top: 5px;
-`
-
-const Handle = styled(Animated.View)`
-  width: 10%;
-  height: 4px;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.border.primary};
 `
