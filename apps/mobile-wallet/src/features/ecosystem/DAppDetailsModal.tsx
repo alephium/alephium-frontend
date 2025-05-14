@@ -14,7 +14,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -24,7 +24,7 @@ const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
 
   return (
-    <BottomModal modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />
@@ -37,7 +37,7 @@ const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
           <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
         </BottomButtons>
       </Content>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

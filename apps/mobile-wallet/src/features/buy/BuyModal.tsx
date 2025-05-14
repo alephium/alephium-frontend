@@ -10,7 +10,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -48,7 +48,7 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   }
 
   return (
-    <BottomModal modalId={id} title={t('Disclaimer')}>
+    <BottomModal2 modalId={id} title={t('Disclaimer')}>
       <AppText>
         <Trans
           t={t}
@@ -66,7 +66,7 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
       <BottomButtons fullWidth backgroundColor="back1">
         <Button title={t('I understand')} onPress={openProviderUrl} variant="highlight" />
       </BottomButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

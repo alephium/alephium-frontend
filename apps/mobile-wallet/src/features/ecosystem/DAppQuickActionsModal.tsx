@@ -8,7 +8,7 @@ import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleFavoriteDApp'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -28,7 +28,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
   }
 
   return (
-    <BottomModal modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}
@@ -38,7 +38,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
         <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="quickAction" />
         <AddToFavoritesButton dAppName={dAppName} parentModalId={id} />
       </QuickActionButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

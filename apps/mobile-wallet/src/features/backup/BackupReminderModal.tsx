@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -25,7 +25,7 @@ const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWall
   }
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
+    <BottomModal2 modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       </ScreenSection>
@@ -61,7 +61,7 @@ const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWall
       <ScreenSection>
         <Button title={t("Let's do that!")} onPress={handleValidatePress} variant="highlight" />
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

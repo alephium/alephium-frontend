@@ -4,7 +4,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
@@ -21,7 +21,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal modalId={id} title={t('Auto-lock')}>
+    <BottomModal2 modalId={id} title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (
@@ -35,7 +35,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
           ))}
         </Surface>
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

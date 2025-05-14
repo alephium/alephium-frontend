@@ -7,7 +7,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
@@ -28,7 +28,7 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
   }
 
   return (
-    <BottomModal modalId={id}>
+    <BottomModal2 modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
@@ -53,7 +53,7 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
           </ButtonsRow>
         </ScreenSection>
       </ModalContent>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

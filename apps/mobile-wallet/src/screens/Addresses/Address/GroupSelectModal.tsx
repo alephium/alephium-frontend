@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -29,7 +29,7 @@ const GroupSelectModal = withModal<GroupSelectModalProps>(({ id, onSelect, selec
   }
 
   return (
-    <BottomModal modalId={id} title={t('Address group')}>
+    <BottomModal2 modalId={id} title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}
@@ -39,7 +39,7 @@ const GroupSelectModal = withModal<GroupSelectModalProps>(({ id, onSelect, selec
           isLast={index === groupSelectOptions.length - 1}
         />
       ))}
-    </BottomModal>
+    </BottomModal2>
   )
 })
 
