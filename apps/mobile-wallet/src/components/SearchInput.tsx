@@ -1,10 +1,15 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { TextInput, TextInputProps } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 
-const SearchInput = (props: TextInputProps) => {
+interface SearchInputProps extends TextInputProps {
+  isInModal?: boolean
+}
+
+const SearchInput = ({ isInModal, ...props }: SearchInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
@@ -12,9 +17,11 @@ const SearchInput = (props: TextInputProps) => {
     props.onChangeText?.('')
   }
 
+  const InputComponent = isInModal ? BottomSheetInputStyled : TextInputStyled
+
   return (
     <SearchInputStyled>
-      <TextInputStyled placeholder={t('Search')} placeholderTextColor={theme.font.tertiary} {...props} />
+      <InputComponent placeholder={t('Search')} placeholderTextColor={theme.font.tertiary} {...props} />
 
       {props.value && (
         <ClearButtonContainer>
@@ -41,7 +48,7 @@ const ClearButtonContainer = styled.View`
   justify-content: center;
 `
 
-const TextInputStyled = styled(TextInput)`
+const InputStyles = css<{ value?: string }>`
   width: 100%;
   background-color: ${({ theme }) => theme.bg.highlight};
   padding: 12px 14px;
@@ -53,4 +60,12 @@ const TextInputStyled = styled(TextInput)`
     css`
       padding-right: 52px;
     `};
+`
+
+const TextInputStyled = styled(TextInput)`
+  ${InputStyles}
+`
+
+const BottomSheetInputStyled = styled(BottomSheetTextInput)`
+  ${InputStyles}
 `

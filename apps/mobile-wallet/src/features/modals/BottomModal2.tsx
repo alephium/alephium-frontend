@@ -56,6 +56,12 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       : BottomSheetScrollView
     : undefined
 
+  const styles = {
+    paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
+    paddingBottom: props.noPadding ? 0 : VERTICAL_GAP,
+    gap: props.contentVerticalGap ? VERTICAL_GAP : undefined
+  }
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -76,31 +82,15 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
             />
           }
           {...props.flashListProps}
-          contentContainerStyle={{
-            paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
-            paddingBottom: props.noPadding ? 0 : VERTICAL_GAP
-          }}
+          contentContainerStyle={styles}
         />
       ) : (
         !isFlashList(props) &&
         BottomSheetComponent && (
           <BottomSheetComponent
-            style={
-              props.notScrollable
-                ? {
-                    gap: props.contentVerticalGap ? VERTICAL_GAP : undefined,
-                    padding: props.noPadding ? 0 : DEFAULT_MARGIN
-                  }
-                : undefined
-            }
-            contentContainerStyle={
-              props.notScrollable
-                ? undefined
-                : {
-                    paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
-                    paddingBottom: props.noPadding ? 0 : VERTICAL_GAP
-                  }
-            }
+            style={props.notScrollable ? styles : undefined}
+            contentContainerStyle={props.notScrollable ? undefined : styles}
+            // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
           >
             <BottomModalHeader
               title={props.title}
