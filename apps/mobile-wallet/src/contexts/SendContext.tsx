@@ -1,4 +1,4 @@
-import { AddressHash, AssetAmount, transactionSent } from '@alephium/shared'
+import { AddressHash, AssetAmount, selectAddressByHash, transactionSent } from '@alephium/shared'
 import { node, Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +9,6 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -21,7 +20,7 @@ type UnsignedTxData = {
   fees: bigint
 }
 
-type BuildTransactionCallbacks = {
+export type BuildTransactionCallbacks = {
   onBuildSuccess: () => void
   onConsolidationSuccess: () => void
 }
@@ -34,7 +33,7 @@ interface SendContextValue {
   assetAmounts: AssetAmount[]
   setAssetAmount: (assetId: string, amount?: bigint) => void
   fees: bigint
-  buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
+  buildTransaction: (callbacks: BuildTransactionCallbacks, shouldSweep: boolean) => Promise<void>
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
 }
 
@@ -164,11 +163,11 @@ export const SendContextProvider = ({
   )
 
   const buildTransaction = useCallback(
-    async (callbacks: BuildTransactionCallbacks) => {
+    async (callbacks: BuildTransactionCallbacks, shouldSweep: boolean) => {
       if (!address || !toAddress) return
 
       try {
-        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
+        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts, shouldSweep)
         if (data) setUnsignedTxData(data)
         callbacks.onBuildSuccess()
       } catch (e) {

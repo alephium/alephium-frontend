@@ -1,5 +1,9 @@
 import { AddressHash, isFT } from '@alephium/shared'
-import { useFetchAddressesHashesWithBalanceSortedByLastUse, useFetchToken } from '@alephium/shared-react'
+import {
+  useFetchAddressesHashesWithBalanceSortedByLastUse,
+  useFetchToken,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -11,8 +15,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressesWithTokenModalProps {
@@ -21,7 +24,7 @@ interface AddressesWithTokenModalProps {
 
 const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
-  const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
+  const totalNumberOfAddresses = useUnsortedAddressesHashes().length
   const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null

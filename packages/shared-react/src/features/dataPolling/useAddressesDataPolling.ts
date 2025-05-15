@@ -5,7 +5,7 @@ import {
 import { useQueries } from '@tanstack/react-query'
 
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
-import { useFetchAddressesHashesSplitByUseFrequency } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSplitByUseFrequency } from '@/hooks/addresses/useAddresses'
 import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
 
 export const useAddressesDataPolling = () => {

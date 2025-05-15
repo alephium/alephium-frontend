@@ -1,12 +1,10 @@
-import { DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
+import { appLaunchedWithLastUsedWallet } from '@alephium/shared'
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
   queryClient,
   useAddressesDataPolling,
-  useInitializeClient,
   useInitializeThrottledClient,
-  useInterval,
   usePersistQueryClientContext
 } from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
@@ -23,7 +21,7 @@ import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
 import { useSystemRegion } from '~/features/settings/regionSettings/useSystemRegion'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
@@ -32,9 +30,7 @@ import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { store } from '~/store/store'
-import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 
@@ -107,17 +103,10 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
 
 const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
-  const network = useAppSelector((s) => s.network)
-  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
-  const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
-  const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const { restoreQueryCache } = usePersistQueryClientContext()
 
   useLoadStoredSettings()
-  useInitializeClient() // TODO: Delete
   useInitializeThrottledClient()
   useLocalization()
   useSystemRegion()
@@ -129,23 +118,6 @@ const Main = ({ children, ...props }: ViewProps) => {
       restoreQueryCache(walletMetadata.id)
     }
   }, [dispatch, restoreQueryCache, walletMetadata])
-
-  const checkForNewTransactions = useCallback(() => {
-    dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))
-  }, [dispatch])
-
-  const dataResyncNeeded =
-    nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && (isUnlocked || appJustLaunched)
-
-  useEffect(() => {
-    if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()
-  }, [addressesStatus, checkForNewTransactions, dataResyncNeeded])
-
-  useInterval(
-    checkForNewTransactions,
-    DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL, // TODO: Replace with FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL and INFREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL after Tanstack migration
-    !dataResyncNeeded || addressesStatus === 'uninitialized'
-  )
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

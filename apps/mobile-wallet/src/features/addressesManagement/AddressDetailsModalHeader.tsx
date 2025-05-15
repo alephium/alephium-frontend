@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
@@ -19,7 +20,6 @@ import { ModalInstance } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { copyAddressToClipboard } from '~/utils/addresses'
 

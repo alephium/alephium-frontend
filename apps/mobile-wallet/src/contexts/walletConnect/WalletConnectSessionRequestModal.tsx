@@ -1,7 +1,8 @@
 import {
-  client,
   getHumanReadableError,
+  selectAddressByHash,
   SessionRequestEvent,
+  throttledClient,
   transactionSent,
   WALLETCONNECT_ERRORS,
   WalletConnectError
@@ -50,7 +51,6 @@ import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
@@ -215,7 +215,7 @@ const WalletConnectSessionRequestModal = withModal(
           )
 
           if (requestData.submit) {
-            await client.node.transactions.postTransactionsSubmit({
+            await throttledClient.node.transactions.postTransactionsSubmit({
               unsignedTx: requestData.wcData.unsignedTx,
               signature
             })

@@ -8,6 +8,7 @@ import {
   isInternalTx
 } from '@/transactions'
 import { AddressHash } from '@/types/addresses'
+import { AssetAmount, TokenApiBalances } from '@/types/assets'
 import { SentTransaction, TransactionInfoType } from '@/types/transactions'
 
 export const getTransactionInfoType = (
@@ -44,3 +45,11 @@ export const getTransactionInfoType = (
     }
   }
 }
+
+export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokensBalances: TokenApiBalances[]) =>
+  assetAmounts.length === tokensBalances.length &&
+  tokensBalances.every(({ id, totalBalance }) => {
+    const assetAmount = assetAmounts.find((asset) => asset.id === id)
+
+    return totalBalance === (assetAmount?.amount ?? 0).toString()
+  })

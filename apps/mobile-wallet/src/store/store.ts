@@ -11,9 +11,7 @@ import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
-import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
-import loadersSlice from '~/store/loadersSlice'
 import walletSlice from '~/store/wallet/walletSlice'
 import walletGenerationSlice from '~/store/walletGenerationSlice'
 
@@ -23,14 +21,12 @@ export const store = configureStore({
     [walletGenerationSlice.name]: walletGenerationSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
     [walletSlice.name]: walletSlice.reducer,
-    [addressesSlice.name]: addressesSlice.reducer,
     [appSlice.name]: appSlice.reducer,
     [loaderSlice.name]: loaderSlice.reducer,
     [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,
     [backupSlice.name]: backupSlice.reducer,
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
-    [loadersSlice.name]: loadersSlice.reducer,
     [modalSlice.name]: modalSlice.reducer,
     [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer
   },

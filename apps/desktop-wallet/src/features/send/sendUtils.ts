@@ -1,4 +1,4 @@
-import { AssetAmount, TokenApiBalances } from '@alephium/shared'
+import { AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 
@@ -22,11 +22,3 @@ export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[])
 
 export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean =>
   amount >= MIN_UTXO_SET_AMOUNT && amount <= maxAmount
-
-export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokensBalances: TokenApiBalances[]) =>
-  assetAmounts.length === tokensBalances.length &&
-  tokensBalances.every(({ id, totalBalance }) => {
-    const assetAmount = assetAmounts.find((asset) => asset.id === id)
-
-    return totalBalance === (assetAmount?.amount ?? 0).toString()
-  })

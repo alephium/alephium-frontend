@@ -1,4 +1,4 @@
-import { AddressHash, AddressIndex, AddressMetadata } from '@alephium/shared'
+import { AddressHash, AddressIndex } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 
 export type AddressDiscoveryGroupData = {
@@ -11,5 +11,3 @@ export type AddressTransactionsSyncResult = {
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
 }
-
-export type AddressMetadataWithHash = AddressMetadata & { hash: string }

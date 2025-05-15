@@ -2,7 +2,7 @@ import { AddressHash, getTransactionInfoType, SentTransaction, TransactionInfoTy
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 
 export const useTransactionInfoType = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction,

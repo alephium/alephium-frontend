@@ -1,5 +1,10 @@
-import { AddressHash, TokenId } from '@alephium/shared'
-import { useFetchAddressFtsSorted, useFetchAddressTokensByType, useSortedTokenIds } from '@alephium/shared-react'
+import { AddressHash, selectAddressByHash, shouldBuildSweepTransactions, TokenId } from '@alephium/shared'
+import {
+  useFetchAddressBalances,
+  useFetchAddressFtsSorted,
+  useFetchAddressTokensByType,
+  useSortedTokenIds
+} from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,13 +13,12 @@ import Button from '~/components/buttons/Button'
 import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import { useSendContext } from '~/contexts/SendContext'
+import { BuildTransactionCallbacks, useSendContext } from '~/contexts/SendContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import TokenRow from '~/features/send/screens/addressTokensScreen/TokenRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -23,22 +27,12 @@ interface ScreenProps
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, buildTransaction, setAssetAmount } = useSendContext()
+  const { fromAddress, setAssetAmount } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const [shouldOpenAmountModal, setShouldOpenAmountModal] = useState(!!params?.tokenId)
-
-  const handleContinueButtonPress = useCallback(async () => {
-    dispatch(activateAppLoading(t('Building transaction')))
-
-    await buildTransaction({
-      onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-      onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
-    })
-    dispatch(deactivateAppLoading())
-  }, [buildTransaction, dispatch, navigation, t])
 
   useEffect(() => {
     const tokenId = params?.tokenId
@@ -66,12 +60,17 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
     setShouldOpenAmountModal(false)
   }, [dispatch, fromAddress, params?.isNft, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t])
 
+  const onBuildSuccess = useCallback(() => navigation.navigate('VerifyScreen'), [navigation])
+
+  const onConsolidationSuccess = useCallback(() => navigation.navigate('ActivityScreen'), [navigation])
+
   if (!address) return null
 
   return (
     <AddressTokensFlashListScreen
       addressHash={address.hash}
-      onContinueButtonPress={handleContinueButtonPress}
+      onBuildSuccess={onBuildSuccess}
+      onConsolidationSuccess={onConsolidationSuccess}
       {...props}
     />
   )
@@ -79,14 +78,14 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
 
 export default AddressTokensScreen
 
-interface AddressTokensFlashListScreenProps extends Partial<FlashListScreenProps<TokenId>> {
+interface AddressTokensFlashListScreenProps extends Partial<FlashListScreenProps<TokenId>>, BuildTransactionCallbacks {
   addressHash: AddressHash
-  onContinueButtonPress: () => void
 }
 
 const AddressTokensFlashListScreen = ({
   addressHash,
-  onContinueButtonPress,
+  onBuildSuccess,
+  onConsolidationSuccess,
   ...props
 }: AddressTokensFlashListScreenProps) => {
   const { t } = useTranslation()
@@ -96,9 +95,25 @@ const AddressTokensFlashListScreen = ({
     data: { nftIds, nstIds }
   } = useFetchAddressTokensByType(addressHash)
   const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
-  const { assetAmounts } = useSendContext()
+  const { assetAmounts, buildTransaction } = useSendContext()
+  const dispatch = useAppDispatch()
+  const { data: tokensBalances } = useFetchAddressBalances(addressHash)
 
   const isContinueButtonDisabled = assetAmounts.length < 1
+  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances ?? [])
+
+  const handleContinueButtonPress = useCallback(async () => {
+    dispatch(activateAppLoading(t('Building transaction')))
+
+    await buildTransaction(
+      {
+        onBuildSuccess,
+        onConsolidationSuccess
+      },
+      shouldSweep
+    )
+    dispatch(deactivateAppLoading())
+  }, [buildTransaction, dispatch, onBuildSuccess, onConsolidationSuccess, shouldSweep, t])
 
   return (
     <FlashListScreen
@@ -123,7 +138,7 @@ const AddressTokensFlashListScreen = ({
         <Button
           title={t('Continue')}
           variant="highlight"
-          onPress={onContinueButtonPress}
+          onPress={handleContinueButtonPress}
           disabled={isContinueButtonDisabled}
         />
       )}

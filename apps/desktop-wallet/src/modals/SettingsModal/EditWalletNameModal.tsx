@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { ActiveWalletDesktop, getHumanReadableError } from '@alephium/shared'
 import { isEmpty } from 'lodash'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -13,11 +13,10 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { newWalletNameStored, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { ActiveWallet } from '@/types/wallet'
 import { isWalletNameValid, requiredErrorMessage } from '@/utils/form-validation'
 
 type FormData = {
-  name: ActiveWallet['name']
+  name: ActiveWalletDesktop['name']
 }
 
 const EditWalletNameModal = memo(({ id }: ModalBaseProp) => {

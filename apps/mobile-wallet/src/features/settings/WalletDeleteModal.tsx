@@ -1,3 +1,4 @@
+import { activeWalletDeleted } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +15,6 @@ import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
-import { walletDeleted } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
 interface WalletDeleteModalProps {
@@ -39,7 +39,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
 
       onDelete()
 
-      dispatch(walletDeleted())
+      dispatch(activeWalletDeleted())
       resetWalletConnectStorage()
       deletePersistedCache(walletId)
       sendAnalytics({ event: 'Deleted wallet' })

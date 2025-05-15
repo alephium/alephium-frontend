@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { FlashList } from '@shopify/flash-list'
 import { useTranslation } from 'react-i18next'
 
@@ -6,16 +7,14 @@ import AddressBox from '~/components/AddressBox'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
-  hideEmptyAddresses?: boolean
 }
 
-const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPress, hideEmptyAddresses }) => {
-  const addresses = useAppSelector(selectAllAddresses)
+const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPress }) => {
+  const { data } = useFetchAddressesHashesSortedByLastUse()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
@@ -24,8 +23,6 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
     onAddressPress(addressHash)
   }
 
-  const data = hideEmptyAddresses ? addresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0') : addresses
-
   return (
     <BottomModalFlashList
       modalId={id}
@@ -33,13 +30,12 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
       flashListRender={(props) => (
         <FlashList
           data={data}
-          keyExtractor={(item) => item.hash}
           estimatedItemSize={70}
-          renderItem={({ item: address, index }) => (
+          renderItem={({ item: addressHash, index }) => (
             <AddressBox
-              key={address.hash}
-              addressHash={address.hash}
-              onPress={() => handleAddressPress(address.hash)}
+              key={addressHash}
+              addressHash={addressHash}
+              onPress={() => handleAddressPress(addressHash)}
               isLast={index === data.length - 1}
               origin="selectAddressModal"
               showGroup

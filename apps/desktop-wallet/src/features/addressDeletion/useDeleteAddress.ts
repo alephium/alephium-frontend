@@ -1,8 +1,7 @@
-import { AddressHash } from '@alephium/shared'
+import { addressDeleted, AddressHash } from '@alephium/shared'
 import { queryClient } from '@alephium/shared-react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 
 const useDeleteAddress = () => {
