@@ -6,9 +6,7 @@ const BottomModalHandle = styled(Animated.View)`
   height: 4px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.border.primary};
-  margin-top: 5px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 5px auto;
 `
 
 export default BottomModalHandle
