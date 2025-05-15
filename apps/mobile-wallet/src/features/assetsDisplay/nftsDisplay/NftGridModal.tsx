@@ -1,6 +1,6 @@
 import { NFT } from '@alephium/shared'
 
-import NFTsGrid from '~/components/NFTsGrid'
+import NFTsGrid from '~/features/assetsDisplay/nftsDisplay/NFTsGrid'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 

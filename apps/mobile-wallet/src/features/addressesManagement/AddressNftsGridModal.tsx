@@ -1,7 +1,7 @@
 import { useFetchAddressNfts } from '@alephium/shared-react'
 
 import AddressBadge from '~/components/AddressBadge'
-import NFTsGrid from '~/components/NFTsGrid'
+import NFTsGrid from '~/features/assetsDisplay/nftsDisplay/NFTsGrid'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 

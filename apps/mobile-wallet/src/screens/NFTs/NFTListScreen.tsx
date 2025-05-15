@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
-import NFTsGrid from '~/components/NFTsGrid'
+import NFTsGrid from '~/features/assetsDisplay/nftsDisplay/NFTsGrid'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 
