@@ -1,4 +1,5 @@
 import { useFetchAddressesHashesWithBalance, useFetchNft } from '@alephium/shared-react'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { openBrowserAsync } from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
@@ -9,10 +10,8 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import SendButton from '~/features/send/SendButton'
-import { useAppDispatch } from '~/hooks/redux'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type NftModalProps = Pick<NFTImageProps, 'nftId'>
@@ -22,14 +21,14 @@ const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
 const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const { data: nft } = useFetchNft({ id: nftId })
   const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
 
   if (!nft) return null
 
-  const handleClose = () => dispatch(closeModal({ id }))
+  const handleClose = () => dismiss()
 
   const attributes = nft.attributes
   const canViewFullSize = !nft.image.startsWith('data:image/')

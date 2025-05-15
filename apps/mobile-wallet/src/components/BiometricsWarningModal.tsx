@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -5,9 +6,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
@@ -17,11 +16,15 @@ interface BiometricsWarningModalProps {
 
 const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onConfirm, confirmText }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const handleConfirm = () => {
     onConfirm()
-    dispatch(closeModal({ id }))
+    dismiss()
+  }
+
+  const handleCancel = () => {
+    dismiss()
   }
 
   return (
@@ -33,7 +36,7 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
           )}
         </AppText>
         <BottomButtons fullWidth backgroundColor="back1" bottomInset>
-          <Button title={t('Cancel')} onPress={() => dispatch(closeModal({ id }))} flex />
+          <Button title={t('Cancel')} onPress={handleCancel} flex />
           <Button title={confirmText ?? t('Disable')} onPress={handleConfirm} variant="alert" flex />
         </BottomButtons>
       </ScreenSection>
