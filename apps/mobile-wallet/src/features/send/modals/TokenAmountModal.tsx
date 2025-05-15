@@ -11,6 +11,7 @@ import {
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { BottomSheetTextInput, useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
@@ -19,10 +20,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -38,8 +37,8 @@ const MAX_FONT_LENGTH = 10
 
 const TokenAmountModal = withModal<TokenAmountModalProps>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
-    const dispatch = useAppDispatch()
     const theme = useTheme()
+    const { dismiss } = useBottomSheetModal()
 
     const { data: token } = useFetchToken(tokenId)
     const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
@@ -85,7 +84,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
 
     const handleAmountValidate = () => {
       onAmountValidate(amount ? fromHumanReadableAmount(amount, tokenDecimals) : BigInt(0), tokenName)
-      dispatch(closeModal({ id }))
+      dismiss()
     }
 
     const handleClearAmountPress = () => setAmount('')
@@ -94,7 +93,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     const amountIsSet = amount && amount !== '0'
 
     return (
-      <BottomModal
+      <BottomModal2
         modalId={id}
         titleAlign="left"
         title={
@@ -133,7 +132,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </ContentWrapper>
         <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
-      </BottomModal>
+      </BottomModal2>
     )
   }
 )
@@ -187,7 +186,7 @@ const InputWrapper = styled.View`
   justify-content: center;
 `
 
-const TokenAmoutInput = styled.TextInput<{ fontSize: number }>`
+const TokenAmoutInput = styled(BottomSheetTextInput)<{ fontSize: number }>`
   font-size: ${({ fontSize }) => fontSize}px;
   font-weight: 600;
   text-align: right;
