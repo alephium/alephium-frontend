@@ -1,4 +1,5 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -13,7 +14,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -25,9 +26,9 @@ interface AddressQuickActionsModalProps {
 }
 
 const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id, addressHash }) => {
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
-  const handleClose = () => dispatch(closeModal({ id }))
+  const handleClose = () => dismiss()
 
   return (
     <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>

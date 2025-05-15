@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
@@ -8,10 +9,8 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void
@@ -20,11 +19,15 @@ interface ConsolidationModalProps {
 
 const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolidate, fees }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const handleConsolidate = () => {
     onConsolidate()
-    dispatch(closeModal({ id }))
+    dismiss()
+  }
+
+  const handleCancel = () => {
+    dismiss()
   }
 
   return (
@@ -48,7 +51,7 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
         </ScreenSection>
         <ScreenSection centered>
           <ButtonsRow>
-            <Button title={t('Cancel')} onPress={() => dispatch(closeModal({ id }))} flex variant="accent" short />
+            <Button title={t('Cancel')} onPress={handleCancel} flex variant="accent" short />
             <Button title={t('Consolidate')} onPress={handleConsolidate} variant="highlight" flex short />
           </ButtonsRow>
         </ScreenSection>
