@@ -33,6 +33,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
   return (
     <ScrollScreen
       fill
+      hasKeyboard
       contentPaddingTop
       headerOptions={{
         type: 'stack',

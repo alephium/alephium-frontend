@@ -114,6 +114,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
     <>
       <ScrollScreen
         fill
+        hasKeyboard
         verticalGap
         headerOptions={{ type: 'stack' }}
         contentPaddingTop

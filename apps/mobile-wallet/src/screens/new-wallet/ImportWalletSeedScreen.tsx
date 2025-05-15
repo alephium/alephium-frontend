@@ -126,6 +126,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       headerOptions={{
         type: 'stack'
       }}
+      hasKeyboard
       keyboardShouldPersistTaps="always"
       contentPaddingTop
       screenTitle={t('Secret phrase')}

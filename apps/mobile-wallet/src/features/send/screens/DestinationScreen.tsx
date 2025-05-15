@@ -135,6 +135,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
       onScroll={screenScrollHandler}
       fill
+      hasKeyboard
       bottomButtonsRender={() => (
         <Button title={t('Continue')} variant="highlight" onPress={handleSubmit(handleContinuePress)} />
       )}
