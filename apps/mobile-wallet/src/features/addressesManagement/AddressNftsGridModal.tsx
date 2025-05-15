@@ -1,8 +1,8 @@
 import { useFetchAddressNfts } from '@alephium/shared-react'
 
 import AddressBadge from '~/components/AddressBadge'
-import NFTsGrid from '~/features/assetsDisplay/nftsDisplay/NFTsGrid'
-import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
+import useNftsGridFlashListProps from '~/features/assetsDisplay/nftsDisplay/useNftsGridFlashListProps'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 
 export interface AddressNftsGridModalProps {
@@ -11,14 +11,10 @@ export interface AddressNftsGridModalProps {
 
 const AddressNftsGridModal = withModal<AddressNftsGridModalProps>(({ id, addressHash }) => {
   const { data: nfts } = useFetchAddressNfts(addressHash)
+  const flashListProps = useNftsGridFlashListProps({ nfts })
 
   return (
-    <BottomModalFlashList
-      modalId={id}
-      noPadding
-      title={<AddressBadge addressHash={addressHash} />}
-      flashListRender={(props) => <NFTsGrid nfts={nfts} {...props} />}
-    />
+    <BottomModal2 modalId={id} title={<AddressBadge addressHash={addressHash} />} flashListProps={flashListProps} />
   )
 })
 
