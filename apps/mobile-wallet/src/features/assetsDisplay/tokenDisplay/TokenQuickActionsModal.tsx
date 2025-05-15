@@ -12,7 +12,7 @@ import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 
@@ -32,8 +32,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
-    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
-    dispatch(closeModal({ id }))
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId, stackBehavior: 'replace' } }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
