@@ -20,28 +20,32 @@ const BottomModalHeader = ({
   title,
   showCloseButton,
   titleAlign = 'center'
-}: BottomModalHeaderProps) => (
-  <HeaderContainer style={{ height }}>
-    {titleAlign !== 'left' && showCloseButton && <HeaderSideContainer align="left" />}
-    <HeaderTitleOutterContainer style={{ justifyContent: titleAlign === 'left' ? 'flex-start' : 'center' }}>
-      <TitleContainer titleAlign={titleAlign}>
-        {title &&
-          (typeof title === 'string' ? (
-            <Title semiBold size={16}>
-              {title}
-            </Title>
-          ) : (
-            title
-          ))}
-      </TitleContainer>
-    </HeaderTitleOutterContainer>
-    {showCloseButton && (
-      <HeaderSideContainer align="right">
-        <CloseButton onPress={onClose} />
-      </HeaderSideContainer>
-    )}
-  </HeaderContainer>
-)
+}: BottomModalHeaderProps) => {
+  if (!title && !showCloseButton) return null
+
+  return (
+    <HeaderContainer style={{ height }}>
+      {titleAlign !== 'left' && showCloseButton && <HeaderSideContainer align="left" />}
+      <HeaderTitleOutterContainer style={{ justifyContent: titleAlign === 'left' ? 'flex-start' : 'center' }}>
+        <TitleContainer titleAlign={titleAlign}>
+          {title &&
+            (typeof title === 'string' ? (
+              <Title semiBold size={16}>
+                {title}
+              </Title>
+            ) : (
+              title
+            ))}
+        </TitleContainer>
+      </HeaderTitleOutterContainer>
+      {showCloseButton && (
+        <HeaderSideContainer align="right">
+          <CloseButton onPress={onClose} />
+        </HeaderSideContainer>
+      )}
+    </HeaderContainer>
+  )
+}
 
 export default BottomModalHeader
 

@@ -25,7 +25,7 @@ const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWall
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       </ScreenSection>
