@@ -1,10 +1,10 @@
-import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
+import { Asset, isFT, isNFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 
 import Amount, { AmountProps } from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import NFTThumbnail from '~/components/NFTThumbnail'
-import { useAppSelector } from '~/hooks/redux'
 
 interface AssetAmountWithLogoProps
   extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus' | 'bold'> {
@@ -17,36 +17,35 @@ interface AssetAmountWithLogoProps
 const AssetAmountWithLogo = ({
   assetId,
   amount,
-  useTinyAmountShorthand,
-  fullPrecision,
-  showPlusMinus,
-  bold,
   logoSize = 18,
-  logoPosition = 'left'
+  logoPosition = 'left',
+  ...props
 }: AssetAmountWithLogoProps) => {
-  const asset = useAppSelector((s) => selectFungibleTokenById(s, assetId))
-  const nft = useAppSelector((s) => selectNFTById(s, assetId))
+  const { data: token } = useFetchToken(assetId)
+
+  if (!token) return null
 
   const Logo = <AssetLogo assetId={assetId} size={logoSize} />
 
-  return nft ? (
-    <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
+  return isNFT(token) ? (
+    <NFTThumbnail key={assetId} nftId={assetId} size={50} />
   ) : (
     <AssetStyled key={assetId}>
       {logoPosition === 'left' && Logo}
-      <AmountStyled
-        value={amount}
-        isUnknownToken={!asset?.symbol}
-        suffix={asset?.symbol}
-        decimals={asset?.decimals}
-        fadeSuffix
-        fullPrecision={fullPrecision}
-        useTinyAmountShorthand={useTinyAmountShorthand}
-        showPlusMinus={showPlusMinus}
-        highlight={showPlusMinus}
-        semiBold={!bold}
-        bold={bold}
-      />
+
+      {isFT(token) ? (
+        <AmountStyled
+          value={amount}
+          suffix={token.symbol}
+          decimals={token.decimals}
+          fadeSuffix
+          semiBold={!props.bold}
+          {...props}
+        />
+      ) : (
+        <AmountStyled value={amount} isUnknownToken fadeSuffix semiBold={!props.bold} {...props} />
+      )}
+
       {logoPosition === 'right' && Logo}
     </AssetStyled>
   )

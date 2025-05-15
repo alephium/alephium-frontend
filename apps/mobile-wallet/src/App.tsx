@@ -1,23 +1,18 @@
-import {
-  DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL,
-  PRICES_REFRESH_INTERVAL,
-  selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenCurrentPrices,
-  syncVerifiedFungibleTokens
-} from '@alephium/shared'
+import { DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
   queryClient,
   useAddressesDataPolling,
   useInitializeClient,
+  useInitializeThrottledClient,
   useInterval,
   usePersistQueryClientContext
 } from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -38,7 +33,6 @@ import {
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import { selectAllAddressVerifiedFungibleTokenSymbols } from '~/store/addresses/addressesSelectors'
 import { store } from '~/store/store'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { metadataRestored } from '~/store/wallet/walletSlice'
@@ -114,22 +108,17 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
 const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((s) => s.network)
-  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
-  const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
-  const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
-  const currency = useRef(settings.currency)
   const { restoreQueryCache } = usePersistQueryClientContext()
 
   useLoadStoredSettings()
-  useInitializeClient()
+  useInitializeClient() // TODO: Delete
+  useInitializeThrottledClient()
   useLocalization()
   useSystemRegion()
   useAddressesDataPolling()
@@ -140,38 +129,6 @@ const Main = ({ children, ...props }: ViewProps) => {
       restoreQueryCache(walletMetadata.id)
     }
   }, [dispatch, restoreQueryCache, walletMetadata])
-
-  // Fetch verified tokens from GitHub token-list
-  useEffect(() => {
-    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (verifiedFungibleTokensNeedInitialization) {
-        dispatch(syncVerifiedFungibleTokens())
-      }
-    }
-  }, [dispatch, isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokensNeedInitialization])
-
-  useEffect(() => {
-    if (
-      verifiedFungibleTokenSymbols.some((symbol) => !addressesListedFungibleTokensSymbols.current.includes(symbol)) ||
-      currency.current !== settings.currency
-    ) {
-      dispatch(
-        syncTokenCurrentPrices({
-          verifiedFungibleTokenSymbols,
-          currency: settings.currency
-        })
-      )
-
-      addressesListedFungibleTokensSymbols.current = verifiedFungibleTokenSymbols
-      currency.current = settings.currency
-    }
-  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
-
-  const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols, currency: settings.currency }))
-  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
-
-  useInterval(refreshTokensLatestPrice, PRICES_REFRESH_INTERVAL, network.status !== 'online')
 
   const checkForNewTransactions = useCallback(() => {
     dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))

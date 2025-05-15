@@ -1,3 +1,4 @@
+import { useFetchWalletBalancesAlph } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { useRef } from 'react'
@@ -16,7 +17,7 @@ import WalletTransactionsFlashList from '~/features/transactionsDisplay/WalletTr
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectContactById, selectTotalBalance } from '~/store/addresses/addressesSelectors'
+import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -27,7 +28,7 @@ type ContactScreenProps = StackScreenProps<RootStackParamList, 'ContactScreen'> 
 const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) => {
   const listRef = useRef(null)
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
-  const totalBalance = useAppSelector(selectTotalBalance)
+  const { data: alphBalances } = useFetchWalletBalancesAlph()
   const { t } = useTranslation()
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
@@ -90,7 +91,9 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               </ContactAddress>
             </CenteredSection>
             <ButtonsRow>
-              {totalBalance > BigInt(0) && <SendButton origin="contact" destinationAddressHash={contact.address} />}
+              {alphBalances.availableBalance !== '0' && (
+                <SendButton origin="contact" destinationAddressHash={contact.address} />
+              )}
               <ActionCardButton
                 iconProps={{ name: 'clipboard' }}
                 title={t('Copy address')}

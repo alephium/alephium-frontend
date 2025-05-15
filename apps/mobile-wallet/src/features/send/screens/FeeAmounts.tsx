@@ -1,10 +1,8 @@
-import { calculateTokenAmountWorth, selectPriceById } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
+import { useFetchFeeWorth } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
-import { useAppSelector } from '~/hooks/redux'
 
 interface FeeAmountsProps {
   fees: bigint
@@ -20,10 +18,10 @@ const FeeAmounts = ({ fees }: FeeAmountsProps) => (
 export default FeeAmounts
 
 const FeeWorth = ({ fees }: FeeAmountsProps) => {
-  const alphPrice = useAppSelector((s) => selectPriceById(s, ALPH.symbol)?.price)
   const { t } = useTranslation()
 
-  const feesWorth = calculateTokenAmountWorth(fees, alphPrice ?? 0, ALPH.decimals)
+  const { data: feesWorth } = useFetchFeeWorth(fees)
+
   const isTooSmall = feesWorth < 0.01
   const displayedFeesWorth = isTooSmall ? 0.01 : feesWorth
 

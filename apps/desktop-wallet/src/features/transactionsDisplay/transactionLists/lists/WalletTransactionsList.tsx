@@ -4,7 +4,6 @@ import {
   calcTxAmountsDeltaForAddress,
   findTransactionReferenceAddress,
   getTransactionInfoType,
-  isInternalTx,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
 import { useFetchWalletTransactionsInfinite, useUnsortedAddressesHashes } from '@alephium/shared-react'
@@ -128,8 +127,7 @@ const applyFilters = ({
         if (!txRefAddress) return false
 
         const { tokenAmounts } = calcTxAmountsDeltaForAddress(tx, txRefAddress)
-        const isInternalTransfer = isInternalTx(tx, allAddressHashes)
-        const infoType = getTransactionInfoType(tx, txRefAddress, isInternalTransfer)
+        const infoType = getTransactionInfoType(tx, txRefAddress, allAddressHashes)
 
         const dir = infoType === 'pending' ? 'out' : infoType
         const tokenIds = [ALPH.id, ...tokenAmounts.map(({ id }) => id)]

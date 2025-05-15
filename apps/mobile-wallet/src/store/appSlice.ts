@@ -1,4 +1,4 @@
-import { appReset, FungibleToken, syncUnknownTokensInfo } from '@alephium/shared'
+import { appReset } from '@alephium/shared'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import {
@@ -13,13 +13,11 @@ const sliceName = 'app'
 
 export interface AppMetadataState {
   isCameraOpen: boolean
-  checkedUnknownTokenIds: FungibleToken['id'][]
   wasJustLaunched: boolean
 }
 
 const initialState: AppMetadataState = {
   isCameraOpen: false,
-  checkedUnknownTokenIds: [],
   wasJustLaunched: false
 }
 
@@ -36,11 +34,6 @@ const appSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(walletDeleted, resetState)
-      .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
-        const initiallyUnknownTokenIds = action.meta.arg
-
-        state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
-      })
       .addCase(appReset, resetState)
       .addCase(appLaunchedWithLastUsedWallet, (state) => {
         state.wasJustLaunched = true

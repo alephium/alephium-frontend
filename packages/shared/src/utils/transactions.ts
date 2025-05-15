@@ -4,7 +4,8 @@ import {
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
   isConfirmedTx,
-  isConsolidationTx
+  isConsolidationTx,
+  isInternalTx
 } from '@/transactions'
 import { AddressHash } from '@/types/addresses'
 import { SentTransaction, TransactionInfoType } from '@/types/transactions'
@@ -12,7 +13,7 @@ import { SentTransaction, TransactionInfoType } from '@/types/transactions'
 export const getTransactionInfoType = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction,
   addressHash: AddressHash,
-  isInternalTransfer: boolean,
+  internalAddresses: AddressHash[],
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {
   if (!isConfirmedTx(tx)) {
@@ -26,6 +27,7 @@ export const getTransactionInfoType = (
       return 'swap'
     } else {
       const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
+      const isInternalTransfer = isInternalTx(tx, internalAddresses)
 
       if (
         (isInternalTransfer && isInAddressDetailsModal && alphAmountReduced) ||

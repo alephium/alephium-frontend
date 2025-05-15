@@ -60,7 +60,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
             </AssetAmounts>
           </Row>
 
-          <TotalWorthRow assetAmounts={assetAmounts} fromAddress={fromAddress} />
+          <TotalWorthRow assetAmounts={assetAmounts} />
 
           <Row title={t('To')} titleColor="secondary">
             <AddressBadge addressHash={toAddress} />

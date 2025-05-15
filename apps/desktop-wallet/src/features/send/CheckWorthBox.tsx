@@ -1,7 +1,6 @@
-import { AssetAmount, calculateTokenAmountWorth } from '@alephium/shared'
-import { useFetchTokenPrices, useFetchTokensSeparatedByType } from '@alephium/shared-react'
+import { AssetAmount } from '@alephium/shared'
+import { useFetchFeeWorth, useFetchTokensAmountsWorth } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -17,42 +16,20 @@ interface CheckWorthBoxProps extends BoxProps {
 const CheckWorthBox = ({ assetAmounts, fee, ...props }: CheckWorthBoxProps) => {
   const { t } = useTranslation()
 
-  const {
-    data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchTokensSeparatedByType(assetAmounts)
+  const { data: tokenAmountsWorth, isLoading } = useFetchTokensAmountsWorth(assetAmounts)
+  const { data: feeWorth, isLoading: isLoadingFeeWorth } = useFetchFeeWorth(fee)
 
-  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
-
-  const totalWorth = listedFts.reduce((totalWorth, token) => {
-    const tokenPrice = tokenPrices?.find(({ symbol }) => symbol === token.symbol)?.price
-    const tokenAmount = assetAmounts.find((asset) => asset.id === token.id)?.amount
-    const tokenWorth =
-      isNumber(tokenPrice) && tokenAmount !== undefined
-        ? calculateTokenAmountWorth(tokenAmount, tokenPrice, token.decimals)
-        : 0
-
-    return totalWorth + tokenWorth
-  }, 0)
-
-  const alphPrice = tokenPrices?.find(({ symbol }) => symbol === ALPH.symbol)?.price
-  const feeWorth = alphPrice ? calculateTokenAmountWorth(fee, alphPrice, ALPH.decimals) : 0
   const tooSmallFee = feeWorth < 0.01
 
   return (
     <Box {...props}>
       <InfoRowStyled label={t('Total worth')}>
         <Amounts>
-          <AmountStyled
-            tokenId={ALPH.id}
-            value={totalWorth}
-            isFiat
-            isLoading={isLoadingTokensByType || isLoadingTokenPrices}
-          />
+          <AmountStyled tokenId={ALPH.id} value={tokenAmountsWorth} isFiat isLoading={isLoading} />
           <FeeRow>
             <FeeLabel>{t('Fee')}</FeeLabel>
             {tooSmallFee && ' < '}
-            <AmountFee value={tooSmallFee ? 0.01 : feeWorth} isFiat isLoading={isLoadingTokenPrices} />
+            <AmountFee value={tooSmallFee ? 0.01 : feeWorth} isFiat isLoading={isLoadingFeeWorth} />
           </FeeRow>
         </Amounts>
       </InfoRowStyled>

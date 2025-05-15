@@ -19,7 +19,7 @@ const workflowSteps: Record<
   (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[] | (keyof BackupMnemonicNavigationParamList)[]
 > = {
   receive: ['AddressScreen', 'QRCodeScreen'],
-  send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen'],
+  send: ['DestinationScreen', 'OriginScreen', 'AddressTokensScreen', 'VerifyScreen'],
   backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 

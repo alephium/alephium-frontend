@@ -115,7 +115,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   useEffect(() => {
     if (params?.originAddressHash) {
       setFromAddress(params.originAddressHash)
-      setNextScreen('AssetsScreen')
+      setNextScreen('AddressTokensScreen')
     } else {
       setNextScreen('OriginScreen')
     }

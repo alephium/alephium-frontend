@@ -1,5 +1,5 @@
 import { isFT } from '@alephium/shared'
-import { useFetchToken } from '@alephium/shared-react'
+import { useFetchAddressesHashesWithBalance, useFetchToken } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
 import styled from 'styled-components/native'
@@ -12,7 +12,7 @@ import FtWorth from '~/components/tokensLists/FtWorth'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken, selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface TokenDetailsModalBalanceSummaryProps extends TokenDetailsModalCommonProps {
@@ -60,7 +60,7 @@ const AddressesWithTokenBadge = ({
   onPress,
   fontColor
 }: Pick<TokenDetailsModalBalanceSummaryProps, 'tokenId' | 'onPress' | 'fontColor'>) => {
-  const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
+  const { data: addresses } = useFetchAddressesHashesWithBalance(tokenId)
   const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
