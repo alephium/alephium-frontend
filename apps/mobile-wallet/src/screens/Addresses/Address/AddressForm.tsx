@@ -26,13 +26,15 @@ interface AddressFormProps {
   allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
+  isInModal?: boolean
 }
 
 const AddressForm = ({
   initialValues,
   onValuesChange,
   allowGroupSelection,
-  disableIsMainToggle = false
+  disableIsMainToggle = false,
+  isInModal = false
 }: AddressFormProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -61,9 +63,9 @@ const AddressForm = ({
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <Row title={t('Label')}>
-        <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
+        <Input isInModal={isInModal} value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
       </Row>
       <ColorPicker value={color} onChange={setColor} />
       <Row
