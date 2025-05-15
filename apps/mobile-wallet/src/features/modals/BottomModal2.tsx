@@ -1,10 +1,12 @@
 import {
   BottomSheetBackdropProps,
+  BottomSheetFlashList,
   BottomSheetModal,
   BottomSheetModalProps,
   BottomSheetScrollView,
   BottomSheetView
 } from '@gorhom/bottom-sheet'
+import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
 import { useCallback, useEffect, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
@@ -17,21 +19,19 @@ import { closeModal, removeModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface BottomModal2Props extends BottomModalBaseProps, Omit<BottomSheetModalProps, 'children'> {
+export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
+
+interface BottomModalWithChildrenProps extends BottomModalBaseProps {
   notScrollable?: boolean
+  bottomSheetModalProps?: Omit<BottomSheetModalProps, 'children'>
 }
 
-const BottomModal2 = ({
-  children,
-  title,
-  titleAlign,
-  navHeight,
-  modalId,
-  noPadding,
-  contentVerticalGap,
-  notScrollable,
-  ...props
-}: BottomModal2Props) => {
+interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'children'> {
+  flashListProps?: BottomSheetFlashListProps<T>
+  bottomSheetModalProps?: Omit<BottomSheetModalProps, 'children'>
+}
+
+const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const dispatch = useAppDispatch()
   const theme = useTheme()
@@ -39,18 +39,22 @@ const BottomModal2 = ({
 
   useEffect(() => {
     bottomSheetModalRef.current?.present()
-  }, [dispatch, modalId])
+  }, [])
 
   const handleClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss()
   }, [])
 
   const handleDismiss = useCallback(() => {
-    dispatch(closeModal({ id: modalId }))
-    dispatch(removeModal({ id: modalId }))
-  }, [dispatch, modalId])
+    dispatch(closeModal({ id: props.modalId }))
+    dispatch(removeModal({ id: props.modalId }))
+  }, [dispatch, props.modalId])
 
-  const BottomSheetComponent = notScrollable ? BottomSheetView : BottomSheetScrollView
+  const BottomSheetComponent = !isFlashList(props)
+    ? props.notScrollable
+      ? BottomSheetView
+      : BottomSheetScrollView
+    : undefined
 
   return (
     <BottomSheetModal
@@ -59,19 +63,40 @@ const BottomModal2 = ({
       handleComponent={() => <BottomModalHandle style={{ backgroundColor: theme.global.complementary }} />}
       onDismiss={handleDismiss}
       topInset={safeAreaInsets.top}
-      {...props}
+      {...props.bottomSheetModalProps}
     >
-      <BottomSheetComponent
-        style={{
-          gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-          padding: noPadding ? 0 : DEFAULT_MARGIN
-        }}
-      >
-        <BottomModalHeader title={title} height={navHeight} onClose={handleClose} titleAlign={titleAlign} />
-        {children}
-      </BottomSheetComponent>
+      {isFlashList(props) && props.flashListProps ? (
+        <BottomSheetFlashList
+          {...props.flashListProps}
+          contentContainerStyle={{
+            paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
+            paddingBottom: props.noPadding ? 0 : VERTICAL_GAP
+          }}
+        />
+      ) : (
+        BottomSheetComponent && (
+          <BottomSheetComponent
+            style={{
+              gap: props.contentVerticalGap ? VERTICAL_GAP : undefined,
+              padding: props.noPadding ? 0 : DEFAULT_MARGIN
+            }}
+          >
+            <BottomModalHeader
+              title={props.title}
+              height={props.navHeight}
+              onClose={handleClose}
+              titleAlign={props.titleAlign}
+            />
+            {!isFlashList(props) && props.children}
+          </BottomSheetComponent>
+        )
+      )}
     </BottomSheetModal>
   )
 }
 
 export default BottomModal2
+
+const isFlashList = <T,>(
+  props: BottomModalWithChildrenProps | BottomModalFlashListProps<T>
+): props is BottomModalFlashListProps<T> => 'flashListProps' in props
