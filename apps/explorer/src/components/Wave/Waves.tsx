@@ -51,7 +51,7 @@ const Waves = () => {
 
 const staticHeight = 600
 
-const waves: [WaveEntity, WaveEntity, WaveEntity] = [
+const waves: [WaveEntity, WaveEntity] = [
   new WaveEntity([0.0041, 0.02, 0.008], 0.9, 0.1, ['#5cd1ffac', 'rgba(126, 223, 255, 0)']),
   new WaveEntity([0.0172, 0.014, 0.005], 0.8, 0.1, ['#d167ff75', 'rgba(207, 136, 255, 0)'])
 ]

@@ -1,5 +1,12 @@
 # @alephium/explorer
 
+## 1.10.12
+
+### Patch Changes
+
+- Fix timestamp issue
+- Update layout
+
 ## 1.10.11
 
 ### Patch Changes
