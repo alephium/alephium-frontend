@@ -74,12 +74,25 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
           }}
         />
       ) : (
+        !isFlashList(props) &&
         BottomSheetComponent && (
           <BottomSheetComponent
-            style={{
-              gap: props.contentVerticalGap ? VERTICAL_GAP : undefined,
-              padding: props.noPadding ? 0 : DEFAULT_MARGIN
-            }}
+            style={
+              props.notScrollable
+                ? {
+                    gap: props.contentVerticalGap ? VERTICAL_GAP : undefined,
+                    padding: props.noPadding ? 0 : DEFAULT_MARGIN
+                  }
+                : undefined
+            }
+            contentContainerStyle={
+              props.notScrollable
+                ? undefined
+                : {
+                    paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
+                    paddingBottom: props.noPadding ? 0 : VERTICAL_GAP
+                  }
+            }
           >
             <BottomModalHeader
               title={props.title}
@@ -87,7 +100,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
               onClose={handleClose}
               titleAlign={props.titleAlign}
             />
-            {!isFlashList(props) && props.children}
+            {props.children}
           </BottomSheetComponent>
         )
       )}
