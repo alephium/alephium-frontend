@@ -43,7 +43,7 @@ export default styled(TableRow)`
   td:first-child {
     display: flex;
     align-items: center;
-    min-height: 55px;
+    min-height: 46px;
     font-weight: 600;
     color: ${({ theme, highlight }) => (highlight ? theme.font.primary : theme.font.secondary)};
 

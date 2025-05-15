@@ -30,6 +30,7 @@ const Waves = () => {
 
     if (canvasContextRef.current) {
       canvasContextRef.current.clearRect(0, 0, innerWidth, staticHeight)
+      canvasContextRef.current.globalCompositeOperation = 'hard-light'
       Object.entries(waves).forEach((w) => {
         w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t / 20.0)
       })
@@ -50,9 +51,9 @@ const Waves = () => {
 
 const staticHeight = 600
 
-const waves: [WaveEntity, WaveEntity] = [
-  new WaveEntity([0.0081, 0.028, 0.015], 1, 1, ['rgba(22, 204, 244, 0.6)', 'rgba(101, 16, 248, 0)']),
-  new WaveEntity([0.0022, 0.018, 0.005], 1, 1.2, ['rgba(244, 129, 22, 0.6)', 'rgba(101, 16, 248, 0)'])
+const waves: [WaveEntity, WaveEntity, WaveEntity] = [
+  new WaveEntity([0.0041, 0.02, 0.008], 0.9, 0.1, ['#5cd1ffac', 'rgba(126, 223, 255, 0)']),
+  new WaveEntity([0.0172, 0.014, 0.005], 0.8, 0.1, ['#d167ff75', 'rgba(207, 136, 255, 0)'])
 ]
 
 const CanvasContainer = styled.div`
@@ -61,6 +62,7 @@ const CanvasContainer = styled.div`
   left: 0;
   right: 0;
   z-index: -1;
+  opacity: 0.7;
 `
 
 export default Waves

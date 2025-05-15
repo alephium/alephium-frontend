@@ -1,5 +1,5 @@
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+  font-family: 'Geist', 'InterDisplay', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -8,27 +8,52 @@ body {
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('./Inter-Regular.woff') format('woff');
+  font-family: 'InterDisplay';
+  font-display: swap;
+  font-weight: 200;
+  src: url('../fonts/InterDisplay-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'InterDisplay';
+  font-style: normal;
+  font-display: swap;
   font-weight: 400;
+  src: url('../fonts/InterDisplay-Regular.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('./Inter-Medium.woff') format('woff');
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('./Inter-SemiBold.woff') format('woff');
+  font-family: 'InterDisplay';
+  font-style: normal;
+  font-display: swap;
   font-weight: 600;
+  src: url('../fonts/InterDisplay-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('./Inter-Bold.woff') format('woff');
-  font-weight: 700;
+  font-family: 'InterDisplay';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 800;
+  src: url('../fonts/InterDisplay-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Sentient';
+  font-weight: 100 1000;
+  src: url('../fonts/Sentient-Variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Switzer';
+  font-weight: 100 1000;
+  src: url('../fonts/Switzer-Variable.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-weight: 100 1000;
+  src: url('../fonts/Geist-Variable.ttf') format('truetype');
 }
 
 @font-face {

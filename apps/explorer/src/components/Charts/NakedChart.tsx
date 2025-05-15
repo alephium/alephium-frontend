@@ -47,7 +47,10 @@ const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
     }
   },
   stroke: {
-    show: false
+    show: true,
+    curve: 'smooth',
+    width: 2,
+    colors: [colors[0]]
   },
   dataLabels: {
     enabled: false
@@ -62,12 +65,12 @@ const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
           {
             offset: 0,
             color: colors[0],
-            opacity: 1
+            opacity: 0.2
           },
           {
             offset: 100,
-            color: colors[1],
-            opacity: 1
+            color: colors[0],
+            opacity: 0
           }
         ]
       ]

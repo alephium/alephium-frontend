@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 export interface CardProps extends HTMLMotionProps<'div'> {
   children: ReactNode
@@ -28,13 +28,13 @@ export default Card
 const Container = styled(motion.div)`
   flex: 1;
   position: relative;
-  ${({ theme }) => blurredBackground(theme.bg.primary)};
+  border-radius: 9px;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 8px;
+  background-color: ${({ theme }) => theme.bg.primary};
   display: flex;
   flex-direction: column;
   gap: 25%;
-  height: 150px;
+  height: 155px;
   padding: 20px;
   overflow: hidden;
 

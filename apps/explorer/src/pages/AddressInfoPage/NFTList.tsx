@@ -155,7 +155,7 @@ const Toolbar = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const NFTListStyled = styled.div`

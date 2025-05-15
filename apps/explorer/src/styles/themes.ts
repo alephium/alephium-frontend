@@ -7,12 +7,12 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     primary: '#ffffff',
-    secondary: '#F9F9F9',
+    secondary: '#fafafa',
     tertiary: '#f4f4f4',
     hover: 'rgba(0, 0, 0, 0.012)',
     contrast: '#212126',
     accent: colord('#5981f3').alpha(0.15).toRgbString(),
-    background1: '#F0F0F0',
+    background1: '#f5f5f5',
     background2: '#F0F0F0'
   },
   font: {
@@ -24,8 +24,8 @@ export const lightTheme: DefaultTheme = {
     highlight: '#f67460'
   },
   border: {
-    primary: '#e3e3e3',
-    secondary: '#f1f1f1'
+    primary: 'rgba(0, 0, 0, 0.07)',
+    secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {
     primary: '0 2px 2px rgba(0, 0, 0, 0.03)',
@@ -38,7 +38,7 @@ export const lightTheme: DefaultTheme = {
     alert: '#da3341',
     warning: '#ffa600',
     valid: '#028f54',
-    highlight: '#f78c14',
+    highlight: '#f7a214',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
 }
@@ -46,14 +46,14 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    primary: '#1B1B1F',
-    secondary: '#18181B',
-    tertiary: '#141417',
+    primary: '#1c1c1c',
+    secondary: '#1f1f1f',
+    tertiary: '#1a1a1a',
     hover: 'rgba(255, 255, 255, 0.02)',
     contrast: 'white',
     accent: colord('#598BED').alpha(0.15).toRgbString(),
-    background1: '#121215',
-    background2: '#0E0E10'
+    background1: '#171717',
+    background2: '#171717'
   },
   font: {
     primary: '#e3e3e3',
@@ -64,8 +64,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f37975'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.08)',
-    secondary: 'rgba(255, 255, 255, 0.04)'
+    primary: 'rgba(255, 255, 255, 0.04)',
+    secondary: 'rgba(255, 255, 255, 0.03)'
   },
   shadow: {
     primary: '0 4px 4px rgba(0, 0, 0, 0.25)',
@@ -73,12 +73,12 @@ export const darkTheme: DefaultTheme = {
     tertiary: '0 0 50px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#598BED',
+    accent: '#5791ee',
     complementary: '#eb88a4',
     alert: '#f24242',
     warning: '#ffc42d',
     valid: '#1dcd84',
-    highlight: '#f78c14',
+    highlight: '#e6a125',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
 }

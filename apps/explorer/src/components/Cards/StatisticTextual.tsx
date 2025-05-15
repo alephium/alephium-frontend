@@ -18,7 +18,7 @@ const Container = styled.div``
 const Primary = styled.div`
   color: ${({ theme }) => theme.font.primary};
   font-size: 23px;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 5px;
 `
 
