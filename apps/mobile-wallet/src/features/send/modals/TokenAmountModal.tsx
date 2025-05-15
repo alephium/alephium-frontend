@@ -84,7 +84,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
 
     const handleAmountValidate = () => {
       onAmountValidate(amount ? fromHumanReadableAmount(amount, tokenDecimals) : BigInt(0), tokenName)
-      dismiss()
+      dismiss(id)
     }
 
     const handleClearAmountPress = () => setAmount('')

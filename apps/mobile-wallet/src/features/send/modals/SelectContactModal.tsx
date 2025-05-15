@@ -15,11 +15,11 @@ const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPr
 
   const handleContactPress = (contactId: string) => {
     onContactPress(contactId)
-    dismiss()
+    dismiss(id)
   }
 
   const handleNewContactPress = () => {
-    dismiss()
+    dismiss(id)
   }
 
   return (

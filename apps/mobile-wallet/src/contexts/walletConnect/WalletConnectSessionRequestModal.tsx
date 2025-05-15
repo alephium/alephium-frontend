@@ -247,7 +247,7 @@ const WalletConnectSessionRequestModal = withModal(
               : WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
         })
       } finally {
-        dismiss()
+        dismiss(id)
       }
     }
 
@@ -271,7 +271,7 @@ const WalletConnectSessionRequestModal = withModal(
         console.error('❌ INFORMING: FAILED.')
       } finally {
         showRejectedToast()
-        dismiss()
+        dismiss(id)
       }
     }
 
@@ -283,7 +283,7 @@ const WalletConnectSessionRequestModal = withModal(
       } catch (e) {
         console.error('❌ INFORMING: FAILED.')
       } finally {
-        dismiss()
+        dismiss(id)
       }
     }
 
@@ -326,7 +326,7 @@ const WalletConnectSessionRequestModal = withModal(
                 console.log('👉 RESETTING SESSION REQUEST EVENT.')
                 dispatch(deactivateAppLoading())
                 showApprovedToast()
-                dismiss()
+                dismiss(id)
               }
             }
           })

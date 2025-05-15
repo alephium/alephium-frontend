@@ -28,7 +28,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
 
   if (!nft) return null
 
-  const handleClose = () => dismiss()
+  const handleClose = () => dismiss(id)
 
   const attributes = nft.attributes
   const canViewFullSize = !nft.image.startsWith('data:image/')

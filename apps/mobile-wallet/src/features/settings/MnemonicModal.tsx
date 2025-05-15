@@ -32,7 +32,7 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
 
   const handleVerifyButtonPress = () => {
     onVerifyPress && onVerifyPress()
-    dismiss()
+    dismiss(id)
   }
 
   return (

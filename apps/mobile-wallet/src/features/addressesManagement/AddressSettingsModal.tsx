@@ -34,8 +34,8 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
     addressHash,
     origin: 'addressSettings',
     onConfirm: () => {
-      if (parentModalId) dismiss()
-      dismiss()
+      if (parentModalId) dismiss(parentModalId)
+      dismiss(id)
     }
   })
 
@@ -66,7 +66,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       sendAnalytics({ type: 'error', message })
     }
 
-    dismiss()
+    dismiss(id)
   }
 
   return (

@@ -48,7 +48,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       dispatch(deactivateAppLoading())
-      dismiss()
+      dismiss(id)
     }
   }
 

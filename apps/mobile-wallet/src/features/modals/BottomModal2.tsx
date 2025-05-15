@@ -69,6 +69,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       handleComponent={() => <BottomModalHandle style={{ backgroundColor: theme.global.complementary }} />}
       onDismiss={handleDismiss}
       topInset={safeAreaInsets.top}
+      name={props.modalId}
       {...props.bottomSheetModalProps}
     >
       {isFlashList(props) && props.flashListProps ? (

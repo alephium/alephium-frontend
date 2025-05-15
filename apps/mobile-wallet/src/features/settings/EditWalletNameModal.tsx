@@ -38,7 +38,7 @@ const EditWalletNameModal = withModal(({ id }) => {
     }
 
     dispatch(deactivateAppLoading())
-    dismiss()
+    dismiss(id)
   }
 
   return (
