@@ -6,9 +6,8 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
@@ -48,33 +47,32 @@ const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallba
   }
 
   return (
-    <BottomModal modalId={id}>
-      <ModalContent verticalGap>
-        <ScreenSection>
-          <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
-        </ScreenSection>
-        <ScreenSection>
-          <AppText color="secondary" size={18}>
-            {t('Please, enter your fund password.')}
-          </AppText>
-        </ScreenSection>
-        <ScreenSection>
-          <Input
-            label={t('Fund password')}
-            value={password}
-            onChangeText={handleFundPasswordChange}
-            onSubmitEditing={handleSubmit}
-            secureTextEntry
-            autoCapitalize="none"
-            blurOnSubmit={false}
-            error={displayedError}
-          />
-        </ScreenSection>
-        <ScreenSection>
-          <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
-        </ScreenSection>
-      </ModalContent>
-    </BottomModal>
+    <BottomModal2 modalId={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t('Please, enter your fund password.')}
+        </AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <Input
+          isInModal
+          label={t('Fund password')}
+          value={password}
+          onChangeText={handleFundPasswordChange}
+          onSubmitEditing={handleSubmit}
+          secureTextEntry
+          autoCapitalize="none"
+          blurOnSubmit={false}
+          error={displayedError}
+        />
+      </ScreenSection>
+      <ScreenSection>
+        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
+      </ScreenSection>
+    </BottomModal2>
   )
 })
 

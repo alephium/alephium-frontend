@@ -73,16 +73,24 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
     >
       {isFlashList(props) && props.flashListProps ? (
         <BottomSheetFlashList
-          ListHeaderComponent={
-            <BottomModalHeader
-              title={props.title}
-              height={props.navHeight}
-              onClose={handleClose}
-              titleAlign={props.titleAlign}
-            />
-          }
-          {...props.flashListProps}
           contentContainerStyle={styles}
+          {...props.flashListProps}
+          ListHeaderComponent={
+            <>
+              {/* Note: The header is kept INSIDE the sheet so that it behaves properly. Moving it outside creates issues with calculating its height. To be looked into. */}
+              <BottomModalHeader
+                title={props.title}
+                height={props.navHeight}
+                onClose={handleClose}
+                titleAlign={props.titleAlign}
+              />
+              {typeof props.flashListProps.ListHeaderComponent === 'function' ? (
+                <props.flashListProps.ListHeaderComponent />
+              ) : (
+                props.flashListProps.ListHeaderComponent
+              )}
+            </>
+          }
         />
       ) : (
         !isFlashList(props) &&
@@ -92,6 +100,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
             contentContainerStyle={props.notScrollable ? undefined : styles}
             // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
           >
+            {/* Note: Same as above regarding header. */}
             <BottomModalHeader
               title={props.title}
               height={props.navHeight}

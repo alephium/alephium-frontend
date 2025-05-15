@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,9 +9,7 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
@@ -23,6 +22,7 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
@@ -42,7 +42,7 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
 
       onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
-      dispatch(closeModal({ id }))
+      dismiss()
     } else {
       showToast({
         text1: 'Invalid URI',
@@ -53,28 +53,32 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
   }
 
   return (
-    <BottomModal modalId={id} title={t('Connect to dApp')}>
-      <ModalContent verticalGap>
-        <ScreenSection>
-          <AppText color="secondary" size={18}>
-            {t('Paste the WalletConnect URI you copied from the dApp')}:
-          </AppText>
-        </ScreenSection>
-        <ScreenSection>
-          <Input
-            label={t('WalletConnect URI')}
-            value={inputWcUrl}
-            onChangeText={handleInputChange}
-            error={error}
-            autoFocus
-            showPasteButton
-          />
-        </ScreenSection>
-        <ScreenSection>
-          <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
-        </ScreenSection>
-      </ModalContent>
-    </BottomModal>
+    <BottomModal2
+      modalId={id}
+      title={t('Connect to dApp')}
+      contentVerticalGap
+      bottomSheetModalProps={{ stackBehavior: 'replace' }}
+    >
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t('Paste the WalletConnect URI you copied from the dApp')}:
+        </AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <Input
+          isInModal
+          label={t('WalletConnect URI')}
+          value={inputWcUrl}
+          onChangeText={handleInputChange}
+          error={error}
+          autoFocus
+          showPasteButton
+        />
+      </ScreenSection>
+      <ScreenSection>
+        <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
+      </ScreenSection>
+    </BottomModal2>
   )
 })
 
