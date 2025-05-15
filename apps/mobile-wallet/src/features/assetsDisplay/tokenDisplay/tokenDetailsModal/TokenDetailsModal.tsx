@@ -33,29 +33,37 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
-const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
-  const dispatch = useAppDispatch()
+const TokenDetailsModal = withModal<TokenDetailsModalProps>(
+  ({ id, tokenId, addressHash, parentModalId, stackBehavior }) => {
+    const dispatch = useAppDispatch()
 
-  const handleClose = () => {
-    dispatch(closeModal({ id }))
+    const handleClose = () => {
+      dispatch(closeModal({ id }))
 
-    if (parentModalId) dispatch(closeModal({ id: parentModalId }))
+      if (parentModalId) dispatch(closeModal({ id: parentModalId }))
+    }
+
+    return (
+      <BottomModal2
+        notScrollable
+        modalId={id}
+        title={<TokenDetailsModalHeader tokenId={tokenId} />}
+        titleAlign="left"
+        bottomSheetModalProps={{ stackBehavior }}
+      >
+        <Content>
+          <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
+          <ActionButtons>
+            <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
+            <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
+            <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
+          </ActionButtons>
+          <TokenDetailsModalDescription tokenId={tokenId} />
+        </Content>
+      </BottomModal2>
+    )
   }
-
-  return (
-    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
-      <Content>
-        <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
-        <ActionButtons>
-          <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
-          <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
-          <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
-        </ActionButtons>
-        <TokenDetailsModalDescription tokenId={tokenId} />
-      </Content>
-    </BottomModal2>
-  )
-})
+)
 
 const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
