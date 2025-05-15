@@ -12,7 +12,7 @@ const ReceiveQRCodeModal = withModal<ReceiveQRCodeModalProps>(({ id, addressHash
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 modalId={id} title={t('Receive')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Receive')}>
       <ReceiveQRCodeSection addressHash={addressHash} />
     </BottomModal2>
   )

@@ -8,7 +8,7 @@ import AppText from '~/components/AppText'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import SendButton from '~/features/send/SendButton'
@@ -35,7 +35,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
-    <BottomModal modalId={id} title={nft.name}>
+    <BottomModal2 modalId={id} title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>
@@ -73,7 +73,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
           ))}
         </>
       )}
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

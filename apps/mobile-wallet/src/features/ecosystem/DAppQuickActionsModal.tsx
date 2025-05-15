@@ -28,7 +28,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
   }
 
   return (
-    <BottomModal2 modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}

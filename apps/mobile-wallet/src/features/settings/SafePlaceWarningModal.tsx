@@ -20,7 +20,7 @@ const SafePlaceWarningModal = withModal(({ id }) => {
   const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
 
   return (
-    <BottomModal2 modalId={id}>
+    <BottomModal2 notScrollable modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>

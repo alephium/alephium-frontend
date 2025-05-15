@@ -42,7 +42,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 notScrollable modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (

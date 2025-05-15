@@ -26,7 +26,7 @@ const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalPro
   const handleClose = () => dispatch(closeModal({ id }))
 
   return (
-    <BottomModal2 modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <SendButton

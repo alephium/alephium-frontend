@@ -28,7 +28,7 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
   }
 
   return (
-    <BottomModal2 modalId={id}>
+    <BottomModal2 notScrollable modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>

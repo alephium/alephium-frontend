@@ -25,7 +25,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import IOList from '~/components/IOList'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -41,7 +41,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal modalId={id} title={t('Transaction')}>
+    <BottomModal2 modalId={id} title={t('Transaction')}>
       <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>
@@ -51,7 +51,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
           title={t('Explorer')}
         />
       </BottomButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 
