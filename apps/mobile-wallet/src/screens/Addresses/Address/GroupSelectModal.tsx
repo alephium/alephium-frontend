@@ -29,7 +29,7 @@ const GroupSelectModal = withModal<GroupSelectModalProps>(({ id, onSelect, selec
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('Address group')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}

@@ -25,7 +25,7 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
   }
 
   return (
-    <BottomModal2 modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
+    <BottomModal2 notScrollable modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
       <ScreenSection verticalGap>
         <AppText color="secondary" size={18} style={{ textAlign: 'center', paddingTop: VERTICAL_GAP }}>
           {t(

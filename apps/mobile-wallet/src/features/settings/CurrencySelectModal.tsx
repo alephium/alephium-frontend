@@ -2,7 +2,7 @@ import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -23,7 +23,7 @@ const CurrencySelectModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal modalId={id} title={t('Currency')}>
+    <BottomModal2 modalId={id} title={t('Currency')}>
       {currencyOptions.map((currencyOption, index) => (
         <RadioButtonRow
           key={currencyOption.label}
@@ -33,7 +33,7 @@ const CurrencySelectModal = withModal(({ id }) => {
           isLast={index === currencyOptions.length - 1}
         />
       ))}
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

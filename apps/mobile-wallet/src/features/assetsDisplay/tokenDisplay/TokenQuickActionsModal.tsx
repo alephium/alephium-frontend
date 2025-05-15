@@ -39,6 +39,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
 
   return (
     <BottomModal2
+      notScrollable
       modalId={id}
       title={
         <Title>

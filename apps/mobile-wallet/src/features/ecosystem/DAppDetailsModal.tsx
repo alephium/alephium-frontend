@@ -24,7 +24,7 @@ const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
 
   return (
-    <BottomModal2 modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />

@@ -9,7 +9,7 @@ import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
@@ -35,7 +35,7 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
     }
 
     return (
-      <BottomModal modalId={id} title={t('Current connections')}>
+      <BottomModal2 modalId={id} title={t('Current connections')}>
         <ModalContent verticalGap>
           {activeSessions.map(({ topic, peer: { metadata } }, index) => (
             <ListItem
@@ -58,7 +58,7 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
             <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
           </BottomButtons>
         </ModalContent>
-      </BottomModal>
+      </BottomModal2>
     )
   }
 )

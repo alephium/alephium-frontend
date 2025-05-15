@@ -21,7 +21,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('Auto-lock')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (

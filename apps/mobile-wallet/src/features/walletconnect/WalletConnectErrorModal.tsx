@@ -29,7 +29,7 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
   }
 
   return (
-    <BottomModal2 modalId={id}>
+    <BottomModal2 notScrollable modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>

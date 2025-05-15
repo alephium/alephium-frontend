@@ -48,7 +48,7 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('Disclaimer')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Disclaimer')}>
       <AppText>
         <Trans
           t={t}
