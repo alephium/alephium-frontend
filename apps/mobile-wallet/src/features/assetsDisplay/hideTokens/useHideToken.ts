@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { closeModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-const useHideToken = (origin: 'quick_actions' | 'app_settings', modalId?: number) => {
+const useHideToken = (origin: 'quick_actions' | 'app_settings', modalId?: ModalInstance['id']) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 

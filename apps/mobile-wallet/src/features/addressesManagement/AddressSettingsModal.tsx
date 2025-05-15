@@ -10,6 +10,7 @@ import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -18,7 +19,7 @@ import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
-  parentModalId?: number
+  parentModalId?: ModalInstance['id']
 }
 
 const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash, parentModalId }) => {

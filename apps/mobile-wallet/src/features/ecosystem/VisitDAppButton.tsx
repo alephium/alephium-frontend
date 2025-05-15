@@ -9,12 +9,13 @@ import Button, { ButtonProps } from '~/components/buttons/Button'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { closeModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface VisitDAppButtonProps extends ButtonProps {
   dAppName: DApp['name']
-  parentModalId?: number
+  parentModalId?: ModalInstance['id']
   buttonType: 'quickAction' | 'default'
 }
 
