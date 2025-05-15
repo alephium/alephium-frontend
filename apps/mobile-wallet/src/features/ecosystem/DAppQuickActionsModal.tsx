@@ -10,6 +10,7 @@ import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleF
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal, openModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 
@@ -45,7 +46,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
 export default DAppQuickActionsModal
 
 interface QuickActionButtonProps extends DAppQuickActionsModalProps {
-  parentModalId: number
+  parentModalId: ModalInstance['id']
 }
 
 const AddToFavoritesButton = ({ dAppName }: QuickActionButtonProps) => {

@@ -105,7 +105,7 @@ export type OpenModalParams = {
 }[ModalName]
 
 export type ModalInstance = {
-  id: number
+  id: string
   params: OpenModalParams
   isClosing: boolean
 }
