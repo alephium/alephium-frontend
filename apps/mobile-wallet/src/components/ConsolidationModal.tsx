@@ -23,11 +23,11 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
 
   const handleConsolidate = () => {
     onConsolidate()
-    dismiss()
+    dismiss(id)
   }
 
   const handleCancel = () => {
-    dismiss()
+    dismiss(id)
   }
 
   return (

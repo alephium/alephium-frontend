@@ -28,7 +28,7 @@ interface AddressQuickActionsModalProps {
 const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id, addressHash }) => {
   const { dismiss } = useBottomSheetModal()
 
-  const handleClose = () => dismiss()
+  const handleClose = () => dismiss(id)
 
   return (
     <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>

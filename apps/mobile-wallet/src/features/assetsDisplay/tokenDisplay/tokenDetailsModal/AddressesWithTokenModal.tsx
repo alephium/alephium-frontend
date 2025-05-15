@@ -13,9 +13,8 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressesWithTokenModalProps {
@@ -25,13 +24,11 @@ interface AddressesWithTokenModalProps {
 const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useUnsortedAddressesHashes().length
-  const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
 
   const handleAddressPress = (addressHash: AddressHash) => {
-    dispatch(closeModal({ id }))
-    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
+    openModal({ name: 'AddressDetailsModal', props: { addressHash, stackBehavior: 'replace' } })
   }
 
   return (

@@ -169,7 +169,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showApprovedToast()
-        dismiss()
+        dismiss(modalId)
       }
     }
 
@@ -187,7 +187,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showRejectedToast()
-        dismiss()
+        dismiss(modalId)
       }
     }
 

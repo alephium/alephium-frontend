@@ -42,7 +42,7 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
 
       onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
-      dismiss()
+      dismiss(id)
     } else {
       showToast({
         text1: 'Invalid URI',

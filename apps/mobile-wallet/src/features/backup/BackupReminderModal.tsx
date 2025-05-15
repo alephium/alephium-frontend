@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Trans, useTranslation } from 'react-i18next'
 
@@ -5,9 +6,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
@@ -16,11 +15,11 @@ export interface BackupReminderModalProps {
 
 const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { dismiss } = useBottomSheetModal()
 
   const handleValidatePress = () => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
     navigation.navigate('BackupMnemonicNavigation')
   }
 

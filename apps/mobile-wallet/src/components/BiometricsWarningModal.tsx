@@ -20,11 +20,11 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
 
   const handleConfirm = () => {
     onConfirm()
-    dismiss()
+    dismiss(id)
   }
 
   const handleCancel = () => {
-    dismiss()
+    dismiss(id)
   }
 
   return (
