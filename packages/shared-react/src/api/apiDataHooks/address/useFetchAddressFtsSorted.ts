@@ -1,5 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { useFetchSortListedFtsByWorth } from '@/api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
 import { useSortUnlistedFtsAlphabetically } from '@/api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
@@ -15,8 +16,7 @@ export const useFetchAddressFtsSorted = (addressHash: AddressHash) => {
   const sortedUnlistedFts = useSortUnlistedFtsAlphabetically(addressFts?.unlistedFts ?? [])
 
   return {
-    listedFts: sortedListedFts,
-    unlistedFts: sortedUnlistedFts,
+    data: useMemo(() => [...sortedListedFts, ...sortedUnlistedFts], [sortedListedFts, sortedUnlistedFts]),
     isLoading: isLoadingAddressFts || isLoadingSortFts
   }
 }

@@ -1,6 +1,6 @@
+import { useFetchAddressesHashesWithBalance } from '@alephium/shared-react'
 import styled from 'styled-components'
 
-import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import AddressListRow from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressListRow'
 

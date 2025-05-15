@@ -1,10 +1,10 @@
+import { useTransactionDirection } from '@alephium/shared-react'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import IOList from '@/components/IOList'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const SecondAddressColumnCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const direction = useTransactionDirection(tx, refAddressHash)

@@ -6,6 +6,7 @@ import {
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
 import { explorer as e, sleep } from '@alephium/web3'
+import { AcceptedTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -64,16 +65,6 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             }
           }
         : skipToken
-  })
-
-export const addressLatestTransactionsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
-  queryOptions({
-    queryKey: ['address', addressHash, 'transactions', 'latest', { networkId }],
-    // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed
-    // the cached data will be deleted.
-    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
-    queryFn: () =>
-      throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1, limit: 5 })
   })
 
 interface TransactionsInfiniteQueryBaseProps {
@@ -164,21 +155,36 @@ export const walletTransactionsInfiniteQuery = ({
           } as PageParam)
   })
 
-interface TransactionQueryProps extends SkipProp {
+interface PendingTransactionQueryProps extends SkipProp {
   txHash: string
   networkId?: number
 }
 
-export const confirmedTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
+interface ConfirmedTransactionQueryProps extends PendingTransactionQueryProps {
+  addressHashes: AddressHash[]
+}
+
+export const confirmedTransactionQuery = ({ txHash, addressHashes, networkId, skip }: ConfirmedTransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
     // When the user navigates away from the transaction details modal for 5 minutes or when a sent tx confirms the
     // cached data will be deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
+    placeholderData: () => {
+      const paginatedTxs = queryClient.getQueryData(
+        walletTransactionsInfiniteQuery({ addressHashes, networkId }).queryKey
+      )
+
+      const tx = paginatedTxs?.pages
+        .flatMap(({ pageTransactions }) => pageTransactions)
+        .find((tx) => tx.hash === txHash)
+
+      return tx ? ({ ...tx, type: 'confirmed' } as AcceptedTransaction) : undefined
+    }
   })
 
-export const pendingTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
+export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'pending', txHash],
     // 5 minutes after a sent tx is confirmed, the cached data will be deleted. We cannot set it to a lower value than

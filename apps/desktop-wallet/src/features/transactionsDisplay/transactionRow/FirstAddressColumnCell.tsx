@@ -1,3 +1,4 @@
+import { useTransactionDirection } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -5,7 +6,6 @@ import HiddenLabel from '@/components/HiddenLabel'
 import IOList from '@/components/IOList'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionProps) => {
   const { t } = useTranslation()

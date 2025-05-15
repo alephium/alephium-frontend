@@ -19,7 +19,7 @@ const workflowSteps: Record<
   (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[] | (keyof BackupMnemonicNavigationParamList)[]
 > = {
   receive: ['AddressScreen', 'QRCodeScreen'],
-  send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen'],
+  send: ['DestinationScreen', 'OriginScreen', 'AddressTokensScreen', 'VerifyScreen'],
   backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 
@@ -65,15 +65,6 @@ const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) =>
 }
 
 export default ProgressHeader
-
-export const BackButtonStyled = styled.Pressable`
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  align-items: center;
-  justify-content: center;
-`
 
 const HeaderRightContainer = styled.View`
   align-items: flex-end;

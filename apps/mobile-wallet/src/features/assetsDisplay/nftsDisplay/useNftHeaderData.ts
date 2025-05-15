@@ -1,8 +1,7 @@
-import { NFT, NFTDataType, NFTDataTypes, selectNFTById } from '@alephium/shared'
+import { NFT, NFTDataType, NFTDataTypes } from '@alephium/shared'
+import { useFetchNft } from '@alephium/shared-react'
 import { useEffect, useState } from 'react'
 import { DimensionValue } from 'react-native'
-
-import { useAppSelector } from '~/hooks/redux'
 
 export interface NFTImageProps {
   nftId: NFT['id']
@@ -17,7 +16,7 @@ interface UseNftHeaderDataProps {
 }
 
 const useNftHeaderData = ({ nftId, maxFileSizeInBytes }: UseNftHeaderDataProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nft } = useFetchNft({ id: nftId })
 
   const [contentType, setContentType] = useState<NFTDataType>()
   const [isLargeFile, setIsLargeFile] = useState<boolean>()

@@ -23,3 +23,5 @@ export const newAddressesSaved = createAction<AddressBase[]>('addresses/newAddre
 export const addressDeleted = createAction<AddressHash>('addresses/addressDeleted')
 
 export const defaultAddressChanged = createAction<Address>('addresses/defaultAddressChanged')
+
+export const addressesImported = createAction<AddressBase[]>('addresses/addressesImported')

@@ -1,3 +1,4 @@
+import { walletUnlockedMobile } from '@alephium/shared'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
@@ -9,7 +10,7 @@ import { useTheme } from 'styled-components/native'
 import { Analytics, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
-import HiddenAssetsScreen from '~/features/assetsDisplay/hideAssets/HiddenAssetsScreen'
+import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import DAppWebViewScreen from '~/features/ecosystem/DAppWebViewScreen'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -52,7 +53,7 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
-import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
+import { mnemonicMigrated } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -114,7 +115,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
               <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
               <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
               <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
-              <RootStack.Screen name="HiddenAssetsScreen" component={HiddenAssetsScreen} />
+              <RootStack.Screen name="HiddenTokensScreen" component={HiddenTokensScreen} />
               <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
               <RootStack.Screen
                 name="ImportWalletAddressDiscoveryScreen"
@@ -153,7 +154,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     }
 
     try {
-      dispatch(walletUnlocked(metadata))
+      dispatch(walletUnlockedMobile(metadata))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 

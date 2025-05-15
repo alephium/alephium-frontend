@@ -1,3 +1,4 @@
+import { useFetchTransactionTokens } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -5,7 +6,6 @@ import Amount from '@/components/Amount'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 
 const NSTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const {

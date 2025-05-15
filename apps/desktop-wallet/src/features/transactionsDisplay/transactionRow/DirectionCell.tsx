@@ -1,10 +1,10 @@
+import { useTransactionDirection } from '@alephium/shared-react'
 import { ArrowLeftRight, ArrowRight as ArrowRightIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import HiddenLabel from '@/components/HiddenLabel'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const DirectionCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const { t } = useTranslation()

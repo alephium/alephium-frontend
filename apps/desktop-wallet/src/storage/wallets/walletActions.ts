@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
 import { Message } from '@/features/toastMessages/toastMessagesTypes'
-import { GeneratedWallet, StoredEncryptedWallet, UnlockedWallet } from '@/types/wallet'
+import { GeneratedWallet, StoredEncryptedWallet } from '@/types/wallet'
 
 export const walletCreationFailed = createAction<Message>('wallets/walletCreationFailed')
 
@@ -9,14 +9,6 @@ export const walletNameStorageFailed = createAction<Message>('wallets/walletName
 
 export const walletDeleted = createAction<StoredEncryptedWallet['id']>('wallets/walletDeleted')
 
-export const walletSaved = createAction<GeneratedWallet>('wallets/walletSaved')
-
-export const walletLocked = createAction('wallets/walletLocked')
-
-export const walletUnlocked = createAction<UnlockedWallet>('wallets/walletUnlocked')
-
-export const walletSwitched = createAction<UnlockedWallet>('wallets/walletSwitched')
-
-export const activeWalletDeleted = createAction('wallets/activeWalletDeleted')
+export const walletSaved = createAction<GeneratedWallet['wallet']>('wallets/walletSaved')
 
 export const newWalletNameStored = createAction<StoredEncryptedWallet['name']>('wallets/newWalletNameStored')

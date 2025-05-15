@@ -1,5 +1,5 @@
-import { GENESIS_TIMESTAMP } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { AddressHash, GENESIS_TIMESTAMP } from '@alephium/shared'
+import { explorer as e } from '@alephium/web3'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -8,25 +8,27 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
-import { AddressConfirmedTransaction } from '~/types/transactions'
 
 interface IOListProps {
+  currentAddress: AddressHash
   isOut: boolean
-  tx: AddressConfirmedTransaction
+  timestamp?: number
+  outputs?: e.Output[]
+  inputs?: e.Input[]
 }
 
-const IOList = ({ isOut, tx }: IOListProps) => {
-  const io = (isOut ? tx.outputs : tx.inputs) as Array<explorer.Output | explorer.Input> | undefined
+const IOList = ({ currentAddress, isOut, timestamp, outputs, inputs }: IOListProps) => {
+  const io = isOut ? outputs : inputs
   const addresses = useAppSelector((s) => s.addresses.entities)
   const { t } = useTranslation()
 
   if (io && io.length > 0) {
-    const isAllCurrentAddress = io.every((o) => o.address === tx.address.hash)
-    const notCurrentAddresses = _(io.filter((o) => o.address !== tx.address.hash))
+    const isAllCurrentAddress = io.every((o) => o.address === currentAddress)
+    const notCurrentAddresses = _(io.filter((o) => o.address !== currentAddress))
       .map((v) => v.address)
       .uniq()
       .value()
-    const addressHash = isAllCurrentAddress ? tx.address.hash : notCurrentAddresses[0]
+    const addressHash = isAllCurrentAddress ? currentAddress : notCurrentAddresses[0]
     const extraAddressesText = notCurrentAddresses.length > 1 ? `(+${notCurrentAddresses.length - 1})` : ''
 
     if (!addressHash) return null
@@ -39,7 +41,7 @@ const IOList = ({ isOut, tx }: IOListProps) => {
         {extraAddressesText && <AppText>{extraAddressesText}</AppText>}
       </View>
     )
-  } else if (tx.timestamp === GENESIS_TIMESTAMP) {
+  } else if (timestamp === GENESIS_TIMESTAMP) {
     return <BoldText>{t('Genesis TX')}</BoldText>
   } else {
     return <BoldText>{t('Mining Rewards')}</BoldText>

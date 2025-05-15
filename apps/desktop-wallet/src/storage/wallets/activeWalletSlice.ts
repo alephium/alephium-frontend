@@ -1,16 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit'
-
 import {
   activeWalletDeleted,
-  newWalletNameStored,
+  ActiveWalletDesktop,
   walletLocked,
-  walletSaved,
-  walletSwitched,
-  walletUnlocked
-} from '@/storage/wallets/walletActions'
-import { ActiveWallet } from '@/types/wallet'
+  walletSwitchedDesktop,
+  walletUnlockedDesktop
+} from '@alephium/shared'
+import { createSlice } from '@reduxjs/toolkit'
 
-type ActiveWalletState = Partial<ActiveWallet>
+import { newWalletNameStored, walletSaved } from '@/storage/wallets/walletActions'
+
+type ActiveWalletState = Partial<ActiveWalletDesktop>
 
 const initialState: ActiveWalletState = {
   id: undefined,
@@ -25,9 +24,9 @@ const activeWalletSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(walletSaved, (_, action) => action.payload.wallet)
-      .addCase(walletUnlocked, (_, action) => action.payload.wallet)
-      .addCase(walletSwitched, (_, action) => action.payload.wallet)
+      .addCase(walletSaved, (_, action) => action.payload)
+      .addCase(walletUnlockedDesktop, (_, action) => action.payload)
+      .addCase(walletSwitchedDesktop, (_, action) => action.payload)
       .addCase(walletLocked, resetState)
       .addCase(activeWalletDeleted, resetState)
       .addCase(newWalletNameStored, (state, action) => {

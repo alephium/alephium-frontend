@@ -1,4 +1,5 @@
 import { isConfirmedTx, selectPendingSentTransactionByHash } from '@alephium/shared'
+import { useTransactionDirection } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,7 +13,6 @@ import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionD
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 import { useAppSelector } from '@/hooks/redux'
 
 const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {

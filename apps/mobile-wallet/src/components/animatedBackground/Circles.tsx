@@ -6,6 +6,7 @@ import { useWindowDimensions } from 'react-native'
 import {
   AnimatedSensor,
   Easing,
+  runOnJS,
   SensorType,
   useAnimatedSensor,
   useDerivedValue,
@@ -152,8 +153,10 @@ const useCircleColors = ({ isDark, shade }: CircleColorsProps) => {
   useEffect(() => {
     if (shade !== previousShade) {
       shadeTransition.value = 0
-      shadeTransition.value = withTiming(1, { duration: 600 }, () => {
-        setPreviousShade(shade)
+      shadeTransition.value = withTiming(1, { duration: 600 }, (finished) => {
+        if (finished) {
+          runOnJS(setPreviousShade)(shade)
+        }
       })
     }
   }, [previousShade, shade, shadeTransition])

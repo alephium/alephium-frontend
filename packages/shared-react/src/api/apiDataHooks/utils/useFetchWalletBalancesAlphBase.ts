@@ -1,7 +1,7 @@
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 import { useCurrentlyOnlineNetworkId } from '@/network'
 
 export const useFetchWalletBalancesAlphBase = <T>(

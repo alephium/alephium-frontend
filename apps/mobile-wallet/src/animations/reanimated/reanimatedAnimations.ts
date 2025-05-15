@@ -18,21 +18,6 @@ export const fastestSpringConfiguration: WithSpringConfig = {
   overshootClamping: true
 }
 
-export const PopIn = (targetValues: EntryAnimationsValues) => {
-  'worklet'
-  const animations: StyleProp<ViewStyle> = {
-    transform: [{ scale: withSpring(1, fastSpringConfiguration) }]
-  }
-  const initialValues = {
-    transform: [{ scale: 0 }]
-  }
-
-  return {
-    initialValues,
-    animations
-  }
-}
-
 export const PopInFast = (targetValues: EntryAnimationsValues) => {
   'worklet'
   const animations: StyleProp<ViewStyle> = {
@@ -42,20 +27,6 @@ export const PopInFast = (targetValues: EntryAnimationsValues) => {
     transform: [{ scale: 0 }]
   }
 
-  return {
-    initialValues,
-    animations
-  }
-}
-
-export const PopOut = (targetValues: EntryAnimationsValues) => {
-  'worklet'
-  const animations: StyleProp<ViewStyle> = {
-    transform: [{ scale: withSpring(0, fastSpringConfiguration) }]
-  }
-  const initialValues = {
-    transform: [{ scale: 1 }]
-  }
   return {
     initialValues,
     animations
