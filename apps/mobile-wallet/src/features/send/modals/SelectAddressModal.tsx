@@ -1,10 +1,9 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
-import { FlashList } from '@shopify/flash-list'
 import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
-import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -24,26 +23,23 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
   }
 
   return (
-    <BottomModalFlashList
+    <BottomModal2
       modalId={id}
       title={t('Addresses')}
-      flashListRender={(props) => (
-        <FlashList
-          data={data}
-          estimatedItemSize={70}
-          renderItem={({ item: addressHash, index }) => (
-            <AddressBox
-              key={addressHash}
-              addressHash={addressHash}
-              onPress={() => handleAddressPress(addressHash)}
-              isLast={index === data.length - 1}
-              origin="selectAddressModal"
-              showGroup
-            />
-          )}
-          {...props}
-        />
-      )}
+      flashListProps={{
+        data,
+        estimatedItemSize: 70,
+        renderItem: ({ item: addressHash, index }) => (
+          <AddressBox
+            key={addressHash}
+            addressHash={addressHash}
+            onPress={() => handleAddressPress(addressHash)}
+            isLast={index === data.length - 1}
+            origin="selectAddressModal"
+            showGroup
+          />
+        )
+      }}
     />
   )
 })

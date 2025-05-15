@@ -67,6 +67,14 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
     >
       {isFlashList(props) && props.flashListProps ? (
         <BottomSheetFlashList
+          ListHeaderComponent={
+            <BottomModalHeader
+              title={props.title}
+              height={props.navHeight}
+              onClose={handleClose}
+              titleAlign={props.titleAlign}
+            />
+          }
           {...props.flashListProps}
           contentContainerStyle={{
             paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
