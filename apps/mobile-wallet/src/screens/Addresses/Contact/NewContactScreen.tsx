@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
@@ -15,7 +13,6 @@ interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
 
   const initialValues = {
     id: undefined,
@@ -24,8 +21,6 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
   }
 
   const handleSavePress = async (formData: ContactFormData) => {
-    dispatch(activateAppLoading(t('Saving')))
-
     try {
       await persistContact(formData)
 
@@ -37,9 +32,7 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
       sendAnalytics({ type: 'error', error, message })
     }
 
-    dispatch(deactivateAppLoading())
-
-    navigation.goBack()
+    navigation.pop()
   }
 
   return (
