@@ -2,6 +2,7 @@ import { isFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -24,6 +25,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const hideToken = useHideToken('quick_actions', id)
+  const { dismiss } = useBottomSheetModal()
 
   const { data: token } = useFetchToken(tokenId)
 
@@ -32,7 +34,8 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
-    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId, stackBehavior: 'replace' } }))
+    dismiss(id)
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 

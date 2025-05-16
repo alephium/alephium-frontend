@@ -1,5 +1,6 @@
 import { selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
@@ -15,7 +16,7 @@ import Box from '~/components/layout/Box'
 import RoundedCard from '~/components/RoundedCard'
 import Row from '~/components/Row'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
@@ -76,12 +77,12 @@ const AddressBalanceSummary = ({ addressHash }: Pick<AddressDetailsModalHeaderPr
 }
 
 const AddressSendButton = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
-  const dispatch = useAppDispatch()
   const { data: addressBalances } = useFetchAddressBalances(addressHash)
+  const { dismiss } = useBottomSheetModal()
 
   if (!addressBalances?.length) return null
 
-  const handleClose = () => dispatch(closeModal({ id: parentModalId }))
+  const handleClose = () => dismiss(parentModalId)
 
   return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />
 }

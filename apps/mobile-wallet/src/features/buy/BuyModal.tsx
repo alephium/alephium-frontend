@@ -1,4 +1,5 @@
 import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useURL } from 'expo-linking'
 import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
 import { useEffect } from 'react'
@@ -11,9 +12,8 @@ import Button from '~/components/buttons/Button'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 
 export interface BuyModalProps {
   receiveAddressHash: AddressHash
@@ -24,17 +24,17 @@ const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const dispatch = useAppDispatch()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
   const providerUrl = useOnramperUrl(receiveAddressHash)
   const deeplink = useURL()
+  const { dismiss } = useBottomSheetModal()
 
   useEffect(() => {
     if (deeplink?.includes(CLOSE_ONRAMP_TAB_DEEP_LINK)) {
-      dispatch(closeModal({ id }))
+      dismiss(id)
       dismissBrowser()
     }
-  }, [deeplink, dispatch, id])
+  }, [deeplink, dismiss, id])
 
   const openProviderUrl = async () => {
     receiveAddress &&
@@ -44,7 +44,7 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
         controlsColor: theme.global.accent // iOS: color of button texts
       })
 
-    dispatch(closeModal({ id }))
+    dismiss(id)
   }
 
   return (

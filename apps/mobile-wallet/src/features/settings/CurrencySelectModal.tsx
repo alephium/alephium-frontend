@@ -1,9 +1,9 @@
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -16,10 +16,11 @@ const CurrencySelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
+  const { dismiss } = useBottomSheetModal()
 
   const handleCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
-    dispatch(closeModal({ id }))
+    dismiss(id)
   }
 
   return (

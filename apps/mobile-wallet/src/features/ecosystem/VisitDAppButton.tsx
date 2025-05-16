@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
@@ -8,14 +9,12 @@ import { dAppQuery } from '~/api/queries/dAppQueries'
 import Button, { ButtonProps } from '~/components/buttons/Button'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
-import { closeModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
-import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface VisitDAppButtonProps extends ButtonProps {
   dAppName: DApp['name']
-  parentModalId?: ModalInstance['id']
+  parentModalId: ModalInstance['id']
   buttonType: 'quickAction' | 'default'
 }
 
@@ -23,12 +22,12 @@ const VisitDAppButton = ({ dAppName, parentModalId, buttonType, ...props }: Visi
   const { data: dApp } = useQuery(dAppQuery(dAppName))
   const { t } = useTranslation()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   if (!dApp) return null
 
   const handleVisitDApp = () => {
-    parentModalId && dispatch(closeModal({ id: parentModalId }))
+    dismiss(parentModalId)
     navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
     sendAnalytics({ event: 'Opened dApp', props: { origin: 'quick_actions', dAppName } })
   }

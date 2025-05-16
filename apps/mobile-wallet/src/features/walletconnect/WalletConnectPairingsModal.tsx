@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
@@ -10,10 +11,8 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
@@ -23,12 +22,12 @@ interface WalletConnectPairingsModalProps {
 const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
   ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
     const { t } = useTranslation()
-    const dispatch = useAppDispatch()
+    const { dismiss } = useBottomSheetModal()
     const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
     useEffect(() => {
-      if (!walletConnectClient) dispatch(closeModal({ id }))
-    }, [activeSessions.length, dispatch, id, walletConnectClient])
+      if (!walletConnectClient) dismiss(id)
+    }, [activeSessions.length, dismiss, id, walletConnectClient])
 
     const handleDisconnectPress = async (pairingTopic: string) => {
       await unpairFromDapp(pairingTopic)

@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -9,7 +10,7 @@ import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleFavoriteDApp'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
@@ -21,9 +22,10 @@ interface DAppQuickActionsModalProps {
 const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const handleShowDetails = () => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
     dispatch(openModal({ name: 'DAppDetailsModal', props: { dAppName } }))
     sendAnalytics({ event: 'Opened dApp details modal', props: { origin: 'quick_actions' } })
   }
