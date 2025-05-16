@@ -6,15 +6,15 @@ import useNftsGridFlashListProps, {
   UseNftsGridFlashListPropsProps
 } from '~/features/assetsDisplay/nftsDisplay/useNftsGridFlashListProps'
 
-type NFTsGridProps = Omit<
+type NftsGridFlashListProps = Omit<
   Partial<FlashListProps<NFT[] | NFT['collectionId']>>,
   'contentContainerStyle' | 'renderItem' | 'keyExtractor' | 'getItemType'
 > &
   UseNftsGridFlashListPropsProps
 
-const NFTsGrid = forwardRef(
+const NftsGridFlastList = forwardRef(
   (
-    { nfts, nftSize, nftsPerRow = 3, isLoading, ...props }: NFTsGridProps,
+    { nfts, nftSize, nftsPerRow = 3, isLoading, ...props }: NftsGridFlashListProps,
     ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
   ) => {
     const flashListProps = useNftsGridFlashListProps({ nfts, nftSize, nftsPerRow, isLoading })
@@ -23,4 +23,4 @@ const NFTsGrid = forwardRef(
   }
 )
 
-export default NFTsGrid
+export default NftsGridFlastList
