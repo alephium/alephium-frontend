@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
-import NFTsGrid from '~/features/assetsDisplay/nftsDisplay/NFTsGrid'
+import NftsGridFlashList from '~/features/assetsDisplay/nftsDisplay/NftsGridFlashList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 
@@ -22,7 +22,7 @@ const NFTListScreen = () => {
   return (
     <Screen>
       <BaseHeader options={{ headerTitle: t('NFTs') }} scrollY={screenScrollY} />
-      <NFTsGrid
+      <NftsGridFlashList
         ref={listRef}
         nfts={nfts}
         isLoading={isLoading}
