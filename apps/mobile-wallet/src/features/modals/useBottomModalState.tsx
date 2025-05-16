@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { removeModal } from '~/features/modals/modalActions'
 import { selectModalById } from '~/features/modals/modalSelectors'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -13,7 +14,7 @@ type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
 export type BottomModalAnimationStates = 'idle' | 'animating'
 
 export interface UseBottomModalStateParams {
-  modalId: number
+  modalId: ModalInstance['id']
   navHeight: number
   maximisedContent?: boolean
   minHeight?: number

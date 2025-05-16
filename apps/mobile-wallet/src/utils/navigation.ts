@@ -1,4 +1,4 @@
-import { CommonActions, createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
+import { createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
 
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -20,5 +20,5 @@ export const resetNavigation = (
   navigation: NavigationProp<RootStackParamList>,
   initialRouteName?: keyof RootStackParamList
 ) => {
-  navigation.dispatch(CommonActions.reset(getInitialNavigationState(initialRouteName)))
+  navigation.reset(getInitialNavigationState(initialRouteName))
 }

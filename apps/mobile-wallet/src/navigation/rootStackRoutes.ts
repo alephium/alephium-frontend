@@ -33,6 +33,7 @@ type RootStackParamList = {
   BackupMnemonicNavigation: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean
+    startScanning?: boolean
   }
   NewContactScreen?: {
     addressHash: AddressHash

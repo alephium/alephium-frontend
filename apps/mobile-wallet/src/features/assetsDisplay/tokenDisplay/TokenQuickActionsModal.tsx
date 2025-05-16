@@ -2,6 +2,7 @@ import { isFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -11,8 +12,8 @@ import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 
@@ -24,6 +25,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const hideToken = useHideToken('quick_actions', id)
+  const { dismiss } = useBottomSheetModal()
 
   const { data: token } = useFetchToken(tokenId)
 
@@ -32,13 +34,14 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
+    dismiss(id)
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
-    dispatch(closeModal({ id }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
   return (
-    <BottomModal
+    <BottomModal2
+      notScrollable
       modalId={id}
       title={
         <Title>
@@ -65,7 +68,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
           iconProps={{ name: 'more-horizontal' }}
         />
       </QuickActionButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

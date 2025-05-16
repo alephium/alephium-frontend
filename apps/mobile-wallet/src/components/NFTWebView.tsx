@@ -19,9 +19,7 @@ const NFTWebView = ({ imageUri, size = '100%' }: NFTWebViewProps) => (
         borderRadius: BORDER_RADIUS_SMALL,
         backgroundColor: 'transparent'
       }}
-      injectedJavaScript={
-        "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=1, maximum-scale=1, user-scalable=1'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-      }
+      injectedJavaScript="const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=1, maximum-scale=1, user-scalable=1'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
       javaScriptEnabled={false}
       startInLoadingState={true}
       javaScriptCanOpenWindowsAutomatically={false}
