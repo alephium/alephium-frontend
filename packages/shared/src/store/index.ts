@@ -1,6 +1,5 @@
 export * from '@/store/store'
 export * from '@/store/addresses'
-export * from '@/store/prices'
 export * from '@/store/hiddenTokens'
 export * from '@/store/network'
 export * from '@/store/global'
