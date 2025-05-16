@@ -9,7 +9,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
 
@@ -29,33 +28,31 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id}>
-      <ModalContent verticalGap>
+    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
+      </ScreenSection>
+      {walletConnectClientError && (
         <ScreenSection>
-          <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
+          <Surface>
+            <AppTextStyled>{walletConnectClientError}</AppTextStyled>
+          </Surface>
         </ScreenSection>
-        {walletConnectClientError && (
-          <ScreenSection>
-            <Surface>
-              <AppTextStyled>{walletConnectClientError}</AppTextStyled>
-            </Surface>
-          </ScreenSection>
-        )}
-        <ScreenSection centered>
-          <ButtonsRow>
-            <Button title={t('Close')} onPress={handleClose} flex />
-            <Button
-              title={t('Retry')}
-              variant="accent"
-              onPress={() => {
-                resetWalletConnectClientInitializationAttempts()
-                dismiss(id)
-              }}
-              flex
-            />
-          </ButtonsRow>
-        </ScreenSection>
-      </ModalContent>
+      )}
+      <ScreenSection centered>
+        <ButtonsRow>
+          <Button title={t('Close')} onPress={handleClose} flex />
+          <Button
+            title={t('Retry')}
+            variant="accent"
+            onPress={() => {
+              resetWalletConnectClientInitializationAttempts()
+              dismiss(id)
+            }}
+            flex
+          />
+        </ButtonsRow>
+      </ScreenSection>
     </BottomModal2>
   )
 })

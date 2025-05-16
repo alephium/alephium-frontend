@@ -2,7 +2,6 @@ import { Contact } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 
@@ -24,13 +23,7 @@ const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPr
 
   return (
     <BottomModal2 modalId={id}>
-      <ModalContent>
-        <ContactListScreenBase
-          isInModal
-          onContactPress={handleContactPress}
-          onNewContactPress={handleNewContactPress}
-        />
-      </ModalContent>
+      <ContactListScreenBase isInModal onContactPress={handleContactPress} onNewContactPress={handleNewContactPress} />
     </BottomModal2>
   )
 })
