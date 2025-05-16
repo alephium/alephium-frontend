@@ -87,6 +87,12 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   useEffect(() => {
+    if (params?.startScanning) {
+      startScan()
+    }
+  }, [params?.startScanning, startScan])
+
+  useEffect(() => {
     setAddressSelections((prevSelections) => {
       const newSelections = { ...prevSelections }
 
