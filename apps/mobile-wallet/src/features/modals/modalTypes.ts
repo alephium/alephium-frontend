@@ -1,5 +1,4 @@
 import { HasOptionalProps, HasRequiredProps } from '@alephium/shared'
-import { BottomSheetModalProps } from '@gorhom/bottom-sheet'
 import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
@@ -96,8 +95,7 @@ type ModalParams<K extends ModalName> =
       : { name: K } // Modals with no props
 
 type ModalPropsMap = {
-  [K in ModalName]: Omit<ComponentProps<(typeof ModalComponents)[K]>, 'id'> &
-    Pick<BottomSheetModalProps, 'stackBehavior'>
+  [K in ModalName]: Omit<ComponentProps<(typeof ModalComponents)[K]>, 'id'>
 }
 
 export type OpenModalParams = {
@@ -110,6 +108,6 @@ export type ModalInstance = {
   isClosing: boolean
 }
 
-export interface ModalBaseProp extends Pick<BottomSheetModalProps, 'stackBehavior'> {
+export interface ModalBaseProp {
   id: ModalInstance['id']
 }

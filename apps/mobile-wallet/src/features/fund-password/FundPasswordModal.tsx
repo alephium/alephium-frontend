@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -7,9 +8,8 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
 export interface FundPasswordModalProps {
@@ -18,19 +18,17 @@ export interface FundPasswordModalProps {
 
 const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallback }) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
-
-  if (!isUsingFundPassword) return null
-
   const fundPassword = useFundPassword()
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword({
     correctPassword: fundPassword ?? '',
     errorMessage: t('Provided fund password is wrong')
   })
+  const { dismiss } = useBottomSheetModal()
+
   const [displayedError, setDisplayedError] = useState<string | undefined>()
 
-  if (!fundPassword) return null
+  if (!isUsingFundPassword || !fundPassword) return null
 
   const handleFundPasswordChange = (text: string) => {
     handlePasswordChange(text)
@@ -40,7 +38,7 @@ const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallba
   const handleSubmit = () => {
     if (isPasswordCorrect) {
       successCallback()
-      dispatch(closeModal({ id }))
+      dismiss(id)
     } else {
       setDisplayedError(error)
     }

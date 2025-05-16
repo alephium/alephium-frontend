@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -8,10 +9,9 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 
 interface WalletConnectErrorModalProps {
   onClose?: () => void
@@ -19,13 +19,13 @@ interface WalletConnectErrorModalProps {
 
 const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, onClose }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   const handleClose = () => {
-    onClose && onClose()
-    dispatch(closeModal({ id }))
+    onClose?.()
+    dismiss(id)
   }
 
   return (
@@ -49,7 +49,7 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
               variant="accent"
               onPress={() => {
                 resetWalletConnectClientInitializationAttempts()
-                dispatch(closeModal({ id }))
+                dismiss(id)
               }}
               flex
             />

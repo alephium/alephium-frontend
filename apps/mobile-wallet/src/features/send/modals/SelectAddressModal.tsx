@@ -1,12 +1,11 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
@@ -14,11 +13,11 @@ interface SelectAddressModalProps {
 
 const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPress }) => {
   const { data } = useFetchAddressesHashesSortedByLastUse()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
   const { t } = useTranslation()
 
   const handleAddressPress = (addressHash: AddressHash) => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
     onAddressPress(addressHash)
   }
 
