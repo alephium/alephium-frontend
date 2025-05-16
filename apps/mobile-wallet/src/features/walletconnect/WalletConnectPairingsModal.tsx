@@ -11,7 +11,6 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 
 interface WalletConnectPairingsModalProps {
@@ -34,29 +33,27 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
     }
 
     return (
-      <BottomModal2 modalId={id} title={t('Current connections')}>
-        <ModalContent verticalGap>
-          {activeSessions.map(({ topic, peer: { metadata } }, index) => (
-            <ListItem
-              key={topic}
-              title={metadata.url.replace('https://', '')}
-              isLast={index === activeSessions.length - 1}
-              icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
-              rightSideContent={
-                <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
-              }
-            />
-          ))}
-          {activeSessions.length === 0 && (
-            <EmptyPlaceholder>
-              <AppText>{t('There are no connections yet.')} 🔌</AppText>
-            </EmptyPlaceholder>
-          )}
-          <BottomButtons fullWidth backgroundColor="back1">
-            <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
-            <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
-          </BottomButtons>
-        </ModalContent>
+      <BottomModal2 modalId={id} title={t('Current connections')} contentVerticalGap>
+        {activeSessions.map(({ topic, peer: { metadata } }, index) => (
+          <ListItem
+            key={topic}
+            title={metadata.url.replace('https://', '')}
+            isLast={index === activeSessions.length - 1}
+            icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
+            rightSideContent={
+              <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
+            }
+          />
+        ))}
+        {activeSessions.length === 0 && (
+          <EmptyPlaceholder>
+            <AppText>{t('There are no connections yet.')} 🔌</AppText>
+          </EmptyPlaceholder>
+        )}
+        <BottomButtons fullWidth backgroundColor="back1">
+          <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
+          <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
+        </BottomButtons>
       </BottomModal2>
     )
   }

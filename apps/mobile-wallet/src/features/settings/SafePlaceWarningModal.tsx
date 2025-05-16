@@ -7,7 +7,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
@@ -26,44 +25,42 @@ const SafePlaceWarningModal = withModal(({ id }) => {
 
   return (
     <BottomModal2 notScrollable modalId={id}>
-      <ModalContent verticalGap>
-        <ScreenSection>
-          <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
-        </ScreenSection>
-        <ScreenSection>
-          <AppText color="secondary" size={18}>
-            {t("Don't share your secret recovery phrase with anyone!")}
-          </AppText>
-          <AppText color="secondary" size={18}>
-            <Trans
-              t={t}
-              i18nKey="viewMnemonicModalWarning"
-              components={{
-                1: <AppText bold size={18} />
-              }}
-            >
-              {'Before displaying it, make sure to be in an <1>non-public</1> space.'}
-            </Trans>
-          </AppText>
-        </ScreenSection>
-        <ScreenSection>
-          <Button
-            title={t('I understand')}
-            variant="contrast"
-            onPress={() => {
-              dismiss(id)
-
-              triggerBiometricsAuthGuard({
-                settingsToCheck: 'appAccessOrTransactions',
-                successCallback: () =>
-                  triggerFundPasswordAuthGuard({
-                    successCallback: openMnemonicModal
-                  })
-              })
+      <ScreenSection>
+        <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t("Don't share your secret recovery phrase with anyone!")}
+        </AppText>
+        <AppText color="secondary" size={18}>
+          <Trans
+            t={t}
+            i18nKey="viewMnemonicModalWarning"
+            components={{
+              1: <AppText bold size={18} />
             }}
-          />
-        </ScreenSection>
-      </ModalContent>
+          >
+            {'Before displaying it, make sure to be in an <1>non-public</1> space.'}
+          </Trans>
+        </AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <Button
+          title={t('I understand')}
+          variant="contrast"
+          onPress={() => {
+            dismiss(id)
+
+            triggerBiometricsAuthGuard({
+              settingsToCheck: 'appAccessOrTransactions',
+              successCallback: () =>
+                triggerFundPasswordAuthGuard({
+                  successCallback: openMnemonicModal
+                })
+            })
+          }}
+        />
+      </ScreenSection>
     </BottomModal2>
   )
 })
