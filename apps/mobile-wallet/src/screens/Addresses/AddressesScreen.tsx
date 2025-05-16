@@ -27,7 +27,7 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   return (
     <FlashListScreen
       data={addresses}
-      refreshControl={<RefreshSpinner progressViewOffset={190} />}
+      refreshControl={<RefreshSpinner progressViewOffset={150} />}
       contentPaddingTop={165}
       estimatedItemSize={78}
       onScroll={onScroll}
