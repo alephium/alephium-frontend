@@ -1,4 +1,5 @@
 import { bip39Words, newWalletInitialAddressGenerated } from '@alephium/shared'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { useEffect, useRef, useState } from 'react'
@@ -39,6 +40,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const { t } = useTranslation()
+  const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -90,6 +92,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
     try {
       const wallet = await generateAndStoreWallet(name, mnemonicToImport)
+
+      clearQueryCache()
+      await restoreQueryCache(wallet.id)
 
       dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
       dispatch(newWalletGenerated(wallet))
