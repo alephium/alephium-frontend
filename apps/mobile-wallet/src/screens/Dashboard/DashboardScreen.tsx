@@ -1,6 +1,5 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
 import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
-import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
@@ -24,8 +23,6 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
-import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
-import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
@@ -33,11 +30,7 @@ import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
-interface ScreenProps
-  extends StackScreenProps<InWalletTabsParamList & ReceiveNavigationParamList, 'DashboardScreen'>,
-    BottomBarScrollScreenProps {}
-
-const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
+const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const dispatch = useAppDispatch()

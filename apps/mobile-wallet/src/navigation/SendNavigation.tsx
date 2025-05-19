@@ -1,6 +1,11 @@
 import { AddressHash } from '@alephium/shared'
 import { Token } from '@alephium/web3'
-import { NavigationContainer, ParamListBase, useNavigationContainerRef } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+  ParamListBase,
+  useNavigationContainerRef
+} from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -54,31 +59,33 @@ const SendNavigation = ({
       <HeaderContextProvider>
         <View style={{ flex: 1 }}>
           <SendNavigationHeader onBackPress={handleGoBack} />
-          <NavigationContainer ref={navigationRef} independent>
-            <SendStack.Navigator
-              screenOptions={{
-                headerShown: false
-              }}
-              initialRouteName={initialRouteName}
-            >
-              <SendStack.Screen
-                name="DestinationScreen"
-                component={DestinationScreen}
-                initialParams={{ originAddressHash }}
-              />
-              <SendStack.Screen
-                name="OriginScreen"
-                component={OriginScreen}
-                initialParams={{ tokenId: params?.tokenId }}
-              />
-              <SendStack.Screen
-                name="AddressTokensScreen"
-                component={AddressTokensScreen}
-                initialParams={{ tokenId: params?.tokenId, isNft: params?.isNft }}
-              />
-              <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
-            </SendStack.Navigator>
-          </NavigationContainer>
+          <NavigationIndependentTree>
+            <NavigationContainer ref={navigationRef}>
+              <SendStack.Navigator
+                screenOptions={{
+                  headerShown: false
+                }}
+                initialRouteName={initialRouteName}
+              >
+                <SendStack.Screen
+                  name="DestinationScreen"
+                  component={DestinationScreen}
+                  initialParams={{ originAddressHash }}
+                />
+                <SendStack.Screen
+                  name="OriginScreen"
+                  component={OriginScreen}
+                  initialParams={{ tokenId: params?.tokenId }}
+                />
+                <SendStack.Screen
+                  name="AddressTokensScreen"
+                  component={AddressTokensScreen}
+                  initialParams={{ tokenId: params?.tokenId, isNft: params?.isNft }}
+                />
+                <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
+              </SendStack.Navigator>
+            </NavigationContainer>
+          </NavigationIndependentTree>
         </View>
       </HeaderContextProvider>
     </SendContextProvider>

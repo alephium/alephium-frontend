@@ -12,16 +12,16 @@ const AnimatedPressable = ({ style, ...props }: AnimatedPressableProps) => {
   const fade = useSharedValue(1)
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: fade.value
+    opacity: fade.get()
   }))
 
   return (
     <AnimatedPressableBase
       onPressIn={() => {
-        fade.value = withTiming(0.5, { duration: 150 })
+        fade.set(withTiming(0.5, { duration: 150 }))
       }}
       onPressOut={() => {
-        fade.value = withTiming(1, { duration: 150 })
+        fade.set(withTiming(1, { duration: 150 }))
       }}
       style={[style, animatedStyle]}
       {...props}

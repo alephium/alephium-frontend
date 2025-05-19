@@ -70,110 +70,113 @@ export const useBottomModalState = ({
 
   const handleClose = useCallback(() => {
     'worklet'
-    navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
-    position.value = 'closing'
+    navHeight.set(withSpring(0, springConfig))
+    modalHeight.set(withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)()))
+    position.set('closing')
   }, [handleCloseOnJS, modalHeight, navHeight, position])
 
   const handleMaximize = useCallback(() => {
     'worklet'
-    navHeight.value = withSpring(customNavHeight, springConfig)
-    modalHeight.value = withSpring(-maxHeight, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
-    position.value = 'maximised'
+    navHeight.set(withSpring(customNavHeight, springConfig))
+    modalHeight.set(withSpring(-maxHeight, springConfig, (finished) => finished && runOnJS(setStateToIdle)()))
+    position.set('maximised')
   }, [navHeight, customNavHeight, modalHeight, maxHeight, position, setStateToIdle])
 
   const handleMinimize = useCallback(() => {
     'worklet'
-    navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(-minHeight.value, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
-    position.value = 'minimised'
+    navHeight.set(withSpring(0, springConfig))
+    modalHeight.set(withSpring(-minHeight.get(), springConfig, (finished) => finished && runOnJS(setStateToIdle)()))
+    position.set('minimised')
   }, [navHeight, modalHeight, minHeight, position, setStateToIdle])
 
   const handleContentSizeChange = useCallback(
     (_w: number, newContentHeight: number) => {
-      if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
+      if (!modalHeight.get() || newContentHeight > contentHeight.get() + 1) {
         runOnUI(() => {
-          contentHeight.value = newContentHeight
-          canMaximize.value = contentHeight.value > maxHeight
-          const contentIsScrollable = contentHeight.value > dimensions.height * 0.8
-          shouldMaximizeOnOpen.value = maximisedContent || contentIsScrollable
+          contentHeight.set(newContentHeight)
+          canMaximize.set(contentHeight.get() > maxHeight)
+          const contentIsScrollable = contentHeight.get() > dimensions.height * 0.8
+          shouldMaximizeOnOpen.set(maximisedContent || contentIsScrollable)
           // Determine if scrolling is needed
           runOnJS(setIsContentScrollable)(contentIsScrollable)
-          minHeight.value = customMinHeight
-            ? customMinHeight
-            : shouldMaximizeOnOpen.value
-              ? maxHeight
-              : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
-          shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
+          minHeight.set(
+            customMinHeight
+              ? customMinHeight
+              : shouldMaximizeOnOpen.get()
+                ? maxHeight
+                : contentHeight.get() + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
+          )
+          shouldMaximizeOnOpen.get() ? handleMaximize() : handleMinimize()
         })()
       }
     },
     [
-      modalHeight.value,
-      contentHeight,
       canMaximize,
-      maxHeight,
-      shouldMaximizeOnOpen,
-      maximisedContent,
-      minHeight,
+      contentHeight,
       customMinHeight,
       customNavHeight,
-      insets.bottom,
+      dimensions.height,
       handleMaximize,
       handleMinimize,
-      dimensions.height
+      insets.bottom,
+      maxHeight,
+      maximisedContent,
+      minHeight,
+      modalHeight,
+      shouldMaximizeOnOpen
     ]
   )
 
   // Animated Styles
   // ----------------------------
   const modalAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value
+    height: -modalHeight.get()
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    width: shouldMaximizeOnOpen.value ? 40 : interpolate(-modalHeight.value, [0, maxHeight], [20, 40])
+    width: shouldMaximizeOnOpen.get() ? 40 : interpolate(-modalHeight.get(), [0, maxHeight], [20, 40])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, maxHeight - 100], [0, 1]),
-    pointerEvents: position.value === 'closing' ? 'none' : 'auto'
+    opacity: interpolate(-modalHeight.get(), [0, maxHeight - 100], [0, 1]),
+    pointerEvents: position.get() === 'closing' ? 'none' : 'auto'
   }))
 
   // Pan Gesture
   // ----------------------------
   const panGesture = Gesture.Pan()
     .onStart(() => {
-      offsetY.value = modalHeight.value
+      offsetY.set(modalHeight.get())
     })
     .onChange((e) => {
-      if (position.value !== 'closing') {
-        modalHeight.value = offsetY.value + e.translationY
+      if (position.get() !== 'closing') {
+        modalHeight.set(offsetY.get() + e.translationY)
       }
     })
     .onEnd(() => {
       'worklet'
-      const shouldMinimise = position.value === 'maximised' && -modalHeight.value < maxHeight - DRAG_BUFFER
+      const shouldMinimise = position.get() === 'maximised' && -modalHeight.get() < maxHeight - DRAG_BUFFER
       const shouldMaximise =
-        canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
+        canMaximize.get() && position.get() === 'minimised' && -modalHeight.get() > minHeight.get() + DRAG_BUFFER
       const shouldClose =
-        ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
+        ['minimised', 'closing'].includes(position.get()) && -modalHeight.get() < minHeight.get() - DRAG_BUFFER
       if (shouldMaximise) {
         handleMaximize()
       } else if (shouldMinimise) {
-        shouldMaximizeOnOpen.value ? handleClose() : handleMinimize()
+        shouldMaximizeOnOpen.get() ? handleClose() : handleMinimize()
       } else if (shouldClose) {
         handleClose()
       } else {
-        modalHeight.value =
-          position.value === 'maximised'
+        modalHeight.set(
+          position.get() === 'maximised'
             ? withSpring(-maxHeight, springConfig)
-            : withSpring(-minHeight.value, springConfig)
+            : withSpring(-minHeight.get(), springConfig)
+        )
       }
     })
 
   useEffect(() => {
-    if (position.value !== 'closing' && isModalClosing) {
+    if (position.get() !== 'closing' && isModalClosing) {
       handleClose()
     }
   }, [isModalClosing, position, handleClose])

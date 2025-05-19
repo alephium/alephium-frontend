@@ -121,6 +121,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     <ScrollScreen
       verticalGap
       fill
+      hasKeyboard
       keyboardShouldPersistTaps="always"
       screenTitle={t('Password')}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
