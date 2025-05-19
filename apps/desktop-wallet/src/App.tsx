@@ -1,10 +1,10 @@
-import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
+import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { clear as clearIndexedDB } from 'idb-keyval'
 import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
@@ -24,7 +24,6 @@ import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
-import useWalletLock from '@/hooks/useWalletLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import {
@@ -32,6 +31,7 @@ import {
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
@@ -133,6 +133,7 @@ const useMigrateStoredSettings = () => {
       migrateWalletData()
 
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(storedSharedSettingsLoaded({ fiatCurrency: generalSettings.fiatCurrency }))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
     } catch {
       sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
@@ -204,20 +205,15 @@ const useInitializeNetworkProxy = () => {
 }
 
 const useClearPersistedQueryCacheOnVersionUpdate = () => {
-  const { deletePersistedCache } = usePersistQueryClientContext()
-  const wallets = useAppSelector((s) => s.global.wallets)
-
   useEffect(() => {
     const cacheVersion = PersistedQueryCacheVersionStorage.load()
 
     if (cacheVersion !== currentVersion) {
-      wallets.forEach((wallet) => {
-        deletePersistedCache(wallet.id)
-      })
+      clearIndexedDB()
 
       PersistedQueryCacheVersionStorage.set(currentVersion)
     }
-  }, [deletePersistedCache, wallets])
+  }, [])
 }
 
 interface AppContainerProps {
@@ -245,7 +241,7 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
 `
 
 const LoginAnimatedBackground = () => {
-  const { isWalletUnlocked } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
 
   if (isWalletUnlocked) return null
 

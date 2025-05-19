@@ -17,5 +17,5 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 module.exports = {
-  extends: ['@alephium/eslint-config/base', '@alephium/eslint-config/react']
+  extends: ['@alephium/eslint-config/react']
 }

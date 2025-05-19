@@ -1,14 +1,12 @@
 import { AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { useQueries, UseQueryResult } from '@tanstack/react-query'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { addressTokensSearchStringQuery, AddressTokensSearchStringQueryFnData } from '@/api/queries/addressQueries'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
+import useAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 interface AddressSelectModalProps {
   title: string
@@ -45,7 +43,13 @@ const AddressSelectModal = ({
   useEffect(() => {
     const selectedOptionIsNotPartOfOptions = !addressOptions.some((option) => option === selectedOption?.value)
 
-    if (selectedOptionIsNotPartOfOptions) handleAddressSelect(addressSelectOptions[0])
+    if (selectedOptionIsNotPartOfOptions) {
+      const firstOption = addressSelectOptions.at(0)
+
+      if (firstOption) {
+        handleAddressSelect(firstOption)
+      }
+    }
   }, [addressSelectOptions, handleAddressSelect, addressOptions, selectedOption?.value])
 
   return (
@@ -67,12 +71,7 @@ export default AddressSelectModal
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
   const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
-  const networkId = useCurrentlyOnlineNetworkId()
-
-  const { data: addressesSearchStrings } = useQueries({
-    queries: addressOptions.map((hash) => addressTokensSearchStringQuery({ addressHash: hash, networkId })),
-    combine: combineAddressesSearchStrings
-  })
+  const { data: addressesSearchStrings } = useAddressesSearchStrings(addressOptions)
 
   return useMemo(
     () =>
@@ -80,27 +79,13 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
         .filter((hash) => addressOptions.includes(hash))
         .map((hash) => {
           const label = addresses.find((address) => address.hash === hash)?.label || hash
-          const searchString = label + (addressesSearchStrings[hash] ?? '')
 
           return {
             value: hash,
             label,
-            searchString
+            searchString: addressesSearchStrings[hash]
           }
         }),
     [sortedAddressHashes, addressOptions, addresses, addressesSearchStrings]
   )
 }
-
-const combineAddressesSearchStrings = (results: UseQueryResult<AddressTokensSearchStringQueryFnData, Error>[]) => ({
-  data: results.reduce(
-    (acc, { data }) => {
-      if (!data) return acc
-
-      acc[data.addressHash] = data.searchString
-
-      return acc
-    },
-    {} as Record<AddressHash, string>
-  )
-})

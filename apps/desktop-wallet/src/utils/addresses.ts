@@ -1,7 +1,6 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings } from '@alephium/shared'
+import { Address, AddressSettings } from '@alephium/shared'
 
-import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
 export const getName = (address: Address): string => address.label || `${address.hash.substring(0, 10)}...`

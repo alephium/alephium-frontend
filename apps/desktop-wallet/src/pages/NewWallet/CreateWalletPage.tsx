@@ -1,12 +1,12 @@
 import { encryptMnemonic } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import zxcvbn from 'zxcvbn'
 
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import Input from '@/components/Inputs/Input'

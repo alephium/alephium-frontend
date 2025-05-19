@@ -1,6 +1,6 @@
 // Inpired by https://github.com/ashiishme/react-sine-wave
 
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 
 import useAnimationFrame from '@/hooks/useAnimationFrame'
@@ -11,20 +11,19 @@ import WaveEntity from './WaveEntity'
 const Waves = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContextRef = useRef<CanvasRenderingContext2D>()
+  const t = useRef(0)
+  const f = useRef(0)
 
   const { width } = useWindowSize()
 
-  let t = 0
-  let f = 0
-
-  useAnimationFrame((deltaTime) => {
-    t = t + deltaTime / 1000.0
-    f += 1
+  const callback = useCallback((deltaTime: number) => {
+    t.current = t.current + deltaTime / 1000.0
+    f.current += 1
 
     // 60 fps / 8 ~= 8fps
     // Given the speed of the animation this is sufficient to look smooth
-    if (f != 8) return
-    f = 0
+    if (f.current != 8) return
+    f.current = 0
 
     const { innerWidth } = window
 
@@ -32,7 +31,7 @@ const Waves = () => {
       canvasContextRef.current.clearRect(0, 0, innerWidth, staticHeight)
       canvasContextRef.current.globalCompositeOperation = 'hard-light'
       Object.entries(waves).forEach((w) => {
-        w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t / 20.0)
+        w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t.current / 20.0)
       })
     } else {
       let ctx
@@ -40,7 +39,9 @@ const Waves = () => {
         canvasContextRef.current = ctx
       }
     }
-  })
+  }, [])
+
+  useAnimationFrame(callback)
 
   return (
     <CanvasContainer style={{ height: `${staticHeight}px` }}>

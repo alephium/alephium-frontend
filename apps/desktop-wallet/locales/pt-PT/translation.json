@@ -452,7 +452,6 @@
   "All UTXOs are already consolidated for this address. No consolidation is needed.": "Todas as UTXOs já estão consolidadas para este endereço. Nenhuma consolidação é necessária.",
   "No addresses match the search criteria.": "Nenhum endereço corresponde aos critérios de pesquisa.",
   "walletConnectSwitchNetwork": "Você está conectado a <1>{{ currentNetworkName }}</1>, mas o dApp requer uma conexão com <3>{{ network }}</3>.",
-  "walletConnectNewAddress": "O dApp pede um endereço no grupo <1>{{ currentNetworkName }}</1>. Clique abaixo para gerar um!",
   "ALPH only": "Apenas ALPH",
   "This address doesn't have any tokens yet.": "Ainda não há tokens neste endereço.",
   "This address doesn't have any NFTs yet.": "Este endereço ainda não tem NFTs.",

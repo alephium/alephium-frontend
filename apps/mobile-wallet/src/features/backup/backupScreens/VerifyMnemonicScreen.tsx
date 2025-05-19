@@ -34,7 +34,6 @@ interface VerifyMnemonicScreenProps
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const mnemonicWords = useRef<string[]>([])
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const randomizedOptions = useRef<string[][]>([])
@@ -45,12 +44,14 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
+  const [mnemonicWords, setMnemonicWords] = useState<Array<string>>([])
 
   useEffect(() => {
     try {
       dangerouslyExportWalletMnemonic().then((mnemonic) => {
-        mnemonicWords.current = mnemonic.split(' ')
-        randomizedOptions.current = getRandomizedOptions(mnemonicWords.current, allowedWords.current)
+        const words = mnemonic.split(' ')
+        setMnemonicWords(words)
+        randomizedOptions.current = getRandomizedOptions(words, allowedWords.current)
         setPossibleMatches(randomizedOptions.current[0])
       })
     } catch (e) {
@@ -75,7 +76,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   }, [isMnemonicBackedUp, dispatch, t])
 
   useEffect(() => {
-    if (selectedWords.length < mnemonicWords.current.length) {
+    if (selectedWords.length < mnemonicWords.length) {
       setPossibleMatches(randomizedOptions.current[selectedWords.length])
     } else if (selectedWords.length > 0) {
       confirmBackup()
@@ -85,7 +86,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         navigation.navigate('VerificationSuccessScreen')
       }, 2000)
     }
-  }, [confirmBackup, mnemonicWords.current.length, navigation, randomizedOptions, selectedWords.length])
+  }, [confirmBackup, mnemonicWords.length, navigation, randomizedOptions, selectedWords.length])
 
   useFocusEffect(
     useCallback(() => {
@@ -98,7 +99,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const selectWord = (word: string) => {
     if (!word) return
 
-    if (word !== mnemonicWords.current[selectedWords.length]) {
+    if (word !== mnemonicWords[selectedWords.length]) {
       Alert.alert(
         t('This is not the word in position {{ positionIndex }}', { positionIndex: selectedWords.length + 1 }),
         t('Please, verify that you wrote your secret phrase down correctly and try again.')

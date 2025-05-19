@@ -3,14 +3,14 @@ import {
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
   isConsolidationTx,
+  selectPendingSentTransactionByHash,
   TransactionDirection
 } from '@alephium/shared'
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const useTransactionDirection = (
   tx: e.Transaction | e.PendingTransaction,

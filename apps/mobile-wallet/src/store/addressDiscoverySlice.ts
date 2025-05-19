@@ -1,5 +1,12 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressIndex, appReset, client, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import {
+  AddressIndex,
+  appReset,
+  client,
+  customNetworkSettingsSaved,
+  DEPRECATED_Address as Address,
+  networkPresetSwitched
+} from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -14,7 +21,6 @@ import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { addressesImported } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
-import { Address } from '~/types/addresses'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,

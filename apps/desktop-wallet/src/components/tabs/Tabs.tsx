@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 import TableTabBar from '@/components/TableTabBar'
@@ -7,24 +6,30 @@ import { TabsProps } from '@/components/tabs/tabsTypes'
 
 const Tabs = <T extends string>({ tabs }: TabsProps<T>) => {
   const [currentTab, setCurrentTab] = useState(tabs[0])
-  const [isMouseOverTabHeaders, setIsMouseOverTabHeaders] = useState(false)
+  const [mouseOverTab, setMouseOverTab] = useState<T | null>(null)
+
+  const onMouseEnterTab = (tabValue: T) => setMouseOverTab(tabValue)
+  const onMouseLeaveTab = () => setMouseOverTab(null)
 
   return (
-    <motion.div
-      onMouseEnter={() => setIsMouseOverTabHeaders(true)}
-      onMouseLeave={() => setIsMouseOverTabHeaders(false)}
-    >
-      <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
+    <>
+      <TableTabBar
+        items={tabs}
+        onTabChange={setCurrentTab}
+        activeTab={currentTab}
+        onMouseEnterTab={onMouseEnterTab}
+        onMouseLeaveTab={onMouseLeaveTab}
+      />
 
       {tabs.map(({ value, renderContent }) => (
         <TabContent
           isActive={currentTab.value === value}
           key={value}
           renderContent={renderContent}
-          isMouseOverTabHeaders={isMouseOverTabHeaders}
+          isMouseOverTab={mouseOverTab === value}
         />
       ))}
-    </motion.div>
+    </>
   )
 }
 

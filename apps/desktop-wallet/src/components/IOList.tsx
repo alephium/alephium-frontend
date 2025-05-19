@@ -1,4 +1,4 @@
-import { AddressHash, GENESIS_TIMESTAMP } from '@alephium/shared'
+import { AddressHash, GENESIS_TIMESTAMP, selectAddressIds } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +9,6 @@ import AddressBadge from '@/components/AddressBadge'
 import Badge from '@/components/Badge'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface IOListProps {

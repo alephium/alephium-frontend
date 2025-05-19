@@ -15,7 +15,6 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
 import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
@@ -25,11 +24,9 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
-  const { screenScrollHandler, screenScrollY, parentNavigation } = useHeaderContext()
+  const { screenScrollHandler, parentNavigation } = useHeaderContext()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
-
-  useScrollToTopOnFocus(screenScrollY)
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]

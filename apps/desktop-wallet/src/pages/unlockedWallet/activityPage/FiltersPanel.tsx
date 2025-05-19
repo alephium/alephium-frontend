@@ -1,17 +1,18 @@
+import { Address, TokenId } from '@alephium/shared'
+import {
+  useFetchWalletFtsSorted,
+  useFetchWalletTokensByType,
+  useSortedTokenIds,
+  useUnsortedAddresses
+} from '@alephium/shared-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { Address } from '@/types/addresses'
-import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
 interface FiltersPanelProps {
@@ -36,7 +37,7 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
 
-  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts({ sort: true, includeHidden: false })
+  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFtsSorted()
   const {
     data: { nftIds, nstIds },
     isLoading: isLoadingTokensByType

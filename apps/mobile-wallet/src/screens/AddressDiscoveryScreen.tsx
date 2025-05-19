@@ -60,7 +60,8 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     const newAddressHashes = selectedAddressesToImport.map((address) => address.hash)
     const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
       ...address,
-      settings: { isDefault: false, color: getRandomLabelColor() }
+      isDefault: false,
+      color: getRandomLabelColor()
     }))
 
     try {
@@ -90,13 +91,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   useEffect(() => {
-    discoveredAddresses.forEach(({ hash }) => {
-      if (addressSelections[hash] === undefined) {
-        setAddressSelections({ ...addressSelections, [hash]: true })
-      }
-    })
+    setAddressSelections((prevSelections) => {
+      const newSelections = { ...prevSelections }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      discoveredAddresses.forEach(({ hash }) => {
+        if (newSelections[hash] === undefined) {
+          newSelections[hash] = true
+        }
+      })
+      return newSelections
+    })
   }, [discoveredAddresses])
 
   const handleStartScanPress = () => {
@@ -136,8 +140,8 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
           {addresses.map((address, index) => (
             <Row
               key={address.hash}
-              title={address.settings.label || address.hash}
-              subtitle={address.settings.label ? address.hash : undefined}
+              title={address.label || address.hash}
+              subtitle={address.label ? address.hash : undefined}
               truncate
               isLast={index === addresses.length - 1}
             >

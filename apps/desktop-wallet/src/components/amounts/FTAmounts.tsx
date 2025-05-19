@@ -1,8 +1,8 @@
+import { TokenId } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Amount, { TokenAmountProps } from '@/components/Amount'
-import { TokenId } from '@/types/tokens'
 
 export interface FTAmountsBaseProp {
   isLoading: boolean

@@ -21,10 +21,10 @@ const AddressColorSymbol = ({ addressHash, size = 10 }: AddressColorSymbolProps)
 
   return (
     <View>
-      {address?.settings.isDefault ? (
-        <DefaultAddressBadge size={size} color={address.settings.color} />
+      {address?.isDefault ? (
+        <DefaultAddressBadge size={size} color={address.color} />
       ) : (
-        <Dot color={contact ? stringToColour(contact.address) : address?.settings.color} size={size} />
+        <Dot color={contact ? stringToColour(contact.address) : address?.color} size={size} />
       )}
     </View>
   )

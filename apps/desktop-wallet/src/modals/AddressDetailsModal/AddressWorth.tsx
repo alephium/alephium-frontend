@@ -1,7 +1,7 @@
+import { useFetchAddressWorth } from '@alephium/shared-react'
 import { memo } from 'react'
 import styled from 'styled-components'
 
-import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
 import WorthOverview from '@/components/WorthOverview'
 
 interface AddressWorthProps {

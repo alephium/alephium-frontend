@@ -1,16 +1,26 @@
-import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import {
+  Address,
+  AddressHash,
+  fromHumanReadableAmount,
+  getNumberOfDecimals,
+  toHumanReadableAmount
+} from '@alephium/shared'
+import {
+  addressTokensSearchStringsQuery,
+  useCurrentlyOnlineNetworkId,
+  useFetchAddressBalances,
+  useFetchAddressFtsSorted,
+  useFetchAddressTokensByType,
+  useSortedTokenIds
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
-import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -26,7 +36,6 @@ import InputsSection from '@/features/send/InputsSection'
 import SelectOptionAddressToken from '@/features/send/SelectOptionAddressToken'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import { Address } from '@/types/addresses'
 import { AssetAmountInputType } from '@/types/assets'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -50,14 +59,12 @@ const TokensAmountInputs = ({
   const theme = useTheme()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances({
-    addressHash: address.hash
-  })
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances(address.hash)
 
-  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
+  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(address.hash)
   const {
     data: { nftIds }
-  } = useFetchAddressTokensByType({ addressHash: address.hash, includeAlph: true })
+  } = useFetchAddressTokensByType(address.hash)
 
   const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
@@ -98,7 +105,7 @@ const TokensAmountInputs = ({
   const handleTokenAmountChange = useCallback(
     (tokenRowIndex: number, amountInput: string) => {
       const selectedTokenId = assetAmounts[tokenRowIndex].id
-      const selectedTokenBalances = tokensBalances.find(({ id }) => selectedTokenId === id)
+      const selectedTokenBalances = tokensBalances?.find(({ id }) => selectedTokenId === id)
 
       if (!selectedTokenBalances || nftIds.includes(selectedTokenId)) return
 
@@ -170,7 +177,7 @@ const TokensAmountInputs = ({
   }
 
   const renderOption = (option: SelectOption<string>) => {
-    const token = tokensBalances.find((token) => token.id === option.value)
+    const token = tokensBalances?.find((token) => token.id === option.value)
     return token && <SelectOptionAddressToken tokenId={token.id} addressHash={address.hash} />
   }
 
@@ -179,7 +186,7 @@ const TokensAmountInputs = ({
       <InputsSection className={className}>
         <AssetAmounts ref={selectedValueRef}>
           {assetAmounts.map(({ id, amountInput = '' }, index) => {
-            const tokenBalances = tokensBalances.find((token) => token.id === id)
+            const tokenBalances = tokensBalances?.find((token) => token.id === id)
 
             const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
@@ -280,28 +287,24 @@ const TokensAmountInputs = ({
 export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
-  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
+  const networkId = useCurrentlyOnlineNetworkId()
+  const { listedFts, unlistedFts } = useFetchAddressFtsSorted(addressHash)
   const {
     data: { nftIds, nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  } = useFetchAddressTokensByType(addressHash)
   const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
-  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
 
-  const allTokensOptions = useMemo(() => {
-    const fts = [...listedFts, ...unlistedFts]
+  const { data: tokensSearchStrings } = useQuery(addressTokensSearchStringsQuery({ addressHash, networkId }))
 
-    return sortedTokenIds.map((id) => {
-      const ft = fts.find((ft) => ft.id === id)
-
-      return {
+  const allTokensOptions = useMemo(
+    () =>
+      sortedTokenIds.map((id) => ({
         value: id,
         label: id,
-        searchString: `${id.toLowerCase()} ${ft?.name.toLowerCase()} ${ft?.symbol.toLowerCase()} ${
-          nftsSearchStringsByNftId[id]?.toLowerCase() ?? ''
-        }`
-      }
-    })
-  }, [sortedTokenIds, listedFts, unlistedFts, nftsSearchStringsByNftId])
+        searchString: tokensSearchStrings?.[id] ?? ''
+      })),
+    [sortedTokenIds, tokensSearchStrings]
+  )
 
   return allTokensOptions
 }

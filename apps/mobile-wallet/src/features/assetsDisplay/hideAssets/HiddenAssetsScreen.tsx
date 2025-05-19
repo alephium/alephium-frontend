@@ -27,7 +27,7 @@ interface HiddenAssetsScreenProps extends StackScreenProps<RootStackParamList, '
 const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
   const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
 
   const handleAddAssetPress = () => {

@@ -1,10 +1,9 @@
+import { isFT, isListedFT, isNFT, TokenId } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { HelpCircle } from 'lucide-react'
 import { memo } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
-
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
-import { isFT, isListedFT, isNFT, TokenId } from '@/types/tokens'
 
 interface AssetLogoProps {
   tokenId: TokenId

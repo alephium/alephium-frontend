@@ -1,9 +1,7 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, isNFT } from '@alephium/shared'
+import { useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 
-import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'
-import { isNFT } from '@/types/tokens'
 
 interface SelectOptionAddressTokenProps extends SelectOptionTokenBaseProps {
   addressHash: AddressHash

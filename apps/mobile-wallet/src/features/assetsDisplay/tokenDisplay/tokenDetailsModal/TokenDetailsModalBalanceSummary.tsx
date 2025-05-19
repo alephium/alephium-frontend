@@ -29,7 +29,7 @@ const TokenDetailsModalBalanceSummary = ({
   onPress,
   fontColor
 }: TokenDetailsModalBalanceSummaryProps) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
   const { t } = useTranslation()

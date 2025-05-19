@@ -1,11 +1,11 @@
 import { Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { queryClient } from '@alephium/shared-react'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
@@ -32,13 +32,13 @@ import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useWalletLock from '@/hooks/useWalletLock'
 import {
   appDataCleared,
   appDataClearFailed,
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -49,7 +49,7 @@ interface GeneralSettingsSectionProps {
 const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { isWalletUnlocked } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const walletLockTimeInMinutes = useAppSelector((s) => s.settings.walletLockTimeInMinutes)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)

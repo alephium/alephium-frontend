@@ -5,6 +5,7 @@ import {
   calculateAmountWorth,
   calculateAssetsData,
   contactsAdapter,
+  DEPRECATED_Address as Address,
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
@@ -20,7 +21,6 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '~/store/addresses/addressesAdaptor'
 import { RootState } from '~/store/store'
-import { Address } from '~/types/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -147,7 +147,7 @@ export const makeSelectAddresses = () =>
 
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
-  (addresses) => addresses.find((address) => address.settings.isDefault) || addresses[0]
+  (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
 export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>

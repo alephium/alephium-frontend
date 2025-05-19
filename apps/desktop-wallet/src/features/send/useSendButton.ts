@@ -1,14 +1,11 @@
-import { AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { AddressHash, selectAddressByHash, TokenId } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId, useFetchAddressBalances } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { TokenId } from '@/types/tokens'
 
 interface UseSendButtonProps {
   fromAddressHash: AddressHash
@@ -23,7 +20,7 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
   const dispatch = useAppDispatch()
   const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
-  const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddressHash })
+  const { data: tokensBalances } = useFetchAddressBalances(fromAddressHash)
   const currentNetwork = useCurrentlyOnlineNetworkId()
 
   const isOffline = currentNetwork === undefined

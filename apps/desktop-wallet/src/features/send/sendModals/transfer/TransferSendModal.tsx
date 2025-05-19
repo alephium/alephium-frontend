@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, throttledClient } from '@alephium/shared'
+import { fromHumanReadableAmount, throttledClient, transactionSent } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -10,7 +10,6 @@ import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal
 import { TransferTxData, TransferTxModalData, TxContext } from '@/features/send/sendTypes'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { store } from '@/storage/store'
-import { transactionSent } from '@/storage/transactions/transactionsActions'
 
 export type TransferSendModalProps = ConfigurableSendModalProps<TransferTxModalData>
 
@@ -28,7 +27,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
   context.setIsSweeping(shouldSweep)
 
   if (shouldSweep) {
-    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, toAddress)
+    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, toAddress)
     context.setSweepUnsignedTxs(unsignedTxs)
     context.setFees(fees)
   } else {

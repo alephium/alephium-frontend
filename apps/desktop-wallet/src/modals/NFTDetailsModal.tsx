@@ -1,12 +1,11 @@
 import { NFT } from '@alephium/shared'
-import { useFetchNftCollection } from '@alephium/shared-react'
+import { useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
 import { AxiosError } from 'axios'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -37,9 +36,9 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft, nftMetadata, error } = useFetchNft({ id: nftId })
+  const { data: nft, error } = useFetchNft({ id: nftId })
 
-  const collectionId = nft?.collectionId || nftMetadata?.collectionId
+  const collectionId = nft?.collectionId || nft?.collectionId
 
   return (
     <NFTMetadataContainer>

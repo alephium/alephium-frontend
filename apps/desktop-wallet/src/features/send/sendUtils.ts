@@ -1,8 +1,6 @@
-import { AssetAmount } from '@alephium/shared'
+import { AssetAmount, TokenApiBalances } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-
-import { TokenApiBalances } from '@/types/tokens'
 
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)

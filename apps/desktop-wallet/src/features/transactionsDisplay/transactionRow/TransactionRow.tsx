@@ -1,4 +1,5 @@
 import { findTransactionReferenceAddress } from '@alephium/shared'
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -12,7 +13,6 @@ import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmo
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
 import TimestampCell from '@/features/transactionsDisplay/transactionRow/TimestampCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const TransactionRow = memo(
   ({ tx, refAddressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {
@@ -57,7 +57,6 @@ const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
     css`
       flex-direction: column;
       align-items: flex-start;
-      width: 20%;
       gap: 5px;
     `}
 `

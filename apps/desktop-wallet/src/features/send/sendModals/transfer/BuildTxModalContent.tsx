@@ -1,9 +1,9 @@
+import { useFetchAddressBalances } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
@@ -38,7 +38,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTx
 
   const { fromAddress, toAddress } = data
 
-  const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
+  const { data: tokensBalances } = useFetchAddressBalances(fromAddress.hash)
 
   const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
     data.assetAmounts ?? (data.tokenId ? [{ id: data.tokenId }] : [])
@@ -70,7 +70,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTx
     atLeastOneAssetWithAmountIsSet &&
     allAssetAmountsAreWithinAvailableBalance
 
-  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances)
+  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances ?? [])
 
   return (
     <>

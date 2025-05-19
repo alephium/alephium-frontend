@@ -28,6 +28,7 @@ import {
 } from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { walletConnectPairingFailed, walletConnectProposalValidationFailed } from '@/storage/dApps/dAppActions'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { isRcVersion } from '@/utils/app-data'
 
 export interface WalletConnectContextProps {
@@ -78,7 +79,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
-  const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
@@ -373,11 +374,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize = walletConnectClientStatus !== 'initialized'
+  const shouldInitialize = walletConnectClientStatus !== 'initialized' && walletConnectClientStatus !== 'initializing'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
-    if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
+    if (!walletConnectClient || shouldInitialize) return
 
     console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
@@ -433,7 +434,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionRequest,
     onSessionUpdate,
     walletConnectClient,
-    walletConnectClientStatus
+    walletConnectClientStatus,
+    shouldInitialize
   ])
 
   const unpairFromDapp = useCallback(

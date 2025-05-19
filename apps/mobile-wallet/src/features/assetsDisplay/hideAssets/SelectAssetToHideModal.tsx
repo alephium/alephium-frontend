@@ -13,7 +13,7 @@ import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addres
 
 const SelectAssetToHideModal = withModal(({ id }) => {
   const { t } = useTranslation()
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
   const handleAssetSelection = useHideAsset('app_settings', id)
 
