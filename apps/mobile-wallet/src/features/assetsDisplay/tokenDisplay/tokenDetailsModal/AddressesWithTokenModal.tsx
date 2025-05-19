@@ -1,4 +1,9 @@
-import { AddressHash, selectFungibleTokenById } from '@alephium/shared'
+import { AddressHash, isFT } from '@alephium/shared'
+import {
+  useFetchAddressesHashesWithBalanceSortedByLastUse,
+  useFetchToken,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -10,8 +15,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken, selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressesWithTokenModalProps {
@@ -19,8 +23,8 @@ interface AddressesWithTokenModalProps {
 }
 
 const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, tokenId }) => {
-  const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
-  const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
+  const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
+  const totalNumberOfAddresses = useUnsortedAddressesHashes().length
   const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
@@ -34,12 +38,12 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
     <BottomModal modalId={id} title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
-        {addresses.map((address, i) => (
+        {addresses.map((addressHash, i) => (
           <AddressBox
-            key={address.hash}
-            addressHash={address.hash}
+            key={addressHash}
+            addressHash={addressHash}
             isLast={i === addresses.length - 1}
-            onPress={() => handleAddressPress(address.hash)}
+            onPress={() => handleAddressPress(addressHash)}
             tokenId={tokenId}
             origin="selectAddressModal"
           />
@@ -52,9 +56,9 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
 export default AddressesWithTokenModal
 
 const Header = ({ tokenId }: AddressesWithTokenModalProps) => {
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+  const { data: token } = useFetchToken(tokenId)
 
-  if (!token) return null
+  if (!token || !isFT(token)) return null
 
   return (
     <HeaderStyled>
@@ -73,10 +77,11 @@ const HeaderStyled = styled.View`
 `
 
 const IntroText = ({ tokenId }: AddressesWithTokenModalProps) => {
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
   const { t } = useTranslation()
 
-  if (!token) return null
+  const { data: token } = useFetchToken(tokenId)
+
+  if (!token || !isFT(token)) return null
 
   return (
     <IntroTextStyled>

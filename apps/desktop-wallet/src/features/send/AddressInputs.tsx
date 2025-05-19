@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +14,6 @@ import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
 import { useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'

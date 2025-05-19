@@ -23,8 +23,8 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const pinOpacity = useSharedValue(1)
 
   const animatedSlotsStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: pinTranslation.value }],
-    opacity: pinOpacity.value
+    transform: [{ translateY: pinTranslation.get() }],
+    opacity: pinOpacity.get()
   }))
 
   const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} value={pin[i]} />)
@@ -44,11 +44,13 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
         }
       }
 
-      pinOpacity.value = withSequence(
-        withTiming(0, { duration: 150 }),
-        withTiming(1, { duration: 150 }, () => {
-          runOnJS(onPinEnteredCallback)()
-        })
+      pinOpacity.set(
+        withSequence(
+          withTiming(0, { duration: 150 }),
+          withTiming(1, { duration: 150 }, () => {
+            runOnJS(onPinEnteredCallback)()
+          })
+        )
       )
     }
   }

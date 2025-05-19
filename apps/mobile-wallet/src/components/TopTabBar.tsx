@@ -30,10 +30,7 @@ const indicatorXPadding = DEFAULT_MARGIN
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
-  const position = useDerivedValue(
-    () => pagerScrollEvent.value.position + pagerScrollEvent.value.offset,
-    [pagerScrollEvent.value]
-  )
+  const position = useDerivedValue(() => pagerScrollEvent.get().position + pagerScrollEvent.get().offset, [])
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]
@@ -41,13 +38,13 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
     if (tabLayoutValues.length !== positionsArray.length) return {}
 
     const x = interpolate(
-      position.value,
+      position.get(),
       positionsArray,
       tabLayoutValues.map((l) => l.x)
     )
 
     const width = interpolate(
-      position.value,
+      position.get(),
       positionsArray,
       tabLayoutValues.map((l) => l.width)
     )
@@ -105,7 +102,7 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const theme = useTheme()
 
   const animatedTextStyle = useAnimatedStyle(() => {
-    const diff = position.value - index
+    const diff = position.get() - index
     return {
       color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary])
     }

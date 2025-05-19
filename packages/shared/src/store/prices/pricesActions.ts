@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk } from 'lodash'
 
-import { client } from '@/api/client'
+import { throttledClient } from '@/api'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { TokenPriceEntity } from '@/types/price'
 import { isPromiseFulfilled } from '@/utils'
@@ -13,7 +13,7 @@ export const syncTokenCurrentPrices = createAsyncThunk(
 
     const promiseResults = await Promise.allSettled(
       chunk(verifiedFungibleTokenSymbols, TOKENS_QUERY_LIMIT).map((verifiedFungibleTokenSymbolsChunk) =>
-        client.explorer.market
+        throttledClient.explorer.market
           .postMarketPrices(
             {
               currency: currency.toLowerCase()

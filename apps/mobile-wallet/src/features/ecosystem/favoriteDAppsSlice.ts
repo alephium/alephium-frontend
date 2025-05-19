@@ -1,4 +1,4 @@
-import { appReset } from '@alephium/shared'
+import { activeWalletDeleted, appReset } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
@@ -10,7 +10,6 @@ import {
 } from '~/features/ecosystem/favoriteDAppsActions'
 import { storeFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
 import { RootState } from '~/store/store'
-import { walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'favoriteDApps'
 
@@ -51,7 +50,7 @@ const favoriteDAppsSlice = createSlice({
         state.dAppNames = action.payload
       })
       .addCase(appReset, resetState)
-      .addCase(walletDeleted, resetState)
+      .addCase(activeWalletDeleted, resetState)
   }
 })
 
@@ -59,7 +58,14 @@ export const favoriteDAppsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 favoriteDAppsListenerMiddleware.startListening({
-  matcher: isAnyOf(setFavoriteDApps, addFavoriteDApp, removeFavoriteDApp, loadFavoriteDApps, walletDeleted, appReset),
+  matcher: isAnyOf(
+    setFavoriteDApps,
+    addFavoriteDApp,
+    removeFavoriteDApp,
+    loadFavoriteDApps,
+    activeWalletDeleted,
+    appReset
+  ),
   effect: async (_, { getState }) => {
     const state = (getState() as RootState)[sliceName]
 

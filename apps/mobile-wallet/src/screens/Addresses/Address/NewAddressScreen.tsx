@@ -1,4 +1,6 @@
 import { keyring } from '@alephium/keyring'
+import { newAddressesSaved } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,13 +11,10 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
-import { newAddressGenerated } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
 
@@ -23,7 +22,7 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
@@ -51,8 +50,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       }
 
       await persistAddressSettings(newAddress)
-      dispatch(newAddressGenerated(newAddress))
-      await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
+      dispatch(newAddressesSaved([newAddress]))
 
       sendAnalytics({
         event: 'Address: Generated new address',
@@ -77,6 +75,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   return (
     <ScrollScreen
       fill
+      hasKeyboard
       headerTitleAlwaysVisible
       headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
       contentPaddingTop

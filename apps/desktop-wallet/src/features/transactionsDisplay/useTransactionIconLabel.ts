@@ -1,11 +1,10 @@
 import { AddressHash, isConfirmedTx } from '@alephium/shared'
+import { useTransactionInfoType } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
-
-import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
 const useTransactionIconLabel = (
   tx: e.Transaction | e.PendingTransaction,

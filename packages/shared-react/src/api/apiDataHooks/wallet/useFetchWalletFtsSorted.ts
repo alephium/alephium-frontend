@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useFetchSortListedFtsByWorth } from '@/api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
@@ -24,8 +25,7 @@ export const useFetchWalletFtsSorted = () => {
   const sortedUnlistedFts = useSortUnlistedFtsAlphabetically(unlistedFts ?? [])
 
   return {
-    listedFts: sortedListedFts,
-    unlistedFts: sortedUnlistedFts,
+    data: useMemo(() => [...sortedListedFts, ...sortedUnlistedFts], [sortedListedFts, sortedUnlistedFts]),
     isLoading: isLoadingSortFts || isLoadingUnlistedFTs || isLoadingTokensByType
   }
 }

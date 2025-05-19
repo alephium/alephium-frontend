@@ -1,4 +1,5 @@
 import { AddressHash, selectDefaultAddressHash, selectInitialAddress } from '@alephium/shared'
+import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@alephium/shared-react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -11,7 +12,6 @@ import ForgetMulitpleAddressesButton from '@/features/addressDeletion/ForgetMuli
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 

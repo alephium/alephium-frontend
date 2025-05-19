@@ -1,3 +1,4 @@
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -5,7 +6,6 @@ import styled from 'styled-components'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
 import { AddressModalProps } from '@/features/modals/modalTypes'
-import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import CenteredModal from '@/modals/CenteredModal'
 
 const QRCodeSize = 250

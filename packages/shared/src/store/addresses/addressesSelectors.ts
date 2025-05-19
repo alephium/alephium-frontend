@@ -17,17 +17,6 @@ export const selectAllAddressIndexes = createSelector(selectAllAddresses, (addre
   addresses.map(({ index }) => index)
 )
 
-export const makeSelectAddresses = () =>
-  createSelector(
-    [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],
-    (allAddresses, addressHashes) =>
-      addressHashes
-        ? allAddresses.filter((address) =>
-            Array.isArray(addressHashes) ? addressHashes.includes(address.hash) : addressHashes === address.hash
-          )
-        : allAddresses
-  )
-
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
   (addresses) => addresses.find((address) => address.isDefault) || addresses.at(0)

@@ -1,3 +1,4 @@
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,6 @@ import { openModal } from '~/features/modals/modalActions'
 import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectAddressIds } from '~/store/addresses/addressesSelectors'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
@@ -28,10 +28,10 @@ const instructions: Instruction[] = [
 const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
-  const addressIds = useAppSelector(selectAddressIds)
+  const addressHashes = useUnsortedAddressesHashes()
   const { t } = useTranslation()
 
-  const skipAddressDiscovery = method === 'create' || addressIds.length > 1
+  const skipAddressDiscovery = method === 'create' || addressHashes.length > 1
 
   const openBiometricsWarningModal = () =>
     dispatch(

@@ -1,33 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useRefreshAddressesBalances } from '@alephium/shared-react'
 import { RefreshControl, RefreshControlProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-
 const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
   const theme = useTheme()
-  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
-  const dispatch = useAppDispatch()
 
-  const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
-
-  useEffect(() => {
-    if (!isLoadingLatestTxs) setIsSpinnerVisible(false)
-  }, [isLoadingLatestTxs])
-
-  const refreshData = () => {
-    setIsSpinnerVisible(true)
-
-    if (!isLoadingLatestTxs) {
-      dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false })).finally(() =>
-        setIsSpinnerVisible(false)
-      )
-    }
-  }
+  const { refreshBalances, isFetchingBalances } = useRefreshAddressesBalances()
 
   return (
-    <RefreshControl {...props} refreshing={isSpinnerVisible} onRefresh={refreshData} tintColor={theme.font.primary} />
+    <RefreshControl
+      {...props}
+      refreshing={isFetchingBalances}
+      onRefresh={refreshBalances}
+      tintColor={theme.font.primary}
+    />
   )
 }
 

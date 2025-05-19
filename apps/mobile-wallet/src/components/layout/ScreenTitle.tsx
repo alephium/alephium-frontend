@@ -17,7 +17,7 @@ export interface ScreenTitleProps {
 const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent, paddingTop }: ScreenTitleProps) => {
   const insets = useSafeAreaInsets()
   const titleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
+    opacity: interpolate(scrollY?.get() || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
   }))
 
   return (

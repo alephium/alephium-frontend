@@ -2,11 +2,15 @@ import { PlayCircleIcon } from 'lucide-react-native'
 import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-const NftVideoPlayIconOverlay = ({ children, ...props }: ViewProps) => (
+interface NftVideoPlayIconOverlayProps extends ViewProps {
+  size?: number
+}
+
+const NftVideoPlayIconOverlay = ({ children, size = 30, ...props }: NftVideoPlayIconOverlayProps) => (
   <View {...props}>
     {children}
     <PlayIconWrapper>
-      <PlayCircleIcon color="white" size={30} />
+      <PlayCircleIcon color="white" size={size} />
     </PlayIconWrapper>
   </View>
 )

@@ -6,6 +6,7 @@ import { useWindowDimensions } from 'react-native'
 import {
   AnimatedSensor,
   Easing,
+  runOnJS,
   SensorType,
   useAnimatedSensor,
   useDerivedValue,
@@ -42,10 +43,10 @@ export const Circles = ({ shade, isAnimated, canvasHeight, canvasWidth, isDark, 
   const { circleColor1, circleColor2, circleColor3 } = useCircleColors({ isDark, shade })
   const { width: screenWidth } = useWindowDimensions()
 
-  const sinRoll = useDerivedValue(() => Math.sin(gyroscope?.sensor.value.roll || 0))
-  const sinPitch = useDerivedValue(() => Math.sin(gyroscope?.sensor.value.pitch || 0))
+  const sinRoll = useDerivedValue(() => Math.sin(gyroscope?.sensor.get().roll || 0))
+  const sinPitch = useDerivedValue(() => Math.sin(gyroscope?.sensor.get().pitch || 0))
 
-  const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
+  const canvasCenterY = useDerivedValue(() => canvasHeight.get() / 2)
 
   const danceXAmplitude = 20 + Math.random() * 10
   const danceYAmplitude = 40 + Math.random() * 10
@@ -59,61 +60,61 @@ export const Circles = ({ shade, isAnimated, canvasHeight, canvasWidth, isDark, 
   const circle1X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          canvasWidth.value / 4 +
-            danceXAmplitude * Math.cos(angle.value + randomOffset1) +
-            sinRoll.value * GYRO_MULTIPLIER_X
+          canvasWidth.get() / 4 +
+            danceXAmplitude * Math.cos(angle.get() + randomOffset1) +
+            sinRoll.get() * GYRO_MULTIPLIER_X
         )
-      : withSpring(100 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
+      : withSpring(100 + sinRoll.get() * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
   )
 
   const circle1Y = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          canvasCenterY.value +
-            danceYAmplitude * Math.sin(angle.value + randomOffset1) +
-            sinPitch.value * GYRO_MULTIPLIER_Y
+          canvasCenterY.get() +
+            danceYAmplitude * Math.sin(angle.get() + randomOffset1) +
+            sinPitch.get() * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.get() + sinPitch.get() * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
   const circle2X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          canvasWidth.value / 2 +
-            danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            sinRoll.value * GYRO_MULTIPLIER_X
+          canvasWidth.get() / 2 +
+            danceXAmplitude * Math.cos(angle.get() + (2 * Math.PI) / 3 + randomOffset2) +
+            sinRoll.get() * GYRO_MULTIPLIER_X
         )
-      : withSpring(screenWidth / 2 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 40, damping: 10 })
+      : withSpring(screenWidth / 2 + sinRoll.get() * GYRO_MULTIPLIER_X, { mass: 40, damping: 10 })
   )
 
   const circle2Y = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          canvasCenterY.value +
-            danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            sinPitch.value * GYRO_MULTIPLIER_Y
+          canvasCenterY.get() +
+            danceYAmplitude * Math.sin(angle.get() + (2 * Math.PI) / 3 + randomOffset2) +
+            sinPitch.get() * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value - 120 + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.get() - 120 + sinPitch.get() * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
   const circle3X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          (3 * canvasWidth.value) / 4 +
-            danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            sinRoll.value * GYRO_MULTIPLIER_X
+          (3 * canvasWidth.get()) / 4 +
+            danceXAmplitude * Math.cos(angle.get() + (4 * Math.PI) / 3 + randomOffset3) +
+            sinRoll.get() * GYRO_MULTIPLIER_X
         )
-      : withSpring(screenWidth - 70 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
+      : withSpring(screenWidth - 70 + sinRoll.get() * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
   )
 
   const circle3Y = useDerivedValue(() =>
     isAnimated
       ? withSpring(
-          canvasCenterY.value +
-            danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            sinPitch.value * GYRO_MULTIPLIER_Y
+          canvasCenterY.get() +
+            danceYAmplitude * Math.sin(angle.get() + (4 * Math.PI) / 3 + randomOffset3) +
+            sinPitch.get() * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value - 60 + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.get() - 60 + sinPitch.get() * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
   return (
@@ -131,12 +132,14 @@ const useAnimatedAngle = (isAnimated?: AnimatedBackgroundProps['isAnimated']) =>
   useEffect(() => {
     if (!isAnimated) return
 
-    angle.value = withRepeat(
-      withTiming(2 * Math.PI, {
-        duration: 6000,
-        easing: Easing.linear
-      }),
-      -1
+    angle.set(
+      withRepeat(
+        withTiming(2 * Math.PI, {
+          duration: 6000,
+          easing: Easing.linear
+        }),
+        -1
+      )
     )
   }, [angle, isAnimated])
 
@@ -151,10 +154,14 @@ const useCircleColors = ({ isDark, shade }: CircleColorsProps) => {
 
   useEffect(() => {
     if (shade !== previousShade) {
-      shadeTransition.value = 0
-      shadeTransition.value = withTiming(1, { duration: 600 }, () => {
-        setPreviousShade(shade)
-      })
+      shadeTransition.set(0)
+      shadeTransition.set(
+        withTiming(1, { duration: 600 }, (finished) => {
+          if (finished) {
+            runOnJS(setPreviousShade)(shade)
+          }
+        })
+      )
     }
   }, [previousShade, shade, shadeTransition])
 
@@ -170,9 +177,9 @@ const useCircleColors = ({ isDark, shade }: CircleColorsProps) => {
   const [oldColor1, oldColor2, oldColor3] = oldShadeColors
   const [newColor1, newColor2, newColor3] = newShadeColors
 
-  const circleColor1 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor1, newColor1]))
-  const circleColor2 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor2, newColor2]))
-  const circleColor3 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor3, newColor3]))
+  const circleColor1 = useDerivedValue(() => interpolateColors(shadeTransition.get(), [0, 1], [oldColor1, newColor1]))
+  const circleColor2 = useDerivedValue(() => interpolateColors(shadeTransition.get(), [0, 1], [oldColor2, newColor2]))
+  const circleColor3 = useDerivedValue(() => interpolateColors(shadeTransition.get(), [0, 1], [oldColor3, newColor3]))
 
   return { circleColor1, circleColor2, circleColor3 }
 }

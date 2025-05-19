@@ -81,7 +81,7 @@ const Button = ({
     }[variant]
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: withSpring(pressed.value ? 0.7 : disabled ? 0.7 : 1, fastestSpringConfiguration)
+    opacity: withSpring(pressed.get() ? 0.7 : disabled ? 0.7 : 1, fastestSpringConfiguration)
   }))
 
   const buttonStyle: PressableProps['style'] = [
@@ -124,11 +124,11 @@ const Button = ({
     if (haptics || ['highlight', 'highlightedIcon'].includes(variant)) {
       vibrate(ImpactStyle.Light)
     }
-    pressed.value = true
+    pressed.set(true)
   }
 
   const handlePressOut = () => {
-    pressed.value = false
+    pressed.set(false)
   }
 
   if (!iconProps && !customIcon && !title && !children) {

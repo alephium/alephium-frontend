@@ -1,3 +1,4 @@
+import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -5,8 +6,6 @@ import styled, { useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
-import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
 interface TransactionOtherTokenAmountsProps extends TransactionRowSectionProps {
   type: 'nfts' | 'nsts'
