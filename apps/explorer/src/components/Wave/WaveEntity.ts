@@ -1,3 +1,5 @@
+import { colord } from 'colord'
+
 class WaveEntity {
   private waveLength: number[]
   private gradientColors: string[]
@@ -31,12 +33,16 @@ class WaveEntity {
     }
     ctx.lineTo(width, height)
 
-    const gradient = ctx.createLinearGradient(0, height / 1.8, 0, height)
+    const gradient = ctx.createLinearGradient(0, height / 1.5, 0, height)
 
-    gradient.addColorStop(0, this.gradientColors[0])
-    gradient.addColorStop(1, this.gradientColors[1])
+    gradient.addColorStop(0, colord(this.gradientColors[0]).alpha(0.3).toRgbString())
+    gradient.addColorStop(1, colord(this.gradientColors[0]).alpha(0).toRgbString())
 
     ctx.fillStyle = gradient
+
+    ctx.strokeStyle = this.gradientColors[0]
+    ctx.lineWidth = 2
+    ctx.stroke()
 
     ctx.fill()
     ctx.closePath()

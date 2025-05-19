@@ -53,20 +53,22 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 
 export default styled(TableTabBar)`
   display: flex;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 8px 8px 0 0;
   overflow: hidden;
 `
 
 const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   justify-content: center;
   font-size: 15px;
-  height: 50px;
+  margin: 10px;
+  border-radius: 8px;
+  height: 38px;
   cursor: pointer;
+  padding: 0 10px;
 
   ${({ isAlone }) =>
     isAlone &&
@@ -80,19 +82,14 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
     font-size: 13px;
   }
 
-  &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => theme.border.primary};
-  }
-
   ${({ isActive, theme }) =>
     isActive
       ? css`
           background-color: ${theme.bg.secondary};
-          border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+          box-shadow: inset 0 0 0 1px ${theme.border.primary};
         `
       : css`
-          background-color: ${theme.bg.tertiary};
-          border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+          background-color: ${theme.bg.primary};
         `}
 
   opacity: ${({ isActive }) => (isActive ? 1 : 0.6)};

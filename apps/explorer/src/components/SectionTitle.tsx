@@ -36,7 +36,6 @@ const TitleRow = styled.div`
 `
 
 const Title = styled.h1`
-  font-family: 'Inter';
   font-weight: bold;
   font-size: 2.1rem;
   color: ${({ theme }) => theme.font.primary};
@@ -50,7 +49,6 @@ const Title = styled.h1`
 `
 
 const Surtitle = styled.h2`
-  font-family: 'Inter';
   font-weight: 500;
   font-size: 1.6rem;
   color: ${({ theme }) => theme.font.secondary};
@@ -59,7 +57,6 @@ const Surtitle = styled.h2`
 `
 
 const Subtitle = styled.h2`
-  font-family: 'Inter';
   font-weight: 500;
   font-size: 1.6rem;
   color: ${({ theme }) => theme.font.secondary};

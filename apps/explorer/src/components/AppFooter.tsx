@@ -70,8 +70,17 @@ const socialMediaData = [
 export default styled(AppFooter)`
   display: flex;
   justify-content: space-between;
-  backdrop-filter: blur(20px);
-  padding: 15px 30px;
+  position: relative;
+  padding: 10px 30px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    top: -30px;
+    background: linear-gradient(to top, ${({ theme }) => theme.bg.background1}, rgba(0, 0, 0, 0));
+    z-index: -1;
+  }
 
   @media ${deviceBreakPoints.mobile} {
     flex-direction: column;

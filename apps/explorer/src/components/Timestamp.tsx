@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
-import { DATE_TIME_FORMAT } from '@/utils/strings'
+import { DATE_TIME_FORMAT, SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
@@ -27,7 +27,9 @@ const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggl
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'high' : 'low')
 
   const highPrecisionTimestamp = dayjs(timeInMs).format(DATE_TIME_FORMAT)
-  const lowPrecisionTimestamp = dayjs().to(timeInMs)
+  const lowPrecisionTimestamp = dayjs(timeInMs).isBefore(dayjs().subtract(1, 'day'))
+    ? dayjs(timeInMs).format(SIMPLE_DATE_FORMAT)
+    : dayjs().to(timeInMs)
   const customTimestamp = dayjs(timeInMs).format(customFormat)
 
   return (
