@@ -1,7 +1,6 @@
+import { UnlistedFT } from '@alephium/shared'
 import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray } from 'lodash'
-
-import { UnlistedFT } from '@/types/tokens'
 
 export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
   typeof nft.name === 'string' &&
@@ -23,3 +22,8 @@ export const convertTokenDecimalsToNumber = (token: e.FungibleTokenMetadata): Un
     decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
   }
 }
+
+export const getFulfilledValues = <T>(results: PromiseSettledResult<T>[]) =>
+  results
+    .filter((result): result is PromiseFulfilledResult<T> => result.status === 'fulfilled')
+    .map(({ value }) => value)

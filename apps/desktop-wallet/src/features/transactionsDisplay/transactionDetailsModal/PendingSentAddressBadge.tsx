@@ -1,10 +1,9 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectPendingSentTransactionByHash } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
 import Badge from '@/components/Badge'
-import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 import { useAppSelector } from '@/hooks/redux'
 

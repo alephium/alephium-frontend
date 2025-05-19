@@ -1,9 +1,11 @@
+import {
+  useFetchAddressFtsSorted,
+  useFetchAddressTokensByType,
+  useFetchWalletFtsSorted,
+  useFetchWalletTokensByType
+} from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Table, { TableRow } from '@/components/Table'
@@ -24,12 +26,11 @@ import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
 export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
+  const { listedFts, unlistedFts, isLoading } = useFetchAddressFtsSorted(addressHash)
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
-
   const {
     data: { nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
+  } = useFetchAddressTokensByType(addressHash)
 
   return (
     <>
@@ -56,7 +57,7 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
 
 export const WalletFTsBalancesList = () => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
+  const { listedFts, unlistedFts, isLoading } = useFetchWalletFtsSorted()
   const {
     data: { nstIds }
   } = useFetchWalletTokensByType({ includeHidden: false })

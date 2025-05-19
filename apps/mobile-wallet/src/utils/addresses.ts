@@ -1,4 +1,4 @@
-import { AddressHash, getTransactionsOfAddress } from '@alephium/shared'
+import { AddressHash, DEPRECATED_Address as Address, getTransactionsOfAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
@@ -6,7 +6,7 @@ import * as Clipboard from 'expo-clipboard'
 
 import i18n from '~/features/localization/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
-import { Address, AddressDiscoveryGroupData, AddressPartial } from '~/types/addresses'
+import { AddressDiscoveryGroupData, AddressMetadataWithHash } from '~/types/addresses'
 import {
   AddressConfirmedTransaction,
   AddressPendingTransaction,
@@ -15,8 +15,7 @@ import {
 } from '~/types/transactions'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-export const getAddressDisplayName = (address: Address): string =>
-  address.settings.label || address.hash.substring(0, 6)
+export const getAddressDisplayName = (address: Address): string => address.label || address.hash.substring(0, 6)
 
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   try {
@@ -53,23 +52,16 @@ export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
 }
 
 export const persistAddressesSettings = async (
-  addresses: AddressPartial[],
+  addressesMetadata: AddressMetadataWithHash[],
   metadataId: string,
   oldDefaultAddress?: Address
 ) => {
-  const addressesMetadata = addresses.map((address) => ({
-    index: address.index,
-    hash: address.hash,
-    ...address.settings
-  }))
   await persistAddressesMetadata(metadataId, addressesMetadata)
 
-  const newDefaultAddress = addresses.find((address) => address.settings.isDefault)
+  const newDefaultAddress = addressesMetadata.find((address) => address.isDefault)
   if (newDefaultAddress && oldDefaultAddress && oldDefaultAddress.hash !== newDefaultAddress.hash) {
     const updatedOldDefaultAddress = {
-      index: oldDefaultAddress.index,
-      hash: oldDefaultAddress.hash,
-      ...oldDefaultAddress.settings,
+      ...oldDefaultAddress,
       isDefault: false
     }
     await persistAddressesMetadata(metadataId, [updatedOldDefaultAddress])

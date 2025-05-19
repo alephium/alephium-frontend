@@ -1,13 +1,14 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useNavigate } from 'react-router-dom'
 
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import { newLedgerDeviceConnected } from '@/features/ledger/ledgerActions'
 import { generateUuidFromInitialAddress } from '@/features/ledger/utils'
 import { useAppDispatch } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { walletUnlocked } from '@/storage/wallets/walletActions'
+import { getInitialAddressSettings } from '@/utils/addresses'
 
 const useInitializeAppWithLedgerData = () => {
   const dispatch = useAppDispatch()
@@ -35,7 +36,10 @@ const useInitializeAppWithLedgerData = () => {
           isPassphraseUsed: false,
           isLedger: true
         },
-        initialAddress
+        initialAddress: {
+          ...initialAddress,
+          ...getInitialAddressSettings()
+        }
       })
     )
 

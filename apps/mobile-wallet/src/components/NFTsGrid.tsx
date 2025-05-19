@@ -29,7 +29,7 @@ const NFTsGrid = forwardRef(
     { addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps,
     ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
   ) => {
-    const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+    const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
     const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
     const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
     const theme = useTheme()

@@ -40,11 +40,11 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
       </ScreenSection>
       <ScreenSection>
         <Surface>
-          <Row title={t('Address')} isLast={!address?.settings.label}>
+          <Row title={t('Address')} isLast={!address?.label}>
             <AddressBadge addressHash={addressHash} />
           </Row>
 
-          {address?.settings.label && (
+          {address?.label && (
             <Row isLast>
               <AppText truncate ellipsizeMode="middle">
                 {addressHash}

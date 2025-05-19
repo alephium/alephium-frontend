@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -13,7 +13,6 @@ import { useAppDispatch } from '@/hooks/redux'
 import AddressGroup from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressGroup'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 import AddressWorth from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressWorth'
-import { TokenId } from '@/types/tokens'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressListRowProps {

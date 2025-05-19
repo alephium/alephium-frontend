@@ -1,9 +1,8 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface AddressListRowGroupProps {
   addressHash: AddressHash

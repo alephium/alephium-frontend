@@ -1,5 +1,6 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressMetadata } from '@alephium/shared'
+import { AddressBase, AddressMetadata } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,6 @@ import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
@@ -19,7 +19,6 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { AddressBase } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'

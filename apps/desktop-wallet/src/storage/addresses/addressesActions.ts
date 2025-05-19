@@ -1,8 +1,7 @@
-import { AddressHash, AddressSettings, Contact } from '@alephium/shared'
+import { Address, AddressBase, AddressHash, Contact } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
 import { Message } from '@/features/toastMessages/toastMessagesTypes'
-import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
 
 export const addressesRestoredFromMetadata = createAction<AddressBase[]>('addresses/addressesRestoredFromMetadata')
 
@@ -18,10 +17,6 @@ export const addressDiscoveryStarted = createAction<LoadingEnabled>('addresses/a
 
 export const addressDiscoveryFinished = createAction<LoadingEnabled>('addresses/addressDiscoveryFinished')
 
-export const addressSettingsSaved = createAction<{ addressHash: AddressHash; settings: AddressSettings }>(
-  'addresses/addressSettingsSaved'
-)
-
 export const contactsLoadedFromPersistentStorage = createAction<Contact[]>(
   'contacts/contactsLoadedFromPersistentStorage'
 )
@@ -29,3 +24,5 @@ export const contactsLoadedFromPersistentStorage = createAction<Contact[]>(
 export const contactStorageFailed = createAction<Message>('contacts/contactStorageFailed')
 
 export const contactDeletionFailed = createAction<Message>('contacts/contactDeletionFailed')
+
+type LoadingEnabled = boolean | undefined

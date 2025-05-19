@@ -21,11 +21,11 @@ import {
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
 const AddressesTokensList = () => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const selectAddressesCheckedUnknownTokens = useMemo(() => makeSelectAddressesCheckedUnknownTokens(), [])
   const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
-  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
   const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const { t } = useTranslation()
@@ -79,7 +79,7 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
 )
 
 const HiddenAssetsButton = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => {
-  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
   const hiddenFungibleTokens = useAppSelector((s) => selectAddressesHiddenFungibleTokens(s, addressHash))
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
@@ -106,7 +106,7 @@ const HiddenAssetsButton = ({ addressHash, parentModalId }: AddressesTokensListF
 }
 
 const UknownAssetsButton = ({ addressHash }: AddressesTokensListFooterProps) => {
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const selectAddressesCheckedUnknownTokens = useMemo(() => makeSelectAddressesCheckedUnknownTokens(), [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()

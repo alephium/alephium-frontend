@@ -69,6 +69,7 @@ export function useAsyncData<T>(
   }, [asyncCallback])
 
   return useMemo(() => {
+    // eslint-disable-next-line react-compiler/react-compiler
     if (asyncCallback !== lastCompletedAsyncCallbackRef.current) {
       return { isLoading: true, data: undefined }
     }

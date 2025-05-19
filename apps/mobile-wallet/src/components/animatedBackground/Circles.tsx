@@ -1,7 +1,7 @@
 import { Circle, interpolateColors } from '@shopify/react-native-skia'
 // 1) Import colord (and extend if needed)
 import { colord } from 'colord'
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useWindowDimensions } from 'react-native'
 import {
   AnimatedSensor,
@@ -146,20 +146,20 @@ const useAnimatedAngle = (isAnimated?: AnimatedBackgroundProps['isAnimated']) =>
 type CircleColorsProps = Pick<CirclesBaseProps, 'isDark' | 'shade'>
 
 const useCircleColors = ({ isDark, shade }: CircleColorsProps) => {
-  const previousShadeRef = useRef(shade)
+  const [previousShade, setPreviousShade] = useState(shade)
   const shadeTransition = useSharedValue(1)
 
   useEffect(() => {
-    if (shade !== previousShadeRef.current) {
+    if (shade !== previousShade) {
       shadeTransition.value = 0
       shadeTransition.value = withTiming(1, { duration: 600 }, () => {
-        previousShadeRef.current = shade
+        setPreviousShade(shade)
       })
     }
-  }, [shade, shadeTransition])
+  }, [previousShade, shade, shadeTransition])
 
   const oldShadeColors = getCircleColors({
-    shade: previousShadeRef.current,
+    shade: previousShade,
     isDark
   })
   const newShadeColors = getCircleColors({

@@ -80,9 +80,12 @@ function createWindow() {
     return { action: 'deny' }
   })
 
-  mainWindow.on('closed', () => (mainWindow = null))
+  const cleanupThemeListeners = setupNativeThemeListeners(mainWindow)
 
-  setupNativeThemeListeners(mainWindow)
+  mainWindow.on('closed', () => {
+    cleanupThemeListeners()
+    mainWindow = null
+  })
 
   setupAutoUpdaterListeners(mainWindow)
 

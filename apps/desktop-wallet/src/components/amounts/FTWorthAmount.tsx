@@ -1,7 +1,7 @@
 import { calculateAmountWorth } from '@alephium/shared'
+import { useFetchTokenPrice } from '@alephium/shared-react'
 import { isNumber } from 'lodash'
 
-import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import Amount, { AmountLoaderProps, FiatAmountProps } from '@/components/Amount'
 
 type FTWorthAmountProps = Omit<FiatAmountProps, 'value' | 'isFiat'> &

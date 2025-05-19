@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -7,7 +7,7 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import HashEllipsed from '@/components/HashEllipsed'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
+import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 
 interface AddressBadgeProps {
   addressHash: AddressHash
@@ -42,7 +42,7 @@ const AddressBadge = ({
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
+  const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHash))
 
   const displayedHash = contact ? contact.address : address ? address.hash : addressHash

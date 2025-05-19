@@ -1,3 +1,4 @@
+import { selectDefaultAddress } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { Eye, EyeOff, WifiOff } from 'lucide-react'
@@ -15,9 +16,8 @@ import RefreshButton from '@/features/refreshData/RefreshButton'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { platform } from '@/utils/platform.ts'
 
@@ -35,7 +35,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const { isWalletUnlocked } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const networkStatus = useAppSelector((s) => s.network.status)

@@ -1,3 +1,4 @@
+import { TokenId } from '@alephium/shared'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
@@ -6,7 +7,6 @@ import AssetLogo from '@/components/AssetLogo'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import SelectOptionTokenName from '@/components/Inputs/SelectOptionTokenName'
 import Truncate from '@/components/Truncate'
-import { TokenId } from '@/types/tokens'
 
 export interface SelectOptionTokenBaseProps {
   tokenId: TokenId

@@ -1,6 +1,6 @@
 import { getHumanReadableError } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -22,8 +22,22 @@ interface DAppsListProps {
 const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
   const { t } = useTranslation()
   const favoriteDApps = useAppSelector(selectFavoriteDApps)
-
   const { data: dApps, isLoading, isError, error } = useQuery(dAppsQuery({ select: filterDAppsByTag(selectedTag) }))
+
+  const [readableError, setReadableError] = useState<string>()
+
+  useEffect(() => {
+    if (error) {
+      try {
+        setReadableError(getHumanReadableError(error, ''))
+      } catch (error) {
+        console.error('Error getting human readable error', error)
+        setReadableError(t('Unknown error'))
+      }
+    } else {
+      setReadableError(undefined)
+    }
+  }, [error, t])
 
   const tagFilteredDApps = selectedTag === 'fav' ? favoriteDApps : dApps
 
@@ -48,7 +62,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
         <EmptyPlaceholder>
           <AppText size={32}>🥺</AppText>
           <AppText>{t('Could not load dApps')}</AppText>
-          <AppText>{getHumanReadableError(error, '')}</AppText>
+          <AppText>{readableError}</AppText>
         </EmptyPlaceholder>
       </DAppsListStyled>
     )

@@ -11,7 +11,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((token) => token.id === tokenId)
 

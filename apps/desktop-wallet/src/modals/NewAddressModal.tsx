@@ -1,3 +1,4 @@
+import { selectDefaultAddress } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -15,7 +16,6 @@ import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
@@ -37,6 +37,8 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const [isLoading, setIsLoading] = useState(false)
+
+  if (!defaultAddress) return null
 
   const onClose = () => dispatch(closeModal({ id }))
 

@@ -1,18 +1,18 @@
 import { useMotionValue } from 'framer-motion'
-import { ReactNode, UIEvent, useRef } from 'react'
+import { ReactNode, UIEvent, useState } from 'react'
 import { CustomScroll } from 'react-custom-scroll'
 
 import { ScrollContextProvider, ScrollContextType } from '@/contexts/scroll'
 
-interface ScrollbarCustomProps {
+interface ScrollbarProps {
   children?: ReactNode
   className?: string
   onScroll?: (scrollTop: number) => void
 }
 
-const ScrollbarCustom = ({ children, className, onScroll }: ScrollbarCustomProps) => {
+const Scrollbar = ({ children, className, onScroll }: ScrollbarProps) => {
   const scrollY = useMotionValue(0)
-  const contextValueRef = useRef<ScrollContextType>({ scrollY })
+  const [contextValue] = useState<ScrollContextType>({ scrollY })
 
   const handleScrollUpdate = (e: UIEvent<Element>) => {
     const scrollTop = (e.target as HTMLElement).scrollTop
@@ -26,9 +26,9 @@ const ScrollbarCustom = ({ children, className, onScroll }: ScrollbarCustomProps
 
   return (
     <CustomScroll onScroll={handleScrollUpdate} flex="1" className={className}>
-      <ScrollContextProvider value={contextValueRef.current}>{children}</ScrollContextProvider>
+      <ScrollContextProvider value={contextValue}>{children}</ScrollContextProvider>
     </CustomScroll>
   )
 }
 
-export default ScrollbarCustom
+export default Scrollbar

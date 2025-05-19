@@ -14,6 +14,7 @@ import WalletQRCodeExportButton from '@/features/walletExport/qrCodeExport/Walle
 import WalletSecretPhraseExportButton from '@/features/walletExport/secretPhraseExport/WalletSecretPhraseExportButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
+import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 const WalletsSettingsSection = () => {
@@ -23,7 +24,8 @@ const WalletsSettingsSection = () => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const { isWalletUnlocked, lockWallet } = useWalletLock()
+  const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
+  const { lockWallet } = useWalletLock()
   const { isLedger } = useLedger()
 
   const openWalletRemoveModal = (walletId: string, walletName: string) => {
@@ -36,23 +38,22 @@ const WalletsSettingsSection = () => {
 
   return (
     <>
-      {wallets.length > 1 ||
-        (!isWalletUnlocked && (
-          <Section align="flex-start" role="table">
-            <h2>{t('Wallet list')}</h2>
-            <BoxContainerStyled role="rowgroup">
-              {wallets.map((wallet) => (
-                <WalletItem
-                  key={wallet.id}
-                  wallet={wallet}
-                  isCurrent={wallet.id === activeWalletId}
-                  onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
-                  isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
-                />
-              ))}
-            </BoxContainerStyled>
-          </Section>
-        ))}
+      {(wallets.length > 1 || !isWalletUnlocked) && (
+        <Section align="flex-start" role="table">
+          <h2>{t('Wallet list')}</h2>
+          <BoxContainerStyled role="rowgroup">
+            {wallets.map((wallet) => (
+              <WalletItem
+                key={wallet.id}
+                wallet={wallet}
+                isCurrent={wallet.id === activeWalletId}
+                onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
+                isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
+              />
+            ))}
+          </BoxContainerStyled>
+        </Section>
+      )}
       {isWalletUnlocked && activeWalletId && activeWalletName && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>

@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useInView } from 'framer-motion'
 import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +8,6 @@ import AddressBadge from '@/components/AddressBadge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
   addressHash: AddressHash

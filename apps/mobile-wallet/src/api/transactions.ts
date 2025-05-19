@@ -1,17 +1,14 @@
-import { AddressHash, AssetAmount, client } from '@alephium/shared'
+import { AddressHash, AssetAmount, client, DEPRECATED_Address as Address } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
-import i18n from '~/features/localization/i18n'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { store } from '~/store/store'
-import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
-export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
+export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey: await getAddressAsymetricKey(fromAddress.hash, 'public'),
+    fromPublicKey: await getAddressAsymetricKey(fromAddressHash, 'public'),
     toAddress: toAddressHash
   })
 
@@ -37,7 +34,7 @@ export const buildUnsignedTransactions = async (
     )
 
   if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress, toAddressHash)
+    return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
   } else {
     const data = await buildTransferTransaction({
       fromAddress: fromAddress.hash,
@@ -114,11 +111,7 @@ export const buildDeployContractTransaction = async ({
   })
 
 export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
-  const address = store.getState().addresses.entities[fromAddress]
-
-  if (!address) throw new Error(`${i18n.t('Could not find address in store')}: ${fromAddress}`)
-
-  const signature = transactionSign(txId, await getAddressAsymetricKey(address.hash, 'private'))
+  const signature = transactionSign(txId, await getAddressAsymetricKey(fromAddress, 'private'))
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

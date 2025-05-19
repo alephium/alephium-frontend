@@ -1,3 +1,4 @@
+import { selectAddressByHash } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -6,14 +7,14 @@ import AddressBadge from '@/components/AddressBadge'
 import { InputProps, inputStyling } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
+import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 
 type InputFieldMode = 'view' | 'edit'
 
 const AddressInput = ({ value, ...props }: InputProps) => {
   const addressHashInput = value?.toString() || ''
   const ownAddress = useAppSelector((s) => selectAddressByHash(s, addressHashInput))
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
+  const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHashInput))
   const inputRef = useRef<HTMLInputElement>(null)
 

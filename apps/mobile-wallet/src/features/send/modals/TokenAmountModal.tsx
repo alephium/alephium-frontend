@@ -43,9 +43,9 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const dispatch = useAppDispatch()
     const theme = useTheme()
-    const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+    const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
     const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-    const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+    const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokens(), [])
     const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, addressHash))
     const token = knownFungibleTokens.find((t) => t.id === tokenId) ?? unknownTokens.find((t) => t.id === tokenId)
 

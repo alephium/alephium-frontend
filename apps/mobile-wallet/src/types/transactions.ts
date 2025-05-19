@@ -1,7 +1,5 @@
-import { AddressHash, AssetAmount } from '@alephium/shared'
+import { AddressHash, AssetAmount, DEPRECATED_Address as Address } from '@alephium/shared'
 import { explorer, SignMessageParams, SignUnsignedTxParams } from '@alephium/web3'
-
-import { Address } from '~/types/addresses'
 
 export type PendingTransaction =
   | {

@@ -77,18 +77,21 @@ export function useBiometricPrompt<T = undefined>(
 ): {
   triggerBiometricsPrompt: (args?: TriggerArgs<T>) => Promise<void>
 } {
-  const triggerBiometricsPrompt = async (args?: TriggerArgs<T>): Promise<void> => {
-    const authStatus = await tryLocalAuthenticate()
+  const triggerBiometricsPrompt = useCallback(
+    async (args?: TriggerArgs<T>): Promise<void> => {
+      const authStatus = await tryLocalAuthenticate()
 
-    const _successCallback = args?.successCallback ?? successCallback
-    const _failureCallback = args?.failureCallback ?? failureCallback
+      const _successCallback = args?.successCallback ?? successCallback
+      const _failureCallback = args?.failureCallback ?? failureCallback
 
-    if (biometricAuthenticationSuccessful(authStatus) || biometricAuthenticationDisabledByOS(authStatus)) {
-      _successCallback?.(args?.params)
-    } else {
-      _failureCallback?.(authStatus.toString())
-    }
-  }
+      if (biometricAuthenticationSuccessful(authStatus) || biometricAuthenticationDisabledByOS(authStatus)) {
+        _successCallback?.(args?.params)
+      } else {
+        _failureCallback?.(authStatus.toString())
+      }
+    },
+    [failureCallback, successCallback]
+  )
 
   return { triggerBiometricsPrompt }
 }
@@ -171,8 +174,7 @@ export const useBiometricsAuthGuard = () => {
         successCallback()
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [biometricsRequiredForAppAccess, biometricsRequiredForTransactions]
+    [biometricsRequiredForAppAccess, biometricsRequiredForTransactions, triggerBiometricsPrompt]
   )
 
   return { triggerBiometricsAuthGuard }

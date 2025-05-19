@@ -7,6 +7,8 @@ import {
 } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
+import { StringAlias } from '@/types/utils'
+
 export type TokenBalances = e.AddressBalance & { id: e.Token['id'] }
 
 // Same as AddressBalance, but amounts are in BigInt, useful for display purposes
@@ -43,7 +45,16 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 export type FungibleTokenBasicMetadata = Omit<e.FungibleTokenMetadata, 'decimals'> &
   Omit<FungibleTokenMetaDataBase, 'totalSupply'>
 
-export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'>
+export enum NFTDataTypes {
+  image = 'image',
+  video = 'video',
+  audio = 'audio',
+  other = 'other'
+}
+
+export type NFTDataType = keyof typeof NFTDataTypes
+
+export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'> & { dataType: NFTDataType }
 
 export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
@@ -55,4 +66,67 @@ export interface FungibleTokensState extends EntityState<FungibleToken> {
 
 export interface NFTsState extends EntityState<NFT> {
   loading: boolean
+}
+
+// For better code readability
+export interface ListedFT extends TokenInfo {}
+export interface UnlistedFT extends FungibleTokenBasicMetadata {}
+export interface NonStandardToken {
+  id: string
+}
+
+// To represent a token that is not in the token list but we haven't discovered its type yet
+export type UnlistedToken = { id: TokenId }
+
+// For stricter typings in our components that handle display of multiple token types
+export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
+
+export type Token = ListedFT | UnlistedFT | NFT | NonStandardToken
+
+export type ListedFTDisplay = ApiBalances &
+  ListedFT & {
+    type: 'listedFT'
+    worth?: number
+  }
+
+export type UnlistedFTDisplay = ApiBalances &
+  UnlistedFT & {
+    type: 'unlistedFT'
+  }
+
+export type NFTDisplay = NFT & {
+  type: 'NFT'
+}
+
+export type NonStandardTokenDisplay = ApiBalances &
+  NonStandardToken & {
+    type: 'nonStandardToken'
+  }
+
+export type ApiBalances = {
+  totalBalance: string
+  lockedBalance: string
+  availableBalance: string
+}
+
+export type TokenApiBalances = ApiBalances & {
+  id: TokenId
+}
+
+export type TokenId = Token['id'] & StringAlias
+
+export const isFT = (token: Token): token is ListedFT | UnlistedFT =>
+  (token as ListedFT | UnlistedFT).symbol !== undefined
+
+export const isListedFT = (token: Token): token is ListedFT => (token as ListedFT).logoURI !== undefined
+
+export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
+
+export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined
+
+export type FtListMap = Record<TokenId, TokenInfo | undefined>
+
+export interface HiddenTokensState {
+  hiddenTokensIds: Array<TokenId>
+  loadedFromStorage: boolean
 }

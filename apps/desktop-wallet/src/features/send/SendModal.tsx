@@ -1,4 +1,4 @@
-import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { Address, getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
@@ -58,7 +58,6 @@ import {
   transactionSendFailed,
   transactionsSendSucceeded
 } from '@/storage/transactions/transactionsActions'
-import { Address } from '@/types/addresses'
 
 export type ConfigurableSendModalProps<PT extends { fromAddress: Address }> = {
   txData?: TxData
@@ -241,8 +240,9 @@ function SendModal<PT extends { fromAddress: Address }>({
           setIsSweeping(true)
           setIsLoading(true)
 
+          // TODO: See if you can simplify the data to only include AddressHash and not Address
           const { fromAddress } = data
-          const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, fromAddress.hash)
+          const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, fromAddress.hash)
 
           setSweepUnsignedTxs(unsignedTxs)
           setIsLoading(false)

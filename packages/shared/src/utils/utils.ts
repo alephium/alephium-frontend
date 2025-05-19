@@ -10,3 +10,5 @@ export const resetArray = (array: Uint8Array) => {
     array[i] = 0
   }
 }
+
+export const isDefined = <T>(item: T | undefined): item is T => !!item

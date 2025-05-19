@@ -5,7 +5,7 @@ import posthog from 'posthog-js'
 import { fetchCsv } from '@/api/transactions'
 import i18n from '@/features/localization/i18n'
 import { Message, SnackbarMessage } from '@/features/toastMessages/toastMessagesTypes'
-import { CsvExportQueryParams, SentTransaction } from '@/types/transactions'
+import { CsvExportQueryParams } from '@/types/transactions'
 
 // TODO: Move into these features:
 // - send
@@ -26,8 +26,6 @@ export const unsignedTransactionDecodingFailed = createAction<Message>('tx/unsig
 export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
 
 export const messageSignFailed = createAction<Message>('tx/messageSignFailed')
-
-export const transactionSent = createAction<SentTransaction>('tx/transactionSent')
 
 export const csvFileGenerationStarted = createAction('tx/csvFileGenerationStarted')
 

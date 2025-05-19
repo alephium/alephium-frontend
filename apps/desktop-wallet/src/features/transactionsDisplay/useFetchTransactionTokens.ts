@@ -1,14 +1,11 @@
-import { AddressHash, NFT } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { AddressHash, isFT, isNFT, ListedFT, NFT, NonStandardToken, UnlistedFT } from '@alephium/shared'
+import { combineIsLoading, tokenQuery, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { tokenQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
-import { isFT, isNFT, ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT

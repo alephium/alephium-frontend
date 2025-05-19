@@ -71,6 +71,7 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
   const clearBackgroundTimer = () => {
     if (lockTimer) {
       BackgroundTimer.clearTimeout(lockTimer)
+      // eslint-disable-next-line react-compiler/react-compiler
       lockTimer = undefined
     }
   }

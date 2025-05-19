@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { SelectLabel } from '@/components/Inputs'
 import Toggle from '@/components/Inputs/Toggle'
-import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
+import { useFilterAddressesByText } from '@/features/addressFiltering/useFilterAddressesByText'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByPreference, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'

@@ -8,14 +8,17 @@ import { TabItem } from '@/components/tabs/tabsTypes'
 
 interface TabContentProps<T extends string> extends Pick<TabItem<T>, 'renderContent'> {
   isActive: boolean
-  isMouseOverTabHeaders: boolean
+  isMouseOverTab: boolean
 }
 
-const TabContent = <T extends string>({ isActive, renderContent, isMouseOverTabHeaders }: TabContentProps<T>) => {
-  const isFrozen = !isActive && !isMouseOverTabHeaders
+const TabContent = <T extends string>({ isActive, renderContent, isMouseOverTab }: TabContentProps<T>) => {
+  const isFrozen = !isActive && !isMouseOverTab
 
   return (
-    <TabAnimation animate={{ opacity: isActive ? 1 : 0, zIndex: isActive ? 1 : 0 }} {...fastTransition}>
+    <TabAnimation
+      animate={{ opacity: isActive ? 1 : 0, zIndex: isActive ? 1 : 0, position: isFrozen ? 'absolute' : 'relative' }}
+      {...fastTransition}
+    >
       <Freeze freeze={isFrozen}>
         <TabContainer isActive={isActive} renderContent={renderContent} />
       </Freeze>

@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { getHumanReadableError, throttledClient, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { getHumanReadableError, throttledClient, transactionSent, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { memo, useEffect, useState } from 'react'
@@ -17,7 +17,6 @@ import { SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import {
-  transactionSent,
   unsignedTransactionDecodingFailed,
   unsignedTransactionSignFailed,
   unsignedTransactionSignSucceeded

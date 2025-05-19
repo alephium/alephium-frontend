@@ -1,4 +1,4 @@
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT, NFTDataType, NFTDataTypes, selectNFTById } from '@alephium/shared'
 import { useEffect, useState } from 'react'
 import { DimensionValue } from 'react-native'
 
@@ -10,15 +10,6 @@ export interface NFTImageProps {
   play?: boolean
   sizeLimited?: boolean
 }
-
-enum NFTDataTypes {
-  image = 'image',
-  video = 'video',
-  audio = 'audio',
-  other = 'other'
-}
-
-type NFTDataType = keyof typeof NFTDataTypes
 
 interface UseNftHeaderDataProps {
   nftId: NFT['id']

@@ -52,7 +52,13 @@ function AddressSelect({
   useEffect(() => {
     const selectedAddressIsNotPartOfOptions = !addressOptions.some((hash) => hash === selectedAddress)
 
-    if (selectedAddressIsNotPartOfOptions) onAddressChange(addressOptions[0])
+    if (selectedAddressIsNotPartOfOptions) {
+      const firstAddress = addressOptions.at(0)
+
+      if (firstAddress) {
+        onAddressChange(firstAddress)
+      }
+    }
   }, [onAddressChange, addressOptions, selectedAddress])
 
   if (!selectedAddress) return null

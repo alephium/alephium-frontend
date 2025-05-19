@@ -5,6 +5,7 @@ import {
   findTransactionReferenceAddress,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
+import { useFetchWalletTransactionsInfinite, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { orderBy, uniqBy } from 'lodash'
@@ -12,7 +13,6 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchWalletTransactionsInfinite from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
@@ -21,7 +21,6 @@ import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/Tab
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 

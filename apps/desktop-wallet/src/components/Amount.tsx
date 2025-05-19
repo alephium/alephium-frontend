@@ -1,13 +1,12 @@
-import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { isFT, TokenId } from '@/types/tokens'
 
 export interface AmountBaseProps {
   fadeDecimals?: boolean
@@ -81,8 +80,6 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  amountProps.color = color
-
   const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
@@ -98,11 +95,11 @@ const Amount = ({
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
       {isFiat(amountProps) ? (
-        <FiatAmount {...amountProps} />
+        <FiatAmount {...amountProps} color={color} />
       ) : isCustom(amountProps) ? (
-        <CustomAmount {...amountProps} />
+        <CustomAmount {...amountProps} color={color} />
       ) : (
-        <TokenAmount {...amountProps} />
+        <TokenAmount {...amountProps} color={color} />
       )}
     </AmountStyled>
   )

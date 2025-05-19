@@ -17,7 +17,7 @@ interface TotalWorthRowProps {
 // This component will be improved by reusing the worth in desktop wallet after migrating to Tanstack
 const TotalWorthRow = ({ assetAmounts, fromAddress }: TotalWorthRowProps) => {
   const tokenPrices = useAppSelector(selectAllPrices)
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, fromAddress))
   const { t } = useTranslation()
 

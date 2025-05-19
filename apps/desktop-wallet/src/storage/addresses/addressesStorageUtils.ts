@@ -1,9 +1,8 @@
-import { AddressSettings } from '@alephium/shared'
+import { Address, AddressBase, AddressSettings, addressSettingsSaved } from '@alephium/shared'
 
-import { addressSettingsSaved, defaultAddressChanged, newAddressesSaved } from '@/storage/addresses/addressesActions'
+import { defaultAddressChanged, newAddressesSaved } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
-import { Address, AddressBase } from '@/types/addresses'
 
 export const saveNewAddresses = (addresses: AddressBase[]) => {
   const { id: walletId, isPassphraseUsed } = store.getState().activeWallet

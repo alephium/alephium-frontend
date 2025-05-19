@@ -1,11 +1,11 @@
 import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
+import { useFetchTransaction, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useFetchTransaction from '@/api/apiDataHooks/transaction/useFetchTransaction'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
@@ -22,7 +22,6 @@ import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsMo
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import SideModal, { SideModalTitle } from '@/modals/SideModal'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 

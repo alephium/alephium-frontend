@@ -84,7 +84,7 @@ const AddressBox = ({
     sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
   }
 
-  const hasLabel = !!address?.settings.label
+  const hasLabel = !!address?.label
 
   return (
     <AddressBoxStyled
@@ -126,7 +126,7 @@ const AddressBox = ({
                   includeFontPadding: false
                 }}
               >
-                {address?.settings.label || addressHash}
+                {address?.label || addressHash}
               </AppText>
             </AddressLabel>
             <AddressAmount addressHash={addressHash} tokenId={tokenId} />
@@ -137,9 +137,7 @@ const AddressBox = ({
                 truncate
                 ellipsizeMode="middle"
                 style={{ maxWidth: 100 }}
-                color={
-                  isSelected ? theme.global.accent : address.settings.label ? theme.font.secondary : theme.font.primary
-                }
+                color={isSelected ? theme.global.accent : address.label ? theme.font.secondary : theme.font.primary}
               >
                 {address.hash}
               </AppText>
@@ -170,12 +168,12 @@ const AddressAmount = ({
   addressHash,
   tokenId
 }: Pick<AddressBoxProps, 'addressHash'> & Pick<AddressBoxProps, 'tokenId'>) => {
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const selectAddessesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
 
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
@@ -187,9 +185,9 @@ const AddressAmount = ({
 }
 
 const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const { t } = useTranslation()
 
@@ -222,7 +220,7 @@ const AddressTokenDetails = ({
   tokenId
 }: Pick<AddressBoxProps, 'addressHash'> & Required<Pick<AddressBoxProps, 'tokenId'>>) => {
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 

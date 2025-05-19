@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, DEPRECATED_Address as Address } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 
@@ -7,7 +7,6 @@ import FlashListScreen, { FlashListScreenProps } from '~/components/layout/Flash
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { Address } from '~/types/addresses'
 
 export interface AddressFlashListScreenProps extends Partial<FlashListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void

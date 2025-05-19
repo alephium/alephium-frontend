@@ -14,7 +14,7 @@ import { makeSelectAddressesCheckedUnknownTokens } from '~/store/addresses/addre
 import { showToast } from '~/utils/layout'
 
 const UnknownTokensModal = withModal(({ id }) => {
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const selectAddressesCheckedUnknownTokens = useMemo(() => makeSelectAddressesCheckedUnknownTokens(), [])
   const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
   const { t } = useTranslation()
   const theme = useTheme()

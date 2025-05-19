@@ -1,6 +1,7 @@
-import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
+import { isFT, isNFT, TokenId } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
+
 import HashEllipsed from '@/components/HashEllipsed'
-import { isFT, isNFT, TokenId } from '@/types/tokens'
 
 interface SelectOptionTokenNameProps {
   tokenId: TokenId
