@@ -56,7 +56,7 @@ const TableWrapper = styled.div<TableProps>`
   background-color: ${({ theme }) => theme.bg.primary};
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 6px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
 `
@@ -122,7 +122,7 @@ const StyledTable = styled.table<TableProps>`
     }
 
     &:first-child {
-      padding-left: 20px;
+      padding-left: 12px;
 
       @media ${deviceBreakPoints.tablet} {
         padding-left: 12px;

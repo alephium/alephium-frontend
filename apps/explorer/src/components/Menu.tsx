@@ -11,7 +11,7 @@ interface MenuItem {
 
 type Direction = 'up' | 'down'
 
-const menuHeight = '45px'
+const menuHeight = '32px'
 
 const Menu = ({
   label,
@@ -46,7 +46,7 @@ const Menu = ({
       <MenuCurrentContent>
         {icon && <IconContainer>{icon}</IconContainer>}
         <Label>{label}</Label>
-        <RiMore2Line size={15} />
+        <RiMore2Line size={12} />
       </MenuCurrentContent>
       <AnimatePresence>
         {visible && (
@@ -83,6 +83,7 @@ const MenuContainer = styled.div`
   height: ${menuHeight};
   display: flex;
   outline: none;
+  border-radius: 6px;
 
   &:hover {
     background-color: ${({ theme }) => theme.bg.hover};
@@ -93,9 +94,9 @@ const MenuCurrentContent = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  padding: 0 10px;
   cursor: pointer;
-  gap: 15px;
+  gap: 8px;
 `
 
 const Label = styled.span`
@@ -104,7 +105,9 @@ const Label = styled.span`
   flex: 1;
 `
 
-const IconContainer = styled.div``
+const IconContainer = styled.div`
+  margin-left: -4px;
+`
 
 const MenuItemsContainer = styled(motion.div)`
   position: absolute;
@@ -114,7 +117,7 @@ const MenuItemsContainer = styled(motion.div)`
 
 const MenuItemsList = styled.div`
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
 `
@@ -122,16 +125,15 @@ const MenuItemsList = styled.div`
 const ItemIcon = styled.div`
   width: 23px;
   height: 23px;
-
-  margin-right: 20px;
+  margin-right: 10px;
   opacity: 0.8;
 `
 
 const MenuItem = styled.div`
-  height: 47px;
+  height: 32px;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 8px;
   cursor: pointer;
   color: ${({ theme }) => theme.font.primary};
 

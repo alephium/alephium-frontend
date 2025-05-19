@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import NetworkSwitch from '@/components/NetworkSwitch'
 import SearchBar from '@/components/SearchBar'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import logoDarkSrc from '@/images/explorer-logo-dark.svg'
@@ -25,9 +24,7 @@ const AppHeader = ({ className }: AppHeaderProps) => {
         </StyledLogoLink>
       </HeaderSideContainer>
       {(pathname !== '/' || (width && width <= deviceSizes.mobile)) && <StyledSearchBar />}
-      <HeaderSideContainer justifyContent="flex-end" hideOnMobile>
-        <NetworkSwitch direction="down" />
-      </HeaderSideContainer>
+      <HeaderSideContainer justifyContent="flex-end" hideOnMobile></HeaderSideContainer>
     </header>
   )
 }

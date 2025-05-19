@@ -24,7 +24,7 @@ export const lightTheme: DefaultTheme = {
     highlight: '#f67460'
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.07)',
+    primary: 'rgba(0, 0, 0, 0.08)',
     secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {

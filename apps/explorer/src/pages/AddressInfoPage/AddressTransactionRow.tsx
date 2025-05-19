@@ -236,7 +236,7 @@ const BlockRewardLabel = styled.span`
 `
 
 const BlockRewardInputLabel = styled(BlockRewardLabel)`
-  padding: 18px 15px;
+  padding: 8px 10px;
   text-align: center;
 `
 
@@ -294,7 +294,7 @@ const IODetailList = styled.div`
 `
 
 const IODetailsContainer = styled.div`
-  padding: 15px;
+  padding: 8px 10px;
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};

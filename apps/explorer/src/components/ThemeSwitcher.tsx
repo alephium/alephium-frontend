@@ -17,9 +17,14 @@ const toggleWidth = 60
 const toggleHeight = toggleWidth / 2
 const toggleIndicatorSize = toggleWidth / 2
 
-const toggleVariants = {
-  light: { left: 0, backgroundColor: '#F6C76A' },
-  dark: { left: toggleWidth - toggleIndicatorSize, backgroundColor: '#3A0595' }
+const togglePositionVariants = {
+  light: { left: 0 },
+  dark: { left: toggleWidth - toggleIndicatorSize }
+}
+
+const toggleColorVariants = {
+  light: { backgroundColor: '#F6C76A' },
+  dark: { backgroundColor: '#3A0595' }
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
@@ -35,11 +40,17 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
           <RiMoonLine onClick={() => switchTheme('dark')} color={getButtonColor(theme, 'dark')} size={18} />
         </ToggleIcon>
       </ToggleContent>
-      <ToggleFloatingIndicator
-        variants={toggleVariants}
+      <ToggleFloatingIndicatorContainer
+        variants={togglePositionVariants}
         animate={theme}
-        transition={{ duration: 0.5, type: 'spring' }}
-      />
+        transition={{ type: 'spring', stiffness: 300, damping: 60 }}
+      >
+        <ToggleFloatingIndicator
+          variants={toggleColorVariants}
+          animate={theme}
+          transition={{ type: 'spring', stiffness: 300, damping: 60 }}
+        />
+      </ToggleFloatingIndicatorContainer>
     </StyledThemeSwitcher>
   )
 }
@@ -79,11 +90,19 @@ const ToggleIcon = styled.div`
   }
 `
 
-const ToggleFloatingIndicator = styled(motion.div)`
+const ToggleFloatingIndicatorContainer = styled(motion.div)`
   position: absolute;
   width: ${toggleIndicatorSize}px;
   height: ${toggleIndicatorSize}px;
+  border-radius: 60px;
+  padding: 2px;
+  z-index: 0;
+`
+
+const ToggleFloatingIndicator = styled(motion.div)`
+  width: 100%;
+  height: 100%;
   background-color: ${({ theme }) => theme.font.primary};
   border-radius: 60px;
-  z-index: 0;
+  padding: 2px;
 `
