@@ -1,5 +1,6 @@
 import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared'
-import { useInitializeThrottledClient, usePersistQueryClientContext } from '@alephium/shared-react'
+import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { clear as clearIndexedDB } from 'idb-keyval'
 import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
@@ -204,20 +205,15 @@ const useInitializeNetworkProxy = () => {
 }
 
 const useClearPersistedQueryCacheOnVersionUpdate = () => {
-  const { deletePersistedCache } = usePersistQueryClientContext()
-  const wallets = useAppSelector((s) => s.global.wallets)
-
   useEffect(() => {
     const cacheVersion = PersistedQueryCacheVersionStorage.load()
 
     if (cacheVersion !== currentVersion) {
-      wallets.forEach((wallet) => {
-        deletePersistedCache(wallet.id)
-      })
+      clearIndexedDB()
 
       PersistedQueryCacheVersionStorage.set(currentVersion)
     }
-  }, [deletePersistedCache, wallets])
+  }, [])
 }
 
 interface AppContainerProps {
