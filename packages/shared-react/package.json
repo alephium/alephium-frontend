@@ -19,7 +19,7 @@
     "@alephium/shared": "workspace:*",
     "@alephium/web3": "1.11.3",
     "@tanstack/react-query": "5.45.0",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "react": "^18.2.0",
     "react-redux": "^8.0.5"
   },
