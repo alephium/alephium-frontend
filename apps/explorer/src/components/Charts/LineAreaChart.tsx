@@ -1,5 +1,4 @@
 import { explorer } from '@alephium/web3'
-import { colord } from 'colord'
 import dayjs from 'dayjs'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
@@ -35,6 +34,7 @@ const LineAreaChart = ({
 
   const options: ApexCharts.ApexOptions = {
     chart: {
+      offsetY: 15,
       toolbar: {
         show: false
       },
@@ -86,7 +86,7 @@ const LineAreaChart = ({
       }
     },
     grid: {
-      borderColor: colord(theme.border.primary).alpha(0.5).toHex(),
+      borderColor: theme.border.primary,
       padding: {
         top: 0,
         right: 0
@@ -95,7 +95,7 @@ const LineAreaChart = ({
       position: 'front'
     },
     markers: {
-      colors: theme.bg.primary
+      colors: colors[0]
     },
     tooltip: {
       theme: false as unknown as string,
@@ -131,23 +131,27 @@ const LineAreaChart = ({
       enabled: false
     },
     stroke: {
-      show: false
+      show: true,
+      curve: 'smooth',
+      width: 2,
+      colors: [colors[0]]
     },
     fill: {
       type: 'gradient',
       gradient: {
+        shadeIntensity: 1,
         type: 'vertical',
         colorStops: [
           [
             {
               offset: 0,
               color: colors[0],
-              opacity: 0.8
+              opacity: 0.2
             },
             {
               offset: 100,
-              color: colors[1],
-              opacity: 0.8
+              color: colors[0],
+              opacity: 0
             }
           ]
         ]
