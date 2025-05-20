@@ -80,7 +80,7 @@ const WalletConnectSessionRequestModal = withModal(
     const metadata = activeSessions.find((s) => s.topic === requestEvent.topic)?.peer.metadata
     const isSignRequest = requestData.type === 'sign-message' || requestData.type === 'sign-unsigned-tx'
     const fees =
-      !isSignRequest && !isGrouplessTxResult(requestData.unsignedTxData) // TODO: handle groupless txs
+      !isSignRequest && !isGrouplessTxResult(requestData.unsignedTxData) // TODO: handle groupless addresses
         ? BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
         : undefined
 
@@ -89,7 +89,7 @@ const WalletConnectSessionRequestModal = withModal(
     const sendTransaction = async () => {
       if (isSignRequest) return
 
-      // TODO: handle groupless txs
+      // TODO: handle groupless addresses
       if (isGrouplessTxResult(requestData.unsignedTxData)) return
 
       try {
