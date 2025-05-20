@@ -47,7 +47,7 @@ export class LedgerAlephium extends AccountDiscovery {
     _group?: number,
     keyType?: KeyType
   ): Promise<NonSensitiveAddressDataWithGroup> => {
-    const _keyType = keyType ?? 'default'
+    const _keyType = keyType !== 'bip340-schnorr' ? 'default' : 'bip340-schnorr' // TODO: handle groupless addresses
     const path = getHDWalletPath(_keyType, startIndex)
     const [{ address: hash, publicKey, group }, index] = await this.app.getAccount(path, _group, _keyType)
 

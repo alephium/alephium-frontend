@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, throttledClient, transactionSent } from '@alephium/shared'
+import { fromHumanReadableAmount, isGrouplessTxResult, throttledClient, transactionSent } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -46,6 +46,10 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
       gasAmount: gasAmount ? gasAmount : undefined,
       gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
     })
+
+    // TODO: handle groupless addresses
+    if (isGrouplessTxResult(data)) return
+
     context.setUnsignedTransaction(data)
     context.setUnsignedTxId(data.txId)
     context.setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
