@@ -20,7 +20,7 @@
   "dependencies": {
     "@alephium/encryptor": "workspace:*",
     "@alephium/shared": "workspace:*",
-    "@alephium/web3": "1.11.3",
+    "@alephium/web3": "1.12.0-danube.1",
     "@metamask/scure-bip39": "^2.1.1",
     "blakejs": "^1.1.1",
     "ethereum-cryptography": "^2.1.3"
