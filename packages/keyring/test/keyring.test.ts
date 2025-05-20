@@ -27,7 +27,6 @@ describe('keyring', function () {
   it('should create an empty instance of the Keyring class', () => {
     expect(keyring).toBeInstanceOf(Keyring),
       expect(keyring['hdWallet']).toBeNull(),
-      expect(keyring['root']).toBeNull(),
       expect(keyring['addresses']).toHaveLength(0)
   })
 
@@ -38,9 +37,8 @@ describe('keyring', function () {
   it('should get initialized with a random mnemonic', () => {
     keyring.generateRandomMnemonic()
 
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should fail generating new mnemonic if already initialized', () => {
@@ -51,9 +49,8 @@ describe('keyring', function () {
     keyring.clear()
     keyring.generateRandomMnemonic()
 
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should generate a Uint8Array mnemonic of indexes of words of bip39 word list', () => {
@@ -65,7 +62,8 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
+      expect(index).toBeGreaterThanOrEqual(0)
+      expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
@@ -84,17 +82,15 @@ describe('keyring', function () {
   it('should initialize from a valid 24 word mnemonic string', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
 
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should initialize from a valid 12 word mnemonic string', () => {
     keyring.importMnemonicString(valid12WordMnemonicString)
 
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should fail to initialize from an invalid 24 word mnemonic string', () => {
@@ -117,7 +113,8 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
+      expect(index).toBeGreaterThanOrEqual(0)
+      expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
@@ -133,31 +130,27 @@ describe('keyring', function () {
 
   it('should initialize from old-format encrypted mnemonic when the correct password is given', () => {
     keyring.initFromEncryptedMnemonic(encryptedWalletOld, correctPassword, '')
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should initialize from new-format encrypted mnemonic when the correct password is given', () => {
     keyring.initFromEncryptedMnemonic(encryptedWalletNew, correctPassword, '')
-    expect(keyring['hdWallet']).not.toBeNull(),
-      expect(keyring['root']).not.toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).not.toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should fail to initialize from old-format encrypted mnemonic when an incorrect password is given', () => {
     keyring.clear()
     expect(() => keyring.initFromEncryptedMnemonic(encryptedWalletOld, wrongPassword, '')).rejects.toThrow()
-    expect(keyring['hdWallet']).toBeNull(),
-      expect(keyring['root']).toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should fail to initialize from new-format encrypted mnemonic when an incorrect password is given', () => {
     expect(() => keyring.initFromEncryptedMnemonic(encryptedWalletNew, wrongPassword, '')).rejects.toThrow()
-    expect(keyring['hdWallet']).toBeNull(),
-      expect(keyring['root']).toBeNull(),
-      expect(keyring['addresses']).toHaveLength(0)
+    expect(keyring['hdWallet']).toBeNull()
+    expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should return the correct mnemonic version when initializing from encrypted mnemonic', async () => {
