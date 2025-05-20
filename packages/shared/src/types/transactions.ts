@@ -1,4 +1,4 @@
-import { explorer as e, Optional } from '@alephium/web3'
+import { explorer as e, node as n, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { Asset, AssetAmount } from '@/types/assets'
@@ -38,3 +38,16 @@ export type SentTransaction = {
 }
 
 export type SentTransactionsState = EntityState<SentTransaction>
+
+export const isGrouplessTxResult = (
+  txResult:
+    | n.BuildSimpleTransferTxResult
+    | n.BuildGrouplessTransferTxResult
+    | n.BuildSimpleExecuteScriptTxResult
+    | n.BuildGrouplessExecuteScriptTxResult
+    | n.BuildSimpleDeployContractTxResult
+    | n.BuildGrouplessDeployContractTxResult
+): txResult is
+  | n.BuildGrouplessTransferTxResult
+  | n.BuildGrouplessExecuteScriptTxResult
+  | n.BuildGrouplessDeployContractTxResult => 'transferTxs' in txResult
