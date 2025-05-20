@@ -1,6 +1,6 @@
 import { addApostrophes, calculateTokenAmountWorth, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress, isValidAddress } from '@alephium/web3'
+import { contractIdFromAddress, groupOfAddress, isGrouplessAddress, isValidAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -55,6 +55,8 @@ const AddressInfoPage = () => {
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const addressHash = id && isValidAddress(id) ? id : ''
+
+  const isGroupless = isGrouplessAddress(addressHash)
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
@@ -194,7 +196,7 @@ const AddressInfoPage = () => {
             value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
-          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+          <InfoGrid.Cell label={t('Address group')} value={isGroupless ? t('Groupless') : addressGroup?.toString()} />
           <InfoGrid.Cell
             label={t('Latest activity')}
             value={
