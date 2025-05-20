@@ -116,8 +116,8 @@ importers:
         specifier: 1.11.3
         version: 1.11.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1)))
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@alephium/web3-wallet':
         specifier: 1.11.3
         version: 1.11.3
@@ -383,8 +383,8 @@ importers:
         specifier: ^0.0.19
         version: 0.0.19
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@tanstack/query-sync-storage-persister':
         specifier: 5.45.0
         version: 5.45.0
@@ -549,8 +549,8 @@ importers:
         specifier: 1.11.3
         version: 1.11.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1)))
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@dev-plugins/react-query':
         specifier: ^0.2.0
         version: 0.2.0(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))
@@ -956,8 +956,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1008,8 +1008,8 @@ importers:
         specifier: 1.11.3
         version: 1.11.3(@react-native-async-storage/async-storage@1.23.1)
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1157,8 +1157,8 @@ importers:
         specifier: ^0.0.19
         version: 0.0.19
       '@alephium/web3':
-        specifier: 1.11.3
-        version: 1.11.3
+        specifier: 1.12.0-danube.1
+        version: 1.12.0-danube.1
       '@tanstack/react-query':
         specifier: 5.45.0
         version: 5.45.0(react@18.3.1)
@@ -1249,6 +1249,10 @@ packages:
 
   '@alephium/web3@1.11.3':
     resolution: {integrity: sha512-EySFublnjSrEY29jeNHingFAMd2bY4v51tlmOZrhQFkg3bjzX7UemfYyR4uokeYugErQa8hJrKPQLj9oQttCPw==}
+    engines: {node: '>=14.0.0', npm: '>=7.0.0'}
+
+  '@alephium/web3@1.12.0-danube.1':
+    resolution: {integrity: sha512-+46j82U+u8wo8lSmYRIjBKMBBwxQwKT1wmVQLb/BTResVwV6mR3tO4T01xbOXIobNZcWtk3A+NWe8I/YTwJOXw==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
   '@ampproject/remapping@2.3.0':
@@ -11857,6 +11861,22 @@ snapshots:
       - encoding
 
   '@alephium/web3@1.11.3':
+    dependencies:
+      '@noble/secp256k1': 1.7.1
+      base-x: 5.0.1
+      bignumber.js: 9.1.2
+      blakejs: 1.2.1
+      bn.js: 5.2.1
+      cross-fetch: 3.1.8
+      crypto-browserify: 3.12.0
+      elliptic: 6.6.1
+      eventemitter3: 4.0.7
+      path-browserify: 1.0.1
+      stream-browserify: 3.0.0
+    transitivePeerDependencies:
+      - encoding
+
+  '@alephium/web3@1.12.0-danube.1':
     dependencies:
       '@noble/secp256k1': 1.7.1
       base-x: 5.0.1
