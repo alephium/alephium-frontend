@@ -5,14 +5,14 @@ import {
   isAddressIndexValid,
   resetArray
 } from '@alephium/shared'
-import { bs58, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import { addressFromPublicKey, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import * as metamaskBip39 from '@metamask/scure-bip39'
-import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
+import { publicKeyFromPrivateKey } from '@/utils'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -211,19 +211,12 @@ export class Keyring {
 
     const keyType = 'default'
     const path = getHDWalletPath(keyType, addressIndex)
-    const keyPair = this.hdWallet.derive(path)
+    const { privateKey } = this.hdWallet.derive(path)
 
-    if (!keyPair.publicKey) throw new Error('Keyring: Missing public key')
-    if (!keyPair.privateKey) throw new Error('Keyring: Missing private key')
+    if (!privateKey) throw new Error('Keyring: Missing private key')
 
-    const publicKey = bytesToHex(keyPair.publicKey)
-    const privateKey = keyPair.privateKey
-    const hash = blake.blake2b(Uint8Array.from(keyPair.publicKey), undefined, 32)
-    const type = new Uint8Array([0])
-    const bytes = new Uint8Array(type.length + hash.length)
-    bytes.set(type, 0)
-    bytes.set(hash, type.length)
-    const address = bs58.encode(bytes)
+    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
+    const address = addressFromPublicKey(publicKey, keyType)
 
     return { hash: address, publicKey, privateKey, index: addressIndex }
   }
