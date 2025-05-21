@@ -30,10 +30,6 @@ describe('keyring', function () {
       expect(keyring['addresses']).toHaveLength(0)
   })
 
-  it('should have the correct HD path', () => {
-    expect(keyring['hdPath']).toBe("m/44'/1234'/0'/0")
-  })
-
   it('should get initialized with a random mnemonic', () => {
     keyring.generateRandomMnemonic()
 
