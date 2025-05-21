@@ -19,7 +19,7 @@ export const deriveAddressesInGroup = (
   const skipAddressIndexes = Array.from(skipIndexes)
 
   for (let j = 0; j < amount; j++) {
-    const newAddress = keyring.generateAndCacheAddress({ group, skipAddressIndexes })
+    const newAddress = keyring.generateAndCacheAddress({ group, skipAddressIndexes, keyType: 'default' })
     addresses.push(newAddress)
     skipAddressIndexes.push(newAddress.index)
   }
