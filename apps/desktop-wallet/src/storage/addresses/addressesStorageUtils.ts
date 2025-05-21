@@ -13,6 +13,7 @@ export const saveNewAddresses = (addresses: AddressBase[]) => {
     addresses.forEach((address) =>
       addressMetadataStorage.storeOne(walletId, {
         index: address.index,
+        keyType: address.keyType ?? 'default',
         settings: {
           isDefault: address.isDefault,
           label: address.label,
@@ -32,6 +33,7 @@ export const changeDefaultAddress = (address: Address) => {
   if (!isPassphraseUsed)
     addressMetadataStorage.storeOne(walletId, {
       index: address.index,
+      keyType: address.keyType ?? 'default',
       settings: {
         isDefault: true,
         label: address.label,
@@ -47,7 +49,8 @@ export const saveAddressSettings = (address: AddressBase, settings: AddressSetti
 
   if (!walletId) throw new Error('Could not save address settings, wallet ID not found')
 
-  if (!isPassphraseUsed) addressMetadataStorage.storeOne(walletId, { index: address.index, settings })
+  if (!isPassphraseUsed)
+    addressMetadataStorage.storeOne(walletId, { index: address.index, keyType: address.keyType ?? 'default', settings })
 
   store.dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 }

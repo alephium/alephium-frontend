@@ -37,12 +37,14 @@ const addDeprecatedTestWalletMetadataInStorage = () =>
     addresses: [
       {
         index: 0,
+        keyType: 'default',
         color: 'red',
         isDefault: true,
         label: 'Main'
       },
       {
         index: 4,
+        keyType: 'default',
         color: 'blue',
         isDefault: false,
         label: 'Secondary'
@@ -59,6 +61,7 @@ const addTestWalletMetadataInStorage = () =>
     addresses: [
       {
         index: 0,
+        keyType: 'default',
         hash: '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH',
         color: 'red',
         isDefault: true,
@@ -66,6 +69,7 @@ const addTestWalletMetadataInStorage = () =>
       },
       {
         index: 4,
+        keyType: 'default',
         hash: '1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf',
         color: 'blue',
         isDefault: false,

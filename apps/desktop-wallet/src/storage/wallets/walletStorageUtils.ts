@@ -34,7 +34,7 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
     throw new Error('Could not generate initial address while saving new wallet')
   }
 
-  addressMetadataStorage.storeOne(storedWallet.id, { index: 0, settings: initialAddressSettings })
+  addressMetadataStorage.storeOne(storedWallet.id, { index: 0, keyType: 'default', settings: initialAddressSettings })
 
   return storedWallet.id
 }
