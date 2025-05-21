@@ -1,10 +1,12 @@
 import { AddressMetadata, AddressSettings } from '@alephium/shared'
+import { KeyType } from '@alephium/web3'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface AddressMetadataStorageStoreProps {
   index: number
+  keyType: KeyType
   settings: AddressSettings
 }
 
@@ -28,7 +30,7 @@ class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
     super.store(walletId, addressesMetadata)
   }
 
-  storeOne(walletId: StoredEncryptedWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
+  storeOne(walletId: StoredEncryptedWallet['id'], { index, keyType, settings }: AddressMetadataStorageStoreProps) {
     const addressesMetadata = this.load(walletId)
     const existingAddressMetadata = addressesMetadata.find((address) => address.index === index)
     const currentDefaultAddress = addressesMetadata.find((data) => data.isDefault)
@@ -36,6 +38,7 @@ class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
     if (!existingAddressMetadata) {
       addressesMetadata.push({
         index,
+        keyType,
         ...settings
       })
     } else {

@@ -144,6 +144,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
+                keyType: 'default',
                 isDefault: true,
                 color: getRandomLabelColor()
               }
@@ -500,10 +501,11 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   addresses: [
     {
       index: 0,
+      keyType: 'default',
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
-    }
+    } as AddressMetadataWithHash
   ],
   contacts: []
 })

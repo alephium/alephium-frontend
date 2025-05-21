@@ -118,8 +118,8 @@ const useAddressGeneration = () => {
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      addressMetadataStorage.storeOne(walletId, { index: 0, settings: initialAddressSettings })
-      addressesMetadata.push({ index: 0, ...initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'default', settings: initialAddressSettings })
+      addressesMetadata.push({ index: 0, keyType: 'default', ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())
@@ -144,6 +144,7 @@ const useAddressGeneration = () => {
         addresses[0].isDefault = true
         addressMetadataStorage.storeOne(walletId, {
           index: addresses[0].index,
+          keyType: 'default',
           settings: {
             isDefault: true,
             label: addresses[0].label,
