@@ -159,12 +159,12 @@ describe('keyring', function () {
 
   it('should generate the correct address given its index', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    let address = keyring.generateAndCacheAddress({ addressIndex: 0 })
+    let address = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
     expect(address.index).toBe(0)
     expect(address.hash).toBe('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
     expect(address.publicKey).toBe('0381818e63bd9e35a5489b52a430accefc608fd60aa2c7c0d1b393b5239aedf6b0')
 
-    address = keyring.generateAndCacheAddress({ addressIndex: 4 })
+    address = keyring.generateAndCacheAddress({ addressIndex: 4, keyType: 'default' })
     expect(address.index).toBe(4)
     expect(address.hash).toBe('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
     expect(address.publicKey).toBe('03cc2d92123def7c72bd4dd8ec1c6c41ea1fbeceac0b33dbffb42777f0ca3ea4d8')
@@ -172,12 +172,12 @@ describe('keyring', function () {
 
   it('should generate the address in the next available index', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    let address = keyring.generateAndCacheAddress({ skipAddressIndexes: [1, 2, 3] })
+    let address = keyring.generateAndCacheAddress({ skipAddressIndexes: [1, 2, 3], keyType: 'default' })
     expect(address.index).toBe(0)
     expect(address.hash).toBe('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
     expect(address.publicKey).toBe('0381818e63bd9e35a5489b52a430accefc608fd60aa2c7c0d1b393b5239aedf6b0')
 
-    address = keyring.generateAndCacheAddress({ skipAddressIndexes: [0, 1, 2, 3] })
+    address = keyring.generateAndCacheAddress({ skipAddressIndexes: [0, 1, 2, 3], keyType: 'default' })
     expect(address.index).toBe(4)
     expect(address.hash).toBe('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
     expect(address.publicKey).toBe('03cc2d92123def7c72bd4dd8ec1c6c41ea1fbeceac0b33dbffb42777f0ca3ea4d8')
@@ -185,17 +185,17 @@ describe('keyring', function () {
 
   it('should generate an address in the given group', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    let address = keyring.generateAndCacheAddress({ group: 0 })
+    let address = keyring.generateAndCacheAddress({ group: 0, keyType: 'default' })
     expect(address.index).toBe(0)
     expect(address.hash).toBe('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
     expect(address.publicKey).toBe('0381818e63bd9e35a5489b52a430accefc608fd60aa2c7c0d1b393b5239aedf6b0')
 
-    address = keyring.generateAndCacheAddress({ group: 2, skipAddressIndexes: [1] })
+    address = keyring.generateAndCacheAddress({ group: 2, skipAddressIndexes: [1], keyType: 'default' })
     expect(address.index).toBe(4)
     expect(address.hash).toBe('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
     expect(address.publicKey).toBe('03cc2d92123def7c72bd4dd8ec1c6c41ea1fbeceac0b33dbffb42777f0ca3ea4d8')
 
-    address = keyring.generateAndCacheAddress({ group: 2 })
+    address = keyring.generateAndCacheAddress({ group: 2, keyType: 'default' })
     expect(address.index).toBe(1)
     expect(address.hash).toBe('15jjExDyS8q3Wqk9v29PCQ21jDqubDrD8WQdgn6VW2oi4')
     expect(address.publicKey).toBe('028bff16a5102770af5ef0171887cdc0f7dd8b8923f6533806fa3bff637ebcfbfb')
@@ -203,8 +203,8 @@ describe('keyring', function () {
 
   it('should cache generated addresses', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
-    keyring.generateAndCacheAddress({ addressIndex: 4 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+    keyring.generateAndCacheAddress({ addressIndex: 4, keyType: 'default' })
 
     expect(keyring['addresses']).toHaveLength(2)
     expect(keyring['addresses'][0].index).toBe(0)
@@ -223,32 +223,34 @@ describe('keyring', function () {
 
   it('should not re-generate an address that is already cached', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
-    keyring.generateAndCacheAddress({ addressIndex: 4 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+    keyring.generateAndCacheAddress({ addressIndex: 4, keyType: 'default' })
 
     expect(keyring['addresses']).toHaveLength(2)
 
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
     expect(keyring['addresses']).toHaveLength(2)
   })
 
   it('should fail generating an address when wrong arguments are given', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    expect(() => keyring.generateAndCacheAddress({ addressIndex: 0, skipAddressIndexes: [0] })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ addressIndex: 0, group: 0 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ group: -1 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ group: 5 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ group: 1.2 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ group: 10e12 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ addressIndex: -1 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ addressIndex: 1.2 })).toThrow()
-    expect(() => keyring.generateAndCacheAddress({ addressIndex: 10e12 })).toThrow()
+    expect(() =>
+      keyring.generateAndCacheAddress({ addressIndex: 0, skipAddressIndexes: [0], keyType: 'default' })
+    ).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ addressIndex: 0, group: 0, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ group: -1, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ group: 5, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ group: 1.2, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ group: 10e12, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ addressIndex: -1, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ addressIndex: 1.2, keyType: 'default' })).toThrow()
+    expect(() => keyring.generateAndCacheAddress({ addressIndex: 10e12, keyType: 'default' })).toThrow()
   })
 
   it('should export the private key of an address', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
-    keyring.generateAndCacheAddress({ addressIndex: 4 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+    keyring.generateAndCacheAddress({ addressIndex: 4, keyType: 'default' })
     expect(keyring.exportPrivateKeyOfAddress('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')).toBe(
       'a642942e67258589cd2b1822c631506632db5a12aabcf413604e785300d762a5'
     )
@@ -263,7 +265,7 @@ describe('keyring', function () {
 
   it('should sign a transaction with the private key of the address', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
     expect(
       keyring.signTransaction(
         '0041313469a65f07904379d53915d86e5ed4541a7583762de38a1a3fed4ff1bd',
@@ -281,7 +283,7 @@ describe('keyring', function () {
 
   it('should sign a message with the private key of the address', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
-    keyring.generateAndCacheAddress({ addressIndex: 0 })
+    keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
 
     expect(
       keyring.signMessageHash(hashMessage('hello', 'alephium'), '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')

@@ -86,7 +86,7 @@ const useWalletLock = () => {
     }
 
     try {
-      initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0 })
+      initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
     } catch (e) {
       console.error(e)
       return

@@ -417,7 +417,7 @@ export const migrateAddressMetadata = async () => {
     const updatedAddressesMetadata: AddressMetadataWithHash[] = []
 
     for (const address of addresses) {
-      const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex: address.index })
+      const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex: address.index, keyType: 'default' })
       let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
       await storeAddressPublicKey(hash, publicKey)
@@ -550,7 +550,7 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
   try {
     if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
 
-    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex })
+    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex, keyType: 'default' })
     let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
     await storeAddressPublicKey(nonSensitiveAddressData.hash, nonSensitiveAddressData.publicKey)

@@ -54,8 +54,10 @@ const useAddressGeneration = () => {
       isLedger
         ? LedgerAlephium.create()
             .catch(onLedgerError)
-            .then((app) => (app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes }) : null))
-        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
+            .then((app) =>
+              app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes, keyType: 'default' }) : null
+            )
+        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes, keyType: 'default' }),
     [currentAddressIndexes, isLedger, onLedgerError]
   )
 
@@ -132,7 +134,7 @@ const useAddressGeneration = () => {
         })
       } else {
         addresses = addressesMetadata.map((metadata) => ({
-          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: 'default' }),
           ...metadata
         }))
       }

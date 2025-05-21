@@ -51,7 +51,7 @@ export class LedgerAlephium extends AccountDiscovery {
     const path = getHDWalletPath(_keyType, startIndex)
     const [{ address: hash, publicKey, group }, index] = await this.app.getAccount(path, _group, _keyType)
 
-    return { hash, publicKey, index, group }
+    return { hash, publicKey, index, group, keyType: _keyType }
   }
 
   public getDeviceInfo = async () => ({
@@ -157,7 +157,7 @@ export const generateLedgerAddressesFromMetadata = async ({
   if (app) {
     for (const metadata of addressesMetadata) {
       addresses.push({
-        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true })),
+        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true, keyType: 'default' })),
         ...metadata
       })
     }

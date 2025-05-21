@@ -5,7 +5,14 @@ import {
   isAddressIndexValid,
   resetArray
 } from '@alephium/shared'
-import { addressFromPublicKey, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import {
+  addressFromPublicKey,
+  groupOfAddress,
+  KeyType,
+  sign,
+  TOTAL_NUMBER_OF_GROUPS,
+  transactionSign
+} from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import * as metamaskBip39 from '@metamask/scure-bip39'
 import { HDKey } from 'ethereum-cryptography/hdkey'
@@ -18,6 +25,7 @@ export type NonSensitiveAddressData = {
   hash: AddressHash
   index: number
   publicKey: string
+  keyType: KeyType
 }
 
 export type NonSensitiveAddressDataWithGroup = NonSensitiveAddressData & { group: number }
@@ -31,6 +39,7 @@ type NullableSensitiveAddressData = NonSensitiveAddressData & {
 }
 
 export type GenerateAddressProps = {
+  keyType: KeyType
   group?: number
   addressIndex?: number
   skipAddressIndexes?: number[]
@@ -117,7 +126,7 @@ export class Keyring {
     const address = this._getAddress(addressHash)
 
     if (!address.privateKey) {
-      address.privateKey = this._deriveAddressAndKeys(address.index).privateKey
+      address.privateKey = this._deriveAddressAndKeys(address.index, address.keyType).privateKey
     }
 
     return bytesToHex(address.privateKey)
@@ -140,7 +149,7 @@ export class Keyring {
 
     if (cachedAddress) {
       if (!cachedAddress.privateKey) {
-        cachedAddress.privateKey = this._deriveAddressAndKeys(cachedAddress.index).privateKey
+        cachedAddress.privateKey = this._deriveAddressAndKeys(cachedAddress.index, cachedAddress.keyType).privateKey
       }
 
       return cachedAddress as SensitiveAddressData
@@ -156,6 +165,7 @@ export class Keyring {
   private _generateAddress = ({
     group,
     addressIndex,
+    keyType,
     skipAddressIndexes = []
   }: GenerateAddressProps): SensitiveAddressData => {
     if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
@@ -170,7 +180,7 @@ export class Keyring {
           'Keyring: Could not generate address, invalid arguments passed: when addressIndex is provided the group and skipAddressIndexes should not be provided.'
         )
 
-      return this._deriveAddressAndKeys(addressIndex)
+      return this._deriveAddressAndKeys(addressIndex, keyType)
     }
 
     const initialAddressIndex = 0
@@ -178,11 +188,11 @@ export class Keyring {
     let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
       ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
       : initialAddressIndex
-    let newAddressData = this._deriveAddressAndKeys(nextAddressIndex)
+    let newAddressData = this._deriveAddressAndKeys(nextAddressIndex, keyType)
 
     while (group !== undefined && groupOfAddress(newAddressData.hash) !== group) {
       nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
-      newAddressData = this._deriveAddressAndKeys(nextAddressIndex)
+      newAddressData = this._deriveAddressAndKeys(nextAddressIndex, keyType)
     }
 
     return newAddressData
@@ -191,8 +201,9 @@ export class Keyring {
   private _getNonSensitiveAddressData = ({
     hash,
     index,
-    publicKey
-  }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey })
+    publicKey,
+    keyType
+  }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey, keyType })
 
   private _initFromMnemonic = (mnemonic: Uint8Array | null, passphrase: string) => {
     if (this.hdWallet) throw new Error('Keyring: Secret recovery phrase already provided')
@@ -204,12 +215,11 @@ export class Keyring {
     passphrase = ''
   }
 
-  private _deriveAddressAndKeys = (addressIndex: number): SensitiveAddressData => {
+  private _deriveAddressAndKeys = (addressIndex: number, keyType: KeyType): SensitiveAddressData => {
     if (!this.hdWallet)
       throw new Error('Keyring: Cannot derive address and keys, secret recovery phrase is not provided')
     if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
 
-    const keyType = 'default'
     const path = getHDWalletPath(keyType, addressIndex)
     const { privateKey } = this.hdWallet.derive(path)
 
@@ -218,7 +228,7 @@ export class Keyring {
     const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
     const address = addressFromPublicKey(publicKey, keyType)
 
-    return { hash: address, publicKey, privateKey, index: addressIndex }
+    return { hash: address, publicKey, privateKey, index: addressIndex, keyType }
   }
 }
 
