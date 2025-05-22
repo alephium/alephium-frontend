@@ -1,4 +1,5 @@
 import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { isGrouplessAddress } from '@alephium/web3'
 import { useInView } from 'framer-motion'
 import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,6 +22,7 @@ const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionA
 
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
+  const _isGrouplessAddress = address && isGrouplessAddress(address.hash)
 
   return (
     <SelectOptionItemContent
@@ -36,9 +38,11 @@ const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionA
             <AddressBadgeStyled addressHash={addressHash} disableA11y truncate appendHash />
             {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </AddressBadgeContainer>
-          <Group>
-            {t('Group')} {address?.group}
-          </Group>
+          {!_isGrouplessAddress && (
+            <Group>
+              {t('Group')} {address?.group}
+            </Group>
+          )}
         </Header>
       }
       SecondaryContent={
