@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -23,6 +24,8 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const dispatch = useAppDispatch()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const allAddressesIndexes = useAppSelector(selectAllAddressIndexes)
+  const hasOnlyOneAddress = useAppSelector((s) => s.addresses.ids.length === 1)
+  const { isLedger } = useLedger()
 
   const handleOneAddressPerGroupClick = async () => {
     if (isPassphraseUsed) {
@@ -37,7 +40,10 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   }
 
   const handleDiscoverAddressesClick = () => {
-    discoverAndSaveUsedAddresses({ skipIndexes: allAddressesIndexes })
+    discoverAndSaveUsedAddresses({
+      skipIndexesForAddressesWithGroup: allAddressesIndexes.indexesOfAddressesWithGroup,
+      skipIndexesForGrouplessAddresses: allAddressesIndexes.indexesOfGrouplessAddresses
+    })
     sendAnalytics({ event: 'Advanced operation to discover addresses clicked' })
   }
 
@@ -67,17 +73,20 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           description={t("Declutter your wallet by removing addresses you don't need.")}
           buttonText={t('Start')}
           onButtonClick={handleDeleteAddressesClick}
-          isButtonDisabled={allAddressesIndexes.length === 1}
+          isButtonDisabled={hasOnlyOneAddress}
           disabledButtonTooltip={t('You only have one address. You cannot forget it.')}
         />
-        <OperationBox
-          title={t('Generate one address per group')}
-          Icon={<HardHat color="#a880ff" strokeWidth={1} size={55} />}
-          description={t('Useful for miners or DeFi use.')}
-          buttonText={isPassphraseUsed ? t('Generate') : t('Start')}
-          onButtonClick={handleOneAddressPerGroupClick}
-          infoLink={links.miningWallet}
-        />
+
+        {isLedger && (
+          <OperationBox
+            title={t('Generate one address per group')}
+            Icon={<HardHat color="#a880ff" strokeWidth={1} size={55} />}
+            description={t('Useful for miners or DeFi use.')}
+            buttonText={isPassphraseUsed ? t('Generate') : t('Start')}
+            onButtonClick={handleOneAddressPerGroupClick}
+            infoLink={links.miningWallet}
+          />
+        )}
 
         <ConsolidationOperationBox />
 

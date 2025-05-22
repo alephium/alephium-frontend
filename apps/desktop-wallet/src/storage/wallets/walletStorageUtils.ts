@@ -25,7 +25,7 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
   const initialAddressSettings = getInitialAddressSettings()
 
   try {
-    const address = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+    const address = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'gl-secp256k1' }) // This means that every newly created OR IMPORTED wallet will start with a groupless address.
     const initialAddress = { ...address, ...initialAddressSettings }
 
     store.dispatch(newWalletInitialAddressGenerated(initialAddress))

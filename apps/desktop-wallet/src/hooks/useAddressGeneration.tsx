@@ -29,7 +29,8 @@ interface GenerateAddressProps {
 
 interface DiscoverUsedAddressesProps {
   walletId?: string
-  skipIndexes?: number[]
+  skipIndexesForAddressesWithGroup?: number[]
+  skipIndexesForGrouplessAddresses?: number[]
   enableLoading?: boolean
   enableToast?: boolean
 }
@@ -57,7 +58,10 @@ const useAddressGeneration = () => {
             .then((app) =>
               app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes, keyType: 'default' }) : null
             )
-        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes, keyType: 'default' }),
+        : keyring.generateAndCacheAddress({
+            skipAddressIndexes: currentAddressIndexes,
+            keyType: 'gl-secp256k1'
+          }),
     [currentAddressIndexes, isLedger, onLedgerError]
   )
 
@@ -134,7 +138,7 @@ const useAddressGeneration = () => {
         })
       } else {
         addresses = addressesMetadata.map((metadata) => ({
-          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: 'default' }),
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: metadata.keyType ?? 'default' }),
           ...metadata
         }))
       }
@@ -161,7 +165,8 @@ const useAddressGeneration = () => {
   }
 
   const discoverAndSaveUsedAddresses = async ({
-    skipIndexes,
+    skipIndexesForAddressesWithGroup,
+    skipIndexesForGrouplessAddresses,
     enableLoading = true,
     enableToast = true
   }: DiscoverUsedAddressesProps = {}) => {
@@ -171,8 +176,8 @@ const useAddressGeneration = () => {
       const derivedAddresses = isLedger
         ? await LedgerAlephium.create()
             .catch(onLedgerError)
-            .then((app) => (app ? app.discoverActiveAddresses(skipIndexes) : []))
-        : await discoverAndCacheActiveAddresses(skipIndexes)
+            .then((app) => (app ? app.discoverActiveAddresses(skipIndexesForAddressesWithGroup, 'default') : []))
+        : await discoverAndCacheActiveAddresses(skipIndexesForAddressesWithGroup, skipIndexesForGrouplessAddresses)
 
       const newAddresses = derivedAddresses.map((address) => ({
         ...address,
