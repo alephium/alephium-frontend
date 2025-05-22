@@ -5,6 +5,15 @@ import { AssetAmount } from '@/types/assets'
 import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
+// Address without group number
+const getBaseAddressHash = (address: string): string => {
+  const parts = address.split(':')
+  return parts[0]
+}
+
+const isSameBaseAddress = (address1: string, address2: string): boolean =>
+  getBaseAddressHash(address1) === getBaseAddressHash(address2)
+
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
   address: string,
@@ -36,7 +45,7 @@ export const calcTxAmountsDeltaForAddress = (
 const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Output)[]) =>
   io.reduce(
     (acc, io) => {
-      if (io.address !== address) return acc
+      if (!io.address || !isSameBaseAddress(io.address, address)) return acc
 
       acc.alphAmount += BigInt(io.attoAlphAmount ?? 0)
 
@@ -67,8 +76,13 @@ export const getDirection = (
 export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
-
-  return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
+  return (
+    inputAddresses.length === 1 &&
+    outputAddresses.length === 1 &&
+    inputAddresses[0] !== undefined &&
+    outputAddresses[0] !== undefined &&
+    isSameBaseAddress(inputAddresses[0], outputAddresses[0])
+  )
 }
 
 export const isConfirmedTx = (
@@ -112,8 +126,8 @@ export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: e.
   addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
 
 export const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.Transaction | e.PendingTransaction) =>
-  tx.inputs?.some((input) => input.address === addressHash) ||
-  tx.outputs?.some((output) => output.address === addressHash)
+  tx.inputs?.some((input) => input.address && isSameBaseAddress(input.address, addressHash)) ||
+  tx.outputs?.some((output) => output.address && isSameBaseAddress(output.address, addressHash))
 
 export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: e.Transaction) =>
   addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))
