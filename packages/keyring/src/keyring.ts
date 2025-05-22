@@ -128,7 +128,9 @@ export class Keyring {
   }
 
   private _generateAndCacheAddress = (props: GenerateAddressProps): SensitiveAddressData => {
-    const cachedAddress = this.addresses.find(({ index }) => index === props.addressIndex)
+    const cachedAddress = this.addresses.find(
+      ({ index, keyType }) => index === props.addressIndex && keyType === props.keyType
+    )
 
     if (cachedAddress) {
       if (!cachedAddress.privateKey) {

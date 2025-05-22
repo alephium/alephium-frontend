@@ -86,6 +86,9 @@ const useWalletLock = () => {
     }
 
     try {
+      // TODO: This is used only for passphrase. What do we do when unlocking a passphrase wallet after Danube?
+      // Do we generate a groupless address at index 0? What if the user had their funds in index 0 of default keyType?
+      // Do we do address discovery?
       initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
     } catch (e) {
       console.error(e)

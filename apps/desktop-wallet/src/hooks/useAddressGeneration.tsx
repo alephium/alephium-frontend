@@ -120,6 +120,7 @@ const useAddressGeneration = () => {
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
+    // TODO: What to do with groupless addresses?
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
       addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'default', settings: initialAddressSettings })
@@ -144,6 +145,7 @@ const useAddressGeneration = () => {
       }
 
       // Fix corrupted data if there is no default address in stored address metadata by making first address default
+      // TODO: What to do with groupless addresses?
       if (!addresses.some((address) => address.isDefault)) {
         addresses[0].isDefault = true
         addressMetadataStorage.storeOne(walletId, {
