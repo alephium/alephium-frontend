@@ -1,6 +1,7 @@
 import {
   AddressHash,
   exponentialBackoffFetchRetry,
+  isGrouplessTxResult,
   SentTransaction,
   throttledClient,
   transactionSent
@@ -45,7 +46,11 @@ export const appDataCleared = createAction('app/appDataCleared')
 
 export const appDataClearFailed = createAction('app/appDataClearFailed')
 
-export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+export const receiveFaucetTokens = createAsyncThunk<
+  SentTransaction | undefined,
+  AddressHash,
+  { rejectValue: SnackbarMessage }
+>(
   'assets/receiveFaucetTokens',
   async (destinationAddress: AddressHash, { getState, rejectWithValue, fulfillWithValue, dispatch }) => {
     const state = getState() as RootState
@@ -81,6 +86,8 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
           }
         ]
       })
+
+      if (isGrouplessTxResult(builtTx)) return
 
       const txRes = await throttledClient.node.transactions.postTransactionsSubmit({
         unsignedTx: builtTx.unsignedTx,

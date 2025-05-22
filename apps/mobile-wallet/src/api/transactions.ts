@@ -1,4 +1,4 @@
-import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, isGrouplessTxResult, throttledClient } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -33,6 +33,9 @@ export const buildUnsignedTransactions = async (
     })
 
     if (!data) return
+
+    // TODO: handle groupless transfer txs
+    if (isGrouplessTxResult(data)) return
 
     return {
       unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],

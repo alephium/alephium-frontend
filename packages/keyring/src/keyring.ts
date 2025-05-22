@@ -5,13 +5,14 @@ import {
   isAddressIndexValid,
   resetArray
 } from '@alephium/shared'
-import { bs58, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import { addressFromPublicKey, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import { getHDWalletPath } from '@alephium/web3-wallet'
 import * as metamaskBip39 from '@metamask/scure-bip39'
-import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
+import { publicKeyFromPrivateKey } from '@/utils'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -36,15 +37,12 @@ export type GenerateAddressProps = {
 }
 
 export class Keyring {
-  private hdPath = "m/44'/1234'/0'/0"
   private hdWallet: HDKey | null
-  private root: HDKey | null
   private addresses: NullableSensitiveAddressData[]
 
   constructor() {
     this.addresses = []
     this.hdWallet = null
-    this.root = null
   }
 
   // PUBLIC METHODS
@@ -58,7 +56,6 @@ export class Keyring {
     })
 
     this.hdWallet = null
-    this.root = null
     this.addresses = []
   }
 
@@ -126,7 +123,7 @@ export class Keyring {
     return bytesToHex(address.privateKey)
   }
 
-  public isInitialized = () => this.root !== null
+  public isInitialized = () => this.hdWallet !== null
 
   // PRIVATE METHODS
 
@@ -198,33 +195,28 @@ export class Keyring {
   }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey })
 
   private _initFromMnemonic = (mnemonic: Uint8Array | null, passphrase: string) => {
-    if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
+    if (this.hdWallet) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
     const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, bip39Words, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)
-    this.root = this.hdWallet.derive(this.hdPath)
 
     passphrase = ''
   }
 
   private _deriveAddressAndKeys = (addressIndex: number): SensitiveAddressData => {
-    if (!this.root) throw new Error('Keyring: Cannot derive address and keys, secret recovery phrase is not provided')
+    if (!this.hdWallet)
+      throw new Error('Keyring: Cannot derive address and keys, secret recovery phrase is not provided')
     if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
 
-    const keyPair = this.root.deriveChild(addressIndex)
+    const keyType = 'default'
+    const path = getHDWalletPath(keyType, addressIndex)
+    const { privateKey } = this.hdWallet.derive(path)
 
-    if (!keyPair.publicKey) throw new Error('Keyring: Missing public key')
-    if (!keyPair.privateKey) throw new Error('Keyring: Missing private key')
+    if (!privateKey) throw new Error('Keyring: Missing private key')
 
-    const publicKey = bytesToHex(keyPair.publicKey)
-    const privateKey = keyPair.privateKey
-    const hash = blake.blake2b(Uint8Array.from(keyPair.publicKey), undefined, 32)
-    const type = new Uint8Array([0])
-    const bytes = new Uint8Array(type.length + hash.length)
-    bytes.set(type, 0)
-    bytes.set(hash, type.length)
-    const address = bs58.encode(bytes)
+    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
+    const address = addressFromPublicKey(publicKey, keyType)
 
     return { hash: address, publicKey, privateKey, index: addressIndex }
   }

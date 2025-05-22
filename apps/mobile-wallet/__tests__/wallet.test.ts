@@ -111,7 +111,7 @@ describe(migrateDeprecatedMnemonic, () => {
   })
 
   it('should migrate mnemonic even if there is no wallet metadata stored', async () => {
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
 
     await expect(() => migrateDeprecatedMnemonic(testWalletMnemonicString)).rejects.toThrow()
     expect(mockedSetItemAsync).toHaveBeenCalledWith(
@@ -123,24 +123,24 @@ describe(migrateDeprecatedMnemonic, () => {
   })
 
   it('should clear secrets after migrating successfully', async () => {
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
 
     addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
   })
 
   it('should clear secrets even when there is an error', async () => {
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
 
     await expect(() => migrateDeprecatedMnemonic(testWalletMnemonicString)).rejects.toThrow()
 
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
   })
 
   it('should store public and private key in secure store', async () => {
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
 
     addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
@@ -174,7 +174,7 @@ describe(migrateDeprecatedMnemonic, () => {
   })
 
   it('should add hash in address metadata', async () => {
-    expect(keyring['root']).toBeNull()
+    expect(keyring['hdWallet']).toBeNull()
 
     addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
