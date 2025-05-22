@@ -10,6 +10,7 @@ import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
@@ -32,6 +33,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
+  const { isLedger } = useLedger()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
@@ -123,7 +125,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
           )}
         </InfoBox>
       )}
-      {singleAddress && (
+      {singleAddress && isLedger && (
         <ToggleSection title={t('Advanced options')} subtitle={t('Select address group')}>
           <Select
             label={t('Group')}

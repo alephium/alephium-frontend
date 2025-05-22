@@ -18,32 +18,15 @@ import * as metamaskBip39 from '@metamask/scure-bip39'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
+import {
+  canHaveTargetGroup,
+  GenerateAddressProps,
+  NonSensitiveAddressData,
+  NullableSensitiveAddressData,
+  SensitiveAddressData
+} from '@/keyringTypes'
 import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
 import { publicKeyFromPrivateKey } from '@/utils'
-
-export type NonSensitiveAddressData = {
-  hash: AddressHash
-  index: number
-  publicKey: string
-  keyType: KeyType
-}
-
-export type NonSensitiveAddressDataWithGroup = NonSensitiveAddressData & { group: number }
-
-type SensitiveAddressData = NonSensitiveAddressData & {
-  privateKey: Uint8Array
-}
-
-type NullableSensitiveAddressData = NonSensitiveAddressData & {
-  privateKey: Uint8Array | null
-}
-
-export type GenerateAddressProps = {
-  keyType: KeyType
-  group?: number
-  addressIndex?: number
-  skipAddressIndexes?: number[]
-}
 
 export class Keyring {
   private hdWallet: HDKey | null
@@ -162,20 +145,21 @@ export class Keyring {
     return address
   }
 
-  private _generateAddress = ({
-    group,
-    addressIndex,
-    keyType,
-    skipAddressIndexes = []
-  }: GenerateAddressProps): SensitiveAddressData => {
-    if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
-      throw new Error(`Keyring: Could not generate address in group ${group}, group is invalid`)
+  private _generateAddress = (props: GenerateAddressProps): SensitiveAddressData => {
+    const { addressIndex, keyType, skipAddressIndexes = [] } = props
+
+    if (
+      canHaveTargetGroup(props) &&
+      props.group !== undefined &&
+      (!Number.isInteger(props.group) || props.group < 0 || props.group >= TOTAL_NUMBER_OF_GROUPS)
+    )
+      throw new Error(`Keyring: Could not generate address in group ${props.group}, group is invalid`)
 
     if (addressIndex !== undefined) {
       if (!Number.isInteger(addressIndex) || addressIndex < 0)
         throw new Error(`Keyring: Could not generate address, ${addressIndex} is not a valid addressIndex`)
 
-      if (group !== undefined || skipAddressIndexes.length > 0)
+      if ((canHaveTargetGroup(props) && props.group !== undefined) || skipAddressIndexes.length > 0)
         throw new Error(
           'Keyring: Could not generate address, invalid arguments passed: when addressIndex is provided the group and skipAddressIndexes should not be provided.'
         )
@@ -190,7 +174,11 @@ export class Keyring {
       : initialAddressIndex
     let newAddressData = this._deriveAddressAndKeys(nextAddressIndex, keyType)
 
-    while (group !== undefined && groupOfAddress(newAddressData.hash) !== group) {
+    while (
+      canHaveTargetGroup(props) &&
+      props.group !== undefined &&
+      groupOfAddress(newAddressData.hash) !== props.group
+    ) {
       nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
       newAddressData = this._deriveAddressAndKeys(nextAddressIndex, keyType)
     }
