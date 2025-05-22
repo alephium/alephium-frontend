@@ -15,7 +15,7 @@ const InfoGrid = ({ children, className }: InfoGridProps) => <div className={cla
 // Subcomponent declaration
 
 interface GridCellProps {
-  label: string
+  label: string | ReactNode
   value?: ReactNode
   sublabel?: ReactNode
   className?: string
