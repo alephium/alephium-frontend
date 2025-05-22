@@ -1,6 +1,12 @@
 import { addApostrophes, calculateTokenAmountWorth, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress, isGrouplessAddress, isValidAddress } from '@alephium/web3'
+import {
+  contractIdFromAddress,
+  groupOfAddress,
+  isGrouplessAddressWithGroupIndex,
+  isGrouplessAddressWithoutGroupIndex,
+  isValidAddress
+} from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -19,6 +25,7 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Buttons/Button'
 import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import HighlightedHash from '@/components/HighlightedHash'
+import { SimpleLink } from '@/components/Links'
 import PageSwitch from '@/components/PageSwitch'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -34,6 +41,7 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import { removeGroupIndexFromAddress } from '@/utils/strings'
 
 type ParamTypes = {
   id: string
@@ -56,7 +64,8 @@ const AddressInfoPage = () => {
 
   const addressHash = id && isValidAddress(id) ? id : ''
 
-  const isGroupless = isGrouplessAddress(addressHash)
+  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
+  const isGrouplessSubaddress = isGrouplessAddressWithGroupIndex(addressHash)
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
@@ -164,7 +173,20 @@ const AddressInfoPage = () => {
   return (
     <Section>
       <SectionTitle
-        title={isContract ? t('Contract') : t('Addresses_one')}
+        title={
+          isContract ? (
+            t('Contract')
+          ) : isGrouplessSubaddress ? (
+            <>
+              {t('Sub-addresses_one')}
+              <Button onClick={() => navigate(`/addresses/${removeGroupIndexFromAddress(addressHash)}`)}>
+                {t('Go to parent address')}
+              </Button>
+            </>
+          ) : (
+            t('Addresses_one')
+          )
+        }
         subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
       />
       <InfoGridAndQR>
@@ -196,7 +218,22 @@ const AddressInfoPage = () => {
             value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
-          <InfoGrid.Cell label={t('Address group')} value={isGroupless ? t('Groupless') : addressGroup?.toString()} />
+          <InfoGrid.Cell
+            label={isGrouplessSubaddress ? t('Sub-address group') : t('Address group')}
+            value={<GroupContainer>{isGrouplessAddress ? t('Groupless') : addressGroup?.toString()}</GroupContainer>}
+            sublabel={
+              isGrouplessAddress && (
+                <SubAddressesList>
+                  {t('Sub-addresses')}:
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SubAddressLink key={i} to={`/addresses/${addressHash}:${i}`}>
+                      {i + 1}
+                    </SubAddressLink>
+                  ))}
+                </SubAddressesList>
+              )
+            }
+          />
           <InfoGrid.Cell
             label={t('Latest activity')}
             value={
@@ -348,4 +385,24 @@ const NoTxsMessage = styled.tr`
   color: ${({ theme }) => theme.font.secondary};
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
+`
+
+const GroupContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+`
+
+const SubAddressesList = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`
+
+const SubAddressLink = styled(SimpleLink)`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  padding: 2px 4px;
+  border-radius: 4px;
 `

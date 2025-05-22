@@ -34,3 +34,5 @@ export const formatNumberForDisplay = (
 
 export const SIMPLE_DATE_FORMAT = 'DD/MM/YYYY'
 export const DATE_TIME_FORMAT = `${SIMPLE_DATE_FORMAT} HH:mm:ss [UTC]Z`
+
+export const removeGroupIndexFromAddress = (address: string) => address.replace(/:\d+$/, '')
