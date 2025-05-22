@@ -5,6 +5,7 @@ import {
   useUnsortedAddressesHashes
 } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -12,8 +13,8 @@ import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -25,17 +26,18 @@ interface AddressesWithTokenModalProps {
 const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useUnsortedAddressesHashes().length
+  const { dismiss } = useBottomSheetModal()
   const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
 
   const handleAddressPress = (addressHash: AddressHash) => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
     dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
   }
 
   return (
-    <BottomModal modalId={id} title={<Header tokenId={tokenId} />}>
+    <BottomModal2 modalId={id} title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
         {addresses.map((addressHash, i) => (
@@ -49,7 +51,7 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
           />
         ))}
       </Content>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

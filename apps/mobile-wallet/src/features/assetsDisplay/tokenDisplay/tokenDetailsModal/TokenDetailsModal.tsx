@@ -6,6 +6,7 @@ import {
 } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,26 +25,25 @@ import {
   TokenDetailsModalProps
 } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const handleClose = () => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
 
-    if (parentModalId) dispatch(closeModal({ id: parentModalId }))
+    if (parentModalId) dismiss(parentModalId)
   }
 
   return (
-    <BottomModal modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
+    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
@@ -53,7 +53,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
         </ActionButtons>
         <TokenDetailsModalDescription tokenId={tokenId} />
       </Content>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

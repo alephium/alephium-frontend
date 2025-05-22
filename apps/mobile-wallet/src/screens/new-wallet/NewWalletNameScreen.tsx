@@ -1,4 +1,5 @@
 import { newWalletInitialAddressGenerated } from '@alephium/shared'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,6 +40,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
 
   const [name, setName] = useState('')
 
@@ -54,6 +56,9 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       try {
         await sleep(0) // Allow react state to update to display loader before heavy operation
         const wallet = await generateAndStoreWallet(name)
+
+        clearQueryCache()
+        await restoreQueryCache(wallet.id)
 
         dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
         dispatch(newWalletGenerated(wallet))

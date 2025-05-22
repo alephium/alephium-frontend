@@ -13,7 +13,7 @@ const modalSlice = createSlice({
     builder
       .addCase(openModal, (state, action) => {
         modalAdapter.addOne(state, {
-          id: Date.now(),
+          id: Date.now().toString(),
           params: action.payload,
           isClosing: false
         })

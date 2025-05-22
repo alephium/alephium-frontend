@@ -4,18 +4,15 @@ import addressesSlice from '@/store/addresses/addressesSlice'
 import clientsSlice from '@/store/clients/clientsSlice'
 import hiddenTokensSlice from '@/store/hiddenTokens/hiddenTokensSlice'
 import networkSlice from '@/store/network/networkSlice'
-import pricesSlice from '@/store/prices/pricesSlice'
 import sentTransactionsSlice from '@/store/sentTransactions/sentTransactionsSlice'
 import { AddressesState, ClientsState, SentTransactionsState } from '@/types'
 import { HiddenTokensState } from '@/types/assets'
 import { NetworkState } from '@/types/network'
-import { PricesState } from '@/types/price'
 import { SharedSettings } from '@/types/sharedSettings'
 
 import sharedSettingsSlice from './sharedSettings/sharedSettingsSlice'
 
 export const sharedReducer = {
-  [pricesSlice.name]: pricesSlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
   [clientsSlice.name]: clientsSlice.reducer,
   [hiddenTokensSlice.name]: hiddenTokensSlice.reducer,
@@ -32,7 +29,6 @@ export const sharedReducer = {
 // export type SharedDispatch = typeof sharedStore.dispatch
 
 export type SharedRootState = {
-  [pricesSlice.name]: PricesState
   [networkSlice.name]: NetworkState
   [clientsSlice.name]: ClientsState
   [hiddenTokensSlice.name]: HiddenTokensState

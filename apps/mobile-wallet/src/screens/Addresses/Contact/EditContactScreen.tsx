@@ -7,7 +7,6 @@ import { Alert } from 'react-native'
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteContact, persistContact } from '~/persistent-storage/contacts'
@@ -35,8 +34,6 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
               {
                 text: t('Delete'),
                 onPress: async () => {
-                  dispatch(activateAppLoading(t('Deleting')))
-
                   try {
                     await deleteContact(params.contactId)
 
@@ -46,8 +43,6 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
 
                     showExceptionToast(error, t(message))
                     sendAnalytics({ type: 'error', error, message })
-                  } finally {
-                    dispatch(deactivateAppLoading())
                   }
 
                   navigation.pop(3)
@@ -63,8 +58,6 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
   if (!contact) return null
 
   const handleSavePress = async (formData: ContactFormData) => {
-    dispatch(activateAppLoading(t('Saving')))
-
     try {
       await persistContact(formData)
 
@@ -76,9 +69,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
       sendAnalytics({ type: 'error', error, message })
     }
 
-    dispatch(deactivateAppLoading())
-
-    navigation.goBack()
+    navigation.pop()
   }
 
   return (

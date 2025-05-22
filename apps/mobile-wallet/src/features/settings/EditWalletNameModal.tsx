@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -6,8 +7,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
@@ -18,6 +18,7 @@ const EditWalletNameModal = withModal(({ id }) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { dismiss } = useBottomSheetModal()
 
   const [name, setName] = useState(walletName)
 
@@ -37,16 +38,16 @@ const EditWalletNameModal = withModal(({ id }) => {
     }
 
     dispatch(deactivateAppLoading())
-    dispatch(closeModal({ id }))
+    dismiss(id)
   }
 
   return (
-    <BottomModal modalId={id} title={t('Wallet name')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Wallet name')}>
       <ScreenSection verticalGap>
-        <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+        <Input isInModal value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

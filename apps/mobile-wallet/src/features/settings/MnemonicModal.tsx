@@ -1,15 +1,13 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { usePreventScreenCapture } from 'expo-screen-capture'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import OrderedTable from '~/features/settings/OrderedTable'
-import { useAppDispatch } from '~/hooks/redux'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 
 interface MnemonicModalProps {
@@ -18,7 +16,7 @@ interface MnemonicModalProps {
 
 const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
   const [mnemonic, setMnemonic] = useState<string>()
 
@@ -34,22 +32,19 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
 
   const handleVerifyButtonPress = () => {
     onVerifyPress && onVerifyPress()
-    dispatch(closeModal({ id }))
+    dismiss(id)
   }
 
   return (
-    <BottomModal modalId={id}>
-      <ModalContent verticalGap>
-        <ScreenSection fill>
-          <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+      <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+
+      {onVerifyPress && (
+        <ScreenSection>
+          <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
         </ScreenSection>
-        {onVerifyPress && (
-          <ScreenSection>
-            <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
-          </ScreenSection>
-        )}
-      </ModalContent>
-    </BottomModal>
+      )}
+    </BottomModal2>
   )
 })
 

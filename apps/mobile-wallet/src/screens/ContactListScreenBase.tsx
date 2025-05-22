@@ -26,9 +26,15 @@ export interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress: () => void
   style?: AnimatedProps<ViewProps>['style']
+  isInModal?: boolean
 }
 
-const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
+const ContactListScreenBase = ({
+  onContactPress,
+  onNewContactPress,
+  isInModal,
+  ...props
+}: ContactListScreenBaseProps) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
@@ -51,7 +57,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
     <Animated.View {...props}>
       {contacts.length > 4 && (
         <HeaderScreenSection>
-          <SearchInput value={searchTerm} onChangeText={setSearchTerm} />
+          <SearchInput isInModal={isInModal} value={searchTerm} onChangeText={setSearchTerm} />
         </HeaderScreenSection>
       )}
       {contacts.length === 0 ? (
