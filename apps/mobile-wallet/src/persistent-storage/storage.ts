@@ -24,7 +24,9 @@ export async function migrateFromAsyncStorage(): Promise<void> {
           storage.set(key, value)
         }
 
-        AsyncStorage.removeItem(key)
+        // TODO: We should delete the AsyncStorage data but for now we are keeping it in case something goes wrong
+        // to prevent data loss.
+        // AsyncStorage.removeItem(key)
       }
     } catch (error) {
       console.error(`Failed to migrate key "${key}" from AsyncStorage to MMKV!`, error)
