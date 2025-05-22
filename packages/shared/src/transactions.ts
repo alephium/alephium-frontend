@@ -6,16 +6,25 @@ import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/tra
 import { uniq } from '@/utils'
 
 // Address without group number
+<<<<<<< HEAD
 export const getBaseAddressStr = (address: string): string => {
+=======
+const getBaseAddressHash = (address: string): string => {
+>>>>>>> d45726b16 (Fix amount delta computation (take into account base address without group))
   const parts = address.split(':')
   return parts[0]
 }
 
+<<<<<<< HEAD
 export const getInputOutputBaseAddress = (io: e.Input | e.Output): string | undefined =>
   io.address ? getBaseAddressStr(io.address) : undefined
 
 export const isSameBaseAddress = (address1: string, address2: string): boolean =>
   getBaseAddressStr(address1) === getBaseAddressStr(address2)
+=======
+const isSameBaseAddress = (address1: string, address2: string): boolean =>
+  getBaseAddressHash(address1) === getBaseAddressHash(address2)
+>>>>>>> d45726b16 (Fix amount delta computation (take into account base address without group))
 
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
