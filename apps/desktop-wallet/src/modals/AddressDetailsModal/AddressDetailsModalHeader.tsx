@@ -7,6 +7,7 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
+import { useLedger } from '@/features/ledger/useLedger'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { openInWebBrowser } from '@/utils/misc'
@@ -36,6 +37,7 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
   const theme = useTheme()
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const { isLedger } = useLedger()
 
   if (!address) return null
 
@@ -51,9 +53,11 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
         />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
-      <Badge short color={theme.font.tertiary}>
-        {t('Group')} {address.group}
-      </Badge>
+      {isLedger && (
+        <Badge short color={theme.font.tertiary}>
+          {t('Group')} {address.group}
+        </Badge>
+      )}
     </>
   )
 }
