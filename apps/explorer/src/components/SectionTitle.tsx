@@ -41,6 +41,7 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   display: flex;
+  gap: 14px;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2rem;
