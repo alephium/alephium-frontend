@@ -220,7 +220,7 @@ SelectItem = styled(SelectItem)`
   font-size: 13px;
   line-height: 14.4px;
 
-  padding: 15px;
+  padding: 8px 10px;
 
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};

@@ -28,7 +28,7 @@ export default Card
 const Container = styled(motion.div)`
   flex: 1;
   position: relative;
-  border-radius: 9px;
+  border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
   display: flex;

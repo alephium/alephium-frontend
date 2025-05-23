@@ -54,7 +54,7 @@ export default styled(TableRow)`
   }
 
   td:first-child .row-link {
-    padding-left: 20px;
+    padding-left: 12px;
   }
 
   td:nth-child(2) {

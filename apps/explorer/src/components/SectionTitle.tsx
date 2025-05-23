@@ -26,7 +26,7 @@ const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitle
 )
 
 const TitleWrapper = styled.div`
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 `
 
 const TitleRow = styled.div`

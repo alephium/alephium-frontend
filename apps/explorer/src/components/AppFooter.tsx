@@ -71,7 +71,7 @@ export default styled(AppFooter)`
   display: flex;
   justify-content: space-between;
   position: relative;
-  padding: 10px 30px;
+  padding: 10px 16px;
 
   &::before {
     content: '';
@@ -124,8 +124,6 @@ const SocialMediaIconList = styled.div`
 `
 
 const StyledNetworkSwitch = styled(NetworkSwitch)`
-  display: none;
-
   @media ${deviceBreakPoints.mobile} {
     display: inherit;
   }
