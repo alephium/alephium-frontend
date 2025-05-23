@@ -41,11 +41,9 @@ InfoGrid.Cell = GridCell
 
 export default styled(InfoGrid)`
   display: grid;
-  background-color: ${({ theme }) => theme.border.secondary};
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1px;
+  grid-gap: 6px;
   flex: 1;
-  overflow: hidden;
   border-radius: 8px;
 
   @media ${deviceBreakPoints.tablet} {
@@ -59,6 +57,7 @@ const CellContainer = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.primary};
   padding: 0px 20px;
+  border-radius: 8px;
 `
 
 const Label = styled.label`
