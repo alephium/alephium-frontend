@@ -56,6 +56,7 @@ export default styled(TableTabBar)`
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 8px 8px 0 0;
   overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
@@ -65,10 +66,10 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   justify-content: center;
   font-size: 15px;
   margin: 10px;
-  border-radius: 8px;
-  height: 38px;
+  border-radius: 6px;
+  height: 34px;
   cursor: pointer;
-  padding: 0 10px;
+  padding: 0 8px;
 
   ${({ isAlone }) =>
     isAlone &&
@@ -85,11 +86,11 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          background-color: ${theme.bg.secondary};
+          background-color: ${theme.bg.primary};
           box-shadow: inset 0 0 0 1px ${theme.border.primary};
         `
       : css`
-          background-color: ${theme.bg.primary};
+          background-color: ${theme.bg.secondary};
         `}
 
   opacity: ${({ isActive }) => (isActive ? 1 : 0.6)};

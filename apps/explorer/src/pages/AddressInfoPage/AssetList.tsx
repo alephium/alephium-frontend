@@ -144,6 +144,7 @@ export default styled(AssetList)`
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: 8px;
+  overflow: hidden;
 `
 
 const EmptyListContainer = styled.div`
