@@ -175,7 +175,7 @@ const HomePage = () => {
         <LatestsBlocks>
           <h2>{t('Latest Blocks')}</h2>
           <Content>
-            <BlockListTable main isLoading={blockPageLoading} minHeight={511}>
+            <BlockListTable noBorder main isLoading={blockPageLoading} minHeight={511}>
               <TableHeader
                 headerTitles={[t('Height'), t('Timestamp'), t('Txn'), t('Chain index')]}
                 columnWidths={['20%', '30%', '20%', '25%']}
