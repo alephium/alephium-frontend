@@ -58,7 +58,7 @@ const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, transparent, theme }) =>
     !noBorder && `1px solid ${transparent ? theme.border.secondary : theme.border.primary}`};
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 8px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
 `

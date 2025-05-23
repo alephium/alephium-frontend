@@ -154,7 +154,7 @@ const TransactionInfoPage = () => {
       <SectionTitle title={t('Transaction')} />
       {!errorMessage ? (
         <>
-          <Table bodyOnly isLoading={txInfoLoading}>
+          <Table noBorder bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
               <TableBody>
                 <TableRow>

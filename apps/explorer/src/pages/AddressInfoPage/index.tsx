@@ -283,7 +283,7 @@ const AddressInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={txListLoading}>
+      <Table noBorder hasDetails main scrollable isLoading={txListLoading}>
         {(!txListLoading && txList?.length) || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
@@ -373,10 +373,8 @@ const SectionHeader = styled.div`
 const InfoGridAndQR = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -394,8 +392,8 @@ const QRCodeCell = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.primary};
   padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.secondary};
-  border-radius: 0 8px 8px 0;
+  margin-left: 5px;
+  border-radius: 8px;
 `
 
 const NoTxsMessage = styled.tr`
