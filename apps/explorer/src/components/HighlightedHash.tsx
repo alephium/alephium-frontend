@@ -16,7 +16,7 @@ const HighlightedHash = ({
   text,
   textToCopy,
   middleEllipsis = false,
-  fontSize = 14,
+  fontSize = 15,
   maxWidth = 'auto',
   className
 }: HighlightedHashProps) => (
