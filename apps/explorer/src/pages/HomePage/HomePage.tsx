@@ -304,7 +304,7 @@ const TimeIntervalButton = styled.button<{ isSelected: boolean }>`
 const StatisticsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 23px;
+  gap: 12px;
 
   div:nth-child(1) {
     grid-column-end: span 2;
