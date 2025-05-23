@@ -34,7 +34,7 @@ const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 25%;
-  height: 155px;
+  height: 162px;
   padding: 20px;
   overflow: hidden;
 

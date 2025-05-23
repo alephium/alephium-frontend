@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { createContext, useContext } from 'react'
 import { RiArrowDownSLine } from 'react-icons/ri'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 interface DetailsRowProps {
   openCondition: boolean
@@ -19,7 +19,9 @@ interface DetailToggleProps {
 
 export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
   <OpenConditionContext.Provider value={openCondition}>
-    <tr className="details">{children}</tr>
+    <RowContainer className="details" open={openCondition}>
+      {children}
+    </RowContainer>
   </OpenConditionContext.Provider>
 )
 
@@ -65,7 +67,18 @@ const DetailToggleWrapper = styled(motion.div)`
   color: ${({ theme }) => theme.font.tertiary};
 `
 
+const RowContainer = styled.tr<{ open: boolean }>`
+  position: relative;
+
+  ${({ open }) =>
+    open &&
+    css`
+      border-top: 1px solid ${({ theme }) => theme.border.secondary};
+    `}
+`
+
 const AnimatedCellContainer = styled(motion.div)<{ alignItems: 'left' | 'right' }>`
+  height: 100%;
   padding: 10px 0;
   text-align: left;
   overflow: hidden;
