@@ -25,7 +25,7 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Buttons/Button'
 import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import HighlightedHash from '@/components/HighlightedHash'
-import { SimpleLink } from '@/components/Links'
+import Menu from '@/components/Menu'
 import PageSwitch from '@/components/PageSwitch'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -63,9 +63,10 @@ const AddressInfoPage = () => {
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const addressHash = id && isValidAddress(id) ? id : ''
+  const addressWithoutGroup = removeGroupIndexFromAddress(addressHash)
 
   const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
-  const isGrouplessSubaddress = isGrouplessAddressWithGroupIndex(addressHash)
+  const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
@@ -173,20 +174,7 @@ const AddressInfoPage = () => {
   return (
     <Section>
       <SectionTitle
-        title={
-          isContract ? (
-            t('Contract')
-          ) : isGrouplessSubaddress ? (
-            <>
-              {t('Sub-addresses_one')}
-              <Button onClick={() => navigate(`/addresses/${removeGroupIndexFromAddress(addressHash)}`)}>
-                {t('Go to parent address')}
-              </Button>
-            </>
-          ) : (
-            t('Addresses_one')
-          )
-        }
+        title={isContract ? t('Contract') : t('Addresses_one')}
         subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
       />
       <InfoGridAndQR>
@@ -219,18 +207,47 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
           <InfoGrid.Cell
-            label={isGrouplessSubaddress ? t('Sub-address group') : t('Address group')}
-            value={<GroupContainer>{isGrouplessAddress ? t('Groupless') : addressGroup?.toString()}</GroupContainer>}
-            sublabel={
-              isGrouplessAddress && (
-                <SubAddressesList>
-                  {t('Sub-addresses')}:
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <SubAddressLink key={i} to={`/addresses/${addressHash}:${i}`}>
-                      {i + 1}
-                    </SubAddressLink>
-                  ))}
-                </SubAddressesList>
+            label={t('Group(s)')}
+            value={
+              isGrouplessAddress || isGroupedAddress ? (
+                <GroupMenu
+                  label={isGrouplessAddress ? t('All') : `${t('Group')} ${addressGroup?.toString() || ''}`}
+                  items={[
+                    {
+                      text: t('All'),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 0 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:0`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 1 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:1`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 2 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:2`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 3 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:3`)
+                      }
+                    }
+                  ]}
+                  direction="down"
+                />
+              ) : (
+                addressGroup
               )
             }
           />
@@ -360,7 +377,6 @@ const InfoGridAndQR = styled.div`
   width: 100%;
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -376,9 +392,10 @@ const QRCodeCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
+  box-shadow: -1px 0 ${({ theme }) => theme.border.secondary};
+  border-radius: 0 8px 8px 0;
 `
 
 const NoTxsMessage = styled.tr`
@@ -387,22 +404,10 @@ const NoTxsMessage = styled.tr`
   padding: 15px 20px;
 `
 
-const GroupContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-`
-
-const SubAddressesList = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
-`
-
-const SubAddressLink = styled(SimpleLink)`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  padding: 2px 4px;
-  border-radius: 4px;
+const GroupMenu = styled(Menu)`
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  width: fit-content;
+  min-width: 120px;
+  font-size: 17px;
+  font-weight: 500;
 `

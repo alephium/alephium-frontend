@@ -45,6 +45,8 @@ export default styled(InfoGrid)`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1px;
   flex: 1;
+  overflow: hidden;
+  border-radius: 8px;
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(2, 1fr);
@@ -56,7 +58,7 @@ const CellContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.primary};
-  padding: 10px 20px;
+  padding: 0px 20px;
 `
 
 const Label = styled.label`
@@ -70,8 +72,8 @@ const Label = styled.label`
 `
 
 const Value = styled(motion.div)`
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
 
   @media ${deviceBreakPoints.tiny} {
     font-size: 18px;

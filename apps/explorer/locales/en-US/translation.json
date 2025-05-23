@@ -138,8 +138,8 @@
   "Video thumbnail": "Video thumbnail",
   "No media": "No media",
   "Address worth": "Address worth",
-  "Groupless": "Groupless",
-  "Go to parent address": "Go to parent address",
-  "Sub-address group": "Sub-address group",
-  "Sub-addresses_one": "Sub-address"
+  "Group": "Group",
+  "Group(s)": "Group(s)",
+  "All": "All",
+  "Group {{ number }}": "Group {{ number }}"
 }
