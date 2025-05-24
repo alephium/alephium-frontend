@@ -122,11 +122,12 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: 50px;
   padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};
+  border: none;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
   z-index: 10;
 
   &:focus,

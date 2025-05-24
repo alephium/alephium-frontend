@@ -109,7 +109,6 @@ const AddressLinkBase = ({
 }
 
 export const AddressLink = styled(AddressLinkBase)`
-  padding: 3px 0;
   display: flex;
 
   ${({ flex }) =>

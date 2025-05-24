@@ -1,6 +1,12 @@
 import { addApostrophes, calculateAmountWorth, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress, isValidAddress } from '@alephium/web3'
+import {
+  contractIdFromAddress,
+  groupOfAddress,
+  isGrouplessAddressWithGroupIndex,
+  isGrouplessAddressWithoutGroupIndex,
+  isValidAddress
+} from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -19,6 +25,7 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Buttons/Button'
 import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import HighlightedHash from '@/components/HighlightedHash'
+import Menu from '@/components/Menu'
 import PageSwitch from '@/components/PageSwitch'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -34,6 +41,7 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import { removeGroupIndexFromAddress } from '@/utils/strings'
 
 type ParamTypes = {
   id: string
@@ -55,6 +63,10 @@ const AddressInfoPage = () => {
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const addressHash = id && isValidAddress(id) ? id : ''
+  const addressWithoutGroup = removeGroupIndexFromAddress(addressHash)
+
+  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
+  const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
@@ -192,7 +204,51 @@ const AddressInfoPage = () => {
             value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
-          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+          <InfoGrid.Cell
+            label={t('Group(s)')}
+            value={
+              isGrouplessAddress || isGroupedAddress ? (
+                <GroupMenu
+                  label={isGrouplessAddress ? t('All') : `${t('Group')} ${addressGroup?.toString() || ''}`}
+                  items={[
+                    {
+                      text: t('All'),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 0 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:0`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 1 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:1`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 2 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:2`)
+                      }
+                    },
+                    {
+                      text: t('Group {{ number }}', { number: 3 }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:3`)
+                      }
+                    }
+                  ]}
+                  direction="down"
+                />
+              ) : (
+                addressGroup
+              )
+            }
+          />
           <InfoGrid.Cell
             label={t('Latest activity')}
             value={
@@ -225,7 +281,7 @@ const AddressInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={txListLoading}>
+      <Table noBorder hasDetails main scrollable isLoading={txListLoading}>
         {(!txListLoading && txList?.length) || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
@@ -315,11 +371,8 @@ const SectionHeader = styled.div`
 const InfoGridAndQR = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -335,13 +388,22 @@ const QRCodeCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
+  margin-left: 5px;
+  border-radius: 8px;
 `
 
 const NoTxsMessage = styled.tr`
   color: ${({ theme }) => theme.font.secondary};
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
+`
+
+const GroupMenu = styled(Menu)`
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  width: fit-content;
+  min-width: 120px;
+  font-size: 17px;
+  font-weight: 500;
 `

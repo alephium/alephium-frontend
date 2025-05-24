@@ -26,7 +26,7 @@ const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitle
 )
 
 const TitleWrapper = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `
 
 const TitleRow = styled.div`
@@ -41,6 +41,7 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   display: flex;
+  gap: 14px;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2rem;

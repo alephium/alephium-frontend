@@ -137,5 +137,9 @@
   "Unsupported media type": "Unsupported media type",
   "Video thumbnail": "Video thumbnail",
   "No media": "No media",
-  "Address worth": "Address worth"
+  "Address worth": "Address worth",
+  "Group": "Group",
+  "Group(s)": "Group(s)",
+  "All": "All",
+  "Group {{ number }}": "Group {{ number }}"
 }

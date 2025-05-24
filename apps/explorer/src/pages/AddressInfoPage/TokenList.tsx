@@ -47,7 +47,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
 
         return (
           <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <AssetLogoStyled assetId={token.id} size={30} />
+            <AssetLogoStyled assetId={token.id} size={28} />
             <NameColumn>
               <TokenNameAndTag>
                 <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
@@ -105,7 +105,7 @@ export default TokenList
 
 const AssetRow = styled(motion.div)`
   display: flex;
-  padding: 14px 20px;
+  padding: 10px 18px;
   align-items: center;
 
   &:not(:last-child) {
