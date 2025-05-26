@@ -78,7 +78,7 @@ export const darkTheme: DefaultTheme = {
     alert: '#f24242',
     warning: '#ffc42d',
     valid: '#1dcd84',
-    highlight: '#cc64e6',
+    highlight: '#8564e6',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
 }

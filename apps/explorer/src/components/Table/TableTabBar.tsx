@@ -87,7 +87,8 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
     isActive
       ? css`
           background-color: ${theme.bg.primary};
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+          box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+          border: 1px solid ${theme.border.primary};
         `
       : css`
           background-color: ${theme.bg.secondary};

@@ -126,7 +126,7 @@ const SearchInput = styled.input`
   padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};
-  border: none;
+  border: 1px solid ${({ theme }) => theme.border.primary};
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
   z-index: 10;
 

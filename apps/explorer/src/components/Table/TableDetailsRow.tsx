@@ -73,7 +73,14 @@ const RowContainer = styled.tr<{ open: boolean }>`
   ${({ open }) =>
     open &&
     css`
-      border-top: 1px solid ${({ theme }) => theme.border.secondary};
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 12px;
+        right: 12px;
+        border-top: 1px solid ${({ theme }) => theme.border.secondary};
+      }
     `}
 `
 
