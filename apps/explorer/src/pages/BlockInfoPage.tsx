@@ -266,7 +266,7 @@ const IODetailList = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 10px;
 `
 
