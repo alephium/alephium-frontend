@@ -33,7 +33,7 @@ class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
   storeOne(walletId: StoredEncryptedWallet['id'], { index, keyType, settings }: AddressMetadataStorageStoreProps) {
     const addressesMetadata = this.load(walletId)
     const existingAddressMetadata = addressesMetadata.find(
-      (address) => address.index === index && address.keyType === keyType
+      (address) => address.index === index && (address.keyType ?? 'default') === keyType
     )
     const currentDefaultAddress = addressesMetadata.find((data) => data.isDefault)
 
@@ -50,7 +50,7 @@ class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
     if (
       settings.isDefault &&
       currentDefaultAddress &&
-      (currentDefaultAddress.index !== index || currentDefaultAddress.keyType !== keyType)
+      (currentDefaultAddress.index !== index || (currentDefaultAddress.keyType ?? 'default') !== keyType)
     ) {
       console.log(`🟠 Removing old default address with index ${index} and keyType ${keyType}`)
 
