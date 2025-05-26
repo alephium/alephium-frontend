@@ -138,7 +138,7 @@ const PageNumbers = styled.div`
   transition: all 0.1s ease-out;
 
   &:hover {
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid ${({ theme }) => theme.border.primary};
     background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.8).toHex()};
   }
@@ -151,7 +151,7 @@ const TotalNumberOfPages = styled.span`
 const PageManualInput = styled.input`
   height: ${manualInputHeight};
   padding: 5px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   width: 80px;
   margin: 0 10px;
