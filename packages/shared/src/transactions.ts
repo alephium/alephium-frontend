@@ -6,13 +6,13 @@ import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/tra
 import { uniq } from '@/utils'
 
 // Address without group number
-const getBaseAddressHash = (address: string): string => {
+export const getBaseAddressStr = (address: string): string => {
   const parts = address.split(':')
   return parts[0]
 }
 
 const isSameBaseAddress = (address1: string, address2: string): boolean =>
-  getBaseAddressHash(address1) === getBaseAddressHash(address2)
+  getBaseAddressStr(address1) === getBaseAddressStr(address2)
 
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
