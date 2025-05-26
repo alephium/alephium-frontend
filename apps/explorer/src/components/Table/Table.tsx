@@ -151,7 +151,7 @@ const StyledTable = styled.table<TableProps>`
       &:not(:last-child) {
         border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
       }
-      background-color: ${({ theme }) => theme.bg.hover};
+      background-color: ${({ theme }) => theme.bg.primary};
 
       td {
         padding-top: 0;

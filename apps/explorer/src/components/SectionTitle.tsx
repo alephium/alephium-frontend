@@ -62,7 +62,7 @@ const Subtitle = styled.h2`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.font.secondary};
   margin: 0;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
 `
 
 export const SecondaryTitle = styled.h2`

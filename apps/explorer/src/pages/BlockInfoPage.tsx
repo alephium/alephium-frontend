@@ -187,7 +187,6 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <td />
-        <td />
         <AnimatedCell>
           {t.inputs &&
             t.inputs.map(
