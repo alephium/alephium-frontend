@@ -19,25 +19,48 @@ const HighlightedHash = ({
   fontSize = 15,
   maxWidth = 'auto',
   className
-}: HighlightedHashProps) => (
-  <div style={{ fontSize, maxWidth, wordBreak: middleEllipsis ? 'initial' : 'break-all' }} className={className}>
-    {middleEllipsis ? <TextMiddleEllipsis text={text} /> : text}
-    {textToCopy && (
-      <ButtonWrapper>
-        <ClipboardButton textToCopy={textToCopy} />
-      </ButtonWrapper>
-    )}
-  </div>
-)
+}: HighlightedHashProps) => {
+  const [baseHash, group] = text.split(':')
+
+  return (
+    <div style={{ fontSize, maxWidth, wordBreak: middleEllipsis ? 'initial' : 'break-all' }} className={className}>
+      {middleEllipsis ? (
+        <>
+          <HighlightedPart>
+            <TextMiddleEllipsis text={baseHash} />
+          </HighlightedPart>
+          {group && <GroupPart>:{group}</GroupPart>}
+        </>
+      ) : (
+        <>
+          <HighlightedPart>{baseHash}</HighlightedPart>
+          {group && <GroupPart>:{group}</GroupPart>}
+        </>
+      )}
+      {textToCopy && (
+        <ButtonWrapper>
+          <ClipboardButton textToCopy={textToCopy} />
+        </ButtonWrapper>
+      )}
+    </div>
+  )
+}
 
 export default styled(HighlightedHash)`
   display: flex;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+`
+
+const HighlightedPart = styled.span`
   background: ${({ theme }) => theme.global.highlight};
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
+`
+
+const GroupPart = styled.span`
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const ButtonWrapper = styled.div`
