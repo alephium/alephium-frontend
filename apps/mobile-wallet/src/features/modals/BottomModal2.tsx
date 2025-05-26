@@ -66,7 +66,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
     <BottomSheetModal
       ref={bottomSheetModalRef}
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
-      handleComponent={() => <BottomModalHandle style={{ backgroundColor: theme.global.complementary }} />}
+      handleComponent={() => <BottomModalHandle />}
       onDismiss={handleDismiss}
       topInset={safeAreaInsets.top}
       name={props.modalId}
