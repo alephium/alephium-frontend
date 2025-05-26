@@ -11,7 +11,10 @@ export const getBaseAddressStr = (address: string): string => {
   return parts[0]
 }
 
-const isSameBaseAddress = (address1: string, address2: string): boolean =>
+export const getInputOutputBaseAddress = (io: e.Input | e.Output): string | undefined =>
+  io.address ? getBaseAddressStr(io.address) : undefined
+
+export const isSameBaseAddress = (address1: string, address2: string): boolean =>
   getBaseAddressStr(address1) === getBaseAddressStr(address2)
 
 export const calcTxAmountsDeltaForAddress = (
@@ -94,7 +97,9 @@ export const isSentTx = (
 ): tx is SentTransaction => 'status' in tx
 
 export const isInternalTx = (tx: e.Transaction | e.PendingTransaction, internalAddresses: AddressHash[]): boolean =>
-  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
+  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
+    (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
+  )
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: e.AssetOutput[] | e.Output[]) => {
   const lastOutput = outputs[outputs.length - 1]
