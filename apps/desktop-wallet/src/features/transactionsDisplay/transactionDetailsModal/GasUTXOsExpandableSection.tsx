@@ -1,4 +1,4 @@
-import { addApostrophes } from '@alephium/shared'
+import { addApostrophes, getBaseAddressStr, getInputOutputBaseAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
@@ -18,7 +18,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
   const handleShowAddress = useOnAddressClick()
 
   const renderInput = (input: e.Input) => {
-    const addressHash = input.address
+    const addressHash = getInputOutputBaseAddress(input)
     if (!addressHash) return null
 
     return (
@@ -37,7 +37,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
         {isLockTimeInFuture && <Lock unlockAt={unlocksAt} />}
         <ActionLinkStyled
           key={`${output.key}`}
-          onClick={() => handleShowAddress(output.address)}
+          onClick={() => handleShowAddress(getBaseAddressStr(output.address))}
           hasLock={isLockTimeInFuture}
         >
           <HashEllipsed key={`${output.key}`} hash={output.address} width="100%" />
