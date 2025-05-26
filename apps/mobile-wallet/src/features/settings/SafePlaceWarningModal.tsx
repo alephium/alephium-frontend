@@ -24,7 +24,7 @@ const SafePlaceWarningModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id}>
+    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
       </ScreenSection>
