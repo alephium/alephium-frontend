@@ -88,7 +88,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
           ...keyring.generateAndCacheAddress({
             group,
             skipAddressIndexes: currentAddressIndexes.current,
-            keyType: 'default'
+            keyType: 'default' // TODO: Support groupless addresses
           }),
           label: '',
           color: getRandomLabelColor(),
