@@ -18,6 +18,7 @@ import {
   combineTokenTypes,
   ftListQuery,
   fungibleTokenMetadataQuery,
+  nftQuery,
   tokenQuery,
   tokenTypeQuery
 } from '@/api/queries/tokenQueries'
@@ -241,5 +242,22 @@ export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransac
         listedFts,
         unlistedFts
       }
+    }
+  })
+
+export const addressNftsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'nfts', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () => {
+      const { nftIds } = await queryClient.fetchQuery(addressTokensByTypeQuery({ addressHash, networkId }))
+
+      const nftsPromiseResults = await Promise.allSettled(
+        nftIds.map((id) => queryClient.fetchQuery(nftQuery({ id, networkId })))
+      )
+
+      const nfts = getFulfilledValues(nftsPromiseResults).filter((nft) => nft !== null)
+
+      return nfts
     }
   })

@@ -1,4 +1,5 @@
-import { AddressHash, addressSettingsSaved } from '@alephium/shared'
+import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -12,12 +13,11 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -26,12 +26,12 @@ interface AddressQuickActionsModalProps {
 }
 
 const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id, addressHash }) => {
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
 
-  const handleClose = () => dispatch(closeModal({ id }))
+  const handleClose = () => dismiss(id)
 
   return (
-    <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />
@@ -40,7 +40,7 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
           <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
         </QuickActionButtons>
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

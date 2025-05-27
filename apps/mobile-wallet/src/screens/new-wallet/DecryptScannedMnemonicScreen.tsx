@@ -1,4 +1,5 @@
 import { decryptAsync } from '@alephium/shared-crypto'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useRef, useState } from 'react'
@@ -36,6 +37,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const inputRef = useRef<TextInput>(null)
   const { t } = useTranslation()
+  const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -71,6 +73,9 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       try {
         const wallet = await generateAndStoreWallet(name, mnemonic)
+
+        clearQueryCache()
+        await restoreQueryCache(wallet.id)
 
         dispatch(newWalletImportedWithMetadata(wallet))
 
@@ -121,6 +126,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     <ScrollScreen
       verticalGap
       fill
+      hasKeyboard
       keyboardShouldPersistTaps="always"
       screenTitle={t('Password')}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}

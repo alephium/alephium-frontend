@@ -1,58 +1,69 @@
-import { AddressHash, selectFungibleTokenById } from '@alephium/shared'
+import { AddressHash, isListedFT, selectDefaultAddressHash } from '@alephium/shared'
+import {
+  useFetchAddressSingleTokenBalances,
+  useFetchToken,
+  useFetchWalletSingleTokenBalances
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getColors } from 'react-native-image-colors'
 import styled, { useTheme } from 'styled-components/native'
 
 import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import RoundedCard from '~/components/RoundedCard'
-import TokenDetailsModalBalanceSummary from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
+import TokenDetailsModalBalanceSummary, {
+  TokenDetailsModalBalanceSummaryProps
+} from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
 import TokenDetailsModalDescription from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
 import TokenDetailsModalHeader from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalHeader'
-import { TokenDetailsModalProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
+import {
+  TokenDetailsModalCommonProps,
+  TokenDetailsModalProps
+} from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
+import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
-  const dispatch = useAppDispatch()
-  const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
+  const { dismiss } = useBottomSheetModal()
 
   const handleClose = () => {
-    dispatch(closeModal({ id }))
+    dismiss(id)
 
-    if (parentModalId) dispatch(closeModal({ id: parentModalId }))
+    if (parentModalId) dismiss(parentModalId)
   }
 
   return (
-    <BottomModal
-      modalId={id}
-      title={<TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />}
-      titleAlign="left"
-    >
+    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
           <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
-          {tokenId === ALPH.id && (
-            <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />
-          )}
+          <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
         </ActionButtons>
-        <TokenDetailsModalDescription tokenId={tokenId} addressHash={addressHash} />
+        <TokenDetailsModalDescription tokenId={tokenId} />
       </Content>
-    </BottomModal>
+    </BottomModal2>
   )
 })
+
+const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+
+  if (!defaultAddressHash || tokenId !== ALPH.id) return null
+
+  return <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />
+}
 
 interface TokenAnimatedBackgroundProps {
   tokenId: Token['id']
@@ -62,7 +73,7 @@ interface TokenAnimatedBackgroundProps {
 const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps) => {
   const theme = useTheme()
   const [dominantColor, setDominantColor] = useState<string>()
-  const tokenLogoUri = useAppSelector((s) => selectFungibleTokenById(s, tokenId)?.logoURI)
+  const { data: token } = useFetchToken(tokenId)
 
   const fontColor =
     dominantColor &&
@@ -75,7 +86,11 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
         : darkTheme.font.primary)
 
   useEffect(() => {
-    if (!tokenLogoUri || tokenId === ALPH.id) return
+    if (tokenId === ALPH.id || !token) return
+
+    const tokenLogoUri = isListedFT(token) ? token.logoURI : undefined
+
+    if (!tokenLogoUri) return
 
     getColors(tokenLogoUri, {
       fallback: '#228B22',
@@ -97,17 +112,45 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
           .toHex()
       )
     })
-  }, [theme.name, tokenId, tokenLogoUri])
+  }, [theme.name, token, tokenId])
 
   return (
     <RoundedCard>
       <AnimatedBackground shade={dominantColor} />
-      <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} fontColor={fontColor} />
+
+      {addressHash ? (
+        <AddressTokenDetailsModalBalanceSummary addressHash={addressHash} tokenId={tokenId} fontColor={fontColor} />
+      ) : (
+        <WalletTokenDetailsModalBalanceSummary tokenId={tokenId} fontColor={fontColor} />
+      )}
     </RoundedCard>
   )
 }
 
 export default TokenDetailsModal
+
+const AddressTokenDetailsModalBalanceSummary = ({
+  addressHash,
+  ...props
+}: Required<TokenDetailsModalCommonProps> & Pick<TokenDetailsModalBalanceSummaryProps, 'fontColor'>) => {
+  const { t } = useTranslation()
+  const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId: props.tokenId })
+
+  const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
+  return <TokenDetailsModalBalanceSummary label={t('Address balance')} balance={balance} {...props} />
+}
+
+const WalletTokenDetailsModalBalanceSummary = (
+  props: TokenDetailsModalCommonProps & Pick<TokenDetailsModalBalanceSummaryProps, 'fontColor'>
+) => {
+  const { t } = useTranslation()
+  const { data: tokenBalances } = useFetchWalletSingleTokenBalances({ tokenId: props.tokenId })
+
+  const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
+  return <TokenDetailsModalBalanceSummary label={t('Wallet balance')} balance={balance} {...props} />
+}
 
 // TODO: DRY
 const Content = styled.View`

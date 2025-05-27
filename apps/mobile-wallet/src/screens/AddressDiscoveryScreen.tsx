@@ -1,4 +1,5 @@
-import { AddressHash } from '@alephium/shared'
+import { addressesImported, AddressHash } from '@alephium/shared'
+import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { useCallback, useEffect, useState } from 'react'
@@ -8,6 +9,7 @@ import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import AddressBox from '~/components/AddressBox'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
@@ -17,13 +19,11 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { openModal } from '~/features/modals/modalActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
-import { addressesImported } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { resetNavigation } from '~/utils/navigation'
@@ -33,7 +33,6 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'AddressDisco
 const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
   const networkName = useAppSelector((s) => s.network.name)
@@ -57,7 +56,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     setImportLoading(true)
     dispatch(activateAppLoading(t('Importing addresses')))
 
-    const newAddressHashes = selectedAddressesToImport.map((address) => address.hash)
     const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
       ...address,
       isDefault: false,
@@ -69,8 +67,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       dispatch(addressesImported(newAddresses))
 
       sendAnalytics({ event: 'Imported discovered addresses' })
-
-      dispatch(syncLatestTransactions({ addresses: newAddressHashes, areAddressesNew: true }))
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not import addresses from address discovery' })
     }
@@ -89,6 +85,12 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       [hash]: !addressSelections[hash]
     })
   }
+
+  useEffect(() => {
+    if (params?.startScanning) {
+      startScan()
+    }
+  }, [params?.startScanning, startScan])
 
   useEffect(() => {
     setAddressSelections((prevSelections) => {
@@ -135,20 +137,8 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       {...props}
     >
       <ScreenSection fill>
-        <ScreenSectionTitle>{t('Current addresses')}</ScreenSectionTitle>
-        <Surface>
-          {addresses.map((address, index) => (
-            <Row
-              key={address.hash}
-              title={address.label || address.hash}
-              subtitle={address.label ? address.hash : undefined}
-              truncate
-              isLast={index === addresses.length - 1}
-            >
-              <Amount value={BigInt(address.balance)} bold />
-            </Row>
-          ))}
-        </Surface>
+        <CurrentAddresses />
+
         {(loading || status === 'finished' || discoveredAddresses.length > 0) && !importLoading && (
           <>
             <ScreenSectionTitle style={{ marginTop: VERTICAL_GAP }}>
@@ -242,6 +232,32 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
 export default AddressDiscoveryScreen
 
+const CurrentAddresses = () => {
+  const addresses = useUnsortedAddressesHashes()
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  const handleAddressPress = (addressHash: AddressHash) => {
+    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
+  }
+
+  return (
+    <>
+      <ScreenSectionTitle>{t('Current addresses')}</ScreenSectionTitle>
+      <Surface>
+        {addresses.map((addressHash, index) => (
+          <AddressBox
+            key={addressHash}
+            addressHash={addressHash}
+            isLast={index === addresses.length - 1}
+            onPress={() => handleAddressPress(addressHash)}
+            origin="addressesScreen"
+          />
+        ))}
+      </Surface>
+    </>
+  )
+}
 const ScanningIndication = styled.View`
   margin-bottom: 20px;
   align-items: center;

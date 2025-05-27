@@ -1,5 +1,4 @@
-import { CommonActions, createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
-import { NavigationState } from '@react-navigation/routers'
+import { createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
 
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -17,16 +16,9 @@ export const getInitialNavigationState = (initialRouteName: keyof RootStackParam
 // well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
-export const getNavStateLastRoute = (state: NavigationState) => {
-  const routes = state.routes.map((route) => route.name)
-  const latestRoute = routes.length > 0 ? routes[routes.length - 1] : undefined
-
-  return latestRoute
-}
-
 export const resetNavigation = (
   navigation: NavigationProp<RootStackParamList>,
   initialRouteName?: keyof RootStackParamList
 ) => {
-  navigation.dispatch(CommonActions.reset(getInitialNavigationState(initialRouteName)))
+  navigation.reset(getInitialNavigationState(initialRouteName))
 }

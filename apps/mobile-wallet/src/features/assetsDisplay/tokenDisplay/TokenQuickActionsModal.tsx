@@ -1,6 +1,8 @@
-import { selectFungibleTokenById } from '@alephium/shared'
+import { isFT } from '@alephium/shared'
+import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -9,11 +11,11 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
-import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
+import BottomModal2 from '~/features/modals/BottomModal2'
+import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
@@ -22,21 +24,24 @@ interface TokenQuickActionsModalProps {
 const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
-  const hideAsset = useHideAsset('quick_actions', id)
+  const hideToken = useHideToken('quick_actions', id)
+  const { dismiss } = useBottomSheetModal()
 
-  if (!token) return
+  const { data: token } = useFetchToken(tokenId)
 
-  const handleAssetHide = () => hideAsset(tokenId)
+  if (!token || !isFT(token)) return
+
+  const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
+    dismiss(id)
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
-    dispatch(closeModal({ id }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
   return (
-    <BottomModal
+    <BottomModal2
+      notScrollable
       modalId={id}
       title={
         <Title>
@@ -63,7 +68,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
           iconProps={{ name: 'more-horizontal' }}
         />
       </QuickActionButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

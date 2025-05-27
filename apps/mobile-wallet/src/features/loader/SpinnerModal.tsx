@@ -1,5 +1,6 @@
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
+import { useEffect, useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
@@ -24,6 +25,20 @@ interface SpinnerModalProps extends SpinnerProps {
 
 const SpinnerModal = ({ isActive, text, blur = true, bg, progress }: SpinnerModalProps) => {
   const theme = useTheme()
+
+  const [shouldRender, setShouldRender] = useState(false)
+
+  useEffect(() => {
+    if (isActive) {
+      setShouldRender(true)
+    } else {
+      const timeout = setTimeout(() => setShouldRender(false), 300)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [isActive])
+
+  if (!shouldRender) return null
 
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>

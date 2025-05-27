@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -6,11 +7,10 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import SendButton from '~/features/send/SendButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -20,13 +20,13 @@ interface AddressQRCodeScanActionsModalProps {
 }
 
 const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalProps>(({ id, addressHash }) => {
-  const dispatch = useAppDispatch()
   const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
+  const { dismiss } = useBottomSheetModal()
 
-  const handleClose = () => dispatch(closeModal({ id }))
+  const handleClose = () => dismiss(id)
 
   return (
-    <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <SendButton
@@ -38,7 +38,7 @@ const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalPro
           {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
         </ActionButtons>
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

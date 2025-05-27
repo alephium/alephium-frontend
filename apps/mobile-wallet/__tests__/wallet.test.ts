@@ -1,9 +1,9 @@
 import { keyring } from '@alephium/keyring'
-import AsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock'
 import * as SecureStore from 'expo-secure-store'
 import { Alert } from 'react-native'
 
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
+import { storage } from '~/persistent-storage/storage'
 import {
   deleteWallet,
   getStoredWalletMetadata,
@@ -76,7 +76,7 @@ const addTestWalletMetadataInStorage = () =>
   })
 
 afterEach(() => {
-  AsyncStorage.clear()
+  storage.clearAll()
   mockedDeleteItemAsync.mockReset()
   mockedSetItemAsync.mockReset()
   mockedGetItemAsync.mockReset()
@@ -86,7 +86,7 @@ describe(getStoredWalletMetadata, () => {
   it('should fail if there are no wallet metadata stored', async () => {
     expect(getStoredWalletMetadata).rejects.toThrow()
 
-    await addTestWalletMetadataInStorage()
+    addTestWalletMetadataInStorage()
     const wallet = await getStoredWalletMetadata()
 
     expect(wallet.name).toEqual('Test wallet')
@@ -99,7 +99,7 @@ describe(migrateDeprecatedMnemonic, () => {
   })
 
   it('should migrate mnemonic and delete old entries', async () => {
-    await addDeprecatedTestWalletMetadataInStorage()
+    addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(mockedSetItemAsync).toHaveBeenCalledWith(
@@ -125,7 +125,7 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should clear secrets after migrating successfully', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletMetadataInStorage()
+    addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(keyring['root']).toBeNull()
@@ -142,7 +142,7 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should store public and private key in secure store', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletMetadataInStorage()
+    addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(mockedSetItemAsync).toHaveBeenCalledTimes(5)
@@ -176,7 +176,7 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should add hash in address metadata', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletMetadataInStorage()
+    addDeprecatedTestWalletMetadataInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
     const wallet = await getStoredWalletMetadata()
 
@@ -191,7 +191,7 @@ describe(migrateDeprecatedMnemonic, () => {
 
 describe(deleteWallet, () => {
   it('should delete all wallet entries', async () => {
-    await addTestWalletMetadataInStorage()
+    addTestWalletMetadataInStorage()
     await deleteWallet()
 
     expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(6)
@@ -213,15 +213,15 @@ describe(deleteWallet, () => {
       defaultSecureStoreConfig
     )
 
-    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(2)
-    expect(AsyncStorage.removeItem).toHaveBeenCalledWith('wallet-metadata')
+    expect(storage.contains('wallet-metadata')).toBeFalsy()
+    expect(storage.contains('is-new-wallet')).toBeFalsy()
   })
 })
 
 describe(validateAndRepareStoredWalletData, () => {
   it('should be valid if we have a mnemonic and metadata', async () => {
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored)
-    await addTestWalletMetadataInStorage()
+    addTestWalletMetadataInStorage()
 
     const status = await validateAndRepareStoredWalletData(mockCallback)
 
@@ -329,7 +329,7 @@ describe(validateAndRepareStoredWalletData, () => {
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing mnemonic
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing deprecated mnemonic
-    await addTestWalletMetadataInStorage()
+    addTestWalletMetadataInStorage()
 
     const status = await validateAndRepareStoredWalletData(mockCallback)
 

@@ -46,8 +46,8 @@ const TabBarPager = ({
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   const updateTabBarY = (newValue?: number) => {
-    if (newValue && tabBarPageY.value !== newValue) {
-      tabBarPageY.value = newValue
+    if (newValue && tabBarPageY.get() !== newValue) {
+      tabBarPageY.set(newValue)
     }
   }
 
@@ -58,7 +58,7 @@ const TabBarPager = ({
 
     runOnJS(updateTabBarY)(newTabBarPageY)
 
-    pagerScrollEvent.value = e
+    pagerScrollEvent.set(e)
   })
 
   const handleTabPress = (tabIndex: number) => {

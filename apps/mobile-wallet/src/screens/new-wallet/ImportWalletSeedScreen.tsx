@@ -1,4 +1,5 @@
-import { bip39Words } from '@alephium/shared'
+import { bip39Words, newWalletInitialAddressGenerated } from '@alephium/shared'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { useEffect, useRef, useState } from 'react'
@@ -18,9 +19,9 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { getInitialAddressSettings } from '~/utils/addresses'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -39,6 +40,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const { t } = useTranslation()
+  const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -91,8 +93,11 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
     try {
       const wallet = await generateAndStoreWallet(name, mnemonicToImport)
 
+      clearQueryCache()
+      await restoreQueryCache(wallet.id)
+
+      dispatch(newWalletInitialAddressGenerated({ ...wallet.initialAddress, ...getInitialAddressSettings() }))
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncLatestTransactions({ addresses: wallet.firstAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({ event: 'Imported wallet', props: { note: 'Entered mnemonic manually' } })
 
@@ -126,6 +131,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       headerOptions={{
         type: 'stack'
       }}
+      hasKeyboard
       keyboardShouldPersistTaps="always"
       contentPaddingTop
       screenTitle={t('Secret phrase')}

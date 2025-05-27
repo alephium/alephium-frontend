@@ -5,7 +5,7 @@ const useScreenScrollHandler = () => {
   const screenScrollY = useSharedValue(0)
 
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    screenScrollY.value = e.nativeEvent.contentOffset.y
+    screenScrollY.set(e.nativeEvent.contentOffset.y)
   }
 
   return { screenScrollY, screenScrollHandler }

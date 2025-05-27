@@ -1,4 +1,6 @@
+import { activeWalletDeleted } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -9,12 +11,10 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
-import { walletDeleted } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
 interface WalletDeleteModalProps {
@@ -28,6 +28,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
   const { resetWalletConnectStorage } = useWalletConnectContext()
   const { t } = useTranslation()
   const { deletePersistedCache } = usePersistQueryClientContext()
+  const { dismiss } = useBottomSheetModal()
 
   const [inputWalletName, setInputWalletName] = useState('')
 
@@ -39,7 +40,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
 
       onDelete()
 
-      dispatch(walletDeleted())
+      dispatch(activeWalletDeleted())
       resetWalletConnectStorage()
       deletePersistedCache(walletId)
       sendAnalytics({ event: 'Deleted wallet' })
@@ -47,12 +48,12 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       dispatch(deactivateAppLoading())
-      dispatch(closeModal({ id }))
+      dismiss(id)
     }
   }
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
+    <BottomModal2 modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>
@@ -68,7 +69,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
         </AppText>
       </ScreenSection>
       <ScreenSection>
-        <Input label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
+        <Input isInModal label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
       </ScreenSection>
       <ScreenSection>
         <Button
@@ -79,7 +80,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
           iconProps={{ name: 'trash' }}
         />
       </ScreenSection>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

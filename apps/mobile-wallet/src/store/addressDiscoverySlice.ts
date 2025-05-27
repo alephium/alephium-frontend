@@ -1,11 +1,13 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
+  activeWalletDeleted,
+  Address,
+  addressesImported,
   AddressIndex,
   appReset,
-  client,
   customNetworkSettingsSaved,
-  DEPRECATED_Address as Address,
-  networkPresetSwitched
+  networkPresetSwitched,
+  throttledClient
 } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -18,9 +20,8 @@ import {
 } from '@reduxjs/toolkit'
 
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import { addressesImported } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
-import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
+import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,
@@ -103,11 +104,11 @@ export const discoverAddresses = createAsyncThunk(
 
         groupData.highestIndex = newAddressData.index
 
-        const data = await client.explorer.addresses.postAddressesUsed([newAddressData.hash])
+        const data = await throttledClient.explorer.addresses.postAddressesUsed([newAddressData.hash])
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
-          const { balance } = await client.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
+          const { balance } = await throttledClient.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
           groupData.gap = 0
@@ -184,7 +185,7 @@ const addressDiscoverySlice = createSlice({
         newWalletGenerated,
         newWalletImportedWithMetadata,
         appReset,
-        walletDeleted,
+        activeWalletDeleted,
         networkPresetSwitched,
         customNetworkSettingsSaved
       ),

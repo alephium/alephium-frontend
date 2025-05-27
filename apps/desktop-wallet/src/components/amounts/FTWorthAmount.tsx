@@ -1,4 +1,4 @@
-import { calculateAmountWorth } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared'
 import { useFetchTokenPrice } from '@alephium/shared-react'
 import { isNumber } from 'lodash'
 
@@ -16,7 +16,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals, ...props }: FTWorthAmou
 
   const worth =
     totalBalance !== undefined && isNumber(tokenPrice)
-      ? calculateAmountWorth(totalBalance, tokenPrice, decimals)
+      ? calculateTokenAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 
   if (worth === undefined) return '-'

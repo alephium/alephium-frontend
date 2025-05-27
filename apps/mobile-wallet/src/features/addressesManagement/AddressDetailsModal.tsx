@@ -1,54 +1,41 @@
 import { AddressHash } from '@alephium/shared'
-import { FlashList } from '@shopify/flash-list'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useFetchAddressBalances, useFetchAddressFtsSorted } from '@alephium/shared-react'
 
 import AddressBadge from '~/components/AddressBadge'
-import { AddressesTokensListFooter } from '~/components/AddressesTokensList'
-import AppText from '~/components/AppText'
-import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import TokenListItem from '~/components/TokenListItem'
+import EmptyTokensListPlaceholders from '~/components/tokensLists/EmptyTokensListPlaceholder'
 import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDetailsModalHeader'
-import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
+import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
+import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
-import { useAppSelector } from '~/hooks/redux'
-import {
-  makeSelectAddressesCheckedUnknownTokens,
-  makeSelectAddressesKnownFungibleTokens,
-  selectAddressHiddenAssetIds
-} from '~/store/addresses/addressesSelectors'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
 
   return (
-    <BottomModalFlashList
+    <BottomModal2
       modalId={id}
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
-      flashListRender={(props) => (
-        <FlashList
-          data={knownFungibleTokens}
-          estimatedItemSize={70}
-          ListHeaderComponent={() => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={id} />}
-          ListFooterComponent={() => <AddressesTokensListFooter addressHash={addressHash} parentModalId={id} />}
-          ListEmptyComponent={() => <AddressesTokensListEmpty addressHash={addressHash} />}
-          renderItem={({ item: entry, index }) => (
-            <TokenListItem
-              key={entry.id}
-              asset={entry}
-              hideSeparator={index === knownFungibleTokens.length - 1}
-              addressHash={addressHash}
-              parentModalId={id}
-            />
-          )}
-          {...props}
-        />
-      )}
+      flashListProps={{
+        data: sortedFts,
+        estimatedItemSize: 70,
+        ListHeaderComponent: () => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={id} />,
+        ListFooterComponent: () => <AddressTokensListFooter addressHash={addressHash} parentModalId={id} />,
+        ListEmptyComponent: () => <AddressesTokensListEmpty addressHash={addressHash} />,
+        renderItem: ({ item: { id: itemId }, index }) => (
+          <AddressFtListItem
+            key={itemId}
+            tokenId={itemId}
+            hideSeparator={index === sortedFts.length - 1}
+            addressHash={addressHash}
+            parentModalId={id}
+          />
+        )
+      }}
     />
   )
 })
@@ -56,30 +43,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
 export default AddressDetailsModal
 
 const AddressesTokensListEmpty = ({ addressHash }: { addressHash: AddressHash }) => {
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
-  const selectAddressesCheckedUnknownTokens = useMemo(() => makeSelectAddressesCheckedUnknownTokens(), [])
-  const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
-  const hiddenAssetIds = useAppSelector((s) => selectAddressHiddenAssetIds(s, addressHash))
-  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
-  const { t } = useTranslation()
+  const { data: addressTokens, isLoading: isLoadingAddressTokens } = useFetchAddressBalances(addressHash)
 
-  const hasHiddenTokens = hiddenAssetIds.length > 0
-  const hasUnknownTokens = unknownTokens.length > 0
-
-  if (addressesBalancesStatus === 'uninitialized')
-    return (
-      <EmptyPlaceholder>
-        <AppText size={32}>⏳</AppText>
-        <AppText>{t('Loading your balances...')}</AppText>
-      </EmptyPlaceholder>
-    )
-
-  if (knownFungibleTokens.length === 0 && !hasUnknownTokens && !hasHiddenTokens)
-    return (
-      <EmptyPlaceholder>
-        <AppText size={32}>👀</AppText>
-        <AppText>{t('No assets here, yet.')}</AppText>
-      </EmptyPlaceholder>
-    )
+  return <EmptyTokensListPlaceholders isLoading={isLoadingAddressTokens} isEmpty={addressTokens?.length === 0} />
 }

@@ -4,7 +4,6 @@ import { FlatList as GHFlatList, ScrollView as GHScrollView } from 'react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
-import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ModalContentBaseProps {
@@ -79,16 +78,6 @@ export const Modal = ({ children, style, ...props }: ScreenProps) => {
     <Screen style={[style, { paddingBottom: insets.bottom, backgroundColor: 'transparent' }]} {...props}>
       {children}
     </Screen>
-  )
-}
-
-export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) => {
-  const insets = useSafeAreaInsets()
-
-  return (
-    <ScrollSection style={[style, { paddingBottom: insets.bottom, backgroundColor: 'transparent' }]} {...props}>
-      {children}
-    </ScrollSection>
   )
 }
 

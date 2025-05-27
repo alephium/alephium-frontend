@@ -1,7 +1,16 @@
-import { NFT } from '@alephium/shared'
+import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
+import {
+  useFetchTransaction,
+  useFetchTransactionTokens,
+  useTransactionDirection,
+  useTransactionInfoType,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
+import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { groupBy, partition } from 'lodash'
+import { groupBy } from 'lodash'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -12,138 +21,28 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Badge from '~/components/Badge'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import IOList from '~/components/IOList'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { AddressConfirmedTransaction } from '~/types/transactions'
-import { getTransactionInfo } from '~/utils/transactions'
 
 interface TransactionModalProps {
-  tx: AddressConfirmedTransaction
+  txHash: string
 }
 
-const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
+const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
-  const allNFTs = useAppSelector((s) => s.nfts.entities)
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const theme = useTheme()
 
-  const { direction, infoType, assets } = getTransactionInfo(tx)
-  const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
-  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
-  const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
-  const explorerTxUrl = `${explorerBaseUrl}/transactions/${tx.hash}`
-  const isOut = direction === 'out'
-  const isMoved = infoType === 'move'
-
-  const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData } }))
-
-  const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
-
-  const statuses = {
-    confirmed: {
-      color: theme.global.valid,
-      text: t('Confirmed')
-    },
-    pending: {
-      color: theme.bg.primary,
-      text: t('Pending')
-    },
-    scriptError: {
-      color: theme.global.alert,
-      text: t('Script execution failed')
-    }
-  }
-
-  const status = !tx.scriptExecutionOk ? statuses.scriptError : tx.blockHash ? statuses.confirmed : statuses.pending
+  const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal modalId={id} title={t('Transaction')}>
-      <Row title={t('From')} transparent>
-        {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-      </Row>
-      <Row title={t('To')} transparent>
-        {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-      </Row>
-      <Row title={t('Timestamp')} transparent>
-        <AppText semiBold>
-          {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-        </AppText>
-      </Row>
-      <Row title={t('Status')} transparent>
-        <Badge color={status.color}>{status.text}</Badge>
-      </Row>
-      <Row title={t('Fee')} transparent>
-        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
-      </Row>
-      {isMoved && (
-        <Row title={t('Moved')} transparent>
-          <AmountsContainer>
-            {tokensWithSymbol.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
-            ))}
-          </AmountsContainer>
-        </Row>
-      )}
-      {!isMoved && groupedIOAmounts.out && (
-        <Row title={t('Sent')} transparent titleColor={theme.global.send}>
-          <AmountsContainer>
-            {groupedIOAmounts.out.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
-            ))}
-          </AmountsContainer>
-        </Row>
-      )}
-      {!isMoved && groupedIOAmounts.in && (
-        <Row title={t('Received')} transparent titleColor={theme.global.receive}>
-          <AmountsContainer>
-            {groupedIOAmounts.in.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
-            ))}
-          </AmountsContainer>
-        </Row>
-      )}
-
-      {nftsData.length === 1 && (
-        <Row title={t('NFT')} noMaxWidth transparent>
-          <NFTThumbnail nftId={nftsData[0].id} size={100} />
-        </Row>
-      )}
-      {nftsData.length > 1 && (
-        <Row title={t('NFTs')} noMaxWidth transparent>
-          <Button title={t('See NFTs')} onPress={openNftGridModal} short />
-        </Row>
-      )}
-      {unknownTokens.length > 0 && (
-        <Row title={t('Unknown tokens')} transparent>
-          {unknownTokens.map(({ id, amount, decimals, symbol }) => (
-            <UnknownTokenAmount key={id}>
-              <Amount
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                fullPrecision
-                semiBold
-              />
-              {!symbol && (
-                <TokenId>
-                  <AppText truncate ellipsizeMode="middle">
-                    {id}
-                  </AppText>
-                </TokenId>
-              )}
-            </UnknownTokenAmount>
-          ))}
-        </Row>
-      )}
+    <BottomModal2 modalId={id} title={t('Transaction')}>
+      <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>
         <Button
@@ -152,11 +51,209 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
           title={t('Explorer')}
         />
       </BottomButtons>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 
 export default TransactionModal
+
+const TransactionModalContent = ({ txHash }: TransactionModalProps) => {
+  const { t } = useTranslation()
+  const allAddressHashes = useUnsortedAddressesHashes()
+
+  const { data: tx, isLoading } = useFetchTransaction({ txHash })
+
+  if (isLoading)
+    return (
+      <EmptyPlaceholder>
+        <AppText size={32}>⏳</AppText>
+        <AppText>{t('Loading transaction details...')}</AppText>
+      </EmptyPlaceholder>
+    )
+
+  if (!tx) return null
+
+  const referenceAddress = findTransactionReferenceAddress(allAddressHashes, tx)
+
+  if (!referenceAddress) return null
+
+  return <TransactionDetailRows tx={tx} refAddressHash={referenceAddress} />
+}
+
+interface TransactionModalSubcomponentProps {
+  tx: e.AcceptedTransaction | e.PendingTransaction
+  refAddressHash: AddressHash
+}
+
+const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
+  const { t } = useTranslation()
+  const direction = useTransactionDirection(tx, refAddressHash)
+
+  const isOut = direction === 'out'
+
+  return (
+    <>
+      <Row title={t('From')} transparent>
+        {isOut ? (
+          <AddressBadge addressHash={refAddressHash} />
+        ) : (
+          <IOList
+            currentAddress={refAddressHash}
+            isOut={isOut}
+            outputs={tx.outputs}
+            inputs={tx.inputs}
+            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
+          />
+        )}
+      </Row>
+      <Row title={t('To')} transparent>
+        {!isOut ? (
+          <AddressBadge addressHash={refAddressHash} />
+        ) : (
+          <IOList
+            currentAddress={refAddressHash}
+            isOut={isOut}
+            outputs={tx.outputs}
+            inputs={tx.inputs}
+            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
+          />
+        )}
+      </Row>
+
+      {isConfirmedTx(tx) && (
+        <Row title={t('Timestamp')} transparent>
+          <AppText semiBold>
+            {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+          </AppText>
+        </Row>
+      )}
+
+      <TransactionStatus tx={tx} />
+
+      <Row title={t('Fee')} transparent>
+        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
+      </Row>
+
+      <TransactionAmounts tx={tx} refAddressHash={refAddressHash} />
+    </>
+  )
+}
+
+const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>) => {
+  const { t } = useTranslation()
+  const theme = useTheme()
+
+  const statuses = {
+    confirmed: {
+      color: theme.global.valid,
+      text: t('Confirmed')
+    },
+    pending: {
+      color: theme.bg.contrast,
+      text: t('Pending')
+    },
+    scriptError: {
+      color: theme.global.alert,
+      text: t('Script execution failed')
+    }
+  }
+
+  const status = !isConfirmedTx(tx)
+    ? statuses.pending
+    : !tx.scriptExecutionOk
+      ? statuses.scriptError
+      : statuses.confirmed
+
+  return (
+    <Row title={t('Status')} transparent>
+      <Badge color={status.color}>{status.text}</Badge>
+    </Row>
+  )
+}
+
+const TransactionAmounts = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
+  const { t } = useTranslation()
+  const theme = useTheme()
+  const dispatch = useAppDispatch()
+  const {
+    data: { fungibleTokens, nfts, nsts }
+  } = useFetchTransactionTokens(tx, refAddressHash)
+  const infoType = useTransactionInfoType(tx, refAddressHash)
+
+  const isMoved = infoType === 'move'
+  const isPending = infoType === 'pending'
+  const groupedFtAmounts = useMemo(
+    () => groupBy(fungibleTokens, (t) => (t.amount > 0 ? 'in' : 'out')),
+    [fungibleTokens]
+  )
+
+  const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData: nfts } }))
+
+  return (
+    <>
+      {isMoved && (
+        <Row title={t('Moved')} transparent>
+          <AmountsContainer>
+            {fungibleTokens.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
+            ))}
+          </AmountsContainer>
+        </Row>
+      )}
+      {!isMoved && groupedFtAmounts.out && (
+        <Row title={t(isPending ? 'Sending' : 'Sent')} transparent titleColor={theme.global.send}>
+          <AmountsContainer>
+            {groupedFtAmounts.out.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
+            ))}
+          </AmountsContainer>
+        </Row>
+      )}
+      {!isMoved && groupedFtAmounts.in && (
+        <Row title={t('Received')} transparent titleColor={theme.global.receive}>
+          <AmountsContainer>
+            {groupedFtAmounts.in.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
+            ))}
+          </AmountsContainer>
+        </Row>
+      )}
+
+      {nfts.length === 1 && (
+        <Row title={t('NFT')} noMaxWidth transparent>
+          <NFTThumbnail nftId={nfts[0].id} size={100} />
+        </Row>
+      )}
+      {nfts.length > 1 && (
+        <Row title={t('NFTs')} noMaxWidth transparent>
+          <Button title={t('See NFTs')} onPress={openNftGridModal} short />
+        </Row>
+      )}
+      {nsts.length > 0 && (
+        <Row title={t('Unknown tokens')} transparent>
+          {nsts.map(({ id, amount }) => (
+            <UnknownTokenAmount key={id}>
+              <Amount
+                value={amount}
+                isUnknownToken
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                fullPrecision
+                semiBold
+              />
+
+              <TokenId>
+                <AppText truncate ellipsizeMode="middle">
+                  {id}
+                </AppText>
+              </TokenId>
+            </UnknownTokenAmount>
+          ))}
+        </Row>
+      )}
+    </>
+  )
+}
 
 const TokenId = styled.View`
   max-width: 120px;

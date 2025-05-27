@@ -6,9 +6,10 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
+import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
-import SelectAssetToHideModal from '~/features/assetsDisplay/hideAssets/SelectAssetToHideModal'
+import SelectTokenToHideModal from '~/features/assetsDisplay/hideTokens/SelectTokenToHideModal'
 import NftGridModal from '~/features/assetsDisplay/nftsDisplay/NftGridModal'
 import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
 import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
@@ -73,14 +74,15 @@ export const ModalComponents = {
   TokenDetailsModal,
   AddressQuickActionsModal,
   AddressesWithTokenModal,
-  SelectAssetToHideModal,
+  SelectTokenToHideModal,
   TokenQuickActionsModal,
   AddressQRCodeScanActionsModal,
   AddressPickerQuickActionsModal,
   DAppQuickActionsModal,
   DAppDetailsModal,
   RegionSelectModal,
-  UnknownTokensModal
+  UnknownTokensModal,
+  AddressNftsGridModal
 }
 
 export type ModalName = keyof typeof ModalComponents
@@ -100,10 +102,8 @@ export type OpenModalParams = {
   [K in ModalName]: ModalParams<K>
 }[ModalName]
 
-export const getModalComponent = (name: ModalName) => ModalComponents[name]
-
 export type ModalInstance = {
-  id: number
+  id: string
   params: OpenModalParams
   isClosing: boolean
 }

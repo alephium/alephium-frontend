@@ -1,10 +1,10 @@
+import { useTransactionAmountDeltas } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import styled from 'styled-components'
 
 import { TableCell } from '@/components/Table'
 import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowProps, TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
-import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 const TokenBadgesListCell = ({ tx, refAddressHash, compact }: TransactionRowSectionProps) => {

@@ -17,8 +17,6 @@ import useCanvasDimensions, { CanvasDimensions } from '~/components/animatedBack
 // extend([/* plugins */])
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
-const AnimatedSkiaCanvas = Animated.createAnimatedComponent(SkiaCanvas)
-
 const AnimatedBackground = ({
   height,
   width,
@@ -60,7 +58,7 @@ const ParallaxAnimatedContainer = ({ children, scrollY }: ParallaxAnimatedContai
   const parallaxAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
+        translateY: interpolate(scrollY?.get() || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
       }
     ]
   }))
@@ -74,11 +72,15 @@ interface AnimatedCanvasProps extends CanvasDimensions {
 
 const AnimatedCanvas = ({ children, canvasHeight, canvasWidth }: AnimatedCanvasProps) => {
   const animatedCanvasStyle = useAnimatedStyle(() => ({
-    height: canvasHeight.value,
-    width: canvasWidth.value
+    height: canvasHeight.get(),
+    width: canvasWidth.get()
   }))
 
-  return <AnimatedSkiaCanvas style={animatedCanvasStyle}>{children}</AnimatedSkiaCanvas>
+  return (
+    <Animated.View style={animatedCanvasStyle}>
+      <SkiaCanvas style={{ flex: 1 }}>{children}</SkiaCanvas>
+    </Animated.View>
+  )
 }
 
 const AnimatedContainer = styled(Animated.View)`

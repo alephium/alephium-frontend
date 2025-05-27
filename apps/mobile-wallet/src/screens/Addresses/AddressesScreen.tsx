@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useTranslation } from 'react-i18next'
 
@@ -9,8 +10,7 @@ import FlashListScreen from '~/components/layout/FlashListScreen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
@@ -18,7 +18,7 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   const { t } = useTranslation()
   const bottomBarHeight = useBottomTabBarHeight()
 
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useFetchAddressesHashesSortedByLastUse()
 
   const handleAddressPress = (addressHash: AddressHash) => {
     dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
@@ -27,17 +27,17 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   return (
     <FlashListScreen
       data={addresses}
-      refreshControl={<RefreshSpinner progressViewOffset={190} />}
+      refreshControl={<RefreshSpinner progressViewOffset={150} />}
       contentPaddingTop={165}
       estimatedItemSize={78}
       onScroll={onScroll}
       contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN, paddingBottom: bottomBarHeight }}
-      renderItem={({ item, index }) => (
+      renderItem={({ item: addressHash, index }) => (
         <AddressBox
-          key={item.hash}
-          addressHash={item.hash}
+          key={addressHash}
+          addressHash={addressHash}
           isLast={index === addresses.length - 1}
-          onPress={() => handleAddressPress(item.hash)}
+          onPress={() => handleAddressPress(addressHash)}
           origin="addressesScreen"
         />
       )}

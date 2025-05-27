@@ -1,13 +1,12 @@
-import { AddressHash, AssetAmount, client, DEPRECATED_Address as Address } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
-import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
-  const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
+  const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddressHash, 'public'),
     toAddress: toAddressHash
   })
@@ -21,18 +20,9 @@ export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAdd
 export const buildUnsignedTransactions = async (
   fromAddress: Address,
   toAddressHash: string,
-  assetAmounts: AssetAmount[]
+  assetAmounts: AssetAmount[],
+  shouldSweep: boolean
 ) => {
-  const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
-    (asset) => asset.availableBalance > 0
-  )
-
-  const shouldSweep =
-    assetsWithAvailableBalance.length === assetAmounts.length &&
-    assetsWithAvailableBalance.every(
-      (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
-    )
-
   if (shouldSweep) {
     return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
   } else {
@@ -60,7 +50,7 @@ export const buildTransferTransaction = async ({
 }: TransferTxData) => {
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
-  return await client.node.transactions.postTransactionsBuild({
+  return await throttledClient.node.transactions.postTransactionsBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     destinations: [
       {
@@ -83,7 +73,7 @@ export const buildCallContractTransaction = async ({
 }: CallContractTxData) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
 
-  return await client.node.contracts.postContractsUnsignedTxExecuteScript({
+  return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode,
     attoAlphAmount,
@@ -101,7 +91,7 @@ export const buildDeployContractTransaction = async ({
   gasAmount,
   gasPrice
 }: DeployContractTxData) =>
-  await client.node.contracts.postContractsUnsignedTxDeployContract({
+  await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
@@ -112,7 +102,7 @@ export const buildDeployContractTransaction = async ({
 
 export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
   const signature = transactionSign(txId, await getAddressAsymetricKey(fromAddress, 'private'))
-  const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
+  const data = await throttledClient.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }
 }

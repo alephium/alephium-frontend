@@ -1,14 +1,13 @@
-import { appBecameInactive, appReset } from '@alephium/shared'
+import {
+  activeWalletDeleted,
+  appBecameInactive,
+  appLaunchedWithLastUsedWallet,
+  appReset,
+  walletUnlockedMobile
+} from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
-import {
-  appLaunchedWithLastUsedWallet,
-  newWalletGenerated,
-  newWalletImportedWithMetadata,
-  walletDeleted,
-  walletNameChanged,
-  walletUnlocked
-} from '~/store/wallet/walletActions'
+import { newWalletGenerated, newWalletImportedWithMetadata, walletNameChanged } from '~/store/wallet/walletActions'
 import { WalletState } from '~/types/wallet'
 
 const sliceName = 'wallet'
@@ -42,9 +41,9 @@ const walletSlice = createSlice({
       .addCase(appBecameInactive, (state) => {
         state.isUnlocked = false
       })
-    builder.addMatcher(isAnyOf(appReset, walletDeleted), resetState)
+    builder.addMatcher(isAnyOf(appReset, activeWalletDeleted), resetState)
     builder.addMatcher(
-      isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata, appLaunchedWithLastUsedWallet),
+      isAnyOf(walletUnlockedMobile, newWalletGenerated, newWalletImportedWithMetadata, appLaunchedWithLastUsedWallet),
       (state, { payload: { name, id, isMnemonicBackedUp } }) => ({
         ...state,
         id,
@@ -52,7 +51,7 @@ const walletSlice = createSlice({
         isMnemonicBackedUp
       })
     )
-    builder.addMatcher(isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata), (state) => {
+    builder.addMatcher(isAnyOf(walletUnlockedMobile, newWalletGenerated, newWalletImportedWithMetadata), (state) => {
       state.isUnlocked = true
     })
   }

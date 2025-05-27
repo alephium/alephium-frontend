@@ -1,7 +1,9 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import * as Clipboard from 'expo-clipboard'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, TextInput, TextInputProps, ViewProps, ViewStyle } from 'react-native'
+import { StyleProp, TextInputProps, ViewProps, ViewStyle } from 'react-native'
+import { TextInput } from 'react-native-gesture-handler'
 import Animated, { AnimatedProps, FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -12,7 +14,7 @@ import { INPUTS_HEIGHT } from '~/style/globalStyle'
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
 
-export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'> {
+export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value' | 'style'> {
   value: T
   label: string
   onPress?: () => void
@@ -25,6 +27,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
   inputRef?: RefObject<TextInput>
+  isInModal?: boolean
 }
 
 const Input = <T extends InputValue>({
@@ -43,6 +46,7 @@ const Input = <T extends InputValue>({
   layout,
   inputRef,
   onChangeText,
+  isInModal,
   ...props
 }: InputProps<T>) => {
   const { t } = useTranslation()
@@ -68,19 +72,19 @@ const Input = <T extends InputValue>({
   }
 
   const isShowingPasteButton = copiedText && showPasteButton
+  const TextInputComponent = isInModal ? BottomSheetTextInputStyled : TextInputStyled
 
   return (
     <InputStyled onPress={onPress} style={style} short={short}>
       <InputContainer>
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
-        <TextInputStyled
+        <TextInputComponent
           selectionColor={theme.global.accent}
           value={renderedValue?.toString()}
           onFocus={onFocus}
           onBlur={onBlur}
           ref={usedInputRef}
           placeholder={label}
-          forwardedAs={TextInput}
           placeholderTextColor={theme.font.tertiary}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
@@ -119,11 +123,25 @@ const InputContainer = styled.View`
   gap: 5px;
 `
 
-const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
+const InputStyles = css`
   flex: 1;
   height: 100%;
   color: ${({ theme }) => theme.font.primary};
   font-size: 15px;
+`
+
+const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
+  ${InputStyles};
+
+  ${({ hide }) =>
+    hide &&
+    css`
+      opacity: 0;
+    `}
+`
+
+const BottomSheetTextInputStyled = styled(BottomSheetTextInput)<{ hide?: boolean }>`
+  ${InputStyles};
 
   ${({ hide }) =>
     hide &&

@@ -1,4 +1,5 @@
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,8 +7,7 @@ import { View } from 'react-native'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -20,6 +20,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { dismiss } = useBottomSheetModal()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
@@ -36,13 +37,13 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
 
-    dispatch(closeModal({ id }))
+    dismiss(id)
   }
 
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 notScrollable modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (
@@ -56,7 +57,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
           ))}
         </Surface>
       </View>
-    </BottomModal>
+    </BottomModal2>
   )
 })
 

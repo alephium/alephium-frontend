@@ -4,14 +4,14 @@ import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 import { BaseHeaderOptions } from '~/components/headers/BaseHeader'
-import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface HeaderContextValue {
   headerOptions: BaseHeaderOptions
   setHeaderOptions: (options: BaseHeaderOptions) => void
   screenScrollHandler: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
   screenScrollY?: SharedValue<number>
-  parentNavigation?: NavigationProp<InWalletTabsParamList>
+  parentNavigation?: NavigationProp<RootStackParamList>
 }
 
 const initialValues: HeaderContextValue = {
@@ -27,10 +27,10 @@ const HeaderContext = createContext(initialValues)
 export const HeaderContextProvider = ({ children }: { children: ReactNode }) => {
   const [headerOptions, setHeaderOptions] = useState<HeaderContextValue['headerOptions']>(initialValues.headerOptions)
   const screenScrollY = useSharedValue(0)
-  const parentNavigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
+  const parentNavigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    screenScrollY.value = e.nativeEvent.contentOffset.y
+    screenScrollY.set(e.nativeEvent.contentOffset.y)
   }
 
   return (

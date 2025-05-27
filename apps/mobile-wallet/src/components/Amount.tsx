@@ -6,6 +6,7 @@ import { useAppSelector } from '~/hooks/redux'
 
 import AppText, { AppTextProps } from './AppText'
 
+// TODO: Refactor to match desktop wallet
 export interface AmountProps extends AppTextProps {
   value?: bigint | number
   decimals?: number

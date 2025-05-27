@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { useFetchWalletLatestTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
 import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
 
 export const useFetchWalletTransactionsInfinite = () => {

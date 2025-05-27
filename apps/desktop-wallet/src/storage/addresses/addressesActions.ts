@@ -1,4 +1,4 @@
-import { Address, AddressBase, AddressHash, Contact } from '@alephium/shared'
+import { Address, AddressBase, Contact } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
 import { Message } from '@/features/toastMessages/toastMessagesTypes'
@@ -8,8 +8,6 @@ export const addressesRestoredFromMetadata = createAction<AddressBase[]>('addres
 export const addressRestorationStarted = createAction('addresses/addressRestorationStarted')
 
 export const newAddressesSaved = createAction<AddressBase[]>('addresses/newAddressesSaved')
-
-export const addressDeleted = createAction<AddressHash>('addresses/addressDeleted')
 
 export const defaultAddressChanged = createAction<Address>('addresses/defaultAddressChanged')
 

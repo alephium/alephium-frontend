@@ -1,3 +1,5 @@
+import { walletUnlockedMobile } from '@alephium/shared'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
@@ -9,7 +11,7 @@ import { useTheme } from 'styled-components/native'
 import { Analytics, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
-import HiddenAssetsScreen from '~/features/assetsDisplay/hideAssets/HiddenAssetsScreen'
+import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import DAppWebViewScreen from '~/features/ecosystem/DAppWebViewScreen'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -52,7 +54,7 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
-import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
+import { mnemonicMigrated } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -81,50 +83,52 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
-        <Analytics>
-          <WalletConnectContextProvider>
-            <RootStack.Navigator
-              initialRouteName={initialRouteName || 'LandingScreen'}
-              screenOptions={{
-                headerShown: false,
-                presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
-              }}
-            >
-              <RootStack.Group screenOptions={{ animation: 'fade' }}>
-                <RootStack.Screen name="LandingScreen" component={LandingScreen} />
-                <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
-                <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
-                <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
-              </RootStack.Group>
-              <RootStack.Screen name="SendNavigation" component={SendNavigation} />
-              <RootStack.Screen name="ReceiveNavigation" component={ReceiveNavigation} />
-              <RootStack.Screen name="BackupMnemonicNavigation" component={BackupMnemonicNavigation} />
-              <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
-              <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
-              <RootStack.Screen name="ContactScreen" component={ContactScreen} />
-              <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
-              <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
-              <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-              <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-              <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
-              <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
-              <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
-              <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
-              <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-              <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
-              <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
-              <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
-              <RootStack.Screen name="HiddenAssetsScreen" component={HiddenAssetsScreen} />
-              <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
-              <RootStack.Screen
-                name="ImportWalletAddressDiscoveryScreen"
-                component={ImportWalletAddressDiscoveryScreen}
-              />
-            </RootStack.Navigator>
-            <AppModals />
-          </WalletConnectContextProvider>
-        </Analytics>
-        <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
+        <BottomSheetModalProvider>
+          <Analytics>
+            <WalletConnectContextProvider>
+              <RootStack.Navigator
+                initialRouteName={initialRouteName || 'LandingScreen'}
+                screenOptions={{
+                  headerShown: false,
+                  presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
+                }}
+              >
+                <RootStack.Group screenOptions={{ animation: 'fade' }}>
+                  <RootStack.Screen name="LandingScreen" component={LandingScreen} />
+                  <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
+                  <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
+                  <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
+                </RootStack.Group>
+                <RootStack.Screen name="SendNavigation" component={SendNavigation} />
+                <RootStack.Screen name="ReceiveNavigation" component={ReceiveNavigation} />
+                <RootStack.Screen name="BackupMnemonicNavigation" component={BackupMnemonicNavigation} />
+                <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
+                <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
+                <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+                <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
+                <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
+                <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
+                <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+                <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+                <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
+                <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
+                <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+                <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+                <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
+                <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
+                <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
+                <RootStack.Screen name="HiddenTokensScreen" component={HiddenTokensScreen} />
+                <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
+                <RootStack.Screen
+                  name="ImportWalletAddressDiscoveryScreen"
+                  component={ImportWalletAddressDiscoveryScreen}
+                />
+              </RootStack.Navigator>
+              <AppModals />
+            </WalletConnectContextProvider>
+          </Analytics>
+          <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
+        </BottomSheetModalProvider>
       </NavigationContainer>
     </GestureHandlerRootView>
   )
@@ -153,7 +157,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     }
 
     try {
-      dispatch(walletUnlocked(metadata))
+      dispatch(walletUnlockedMobile(metadata))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 

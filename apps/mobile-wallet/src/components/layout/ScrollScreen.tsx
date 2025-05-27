@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { ReactNode, RefObject, useRef, useState } from 'react'
+import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
@@ -21,7 +21,7 @@ import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
@@ -41,6 +41,7 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
+  hasKeyboard?: boolean
 }
 
 const ScrollScreen = ({
@@ -61,6 +62,7 @@ const ScrollScreen = ({
   TitleSideComponent,
   bottomButtonsRender,
   customBottomRender,
+  hasKeyboard,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -69,6 +71,7 @@ const ScrollScreen = ({
   const insets = useSafeAreaInsets()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const [paddingBottom, setPaddingBottom] = useState(0)
+  const [canGoBack, setCanGoBack] = useState(false)
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     onScroll && onScroll(e)
@@ -83,65 +86,76 @@ const ScrollScreen = ({
 
   const hasHeaderButtons = headerOptions?.headerLeft || headerOptions?.headerRight || headerOptions?.type === 'stack'
 
+  useEffect(() => {
+    setCanGoBack(navigation.canGoBack())
+  }, [navigation])
+
+  const content = (
+    <ScrollViewContainer style={containerStyle}>
+      {headerOptions && (
+        <HeaderComponent
+          onBackPress={canGoBack ? navigation.goBack : undefined}
+          options={{ headerTitle: screenTitle, ...headerOptions }}
+          scrollY={screenScrollY}
+          scrollEffectOffset={headerScrollEffectOffset}
+          titleAlwaysVisible={headerTitleAlwaysVisible}
+          style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
+        />
+      )}
+      <ScrollView
+        ref={viewRef}
+        scrollEventThrottle={16}
+        alwaysBounceVertical={true}
+        onScroll={handleScroll}
+        onScrollEndDrag={scrollEndHandler}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={[
+          {
+            flexGrow: fill ? 1 : undefined,
+            paddingTop:
+              typeof contentPaddingTop === 'boolean'
+                ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * (hasHeaderButtons ? 2 : 1)
+                : contentPaddingTop,
+            paddingBottom
+          },
+          contentContainerStyle
+        ]}
+        {...props}
+      >
+        {screenTitle && (
+          <ScreenIntro
+            title={screenTitle}
+            subtitle={screenIntro}
+            TitleSideComponent={TitleSideComponent}
+            scrollY={screenScrollY}
+            paddingBottom={!!screenIntro}
+          />
+        )}
+        <View
+          style={[
+            {
+              gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+              paddingBottom: insets.bottom + DEFAULT_MARGIN,
+              flex: fill ? 1 : undefined
+            },
+            style
+          ]}
+        >
+          {children}
+        </View>
+      </ScrollView>
+    </ScrollViewContainer>
+  )
+
   return (
     <>
-      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-        <ScrollViewContainer style={containerStyle}>
-          {headerOptions && (
-            <HeaderComponent
-              onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
-              options={{ headerTitle: screenTitle, ...headerOptions }}
-              scrollY={screenScrollY}
-              scrollEffectOffset={headerScrollEffectOffset}
-              titleAlwaysVisible={headerTitleAlwaysVisible}
-              style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
-            />
-          )}
-          <ScrollView
-            ref={viewRef}
-            scrollEventThrottle={16}
-            alwaysBounceVertical={true}
-            onScroll={handleScroll}
-            onScrollEndDrag={scrollEndHandler}
-            style={{ overflow: SCREEN_OVERFLOW }}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={[
-              {
-                flexGrow: fill ? 1 : undefined,
-                paddingTop:
-                  typeof contentPaddingTop === 'boolean'
-                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * (hasHeaderButtons ? 2 : 1)
-                    : contentPaddingTop,
-                paddingBottom
-              },
-              contentContainerStyle
-            ]}
-            {...props}
-          >
-            {screenTitle && (
-              <ScreenIntro
-                title={screenTitle}
-                subtitle={screenIntro}
-                TitleSideComponent={TitleSideComponent}
-                scrollY={screenScrollY}
-                paddingBottom={!!screenIntro}
-              />
-            )}
-            <View
-              style={[
-                {
-                  gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-                  paddingBottom: insets.bottom + DEFAULT_MARGIN,
-                  flex: fill ? 1 : undefined
-                },
-                style
-              ]}
-            >
-              {children}
-            </View>
-          </ScrollView>
-        </ScrollViewContainer>
-      </KeyboardAvoidingView>
+      {hasKeyboard ? (
+        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+          {content}
+        </KeyboardAvoidingView>
+      ) : (
+        content
+      )}
       {bottomButtonsRender && (
         <ColoredBackground>
           <BottomButtonsInnerContainer>

@@ -1,13 +1,14 @@
 import { sendAnalytics } from '~/analytics'
-import { getWithReportableError, storeWithReportableError } from '~/persistent-storage/utils'
+import { storage } from '~/persistent-storage/storage'
+import { storeWithReportableError } from '~/persistent-storage/utils'
 
 const FAVORITE_DAPPS_KEY = 'alephium_favorite_dapps'
 
-export const getFavoriteDApps = async (): Promise<string[]> => {
+export const getFavoriteDApps = (): Array<string> => {
   let favoriteDApps = null
 
   try {
-    const rawFavoriteDApps = await getWithReportableError(FAVORITE_DAPPS_KEY)
+    const rawFavoriteDApps = storage.getString(FAVORITE_DAPPS_KEY)
     favoriteDApps = rawFavoriteDApps ? JSON.parse(rawFavoriteDApps) : []
   } catch (error) {
     console.log('error', error)

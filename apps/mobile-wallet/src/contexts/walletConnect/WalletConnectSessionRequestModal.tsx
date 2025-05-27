@@ -1,7 +1,9 @@
 import {
-  client,
   getHumanReadableError,
+  selectAddressByHash,
   SessionRequestEvent,
+  throttledClient,
+  transactionSent,
   WALLETCONNECT_ERRORS,
   WalletConnectError
 } from '@alephium/shared'
@@ -18,6 +20,7 @@ import {
   SignUnsignedTxResult,
   transactionSign
 } from '@alephium/web3'
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { getSdkError } from '@walletconnect/utils'
 import * as Clipboard from 'expo-clipboard'
 import { useState } from 'react'
@@ -39,9 +42,7 @@ import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToa
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
@@ -49,8 +50,6 @@ import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
-import { transactionSent } from '~/store/transactions/transactionsActions'
 import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
@@ -73,6 +72,7 @@ const WalletConnectSessionRequestModal = withModal(
     const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
     const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
+    const { dismiss } = useBottomSheetModal()
 
     const [isApproving, setIsApproving] = useState(false)
 
@@ -106,7 +106,7 @@ const WalletConnectSessionRequestModal = withModal(
                 amount: attoAlphAmount,
                 tokens,
                 timestamp: new Date().getTime(),
-                status: 'pending',
+                status: 'sent',
                 type: 'transfer'
               })
             )
@@ -135,8 +135,9 @@ const WalletConnectSessionRequestModal = withModal(
                 amount: attoAlphAmount,
                 tokens,
                 timestamp: new Date().getTime(),
-                status: 'pending',
-                type: 'call-contract'
+                status: 'sent',
+                type: 'contract',
+                toAddress: ''
               })
             )
 
@@ -157,8 +158,9 @@ const WalletConnectSessionRequestModal = withModal(
                 hash: data.txId,
                 fromAddress: requestData.wcData.fromAddress,
                 timestamp: new Date().getTime(),
-                status: 'pending',
-                type: 'deploy-contract'
+                status: 'sent',
+                type: 'contract',
+                toAddress: ''
               })
             )
 
@@ -213,7 +215,7 @@ const WalletConnectSessionRequestModal = withModal(
           )
 
           if (requestData.submit) {
-            await client.node.transactions.postTransactionsSubmit({
+            await throttledClient.node.transactions.postTransactionsSubmit({
               unsignedTx: requestData.wcData.unsignedTx,
               signature
             })
@@ -245,7 +247,7 @@ const WalletConnectSessionRequestModal = withModal(
               : WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
         })
       } finally {
-        dispatch(closeModal({ id }))
+        dismiss(id)
       }
     }
 
@@ -269,7 +271,7 @@ const WalletConnectSessionRequestModal = withModal(
         console.error('❌ INFORMING: FAILED.')
       } finally {
         showRejectedToast()
-        dispatch(closeModal({ id }))
+        dismiss(id)
       }
     }
 
@@ -281,7 +283,7 @@ const WalletConnectSessionRequestModal = withModal(
       } catch (e) {
         console.error('❌ INFORMING: FAILED.')
       } finally {
-        dispatch(closeModal({ id }))
+        dismiss(id)
       }
     }
 
@@ -324,130 +326,125 @@ const WalletConnectSessionRequestModal = withModal(
                 console.log('👉 RESETTING SESSION REQUEST EVENT.')
                 dispatch(deactivateAppLoading())
                 showApprovedToast()
-                dispatch(closeModal({ id }))
+                dismiss(id)
               }
             }
           })
       })
 
     return (
-      <BottomModal modalId={id} onClose={!isApproving ? onReject : undefined}>
-        <ModalContent verticalGap>
-          {metadata && (
-            <ScreenSection>
-              {metadata.icons && metadata.icons.length > 0 && metadata.icons[0] && (
-                <DAppIcon source={{ uri: metadata.icons[0] }} />
-              )}
-              <ModalScreenTitle>
-                {
-                  {
-                    transfer: t('Transfer request'),
-                    'call-contract': t('Smart contract request'),
-                    'deploy-contract': t('Smart contract request'),
-                    'sign-message': t('Sign message'),
-                    'sign-unsigned-tx': t('Sign unsigned transaction')
-                  }[requestData.type]
-                }
-              </ModalScreenTitle>
-              {metadata.url && (
-                <AppText color="tertiary" size={13}>
-                  {t('from {{ url }}', { url: metadata.url })}
-                </AppText>
-              )}
-            </ScreenSection>
-          )}
+      <BottomModal2 modalId={id} onClose={!isApproving ? onReject : undefined} contentVerticalGap>
+        {metadata && (
           <ScreenSection>
-            <Surface>
-              {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
-                requestData.wcData.assetAmounts &&
-                requestData.wcData.assetAmounts.length > 0 && (
-                  <>
-                    <Row title={t('Sending')} titleColor="secondary">
-                      <AssetAmounts>
-                        {requestData.wcData.assetAmounts.map(({ id, amount }) =>
-                          amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
-                        )}
-                      </AssetAmounts>
-                    </Row>
+            {metadata.icons && metadata.icons.length > 0 && metadata.icons[0] && (
+              <DAppIcon source={{ uri: metadata.icons[0] }} />
+            )}
+            <ModalScreenTitle>
+              {
+                {
+                  transfer: t('Transfer request'),
+                  'call-contract': t('Smart contract request'),
+                  'deploy-contract': t('Smart contract request'),
+                  'sign-message': t('Sign message'),
+                  'sign-unsigned-tx': t('Sign unsigned transaction')
+                }[requestData.type]
+              }
+            </ModalScreenTitle>
+            {metadata.url && (
+              <AppText color="tertiary" size={13}>
+                {t('from {{ url }}', { url: metadata.url })}
+              </AppText>
+            )}
+          </ScreenSection>
+        )}
+        <ScreenSection>
+          <Surface>
+            {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
+              requestData.wcData.assetAmounts &&
+              requestData.wcData.assetAmounts.length > 0 && (
+                <>
+                  <Row title={t('Sending')} titleColor="secondary">
+                    <AssetAmounts>
+                      {requestData.wcData.assetAmounts.map(({ id, amount }) =>
+                        amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
+                      )}
+                    </AssetAmounts>
+                  </Row>
 
-                    <TotalWorthRow
-                      assetAmounts={requestData.wcData.assetAmounts}
-                      fromAddress={requestData.wcData.fromAddress}
-                    />
-                  </>
-                )}
-              <Row title={isSignRequest ? t('Signing with') : t('From')} titleColor="secondary">
-                <AddressBadge addressHash={requestData.wcData.fromAddress} />
+                  <TotalWorthRow assetAmounts={requestData.wcData.assetAmounts} />
+                </>
+              )}
+            <Row title={isSignRequest ? t('Signing with') : t('From')} titleColor="secondary">
+              <AddressBadge addressHash={requestData.wcData.fromAddress} />
+            </Row>
+
+            {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
+              metadata?.url && (
+                <Row title={t('To')} titleColor="secondary" noMaxWidth>
+                  <AppText semiBold>{metadata.url}</AppText>
+                </Row>
+              )
+            ) : requestData.type === 'transfer' ? (
+              <Row title={t('To')} titleColor="secondary">
+                <AddressBadge addressHash={requestData.wcData.toAddress} />
               </Row>
+            ) : null}
 
-              {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
-                metadata?.url && (
-                  <Row title={t('To')} titleColor="secondary" noMaxWidth>
-                    <AppText semiBold>{metadata.url}</AppText>
+            {requestData.type === 'deploy-contract' && (
+              <>
+                {!!requestData.wcData.initialAlphAmount?.amount && (
+                  <Row title={t('Initial amount')} titleColor="secondary">
+                    <AssetAmountWithLogo
+                      assetId={ALPH.id}
+                      amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
+                      fullPrecision
+                    />
                   </Row>
-                )
-              ) : requestData.type === 'transfer' ? (
-                <Row title={t('To')} titleColor="secondary">
-                  <AddressBadge addressHash={requestData.wcData.toAddress} />
-                </Row>
-              ) : null}
+                )}
+                {requestData.wcData.issueTokenAmount && (
+                  <Row title={t('Issue token amount')} titleColor="secondary">
+                    <AppText>{requestData.wcData.issueTokenAmount}</AppText>
+                  </Row>
+                )}
+              </>
+            )}
 
-              {requestData.type === 'deploy-contract' && (
-                <>
-                  {!!requestData.wcData.initialAlphAmount?.amount && (
-                    <Row title={t('Initial amount')} titleColor="secondary">
-                      <AssetAmountWithLogo
-                        assetId={ALPH.id}
-                        amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
-                        fullPrecision
-                      />
-                    </Row>
-                  )}
-                  {requestData.wcData.issueTokenAmount && (
-                    <Row title={t('Issue token amount')} titleColor="secondary">
-                      <AppText>{requestData.wcData.issueTokenAmount}</AppText>
-                    </Row>
-                  )}
-                </>
-              )}
-
-              {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-                <CopyBytecodeRow bytecode={requestData.wcData.bytecode} />
-              )}
-              {requestData.type === 'sign-unsigned-tx' && (
-                <>
-                  <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
-                    <AppText>{requestData.unsignedTxData.unsignedTx.txId}</AppText>
-                  </Row>
-                  <Row isVertical title={t('Unsigned TX')} titleColor="secondary">
-                    <AppText>{requestData.wcData.unsignedTx}</AppText>
-                  </Row>
-                </>
-              )}
-              {requestData.type === 'sign-message' && (
-                <Row isVertical title={t('Message')} titleColor="secondary">
-                  <AppText>{requestData.wcData.message}</AppText>
+            {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
+              <CopyBytecodeRow bytecode={requestData.wcData.bytecode} />
+            )}
+            {requestData.type === 'sign-unsigned-tx' && (
+              <>
+                <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
+                  <AppText>{requestData.unsignedTxData.unsignedTx.txId}</AppText>
                 </Row>
-              )}
-              {fees !== undefined && (
-                <Row title={t('Estimated fees')} titleColor="secondary" isLast>
-                  <FeeAmounts fees={fees} />
+                <Row isVertical title={t('Unsigned TX')} titleColor="secondary">
+                  <AppText>{requestData.wcData.unsignedTx}</AppText>
                 </Row>
-              )}
-            </Surface>
-          </ScreenSection>
-          <ScreenSection centered>
-            <ButtonsRow>
-              <Button title={t('Reject')} variant="alert" onPress={onReject} flex />
-              {isSignRequest ? (
-                <Button title={t('Sign')} variant="valid" onPress={handleSignPress} flex />
-              ) : (
-                <Button title={t('Approve')} variant="valid" onPress={handleApprovePress} flex />
-              )}
-            </ButtonsRow>
-          </ScreenSection>
-        </ModalContent>
-      </BottomModal>
+              </>
+            )}
+            {requestData.type === 'sign-message' && (
+              <Row isVertical title={t('Message')} titleColor="secondary">
+                <AppText>{requestData.wcData.message}</AppText>
+              </Row>
+            )}
+            {fees !== undefined && (
+              <Row title={t('Estimated fees')} titleColor="secondary" isLast>
+                <FeeAmounts fees={fees} />
+              </Row>
+            )}
+          </Surface>
+        </ScreenSection>
+        <ScreenSection centered>
+          <ButtonsRow>
+            <Button title={t('Reject')} variant="alert" onPress={onReject} flex />
+            {isSignRequest ? (
+              <Button title={t('Sign')} variant="valid" onPress={handleSignPress} flex />
+            ) : (
+              <Button title={t('Approve')} variant="valid" onPress={handleApprovePress} flex />
+            )}
+          </ButtonsRow>
+        </ScreenSection>
+      </BottomModal2>
     )
   }
 )

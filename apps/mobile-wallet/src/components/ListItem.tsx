@@ -10,7 +10,7 @@ import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface ListItemProps extends PressableProps {
-  title: string
+  title: string | ReactNode
   subtitle?: string | ReactNode
   icon: ReactNode
   isLast?: boolean

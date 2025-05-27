@@ -1,4 +1,5 @@
 import { isConfirmedTx, selectPendingSentTransactionByHash } from '@alephium/shared'
+import { useTransactionDirection } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -6,7 +7,6 @@ import AddressBadge from '@/components/AddressBadge'
 import IOList from '@/components/IOList'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 import { useAppSelector } from '@/hooks/redux'
 
 const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {

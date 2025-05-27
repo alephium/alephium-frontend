@@ -66,32 +66,24 @@ export default {
     web: {
       favicon: './assets/favicon.png'
     },
+    newArchEnabled: true,
     plugins: [
       [
         'expo-build-properties',
         {
           ios: {
-            deploymentTarget: '13.4',
-            newArchEnabled: false,
+            deploymentTarget: '15.1',
             flipper: false // https://docs.expo.dev/guides/using-flipper/
           },
           android: {
-            compileSdkVersion: 34,
-            targetSdkVersion: 34,
-            buildToolsVersion: '34.0.0',
-            newArchEnabled: false
+            compileSdkVersion: 35,
+            targetSdkVersion: 35,
+            buildToolsVersion: '35.0.0'
           }
         }
       ],
       [
         'expo-camera',
-        {
-          cameraPermission:
-            'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
-        }
-      ],
-      [
-        'expo-barcode-scanner',
         {
           cameraPermission:
             'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'

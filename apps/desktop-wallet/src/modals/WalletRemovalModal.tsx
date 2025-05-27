@@ -1,4 +1,5 @@
 import { keyring } from '@alephium/keyring'
+import { activeWalletDeleted } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
@@ -14,7 +15,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
+import { walletDeleted } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 export interface WalletRemovalModalProps {

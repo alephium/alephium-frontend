@@ -31,16 +31,14 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 
   return (
     <motion.div {...fadeInSlowly} className={className}>
-      <SideBar
-        renderTopComponent={() => (
-          <SideNavigation>
-            <WalletNameButton />
-            <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
-            <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
-            <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
-          </SideNavigation>
-        )}
-      ></SideBar>
+      <SideBar>
+        <SideNavigation>
+          <WalletNameButton />
+          <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
+          <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+          <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
+        </SideNavigation>
+      </SideBar>
 
       <ScrollableContent>
         <Scrollbar>

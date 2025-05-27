@@ -349,7 +349,7 @@ export const isExponentialNotation = (numString: string) => numString.includes('
 
 export const isNumber = (numString: string): boolean => !Number.isNaN(Number(numString)) && numString.length > 0
 
-export const calculateAmountWorth = (amount: bigint, fiatPrice: number, decimals: number): number => {
+export const calculateTokenAmountWorth = (amount: bigint, fiatPrice: number, decimals: number): number => {
   if (fiatPrice < 0) throw `Invalid fiat price: ${fiatPrice}. Fiat price cannot be negative.`
 
   return fiatPrice * parseFloat(toHumanReadableAmount(amount, decimals))
@@ -361,5 +361,3 @@ export const getNumberOfDecimals = (amount: string): number =>
   amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
 
 export const convertToPositive = (num: bigint): bigint => (num < 0 ? num * BigInt(-1) : num)
-
-export const convertToNegative = (num: bigint): bigint => (num > 0 ? num * BigInt(-1) : num)

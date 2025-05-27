@@ -29,6 +29,8 @@ export type AddressMetadata = AddressSettings & {
   index: AddressIndex
 }
 
+export type AddressMetadataWithHash = AddressMetadata & { hash: string }
+
 // hash: AddressHash
 // index: number
 // isDefault: boolean
@@ -59,11 +61,3 @@ export type AddressTokensSyncResult = {
 }
 
 export type AddressesState = EntityState<Address>
-
-export type DEPRECATED_Address = Omit<e.AddressInfo, 'txNumber'> &
-  Address & {
-    transactions: e.Transaction['hash'][]
-    allTransactionPagesLoaded: boolean
-    tokens: e.AddressTokenBalance[]
-    lastUsed: number
-  }

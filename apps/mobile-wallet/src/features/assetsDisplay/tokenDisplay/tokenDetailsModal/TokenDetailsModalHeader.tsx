@@ -1,5 +1,5 @@
-import { CURRENCIES, selectPriceById } from '@alephium/shared'
-import { useMemo } from 'react'
+import { CURRENCIES, isFT } from '@alephium/shared'
+import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -8,14 +8,11 @@ import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
-const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
-  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const token = knownFungibleTokens.find((token) => token.id === tokenId)
+const TokenDetailsModalHeader = ({ tokenId }: TokenDetailsModalCommonProps) => {
+  const { data: token } = useFetchToken(tokenId)
 
-  if (!token) return null
+  if (!token || !isFT(token)) return null
 
   return (
     <TokenDetailsModalHeaderStyled>
@@ -32,9 +29,9 @@ export default TokenDetailsModalHeader
 
 const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
   const currency = useAppSelector((s) => s.settings.currency)
-  const price = useAppSelector((s) => selectPriceById(s, tokenSymbol)?.price)
+  const { data: price } = useFetchTokenPrice(tokenSymbol)
 
-  if (price === undefined || price === null) return null
+  if (price === undefined) return null
 
   return (
     <Badge>

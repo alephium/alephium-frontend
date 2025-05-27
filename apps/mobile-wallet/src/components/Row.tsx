@@ -41,10 +41,10 @@ const Row = ({
   const rowOpacity = useSharedValue(1)
 
   const handleTouchStart = () => {
-    rowOpacity.value = withSpring(0.8, fastestSpringConfiguration)
+    rowOpacity.set(withSpring(0.8, fastestSpringConfiguration))
   }
   const handleTouchEnd = () => {
-    rowOpacity.value = withSpring(1, fastestSpringConfiguration)
+    rowOpacity.set(withSpring(1, fastestSpringConfiguration))
   }
 
   const componentContent = title ? (

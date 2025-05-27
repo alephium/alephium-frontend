@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -7,11 +8,9 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
+import BottomModal2 from '~/features/modals/BottomModal2'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 
 interface WalletConnectErrorModalProps {
   onClose?: () => void
@@ -19,44 +18,42 @@ interface WalletConnectErrorModalProps {
 
 const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, onClose }) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
+  const { dismiss } = useBottomSheetModal()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   const handleClose = () => {
-    onClose && onClose()
-    dispatch(closeModal({ id }))
+    onClose?.()
+    dismiss(id)
   }
 
   return (
-    <BottomModal modalId={id}>
-      <ModalContent verticalGap>
+    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
+      </ScreenSection>
+      {walletConnectClientError && (
         <ScreenSection>
-          <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
+          <Surface>
+            <AppTextStyled>{walletConnectClientError}</AppTextStyled>
+          </Surface>
         </ScreenSection>
-        {walletConnectClientError && (
-          <ScreenSection>
-            <Surface>
-              <AppTextStyled>{walletConnectClientError}</AppTextStyled>
-            </Surface>
-          </ScreenSection>
-        )}
-        <ScreenSection centered>
-          <ButtonsRow>
-            <Button title={t('Close')} onPress={handleClose} flex />
-            <Button
-              title={t('Retry')}
-              variant="accent"
-              onPress={() => {
-                resetWalletConnectClientInitializationAttempts()
-                dispatch(closeModal({ id }))
-              }}
-              flex
-            />
-          </ButtonsRow>
-        </ScreenSection>
-      </ModalContent>
-    </BottomModal>
+      )}
+      <ScreenSection centered>
+        <ButtonsRow>
+          <Button title={t('Close')} onPress={handleClose} flex />
+          <Button
+            title={t('Retry')}
+            variant="accent"
+            onPress={() => {
+              resetWalletConnectClientInitializationAttempts()
+              dismiss(id)
+            }}
+            flex
+          />
+        </ButtonsRow>
+      </ScreenSection>
+    </BottomModal2>
   )
 })
 
