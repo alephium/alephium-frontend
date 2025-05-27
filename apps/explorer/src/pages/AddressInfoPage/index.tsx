@@ -41,7 +41,6 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { removeGroupIndexFromAddress } from '@/utils/strings'
 
 type ParamTypes = {
   id: string
@@ -118,7 +117,7 @@ const AddressInfoPage = () => {
     return null
   }
 
-  const addressWithoutGroup = removeGroupIndexFromAddress(addressHash)
+  const addressWithoutGroup = addressHash.split(':')[0]
 
   const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
   const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
