@@ -146,12 +146,11 @@ const useAddressGeneration = () => {
       }
 
       // Fix corrupted data if there is no default address in stored address metadata by making first address default
-      // TODO: What to do with groupless addresses?
       if (!addresses.some((address) => address.isDefault)) {
         addresses[0].isDefault = true
         addressMetadataStorage.storeOne(walletId, {
           index: addresses[0].index,
-          keyType: 'default',
+          keyType: addresses[0].keyType ?? 'default',
           settings: {
             isDefault: true,
             label: addresses[0].label,
