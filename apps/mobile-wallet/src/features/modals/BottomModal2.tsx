@@ -9,7 +9,6 @@ import {
 import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
 import { useCallback, useEffect, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from 'styled-components/native'
 
 import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
@@ -34,7 +33,6 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
 const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const safeAreaInsets = useSafeAreaInsets()
 
   useEffect(() => {
