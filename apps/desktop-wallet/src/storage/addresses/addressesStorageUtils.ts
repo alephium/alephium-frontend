@@ -1,6 +1,6 @@
-import { Address, AddressBase, AddressSettings, addressSettingsSaved } from '@alephium/shared'
+import { Address, AddressBase, AddressSettings, addressSettingsSaved, newAddressesSaved } from '@alephium/shared'
 
-import { defaultAddressChanged, newAddressesSaved } from '@/storage/addresses/addressesActions'
+import { defaultAddressChanged } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 

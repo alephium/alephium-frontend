@@ -7,8 +7,6 @@ export const addressesRestoredFromMetadata = createAction<AddressBase[]>('addres
 
 export const addressRestorationStarted = createAction('addresses/addressRestorationStarted')
 
-export const newAddressesSaved = createAction<AddressBase[]>('addresses/newAddressesSaved')
-
 export const defaultAddressChanged = createAction<Address>('addresses/defaultAddressChanged')
 
 export const addressDiscoveryStarted = createAction<LoadingEnabled>('addresses/addressDiscoveryStarted')
