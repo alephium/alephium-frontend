@@ -90,7 +90,7 @@ export const getCallContractWalletConnectResult = (
   if (!context.buildExecuteScriptTxResult) throw Error('No buildExecuteScriptTxResult available')
 
   // TODO: handle groupless addresses
-  if (isGrouplessTxResult(context.buildExecuteScriptTxResult)) throw Error('No buildExecuteScriptTxResult available')
+  if (isGrouplessTxResult(context.buildExecuteScriptTxResult)) throw Error('Groupless addresses are not supported yet')
 
   return {
     groupIndex: context.buildExecuteScriptTxResult.fromGroup,
