@@ -63,10 +63,6 @@ const AddressInfoPage = () => {
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const addressHash = id && isValidAddress(id) ? id : ''
-  const addressWithoutGroup = removeGroupIndexFromAddress(addressHash)
-
-  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
-  const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
@@ -114,12 +110,18 @@ const AddressInfoPage = () => {
     lastKnownMempoolTxs.current = addressMempoolTransactions
   }, [addressMempoolTransactions, refetchTxList])
 
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+
   if (!addressHash) {
     displaySnackbar({ text: t('The address format seems invalid'), type: 'alert' })
-    navigate('404')
+    navigate('/404')
+    return null
   }
 
-  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+  const addressWithoutGroup = removeGroupIndexFromAddress(addressHash)
+
+  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
+  const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
