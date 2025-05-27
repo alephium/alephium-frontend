@@ -105,7 +105,11 @@ export const SendContextProvider = ({
     if (!address) return
 
     try {
-      const data = await buildSweepTransactions(address.publicKey, address.hash)
+      const data = await buildSweepTransactions(
+        address.publicKey,
+        // fromAddress.keyType, // TODO: Support groupless addresses
+        address.hash
+      )
       setUnsignedTxData(data)
     } catch (e) {
       showExceptionToast(e, t('Could not build transaction'))

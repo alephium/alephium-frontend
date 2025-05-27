@@ -8,6 +8,7 @@ import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddressHash, 'public'),
+    // fromPublicKeyType: keyType, // TODO: Support groupless addresses
     toAddress: toAddressHash
   })
 
@@ -24,7 +25,11 @@ export const buildUnsignedTransactions = async (
   shouldSweep: boolean
 ) => {
   if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
+    return await buildSweepTransactions(
+      fromAddress.publicKey,
+      // fromAddress.keyType, // TODO: Support groupless addresses
+      toAddressHash
+    )
   } else {
     const data = await buildTransferTransaction({
       fromAddress: fromAddress.hash,
@@ -55,6 +60,7 @@ export const buildTransferTransaction = async ({
 
   return await throttledClient.node.transactions.postTransactionsBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     destinations: [
       {
         address: toAddress,
@@ -78,6 +84,7 @@ export const buildCallContractTransaction = async ({
 
   return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     bytecode,
     attoAlphAmount,
     tokens,
@@ -96,6 +103,7 @@ export const buildDeployContractTransaction = async ({
 }: DeployContractTxData) =>
   await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
     issueTokenAmount: issueTokenAmount?.toString(),

@@ -27,7 +27,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
   context.setIsSweeping(shouldSweep)
 
   if (shouldSweep) {
-    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, toAddress)
+    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, fromAddress.keyType, toAddress)
     context.setSweepUnsignedTxs(unsignedTxs)
     context.setFees(fees)
   } else {
@@ -35,6 +35,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
 
     const data = await throttledClient.node.transactions.postTransactionsBuild({
       fromPublicKey: fromAddress.publicKey,
+      fromPublicKeyType: fromAddress.keyType,
       destinations: [
         {
           address: toAddress,

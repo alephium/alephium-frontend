@@ -25,6 +25,7 @@ export const buildDeployContractTransaction = async (data: DeployContractTxData,
     data.initialAlphAmount !== undefined ? data.initialAlphAmount.amount?.toString() : undefined
   const response = await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: data.fromAddress.publicKey,
+    fromPublicKeyType: data.fromAddress.keyType,
     bytecode: data.bytecode,
     initialAttoAlphAmount,
     issueTokenAmount: data.issueTokenAmount?.toString(),

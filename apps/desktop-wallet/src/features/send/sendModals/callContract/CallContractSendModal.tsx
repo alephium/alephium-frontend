@@ -26,6 +26,7 @@ export const buildCallContractTransaction = async (txData: CallContractTxData, c
 
   const response = await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: txData.fromAddress.publicKey,
+    fromPublicKeyType: txData.fromAddress.keyType,
     bytecode: txData.bytecode,
     attoAlphAmount,
     tokens,
