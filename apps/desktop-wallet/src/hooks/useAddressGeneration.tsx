@@ -1,8 +1,8 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBase, AddressMetadata } from '@alephium/shared'
+import { AddressBase, AddressMetadata, selectAllAddressIndexes } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
@@ -10,7 +10,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
@@ -47,8 +47,7 @@ const useAddressGeneration = () => {
   const { sendAnalytics } = useAnalytics()
   const { isLedger, onLedgerError } = useLedger()
   const { t } = useTranslation()
-
-  const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
+  const { indexesOfAddressesWithGroup, indexesOfGrouplessAddresses } = useAppSelector(selectAllAddressIndexes)
 
   const generateAddress = useCallback(
     async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
@@ -56,13 +55,15 @@ const useAddressGeneration = () => {
         ? LedgerAlephium.create()
             .catch(onLedgerError)
             .then((app) =>
-              app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes, keyType: 'default' }) : null
+              app
+                ? app.generateAddress({ group, skipAddressIndexes: indexesOfAddressesWithGroup, keyType: 'default' })
+                : null
             )
         : keyring.generateAndCacheAddress({
-            skipAddressIndexes: currentAddressIndexes,
+            skipAddressIndexes: indexesOfGrouplessAddresses,
             keyType: 'gl-secp256k1'
           }),
-    [currentAddressIndexes, isLedger, onLedgerError]
+    [indexesOfAddressesWithGroup, indexesOfGrouplessAddresses, isLedger, onLedgerError]
   )
 
   const generateAndSaveOneAddressPerGroup = async (
