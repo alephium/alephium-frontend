@@ -212,7 +212,9 @@ const AddressInfoPage = () => {
             value={
               isGrouplessAddress || isGroupedAddress ? (
                 <GroupMenu
-                  label={isGrouplessAddress ? t('All') : `${t('Group')} ${addressGroup?.toString() || ''}`}
+                  label={
+                    isGrouplessAddress ? t('All') : `${t('Group {{ number }}', { number: addressGroup?.toString() })}`
+                  }
                   items={[
                     {
                       text: t('All'),
