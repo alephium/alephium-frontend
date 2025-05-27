@@ -9,10 +9,11 @@ export const discoverAndCacheActiveAddresses = async (
   skipIndexesForGrouplessAddresses: number[] = [],
   minGap = 5
 ): Promise<NonSensitiveAddressData[]> => {
-  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): NonSensitiveAddressData[] => [])
   const activeAddresses: NonSensitiveAddressData[] = []
+
+  // "Old" addresses
+  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): NonSensitiveAddressData[] => [])
   const _skipIndexesForAddressesWithGroup = Array.from(skipIndexesForAddressesWithGroup)
-  const _skipIndexesForGrouplessAddresses = Array.from(skipIndexesForGrouplessAddresses)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
     const newAddresses = deriveAddresses({
@@ -61,7 +62,46 @@ export const discoverAndCacheActiveAddresses = async (
     }
   }
 
-  // TODO: Implement groupless address discovery
+  // Groupless addresses
+  const _skipIndexesForGrouplessAddresses = Array.from(skipIndexesForGrouplessAddresses)
+
+  const newGrouplessAddresses = deriveAddresses({
+    amount: minGap,
+    keyType: 'gl-secp256k1',
+    skipIndexes: _skipIndexesForGrouplessAddresses
+  })
+
+  const grouplessAddressesToCheckIfActive = newGrouplessAddresses.flat().map((address) => address.hash)
+  const grouplessResults = await getActiveAddressesResults(grouplessAddressesToCheckIfActive)
+
+  const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+    newGrouplessAddresses,
+    grouplessResults
+  )
+
+  let grouplessGap = gap
+  activeAddresses.push(...newActiveAddresses)
+
+  while (grouplessGap < minGap) {
+    const remainingGap = minGap - grouplessGap
+    const newAddresses = deriveAddresses({
+      amount: remainingGap,
+      keyType: 'gl-secp256k1',
+      skipIndexes: _skipIndexesForGrouplessAddresses
+    })
+    _skipIndexesForGrouplessAddresses.push(...newAddresses.map((address) => address.index))
+
+    const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
+    const results = await getActiveAddressesResults(newAddressesToCheckIfActive)
+
+    const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+      newAddresses,
+      results,
+      grouplessGap
+    )
+    grouplessGap = gap
+    activeAddresses.push(...newActiveAddresses)
+  }
 
   return activeAddresses
 }
