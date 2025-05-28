@@ -154,7 +154,7 @@ const TransactionInfoPage = () => {
       <SectionTitle title={t('Transaction')} />
       {!errorMessage ? (
         <>
-          <Table bodyOnly isLoading={txInfoLoading}>
+          <Table noBorder bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
               <TableBody>
                 <TableRow>
@@ -273,7 +273,7 @@ const TransactionInfoPage = () => {
             )}
           </Table>
 
-          <FeesTable bodyOnly>
+          <FeesTable bodyOnly noBorder>
             {transactionData && (
               <TableBody>
                 <TableRow>
@@ -304,7 +304,7 @@ const TransactionInfoPage = () => {
           </FeesTable>
 
           <SecondaryTitle>{t('Inputs & outputs')}</SecondaryTitle>
-          <IOTable bodyOnly isLoading={txInfoLoading}>
+          <IOTable noBorder bodyOnly isLoading={txInfoLoading}>
             <TableBody>
               {confirmedTxInfo && (
                 <TableRow>
@@ -373,7 +373,7 @@ const AssetLogos = styled.div`
 `
 
 const FeesTable = styled(Table)`
-  margin-top: 30px;
+  margin-top: 20px;
 `
 
 const IOTable = styled(Table)``
@@ -403,6 +403,8 @@ const AmountList = styled.div`
 `
 
 const DeltaAmountsTitle = styled.div`
+  display: flex;
+  align-items: center;
   flex: 1;
   overflow: hidden;
 `

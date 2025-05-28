@@ -1,6 +1,12 @@
-import { addApostrophes, calculateTokenAmountWorth, getHumanReadableError } from '@alephium/shared'
+import { addApostrophes, calculateTokenAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress, isValidAddress } from '@alephium/web3'
+import {
+  contractIdFromAddress,
+  groupOfAddress,
+  isGrouplessAddress,
+  isGrouplessAddressWithoutGroupIndex,
+  isValidAddress
+} from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -19,6 +25,7 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Buttons/Button'
 import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import HighlightedHash from '@/components/HighlightedHash'
+import Menu from '@/components/Menu'
 import PageSwitch from '@/components/PageSwitch'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -102,12 +109,15 @@ const AddressInfoPage = () => {
     lastKnownMempoolTxs.current = addressMempoolTransactions
   }, [addressMempoolTransactions, refetchTxList])
 
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+
   if (!addressHash) {
     displaySnackbar({ text: t('The address format seems invalid'), type: 'alert' })
-    navigate('404')
+    navigate('/404')
+    return null
   }
 
-  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+  const [addressWithoutGroup] = addressHash.split(':')
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
@@ -138,18 +148,7 @@ const AddressInfoPage = () => {
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
 
-  let addressGroup
-
-  try {
-    addressGroup = groupOfAddress(addressHash)
-  } catch (e) {
-    console.log(e)
-
-    displaySnackbar({
-      text: getHumanReadableError(e, t('Could not get the group of this address')),
-      type: 'alert'
-    })
-  }
+  const addressGroup = groupOfAddress(addressHash)
 
   let isContract = false
 
@@ -194,7 +193,37 @@ const AddressInfoPage = () => {
             value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
-          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+          <InfoGrid.Cell
+            label={t('Group(s)')}
+            value={
+              isGrouplessAddress(addressHash) ? (
+                <GroupMenu
+                  label={
+                    isGrouplessAddressWithoutGroupIndex(addressHash)
+                      ? t('All')
+                      : `${t('Group {{ number }}', { number: addressGroup })}`
+                  }
+                  items={[
+                    {
+                      text: t('All'),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}`)
+                      }
+                    },
+                    ...Array.from({ length: 4 }).map((_, i) => ({
+                      text: t('Group {{ number }}', { number: i }),
+                      onClick: () => {
+                        navigate(`/addresses/${addressWithoutGroup}:${i}`)
+                      }
+                    }))
+                  ]}
+                  direction="down"
+                />
+              ) : (
+                addressGroup
+              )
+            }
+          />
           <InfoGrid.Cell
             label={t('Latest activity')}
             value={
@@ -227,7 +256,7 @@ const AddressInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={txListLoading}>
+      <Table noBorder hasDetails main scrollable isLoading={txListLoading}>
         {(!txListLoading && txList?.length) || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
@@ -317,11 +346,8 @@ const SectionHeader = styled.div`
 const InfoGridAndQR = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -337,13 +363,22 @@ const QRCodeCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
+  margin-left: 5px;
+  border-radius: 8px;
 `
 
 const NoTxsMessage = styled.tr`
   color: ${({ theme }) => theme.font.secondary};
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
+`
+
+const GroupMenu = styled(Menu)`
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  width: fit-content;
+  min-width: 120px;
+  font-size: 17px;
+  font-weight: 500;
 `
