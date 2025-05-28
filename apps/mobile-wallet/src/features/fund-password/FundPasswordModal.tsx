@@ -58,7 +58,7 @@ const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallba
         <Input
           isInModal
           label={t('Fund password')}
-          value={password}
+          defaultValue={password}
           onChangeText={handleFundPasswordChange}
           onSubmitEditing={handleSubmit}
           secureTextEntry

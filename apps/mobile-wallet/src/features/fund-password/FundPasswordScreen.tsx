@@ -144,7 +144,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
           <ScreenSection fill verticalGap>
             <Input
               label={isEditingPassword ? t('New fund password') : t('Fund password')}
-              value={newPassword}
+              defaultValue={newPassword}
               onChangeText={setNewPassword}
               secureTextEntry
               autoCapitalize="none"
@@ -152,7 +152,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
             />
             <Input
               label={isEditingPassword ? t('Confirm new fund password') : t('Confirm fund password')}
-              value={confirmedNewPassword}
+              defaultValue={confirmedNewPassword}
               onChangeText={handleConfirmedNewPasswordChange}
               secureTextEntry
               autoCapitalize="none"

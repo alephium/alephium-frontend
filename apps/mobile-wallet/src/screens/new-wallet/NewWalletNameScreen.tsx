@@ -109,7 +109,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         <CenteredInstructions instructions={instructions} />
         <StyledInput
           label={t('Wallet name')}
-          value={name}
+          defaultValue={name}
           onChangeText={setName}
           autoFocus
           onSubmitEditing={() => !!name && handleButtonPress()}

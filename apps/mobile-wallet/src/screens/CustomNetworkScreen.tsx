@@ -64,7 +64,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
               label={t('Node host')}
               keyboardType="url"
               textContentType="URL"
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
             />
@@ -78,7 +78,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
               label={t('Explorer API host')}
               keyboardType="url"
               textContentType="URL"
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
             />
@@ -92,7 +92,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
               label={t('Explorer URL')}
               keyboardType="url"
               textContentType="URL"
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
             />

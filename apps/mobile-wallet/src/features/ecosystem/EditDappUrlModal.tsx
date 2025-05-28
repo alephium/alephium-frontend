@@ -41,7 +41,14 @@ const EditDappUrlModal = memo<EditDappUrlModalProps & ModalBaseProp>(({ id, url,
   return (
     <BottomModal2 notScrollable modalId={id} title={t('DApp URL')}>
       <ScreenSection verticalGap>
-        <Input isInModal value={newUrl} onChangeText={handleUrlChange} label={t('DApp URL')} autoFocus error={error} />
+        <Input
+          isInModal
+          defaultValue={newUrl}
+          onChangeText={handleUrlChange}
+          label={t('DApp URL')}
+          autoFocus
+          error={error}
+        />
         <Button title={t('Load dApp')} onPress={handleSavePress} variant="highlight" />
       </ScreenSection>
     </BottomModal2>
