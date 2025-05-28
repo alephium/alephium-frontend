@@ -1,4 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
@@ -9,14 +10,14 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void
   fees: bigint
 }
 
-const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolidate, fees }) => {
+const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, onConsolidate, fees }) => {
   const { t } = useTranslation()
   const { dismiss } = useBottomSheetModal()
 

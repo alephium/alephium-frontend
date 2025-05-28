@@ -1,6 +1,6 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -10,8 +10,7 @@ import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp, ModalInstance } from '~/features/modals/modalTypes'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -22,7 +21,7 @@ interface AddressSettingsModalProps {
   parentModalId?: ModalInstance['id']
 }
 
-const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash, parentModalId }) => {
+const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ id, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()

@@ -1,16 +1,17 @@
 import { useFetchWalletTokensByType } from '@alephium/shared-react'
 import Ionicons from '@expo/vector-icons/Feather'
 import * as Clipboard from 'expo-clipboard'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import ListItem from '~/components/ListItem'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { showToast } from '~/utils/layout'
 
-const UnknownTokensModal = withModal(({ id }) => {
+const UnknownTokensModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
   const theme = useTheme()
 

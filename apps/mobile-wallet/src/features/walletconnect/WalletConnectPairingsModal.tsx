@@ -1,5 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -11,14 +11,14 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
   onScanQRCodePress: () => void
 }
 
-const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
+const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalBaseProp>(
   ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
     const { t } = useTranslation()
     const { dismiss } = useBottomSheetModal()

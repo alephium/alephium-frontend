@@ -10,7 +10,7 @@ import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { groupBy } from 'lodash'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -27,14 +27,14 @@ import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 interface TransactionModalProps {
   txHash: string
 }
 
-const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
+const TransactionModal = memo<TransactionModalProps & ModalBaseProp>(({ id, txHash }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
 

@@ -3,6 +3,7 @@ import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -14,14 +15,14 @@ import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
 }
 
-const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tokenId }) => {
+const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ id, tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const hideToken = useHideToken('quick_actions', id)

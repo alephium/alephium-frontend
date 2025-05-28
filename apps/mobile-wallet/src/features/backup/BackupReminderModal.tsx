@@ -1,19 +1,20 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWallet }) => {
+const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
   const { dismiss } = useBottomSheetModal()

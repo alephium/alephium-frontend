@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Image } from 'expo-image'
 import { openBrowserAsync } from 'expo-web-browser'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Image as RNImage } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -15,10 +15,10 @@ import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
+const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ id, dAppName }) => {
   const { t } = useTranslation()
 
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)

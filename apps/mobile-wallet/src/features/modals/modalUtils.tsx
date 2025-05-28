@@ -1,10 +1,8 @@
-import { isValidElement, ReactElement } from 'react'
-
-import withModal from '~/features/modals/withModal'
+import { isValidElement, memo, ReactElement } from 'react'
 
 // TODO: Move those functions to shared react package
 
-const wrappedModalExample = withModal(() => null)
+const wrappedModalExample = memo(() => null)
 
 export const isModalWrapped = <P,>(element: ReactElement<P>): boolean => {
   if (!isValidElement(element)) return false

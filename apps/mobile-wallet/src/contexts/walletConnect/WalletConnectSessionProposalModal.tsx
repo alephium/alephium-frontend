@@ -13,7 +13,7 @@ import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -30,7 +30,7 @@ import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToa
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -39,7 +39,7 @@ import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposalModalProps>(
+const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps & ModalBaseProp>(
   ({
     id: modalId,
     proposalEventId,

@@ -157,7 +157,7 @@ const ModalsContainer = ({ children }: ModalsContainerProps) => {
   useEffect(() => {
     Children.forEach(children, (child) => {
       if (isValidElement(child) && !isModalWrapped(child)) {
-        console.warn(`Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModal function.`)
+        console.warn(`Warning: ${getElementName(child)} is not wrapped! Please wrap it with the memo function.`)
       }
     })
   }, [children])

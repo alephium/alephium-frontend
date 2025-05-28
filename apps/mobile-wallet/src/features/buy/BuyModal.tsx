@@ -2,7 +2,7 @@ import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useURL } from 'expo-linking'
 import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -12,7 +12,7 @@ import Button from '~/components/buttons/Button'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 
 export interface BuyModalProps {
@@ -21,7 +21,7 @@ export interface BuyModalProps {
 
 const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 
-const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
+const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ id, receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))

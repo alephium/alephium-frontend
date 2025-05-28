@@ -1,14 +1,15 @@
 import { useFetchWalletFtsSorted } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 
-const SelectTokenToHideModal = withModal(({ id }) => {
+const SelectTokenToHideModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
   const { data: knownFungibleTokens } = useFetchWalletFtsSorted()
   const handleTokenSelection = useHideToken('app_settings', id)

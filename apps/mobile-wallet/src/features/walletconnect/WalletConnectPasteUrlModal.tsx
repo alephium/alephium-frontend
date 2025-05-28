@@ -1,5 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -10,7 +10,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
@@ -18,7 +18,7 @@ interface WalletConnectPasteUrlModalProps {
   onClose?: () => void
 }
 
-const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({ id, onClose }) => {
+const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalBaseProp>(({ id, onClose }) => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()

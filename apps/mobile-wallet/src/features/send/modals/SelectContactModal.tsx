@@ -1,15 +1,16 @@
 import { Contact } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 
 interface SelectContactModalProps {
   onContactPress: (contactId: Contact['id']) => void
 }
 
-const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPress }) => {
+const SelectContactModal = memo<SelectContactModalProps & ModalBaseProp>(({ id, onContactPress }) => {
   const { dismiss } = useBottomSheetModal()
 
   const handleContactPress = (contactId: string) => {

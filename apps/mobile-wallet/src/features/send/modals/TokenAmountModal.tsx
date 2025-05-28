@@ -12,7 +12,7 @@ import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice }
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { BottomSheetTextInput, useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -21,7 +21,7 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -35,7 +35,7 @@ const MAX_FONT_SIZE = 42
 const MIN_FONT_SIZE = 22
 const MAX_FONT_LENGTH = 10
 
-const TokenAmountModal = withModal<TokenAmountModalProps>(
+const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const theme = useTheme()
     const { dismiss } = useBottomSheetModal()
