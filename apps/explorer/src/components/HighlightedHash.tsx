@@ -24,19 +24,9 @@ const HighlightedHash = ({
 
   return (
     <div style={{ fontSize, maxWidth, wordBreak: middleEllipsis ? 'initial' : 'break-all' }} className={className}>
-      {middleEllipsis ? (
-        <>
-          <HighlightedPart>
-            <TextMiddleEllipsis text={baseHash} />
-          </HighlightedPart>
-          {group && <GroupPart>:{group}</GroupPart>}
-        </>
-      ) : (
-        <>
-          <HighlightedPart>{baseHash}</HighlightedPart>
-          {group && <GroupPart>:{group}</GroupPart>}
-        </>
-      )}
+      <HighlightedPart>{middleEllipsis ? <TextMiddleEllipsis text={baseHash} /> : baseHash}</HighlightedPart>
+      {group && <GroupPart>:{group}</GroupPart>}
+
       {textToCopy && (
         <ButtonWrapper>
           <ClipboardButton textToCopy={textToCopy} />
