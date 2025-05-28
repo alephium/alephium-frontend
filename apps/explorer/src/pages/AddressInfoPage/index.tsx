@@ -117,7 +117,7 @@ const AddressInfoPage = () => {
     return null
   }
 
-  const addressWithoutGroup = addressHash.split(':')[0]
+  const [addressWithoutGroup] = addressHash.split(':')
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
