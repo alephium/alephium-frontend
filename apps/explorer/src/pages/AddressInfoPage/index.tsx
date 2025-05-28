@@ -210,30 +210,12 @@ const AddressInfoPage = () => {
                         navigate(`/addresses/${addressWithoutGroup}`)
                       }
                     },
-                    {
-                      text: t('Group {{ number }}', { number: 0 }),
+                    ...Array.from({ length: 4 }).map((_, i) => ({
+                      text: t('Group {{ number }}', { number: i }),
                       onClick: () => {
-                        navigate(`/addresses/${addressWithoutGroup}:0`)
+                        navigate(`/addresses/${addressWithoutGroup}:${i}`)
                       }
-                    },
-                    {
-                      text: t('Group {{ number }}', { number: 1 }),
-                      onClick: () => {
-                        navigate(`/addresses/${addressWithoutGroup}:1`)
-                      }
-                    },
-                    {
-                      text: t('Group {{ number }}', { number: 2 }),
-                      onClick: () => {
-                        navigate(`/addresses/${addressWithoutGroup}:2`)
-                      }
-                    },
-                    {
-                      text: t('Group {{ number }}', { number: 3 }),
-                      onClick: () => {
-                        navigate(`/addresses/${addressWithoutGroup}:3`)
-                      }
-                    }
+                    }))
                   ]}
                   direction="down"
                 />
