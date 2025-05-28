@@ -11,11 +11,13 @@ import { ALPH } from '@alephium/token-list'
 import { RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
+  SignChainedTxParams,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
   SignMessageParams,
   SignTransferTxParams,
-  SignUnsignedTxParams
+  SignUnsignedTxParams,
+  TransactionBuilder
 } from '@alephium/web3'
 import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
@@ -127,8 +129,6 @@ const WalletConnectSessionRequestEventHandler = memo(
                 gasPrice: gasPrice?.toString()
               }
 
-              console.log('txData', txData)
-
               dispatch(
                 openModal({
                   name: 'DeployContractSendModal',
@@ -215,6 +215,23 @@ const WalletConnectSessionRequestEventHandler = memo(
                   }
                 })
               )
+              break
+            }
+            case 'alph_signAndSubmitChainedTx': {
+              const params = request.params as SignChainedTxParams[]
+
+              const signerPublicKeys = params
+                .map((param) => addresses.find((address) => address.hash === param.signerAddress)?.publicKey)
+                .filter((publicKey) => publicKey !== undefined)
+
+              try {
+                const txs = await TransactionBuilder.from(throttledClient.node).buildChainedTx(params, signerPublicKeys)
+
+                console.log('txs', txs)
+              } catch (e) {
+                console.log('e', e)
+              }
+
               break
             }
             case 'alph_requestNodeApi': {
