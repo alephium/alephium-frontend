@@ -1,9 +1,9 @@
-import { addApostrophes, calculateTokenAmountWorth, getHumanReadableError } from '@alephium/shared'
+import { addApostrophes, calculateTokenAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   contractIdFromAddress,
   groupOfAddress,
-  isGrouplessAddressWithGroupIndex,
+  isGrouplessAddress,
   isGrouplessAddressWithoutGroupIndex,
   isValidAddress
 } from '@alephium/web3'
@@ -119,9 +119,6 @@ const AddressInfoPage = () => {
 
   const addressWithoutGroup = addressHash.split(':')[0]
 
-  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
-  const isGroupedAddress = isGrouplessAddressWithGroupIndex(addressHash)
-
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
 
@@ -151,18 +148,7 @@ const AddressInfoPage = () => {
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
 
-  let addressGroup
-
-  try {
-    addressGroup = groupOfAddress(addressHash)
-  } catch (e) {
-    console.log(e)
-
-    displaySnackbar({
-      text: getHumanReadableError(e, t('Could not get the group of this address')),
-      type: 'alert'
-    })
-  }
+  const addressGroup = groupOfAddress(addressHash)
 
   let isContract = false
 
@@ -210,10 +196,12 @@ const AddressInfoPage = () => {
           <InfoGrid.Cell
             label={t('Group(s)')}
             value={
-              isGrouplessAddress || isGroupedAddress ? (
+              isGrouplessAddress(addressHash) ? (
                 <GroupMenu
                   label={
-                    isGrouplessAddress ? t('All') : `${t('Group {{ number }}', { number: addressGroup?.toString() })}`
+                    isGrouplessAddressWithoutGroupIndex(addressHash)
+                      ? t('All')
+                      : `${t('Group {{ number }}', { number: addressGroup })}`
                   }
                   items={[
                     {
