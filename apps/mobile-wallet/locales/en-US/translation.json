@@ -467,5 +467,8 @@
   "Worth": "Worth",
   "Group": "Group",
   "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.",
-  "Unknown error": "Unknown error"
+  "Unknown error": "Unknown error",
+  "DApp URL": "DApp URL",
+  "Load dApp": "Load dApp",
+  "Invalid URL": "Invalid URL"
 }

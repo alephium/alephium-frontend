@@ -3,6 +3,7 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-naviga
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Pressable } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView, { WebViewNavigation } from 'react-native-webview'
 import styled from 'styled-components/native'
@@ -13,6 +14,7 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import AddToFavoritesButton from '~/features/ecosystem/AddToFavoritesButton'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -21,11 +23,12 @@ import { showToast, ToastDuration } from '~/utils/layout'
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
-  const { dAppUrl, dAppName } = route.params
+  const { dAppUrl: dAppUrlFromParams, dAppName: dAppNameFromParams } = route.params
   const webViewRef = useRef<WebView>(null)
   const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
 
-  const [currentUrl, setCurrentUrl] = useState(dAppUrl)
+  const [currentUrl, setCurrentUrl] = useState(dAppUrlFromParams)
+  const [currentDappName, setCurrentDappName] = useState<string | undefined>(dAppNameFromParams)
   const [canGoBack, setCanGoBack] = useState(false)
   const [canGoForward, setCanGoForward] = useState(false)
 
@@ -39,7 +42,12 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
     }, [setIsInEcosystemInAppBrowser])
   )
 
-  if (!dAppUrl) return null
+  const handleUrlChange = useCallback((url: string) => {
+    setCurrentUrl(url)
+    setCurrentDappName(undefined)
+  }, [])
+
+  if (!currentUrl) return null
 
   const handleGoBack = () => webViewRef.current?.goBack()
 
@@ -54,10 +62,10 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
 
   return (
     <Screen {...props}>
-      <BrowserHeader dAppName={dAppName} currentUrl={currentUrl} />
+      <BrowserHeader dAppName={currentDappName} currentUrl={currentUrl} onUrlChange={handleUrlChange} />
       <WebViewStyled
         ref={webViewRef}
-        source={{ uri: dAppUrl }}
+        source={{ uri: currentUrl }}
         allowsBackForwardNavigationGestures
         pullToRefreshEnabled
         onLoad={(e) => setCurrentUrl(e.nativeEvent.url)}
@@ -77,21 +85,28 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
 export default DAppWebViewScreen
 
 interface BrowserHeaderProps {
-  dAppName: string
+  dAppName?: string
   currentUrl: string
+  onUrlChange: (url: string) => void
 }
 
-const BrowserHeader = ({ dAppName, currentUrl }: BrowserHeaderProps) => {
+const BrowserHeader = ({ dAppName, currentUrl, onUrlChange }: BrowserHeaderProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
+  const dispatch = useAppDispatch()
+
+  const openEditUrlModal = () =>
+    dispatch(openModal({ name: 'EditDappUrlModal', props: { url: currentUrl, onUrlChange } }))
 
   return (
     <BrowserHeaderStyled style={{ paddingTop: insets.top }}>
       <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-left' }} squared compact />
-      <Url truncate color="secondary">
-        {currentUrl}
-      </Url>
-      <AddToFavoritesButton dAppName={dAppName} />
+      <PressableUrl onPress={openEditUrlModal}>
+        <Url truncate color="secondary">
+          {currentUrl}
+        </Url>
+      </PressableUrl>
+      {dAppName && <AddToFavoritesButtonStyled dAppName={dAppName} />}
     </BrowserHeaderStyled>
   )
 }
@@ -123,7 +138,6 @@ const BrowserFooter = ({ onGoBack, onGoForward, onReload, canGoBack, canGoForwar
 const BrowserHeaderStyled = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   padding-left: ${DEFAULT_MARGIN}px;
   padding-right: ${DEFAULT_MARGIN}px;
   padding-bottom: 5px;
@@ -138,8 +152,13 @@ const BrowserBottomStyled = styled.View`
   gap: ${DEFAULT_MARGIN}px;
 `
 
+const PressableUrl = styled(Pressable)`
+  flex-shrink: 1;
+`
+
 const Url = styled(AppText)`
   flex-shrink: 1;
+  padding: 10px 0;
 `
 
 const ButtonsList = styled.View`
@@ -190,4 +209,8 @@ const useDetectWCUrlInClipboardAndPair = () => {
 
 const WebViewStyled = styled(WebView)`
   flex: 1;
+`
+
+const AddToFavoritesButtonStyled = styled(AddToFavoritesButton)`
+  margin-left: auto;
 `
