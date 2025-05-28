@@ -11907,7 +11907,7 @@ snapshots:
   '@alephium/web3@1.12.0-danube.1':
     dependencies:
       '@noble/secp256k1': 1.7.1
-      base-x: 4.0.0
+      base-x: 5.0.1
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bn.js: 5.2.1
