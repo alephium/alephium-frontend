@@ -1,4 +1,4 @@
-import { GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
+import { canHaveTargetGroup, GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
 import { AddressBase, AddressHash, AddressMetadata, findNextAvailableAddressIndex } from '@alephium/shared'
 import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
@@ -44,14 +44,13 @@ export class LedgerAlephium extends AccountDiscovery {
 
   private _deriveAddress = async (
     startIndex: number,
-    _group?: number,
-    keyType?: KeyType
+    keyType: 'default' | 'bip340-schnorr',
+    _group?: number
   ): Promise<NonSensitiveAddressDataWithGroup> => {
-    const _keyType = keyType ?? 'default'
-    const path = getHDWalletPath(_keyType, startIndex)
-    const [{ address: hash, publicKey, group }, index] = await this.app.getAccount(path, _group, _keyType)
+    const path = getHDWalletPath(keyType, startIndex)
+    const [{ address: hash, publicKey, group }, index] = await this.app.getAccount(path, _group, keyType)
 
-    return { hash, publicKey, index, group }
+    return { hash, publicKey, index, group, keyType }
   }
 
   public getDeviceInfo = async () => ({
@@ -60,32 +59,37 @@ export class LedgerAlephium extends AccountDiscovery {
   })
 
   public generateInitialAddress = async () => {
-    const address = await this._deriveAddress(0)
+    const address = await this._deriveAddress(0, 'default')
 
     this.close()
 
     return address
   }
 
-  public generateAddress = async ({
-    group,
-    addressIndex,
-    skipAddressIndexes = [],
-    keepAppOpen = false
-  }: GenerateAddressProps & { keepAppOpen?: boolean }) => {
-    if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
-      throw new Error(`Could not generate address in group ${group}, group is invalid`)
+  public generateAddress = async (props: GenerateAddressProps & { keepAppOpen?: boolean }) => {
+    const { addressIndex, keyType, skipAddressIndexes = [], keepAppOpen } = props
+
+    if (keyType !== 'default' && keyType !== 'bip340-schnorr') {
+      throw new Error(`KeyType ${keyType} is not supported on Ledger`)
+    }
+
+    if (
+      canHaveTargetGroup(props) &&
+      props.group !== undefined &&
+      (!Number.isInteger(props.group) || props.group < 0 || props.group >= TOTAL_NUMBER_OF_GROUPS)
+    )
+      throw new Error(`Could not generate address in group ${props.group}, group is invalid`)
 
     if (addressIndex !== undefined) {
       if (!Number.isInteger(addressIndex) || addressIndex < 0)
         throw new Error(`Keyring: Could not generate address, ${addressIndex} is not a valid addressIndex`)
 
-      if (group !== undefined || skipAddressIndexes.length > 0)
+      if ((canHaveTargetGroup(props) && props.group !== undefined) || skipAddressIndexes.length > 0)
         throw new Error(
           'Keyring: Could not generate address, invalid arguments passed: when addressIndex is provided the group and skipAddressIndexes should not be provided.'
         )
 
-      return this._deriveAddress(addressIndex)
+      return this._deriveAddress(addressIndex, keyType)
     }
 
     const initialAddressIndex = 0
@@ -93,11 +97,11 @@ export class LedgerAlephium extends AccountDiscovery {
     let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
       ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
       : initialAddressIndex
-    let newAddressData = await this._deriveAddress(nextAddressIndex)
+    let newAddressData = await this._deriveAddress(nextAddressIndex, keyType, props.group)
 
-    while (group !== undefined && newAddressData.group !== group) {
+    while (canHaveTargetGroup(props) && props.group !== undefined && newAddressData.group !== props.group) {
       nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
-      newAddressData = await this._deriveAddress(nextAddressIndex)
+      newAddressData = await this._deriveAddress(nextAddressIndex, keyType, props.group)
     }
 
     if (!keepAppOpen) {
@@ -109,8 +113,15 @@ export class LedgerAlephium extends AccountDiscovery {
 
   // Copied from extension wallet
   // TODO: Merge with existing address discovery mechanism at discoverAndCacheActiveAddresses
-  public async discoverActiveAddresses(skipIndexes: number[] = []): Promise<NonSensitiveAddressDataWithGroup[]> {
-    const addresses = await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
+  public async discoverActiveAddresses(
+    skipIndexes: number[] = [],
+    keyType: KeyType
+  ): Promise<NonSensitiveAddressDataWithGroup[]> {
+    if (keyType !== 'default' && keyType !== 'bip340-schnorr') {
+      throw new Error(`KeyType ${keyType} is not supported on Ledger`)
+    }
+
+    const addresses = await this.deriveActiveAccounts(this._deriveAddress, skipIndexes, keyType)
 
     this.close()
 
@@ -157,7 +168,7 @@ export const generateLedgerAddressesFromMetadata = async ({
   if (app) {
     for (const metadata of addressesMetadata) {
       addresses.push({
-        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true })),
+        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true, keyType: 'default' })),
         ...metadata
       })
     }

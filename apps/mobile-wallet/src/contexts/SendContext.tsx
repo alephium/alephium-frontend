@@ -1,5 +1,5 @@
 import { AddressHash, AssetAmount, selectAddressByHash, transactionSent } from '@alephium/shared'
-import { node, Token } from '@alephium/web3'
+import { node as n, Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,8 +14,8 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {
-    txId: node.BuildTransferTxResult['txId'] | node.SweepAddressTransaction['txId']
-    unsignedTx: node.BuildTransferTxResult['unsignedTx'] | node.SweepAddressTransaction['unsignedTx']
+    txId: n.BuildSimpleTransferTxResult['txId'] | n.SweepAddressTransaction['txId']
+    unsignedTx: n.BuildSimpleTransferTxResult['unsignedTx'] | n.SweepAddressTransaction['unsignedTx']
   }[]
   fees: bigint
 }
@@ -105,7 +105,11 @@ export const SendContextProvider = ({
     if (!address) return
 
     try {
-      const data = await buildSweepTransactions(address.publicKey, address.hash)
+      const data = await buildSweepTransactions(
+        address.publicKey,
+        // fromAddress.keyType, // TODO: Support groupless addresses
+        address.hash
+      )
       setUnsignedTxData(data)
     } catch (e) {
       showExceptionToast(e, t('Could not build transaction'))

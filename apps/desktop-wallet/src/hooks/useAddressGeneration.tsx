@@ -1,8 +1,8 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBase, AddressMetadata } from '@alephium/shared'
+import { AddressBase, AddressMetadata, selectAllAddressIndexes } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
@@ -10,7 +10,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
@@ -29,7 +29,8 @@ interface GenerateAddressProps {
 
 interface DiscoverUsedAddressesProps {
   walletId?: string
-  skipIndexes?: number[]
+  skipIndexesForAddressesWithGroup?: number[]
+  skipIndexesForGrouplessAddresses?: number[]
   enableLoading?: boolean
   enableToast?: boolean
 }
@@ -46,17 +47,23 @@ const useAddressGeneration = () => {
   const { sendAnalytics } = useAnalytics()
   const { isLedger, onLedgerError } = useLedger()
   const { t } = useTranslation()
-
-  const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
+  const { indexesOfAddressesWithGroup, indexesOfGrouplessAddresses } = useAppSelector(selectAllAddressIndexes)
 
   const generateAddress = useCallback(
     async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
       isLedger
         ? LedgerAlephium.create()
             .catch(onLedgerError)
-            .then((app) => (app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes }) : null))
-        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
-    [currentAddressIndexes, isLedger, onLedgerError]
+            .then((app) =>
+              app
+                ? app.generateAddress({ group, skipAddressIndexes: indexesOfAddressesWithGroup, keyType: 'default' })
+                : null
+            )
+        : keyring.generateAndCacheAddress({
+            skipAddressIndexes: indexesOfGrouplessAddresses,
+            keyType: 'gl-secp256k1'
+          }),
+    [indexesOfAddressesWithGroup, indexesOfGrouplessAddresses, isLedger, onLedgerError]
   )
 
   const generateAndSaveOneAddressPerGroup = async (
@@ -114,10 +121,11 @@ const useAddressGeneration = () => {
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
+    // TODO: What to do with groupless addresses?
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      addressMetadataStorage.storeOne(walletId, { index: 0, settings: initialAddressSettings })
-      addressesMetadata.push({ index: 0, ...initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'default', settings: initialAddressSettings })
+      addressesMetadata.push({ index: 0, keyType: 'default', ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())
@@ -132,7 +140,7 @@ const useAddressGeneration = () => {
         })
       } else {
         addresses = addressesMetadata.map((metadata) => ({
-          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: metadata.keyType ?? 'default' }),
           ...metadata
         }))
       }
@@ -142,6 +150,7 @@ const useAddressGeneration = () => {
         addresses[0].isDefault = true
         addressMetadataStorage.storeOne(walletId, {
           index: addresses[0].index,
+          keyType: addresses[0].keyType ?? 'default',
           settings: {
             isDefault: true,
             label: addresses[0].label,
@@ -158,7 +167,8 @@ const useAddressGeneration = () => {
   }
 
   const discoverAndSaveUsedAddresses = async ({
-    skipIndexes,
+    skipIndexesForAddressesWithGroup,
+    skipIndexesForGrouplessAddresses,
     enableLoading = true,
     enableToast = true
   }: DiscoverUsedAddressesProps = {}) => {
@@ -168,8 +178,8 @@ const useAddressGeneration = () => {
       const derivedAddresses = isLedger
         ? await LedgerAlephium.create()
             .catch(onLedgerError)
-            .then((app) => (app ? app.discoverActiveAddresses(skipIndexes) : []))
-        : await discoverAndCacheActiveAddresses(skipIndexes)
+            .then((app) => (app ? app.discoverActiveAddresses(skipIndexesForAddressesWithGroup, 'default') : []))
+        : await discoverAndCacheActiveAddresses(skipIndexesForAddressesWithGroup, skipIndexesForGrouplessAddresses)
 
       const newAddresses = derivedAddresses.map((address) => ({
         ...address,

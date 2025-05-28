@@ -85,7 +85,11 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       try {
         await initializeKeyringWithStoredWallet()
         const newAddress = {
-          ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
+          ...keyring.generateAndCacheAddress({
+            group,
+            skipAddressIndexes: currentAddressIndexes.current,
+            keyType: 'default' // TODO: Support groupless addresses
+          }),
           label: '',
           color: getRandomLabelColor(),
           isDefault: false

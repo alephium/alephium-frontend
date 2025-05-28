@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, throttledClient, transactionSent } from '@alephium/shared'
+import { fromHumanReadableAmount, isGrouplessTxResult, throttledClient, transactionSent } from '@alephium/shared'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -26,12 +26,17 @@ export const buildCallContractTransaction = async (txData: CallContractTxData, c
 
   const response = await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: txData.fromAddress.publicKey,
+    fromPublicKeyType: txData.fromAddress.keyType,
     bytecode: txData.bytecode,
     attoAlphAmount,
     tokens,
     gasAmount: txData.gasAmount,
     gasPrice: txData.gasPrice ? fromHumanReadableAmount(txData.gasPrice).toString() : undefined
   })
+
+  // TODO: handle groupless addresses
+  if (isGrouplessTxResult(response)) return
+
   ctx.setBuildExecuteScriptTxResult(response)
   ctx.setUnsignedTransaction(response)
   ctx.setUnsignedTxId(response.txId)
@@ -84,6 +89,9 @@ export const getCallContractWalletConnectResult = (
 ): SignExecuteScriptTxResult => {
   if (!context.buildExecuteScriptTxResult) throw Error('No buildExecuteScriptTxResult available')
 
+  // TODO: handle groupless addresses
+  if (isGrouplessTxResult(context.buildExecuteScriptTxResult)) throw Error('Groupless addresses are not supported yet')
+
   return {
     groupIndex: context.buildExecuteScriptTxResult.fromGroup,
     unsignedTx: context.buildExecuteScriptTxResult.unsignedTx,
@@ -91,6 +99,6 @@ export const getCallContractWalletConnectResult = (
     signature,
     gasAmount: context.buildExecuteScriptTxResult.gasAmount,
     gasPrice: BigInt(context.buildExecuteScriptTxResult.gasPrice),
-    simulatedOutputs: context.buildExecuteScriptTxResult.simulatedOutputs
+    simulationResult: context.buildExecuteScriptTxResult.simulationResult
   }
 }

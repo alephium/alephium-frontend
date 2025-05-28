@@ -57,9 +57,8 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
             {addressHash}
           </AppText>
         </Row>
-        <Row title={t('Group')} isLast short>
-          <AddressGroupBadge addressHash={addressHash} />
-        </Row>
+
+        <AddressGroupBadge addressHash={addressHash} />
       </AddressDetailsBox>
 
       <AddressTokensBadges addressHash={addressHash} />

@@ -1,4 +1,4 @@
-import { throttledClient, transactionSent } from '@alephium/shared'
+import { isGrouplessTxResult, throttledClient, transactionSent } from '@alephium/shared'
 import { binToHex, contractIdFromAddress, SignDeployContractTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -25,12 +25,17 @@ export const buildDeployContractTransaction = async (data: DeployContractTxData,
     data.initialAlphAmount !== undefined ? data.initialAlphAmount.amount?.toString() : undefined
   const response = await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: data.fromAddress.publicKey,
+    fromPublicKeyType: data.fromAddress.keyType,
     bytecode: data.bytecode,
     initialAttoAlphAmount,
     issueTokenAmount: data.issueTokenAmount?.toString(),
     gasAmount: data.gasAmount,
     gasPrice: data.gasPrice?.toString()
   })
+
+  // TODO: handle groupless addresses
+  if (isGrouplessTxResult(response)) return
+
   context.setContractAddress(response.contractAddress)
   context.setUnsignedTransaction(response)
   context.setUnsignedTxId(response.txId)
