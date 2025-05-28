@@ -23,7 +23,7 @@ import {
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { getSdkError } from '@walletconnect/utils'
 import * as Clipboard from 'expo-clipboard'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -44,7 +44,6 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
 import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -59,7 +58,7 @@ interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> {
   requestEvent: SessionRequestEvent
 }
 
-const WalletConnectSessionRequestModal = withModal(
+const WalletConnectSessionRequestModal = memo(
   <T extends SessionRequestData>({
     id,
     requestData,

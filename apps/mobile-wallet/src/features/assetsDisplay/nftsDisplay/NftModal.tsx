@@ -1,6 +1,7 @@
 import { useFetchAddressesHashesWithBalance, useFetchNft } from '@alephium/shared-react'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { openBrowserAsync } from 'expo-web-browser'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
 import styled from 'styled-components/native'
@@ -10,7 +11,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import SendButton from '~/features/send/SendButton'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -19,7 +20,7 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
+const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
   const { t } = useTranslation()
   const { dismiss } = useBottomSheetModal()
 

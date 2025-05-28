@@ -1,14 +1,15 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = withModal(({ id }) => {
+const LanguageSelectModal = memo<ModalBaseProp>(({ id }) => {
   const dispatch = useAppDispatch()
   const { dismiss } = useBottomSheetModal()
 

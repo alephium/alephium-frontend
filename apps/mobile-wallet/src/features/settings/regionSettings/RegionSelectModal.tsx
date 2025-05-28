@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list'
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Platform } from 'react-native'
 import styled, { css } from 'styled-components/native'
@@ -10,13 +10,12 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import SearchInput from '~/components/SearchInput'
 import BottomModalFlashList, { FlashListRenderProps } from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp, ModalInstance } from '~/features/modals/modalTypes'
 import { numberFormatRegionChanged } from '~/features/settings/regionSettings/regionSettingsActions'
 import { regionOptions } from '~/features/settings/regionSettings/regionsUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const RegionSelectModal = withModal(({ id }) => {
+const RegionSelectModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
 
   return (

@@ -1,4 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -11,15 +12,14 @@ import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleF
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp, ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface DAppQuickActionsModalProps {
   dAppName: DApp['name']
 }
 
-const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppName }) => {
+const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>(({ id, dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { dismiss } = useBottomSheetModal()

@@ -1,5 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressFtsSorted } from '@alephium/shared-react'
+import { memo } from 'react'
 
 import AddressBadge from '~/components/AddressBadge'
 import EmptyTokensListPlaceholders from '~/components/tokensLists/EmptyTokensListPlaceholder'
@@ -7,13 +8,13 @@ import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDet
 import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
+const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ id, addressHash }) => {
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
 
   return (

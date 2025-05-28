@@ -1,4 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -6,7 +7,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
@@ -14,7 +15,7 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onConfirm, confirmText }) => {
+const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>(({ id, onConfirm, confirmText }) => {
   const { t } = useTranslation()
   const { dismiss } = useBottomSheetModal()
 

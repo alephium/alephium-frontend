@@ -1,14 +1,15 @@
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import ReceiveQRCodeSection from '~/features/receive/ReceiveQRCodeSection'
 
 interface ReceiveQRCodeModalProps {
   addressHash: string
 }
 
-const ReceiveQRCodeModal = withModal<ReceiveQRCodeModalProps>(({ id, addressHash }) => {
+const ReceiveQRCodeModal = memo<ReceiveQRCodeModalProps & ModalBaseProp>(({ id, addressHash }) => {
   const { t } = useTranslation()
 
   return (

@@ -1,5 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent } from 'react-native'
 import styled from 'styled-components/native'
@@ -9,7 +10,7 @@ import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressPickerQuickActionsModalProps {
@@ -17,7 +18,7 @@ interface AddressPickerQuickActionsModalProps {
   onSelectAddress: (e: GestureResponderEvent) => void
 }
 
-const AddressPickerQuickActionsModal = withModal<AddressPickerQuickActionsModalProps>(
+const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps & ModalBaseProp>(
   ({ id, addressHash, onSelectAddress }) => {
     const { dismiss } = useBottomSheetModal()
     const { t } = useTranslation()

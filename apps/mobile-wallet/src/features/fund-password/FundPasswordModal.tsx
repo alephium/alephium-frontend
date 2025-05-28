@@ -1,5 +1,5 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -8,7 +8,7 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
@@ -16,7 +16,7 @@ export interface FundPasswordModalProps {
   successCallback: () => void
 }
 
-const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallback }) => {
+const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, successCallback }) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()

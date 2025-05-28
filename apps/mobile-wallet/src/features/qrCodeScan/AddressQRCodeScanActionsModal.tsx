@@ -1,6 +1,7 @@
 import { AddressHash } from '@alephium/shared'
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -8,7 +9,7 @@ import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -19,28 +20,35 @@ interface AddressQRCodeScanActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalProps>(({ id, addressHash }) => {
-  const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
-  const { dismiss } = useBottomSheetModal()
+const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(
+  ({ id, addressHash }) => {
+    const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
+    const { dismiss } = useBottomSheetModal()
 
-  const handleClose = () => dismiss(id)
+    const handleClose = () => dismiss(id)
 
-  return (
-    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
-      <ScreenSection>
-        <ActionButtons>
-          <SendButton
-            origin="qrCodeScan"
-            destinationAddressHash={addressHash}
-            onPress={handleClose}
-            buttonType="quick-action"
-          />
-          {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
-        </ActionButtons>
-      </ScreenSection>
-    </BottomModal2>
-  )
-})
+    return (
+      <BottomModal2
+        notScrollable
+        modalId={id}
+        noPadding
+        title={<AddressBadge addressHash={addressHash} fontSize={16} />}
+      >
+        <ScreenSection>
+          <ActionButtons>
+            <SendButton
+              origin="qrCodeScan"
+              destinationAddressHash={addressHash}
+              onPress={handleClose}
+              buttonType="quick-action"
+            />
+            {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
+          </ActionButtons>
+        </ScreenSection>
+      </BottomModal2>
+    )
+  }
+)
 
 export default AddressQRCodeScanActionsModal
 

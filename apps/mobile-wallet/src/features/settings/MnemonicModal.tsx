@@ -1,12 +1,12 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { usePreventScreenCapture } from 'expo-screen-capture'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { ModalBaseProp } from '~/features/modals/modalTypes'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 
@@ -14,7 +14,7 @@ interface MnemonicModalProps {
   onVerifyPress?: () => void
 }
 
-const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
+const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPress }) => {
   const { t } = useTranslation()
   const { dismiss } = useBottomSheetModal()
 
