@@ -4,10 +4,12 @@ import '@/features/localization/i18n'
 import isPropValid from '@emotion/is-prop-valid'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
 
 import NotificationBar from '@/components/NotificationBar'
+import { store } from '@/storage/store'
 
 import { SettingsProvider } from './contexts/settingsContext'
 import { isFlexGapSupported } from './utils/browserSupport'
@@ -38,13 +40,15 @@ if (browserIsOld) {
   import('./App').then(({ default: App }) => {
     root.render(
       <StrictMode>
-        <Router>
-          <StyleSheetManager shouldForwardProp={shouldForwardProp}>
-            <SettingsProvider>
-              <App />
-            </SettingsProvider>
-          </StyleSheetManager>
-        </Router>
+        <Provider store={store}>
+          <Router>
+            <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+              <SettingsProvider>
+                <App />
+              </SettingsProvider>
+            </StyleSheetManager>
+          </Router>
+        </Provider>
       </StrictMode>
     )
   })
