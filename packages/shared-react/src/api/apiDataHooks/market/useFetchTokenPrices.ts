@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { useFetchWalletTokensByType } from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useCurrentlyOnlineNetworkId } from '@/network'
 import { useSharedSelector } from '@/redux'
 
-export const useFetchTokenPrices = (props?: SkipProp) => {
+export const useFetchTokenPrices = () => {
   const fiatCurrency = useSharedSelector((s) => s.sharedSettings.fiatCurrency)
   const networkId = useCurrentlyOnlineNetworkId()
 

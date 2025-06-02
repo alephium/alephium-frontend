@@ -1,3 +1,5 @@
+import { NFT } from '@alephium/shared'
+import { useFetchAddressNfts } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { groupBy, orderBy } from 'lodash'
@@ -15,22 +17,24 @@ import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/pages/AddressInfoPage/NFTDetailsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadata } from '@/types/assets'
 import { OnOff } from '@/types/generics'
 
 interface NFTListProps {
-  nfts: NFTMetadata[]
-  isLoading?: boolean
+  addressStr: string
 }
 
-const NFTList = ({ nfts, isLoading }: NFTListProps) => {
+const NFTList = ({ addressStr }: NFTListProps) => {
   const { t } = useTranslation()
   const [consultedNftId, setConsultedNftId] = useState<string>()
   const [isCollectionGroupingActive, setIsCollectionGroupingActive] = useStateWithLocalStorage<OnOff>(
     'NFTCollectionGrouping',
     'off'
   )
-  const consultedNft = nfts.find((nft) => nft.id === consultedNftId)
+
+  const { data: _nfts, isLoading: isLoading } = useFetchAddressNfts(addressStr)
+  const nfts = _nfts || []
+
+  const consultedNft = nfts?.find((nft) => nft.id === consultedNftId)
 
   let NFTsGroupedByCollection = groupBy(nfts, 'collectionId')
 
@@ -105,7 +109,7 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 }
 
 interface NFTListComponentProps {
-  nfts?: NFTMetadata[]
+  nfts?: NFT[]
   onClick: (nftId: string) => void
 }
 
@@ -122,16 +126,16 @@ const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => {
 }
 
 interface NFTItemProps {
-  nft: NFTMetadata
+  nft: NFT
   onClick: () => void
 }
 
 const NFTItem = ({ nft, onClick }: NFTItemProps) => (
   <NFTCardStyled onClick={onClick}>
     <NFTPictureContainer>
-      <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo playOnHover />
+      <NFTThumbnail src={nft.image} showPlayIconIfVideo playOnHover />
     </NFTPictureContainer>
-    {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
+    <NFTName>{nft.name}</NFTName>
   </NFTCardStyled>
 )
 

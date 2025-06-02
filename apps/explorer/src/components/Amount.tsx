@@ -75,14 +75,15 @@ const Amount = ({
 
   const [integralPart, fractionalPart] = amount.split('.')
 
-  const RawAmountComponent = () => (
-    <>
-      <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
-        {value?.toString()}
-      </RawAmount>
-      <Suffix>?</Suffix>
-    </>
-  )
+  const RawAmountComponent = () =>
+    value !== undefined && (
+      <>
+        <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(BigInt(value)).toString()}>
+          {value.toString()}
+        </RawAmount>
+        <Suffix>?</Suffix>
+      </>
+    )
 
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
@@ -143,13 +144,15 @@ const getAmount = ({
 }: Partial<AmountProps>) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
-    : formatAmountForDisplay({
-        amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
-        displayDecimals: nbOfDecimalsToShow,
-        fullPrecision,
-        smartRounding
-      })
+    : value !== undefined
+      ? formatAmountForDisplay({
+          amount: convertToPositive(BigInt(value)),
+          amountDecimals: decimals,
+          displayDecimals: nbOfDecimalsToShow,
+          fullPrecision,
+          smartRounding
+        })
+      : ''
 
 export default styled(Amount)`
   color: ${({ color, highlight, value, theme }) =>

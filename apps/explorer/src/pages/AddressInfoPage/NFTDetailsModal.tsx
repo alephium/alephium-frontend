@@ -1,3 +1,4 @@
+import { NFT } from '@alephium/shared'
 import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -12,10 +13,9 @@ import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadata } from '@/types/assets'
 
 interface NFTDetailsModalProps extends Omit<ModalProps, 'children'> {
-  nft?: NFTMetadata
+  nft?: NFT
   collection?: NFTCollectionUriMetaData
 }
 
@@ -27,37 +27,37 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
       {nft ? (
         <>
           <Header>
-            {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
+            <NFTName>{nft.name}</NFTName>
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
           <NFTImageContainer>
-            <NFTThumbnail src={nft.file?.image} autoPlay />
+            <NFTThumbnail src={nft.image} autoPlay />
           </NFTImageContainer>
 
           <MetadataTablesContainer>
-            {nft.file ? (
+            {nft.image ? (
               <>
                 <NFTDetailsContainer>
                   <Table bodyOnly>
                     <TableBody>
-                      {nft.file?.name && (
+                      {nft.name && (
                         <TableRow>
                           <span>{t('Name')}</span>
-                          <span>{nft.file.name}</span>
+                          <span>{nft.name}</span>
                         </TableRow>
                       )}
-                      {nft.file?.description && (
+                      {nft.description && (
                         <TableRow>
                           <span>{t('Description')}</span>
-                          <Paragraph>{nft.file.description}</Paragraph>
+                          <Paragraph>{nft.description}</Paragraph>
                         </TableRow>
                       )}
-                      {nft.file?.image && (
+                      {nft.image && (
                         <TableRow>
                           <span>{t('Image URL')}</span>
                           <LinkContainer>
-                            <SimpleLink to={nft.file.image} newTab>
-                              {nft.file.image}
+                            <SimpleLink to={nft.image} newTab>
+                              {nft.image}
                             </SimpleLink>
                           </LinkContainer>
                         </TableRow>
@@ -65,12 +65,12 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     </TableBody>
                   </Table>
                 </NFTDetailsContainer>
-                {nft.file?.attributes && (
+                {nft.attributes && (
                   <NFTDetailsContainer>
                     <h3>{t('Attributes')}</h3>
                     <Table bodyOnly>
                       <TableBody>
-                        {nft.file.attributes.map((a, i) => (
+                        {nft.attributes.map((a, i) => (
                           <TableRow key={i}>
                             <span>{a.trait_type}</span>
                             <span>{a.value.toString()}</span>

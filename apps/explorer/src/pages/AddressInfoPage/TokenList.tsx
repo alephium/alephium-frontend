@@ -1,35 +1,27 @@
+import { isFT, isListedFT, Token } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { addressFromTokenId, Optional } from '@alephium/web3'
+import { addressFromTokenId } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { RiInformationFill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import Badge from '@/components/Badge'
 import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import TableCellAmount from '@/components/Table/TableCellAmount'
-import { AssetBase, FungibleTokenMetadataBase, NumericTokenBalance } from '@/types/assets'
+import AddressTokenBalances from '@/pages/AddressPage/AddressTokenBalances'
 
 interface TokenListProps {
-  tokens: Optional<
-    AssetBase & FungibleTokenMetadataBase & NumericTokenBalance,
-    'type' | 'decimals' | 'symbol' | 'name' | 'verified'
-  >[]
-  limit?: number
+  tokens: Token[]
+  addressStr: string
   isLoading?: boolean
   className?: string
 }
 
-const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
+const TokenList = ({ tokens, addressStr, isLoading, className }: TokenListProps) => {
   const { t } = useTranslation()
-  const theme = useTheme()
   const navigate = useNavigate()
-
-  const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 
   const handleTokenNameClick = (tokenId: string) => {
     try {
@@ -42,8 +34,11 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
 
   return (
     <div className={className}>
-      {displayedTokens.map((token) => {
+      {tokens.map((token) => {
         const isAlph = token.id === ALPH.id
+
+        const tokenName = isFT(token) ? token.name : token.id
+        const tokenLogoURI = isListedFT(token) ? token.logoURI : undefined
 
         return (
           <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -51,43 +46,20 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
             <NameColumn>
               <TokenNameAndTag>
                 <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
-                  {token.name || <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />}
+                  {tokenName || <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />}
                 </TokenName>
-                {!isAlph && !token.logoURI && token.name && (
+                {!isAlph && !tokenLogoURI && tokenName && (
                   <UnverifiedIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')} />
                 )}
               </TokenNameAndTag>
-              {token.name && !isAlph && (
+              {tokenName && !isAlph && (
                 <TokenHash>
                   <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />
                 </TokenHash>
               )}
             </NameColumn>
 
-            {!token.name && token.type && (
-              <IncompleteMetadataBadge compact type="neutral" content={t('Wrong/old format')} />
-            )}
-
-            <TableCellAmount>
-              <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
-              {token.worth && !isNaN(token.worth) && (
-                <Amount value={token.worth} suffix="$" isFiat color={theme.font.secondary} />
-              )}
-              {token.lockedBalance > 0 ? (
-                <TokenAmountSublabel>
-                  {`${t('Available')} `}
-                  <Amount
-                    assetId={token.id}
-                    value={token.balance - token.lockedBalance}
-                    suffix={token.symbol}
-                    color={theme.font.secondary}
-                    decimals={token.decimals}
-                  />
-                </TokenAmountSublabel>
-              ) : token.decimals === undefined ? (
-                <TokenAmountSublabel>{t('Raw amount')}</TokenAmountSublabel>
-              ) : undefined}
-            </TableCellAmount>
+            <AddressTokenBalances tokenId={token.id} addressStr={addressStr} />
           </AssetRow>
         )
       })}
@@ -157,16 +129,6 @@ const TokenHash = styled.div`
   max-width: 150px;
 `
 
-const TokenAmount = styled(Amount)`
-  font-size: 14px;
-`
-
-const TokenAmountSublabel = styled.div`
-  font-size: 11px;
-  color: ${({ theme }) => theme.font.secondary};
-  font-weight: 400;
-`
-
 const NameColumn = styled(Column)`
   margin-right: 20px;
   overflow: hidden;
@@ -178,5 +140,3 @@ const LoadingRow = styled.div`
   justify-content: space-between;
   align-items: center;
 `
-
-const IncompleteMetadataBadge = styled(Badge)``
