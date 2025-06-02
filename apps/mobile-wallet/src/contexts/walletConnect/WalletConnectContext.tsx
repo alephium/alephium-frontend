@@ -115,7 +115,6 @@ const core = new Core({
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const addressHashes = useUnsortedAddressesHashes()
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
@@ -128,8 +127,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
   const [isInEcosystemInAppBrowser, setIsInEcosystemInAppBrowser] = useState(false)
 
-  const isWalletConnectClientReady =
-    isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
+  const isWalletConnectClientReady = walletConnectClient && walletConnectClientStatus === 'initialized'
 
   const refreshActiveSessions = useCallback(() => {
     if (walletConnectClient) setActiveSessions(Object.values(walletConnectClient.getActiveSessions()))
@@ -191,7 +189,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [dispatch, t, walletConnectClient, walletConnectClientStatus])
 
   const shouldInitializeImmediately =
-    isWalletConnectEnabled &&
     walletConnectClientInitializationAttempts === 0 &&
     (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
   useEffect(() => {
@@ -199,7 +196,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [initializeWalletConnectClient, shouldInitializeImmediately])
 
   const shouldRetryInitializationAfterWaiting =
-    isWalletConnectEnabled &&
     walletConnectClientStatus === 'uninitialized' &&
     walletConnectClientInitializationAttempts > 0 &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
@@ -774,20 +770,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   ])
 
   useEffect(() => {
-    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url || !walletConnectClient)
+      return
 
-    if (!isWalletConnectEnabled) {
-      showToast({
-        text1: t('Experimental feature'),
-        text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
-        type: 'info'
-      })
-    } else if (walletConnectClient) {
-      pairWithDapp(url)
+    pairWithDapp(url)
 
-      wcDeepLink.current = url
-    }
-  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient, t])
+    wcDeepLink.current = url
+  }, [isWalletUnlocked, pairWithDapp, url, walletConnectClient, t])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)

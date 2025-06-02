@@ -11,7 +11,6 @@ import { showToast } from '~/utils/layout'
 const DashboardSecondaryButtons = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
@@ -23,15 +22,12 @@ const DashboardSecondaryButtons = () => {
       onPress: () => navigation.navigate('SettingsScreen')
     })
 
-  const areNoButtonsVisible = !isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-  const onlySideButtonVisible = isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-
-  if (areNoButtonsVisible) return null
+  if (isMnemonicBackedUp && networkStatus !== 'offline') return null
 
   return (
-    <DashboardSecondaryButtonsStyled style={{ height: onlySideButtonVisible ? 15 : 30 }}>
+    <DashboardSecondaryButtonsStyled style={{ height: 15 }}>
       <Buttons>
-        {isWalletConnectEnabled && <WalletConnectButton />}
+        <WalletConnectButton />
         {networkStatus === 'offline' && (
           <Button
             onPress={showOfflineMessage}
