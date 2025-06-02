@@ -12,7 +12,6 @@ import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { showToast } from '~/utils/layout'
 
 const CameraScanButton = () => {
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const contacts = useAppSelector(selectAllContacts)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -33,7 +32,7 @@ const CameraScanButton = () => {
   const handleWalletConnectUriScanned = (uri: string) => {
     sendAnalytics({ event: 'WC: Scanned WC QR code' })
 
-    if (isWalletConnectEnabled && walletConnectClientStatus === 'initialized') {
+    if (walletConnectClientStatus === 'initialized') {
       pairWithDapp(uri)
     } else {
       showToast({
@@ -50,11 +49,7 @@ const CameraScanButton = () => {
 
   return (
     <CameraScanButtonBase
-      text={
-        isWalletConnectEnabled
-          ? t('Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.')
-          : t('Scan an Alephium address QR code to send funds to.')
-      }
+      text={t('Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.')}
       origin="dashboard"
       onValidAddressScanned={handleValidAddressScanned}
       onWalletConnectUriScanned={handleWalletConnectUriScanned}

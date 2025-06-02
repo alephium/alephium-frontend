@@ -45,9 +45,6 @@ const settingsSlice = createSlice({
     analyticsToggled: (state) => {
       state.analytics = !state.analytics
     },
-    walletConnectToggled: (state) => {
-      state.walletConnect = !state.walletConnect
-    },
     biometricsToggled: (state) => {
       state.usesBiometrics = !state.usesBiometrics
     },
@@ -92,7 +89,6 @@ export const {
   discreetModeToggled,
   passwordRequirementToggled,
   analyticsToggled,
-  walletConnectToggled,
   biometricsToggled,
   autoLockSecondsChanged
 } = settingsSlice.actions
@@ -108,7 +104,6 @@ settingsListenerMiddleware.startListening({
     fiatCurrencyChanged,
     analyticsIdGenerated,
     analyticsToggled,
-    walletConnectToggled,
     biometricsToggled,
     autoLockSecondsChanged,
     allBiometricsEnabled,

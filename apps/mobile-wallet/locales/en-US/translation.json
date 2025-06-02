@@ -261,7 +261,6 @@
   "Scan QR code": "Scan QR code",
   "Scan an Alephium address QR code": "Scan an Alephium address QR code",
   "Scan an Alephium address QR code to add to your contacts list.": "Scan an Alephium address QR code to add to your contacts list.",
-  "Scan an Alephium address QR code to send funds to.": "Scan an Alephium address QR code to send funds to.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.",
   "Could not connect to WalletConnect": "Could not connect to WalletConnect",
   "Current connections": "Current connections",
@@ -467,5 +466,7 @@
   "Worth": "Worth",
   "Group": "Group",
   "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.",
-  "Unknown error": "Unknown error"
+  "Unknown error": "Unknown error",
+  "Clear cache": "Clear cache",
+  "DApps": "DApps"
 }
