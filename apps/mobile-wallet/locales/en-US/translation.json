@@ -469,5 +469,9 @@
   "Load dApp": "Load dApp",
   "Invalid URL": "Invalid URL",
   "Clear cache": "Clear cache",
-  "DApps": "DApps"
+  "DApps": "DApps",
+  "Remove all connections": "Remove all connections",
+  "WalletConnect connection unexpectedly dropped.": "WalletConnect connection unexpectedly dropped.",
+  "Please, refresh {{ dAppUrl }}.": "Please, refresh {{ dAppUrl }}.",
+  "WalletConnect cache cleared": "WalletConnect cache cleared"
 }

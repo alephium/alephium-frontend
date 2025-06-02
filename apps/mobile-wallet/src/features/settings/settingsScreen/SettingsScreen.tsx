@@ -78,7 +78,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     )
   }
 
-  const handleWalletConnectEnablePress = () => {
+  const handleWalletConnectClearCache = () => {
     resetWalletConnectStorage()
     resetWalletConnectClientInitializationAttempts()
   }
@@ -126,8 +126,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('DApps')}</ScreenSectionTitle>
 
-          <Row title="WalletConnect" subtitle={t('Clear cache')} isLast>
-            <Button title={t('Clear cache')} short onPress={handleWalletConnectEnablePress} />
+          <Row title="WalletConnect" subtitle={t('Remove all connections')} isLast>
+            <Button title={t('Clear cache')} short onPress={handleWalletConnectClearCache} />
           </Row>
         </ScreenSection>
 
