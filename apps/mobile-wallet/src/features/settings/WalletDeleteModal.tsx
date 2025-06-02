@@ -69,7 +69,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
         </AppText>
       </ScreenSection>
       <ScreenSection>
-        <Input isInModal label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
+        <Input isInModal label={t('Wallet name')} defaultValue={inputWalletName} onChangeText={setInputWalletName} />
       </ScreenSection>
       <ScreenSection>
         <Button
