@@ -201,3 +201,10 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTran
         }
       : skipToken
   })
+
+export const addressTransactionsCountQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'transactions', 'count', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: () => throttledClient.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+  })

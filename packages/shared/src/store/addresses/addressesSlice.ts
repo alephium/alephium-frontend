@@ -7,6 +7,7 @@ import {
   addressesRestoredFromMetadata,
   addressSettingsSaved,
   defaultAddressChanged,
+  initializeViewOnlyAddress,
   newAddressesSaved
 } from '@/store/addresses/addressesActions'
 import { addressesAdapter } from '@/store/addresses/addressesAdapters'
@@ -50,6 +51,9 @@ const addressesSlice = createSlice({
         addressesAdapter.setAll(state, [])
         addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
       })
+      .addCase(initializeViewOnlyAddress, (state, action) =>
+        addInitialAddress(state, { hash: action.payload, publicKey: '', index: 0, isDefault: true, color: '' })
+      )
       .addCase(addressDeleted, (state, { payload: addressHash }) => {
         addressesAdapter.removeOne(state, addressHash)
       })

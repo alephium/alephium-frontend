@@ -9,7 +9,7 @@ const throttle = pThrottle({
   interval: 1000
 })
 
-const throttledFetch = throttle((url, options = {}) => fetch(url, options))
+export const throttledFetch = throttle((url, options = {}) => fetch(url, options))
 
 class Client {
   explorer: ExplorerProvider
