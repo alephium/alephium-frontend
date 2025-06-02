@@ -1,4 +1,4 @@
-import { AddressHash, GENESIS_TIMESTAMP, selectAddressIds } from '@alephium/shared'
+import { AddressHash, GENESIS_TIMESTAMP, getInputOutputBaseAddress, selectAddressIds } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -45,9 +45,9 @@ const IOList = ({
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   if (io && io.length > 0) {
-    const isAllCurrentAddress = io.every((o) => o.address === currentAddress)
-    const notCurrentAddresses = _(io.filter((o) => o.address !== currentAddress))
-      .map((v) => v.address)
+    const isAllCurrentAddress = io.every((o) => getInputOutputBaseAddress(o) === currentAddress)
+    const notCurrentAddresses = _(io.filter((o) => getInputOutputBaseAddress(o) !== currentAddress))
+      .map(getInputOutputBaseAddress)
       .filter((v): v is string => v !== undefined)
       .uniq()
       .value()

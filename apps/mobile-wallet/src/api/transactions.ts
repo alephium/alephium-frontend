@@ -1,4 +1,4 @@
-import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, isGrouplessTxResult, throttledClient } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -8,6 +8,7 @@ import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddressHash, 'public'),
+    // fromPublicKeyType: keyType, // TODO: Support groupless addresses
     toAddress: toAddressHash
   })
 
@@ -24,7 +25,11 @@ export const buildUnsignedTransactions = async (
   shouldSweep: boolean
 ) => {
   if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
+    return await buildSweepTransactions(
+      fromAddress.publicKey,
+      // fromAddress.keyType, // TODO: Support groupless addresses
+      toAddressHash
+    )
   } else {
     const data = await buildTransferTransaction({
       fromAddress: fromAddress.hash,
@@ -33,6 +38,9 @@ export const buildUnsignedTransactions = async (
     })
 
     if (!data) return
+
+    // TODO: handle groupless transfer txs
+    if (isGrouplessTxResult(data)) return
 
     return {
       unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],
@@ -52,6 +60,7 @@ export const buildTransferTransaction = async ({
 
   return await throttledClient.node.transactions.postTransactionsBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     destinations: [
       {
         address: toAddress,
@@ -75,6 +84,7 @@ export const buildCallContractTransaction = async ({
 
   return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     bytecode,
     attoAlphAmount,
     tokens,
@@ -93,6 +103,7 @@ export const buildDeployContractTransaction = async ({
 }: DeployContractTxData) =>
   await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    // fromPublicKeyType: fromAddress.keyType, // TODO: Support groupless addresses
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
     issueTokenAmount: issueTokenAmount?.toString(),

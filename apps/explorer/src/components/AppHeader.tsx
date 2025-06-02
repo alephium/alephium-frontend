@@ -67,7 +67,7 @@ const StyledLogoLink = styled(Link)`
 `
 
 const Logo = styled.img`
-  width: 130px;
+  width: 110px;
 
   @media ${deviceBreakPoints.mobile} {
     width: 100px;

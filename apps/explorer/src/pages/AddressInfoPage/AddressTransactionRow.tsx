@@ -160,8 +160,13 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
       {!isPending && (
         <TableDetailsRow openCondition={detailOpen}>
           <AnimatedCell colSpan={7}>
-            <Table>
-              <TableHeader headerTitles={[t('Inputs'), '', t('Outputs')]} columnWidths={['', '50px', '']} compact />
+            <Table transparent noBorder>
+              <TableHeader
+                headerTitles={[t('Inputs'), '', t('Outputs')]}
+                columnWidths={['', '50px', '']}
+                compact
+                transparent
+              />
               <TableBody>
                 <TableRow>
                   <IODetailList>
@@ -177,9 +182,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
                     )}
                   </IODetailList>
 
-                  <span style={{ textAlign: 'center' }}>
+                  <ArrowContainer>
                     <RiArrowRightLine size={12} />
-                  </span>
+                  </ArrowContainer>
 
                   <IODetailList>
                     {tx.outputs && (
@@ -236,8 +241,11 @@ const BlockRewardLabel = styled.span`
 `
 
 const BlockRewardInputLabel = styled(BlockRewardLabel)`
-  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 6px 10px;
 `
 
 const AmountCell = styled.span`
@@ -286,15 +294,17 @@ const Assets = styled.div`
 `
 
 const IODetailList = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 8px;
+  border-radius: 6px;
 `
 
 const IODetailsContainer = styled.div`
-  padding: 8px 10px;
+  padding: 6px 10px;
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
@@ -314,4 +324,10 @@ const FailedTXBubble = styled.div`
   text-align: center;
   font-size: 10px;
   font-weight: 800;
+`
+
+const ArrowContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

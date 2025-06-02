@@ -28,13 +28,13 @@ export default Card
 const Container = styled(motion.div)`
   flex: 1;
   position: relative;
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: 8px;
   background-color: ${({ theme }) => theme.bg.primary};
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   gap: 25%;
-  height: 155px;
+  height: 162px;
   padding: 20px;
   overflow: hidden;
 

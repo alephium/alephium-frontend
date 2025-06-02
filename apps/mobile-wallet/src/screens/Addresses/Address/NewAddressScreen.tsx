@@ -43,7 +43,11 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     try {
       await initializeKeyringWithStoredWallet()
       const newAddress = {
-        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
+        ...keyring.generateAndCacheAddress({
+          group,
+          skipAddressIndexes: currentAddressIndexes.current,
+          keyType: 'default'
+        }),
         label,
         color,
         isDefault

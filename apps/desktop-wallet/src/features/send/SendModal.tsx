@@ -242,7 +242,11 @@ function SendModal<PT extends { fromAddress: Address }>({
 
           // TODO: See if you can simplify the data to only include AddressHash and not Address
           const { fromAddress } = data
-          const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, fromAddress.hash)
+          const { unsignedTxs, fees } = await buildSweepTransactions(
+            fromAddress.publicKey,
+            fromAddress.keyType,
+            fromAddress.hash
+          )
 
           setSweepUnsignedTxs(unsignedTxs)
           setIsLoading(false)

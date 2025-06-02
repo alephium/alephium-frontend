@@ -92,7 +92,10 @@ export const discoverAddresses = createAsyncThunk(
             newAddressGroup = cachedData.group
           } else {
             await sleep(1) // Allow execution to continue to not block rendering
-            newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
+            newAddressData = keyring.generateAndCacheAddress({
+              addressIndex: index,
+              keyType: 'default' // TODO: Support groupless addresses
+            })
             newAddressGroup = groupOfAddress(newAddressData.hash)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
           }

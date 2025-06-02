@@ -1,4 +1,5 @@
 import { selectAddressByHash } from '@alephium/shared'
+import { isGrouplessAddress } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -51,9 +52,11 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
         />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
-      <Badge short color={theme.font.tertiary}>
-        {t('Group')} {address.group}
-      </Badge>
+      {!isGrouplessAddress(address.hash) && (
+        <Badge short color={theme.font.tertiary}>
+          {t('Group')} {address.group}
+        </Badge>
+      )}
     </>
   )
 }
