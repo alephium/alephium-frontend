@@ -1,7 +1,6 @@
 import { useFetchAddressWorth } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 
-// import { useFetchAddressWorth } from '@/api/addresses/useFetchAddressWorth'
 import client from '@/api/client'
 import Amount from '@/components/Amount'
 import InfoGrid from '@/pages/AddressInfoPage/InfoGrid'

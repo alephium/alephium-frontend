@@ -4,7 +4,6 @@ import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-// import { useFetchAddressTokenUsdPrice } from '@/api/addresses/useFetchAddressTokenUsdPrice1'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
