@@ -121,11 +121,10 @@ const useAddressGeneration = () => {
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
-    // TODO: What to do with groupless addresses?
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'default', settings: initialAddressSettings })
-      addressesMetadata.push({ index: 0, keyType: 'default', ...initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'gl-secp256k1', settings: initialAddressSettings })
+      addressesMetadata.push({ index: 0, keyType: 'gl-secp256k1', ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())

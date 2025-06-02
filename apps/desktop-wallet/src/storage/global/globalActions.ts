@@ -87,6 +87,7 @@ export const receiveFaucetTokens = createAsyncThunk<
         ]
       })
 
+      // TODO: Remove it after updating the SDK
       if (isGrouplessTxResult(builtTx)) return
 
       const txRes = await throttledClient.node.transactions.postTransactionsSubmit({
