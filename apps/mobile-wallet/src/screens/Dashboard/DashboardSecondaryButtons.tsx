@@ -22,8 +22,6 @@ const DashboardSecondaryButtons = () => {
       onPress: () => navigation.navigate('SettingsScreen')
     })
 
-  if (isMnemonicBackedUp && networkStatus !== 'offline') return null
-
   return (
     <DashboardSecondaryButtonsStyled style={{ height: 15 }}>
       <Buttons>
