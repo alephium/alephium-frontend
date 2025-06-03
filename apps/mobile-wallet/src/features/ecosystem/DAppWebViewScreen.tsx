@@ -23,7 +23,8 @@ import { INJECTED_JAVASCRIPT } from './injectedJs'
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
-  const { dAppUrl, dAppName } = route.params
+  const { dAppUrl: _dAppUrl, dAppName } = route.params
+  const dAppUrl = 'http://localhost:3000/'
   const webViewRef = useRef<WebView>(null)
   const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
 
