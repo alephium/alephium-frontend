@@ -18,6 +18,8 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
 
+import { INJECTED_JAVASCRIPT } from './injectedJs'
+
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
@@ -62,6 +64,23 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
         pullToRefreshEnabled
         onLoad={(e) => setCurrentUrl(e.nativeEvent.url)}
         onNavigationStateChange={handleNavigationStateChange}
+        // This is a script that runs before the web page loads for the first time. It only runs once, even if the page is reloaded or navigated away. This is useful if you want to inject anything into the window, localstorage, or document prior to the web code executing.
+        // Warning On Android, this may work, but it is not 100% reliable (see #1609 and #1099). Consider using injectedJavaScriptObject instead.
+        // See: https://github.com/react-native-webview/react-native-webview/blob/master/docs/Guide.md#communicating-between-js-and-native
+        // Ledger Live doesn't seem to use it: https://github.com/LedgerHQ/ledger-live/blob/108556d150ae1200e98077fecc2b6357969ecb4f/apps/ledger-live-mobile/src/components/Web3AppWebview/WalletAPIWebview.tsx#L84
+        injectedJavaScriptBeforeContentLoaded={`
+          window.mobileWalletInjectedObject = {
+            sendMessageToMobileWallet: function (message) {
+              window.ReactNativeWebView.postMessage(JSON.stringify(message))
+            }
+          };
+
+          ${INJECTED_JAVASCRIPT}
+        `}
+        onMessage={(event) => {
+          console.log('event', event.nativeEvent.data)
+          // TODO: handle message from dApp
+        }}
       />
       <BrowserFooter
         onGoBack={handleGoBack}
