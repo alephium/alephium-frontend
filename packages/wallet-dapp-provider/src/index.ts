@@ -1,7 +1,7 @@
-import { alephiumWindowObject } from './alephiumWindowObject'
-import { MessageType } from './types/messages'
 import { AlephiumWindowObject, providerInitializedEvent } from '@alephium/get-extension-wallet'
 import isPlainObject from 'lodash.isplainobject'
+
+import { alephiumWindowObject } from './alephiumWindowObject'
 
 const INJECT_NAMES = ['alephium']
 

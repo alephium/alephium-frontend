@@ -1,7 +1,8 @@
 import { createRequire } from 'node:module'
-import dts from 'rollup-plugin-dts'
-import resolve from '@rollup/plugin-node-resolve'
+
 import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 
 const require = createRequire(import.meta.url)

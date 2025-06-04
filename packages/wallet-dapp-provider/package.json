@@ -13,10 +13,8 @@
   "scripts": {
     "build": "rollup -c",
     "watch-dev": "rollup -c -w",
-    "lint": "eslint . --ext .ts --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts",
-    "test": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
-    "test:watch": "pnpm run test -- --watch",
+    "lint": "eslint . --ext .ts --max-warnings=0 --ignore-pattern 'dist/**'",
+    "lint:fix": "eslint . --fix --ext .ts --ignore-pattern 'dist/**'",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean": "rm -rf dist .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
