@@ -14,6 +14,7 @@ import {
   useWalletConnectNetwork
 } from '@alephium/shared-react'
 import { ConnectDappMessageData, WalletAccountWithNetwork } from '@alephium/wallet-dapp-provider'
+import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
 import { capitalize } from 'lodash'
 import { memo, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -83,30 +84,32 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
       dismissModal()
     }
 
+    const flashListProps: BottomSheetFlashListProps<string> = {
+      data: allAddressesStrInGroup,
+      estimatedItemSize: 70,
+      renderItem: ({ item: addressHash, index }) => (
+        <AddressBox
+          key={addressHash}
+          addressHash={addressHash}
+          onPress={(address) => handleAddressSelect(address)}
+          isLast={index === allAddressesStrInGroup.length - 1}
+          origin="connectDappModal"
+          showGroup
+        />
+      )
+    }
+
+    const isFlashList = !requiresNetworkSwitch && allAddressesStrInGroup.length > 1
+
+    const additionalProps = isFlashList ? { flashListProps } : {}
+
     return (
       <BottomModal2
         onDismiss={onDismiss}
         modalId={id}
         title={t('Connect to dApp')}
         contentVerticalGap={allAddressesStrInGroup.length > 1}
-        flashListProps={
-          allAddressesStrInGroup.length > 1
-            ? {
-                data: allAddressesStrInGroup,
-                estimatedItemSize: 70,
-                renderItem: ({ item: addressHash, index }) => (
-                  <AddressBox
-                    key={addressHash}
-                    addressHash={addressHash}
-                    onPress={(address) => handleAddressSelect(address)}
-                    isLast={index === allAddressesStrInGroup.length - 1}
-                    origin="connectDappModal"
-                    showGroup
-                  />
-                )
-              }
-            : undefined
-        }
+        {...additionalProps}
       >
         <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
