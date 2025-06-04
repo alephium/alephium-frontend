@@ -34,7 +34,7 @@ interface NFTQueryProps extends TokenQueryProps {
 }
 
 export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
-  const network = getNetworkNameFromNetworkId(networkId)
+  const network = getNetworkNameFromNetworkId(networkId) ?? 'mainnet'
 
   return queryOptions({
     queryKey: ['tokenList', { networkId }],
