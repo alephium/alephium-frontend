@@ -1,6 +1,7 @@
 import {
   batchers,
   FtListMap,
+  getNetworkNameFromNetworkId,
   NFT,
   NFTDataType,
   NFTDataTypes,
@@ -33,7 +34,7 @@ interface NFTQueryProps extends TokenQueryProps {
 }
 
 export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
-  const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : networkId === 4 ? 'devnet' : undefined
+  const network = getNetworkNameFromNetworkId(networkId)
 
   return queryOptions({
     queryKey: ['tokenList', { networkId }],

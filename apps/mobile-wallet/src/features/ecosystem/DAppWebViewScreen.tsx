@@ -1,3 +1,9 @@
+import {
+  ConnectDappMessageData,
+  MessageType,
+  RequestOptions,
+  WalletAccountWithNetwork
+} from '@alephium/wallet-dapp-provider'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Clipboard from 'expo-clipboard'
@@ -12,7 +18,9 @@ import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import AddToFavoritesButton from '~/features/ecosystem/AddToFavoritesButton'
+import { isPreAuthorized } from '~/features/ecosystem/dAppMessages'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -27,6 +35,7 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
   const dAppUrl = 'http://localhost:3000/'
   const webViewRef = useRef<WebView>(null)
   const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
+  const dispatch = useAppDispatch()
 
   const [currentUrl, setCurrentUrl] = useState(dAppUrl)
   const [canGoBack, setCanGoBack] = useState(false)
@@ -42,6 +51,30 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
     }, [setIsInEcosystemInAppBrowser])
   )
 
+  const handleRejectDappConnection = useCallback(() => {
+    if (!webViewRef.current) return
+
+    console.log('✈️ Replying with ALPH_REJECT_PREAUTHORIZATION')
+
+    webViewRef.current.postMessage(JSON.stringify({ type: 'ALPH_REJECT_PREAUTHORIZATION' }))
+  }, [])
+
+  const handleApproveDappConnection = useCallback((data: WalletAccountWithNetwork) => {
+    if (!webViewRef.current) return
+
+    console.log('✈️ Replying with ALPH_CONNECT_DAPP_RES', data)
+
+    webViewRef.current.postMessage(JSON.stringify({ type: 'ALPH_CONNECT_DAPP_RES', data }))
+  }, [])
+
+  const handleIsDappPreauthorized = useCallback((data: RequestOptions) => {
+    if (!webViewRef.current) return
+
+    console.log('✈️ Replying with ALPH_IS_PREAUTHORIZED_RES:', isPreAuthorized(data))
+
+    webViewRef.current.postMessage(JSON.stringify({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isPreAuthorized(data) }))
+  }, [])
+
   if (!dAppUrl) return null
 
   const handleGoBack = () => webViewRef.current?.goBack()
@@ -53,6 +86,20 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     setCanGoBack(navState.canGoBack)
     setCanGoForward(navState.canGoForward)
+  }
+
+  const handleConnectDapp = (data: ConnectDappMessageData) => {
+    dispatch(
+      openModal({
+        name: 'ConnectDappModal',
+        props: {
+          ...data,
+          dAppName,
+          onReject: handleRejectDappConnection,
+          onApprove: handleApproveDappConnection
+        }
+      })
+    )
   }
 
   return (
@@ -78,9 +125,28 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
 
           ${INJECTED_JAVASCRIPT}
         `}
-        onMessage={(event) => {
+        onMessage={async (event) => {
           console.log('event', event.nativeEvent.data)
-          // TODO: handle message from dApp
+
+          try {
+            const message = JSON.parse(event.nativeEvent.data) as MessageType
+
+            if ('type' in message) {
+              switch (message.type) {
+                case 'ALPH_IS_PREAUTHORIZED':
+                  handleIsDappPreauthorized(message.data)
+                  break
+                case 'ALPH_CONNECT_DAPP':
+                  handleConnectDapp(message.data)
+                  break
+                default:
+                  console.log('🚨 Unknown message type:', message.type)
+                  break
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing data', error)
+          }
         }}
       />
       <BrowserFooter

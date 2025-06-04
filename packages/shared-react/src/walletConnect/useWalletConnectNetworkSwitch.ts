@@ -15,7 +15,8 @@ export const useWalletConnectNetwork = (networkId: ChainInfo['networkId'], onSuc
     }
   }
 
-  const showNetworkWarning = networkId && currentNetworkId && !isNetworkValid(networkId, currentNetworkId)
+  const showNetworkWarning =
+    !!networkId && currentNetworkId !== undefined && !isNetworkValid(networkId, currentNetworkId)
 
   return {
     handleSwitchNetworkPress,

@@ -133,7 +133,6 @@
   "dAppRequiredNetwork": "You are currently connected to <1>{{ currentNetwork }}</1>, but the dApp requires a connection to <1>{{ requiredNetwork }}</1>.",
   "dAppRequiredGroup": "The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!",
   "Tap to select another one": "Tap to select another one",
-  "If none of the above addresses fit your needs, you can generate a new one.": "If none of the above addresses fit your needs, you can generate a new one.",
   "Connect with address": "Connect with address",
   "Tap to change the address to connect with.": "Tap to change the address to connect with.",
   "Transfer request": "Transfer request",

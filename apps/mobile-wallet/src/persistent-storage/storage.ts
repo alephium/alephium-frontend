@@ -3,6 +3,19 @@ import { MMKV } from 'react-native-mmkv'
 
 export const storage = new MMKV({ id: 'mmkv.alephium-mobile-wallet' })
 
+export const getStorageObject = <T>(key: string): T | null => {
+  const value = storage.getString(key)
+
+  if (value === undefined) return null
+
+  try {
+    return JSON.parse(value)
+  } catch (error) {
+    console.error(`Failed to parse object from storage with key "${key}"`, error)
+    return null
+  }
+}
+
 // TODO: Delete after everyone has migrated to MMKV
 export const hasMigratedFromAsyncStorage = storage.getBoolean('hasMigratedFromAsyncStorage')
 
