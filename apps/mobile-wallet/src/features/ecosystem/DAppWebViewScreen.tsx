@@ -31,6 +31,7 @@ import { INJECTED_JAVASCRIPT } from './injectedJs'
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { dAppUrl: _dAppUrl, dAppName } = route.params
   const dAppUrl = 'http://localhost:3000/'
   const webViewRef = useRef<WebView>(null)
@@ -121,6 +122,22 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
             sendMessageToMobileWallet: function (message) {
               window.ReactNativeWebView.postMessage(JSON.stringify(message))
             }
+          };
+
+          window.onerror = function(message, source, lineno, colno, error) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'CONSOLE_ERROR',
+              data: { message, source, lineno, colno, error: error?.toString() }
+            }));
+            return true;
+          };
+
+          window.console.log = function(...args) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'CONSOLE_LOG',
+              data: args
+            }));
+            return true;
           };
 
           ${INJECTED_JAVASCRIPT}
