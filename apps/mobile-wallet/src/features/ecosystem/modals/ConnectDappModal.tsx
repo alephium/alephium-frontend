@@ -14,7 +14,6 @@ import {
   useWalletConnectNetwork
 } from '@alephium/shared-react'
 import { ConnectDappMessageData, WalletAccountWithNetwork } from '@alephium/wallet-dapp-provider'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { capitalize } from 'lodash'
 import { memo, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,6 +25,7 @@ import ConnectDappModalNewAddress from '~/features/ecosystem/modals/ConnectDappM
 import ConnectDappModalSwitchNetwork from '~/features/ecosystem/modals/ConnectDappModalSwitchNetwork'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -40,6 +40,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
   ({ id, icon, dAppName, keyType, group, host, networkId: networkName, onReject, onApprove }) => {
     // TODO: use keyType after integrating groupless addresses
     const { t } = useTranslation()
+    const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss: onReject })
 
     const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
     const network = useAppSelector((s) => s.network)
@@ -52,10 +53,8 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
       [addressesInGroup, allAddressesStr]
     )
 
-    const { dismiss } = useBottomSheetModal()
-
     const handleDeclinePress = () => {
-      dismiss(id)
+      dismissModal()
       onReject()
     }
 
@@ -80,11 +79,13 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
           group: address.group
         }
       })
-      dismiss(id)
+
+      dismissModal()
     }
 
     return (
       <BottomModal2
+        onDismiss={onDismiss}
         modalId={id}
         title={t('Connect to dApp')}
         contentVerticalGap={allAddressesStrInGroup.length > 1}

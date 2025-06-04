@@ -1,5 +1,4 @@
 import { AddressHash } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +9,7 @@ import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -23,12 +23,11 @@ interface AddressQRCodeScanActionsModalProps {
 const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(
   ({ id, addressHash }) => {
     const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
-    const { dismiss } = useBottomSheetModal()
-
-    const handleClose = () => dismiss(id)
+    const { dismissModal, onDismiss } = useModalDismiss({ id })
 
     return (
       <BottomModal2
+        onDismiss={onDismiss}
         notScrollable
         modalId={id}
         noPadding
@@ -39,10 +38,10 @@ const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & 
             <SendButton
               origin="qrCodeScan"
               destinationAddressHash={addressHash}
-              onPress={handleClose}
+              onPress={dismissModal}
               buttonType="quick-action"
             />
-            {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
+            {!contact && <AddContactButton addressHash={addressHash} onPress={dismissModal} />}
           </ActionButtons>
         </ScreenSection>
       </BottomModal2>

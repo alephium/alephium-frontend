@@ -7,7 +7,6 @@ import {
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { memo, useEffect, useState } from 'react'
@@ -28,6 +27,7 @@ import ConnectDappModalSwitchNetwork from '~/features/ecosystem/modals/ConnectDa
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -54,7 +54,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal, onDismiss } = useModalDismiss({ id: modalId })
 
     const [signerAddress, setSignerAddress] = useState<AddressHash>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
@@ -136,7 +136,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showApprovedToast()
-        dismiss(modalId)
+        dismissModal()
       }
     }
 
@@ -154,12 +154,12 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showRejectedToast()
-        dismiss(modalId)
+        dismissModal()
       }
     }
 
     return (
-      <BottomModal2 modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
+      <BottomModal2 onDismiss={onDismiss} modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
         <ConnectDappModalHeader
           dAppName={metadata?.description}
           dAppUrl={metadata?.url}

@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
@@ -12,6 +11,7 @@ import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
@@ -21,19 +21,19 @@ interface WalletConnectPairingsModalProps {
 const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalBaseProp>(
   ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
     const { t } = useTranslation()
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal, onDismiss } = useModalDismiss({ id })
     const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
     useEffect(() => {
-      if (!walletConnectClient) dismiss(id)
-    }, [activeSessions.length, dismiss, id, walletConnectClient])
+      if (!walletConnectClient) dismissModal()
+    }, [activeSessions.length, dismissModal, walletConnectClient])
 
     const handleDisconnectPress = async (pairingTopic: string) => {
       await unpairFromDapp(pairingTopic)
     }
 
     return (
-      <BottomModal2 modalId={id} title={t('Current connections')} contentVerticalGap>
+      <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('Current connections')} contentVerticalGap>
         {activeSessions.map(({ topic, peer: { metadata } }, index) => (
           <ListItem
             key={topic}

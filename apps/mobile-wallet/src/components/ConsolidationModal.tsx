@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -11,6 +10,7 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void
@@ -19,19 +19,19 @@ interface ConsolidationModalProps {
 
 const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, onConsolidate, fees }) => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const handleConsolidate = () => {
     onConsolidate()
-    dismiss(id)
+    dismissModal()
   }
 
   const handleCancel = () => {
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id}>
+    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id}>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
