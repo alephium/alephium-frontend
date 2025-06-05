@@ -92,6 +92,7 @@
   "Connect to dApp": "Connect to dApp",
   "Connect to dApps": "Connect to dApps",
   "Switch network": "Switch network",
+  "Welcome to {{ networkName }}!": "Welcome to {{ networkName }}!",
   "Approve": "Approve",
   "Decline": "Decline",
   "Accept": "Accept",

@@ -21,6 +21,7 @@ import BuyModal from '~/features/buy/BuyModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
+import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -142,6 +143,8 @@ const AppModals = () => {
             return <UnknownTokensModal key={id} id={id} />
           case 'ConnectDappModal':
             return <ConnectDappModal key={id} id={id} {...params.props} />
+          case 'NetworkSwitchModal':
+            return <NetworkSwitchModal key={id} id={id} {...params.props} />
           default:
             return null
         }

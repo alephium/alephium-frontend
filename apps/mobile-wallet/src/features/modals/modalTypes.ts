@@ -21,6 +21,7 @@ import BuyModal from '~/features/buy/BuyModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
+import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -84,16 +85,18 @@ export const ModalComponents = {
   RegionSelectModal,
   UnknownTokensModal,
   AddressNftsGridModal,
-  ConnectDappModal
+  ConnectDappModal,
+  NetworkSwitchModal
 }
 
 export type ModalName = keyof typeof ModalComponents
 
-type ModalParams<K extends ModalName> = HasRequiredProps<ModalPropsMap[K]> extends true
-  ? { name: K; props: ModalPropsMap[K] } // Modals with required props
-  : HasOptionalProps<ModalPropsMap[K]> extends true
-    ? { name: K; props?: ModalPropsMap[K] } // Modals with only optional props
-    : { name: K } // Modals with no props
+type ModalParams<K extends ModalName> =
+  HasRequiredProps<ModalPropsMap[K]> extends true
+    ? { name: K; props: ModalPropsMap[K] } // Modals with required props
+    : HasOptionalProps<ModalPropsMap[K]> extends true
+      ? { name: K; props?: ModalPropsMap[K] } // Modals with only optional props
+      : { name: K } // Modals with no props
 
 type ModalPropsMap = {
   [K in ModalName]: Omit<ComponentProps<(typeof ModalComponents)[K]>, 'id'>

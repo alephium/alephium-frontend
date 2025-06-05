@@ -1,4 +1,4 @@
-import { AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
+import { Address, AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,
@@ -8,7 +8,7 @@ import {
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
-import { GestureResponderEvent, PressableProps } from 'react-native'
+import { PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -40,7 +40,7 @@ export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
   rounded?: boolean
   showGroup?: boolean
   tokenId?: Token['id']
-  onPress?: (e: GestureResponderEvent) => void
+  onPress?: (address: Address) => void
 }
 
 const maxNbOfTokenLogos = 5
@@ -66,9 +66,9 @@ const AddressBox = ({
 
   if (!address) return
 
-  const handlePress = (e: GestureResponderEvent) => {
+  const handlePress = () => {
     vibrate(ImpactStyle.Heavy)
-    onPress?.(e)
+    onPress?.(address)
   }
 
   const handleLongPress = () => {

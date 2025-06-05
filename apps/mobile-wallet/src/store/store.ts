@@ -7,7 +7,10 @@ import backupSlice from '~/features/backup/backupSlice'
 import authorizedConnectionsSlice, {
   authorizedConnectionsListenerMiddleware
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSlice'
-import favoriteDAppsSlice, { favoriteDAppsListenerMiddleware } from '~/features/ecosystem/favoriteDAppsSlice'
+import dAppMessagesQueueSlice from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSlice'
+import favoriteDAppsSlice, {
+  favoriteDAppsListenerMiddleware
+} from '~/features/ecosystem/favoriteDApps/favoriteDAppsSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
@@ -32,7 +35,8 @@ export const store = configureStore({
     [contactsSlice.name]: contactsSlice.reducer,
     [modalSlice.name]: modalSlice.reducer,
     [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer,
-    [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer
+    [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer,
+    [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer
   },
   devTools: false,
   enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],

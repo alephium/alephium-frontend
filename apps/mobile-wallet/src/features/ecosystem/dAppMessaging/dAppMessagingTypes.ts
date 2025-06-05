@@ -1,5 +1,31 @@
-import { WalletAccountWithNetwork } from '@alephium/wallet-dapp-provider'
+import { MessageType, WalletAccountWithNetwork } from '@alephium/wallet-dapp-provider'
 
 export type ConnectedAddressPayload = WalletAccountWithNetwork & {
   host: string
 }
+
+export const familiarDappMessageTypes: MessageType['type'][] = [
+  'ALPH_IS_PREAUTHORIZED',
+  'ALPH_REMOVE_PREAUTHORIZATION',
+  'ALPH_CONNECT_DAPP',
+  'ALPH_DISCONNECT_ACCOUNT',
+  'ALPH_EXECUTE_TRANSACTION',
+  'ALPH_SIGN_MESSAGE',
+  'ALPH_SIGN_UNSIGNED_TX',
+  // answers
+  'ALPH_EXECUTE_TRANSACTION_RES',
+  'ALPH_TRANSACTION_SUBMITTED',
+  'ALPH_TRANSACTION_FAILED',
+  'ALPH_SIGN_MESSAGE_RES',
+  'ALPH_SIGN_MESSAGE_SUCCESS',
+  'ALPH_SIGN_MESSAGE_FAILURE',
+  'ALPH_SIGN_UNSIGNED_TX_RES',
+  'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+  'ALPH_SIGN_UNSIGNED_TX_FAILURE',
+  'ALPH_IS_PREAUTHORIZED_RES',
+  'ALPH_REMOVE_PREAUTHORIZATION_RES',
+  'ALPH_CONNECT_DAPP_RES',
+  // 'ALPH_CONNECT_ACCOUNT_RES',
+  // 'ALPH_CONNECT_ACCOUNT',
+  'ALPH_REJECT_PREAUTHORIZATION'
+]
