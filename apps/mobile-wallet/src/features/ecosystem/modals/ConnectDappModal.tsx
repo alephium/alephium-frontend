@@ -1,11 +1,9 @@
 import {
-  Address,
   getNetworkIdFromNetworkName,
   getNetworkNameFromNetworkId,
   NetworkName,
   NetworkPreset,
   networkSettingsPresets,
-  selectAddressByHash,
   selectAddressesInGroup
 } from '@alephium/shared'
 import {
@@ -13,14 +11,15 @@ import {
   useFetchAddressesHashesSortedByLastUse,
   useWalletConnectNetwork
 } from '@alephium/shared-react'
-import { ConnectDappMessageData, WalletAccountWithNetwork } from '@alephium/wallet-dapp-provider'
+import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
-import { capitalize } from 'lodash'
-import { memo, useEffect, useMemo } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
+import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
+import useGetConnectedAddressPayload from '~/features/ecosystem/dAppMessaging/useGetAddressNonSensitiveInfo'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import ConnectDappModalNewAddress from '~/features/ecosystem/modals/ConnectDappModalNewAddress'
 import ConnectDappModalSwitchNetwork from '~/features/ecosystem/modals/ConnectDappModalSwitchNetwork'
@@ -29,12 +28,11 @@ import { ModalBaseProp } from '~/features/modals/modalTypes'
 import useModalDismiss from '~/features/modals/useModalDismiss'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
 interface ConnectDappModalProps extends ConnectDappMessageData, ModalBaseProp {
   dAppName?: string
   onReject: () => void
-  onApprove: (data: WalletAccountWithNetwork) => void
+  onApprove: (data: ConnectedAddressPayload) => void
 }
 
 const ConnectDappModal = memo<ConnectDappModalProps>(
@@ -42,9 +40,9 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
     // TODO: use keyType after integrating groupless addresses
     const { t } = useTranslation()
     const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss: onReject })
+    const { getConnectedAddressPayload } = useGetConnectedAddressPayload()
 
     const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
-    const network = useAppSelector((s) => s.network)
     const requiresNetworkSwitch = currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(networkName as NetworkName)
 
     const { data: allAddressesStr } = useFetchAddressesHashesSortedByLastUse()
@@ -54,54 +52,47 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
       [addressesInGroup, allAddressesStr]
     )
 
+    const handleAddressSelect = useCallback(
+      async (addressStr: string) => {
+        const connectedAddressPayload = await getConnectedAddressPayload({ addressStr, host, keyType })
+
+        if (!connectedAddressPayload) return
+
+        onApprove(connectedAddressPayload)
+        dismissModal()
+      },
+      [dismissModal, getConnectedAddressPayload, host, keyType, onApprove]
+    )
+
+    // If there is only one address in the group, select it automatically
+    useEffect(() => {
+      if (allAddressesStrInGroup.length === 1) handleAddressSelect(allAddressesStrInGroup[0])
+    }, [allAddressesStrInGroup, dismissModal, handleAddressSelect])
+
     const handleDeclinePress = () => {
       dismissModal()
       onReject()
     }
 
-    const handleAddressSelect = async (address: Address) => {
-      const publicKey = await getAddressAsymetricKey(allAddressesStrInGroup[0], 'public')
-
-      onApprove({
-        address: allAddressesStrInGroup[0],
-        network: {
-          id: network.name,
-          name: capitalize(network.name),
-          nodeUrl: network.settings.nodeHost,
-          explorerApiUrl: network.settings.explorerApiHost,
-          explorerUrl: network.settings.explorerUrl
-        },
-        type: 'alephium',
-        signer: {
-          type: 'local_secret',
-          keyType: keyType ?? 'default', // TODO: replace with address.keyType after groupless addresses integration
-          publicKey,
-          derivationIndex: address.index,
-          group: address.group
-        }
-      })
-
-      dismissModal()
-    }
-
-    const flashListProps: BottomSheetFlashListProps<string> = {
-      data: allAddressesStrInGroup,
-      estimatedItemSize: 70,
-      renderItem: ({ item: addressHash, index }) => (
-        <AddressBox
-          key={addressHash}
-          addressHash={addressHash}
-          onPress={(address) => handleAddressSelect(address)}
-          isLast={index === allAddressesStrInGroup.length - 1}
-          origin="connectDappModal"
-          showGroup
-        />
-      )
-    }
-
-    const isFlashList = !requiresNetworkSwitch && allAddressesStrInGroup.length > 1
-
-    const additionalProps = isFlashList ? { flashListProps } : {}
+    const additionalProps =
+      !requiresNetworkSwitch && allAddressesStrInGroup.length > 1
+        ? {
+            flashListProps: {
+              data: allAddressesStrInGroup,
+              estimatedItemSize: 70,
+              renderItem: ({ item: addressHash, index }) => (
+                <AddressBox
+                  key={addressHash}
+                  addressHash={addressHash}
+                  onPress={() => handleAddressSelect(addressHash)}
+                  isLast={index === allAddressesStrInGroup.length - 1}
+                  origin="connectDappModal"
+                  showGroup
+                />
+              )
+            } as BottomSheetFlashListProps<string>
+          }
+        : {}
 
     return (
       <BottomModal2
@@ -117,8 +108,6 @@ const ConnectDappModal = memo<ConnectDappModalProps>(
           <ConnectDappModalNetworkSection networkId={networkName} onDeclinePress={handleDeclinePress} />
         ) : allAddressesStrInGroup.length === 0 ? (
           <ConnectDappModalNewAddress group={group} onDeclinePress={handleDeclinePress} />
-        ) : allAddressesStrInGroup.length === 1 ? (
-          <AutoSelectAddress addressStr={allAddressesStrInGroup[0]} onSelect={handleAddressSelect} />
         ) : null}
       </BottomModal2>
     )
@@ -155,19 +144,4 @@ const ConnectDappModalNetworkSection = ({ networkId, onDeclinePress }: ConnectDa
         onDeclinePress={onDeclinePress}
       />
     )
-}
-
-interface AutoSelectAddressProps {
-  addressStr: string
-  onSelect: (address: Address) => void
-}
-
-const AutoSelectAddress = ({ addressStr, onSelect }: AutoSelectAddressProps) => {
-  const address = useAppSelector((s) => selectAddressByHash(s, addressStr))
-
-  useEffect(() => {
-    if (address) onSelect(address)
-  }, [address, onSelect])
-
-  return null
 }

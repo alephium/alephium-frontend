@@ -1,4 +1,4 @@
-import { Address, AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
+import { AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,
@@ -40,7 +40,7 @@ export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
   rounded?: boolean
   showGroup?: boolean
   tokenId?: Token['id']
-  onPress?: (address: Address) => void
+  onPress?: (e: GestureResponderEvent) => void
 }
 
 const maxNbOfTokenLogos = 5
@@ -68,7 +68,7 @@ const AddressBox = ({
 
   const handlePress = (e: GestureResponderEvent) => {
     vibrate(ImpactStyle.Heavy)
-    onPress?.(address)
+    onPress?.(e)
   }
 
   const handleLongPress = () => {

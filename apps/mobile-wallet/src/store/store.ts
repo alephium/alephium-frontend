@@ -4,6 +4,9 @@ import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
 import hiddenTokensListenerMiddleware from '~/features/assetsDisplay/hideTokens/hiddenTokensMiddleware'
 import backupSlice from '~/features/backup/backupSlice'
+import authorizedConnectionsSlice, {
+  authorizedConnectionsListenerMiddleware
+} from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSlice'
 import favoriteDAppsSlice, { favoriteDAppsListenerMiddleware } from '~/features/ecosystem/favoriteDAppsSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import loaderSlice from '~/features/loader/loaderSlice'
@@ -28,7 +31,8 @@ export const store = configureStore({
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [modalSlice.name]: modalSlice.reducer,
-    [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer
+    [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer,
+    [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer
   },
   devTools: false,
   enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],
@@ -39,7 +43,7 @@ export const store = configureStore({
       .prepend(settingsListenerMiddleware.middleware)
       .prepend(favoriteDAppsListenerMiddleware.middleware)
       .prepend(hiddenTokensListenerMiddleware.middleware)
-
+      .prepend(authorizedConnectionsListenerMiddleware.middleware)
     return middlewares
   }
 })
