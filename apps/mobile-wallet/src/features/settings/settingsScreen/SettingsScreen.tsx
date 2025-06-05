@@ -4,10 +4,10 @@ import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
@@ -21,12 +21,7 @@ import RegionSettingsRow from '~/features/settings/regionSettings/RegionSettings
 import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
 import SettingsDevSection from '~/features/settings/settingsScreen/SettingsDevSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
-import {
-  analyticsToggled,
-  discreetModeToggled,
-  themeChanged,
-  walletConnectToggled
-} from '~/features/settings/settingsSlice'
+import { analyticsToggled, discreetModeToggled, themeChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { resetNavigation } from '~/utils/navigation'
@@ -40,7 +35,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
@@ -78,34 +72,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleAnalytics = () => dispatch(analyticsToggled())
 
-  const toggleWalletConnect = () => dispatch(walletConnectToggled())
-
   const handleDeleteButtonPress = () => {
     dispatch(
       openModal({ name: 'WalletDeleteModal', props: { onDelete: () => resetNavigation(navigation, 'LandingScreen') } })
     )
   }
 
-  const handleWalletConnectEnablePress = () => {
-    if (!isWalletConnectEnabled) {
-      Alert.alert(
-        t('Enabling experimental feature'),
-        t('The WalletConnect feature is experimental, use it at your own risk.'),
-        [
-          { text: t('Cancel') },
-          {
-            text: t('I understand'),
-            onPress: () => {
-              toggleWalletConnect()
-              resetWalletConnectClientInitializationAttempts()
-            }
-          }
-        ]
-      )
-    } else {
-      resetWalletConnectStorage()
-      toggleWalletConnect()
-    }
+  const handleWalletConnectClearCache = () => {
+    resetWalletConnectStorage()
+    resetWalletConnectClientInitializationAttempts()
   }
 
   return (
@@ -149,10 +124,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <SettingsAssetsSection />
 
         <ScreenSection>
-          <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>
+          <ScreenSectionTitle>{t('DApps')}</ScreenSectionTitle>
 
-          <Row title="WalletConnect" subtitle={t('Connect to dApps')} isLast>
-            <Toggle value={isWalletConnectEnabled} onValueChange={handleWalletConnectEnablePress} />
+          <Row title="WalletConnect" subtitle={t('Remove all connections')} isLast>
+            <Button title={t('Clear cache')} short onPress={handleWalletConnectClearCache} />
           </Row>
         </ScreenSection>
 

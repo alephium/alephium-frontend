@@ -10,7 +10,6 @@ export interface GeneralSettings {
   currency: Currency
   analytics: boolean
   analyticsId?: string
-  walletConnect: boolean
   usesBiometrics: boolean
   autoLockSeconds: number
   language?: Language

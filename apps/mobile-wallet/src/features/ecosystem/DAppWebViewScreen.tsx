@@ -13,10 +13,9 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import AddToFavoritesButton from '~/features/ecosystem/AddToFavoritesButton'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { showToast, ToastDuration } from '~/utils/layout'
 
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
@@ -152,7 +151,6 @@ const useDetectWCUrlInClipboardAndPair = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { pairWithDapp } = useWalletConnectContext()
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   useEffect(() => {
@@ -162,21 +160,11 @@ const useDetectWCUrlInClipboardAndPair = () => {
       if (content.startsWith('wc:')) {
         Clipboard.setStringAsync('')
 
-        if (!isWalletConnectEnabled) {
-          showToast({
-            text1: t('Experimental feature'),
-            text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
-            type: 'info',
-            visibilityTime: ToastDuration.LONG,
-            onPress: () => navigation.navigate('SettingsScreen')
-          })
-        } else {
-          dispatch(activateAppLoading(t('Connecting')))
+        dispatch(activateAppLoading(t('Connecting')))
 
-          await pairWithDapp(content)
+        await pairWithDapp(content)
 
-          dispatch(deactivateAppLoading())
-        }
+        dispatch(deactivateAppLoading())
       }
     }
 
@@ -185,7 +173,7 @@ const useDetectWCUrlInClipboardAndPair = () => {
     const intervalId = setInterval(checkClipboard, 1000)
 
     return () => clearInterval(intervalId)
-  }, [dispatch, isWalletConnectEnabled, navigation, pairWithDapp, t])
+  }, [dispatch, navigation, pairWithDapp, t])
 }
 
 const WebViewStyled = styled(WebView)`

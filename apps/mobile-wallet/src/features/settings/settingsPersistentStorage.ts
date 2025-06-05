@@ -13,7 +13,6 @@ export const defaultGeneralSettings: GeneralSettings = {
   currency: 'USD',
   analytics: true,
   analyticsId: undefined,
-  walletConnect: false,
   usesBiometrics: false,
   language: undefined,
   region: undefined,
