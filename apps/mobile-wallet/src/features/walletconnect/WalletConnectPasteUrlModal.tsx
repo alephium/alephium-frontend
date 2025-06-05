@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -11,6 +10,7 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
@@ -22,7 +22,7 @@ const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalB
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
@@ -42,7 +42,7 @@ const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalB
 
       onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
-      dismiss(id)
+      dismissModal()
     } else {
       showToast({
         text1: 'Invalid URI',
@@ -54,6 +54,7 @@ const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalB
 
   return (
     <BottomModal2
+      onDismiss={onDismiss}
       modalId={id}
       title={t('Connect to dApp')}
       contentVerticalGap

@@ -1,5 +1,4 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -16,6 +15,7 @@ import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -26,18 +26,22 @@ interface AddressQuickActionsModalProps {
 }
 
 const AddressQuickActionsModal = memo<AddressQuickActionsModalProps & ModalBaseProp>(({ id, addressHash }) => {
-  const { dismiss } = useBottomSheetModal()
-
-  const handleClose = () => dismiss(id)
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   return (
-    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2
+      onDismiss={onDismiss}
+      notScrollable
+      modalId={id}
+      noPadding
+      title={<AddressBadge addressHash={addressHash} fontSize={16} />}
+    >
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />
           <CopyAddressHashButton addressHash={addressHash} />
-          <AddressSettingsButton addressHash={addressHash} onActionCompleted={handleClose} />
-          <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
+          <AddressSettingsButton addressHash={addressHash} onActionCompleted={dismissModal} />
+          <DeleteAddressButton addressHash={addressHash} onActionCompleted={dismissModal} />
         </QuickActionButtons>
       </ScreenSection>
     </BottomModal2>

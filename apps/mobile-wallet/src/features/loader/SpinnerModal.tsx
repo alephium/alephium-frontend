@@ -1,10 +1,11 @@
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
+import LottieView from 'lottie-react-native'
 import { useEffect, useState } from 'react'
-import { ActivityIndicator } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
+import successAnimationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
@@ -23,7 +24,7 @@ interface SpinnerModalProps extends SpinnerProps {
   blur?: boolean
 }
 
-const SpinnerModal = ({ isActive, text, blur = true, bg, progress }: SpinnerModalProps) => {
+const SpinnerModal = ({ isActive, text, blur = false, bg = 'full', progress }: SpinnerModalProps) => {
   const theme = useTheme()
 
   const [shouldRender, setShouldRender] = useState(false)
@@ -77,7 +78,8 @@ export const Spinner = ({ text, color = 'tertiary', animated = true, bg, progres
           animated={animated}
         />
       ) : (
-        <ActivityIndicator size={72} color={theme.font[color]} />
+        // TODO: Show a more appropriate cool animation? I like the confetti tbh! This is so much more fun!
+        <StyledAnimation source={successAnimationSrc} autoPlay />
       )}
       {text && (
         <LoadingText semiBold size={16} color={color}>
@@ -99,4 +101,9 @@ const SpinnerStyled = styled.View<{ bg?: SpinnerProps['bg'] }>`
 
 const LoadingText = styled(AppText)`
   margin-top: 50px;
+`
+
+const StyledAnimation = styled(LottieView)`
+  width: 100%;
+  height: 50%;
 `

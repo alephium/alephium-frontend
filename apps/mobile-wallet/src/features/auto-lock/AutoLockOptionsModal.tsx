@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,6 +7,7 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -15,15 +15,15 @@ const AutoLockOptionsModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const handleAutoLockChange = (seconds: number) => {
     dispatch(autoLockSecondsChanged(seconds))
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Auto-lock')}>
+    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (

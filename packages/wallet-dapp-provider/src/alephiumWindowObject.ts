@@ -89,6 +89,11 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
       type: 'ALPH_CONNECT_DAPP',
       data: {
         host: window.location.host,
+        icon: getAbsoluteFaviconUrl(
+          document.querySelector('link[rel="icon"]')?.getAttribute('href') ||
+            document.querySelector('link[rel="shortcut icon"]')?.getAttribute('href') ||
+            '/favicon.ico'
+        ),
         networkId: options?.networkId,
         group: options?.addressGroup,
         keyType: options?.keyType
@@ -354,3 +359,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     return result
   }
 })()
+
+function getAbsoluteFaviconUrl(faviconPath: string | null): string | undefined {
+  if (!faviconPath) return undefined
+  try {
+    return new URL(faviconPath, window.location.origin).href
+  } catch {
+    return undefined
+  }
+}

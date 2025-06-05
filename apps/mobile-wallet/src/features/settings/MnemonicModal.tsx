@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { usePreventScreenCapture } from 'expo-screen-capture'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +6,7 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 
@@ -16,7 +16,7 @@ interface MnemonicModalProps {
 
 const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPress }) => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const [mnemonic, setMnemonic] = useState<string>()
 
@@ -32,11 +32,11 @@ const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPr
 
   const handleVerifyButtonPress = () => {
     onVerifyPress && onVerifyPress()
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} contentVerticalGap>
       <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
 
       {onVerifyPress && (
