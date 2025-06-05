@@ -80,6 +80,11 @@ contextBridge.exposeInMainWorld('electron', {
       const subscription = (_event: IpcRendererEvent, maximized: boolean) => callback(maximized)
       ipcRenderer.on('window:maximized', subscription)
       return () => ipcRenderer.removeListener('window:maximized', subscription)
+    },
+    onFocusChange: (callback: (focused: boolean) => void) => {
+      const subscription = (_event: IpcRendererEvent, focused: boolean) => callback(focused)
+      ipcRenderer.on('window:focus', subscription)
+      return () => ipcRenderer.removeListener('window:focus', subscription)
     }
   }
 })

@@ -41,6 +41,7 @@ declare global {
         maximize: () => Promise<void>
         close: () => Promise<void>
         onMaximizedChange: (callback: (maximized: boolean) => void) => () => void
+        onFocusChange: (callback: (focused: boolean) => void) => () => void
       }
     }
   }

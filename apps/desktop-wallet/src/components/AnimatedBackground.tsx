@@ -60,12 +60,24 @@ const AnimatedBackground = ({
 
   useEffect(() => {
     let animationFrameId: number
+    let lastUpdateTime = performance.now()
+    const FRAME_DURATION = 16 // 60fps
 
     const handleMouseMove = (event: MouseEvent) => {
-      animationFrameId = window.requestAnimationFrame(() => {
-        mouseX.set(event.clientX)
-        mouseY.set(event.clientY)
-      })
+      const now = performance.now()
+
+      if (now - lastUpdateTime >= FRAME_DURATION) {
+        if (animationFrameId) {
+          window.cancelAnimationFrame(animationFrameId)
+        }
+
+        animationFrameId = window.requestAnimationFrame(() => {
+          mouseX.set(event.clientX)
+          mouseY.set(event.clientY)
+          lastUpdateTime = now
+          animationFrameId = 0
+        })
+      }
     }
 
     if (reactToPointer && typeof window !== 'undefined') {
@@ -75,7 +87,9 @@ const AnimatedBackground = ({
     return () => {
       if (reactToPointer && typeof window !== 'undefined') {
         window.removeEventListener('mousemove', handleMouseMove)
-        window.cancelAnimationFrame(animationFrameId)
+        if (animationFrameId) {
+          window.cancelAnimationFrame(animationFrameId)
+        }
       }
     }
   }, [reactToPointer, mouseX, mouseY])
@@ -137,9 +151,7 @@ const AnimatedBackground = ({
   const circlesDimensions = [
     { width: 500, height: 70 },
     { width: 600, height: 80 },
-    { width: 550, height: 70 },
-    { width: 650, height: 90 },
-    { width: 920, height: 80 }
+    { width: 550, height: 70 }
   ]
 
   return (
@@ -286,6 +298,7 @@ const AnimatedContainer = styled.div`
   left: 0;
   z-index: 0;
   pointer-events: none;
+  will-change: transform;
 `
 
 const Circle = styled(motion.div)`
