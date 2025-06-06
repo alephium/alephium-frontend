@@ -58,7 +58,7 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
         <Input
           isInModal
           label={t('Fund password')}
-          value={password}
+          defaultValue={password}
           onChangeText={handleFundPasswordChange}
           onSubmitEditing={handleSubmit}
           secureTextEntry

@@ -20,6 +20,7 @@ import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
+import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -139,6 +140,8 @@ const AppModals = () => {
             return <RegionSelectModal key={id} id={id} />
           case 'UnknownTokensModal':
             return <UnknownTokensModal key={id} id={id} />
+          case 'EditDappUrlModal':
+            return <EditDappUrlModal key={id} id={id} {...params.props} />
           default:
             return null
         }

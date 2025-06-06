@@ -147,7 +147,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               label={t('Destination address')}
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
               error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}

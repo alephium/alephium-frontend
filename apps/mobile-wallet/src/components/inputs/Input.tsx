@@ -11,16 +11,11 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { INPUTS_HEIGHT } from '~/style/globalStyle'
 
-export type InputValue = string | number | undefined | unknown
-export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
-
-export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value' | 'style'> {
-  value: T
+export interface InputProps extends Omit<TextInputProps, 'style' | 'value'> {
   label: string
   onPress?: () => void
   resetDisabledColor?: boolean
   RightContent?: ReactNode
-  renderValue?: RenderValueFunc<T>
   showPasteButton?: boolean
   short?: boolean
   error?: string
@@ -30,16 +25,14 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   isInModal?: boolean
 }
 
-const Input = <T extends InputValue>({
+const Input = ({
   label,
   style,
-  value,
   onPress,
   onFocus,
   onBlur,
   resetDisabledColor,
   RightContent,
-  renderValue,
   showPasteButton,
   short,
   error,
@@ -48,15 +41,12 @@ const Input = <T extends InputValue>({
   onChangeText,
   isInModal,
   ...props
-}: InputProps<T>) => {
+}: InputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const [copiedText, setCopiedText] = useState('')
   const localInputRef = useRef<TextInput>(null)
   const usedInputRef = inputRef || localInputRef
-
-  const renderedValue = renderValue ? renderValue(value) : value ? (value as object).toString() : ''
-  const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   useEffect(() => {
     Clipboard.hasStringAsync().then((has) => {
@@ -74,21 +64,23 @@ const Input = <T extends InputValue>({
   const isShowingPasteButton = copiedText && showPasteButton
   const TextInputComponent = isInModal ? BottomSheetTextInputStyled : TextInputStyled
 
+  const handleChangeText = (text: string) => {
+    usedInputRef.current?.setNativeProps({ value: text })
+    onChangeText?.(text)
+  }
+
   return (
     <InputStyled onPress={onPress} style={style} short={short}>
       <InputContainer>
-        {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputComponent
           selectionColor={theme.global.accent}
-          value={renderedValue?.toString()}
           onFocus={onFocus}
           onBlur={onBlur}
           ref={usedInputRef}
           placeholder={label}
           placeholderTextColor={theme.font.tertiary}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
-          hide={showCustomValueRendering}
-          onChangeText={onChangeText}
+          onChangeText={handleChangeText}
           {...props}
         />
         {isShowingPasteButton && (
@@ -148,16 +140,6 @@ const BottomSheetTextInputStyled = styled(BottomSheetTextInput)<{ hide?: boolean
     css`
       opacity: 0;
     `}
-`
-
-const CustomRenderedValue = styled.View`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  justify-content: center;
-  height: 100%;
 `
 
 const ErrorContainer = styled(Animated.View)`
