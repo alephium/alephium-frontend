@@ -87,6 +87,14 @@ function createWindow() {
     mainWindow = null
   })
 
+  mainWindow.on('focus', () => {
+    mainWindow?.webContents.send('window:focus', true)
+  })
+
+  mainWindow.on('blur', () => {
+    mainWindow?.webContents.send('window:focus', false)
+  })
+
   setupAutoUpdaterListeners(mainWindow)
 
   setupLedgerDevicePermissions(mainWindow)
