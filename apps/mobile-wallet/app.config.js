@@ -93,9 +93,9 @@ export default {
         'expo-font',
         {
           fonts: [
-            './assets/fonts/Inter18pt-Medium.ttf',
-            './assets/fonts/Inter18pt-SemiBold.ttf',
-            './assets/fonts/Inter18pt-Bold.ttf'
+            './assets/fonts/Geist-Medium.ttf',
+            './assets/fonts/Geist-SemiBold.ttf',
+            './assets/fonts/Geist-Bold.ttf'
           ]
         }
       ],
