@@ -35,7 +35,7 @@ const ActionCardReceiveButton = ({ origin, addressHash, onPress }: ActionCardRec
     onPress?.()
   }
 
-  return <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+  return <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download-outline' }} />
 }
 
 export default ActionCardReceiveButton

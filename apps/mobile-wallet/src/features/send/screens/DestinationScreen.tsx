@@ -165,21 +165,21 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
         <ButtonsRow>
           <Button
             compact
-            iconProps={{ name: 'maximize' }}
+            iconProps={{ name: 'scan-outline' }}
             title={t('Scan')}
             onPress={openQRCodeScannerModal}
             variant="accent"
           />
           <Button
             compact
-            iconProps={{ name: 'user' }}
+            iconProps={{ name: 'person-outline' }}
             title={t('Contacts')}
             onPress={openSelectContactModal}
             variant="accent"
           />
           <Button
             compact
-            iconProps={{ name: 'bookmark' }}
+            iconProps={{ name: 'bookmark-outline' }}
             title={t('Addresses')}
             onPress={openAddressSelectModal}
             variant="accent"

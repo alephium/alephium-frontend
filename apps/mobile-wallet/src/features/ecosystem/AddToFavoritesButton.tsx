@@ -14,9 +14,9 @@ const AddToFavoritesButton = ({ dAppName, ...props }: AddToFavoritesButtonProps)
   return (
     <Button
       onPress={toggleFavorite}
-      iconProps={{ name: 'star' }}
+      iconProps={{ name: isFavorite ? 'heart' : 'heart-outline' }}
       type="transparent"
-      color={isFavorite ? theme.font.highlight : undefined}
+      color={isFavorite ? theme.global.alert : undefined}
       {...props}
     />
   )

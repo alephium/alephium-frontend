@@ -30,7 +30,7 @@ const UnknownTokensButton = ({ tokensCount, addressHash }: UnknownTokensButtonPr
       <Button
         title={t('unknownTokensKey', { count: tokensCount })}
         onPress={handleUnknownTokensPress}
-        iconProps={{ name: 'plus' }}
+        iconProps={{ name: 'add' }}
         compact
       />
     </UnknownTokensButtonStyled>

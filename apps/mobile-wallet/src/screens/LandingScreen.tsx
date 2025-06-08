@@ -89,12 +89,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
                 type="primary"
                 onPress={() => handleButtonPress('create')}
                 variant="highlight"
-                iconProps={{ name: 'sun' }}
+                iconProps={{ name: 'sunny-outline' }}
               />
               <Button
                 title={t('Import wallet')}
                 onPress={() => handleButtonPress('import')}
-                iconProps={{ name: 'download' }}
+                iconProps={{ name: 'download-outline' }}
               />
             </ButtonsContainer>
           </ScreenSection>

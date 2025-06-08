@@ -71,7 +71,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
-          <AppText size={32}>⭐️</AppText>
+          <AppText size={32}>💔</AppText>
           <AppText>{t('No dApps added to your favorites yet')}</AppText>
         </EmptyPlaceholder>
       </DAppsListStyled>

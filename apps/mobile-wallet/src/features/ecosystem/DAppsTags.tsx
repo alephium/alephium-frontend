@@ -26,9 +26,9 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
         compact
         onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
         variant={selectedTag === 'fav' ? 'contrast' : undefined}
-        color={selectedTag === 'fav' ? undefined : theme.font.highlight}
-        iconProps={{ name: 'star' }}
-        style={{ backgroundColor: selectedTag === 'fav' ? theme.font.highlight : theme.bg.primary }}
+        color={selectedTag === 'fav' ? undefined : theme.global.alert}
+        iconProps={{ name: 'heart' }}
+        style={{ backgroundColor: selectedTag === 'fav' ? theme.global.alert : theme.bg.primary }}
       />
 
       {dAppTags.map((tag) => (

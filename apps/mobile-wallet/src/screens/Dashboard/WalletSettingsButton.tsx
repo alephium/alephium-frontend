@@ -6,6 +6,8 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 const WalletSettingsButton = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  return <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
+  return (
+    <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings-outline' }} squared />
+  )
 }
 export default WalletSettingsButton

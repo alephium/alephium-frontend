@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Feather'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import Animated, { LinearTransition } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
