@@ -1,13 +1,13 @@
 import { useTheme } from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
+import Button, { ButtonProps } from '~/components/buttons/Button'
 import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleFavoriteDApp'
 
-interface AddToFavoritesButtonProps {
+interface AddToFavoritesButtonProps extends ButtonProps {
   dAppName: string
 }
 
-const AddToFavoritesButton = ({ dAppName }: AddToFavoritesButtonProps) => {
+const AddToFavoritesButton = ({ dAppName, ...props }: AddToFavoritesButtonProps) => {
   const { isFavorite, toggleFavorite } = useToggleFavoriteDApp(dAppName)
   const theme = useTheme()
 
@@ -17,6 +17,7 @@ const AddToFavoritesButton = ({ dAppName }: AddToFavoritesButtonProps) => {
       iconProps={{ name: 'star' }}
       type="transparent"
       color={isFavorite ? theme.font.highlight : undefined}
+      {...props}
     />
   )
 }

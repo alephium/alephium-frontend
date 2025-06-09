@@ -44,7 +44,7 @@ const EditWalletNameModal = memo<ModalBaseProp>(({ id }) => {
   return (
     <BottomModal2 notScrollable modalId={id} title={t('Wallet name')}>
       <ScreenSection verticalGap>
-        <Input isInModal value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+        <Input isInModal defaultValue={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
       </ScreenSection>
     </BottomModal2>

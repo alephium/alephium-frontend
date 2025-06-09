@@ -162,7 +162,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
             <InputZone>
               <WordInput
-                value={typedInput}
+                defaultValue={typedInput}
                 onChangeText={handleWordInputChange}
                 contextMenuHidden={true}
                 onSubmitEditing={handleEnterPress}
