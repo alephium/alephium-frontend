@@ -95,11 +95,15 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
                 <SendButton origin="contact" destinationAddressHash={contact.address} />
               )}
               <ActionCardButton
-                iconProps={{ name: 'clipboard' }}
+                iconProps={{ name: 'copy-outline' }}
                 title={t('Copy address')}
                 onPress={handleCopyAddressPress}
               />
-              <ActionCardButton iconProps={{ name: 'share-2' }} title={t('Share')} onPress={handleShareContactPress} />
+              <ActionCardButton
+                iconProps={{ name: 'share-outline' }}
+                title={t('Share')}
+                onPress={handleShareContactPress}
+              />
             </ButtonsRow>
             <TransactionsHeaderRow>
               <AppText size={18} semiBold>

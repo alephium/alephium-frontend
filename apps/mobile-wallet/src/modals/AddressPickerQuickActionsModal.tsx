@@ -45,12 +45,12 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps 
             <QuickActionButton
               title={t('See address details')}
               onPress={handleOpenAddressDetailsModal}
-              iconProps={{ name: 'eye' }}
+              iconProps={{ name: 'eye-outline' }}
             />
             <QuickActionButton
               title={t('Select address')}
               onPress={handleSelectAddress}
-              iconProps={{ name: 'check' }}
+              iconProps={{ name: 'checkmark-outline' }}
             />
           </ActionButtons>
         </ScreenSection>

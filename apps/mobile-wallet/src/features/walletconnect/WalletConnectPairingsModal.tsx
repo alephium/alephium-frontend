@@ -41,7 +41,11 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalB
             isLast={index === activeSessions.length - 1}
             icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
             rightSideContent={
-              <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
+              <Button
+                onPress={() => handleDisconnectPress(topic)}
+                iconProps={{ name: 'trash-outline' }}
+                type="transparent"
+              />
             }
           />
         ))}
@@ -51,8 +55,12 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalB
           </EmptyPlaceholder>
         )}
         <BottomButtons fullWidth backgroundColor="back1">
-          <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
-          <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
+          <Button
+            title={t('Paste a WalletConnect URI')}
+            onPress={onPasteWcUrlPress}
+            iconProps={{ name: 'copy-outline' }}
+          />
+          <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'scan-outline' }} />
         </BottomButtons>
       </BottomModal2>
     )

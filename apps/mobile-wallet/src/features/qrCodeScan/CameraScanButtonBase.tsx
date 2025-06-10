@@ -65,7 +65,7 @@ const CameraScanButtonBase = ({
 
   return (
     <>
-      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared {...props} />
+      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'scan-outline' }} squared {...props} />
       {isCameraOpen && isFocused && (
         <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} text={text} />
       )}

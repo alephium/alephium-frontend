@@ -33,12 +33,18 @@ const DashboardSecondaryButtons = () => {
       <Buttons>
         {isWalletConnectEnabled && <WalletConnectButton />}
         {networkStatus === 'offline' && (
-          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared compact />
+          <Button
+            onPress={showOfflineMessage}
+            iconProps={{ name: 'cloud-offline-outline' }}
+            variant="alert"
+            squared
+            compact
+          />
         )}
         {!isMnemonicBackedUp && (
           <Button
             onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-            iconProps={{ name: 'alert-triangle' }}
+            iconProps={{ name: 'alert-outline' }}
             variant="alert"
             squared
             compact

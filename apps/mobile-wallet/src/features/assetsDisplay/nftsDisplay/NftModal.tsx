@@ -52,7 +52,7 @@ const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
           <ActionCardButton
             title={t('View full size')}
             onPress={() => openBrowserAsync(nft.image)}
-            iconProps={{ name: 'external-link' }}
+            iconProps={{ name: 'open-outline' }}
           />
         )}
       </ActionButtons>

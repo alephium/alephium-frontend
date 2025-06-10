@@ -25,7 +25,7 @@ const HiddenTokensButton = ({ tokensCount, ...props }: HiddenTokensButtonProps) 
     <HiddenTokensButtonStyled>
       <Button
         title={t('nb_of_hidden_assets', { count: tokensCount })}
-        iconProps={{ name: 'plus' }}
+        iconProps={{ name: 'add' }}
         compact
         {...props}
         onPress={handlePress}

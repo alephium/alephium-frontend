@@ -1,8 +1,14 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
 import { dAppsTagsQuery } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface DAppsCategoriesProps {
@@ -26,9 +32,9 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
         compact
         onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
         variant={selectedTag === 'fav' ? 'contrast' : undefined}
-        color={selectedTag === 'fav' ? undefined : theme.font.highlight}
-        iconProps={{ name: 'star' }}
-        style={{ backgroundColor: selectedTag === 'fav' ? theme.font.highlight : theme.bg.primary }}
+        color={selectedTag === 'fav' ? undefined : theme.global.alert}
+        iconProps={{ name: 'heart' }}
+        style={{ backgroundColor: selectedTag === 'fav' ? theme.global.alert : theme.bg.primary }}
       />
 
       {dAppTags.map((tag) => (
@@ -40,8 +46,28 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
           variant={selectedTag === tag ? 'contrast' : undefined}
         />
       ))}
+
+      <CustomDappButton />
     </DAppsCategoriesStyled>
   )
+}
+
+const CustomDappButton = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const dispatch = useAppDispatch()
+  const [dAppUrl, setDAppUrl] = useState('')
+
+  const handleUrlChange = (url: string) => {
+    setDAppUrl(url)
+    openDappBrowser(url)
+  }
+
+  const openDappBrowser = (dAppUrl: string) => navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
+
+  const openEditUrlModal = () =>
+    dispatch(openModal({ name: 'EditDappUrlModal', props: { url: dAppUrl, onUrlChange: handleUrlChange } }))
+
+  return <Button compact onPress={openEditUrlModal} iconProps={{ name: 'add' }} />
 }
 
 export default DAppsTags

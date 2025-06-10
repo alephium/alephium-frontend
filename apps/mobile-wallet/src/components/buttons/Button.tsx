@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Feather'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { ActivityIndicator, Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
@@ -175,7 +175,7 @@ const Button = ({
 }
 
 export const CloseButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'x' }} compact squared {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'close' }} compact squared {...props} />
 )
 
 export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
@@ -184,7 +184,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
   return (
     <Button
       onPress={props.onPress}
-      iconProps={{ name: 'arrow-right' }}
+      iconProps={{ name: 'arrow-forward' }}
       type="primary"
       style={[
         style,
@@ -207,7 +207,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
 }
 
 export const BackButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'arrow-left' }} squared compact {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-back' }} squared compact {...props} />
 )
 
 export default styled(Button)`

@@ -100,7 +100,7 @@ const BrowserHeader = ({ dAppName, currentUrl, onUrlChange }: BrowserHeaderProps
 
   return (
     <BrowserHeaderStyled style={{ paddingTop: insets.top }}>
-      <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-left' }} squared compact />
+      <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back' }} squared compact />
       <PressableUrl onPress={openEditUrlModal}>
         <Url truncate color="secondary">
           {currentUrl}
@@ -122,16 +122,16 @@ interface BrowserFooterProps {
 const BrowserFooter = ({ onGoBack, onGoForward, onReload, canGoBack, canGoForward }: BrowserFooterProps) => (
   <BrowserBottomStyled>
     <ButtonsList>
-      <Button onPress={onGoBack} iconProps={{ name: 'arrow-left' }} squared type="transparent" disabled={!canGoBack} />
+      <Button onPress={onGoBack} iconProps={{ name: 'arrow-back' }} squared type="transparent" disabled={!canGoBack} />
       <Button
         onPress={onGoForward}
-        iconProps={{ name: 'arrow-right' }}
+        iconProps={{ name: 'arrow-forward' }}
         squared
         type="transparent"
         disabled={!canGoForward}
       />
     </ButtonsList>
-    <Button onPress={onReload} iconProps={{ name: 'refresh-cw' }} squared type="transparent" />
+    <Button onPress={onReload} iconProps={{ name: 'refresh-outline' }} squared type="transparent" />
   </BrowserBottomStyled>
 )
 

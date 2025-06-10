@@ -10,19 +10,18 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		149165E3E61B4939A0EF6AC0 /* Inter18pt-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8BE7CE0385924D1DB0315589 /* Inter18pt-SemiBold.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		3FB71C6C48EE4FF2AAF78D38 /* Geist-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B5A0F7576DEF44E7B2B766A3 /* Geist-SemiBold.ttf */; };
 		5C2974A1E456417E9325A833 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D76E91D0EB4AB3BB6C9768 /* noop-file.swift */; };
+		861A736603874BD3B1214864 /* Geist-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F8892AD2A7444C86A97DB034 /* Geist-Bold.ttf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-Alephium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Alephium.a */; };
-		A6DA6F0C61F245DD8249389E /* Inter18pt-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E273067170F4408B9CC1074 /* Inter18pt-Bold.ttf */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D005CE324D7E473A9561F47A /* Inter18pt-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BFF493F41B54E27B97ECAA7 /* Inter18pt-Medium.ttf */; };
+		DCC84F720AF4400789A74916 /* Geist-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BDBE7E0E6C2F487E821C4CC5 /* Geist-Medium.ttf */; };
 		FED2375B08DF40479408F05E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5D784FE7BBEA483B8C5D188A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0E273067170F4408B9CC1074 /* Inter18pt-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter18pt-Bold.ttf"; path = "../assets/fonts/Inter18pt-Bold.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Alephium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Alephium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Alephium/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Alephium/AppDelegate.mm; sourceTree = "<group>"; };
@@ -35,11 +34,12 @@
 		6C2E3173556A471DD304B334 /* Pods-Alephium.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.debug.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-Alephium.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.release.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.release.xcconfig"; sourceTree = "<group>"; };
 		7F0077A09B3C4A8397D9E4C2 /* Alephium-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Alephium-Bridging-Header.h"; path = "Alephium/Alephium-Bridging-Header.h"; sourceTree = "<group>"; };
-		8BE7CE0385924D1DB0315589 /* Inter18pt-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter18pt-SemiBold.ttf"; path = "../assets/fonts/Inter18pt-SemiBold.ttf"; sourceTree = "<group>"; };
-		9BFF493F41B54E27B97ECAA7 /* Inter18pt-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter18pt-Medium.ttf"; path = "../assets/fonts/Inter18pt-Medium.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Alephium/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B5A0F7576DEF44E7B2B766A3 /* Geist-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-SemiBold.ttf"; path = "../assets/fonts/Geist-SemiBold.ttf"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		BDBE7E0E6C2F487E821C4CC5 /* Geist-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Medium.ttf"; path = "../assets/fonts/Geist-Medium.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F8892AD2A7444C86A97DB034 /* Geist-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Bold.ttf"; path = "../assets/fonts/Geist-Bold.ttf"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Alephium/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,9 +84,9 @@
 		59E53403FEF34420AB60C169 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9BFF493F41B54E27B97ECAA7 /* Inter18pt-Medium.ttf */,
-				8BE7CE0385924D1DB0315589 /* Inter18pt-SemiBold.ttf */,
-				0E273067170F4408B9CC1074 /* Inter18pt-Bold.ttf */,
+				BDBE7E0E6C2F487E821C4CC5 /* Geist-Medium.ttf */,
+				B5A0F7576DEF44E7B2B766A3 /* Geist-SemiBold.ttf */,
+				F8892AD2A7444C86A97DB034 /* Geist-Bold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -222,9 +222,9 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				FED2375B08DF40479408F05E /* PrivacyInfo.xcprivacy in Resources */,
-				D005CE324D7E473A9561F47A /* Inter18pt-Medium.ttf in Resources */,
-				149165E3E61B4939A0EF6AC0 /* Inter18pt-SemiBold.ttf in Resources */,
-				A6DA6F0C61F245DD8249389E /* Inter18pt-Bold.ttf in Resources */,
+				DCC84F720AF4400789A74916 /* Geist-Medium.ttf in Resources */,
+				3FB71C6C48EE4FF2AAF78D38 /* Geist-SemiBold.ttf in Resources */,
+				861A736603874BD3B1214864 /* Geist-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,7 +341,6 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/EXDevLauncher.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/EXDevMenu.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native/Lottie_React_Native_Privacy.bundle",
 			);
@@ -362,7 +361,6 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevLauncher.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevMenu.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LottiePrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Lottie_React_Native_Privacy.bundle",
 			);

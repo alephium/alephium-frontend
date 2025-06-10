@@ -46,7 +46,7 @@ const TransactionModal = memo<TransactionModalProps & ModalBaseProp>(({ id, txHa
 
       <BottomButtons backgroundColor="back1" fullWidth>
         <Button
-          iconProps={{ name: 'arrow-up-right' }}
+          iconProps={{ name: 'open-outline' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           title={t('Explorer')}
         />

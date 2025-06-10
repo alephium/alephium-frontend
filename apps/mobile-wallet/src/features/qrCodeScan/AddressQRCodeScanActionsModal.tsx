@@ -65,7 +65,7 @@ const AddContactButton = ({ addressHash, onPress }: ActionButtonProps) => {
     onPress()
   }
 
-  return <QuickActionButton title={t('Add to contacts')} onPress={handlePress} iconProps={{ name: 'plus' }} />
+  return <QuickActionButton title={t('Add to contacts')} onPress={handlePress} iconProps={{ name: 'add' }} />
 }
 
 // TODO: DRY

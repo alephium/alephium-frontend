@@ -178,7 +178,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Ionicons name="key" size={18} color={theme.global.warning} />
           </Row>
           <Row onPress={handleDeleteButtonPress} title={t('Delete wallet')} titleColor={theme.global.alert} isLast>
-            <Ionicons name="trash" size={18} color={theme.global.alert} />
+            <Ionicons name="trash-outline" size={18} color={theme.global.alert} />
           </Row>
         </ScreenSection>
 

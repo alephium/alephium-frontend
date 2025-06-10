@@ -460,7 +460,7 @@ const CopyBytecodeRow = ({ bytecode }: { bytecode: string }) => {
 
   return (
     <Row title={t('Bytecode')} titleColor="secondary">
-      <Button iconProps={{ name: 'copy' }} onPress={handleCopy} />
+      <Button iconProps={{ name: 'copy-outline' }} onPress={handleCopy} />
     </Row>
   )
 }

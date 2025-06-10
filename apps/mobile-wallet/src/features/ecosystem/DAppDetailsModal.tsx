@@ -32,7 +32,7 @@ const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ id, dAppName }) => {
           <Button
             title={t('More details on Alph.land')}
             onPress={handleOpenAlphLand}
-            iconProps={{ name: 'external-link' }}
+            iconProps={{ name: 'open-outline' }}
           />
           <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
         </BottomButtons>

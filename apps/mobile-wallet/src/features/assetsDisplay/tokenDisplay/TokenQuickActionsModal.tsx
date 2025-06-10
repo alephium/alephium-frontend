@@ -59,14 +59,14 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>
           <QuickActionButton
             title={t('Hide asset')}
             onPress={handleAssetHide}
-            iconProps={{ name: 'eye-off' }}
+            iconProps={{ name: 'eye-off-outline' }}
             variant="alert"
           />
         )}
         <QuickActionButton
           title={t('Show details')}
           onPress={openTokenDetailsModal}
-          iconProps={{ name: 'more-horizontal' }}
+          iconProps={{ name: 'ellipsis-horizontal' }}
         />
       </QuickActionButtons>
     </BottomModal2>

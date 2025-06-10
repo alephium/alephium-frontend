@@ -67,7 +67,14 @@ const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonPro
     else forgetAddress()
   }
 
-  return <QuickActionButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
+  return (
+    <QuickActionButton
+      title={t('Forget')}
+      onPress={handlePress}
+      iconProps={{ name: 'trash-outline' }}
+      variant="alert"
+    />
+  )
 }
 
 const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
@@ -79,7 +86,9 @@ const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonP
     onActionCompleted()
   }
 
-  return <QuickActionButton title={t('Address settings')} onPress={handlePress} iconProps={{ name: 'settings' }} />
+  return (
+    <QuickActionButton title={t('Address settings')} onPress={handlePress} iconProps={{ name: 'settings-outline' }} />
+  )
 }
 
 const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
@@ -87,7 +96,7 @@ const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onActio
 
   const handlePress = () => copyAddressToClipboard(addressHash)
 
-  return <QuickActionButton title={t('Copy address')} onPress={handlePress} iconProps={{ name: 'copy' }} />
+  return <QuickActionButton title={t('Copy address')} onPress={handlePress} iconProps={{ name: 'copy-outline' }} />
 }
 
 const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
