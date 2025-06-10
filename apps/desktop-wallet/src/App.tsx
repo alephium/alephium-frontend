@@ -255,8 +255,6 @@ const LoginAnimatedBackground = () => {
     }
   }, [])
 
-  console.log('isWindowFocused', isWindowFocused)
-
   if (isWalletUnlocked || !isWindowFocused) return null
 
   return <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-100} hiddenOverflow />
