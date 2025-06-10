@@ -7,7 +7,7 @@ import { WebViewNavigation } from 'react-native-webview'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import DappBrowserFooter from '~/features/ecosystem/dAppBrowser/dAppBrowserFooter'
+import DappBrowserFooter from '~/features/ecosystem/dAppBrowser/DappBrowserFooter'
 import DappBrowserHeader from '~/features/ecosystem/dAppBrowser/DappBrowserHeader'
 import DappBrowserWebView from '~/features/ecosystem/dAppBrowser/DappBrowserWebView'
 import { DappBrowserContextProvider } from '~/features/ecosystem/dAppMessaging/DappBrowserContext'
