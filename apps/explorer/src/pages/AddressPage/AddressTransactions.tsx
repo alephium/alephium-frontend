@@ -1,7 +1,5 @@
 import { useFetchAddressTransactionsCount } from '@alephium/shared-react'
-import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageVisibility } from 'react-page-visibility'
 import styled, { css } from 'styled-components'
@@ -27,31 +25,21 @@ const AddressTransactions = ({ addressStr }: AddressTransactionsProps) => {
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const isContract = useIsContract(addressStr)
-  const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const { data: txNumber } = useFetchAddressTransactionsCount(addressStr)
 
-  const {
-    data: txList,
-    isLoading: txListLoading,
-    refetch: refetchTxList
-  } = useQuery({
+  const refetchInterval = isAppVisible && pageNumber === 1 ? 10000 : undefined
+
+  const { data: txList, isLoading: txListLoading } = useQuery({
     ...queries.address.transactions.confirmed(addressStr, pageNumber, numberOfTxsPerPage),
-    enabled: !!addressStr,
+    refetchInterval,
     placeholderData: keepPreviousData
   })
 
   const { data: addressMempoolTransactions = [] } = useQuery({
     ...queries.address.transactions.mempool(addressStr),
-    refetchInterval: isAppVisible && pageNumber === 1 ? 10000 : undefined
+    refetchInterval
   })
-
-  useEffect(() => {
-    if (addressMempoolTransactions.length < lastKnownMempoolTxs.current.length) {
-      refetchTxList()
-    }
-    lastKnownMempoolTxs.current = addressMempoolTransactions
-  }, [addressMempoolTransactions, refetchTxList])
 
   return (
     <>
