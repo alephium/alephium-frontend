@@ -261,7 +261,6 @@
   "Scan QR code": "Scan QR code",
   "Scan an Alephium address QR code": "Scan an Alephium address QR code",
   "Scan an Alephium address QR code to add to your contacts list.": "Scan an Alephium address QR code to add to your contacts list.",
-  "Scan an Alephium address QR code to send funds to.": "Scan an Alephium address QR code to send funds to.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.",
   "Could not connect to WalletConnect": "Could not connect to WalletConnect",
   "Current connections": "Current connections",
@@ -468,5 +467,11 @@
   "Unknown error": "Unknown error",
   "DApp URL": "DApp URL",
   "Load dApp": "Load dApp",
-  "Invalid URL": "Invalid URL"
+  "Invalid URL": "Invalid URL",
+  "Clear cache": "Clear cache",
+  "DApps": "DApps",
+  "Remove all connections": "Remove all connections",
+  "WalletConnect connection unexpectedly dropped.": "WalletConnect connection unexpectedly dropped.",
+  "Please, refresh {{ dAppUrl }}.": "Please, refresh {{ dAppUrl }}.",
+  "WalletConnect cache cleared": "WalletConnect cache cleared"
 }
