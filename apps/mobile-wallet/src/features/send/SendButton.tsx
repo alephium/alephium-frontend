@@ -44,7 +44,7 @@ const SendButton = ({
 
   const ButtonComponent = buttonType === 'action-card' ? ActionCardButton : QuickActionButton
 
-  return <ButtonComponent title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send-outline' }} />
+  return <ButtonComponent title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'arrow-up' }} />
 }
 
 export default SendButton
