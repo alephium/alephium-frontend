@@ -105,7 +105,13 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         const addressesInGroup = data.group !== undefined ? addresses.filter((a) => a.group === data.group) : addresses
 
         if (addressesInGroup.length === 0) {
-          // TODO: show new address modal (won't be needed after integrating groupless addresses since 1 groupless address will be enough)
+          // Show new address modal (won't be needed after integrating groupless addresses since 1 groupless address will be enough)
+          dispatch(
+            openModal({
+              name: 'NewAddressModal',
+              props: { ...data, dAppName, onReject: () => handleRejectDappConnection(messageId) }
+            })
+          )
         } else if (addressesInGroup.length === 1) {
           // Select address automatically
           const connectedAddressPayload = await getConnectedAddressPayload(network, addressesInGroup[0], data.host)
