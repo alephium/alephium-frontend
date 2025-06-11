@@ -9,6 +9,7 @@ import {
 import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
 import { useCallback, useEffect, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components/native'
 
 import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
@@ -34,6 +35,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const dispatch = useAppDispatch()
   const safeAreaInsets = useSafeAreaInsets()
+  const theme = useTheme()
 
   useEffect(() => {
     bottomSheetModalRef.current?.present()
@@ -68,6 +70,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       onDismiss={handleDismiss}
       topInset={safeAreaInsets.top}
       name={props.modalId}
+      backgroundStyle={{ backgroundColor: theme.bg.back1 }}
       {...props.bottomSheetModalProps}
     >
       {isFlashList(props) && props.flashListProps ? (

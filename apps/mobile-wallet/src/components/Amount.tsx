@@ -58,10 +58,10 @@ const Amount = ({
   let isNegative = false
   const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
 
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     isNegative = value < 0
 
-    if (isFiat && typeof value === 'number') {
+    if (isFiat) {
       amount = new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 
       return (
@@ -69,28 +69,32 @@ const Amount = ({
           {hideAmount ? '•••' : fiatPrefix ? `${fiatPrefix} ${amount}` : amount}
         </AppText>
       )
-    } else if (isUnknownToken) {
-      amount = convertToPositive(value as bigint).toString()
     } else {
-      amount = formatAmountForDisplay({
-        amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
-        displayDecimals: nbOfDecimalsToShow,
-        fullPrecision,
-        region
-      })
+      value = BigInt(value)
 
-      const amountIsTooSmall = formatAmountForDisplay({
-        amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
-        displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
-      }).startsWith('0.0000')
+      if (isUnknownToken) {
+        amount = convertToPositive(value).toString()
+      } else {
+        amount = formatAmountForDisplay({
+          amount: convertToPositive(value as bigint),
+          amountDecimals: decimals,
+          displayDecimals: nbOfDecimalsToShow,
+          fullPrecision,
+          region
+        })
 
-      tinyAmount =
-        useTinyAmountShorthand && amountIsTooSmall
-          ? formatAmountForDisplay({ amount: BigInt(1), amountDecimals: 4, region })
-          : ''
+        const amountIsTooSmall = formatAmountForDisplay({
+          amount: convertToPositive(value as bigint),
+          amountDecimals: decimals,
+          displayDecimals: nbOfDecimalsToShow,
+          fullPrecision
+        }).startsWith('0.0000')
+
+        tinyAmount =
+          useTinyAmountShorthand && amountIsTooSmall
+            ? formatAmountForDisplay({ amount: BigInt(1), amountDecimals: 4, region })
+            : ''
+      }
     }
   }
 

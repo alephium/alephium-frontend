@@ -1,4 +1,5 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -36,7 +37,7 @@ const DashboardSecondaryButtons = () => {
           />
         )}
         {!isMnemonicBackedUp && (
-          <Button
+          <AlertButton
             onPress={() => navigation.navigate('BackupMnemonicNavigation')}
             iconProps={{ name: 'alert-outline' }}
             variant="alert"
@@ -60,4 +61,8 @@ const Buttons = styled.View`
   flex-direction: row-reverse;
   justify-content: space-between;
   gap: 10px;
+`
+
+const AlertButton = styled(Button)`
+  border: 1px solid ${({ theme }) => colord(theme.global.alert).alpha(0.2).toRgbString()};
 `
