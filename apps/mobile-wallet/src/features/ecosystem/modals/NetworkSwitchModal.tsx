@@ -6,7 +6,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
-import ConnectDappModalSwitchNetwork from '~/features/ecosystem/modals/ConnectDappModalSwitchNetwork'
+import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
@@ -50,7 +50,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
       <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('Switch network')} contentVerticalGap>
         <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
-        <ConnectDappModalSwitchNetwork
+        <NetworkSwitchModalContent
           currentNetworkName={currentNetworkName}
           requiredNetworkName={requiredNetworkName}
           onSwitchNetworkPress={handleSwitchToRequiredNetwork}

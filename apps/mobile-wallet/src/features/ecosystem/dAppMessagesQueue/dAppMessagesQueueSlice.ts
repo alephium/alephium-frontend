@@ -19,7 +19,7 @@ const dAppMessagesQueueSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(receivedDappMessage, (state, action) => {
       dAppMessagesQueueAdapter.addOne(state, {
-        id: new Date().getTime(),
+        id: new Date().getTime().toString(),
         ...action.payload
       })
     })

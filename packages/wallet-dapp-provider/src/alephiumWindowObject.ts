@@ -89,11 +89,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
       type: 'ALPH_CONNECT_DAPP',
       data: {
         host: window.location.host,
-        icon: getAbsoluteFaviconUrl(
-          document.querySelector('link[rel="icon"]')?.getAttribute('href') ||
-            document.querySelector('link[rel="shortcut icon"]')?.getAttribute('href') ||
-            '/favicon.ico'
-        ),
+        icon: getDappIcon(),
         networkId: options?.networkId,
         group: options?.addressGroup,
         keyType: options?.keyType
@@ -189,7 +185,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
       signedChainedTxParamsToTransactionParams(param, this.#connectedNetworkId!)
     )
 
-    sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data: transactionParamz })
+    sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data: { txParams: transactionParamz, icon: getDappIcon() } })
 
     const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', USER_ACTION_TIMEOUT)
 
@@ -335,7 +331,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     const data = dataBuilder(params, window.location.host, this.#connectedNetworkId!, this.connectedAccount!.keyType)
 
-    sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data: [data] })
+    sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data: { txParams: [data], icon: getDappIcon() } })
     const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', USER_ACTION_TIMEOUT)
 
     const result = await Promise.race([
@@ -360,7 +356,14 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 })()
 
-function getAbsoluteFaviconUrl(faviconPath: string | null): string | undefined {
+const getDappIcon = () =>
+  getAbsoluteFaviconUrl(
+    document.querySelector('link[rel="icon"]')?.getAttribute('href') ||
+      document.querySelector('link[rel="shortcut icon"]')?.getAttribute('href') ||
+      '/favicon.ico'
+  )
+
+const getAbsoluteFaviconUrl = (faviconPath: string | null): string | undefined => {
   if (!faviconPath) return undefined
   try {
     return new URL(faviconPath, window.location.origin).href

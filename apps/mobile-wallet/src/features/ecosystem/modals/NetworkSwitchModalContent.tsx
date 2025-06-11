@@ -8,19 +8,19 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
 import { ScreenSection } from '~/components/layout/Screen'
 
-interface ConnectDappModalSwitchNetworkProps {
+interface NetworkSwitchModalContentProps {
   currentNetworkName: NetworkName
   requiredNetworkName: NetworkName
   onSwitchNetworkPress: () => void
   onDeclinePress: () => void
 }
 
-const ConnectDappModalSwitchNetwork = ({
+const NetworkSwitchModalContent = ({
   currentNetworkName,
   requiredNetworkName,
   onSwitchNetworkPress,
   onDeclinePress
-}: ConnectDappModalSwitchNetworkProps) => {
+}: NetworkSwitchModalContentProps) => {
   const { t } = useTranslation()
 
   return (
@@ -54,4 +54,4 @@ const ConnectDappModalSwitchNetwork = ({
   )
 }
 
-export default ConnectDappModalSwitchNetwork
+export default NetworkSwitchModalContent

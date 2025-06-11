@@ -1,7 +1,6 @@
 import '@walletconnect/react-native-compat'
 
 import {
-  AssetAmount,
   getHumanReadableError,
   parseSessionProposalEvent,
   SessionProposalEvent,
@@ -14,7 +13,6 @@ import {
   walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
 import { useInterval, useUnsortedAddressesHashes } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
 import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
@@ -48,26 +46,19 @@ import {
 } from '@walletconnect/types'
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
-import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
+import { buildDeployContractTransaction } from '~/api/transactions'
 import {
-  buildCallContractTransaction,
-  buildDeployContractTransaction,
-  buildTransferTransaction
-} from '~/api/transactions'
+  processSignExecuteScriptTxParamsAndBuildTx,
+  processSignTransferTxParamsAndBuildTx
+} from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import {
-  CallContractTxData,
-  DeployContractTxData,
-  SignMessageData,
-  SignUnsignedTxData,
-  TransferTxData
-} from '~/types/transactions'
+import { SignMessageData, SignUnsignedTxData } from '~/types/transactions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -444,6 +435,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [onSessionProposal, t, walletConnectClient]
   )
 
+  const getDappIcon = useCallback(
+    (topic: string) => activeSessions.find((s) => s.topic === topic)?.peer.metadata?.icons?.[0],
+    [activeSessions]
+  )
+
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
@@ -454,50 +450,29 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       try {
         switch (requestEvent.params.request.method as RelayMethod) {
           case 'alph_signAndSubmitTransferTx': {
-            const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
-              .params as SignTransferTxParams
-            const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
-            const assetAmounts = [
-              { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-              ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-            ]
+            const txParams = requestEvent.params.request.params as SignTransferTxParams
 
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: TransferTxData = {
-              fromAddress,
-              toAddress,
-              assetAmounts,
-              gasAmount,
-              gasPrice: gasPrice?.toString(),
-              lockTime: lockTime ? new Date(lockTime) : undefined
-            }
-
-            dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
-            dispatch(deactivateAppLoading())
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            const { txParamsSingleDestination, buildTransactionTxResult } =
+              await processSignTransferTxParamsAndBuildTx(txParams)
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignTransferTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'transfer',
-                    wcData: wcTxData,
-                    unsignedTxData: buildTransactionTxResult
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams: txParamsSingleDestination,
+                  unsignedData: buildTransactionTxResult,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -505,48 +480,30 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
-            const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
-              requestEvent.params.request.params as SignDeployContractTxParams
-            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-              : undefined
-
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: DeployContractTxData = {
-              fromAddress,
-              bytecode,
-              initialAlphAmount,
-              issueTokenAmount: issueTokenAmount?.toString(),
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
+            const txParams = requestEvent.params.request.params as SignDeployContractTxParams
 
             dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
+            const buildDeployContractTxResult = await buildDeployContractTransaction(txParams)
             dispatch(deactivateAppLoading())
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignDeployContractTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'deploy-contract',
-                    wcData: wcTxData,
-                    unsignedTxData: buildDeployContractTxResult
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams,
+                  unsignedData: buildDeployContractTxResult,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -554,60 +511,29 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitExecuteScriptTx': {
-            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
-              .params as SignExecuteScriptTxParams
-            let assetAmounts: AssetAmount[] = []
-            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
+            const txParams = requestEvent.params.request.params as SignExecuteScriptTxParams
 
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            if (tokens) {
-              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-              assetAmounts = tokenAssets
-              allAlphAssets = [...allAlphAssets, ...alphAssets]
-            }
-
-            if (allAlphAssets.length > 0) {
-              assetAmounts.push({
-                id: ALPH.id,
-                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-              })
-            }
-
-            const wcTxData: CallContractTxData = {
-              fromAddress,
-              bytecode,
-              assetAmounts,
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
-
-            dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
-            dispatch(deactivateAppLoading())
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            const { txParamsWithAmounts, buildCallContractTxResult } =
+              await processSignExecuteScriptTxParamsAndBuildTx(txParams)
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignExecuteScriptTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'call-contract',
-                    wcData: wcTxData,
-                    unsignedTxData: buildCallContractTxResult
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams: txParamsWithAmounts,
+                  unsignedData: buildCallContractTxResult,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -745,7 +671,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         }
       }
     },
-    [addressHashes, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
+    [
+      addressHashes,
+      dispatch,
+      getDappIcon,
+      handleApiResponse,
+      respondToWalletConnect,
+      respondToWalletConnectWithError,
+      t,
+      walletConnectClient
+    ]
   )
 
   useEffect(() => {

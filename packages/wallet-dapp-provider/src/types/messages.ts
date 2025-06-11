@@ -26,6 +26,11 @@ export type ConnectDappMessageData = {
   keyType?: KeyType
 }
 
+export type ExecuteTransactionMessageData = {
+  txParams: TransactionParams[]
+  icon?: string
+}
+
 type PreAuthorisationMessage =
   | { type: 'ALPH_CONNECT_DAPP'; data: ConnectDappMessageData }
   | { type: 'ALPH_CONNECT_DAPP_RES'; data: WalletAccountWithNetwork }
@@ -41,7 +46,7 @@ type PreAuthorisationMessage =
 type TransactionMessage =
   | {
       type: 'ALPH_EXECUTE_TRANSACTION'
-      data: TransactionParams[]
+      data: ExecuteTransactionMessageData
     }
   | { type: 'ALPH_EXECUTE_TRANSACTION_RES'; data: { actionHash: string } }
   | {

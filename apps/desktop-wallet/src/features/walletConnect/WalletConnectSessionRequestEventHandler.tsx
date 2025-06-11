@@ -127,8 +127,6 @@ const WalletConnectSessionRequestEventHandler = memo(
                 gasPrice: gasPrice?.toString()
               }
 
-              console.log('txData', txData)
-
               dispatch(
                 openModal({
                   name: 'DeployContractSendModal',
