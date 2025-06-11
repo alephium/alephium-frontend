@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.025)',
     back1: '#fff',
     back2: '#fff',
-    accent: colord('#133de2').alpha(0.1).toHex(),
+    accent: colord('#1485ea').alpha(0.1).toHex(),
     contrast: '#111114'
   },
   font: {
@@ -41,7 +41,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#133de2',
+    accent: '#1485ea',
     alert: '#ed4a34',
     warning: '#f48826',
     valid: '#20942d',
@@ -70,7 +70,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '#121214',
     back1: '#0f0f12',
     back2: '#0a0a0d',
-    accent: colord('#5086f9').alpha(0.15).toHex(),
+    accent: colord('#66a4fa').alpha(0.15).toHex(),
     contrast: '#E3E3E3'
   },
   font: {
@@ -99,7 +99,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#416df9',
+    accent: '#66a4fa',
     alert: '#ed4a34',
     warning: '#ed882d',
     valid: '#16a324',
