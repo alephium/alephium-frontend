@@ -6,8 +6,8 @@ import {
 } from '@alephium/web3/dist/src/api/api-alephium'
 
 import {
-  CallContractTxData,
   DeployContractTxData,
+  SignExecuteScriptTxParamsWithAmounts,
   SignMessageData,
   SignUnsignedTxData,
   TransferTxData
@@ -21,7 +21,7 @@ export type SessionRequestData =
     }
   | {
       type: 'call-contract'
-      wcData: CallContractTxData
+      wcData: SignExecuteScriptTxParamsWithAmounts
       unsignedTxData: BuildExecuteScriptTxResult
     }
   | {

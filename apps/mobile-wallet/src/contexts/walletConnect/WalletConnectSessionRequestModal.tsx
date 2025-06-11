@@ -66,7 +66,7 @@ const WalletConnectSessionRequestModal = memo(
   }: WalletConnectSessionRequestModalProps<T> & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { respondToWalletConnect, respondToWalletConnectWithError, activeSessions } = useWalletConnectContext()
-    const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.fromAddress))
+    const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.signerAddress))
     const { t } = useTranslation()
     const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
     const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()

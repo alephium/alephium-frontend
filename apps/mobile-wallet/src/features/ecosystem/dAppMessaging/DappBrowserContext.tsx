@@ -1,6 +1,6 @@
 import { getNetworkIdFromNetworkName, NetworkName } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
-import { ConnectDappMessageData, RequestOptions } from '@alephium/wallet-dapp-provider'
+import { ConnectDappMessageData, MessageType, RequestOptions, TransactionParams } from '@alephium/wallet-dapp-provider'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
@@ -16,8 +16,10 @@ import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/d
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
+import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem/utils'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { showToast } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
 
@@ -37,47 +39,47 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const network = useNetwork()
   const dispatch = useAppDispatch()
 
-  const handleIsDappPreauthorized = useCallback(
-    (data: RequestOptions, messageId: number) => {
-      const isPreauthorized = isConnectionAuthorized(data)
-      console.log('✈️ Replying with ALPH_IS_PREAUTHORIZED_RES:', isPreauthorized)
-      webViewRef.current?.postMessage(JSON.stringify({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isPreauthorized }))
+  const replyToDapp = useCallback(
+    (message: MessageType, messageId: string) => {
+      console.log('✈️ Replying to dApp with:', message)
+      webViewRef.current?.postMessage(JSON.stringify(message))
       dispatch(respondedToDappMessage(messageId))
     },
     [dispatch]
+  )
+
+  const handleIsDappPreauthorized = useCallback(
+    (data: RequestOptions, messageId: string) => {
+      replyToDapp({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isConnectionAuthorized(data) }, messageId)
+    },
+    [replyToDapp]
   )
 
   const handleRejectDappConnection = useCallback(
-    (messageId: number) => {
-      console.log('✈️ Replying with ALPH_REJECT_PREAUTHORIZATION')
-      webViewRef.current?.postMessage(JSON.stringify({ type: 'ALPH_REJECT_PREAUTHORIZATION' }))
-      dispatch(respondedToDappMessage(messageId))
+    (host: string, messageId: string) => {
+      replyToDapp({ type: 'ALPH_REJECT_PREAUTHORIZATION', data: { host, actionHash: messageId } }, messageId)
     },
-    [dispatch]
+    [replyToDapp]
   )
 
   const handleRemovePreAuthorization = useCallback(
-    (host: string, messageId: number) => {
+    (host: string, messageId: string) => {
       dispatch(connectionRemoved(host))
-      console.log('✈️ Replying with ALPH_REMOVE_PREAUTHORIZATION_RES')
-      webViewRef.current?.postMessage(JSON.stringify({ type: 'ALPH_REMOVE_PREAUTHORIZATION_RES' }))
-      dispatch(respondedToDappMessage(messageId))
+      replyToDapp({ type: 'ALPH_REMOVE_PREAUTHORIZATION_RES' }, messageId)
     },
-    [dispatch]
+    [dispatch, replyToDapp]
   )
 
   const handleApproveDappConnection = useCallback(
-    (data: ConnectedAddressPayload, messageId: number) => {
+    (data: ConnectedAddressPayload, messageId: string) => {
       dispatch(connectionAuthorized(data))
-      console.log('✈️ Replying with ALPH_CONNECT_DAPP_RES', data)
-      webViewRef.current?.postMessage(JSON.stringify({ type: 'ALPH_CONNECT_DAPP_RES', data }))
-      dispatch(respondedToDappMessage(messageId))
+      replyToDapp({ type: 'ALPH_CONNECT_DAPP_RES', data }, messageId)
     },
-    [dispatch]
+    [dispatch, replyToDapp]
   )
 
   const handleConnectDapp = useCallback(
-    async (data: ConnectDappMessageData, messageId: number) => {
+    async (data: ConnectDappMessageData, messageId: string) => {
       const authorizedConnection = getAuthorizedConnection(data)
 
       if (authorizedConnection) {
@@ -96,7 +98,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             props: {
               ...data,
               dAppName,
-              onReject: () => handleRejectDappConnection(messageId)
+              onReject: () => handleRejectDappConnection(data.host, messageId)
             }
           })
         )
@@ -109,7 +111,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           dispatch(
             openModal({
               name: 'NewAddressModal',
-              props: { ...data, dAppName, onReject: () => handleRejectDappConnection(messageId) }
+              props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
             })
           )
         } else if (addressesInGroup.length === 1) {
@@ -123,7 +125,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               props: {
                 ...data,
                 dAppName,
-                onReject: () => handleRejectDappConnection(messageId),
+                onReject: () => handleRejectDappConnection(data.host, messageId),
                 onApprove: (data) => handleApproveDappConnection(data, messageId)
               }
             })
@@ -142,6 +144,111 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     ]
   )
 
+  const handleExecuteTransaction = useCallback(
+    async (data: TransactionParams[], messageId: string) => {
+      const actionHash = messageId
+      replyToDapp({ type: 'ALPH_EXECUTE_TRANSACTION_RES', data: { actionHash } }, messageId)
+
+      try {
+        if (data.length === 0) {
+          replyToDapp(
+            { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'No transactions to execute' } },
+            messageId
+          )
+        }
+
+        if (data.length === 1) {
+          const transaction = data[0]
+
+          switch (transaction.type) {
+            case 'TRANSFER':
+              break
+            case 'EXECUTE_SCRIPT': {
+              const { txParamsWithAmounts, buildCallContractTxResult } =
+                await processSignExecuteScriptTxParamsAndBuildTx(transaction.params)
+
+              dispatch(
+                openModal({
+                  name: 'SignExecuteScriptTxModal',
+                  props: {
+                    txParams: txParamsWithAmounts,
+                    unsignedData: buildCallContractTxResult,
+                    onError: (message) => {
+                      replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
+                    },
+                    onReject: () =>
+                      replyToDapp(
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                        messageId
+                      ),
+                    onSuccess: (result) =>
+                      replyToDapp(
+                        {
+                          type: 'ALPH_TRANSACTION_SUBMITTED',
+                          data: {
+                            result: [
+                              {
+                                type: transaction.type,
+                                result
+                              }
+                            ],
+                            actionHash
+                          }
+                        },
+                        messageId
+                      )
+                  }
+                })
+              )
+
+              break
+            }
+            case 'DEPLOY_CONTRACT':
+          }
+
+          // TODO: Process like on WC by:
+          // 1. building the transaction
+          // 2. showing modal identical to WalletConnectSessionRequestModal for signing and submitting the transaction
+          // I should split the WalletConnectSessionRequestModal in 2 different modals:
+          // 1. signing transaction (includes 4: transfer, deploy, execute, sign and submit unsigned tx)
+          // 2. signing message, sign unsigned tx
+
+          // const { signature } = await executeTransactionAction(
+          //   transaction,
+          //   transaction.signature,
+          //   background,
+          //   transaction.params.networkId,
+          // )
+
+          // transactionWatcher.refresh()
+
+          // results = [
+          //   {
+          //     type: transaction.type,
+          //     result: {
+          //       ...transaction.result,
+          //       signature
+          //     }
+          //   }
+          // ] as TransactionResult[]
+        } else {
+          const errorMessage = 'Chained txs not supported yet'
+          showToast({
+            text1: errorMessage,
+            type: 'error'
+          })
+          throw Error(errorMessage)
+        }
+        // ALPH_TRANSACTION_SUBMITTED with TransactionResult[]
+        // or
+        // ALPH_TRANSACTION_FAILED
+      } catch (error) {
+        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: `${error}` } }, messageId)
+      }
+    },
+    [dispatch, replyToDapp]
+  )
+
   useEffect(() => {
     if (!dAppMessage || currentlyOnlineNetworkId === undefined) return
 
@@ -153,17 +260,20 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         handleRemovePreAuthorization(dAppMessage.data, dAppMessage.id)
         break
       case 'ALPH_REJECT_PREAUTHORIZATION':
-        handleRejectDappConnection(dAppMessage.id)
+        handleRejectDappConnection(dAppMessage.data.host, dAppMessage.id)
         break
       case 'ALPH_CONNECT_DAPP':
         handleConnectDapp(dAppMessage.data, dAppMessage.id)
         break
       case 'ALPH_EXECUTE_TRANSACTION':
+        handleExecuteTransaction(dAppMessage.data, dAppMessage.id)
+        break
     }
   }, [
     currentlyOnlineNetworkId,
     dAppMessage,
     handleConnectDapp,
+    handleExecuteTransaction,
     handleIsDappPreauthorized,
     handleRejectDappConnection,
     handleRemovePreAuthorization

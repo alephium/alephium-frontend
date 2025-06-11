@@ -2,7 +2,7 @@ import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/sh
 import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { DeployContractTxData, SignExecuteScriptTxParamsWithAmounts, TransferTxData } from '~/types/transactions'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
@@ -65,16 +65,16 @@ export const buildTransferTransaction = async ({
 }
 
 export const buildCallContractTransaction = async ({
-  fromAddress,
+  signerAddress,
   bytecode,
   assetAmounts,
   gasAmount,
   gasPrice
-}: CallContractTxData) => {
+}: SignExecuteScriptTxParamsWithAmounts) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
 
   return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
-    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    fromPublicKey: await getAddressAsymetricKey(signerAddress, 'public'),
     bytecode,
     attoAlphAmount,
     tokens,

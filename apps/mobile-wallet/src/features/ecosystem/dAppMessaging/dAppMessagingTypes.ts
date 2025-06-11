@@ -5,9 +5,9 @@ export type ConnectedAddressPayload = WalletAccountWithNetwork & {
 }
 
 export const familiarDappMessageTypes: MessageType['type'][] = [
-  'ALPH_IS_PREAUTHORIZED',
-  'ALPH_REMOVE_PREAUTHORIZATION',
-  'ALPH_CONNECT_DAPP',
+  'ALPH_IS_PREAUTHORIZED', // DONE
+  'ALPH_REMOVE_PREAUTHORIZATION', // DONE
+  'ALPH_CONNECT_DAPP', // DONE
   'ALPH_DISCONNECT_ACCOUNT',
   'ALPH_EXECUTE_TRANSACTION',
   'ALPH_SIGN_MESSAGE',

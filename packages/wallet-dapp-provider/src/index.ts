@@ -1,5 +1,6 @@
 import { announceProvider, attachAlephiumProvider } from './provider'
 import { ConnectDappMessageData, MessageType, RequestOptions } from './types/messages'
+import { TransactionParams, TransactionResult } from './types/transactions'
 import { BaseWalletAccount, WalletAccountWithNetwork } from './types/wallet.model'
 
 export const attach = () => {
@@ -7,4 +8,12 @@ export const attach = () => {
   attachAlephiumProvider()
 }
 
-export type { MessageType, RequestOptions, BaseWalletAccount, ConnectDappMessageData, WalletAccountWithNetwork }
+export type {
+  MessageType,
+  RequestOptions,
+  BaseWalletAccount,
+  ConnectDappMessageData,
+  WalletAccountWithNetwork,
+  TransactionParams,
+  TransactionResult
+}

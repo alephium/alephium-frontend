@@ -1,5 +1,5 @@
 import { Address, AddressHash, AssetAmount } from '@alephium/shared'
-import { explorer, SignMessageParams, SignUnsignedTxParams } from '@alephium/web3'
+import { explorer, SignExecuteScriptTxParams, SignMessageParams, SignUnsignedTxParams } from '@alephium/web3'
 
 export type PendingTransaction =
   | {
@@ -53,13 +53,8 @@ export interface TransferTxData {
   lockTime?: Date
 }
 
-export interface CallContractTxData {
-  fromAddress: AddressHash
-  bytecode: string
-
-  assetAmounts?: AssetAmount[]
-  gasAmount?: number
-  gasPrice?: string
+export interface SignExecuteScriptTxParamsWithAmounts extends SignExecuteScriptTxParams {
+  assetAmounts: AssetAmount[]
 }
 
 export interface DeployContractTxData {
