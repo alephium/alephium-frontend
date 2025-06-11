@@ -16,7 +16,7 @@ interface UseSignModalProps {
   sendTransaction: () => Promise<void>
   onReject: () => void
   onError: (message: string) => void
-  unsignedData: n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult
+  unsignedData: n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult | n.BuildTransferTxResult
 }
 
 const useSignModal = ({ id, unsignedData, sendTransaction, onReject, onError }: UseSignModalProps) => {

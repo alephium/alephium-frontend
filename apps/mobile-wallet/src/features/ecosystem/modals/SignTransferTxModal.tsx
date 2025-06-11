@@ -1,5 +1,5 @@
 import { transactionSent } from '@alephium/shared'
-import { node as n, SignExecuteScriptTxResult } from '@alephium/web3'
+import { node as n, SignTransferTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -10,8 +10,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
-import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
-import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
 import FeesRow from '~/features/ecosystem/modals/FeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
@@ -19,32 +17,22 @@ import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
-import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
+import { SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface SignExecuteScriptTxModalProps {
-  txParams: SignExecuteScriptTxParamsWithAmounts
-  unsignedData: n.BuildExecuteScriptTxResult
+interface SignTransferTxModalProps {
+  txParams: SignTransferTxParamsSingleDestination
+  unsignedData: n.BuildTransferTxResult
   onError: (message: string) => void
-  onSuccess: (signResult: SignExecuteScriptTxResult) => void
+  onSuccess: (signResult: SignTransferTxResult) => void
   onReject: () => void
   origin: ModalOrigin
   dAppUrl?: string
   dAppIcon?: string
 }
 
-const SignExecuteScriptTxModal = memo(
-  ({
-    id,
-    txParams,
-    unsignedData,
-    dAppUrl,
-    dAppIcon,
-    origin,
-    onError,
-    onReject,
-    onSuccess
-  }: SignExecuteScriptTxModalProps & ModalBaseProp) => {
+const SignTransferTxModal = memo(
+  ({ id, txParams, unsignedData, origin, onError, onReject, onSuccess }: SignTransferTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
@@ -61,25 +49,25 @@ const SignExecuteScriptTxModal = memo(
           transactionSent({
             hash: data.txId,
             fromAddress: txParams.signerAddress,
+            toAddress: txParams.toAddress,
             amount: attoAlphAmount,
             tokens,
             timestamp: new Date().getTime(),
             status: 'sent',
-            type: 'contract',
-            toAddress: ''
+            type: 'transfer'
           })
         )
 
-        sendAnalytics({ event: 'Approved contract call', props: { origin } })
+        sendAnalytics({ event: 'Approved transfer', props: { origin } })
 
         onSuccess({
-          groupIndex: unsignedData.fromGroup,
+          fromGroup: unsignedData.fromGroup,
+          toGroup: unsignedData.toGroup,
           unsignedTx: unsignedData.unsignedTx,
           txId: unsignedData.txId,
           signature: data.signature,
           gasAmount: unsignedData.gasAmount,
-          gasPrice: BigInt(unsignedData.gasPrice),
-          simulatedOutputs: []
+          gasPrice: BigInt(unsignedData.gasPrice)
         })
       }
     })
@@ -94,17 +82,18 @@ const SignExecuteScriptTxModal = memo(
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
-            {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
-
-            <CopyBytecodeRow bytecode={txParams.bytecode} />
+            <Row title={t('To')} titleColor="secondary">
+              <AddressBadge addressHash={txParams.toAddress} />
+            </Row>
 
             <FeesRow fees={fees} />
           </Surface>
         </ScreenSection>
+
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
       </BottomModal2>
     )
   }
 )
 
-export default SignExecuteScriptTxModal
+export default SignTransferTxModal

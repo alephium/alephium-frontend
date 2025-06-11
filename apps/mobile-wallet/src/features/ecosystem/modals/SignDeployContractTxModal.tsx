@@ -9,24 +9,23 @@ import {
 } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Image } from 'react-native'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { signAndSendTransaction } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
+import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
+import FeesRow from '~/features/ecosystem/modals/FeesRow'
+import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
+import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import FeeAmounts from '~/features/send/screens/FeeAmounts'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface SignDeployContractTxModalProps {
@@ -35,7 +34,7 @@ interface SignDeployContractTxModalProps {
   onError: (message: string) => void
   onSuccess: (signResult: SignDeployContractTxResult) => void
   onReject: () => void
-  origin: 'walletconnect' | 'in-app-browser'
+  origin: ModalOrigin
   dAppUrl?: string
   dAppIcon?: string
 }
@@ -97,12 +96,7 @@ const SignDeployContractTxModal = memo(
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
-            {dAppUrl && (
-              <Row title={t('To')} titleColor="secondary" noMaxWidth>
-                {dAppIcon && <DAppIcon source={{ uri: dAppIcon }} />}
-                <AppText semiBold>{dAppUrl}</AppText>
-              </Row>
-            )}
+            {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
             {!!txParams.initialAttoAlphAmount && (
               <Row title={t('Initial amount')} titleColor="secondary">
@@ -118,27 +112,13 @@ const SignDeployContractTxModal = memo(
 
             <CopyBytecodeRow bytecode={txParams.bytecode} />
 
-            {fees !== undefined && (
-              <Row title={t('Estimated fees')} titleColor="secondary" isLast>
-                <FeeAmounts fees={fees} />
-              </Row>
-            )}
+            <FeesRow fees={fees} />
           </Surface>
         </ScreenSection>
-        <ScreenSection centered>
-          <ButtonsRow>
-            <Button title={t('Reject')} variant="alert" onPress={handleRejectPress} flex />
-            <Button title={t('Approve')} variant="valid" onPress={handleApprovePress} flex />
-          </ButtonsRow>
-        </ScreenSection>
+        <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
       </BottomModal2>
     )
   }
 )
 
 export default SignDeployContractTxModal
-
-const DAppIcon = styled(Image)`
-  width: 20px;
-  height: 20px;
-`

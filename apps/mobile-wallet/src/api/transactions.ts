@@ -2,7 +2,7 @@ import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/sh
 import { SignDeployContractTxParams, transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { SignExecuteScriptTxParamsWithAmounts, TransferTxData } from '~/types/transactions'
+import { SignExecuteScriptTxParamsWithAmounts, SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
@@ -27,9 +27,10 @@ export const buildUnsignedTransactions = async (
     return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
   } else {
     const data = await buildTransferTransaction({
-      fromAddress: fromAddress.hash,
+      signerAddress: fromAddress.hash,
       toAddress: toAddressHash,
-      assetAmounts
+      assetAmounts,
+      destinations: []
     })
 
     if (!data) return
@@ -42,16 +43,20 @@ export const buildUnsignedTransactions = async (
 }
 
 export const buildTransferTransaction = async ({
-  fromAddress,
+  signerAddress,
+  signerKeyType,
   toAddress,
   assetAmounts,
-  gasAmount,
-  gasPrice
-}: TransferTxData) => {
+  gasPrice,
+  ...props
+}: SignTransferTxParamsSingleDestination) => {
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
   return await throttledClient.node.transactions.postTransactionsBuild({
-    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
+    fromPublicKey: await getAddressAsymetricKey(signerAddress, 'public'),
+    fromPublicKeyType: signerKeyType,
+    ...props,
+    // TODO: Remove when supporting multiple destinations
     destinations: [
       {
         address: toAddress,
@@ -59,8 +64,7 @@ export const buildTransferTransaction = async ({
         tokens
       }
     ],
-    gasAmount,
-    gasPrice
+    gasPrice: gasPrice?.toString()
   })
 }
 

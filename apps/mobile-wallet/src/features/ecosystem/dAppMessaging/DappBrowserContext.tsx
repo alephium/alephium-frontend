@@ -22,7 +22,10 @@ import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/d
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
-import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem/utils'
+import {
+  processSignExecuteScriptTxParamsAndBuildTx,
+  processSignTransferTxParamsAndBuildTx
+} from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -168,12 +171,56 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           const transaction = data.txParams[0]
 
           switch (transaction.type) {
-            case 'TRANSFER':
+            // TODO: DRY
+            case 'TRANSFER': {
+              const { txParamsSingleDestination, buildTransactionTxResult } =
+                await processSignTransferTxParamsAndBuildTx(transaction.params)
+
+              dispatch(
+                openModal({
+                  name: 'SignTransferTxModal',
+                  props: {
+                    dAppUrl: transaction.params.host ?? dAppUrl,
+                    dAppIcon: data.icon,
+                    txParams: txParamsSingleDestination,
+                    unsignedData: buildTransactionTxResult,
+                    origin: 'in-app-browser',
+                    onError: (message) => {
+                      replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
+                    },
+                    onReject: () =>
+                      replyToDapp(
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                        messageId
+                      ),
+                    onSuccess: (result) =>
+                      replyToDapp(
+                        {
+                          type: 'ALPH_TRANSACTION_SUBMITTED',
+                          data: {
+                            result: [
+                              {
+                                type: transaction.type,
+                                result
+                              }
+                            ],
+                            actionHash
+                          }
+                        },
+                        messageId
+                      )
+                  }
+                })
+              )
+
               break
+            }
+
             case 'EXECUTE_SCRIPT': {
               const { txParamsWithAmounts, buildCallContractTxResult } =
                 await processSignExecuteScriptTxParamsAndBuildTx(transaction.params)
 
+              // TODO: DRY
               dispatch(
                 openModal({
                   name: 'SignExecuteScriptTxModal',
@@ -286,18 +333,19 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           // ] as TransactionResult[]
         } else {
           // TODO:
-          const errorMessage = 'Chained txs not supported yet'
-          showToast({
-            text1: errorMessage,
-            type: 'error'
-          })
-          throw Error(errorMessage)
+          throw Error('Chained txs not supported yet')
         }
         // ALPH_TRANSACTION_SUBMITTED with TransactionResult[]
         // or
         // ALPH_TRANSACTION_FAILED
       } catch (error) {
-        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: `${error}` } }, messageId)
+        dispatch(deactivateAppLoading())
+        const errorMessage = `${error}`
+        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: errorMessage } }, messageId)
+        showToast({
+          text1: errorMessage,
+          type: 'error'
+        })
       }
     },
     [dAppUrl, dispatch, replyToDapp]
