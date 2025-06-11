@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.14
+
+### Patch Changes
+
+- 8e47c0b: Fix display of newly confirmed transactions
+
 ## 1.10.13
 
 ### Patch Changes
