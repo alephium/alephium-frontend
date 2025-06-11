@@ -23,6 +23,7 @@ import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import NewAddressModal from '~/features/ecosystem/modals/NewAddressModal'
+import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
@@ -151,6 +152,8 @@ const AppModals = () => {
             return <NewAddressModal key={id} id={id} {...params.props} />
           case 'SignExecuteScriptTxModal':
             return <SignExecuteScriptTxModal key={id} id={id} {...params.props} />
+          case 'SignDeployContractTxModal':
+            return <SignDeployContractTxModal key={id} id={id} {...params.props} />
           default:
             return null
         }

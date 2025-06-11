@@ -1,5 +1,5 @@
 import { announceProvider, attachAlephiumProvider } from './provider'
-import { ConnectDappMessageData, MessageType, RequestOptions } from './types/messages'
+import { ConnectDappMessageData, ExecuteTransactionMessageData, MessageType, RequestOptions } from './types/messages'
 import { TransactionParams, TransactionResult } from './types/transactions'
 import { BaseWalletAccount, WalletAccountWithNetwork } from './types/wallet.model'
 
@@ -13,6 +13,7 @@ export type {
   RequestOptions,
   BaseWalletAccount,
   ConnectDappMessageData,
+  ExecuteTransactionMessageData,
   WalletAccountWithNetwork,
   TransactionParams,
   TransactionResult

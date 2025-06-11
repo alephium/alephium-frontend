@@ -1,7 +1,15 @@
 import { transactionSent } from '@alephium/shared'
-import { node as n, SignExecuteScriptTxResult } from '@alephium/web3'
+import { ALPH } from '@alephium/token-list'
+import {
+  binToHex,
+  contractIdFromAddress,
+  node as n,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult
+} from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -15,28 +23,24 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
-import DappIcon from '~/features/ecosystem/modals/DappIcon'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
-import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch } from '~/hooks/redux'
-import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface SignExecuteScriptTxModalProps {
-  txParams: SignExecuteScriptTxParamsWithAmounts
-  unsignedData: n.BuildExecuteScriptTxResult
+interface SignDeployContractTxModalProps {
+  txParams: SignDeployContractTxParams
+  unsignedData: n.BuildDeployContractTxResult
   onError: (message: string) => void
-  onSuccess: (signResult: SignExecuteScriptTxResult) => void
+  onSuccess: (signResult: SignDeployContractTxResult) => void
   onReject: () => void
   origin: 'walletconnect' | 'in-app-browser'
   dAppUrl?: string
   dAppIcon?: string
 }
 
-const SignExecuteScriptTxModal = memo(
+const SignDeployContractTxModal = memo(
   ({
     id,
     txParams,
@@ -47,7 +51,7 @@ const SignExecuteScriptTxModal = memo(
     onError,
     onReject,
     onSuccess
-  }: SignExecuteScriptTxModalProps & ModalBaseProp) => {
+  }: SignDeployContractTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
@@ -58,14 +62,11 @@ const SignExecuteScriptTxModal = memo(
       unsignedData,
       sendTransaction: async () => {
         const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
-        const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
 
         dispatch(
           transactionSent({
             hash: data.txId,
             fromAddress: txParams.signerAddress,
-            amount: attoAlphAmount,
-            tokens,
             timestamp: new Date().getTime(),
             status: 'sent',
             type: 'contract',
@@ -73,16 +74,17 @@ const SignExecuteScriptTxModal = memo(
           })
         )
 
-        sendAnalytics({ event: 'Approved contract call', props: { origin } })
+        sendAnalytics({ event: 'Approved contract deployment', props: { origin } })
 
         onSuccess({
           groupIndex: unsignedData.fromGroup,
           unsignedTx: unsignedData.unsignedTx,
           txId: unsignedData.txId,
           signature: data.signature,
+          contractAddress: unsignedData.contractAddress,
+          contractId: binToHex(contractIdFromAddress(unsignedData.contractAddress)),
           gasAmount: unsignedData.gasAmount,
-          gasPrice: BigInt(unsignedData.gasPrice),
-          simulatedOutputs: []
+          gasPrice: BigInt(unsignedData.gasPrice)
         })
       }
     })
@@ -91,27 +93,26 @@ const SignExecuteScriptTxModal = memo(
       <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
         <ScreenSection>
           <Surface>
-            {txParams.assetAmounts.length > 0 && (
-              <>
-                <Row title={t('Sending')} titleColor="secondary">
-                  <AssetAmounts>
-                    {txParams.assetAmounts.map(({ id, amount }) =>
-                      amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
-                    )}
-                  </AssetAmounts>
-                </Row>
-
-                <TotalWorthRow assetAmounts={txParams.assetAmounts} />
-              </>
-            )}
             <Row title={t('From')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
             {dAppUrl && (
               <Row title={t('To')} titleColor="secondary" noMaxWidth>
-                {dAppIcon && <DappIcon source={{ uri: dAppIcon }} />}
+                {dAppIcon && <DAppIcon source={{ uri: dAppIcon }} />}
                 <AppText semiBold>{dAppUrl}</AppText>
+              </Row>
+            )}
+
+            {!!txParams.initialAttoAlphAmount && (
+              <Row title={t('Initial amount')} titleColor="secondary">
+                <AssetAmountWithLogo assetId={ALPH.id} amount={BigInt(txParams.initialAttoAlphAmount)} fullPrecision />
+              </Row>
+            )}
+
+            {!!txParams.issueTokenAmount && (
+              <Row title={t('Issue token amount')} titleColor="secondary">
+                <AppText>{txParams.issueTokenAmount.toString()}</AppText>
               </Row>
             )}
 
@@ -135,9 +136,9 @@ const SignExecuteScriptTxModal = memo(
   }
 )
 
-export default SignExecuteScriptTxModal
+export default SignDeployContractTxModal
 
-const AssetAmounts = styled.View`
-  gap: 5px;
-  align-items: flex-end;
+const DAppIcon = styled(Image)`
+  width: 20px;
+  height: 20px;
 `

@@ -23,6 +23,8 @@ import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import NewAddressModal from '~/features/ecosystem/modals/NewAddressModal'
+import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
+import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -88,7 +90,9 @@ export const ModalComponents = {
   AddressNftsGridModal,
   ConnectDappModal,
   NetworkSwitchModal,
-  NewAddressModal
+  NewAddressModal,
+  SignExecuteScriptTxModal,
+  SignDeployContractTxModal
 }
 
 export type ModalName = keyof typeof ModalComponents

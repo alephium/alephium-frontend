@@ -1,9 +1,15 @@
 import { getNetworkIdFromNetworkName, NetworkName } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
-import { ConnectDappMessageData, MessageType, RequestOptions, TransactionParams } from '@alephium/wallet-dapp-provider'
+import {
+  ConnectDappMessageData,
+  ExecuteTransactionMessageData,
+  MessageType,
+  RequestOptions
+} from '@alephium/wallet-dapp-provider'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
+import { buildDeployContractTransaction } from '~/api/transactions'
 import {
   connectionAuthorized,
   connectionRemoved
@@ -17,6 +23,7 @@ import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppM
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem/utils'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
@@ -145,20 +152,20 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   const handleExecuteTransaction = useCallback(
-    async (data: TransactionParams[], messageId: string) => {
+    async (data: ExecuteTransactionMessageData, messageId: string) => {
       const actionHash = messageId
       replyToDapp({ type: 'ALPH_EXECUTE_TRANSACTION_RES', data: { actionHash } }, messageId)
 
       try {
-        if (data.length === 0) {
+        if (data.txParams.length === 0) {
           replyToDapp(
             { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'No transactions to execute' } },
             messageId
           )
         }
 
-        if (data.length === 1) {
-          const transaction = data[0]
+        if (data.txParams.length === 1) {
+          const transaction = data.txParams[0]
 
           switch (transaction.type) {
             case 'TRANSFER':
@@ -171,8 +178,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 openModal({
                   name: 'SignExecuteScriptTxModal',
                   props: {
+                    dAppUrl: transaction.params.host ?? dAppUrl,
+                    dAppIcon: data.icon,
                     txParams: txParamsWithAmounts,
                     unsignedData: buildCallContractTxResult,
+                    origin: 'in-app-browser',
                     onError: (message) => {
                       replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
                     },
@@ -203,7 +213,50 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
               break
             }
-            case 'DEPLOY_CONTRACT':
+            case 'DEPLOY_CONTRACT': {
+              dispatch(activateAppLoading('Loading'))
+              const buildDeployContractTxResult = await buildDeployContractTransaction(transaction.params)
+              dispatch(deactivateAppLoading())
+
+              // TODO: DRY with SignExecuteScriptTxModal?
+              dispatch(
+                openModal({
+                  name: 'SignDeployContractTxModal',
+                  props: {
+                    dAppUrl: transaction.params.host ?? dAppUrl,
+                    dAppIcon: data.icon,
+                    txParams: transaction.params,
+                    unsignedData: buildDeployContractTxResult,
+                    origin: 'in-app-browser',
+                    onError: (message) => {
+                      replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
+                    },
+                    onReject: () =>
+                      replyToDapp(
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                        messageId
+                      ),
+                    onSuccess: (result) =>
+                      replyToDapp(
+                        {
+                          type: 'ALPH_TRANSACTION_SUBMITTED',
+                          data: {
+                            result: [
+                              {
+                                type: transaction.type,
+                                result
+                              }
+                            ],
+                            actionHash
+                          }
+                        },
+                        messageId
+                      )
+                  }
+                })
+              )
+              break
+            }
           }
 
           // TODO: Process like on WC by:
@@ -232,6 +285,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           //   }
           // ] as TransactionResult[]
         } else {
+          // TODO:
           const errorMessage = 'Chained txs not supported yet'
           showToast({
             text1: errorMessage,
@@ -246,7 +300,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: `${error}` } }, messageId)
       }
     },
-    [dispatch, replyToDapp]
+    [dAppUrl, dispatch, replyToDapp]
   )
 
   useEffect(() => {

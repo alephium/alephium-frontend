@@ -57,16 +57,6 @@ export interface SignExecuteScriptTxParamsWithAmounts extends SignExecuteScriptT
   assetAmounts: AssetAmount[]
 }
 
-export interface DeployContractTxData {
-  fromAddress: AddressHash
-  bytecode: string
-
-  initialAlphAmount?: AssetAmount
-  issueTokenAmount?: string
-  gasAmount?: number
-  gasPrice?: string
-}
-
 export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
   fromAddress: AddressHash
 }

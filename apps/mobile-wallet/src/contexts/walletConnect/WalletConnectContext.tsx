@@ -1,7 +1,6 @@
 import '@walletconnect/react-native-compat'
 
 import {
-  AssetAmount,
   getHumanReadableError,
   parseSessionProposalEvent,
   SessionProposalEvent,
@@ -57,7 +56,7 @@ import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { DeployContractTxData, SignMessageData, SignUnsignedTxData, TransferTxData } from '~/types/transactions'
+import { SignMessageData, SignUnsignedTxData, TransferTxData } from '~/types/transactions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -500,48 +499,30 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
-            const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
-              requestEvent.params.request.params as SignDeployContractTxParams
-            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-              : undefined
-
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: DeployContractTxData = {
-              fromAddress,
-              bytecode,
-              initialAlphAmount,
-              issueTokenAmount: issueTokenAmount?.toString(),
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
+            const txParams = requestEvent.params.request.params as SignDeployContractTxParams
 
             dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
+            const buildDeployContractTxResult = await buildDeployContractTransaction(txParams)
             dispatch(deactivateAppLoading())
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignDeployContractTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'deploy-contract',
-                    wcData: wcTxData,
-                    unsignedTxData: buildDeployContractTxResult
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams,
+                  unsignedData: buildDeployContractTxResult,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -562,6 +543,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                   dAppIcon: getDappIcon(requestEvent.topic),
                   txParams: txParamsWithAmounts,
                   unsignedData: buildCallContractTxResult,
+                  origin: 'walletconnect',
                   onError: (message) => {
                     respondToWalletConnectWithError(requestEvent, {
                       message,

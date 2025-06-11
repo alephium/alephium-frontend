@@ -1,8 +1,8 @@
 import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
-import { transactionSign } from '@alephium/web3'
+import { SignDeployContractTxParams, transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { DeployContractTxData, SignExecuteScriptTxParamsWithAmounts, TransferTxData } from '~/types/transactions'
+import { SignExecuteScriptTxParamsWithAmounts, TransferTxData } from '~/types/transactions'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
@@ -66,38 +66,40 @@ export const buildTransferTransaction = async ({
 
 export const buildCallContractTransaction = async ({
   signerAddress,
-  bytecode,
+  signerKeyType,
   assetAmounts,
-  gasAmount,
-  gasPrice
+  gasPrice,
+  ...props
 }: SignExecuteScriptTxParamsWithAmounts) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
 
   return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(signerAddress, 'public'),
-    bytecode,
+    fromPublicKeyType: signerKeyType,
+    gasPrice: gasPrice?.toString(),
+    ...props,
     attoAlphAmount,
-    tokens,
-    gasAmount: gasAmount,
-    gasPrice: gasPrice?.toString()
+    tokens
   })
 }
 
 export const buildDeployContractTransaction = async ({
-  fromAddress,
-  bytecode,
-  initialAlphAmount,
+  signerAddress,
+  signerKeyType,
+  initialAttoAlphAmount,
+  initialTokenAmounts,
   issueTokenAmount,
-  gasAmount,
-  gasPrice
-}: DeployContractTxData) =>
+  gasPrice,
+  ...props
+}: SignDeployContractTxParams) =>
   await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
-    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
-    bytecode: bytecode,
-    initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
+    fromPublicKey: await getAddressAsymetricKey(signerAddress, 'public'),
+    fromPublicKeyType: signerKeyType,
+    initialAttoAlphAmount: initialAttoAlphAmount?.toString(),
+    initialTokenAmounts: initialTokenAmounts?.map((t) => ({ id: t.id, amount: t.amount.toString() })),
     issueTokenAmount: issueTokenAmount?.toString(),
-    gasAmount: gasAmount,
-    gasPrice: gasPrice?.toString()
+    gasPrice: gasPrice?.toString(),
+    ...props
   })
 
 export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {

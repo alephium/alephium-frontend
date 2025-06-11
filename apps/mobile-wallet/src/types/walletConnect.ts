@@ -1,3 +1,4 @@
+import { SignDeployContractTxParams } from '@alephium/web3'
 import {
   BuildDeployContractTxResult,
   BuildExecuteScriptTxResult,
@@ -6,7 +7,6 @@ import {
 } from '@alephium/web3/dist/src/api/api-alephium'
 
 import {
-  DeployContractTxData,
   SignExecuteScriptTxParamsWithAmounts,
   SignMessageData,
   SignUnsignedTxData,
@@ -26,7 +26,7 @@ export type SessionRequestData =
     }
   | {
       type: 'deploy-contract'
-      wcData: DeployContractTxData
+      wcData: SignDeployContractTxParams
       unsignedTxData: BuildDeployContractTxResult
     }
   | {
