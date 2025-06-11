@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 2.1.4
+
+### Patch Changes
+
+- 8e47c0b: Fix display of newly confirmed transactions
+- 864e271: Add CNY
+- 8d12650: Allow custom dApp URLs in ecosystem screen
+
 ## 2.1.3
 
 ### Patch Changes
