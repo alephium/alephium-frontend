@@ -54,8 +54,11 @@ const TextContainer = styled.View`
 const DataFetchErrorIndicator = ({ error }: Pick<BalanceSummaryProps, 'error'>) => {
   const dispatch = useAppDispatch()
 
-  const handlePress = () =>
-    dispatch(openModal({ name: 'DataFetchErrorModal', props: { message: error ? error.toString() : undefined } }))
+  const handlePress = () => {
+    const message = typeof error !== 'boolean' && error ? error.toString() : undefined
+
+    dispatch(openModal({ name: 'DataFetchErrorModal', props: { message } }))
+  }
 
   return (
     <DataFetchIndicatorStyled onPress={handlePress}>
