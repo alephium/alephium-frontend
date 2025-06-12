@@ -4,7 +4,6 @@ import { ComponentProps } from 'react'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
@@ -25,7 +24,9 @@ import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import NewAddressModal from '~/features/ecosystem/modals/NewAddressModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
+import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
 import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
+import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -71,7 +72,6 @@ export const ModalComponents = {
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
   WalletConnectSessionProposalModal,
-  WalletConnectSessionRequestModal,
   GroupSelectModal,
   TokenAmountModal,
   AddressDetailsModal,
@@ -94,7 +94,9 @@ export const ModalComponents = {
   NewAddressModal,
   SignExecuteScriptTxModal,
   SignDeployContractTxModal,
-  SignTransferTxModal
+  SignTransferTxModal,
+  SignUnsignedTxModal,
+  SignMessageTxModal
 }
 
 export type ModalName = keyof typeof ModalComponents

@@ -31,6 +31,18 @@ export type ExecuteTransactionMessageData = {
   icon?: string
 }
 
+export interface SignMessageMessageData extends SignMessageParams {
+  icon?: string
+  networkId?: string
+  host: string
+}
+
+export interface SignUnsignedTxMessageData extends SignUnsignedTxParams {
+  icon?: string
+  networkId?: string
+  host: string
+}
+
 type PreAuthorisationMessage =
   | { type: 'ALPH_CONNECT_DAPP'; data: ConnectDappMessageData }
   | { type: 'ALPH_CONNECT_DAPP_RES'; data: WalletAccountWithNetwork }
@@ -59,14 +71,14 @@ type TransactionMessage =
     }
 
 type ActionMessage =
-  | { type: 'ALPH_SIGN_MESSAGE'; data: SignMessageParams & { networkId?: string; host: string } }
+  | { type: 'ALPH_SIGN_MESSAGE'; data: SignMessageMessageData }
   | { type: 'ALPH_SIGN_MESSAGE_RES'; data: { actionHash: string } }
   | { type: 'ALPH_SIGN_MESSAGE_FAILURE'; data: { actionHash: string; error: string } }
   | {
       type: 'ALPH_SIGN_MESSAGE_SUCCESS'
       data: { signature: string; actionHash: string }
     }
-  | { type: 'ALPH_SIGN_UNSIGNED_TX'; data: SignUnsignedTxParams & { networkId?: string; host: string } }
+  | { type: 'ALPH_SIGN_UNSIGNED_TX'; data: SignUnsignedTxMessageData }
   | { type: 'ALPH_SIGN_UNSIGNED_TX_RES'; data: { actionHash: string } }
   | { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE'; data: { actionHash: string; error: string } }
   | { type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS'; data: { result: SignUnsignedTxResult; actionHash: string } }

@@ -41,7 +41,7 @@ const SignTransferTxModal = memo(
       onReject,
       onError,
       unsignedData,
-      sendTransaction: async () => {
+      sign: async () => {
         const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
         const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
 

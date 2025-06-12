@@ -10,7 +10,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
-import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
+import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
 import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
 import FeesRow from '~/features/ecosystem/modals/FeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
@@ -53,7 +53,7 @@ const SignExecuteScriptTxModal = memo(
       onReject,
       onError,
       unsignedData,
-      sendTransaction: async () => {
+      sign: async () => {
         const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
         const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
 
@@ -96,7 +96,7 @@ const SignExecuteScriptTxModal = memo(
 
             {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
-            <CopyBytecodeRow bytecode={txParams.bytecode} />
+            <CopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
 
             <FeesRow fees={fees} />
           </Surface>

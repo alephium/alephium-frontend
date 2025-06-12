@@ -1,10 +1,12 @@
-import { getNetworkIdFromNetworkName, NetworkName } from '@alephium/shared'
+import { getNetworkIdFromNetworkName, NetworkName, throttledClient } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
   ExecuteTransactionMessageData,
   MessageType,
-  RequestOptions
+  RequestOptions,
+  SignMessageMessageData,
+  SignUnsignedTxMessageData
 } from '@alephium/wallet-dapp-provider'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
@@ -304,14 +306,52 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               )
               break
             }
-          }
+            case 'UNSIGNED_TX': {
+              dispatch(activateAppLoading('Loading'))
+              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
+                unsignedTx: transaction.params.unsignedTx
+              })
+              dispatch(deactivateAppLoading())
 
-          // TODO: Process like on WC by:
-          // 1. building the transaction
-          // 2. showing modal identical to WalletConnectSessionRequestModal for signing and submitting the transaction
-          // I should split the WalletConnectSessionRequestModal in 2 different modals:
-          // 1. signing transaction (includes 4: transfer, deploy, execute, sign and submit unsigned tx)
-          // 2. signing message, sign unsigned tx
+              dispatch(
+                openModal({
+                  name: 'SignUnsignedTxModal',
+                  props: {
+                    dAppUrl: transaction.params.host ?? dAppUrl,
+                    dAppIcon: data.icon,
+                    txParams: transaction.params,
+                    unsignedData: decodedResult,
+                    submitAfterSign: true,
+                    origin: 'in-app-browser',
+                    onError: (message) => {
+                      replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
+                    },
+                    onReject: () =>
+                      replyToDapp(
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                        messageId
+                      ),
+                    onSuccess: (result) =>
+                      replyToDapp(
+                        {
+                          type: 'ALPH_TRANSACTION_SUBMITTED',
+                          data: {
+                            result: [
+                              {
+                                type: transaction.type,
+                                result
+                              }
+                            ],
+                            actionHash
+                          }
+                        },
+                        messageId
+                      )
+                  }
+                })
+              )
+            }
+          }
 
           // const { signature } = await executeTransactionAction(
           //   transaction,
@@ -351,6 +391,86 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     [dAppUrl, dispatch, replyToDapp]
   )
 
+  // TODO: Dry with UNSIGNED_TX of ALPH_EXECUTE_TRANSACTION?
+  const handleSignUnsignedTx = useCallback(
+    async (data: SignUnsignedTxMessageData, messageId: string) => {
+      const actionHash = messageId
+
+      replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_RES', data: { actionHash } }, messageId)
+
+      dispatch(activateAppLoading('Loading'))
+      const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
+        unsignedTx: data.unsignedTx
+      })
+      dispatch(deactivateAppLoading())
+
+      dispatch(
+        openModal({
+          name: 'SignUnsignedTxModal',
+          props: {
+            dAppUrl: data.host ?? dAppUrl,
+            dAppIcon: data.icon,
+            txParams: data,
+            unsignedData: decodedResult,
+            submitAfterSign: false,
+            origin: 'in-app-browser',
+            onError: (message) => {
+              replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: message } }, messageId)
+            },
+            onReject: () =>
+              replyToDapp(
+                { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
+                messageId
+              ),
+            onSuccess: (result) =>
+              replyToDapp(
+                {
+                  type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+                  data: {
+                    result,
+                    actionHash
+                  }
+                },
+                messageId
+              )
+          }
+        })
+      )
+    },
+    [dAppUrl, dispatch, replyToDapp]
+  )
+
+  const handleSignMessage = useCallback(
+    async (data: SignMessageMessageData, messageId: string) => {
+      const actionHash = messageId
+      replyToDapp({ type: 'ALPH_SIGN_MESSAGE_RES', data: { actionHash } }, messageId)
+
+      dispatch(
+        openModal({
+          name: 'SignMessageTxModal',
+          props: {
+            dAppUrl: data.host ?? dAppUrl,
+            dAppIcon: data.icon,
+            txParams: data,
+            unsignedData: data.message,
+            origin: 'in-app-browser',
+            onError: (message) => {
+              replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: message } }, messageId)
+            },
+            onReject: () =>
+              replyToDapp(
+                { type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } },
+                messageId
+              ),
+            onSuccess: (result) =>
+              replyToDapp({ type: 'ALPH_SIGN_MESSAGE_SUCCESS', data: { ...result, actionHash } }, messageId)
+          }
+        })
+      )
+    },
+    [dAppUrl, dispatch, replyToDapp]
+  )
+
   useEffect(() => {
     if (!dAppMessage || currentlyOnlineNetworkId === undefined) return
 
@@ -369,6 +489,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         break
       case 'ALPH_EXECUTE_TRANSACTION':
         handleExecuteTransaction(dAppMessage.data, dAppMessage.id)
+        break
+      case 'ALPH_SIGN_UNSIGNED_TX':
+        handleSignUnsignedTx(dAppMessage.data, dAppMessage.id)
+        break
+      case 'ALPH_SIGN_MESSAGE':
+        handleSignMessage(dAppMessage.data, dAppMessage.id)
         break
     }
   }, [
