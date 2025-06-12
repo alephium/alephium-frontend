@@ -7,6 +7,9 @@
 - 8e47c0b: Fix display of newly confirmed transactions
 - 864e271: Add CNY
 - 8d12650: Allow custom dApp URLs in ecosystem screen
+- e852c19: Display data fetch error
+- 991a2da: Improve data caching
+- 991a2da: Optimize data fetching
 
 ## 2.1.3
 
