@@ -7,16 +7,21 @@ import { ScreenSection } from '~/components/layout/Screen'
 interface SignTxModalFooterButtonsSectionProps {
   onReject: () => void
   onApprove: () => void
+  approveButtonTitle?: string
 }
 
-const SignTxModalFooterButtonsSection = ({ onReject, onApprove }: SignTxModalFooterButtonsSectionProps) => {
+const SignTxModalFooterButtonsSection = ({
+  onReject,
+  onApprove,
+  approveButtonTitle
+}: SignTxModalFooterButtonsSectionProps) => {
   const { t } = useTranslation()
 
   return (
     <ScreenSection centered>
       <ButtonsRow>
         <Button title={t('Reject')} variant="alert" onPress={onReject} flex />
-        <Button title={t('Approve')} variant="valid" onPress={onApprove} flex />
+        <Button title={approveButtonTitle ?? t('Approve')} variant="valid" onPress={onApprove} flex />
       </ButtonsRow>
     </ScreenSection>
   )

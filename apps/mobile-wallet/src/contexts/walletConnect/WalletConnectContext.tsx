@@ -12,7 +12,7 @@ import {
   walletConnectClientInitializing,
   walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
-import { useInterval, useUnsortedAddressesHashes } from '@alephium/shared-react'
+import { useInterval } from '@alephium/shared-react'
 import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
@@ -58,7 +58,6 @@ import {
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { SignMessageData, SignUnsignedTxData } from '~/types/transactions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -105,7 +104,6 @@ const core = new Core({
 })
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
-  const addressHashes = useUnsortedAddressesHashes()
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
@@ -541,34 +539,26 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signMessage': {
-            const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
-
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const signData: SignMessageData = {
-              fromAddress,
-              message,
-              messageHasher
-            }
-
-            console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
+            const signParams = requestEvent.params.request.params as SignMessageParams
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignMessageTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'sign-message',
-                    wcData: signData
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams: signParams,
+                  unsignedData: signParams.message,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -577,45 +567,36 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           }
           case 'alph_signUnsignedTx':
           case 'alph_signAndSubmitUnsignedTx': {
-            const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
-              .params as SignUnsignedTxParams
-
-            const fromAddress = addressHashes.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: SignUnsignedTxData = {
-              fromAddress,
-              signerKeyType,
-              unsignedTx
-            }
+            const txParams = requestEvent.params.request.params as SignUnsignedTxParams
+            const submitAfterSign = requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
 
             dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            console.log('⏳ DECODING TX WITH DATA:', wcTxData)
             const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-              unsignedTx
+              unsignedTx: txParams.unsignedTx
             })
-            console.log('✅ DECODING TX: DONE!')
             dispatch(deactivateAppLoading())
-
-            console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
 
             dispatch(
               openModal({
-                name: 'WalletConnectSessionRequestModal',
+                name: 'SignUnsignedTxModal',
                 props: {
-                  requestEvent,
-                  requestData: {
-                    type: 'sign-unsigned-tx',
-                    wcData: wcTxData,
-                    unsignedTxData: decodedResult,
-                    submit: requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
-                  }
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  txParams,
+                  unsignedData: decodedResult,
+                  submitAfterSign,
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: submitAfterSign
+                        ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+                        : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                    })
+                  },
+                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
               })
             )
@@ -672,7 +653,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     [
-      addressHashes,
       dispatch,
       getDappIcon,
       handleApiResponse,

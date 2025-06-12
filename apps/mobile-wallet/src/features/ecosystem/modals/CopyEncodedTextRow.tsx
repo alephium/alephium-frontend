@@ -5,19 +5,24 @@ import Button from '~/components/buttons/Button'
 import Row from '~/components/Row'
 import { showToast } from '~/utils/layout'
 
-const CopyBytecodeRow = ({ bytecode }: { bytecode: string }) => {
+interface CopyEncodedTextRowProps {
+  text: string
+  title: string
+}
+
+const CopyEncodedTextRow = ({ text, title }: CopyEncodedTextRowProps) => {
   const { t } = useTranslation()
 
   const handleCopy = () => {
-    Clipboard.setStringAsync(bytecode)
-    showToast({ text1: t('Bytecode copied') })
+    Clipboard.setStringAsync(text)
+    showToast({ text1: t('Copied') })
   }
 
   return (
-    <Row title={t('Bytecode')} titleColor="secondary">
+    <Row title={title} titleColor="secondary">
       <Button iconProps={{ name: 'copy' }} onPress={handleCopy} />
     </Row>
   )
 }
 
-export default CopyBytecodeRow
+export default CopyEncodedTextRow

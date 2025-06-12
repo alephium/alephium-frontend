@@ -10,11 +10,11 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
-import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
+import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
 import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
 import FeesRow from '~/features/ecosystem/modals/FeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
+import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
@@ -22,15 +22,10 @@ import { useAppDispatch } from '~/hooks/redux'
 import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface SignExecuteScriptTxModalProps {
+interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
   txParams: SignExecuteScriptTxParamsWithAmounts
   unsignedData: n.BuildExecuteScriptTxResult
-  onError: (message: string) => void
   onSuccess: (signResult: SignExecuteScriptTxResult) => void
-  onReject: () => void
-  origin: ModalOrigin
-  dAppUrl?: string
-  dAppIcon?: string
 }
 
 const SignExecuteScriptTxModal = memo(
@@ -53,7 +48,7 @@ const SignExecuteScriptTxModal = memo(
       onReject,
       onError,
       unsignedData,
-      sendTransaction: async () => {
+      sign: async () => {
         const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
         const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
 
@@ -96,7 +91,7 @@ const SignExecuteScriptTxModal = memo(
 
             {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
-            <CopyBytecodeRow bytecode={txParams.bytecode} />
+            <CopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
 
             <FeesRow fees={fees} />
           </Surface>
