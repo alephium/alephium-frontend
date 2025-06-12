@@ -11,22 +11,17 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
+import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
-interface SignUnsignedTxModalProps {
+export interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
   txParams: SignUnsignedTxParams
   unsignedData: n.DecodeUnsignedTxResult
-  onError: (message: string) => void
-  onSuccess: (signResult: SignUnsignedTxResult) => void
-  onReject: () => void
   submitAfterSign: boolean
-  origin: ModalOrigin
-  dAppUrl?: string
-  dAppIcon?: string
+  onSuccess: (signResult: SignUnsignedTxResult) => void
 }
 
 const SignUnsignedTxModal = memo(

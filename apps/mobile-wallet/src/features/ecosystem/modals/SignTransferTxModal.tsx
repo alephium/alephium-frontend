@@ -12,7 +12,7 @@ import Row from '~/components/Row'
 import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
 import FeesRow from '~/features/ecosystem/modals/FeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
+import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
@@ -20,15 +20,10 @@ import { useAppDispatch } from '~/hooks/redux'
 import { SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface SignTransferTxModalProps {
+export interface SignTransferTxModalProps extends SignTxModalCommonProps {
   txParams: SignTransferTxParamsSingleDestination
   unsignedData: n.BuildTransferTxResult
-  onError: (message: string) => void
   onSuccess: (signResult: SignTransferTxResult) => void
-  onReject: () => void
-  origin: ModalOrigin
-  dAppUrl?: string
-  dAppIcon?: string
 }
 
 const SignTransferTxModal = memo(

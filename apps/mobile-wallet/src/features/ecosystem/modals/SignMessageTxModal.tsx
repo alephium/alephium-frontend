@@ -9,21 +9,16 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
+import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
-interface SignMessageTxModalProps {
+export interface SignMessageTxModalProps extends SignTxModalCommonProps {
   txParams: SignMessageParams
   unsignedData: string
-  onError: (message: string) => void
   onSuccess: (signResult: SignMessageResult) => void
-  onReject: () => void
-  origin: ModalOrigin
-  dAppUrl?: string
-  dAppIcon?: string
 }
 
 const SignMessageTxModal = memo(
