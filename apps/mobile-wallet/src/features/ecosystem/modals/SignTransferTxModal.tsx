@@ -20,7 +20,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import { SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-export interface SignTransferTxModalProps extends SignTxModalCommonProps {
+interface SignTransferTxModalProps extends SignTxModalCommonProps {
   txParams: SignTransferTxParamsSingleDestination
   unsignedData: n.BuildTransferTxResult
   onSuccess: (signResult: SignTransferTxResult) => void

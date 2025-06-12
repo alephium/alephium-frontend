@@ -28,7 +28,7 @@ import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
-export interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
+interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
   txParams: SignDeployContractTxParams
   unsignedData: n.BuildDeployContractTxResult
   onSuccess: (signResult: SignDeployContractTxResult) => void

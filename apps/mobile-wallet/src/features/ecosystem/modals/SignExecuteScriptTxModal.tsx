@@ -22,7 +22,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-export interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
+interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
   txParams: SignExecuteScriptTxParamsWithAmounts
   unsignedData: n.BuildExecuteScriptTxResult
   onSuccess: (signResult: SignExecuteScriptTxResult) => void

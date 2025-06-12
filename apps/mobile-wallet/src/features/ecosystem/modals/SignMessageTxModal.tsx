@@ -15,7 +15,7 @@ import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
-export interface SignMessageTxModalProps extends SignTxModalCommonProps {
+interface SignMessageTxModalProps extends SignTxModalCommonProps {
   txParams: SignMessageParams
   unsignedData: string
   onSuccess: (signResult: SignMessageResult) => void
