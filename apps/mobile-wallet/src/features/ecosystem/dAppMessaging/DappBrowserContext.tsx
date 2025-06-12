@@ -6,8 +6,7 @@ import {
   MessageType,
   RequestOptions,
   SignMessageMessageData,
-  SignUnsignedTxMessageData,
-  TransactionResult
+  SignUnsignedTxMessageData
 } from '@alephium/wallet-dapp-provider'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
@@ -429,7 +428,9 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     handleExecuteTransaction,
     handleIsDappPreauthorized,
     handleRejectDappConnection,
-    handleRemovePreAuthorization
+    handleRemovePreAuthorization,
+    handleSignMessage,
+    handleSignUnsignedTx
   ])
 
   return <DappBrowserContext.Provider value={webViewRef}>{children}</DappBrowserContext.Provider>
