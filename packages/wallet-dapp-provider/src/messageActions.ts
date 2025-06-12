@@ -1,4 +1,4 @@
-import { MessageType, RequestOptions, WindowMessageType } from './types/messages'
+import { MessageType, RequestOptions } from './types/messages'
 
 export function sendMessage(msg: MessageType): void {
   return window.ReactNativeWebView.postMessage(JSON.stringify(msg))
@@ -12,14 +12,16 @@ export function waitForMessage<K extends MessageType['type'], T extends { type: 
   return new Promise((resolve, reject) => {
     const pid = setTimeout(() => reject(new Error('Timeout')), timeout)
 
-    const handler = (event: MessageEvent<WindowMessageType>) => {
+    // React Native WebView sends messages as strings so we can't use WindowMessageType
+    const handler = (event: MessageEvent<string>) => {
+      const data = JSON.parse(event.data)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (event.data.type === type && predicate(event.data as any)) {
+      if (data.type === type && predicate(data as any)) {
         clearTimeout(pid)
         window.removeEventListener('message', handler)
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return resolve('data' in event.data ? (event.data.data as any) : undefined)
+        return resolve('data' in data ? (data.data as any) : undefined)
       }
     }
 

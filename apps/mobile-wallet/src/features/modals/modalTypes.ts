@@ -20,6 +20,8 @@ import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
+import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
+import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -82,7 +84,9 @@ export const ModalComponents = {
   DAppDetailsModal,
   RegionSelectModal,
   UnknownTokensModal,
-  AddressNftsGridModal
+  AddressNftsGridModal,
+  ConnectDappModal,
+  NetworkSwitchModal
 }
 
 export type ModalName = keyof typeof ModalComponents

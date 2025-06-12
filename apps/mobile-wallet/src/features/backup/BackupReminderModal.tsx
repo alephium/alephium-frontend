@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -8,6 +7,7 @@ import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
@@ -17,15 +17,15 @@ export interface BackupReminderModalProps {
 const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const handleValidatePress = () => {
-    dismiss(id)
+    dismissModal()
     navigation.navigate('BackupMnemonicNavigation')
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       </ScreenSection>

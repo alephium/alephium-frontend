@@ -17,7 +17,7 @@ export const useFetchAddressesHashesSortedByLastUse = () => {
   const sortedAddressHashes = useMemo(() => sortedAddresses.map(({ addressHash }) => addressHash), [sortedAddresses])
 
   return {
-    data: !isLoading && !isNetworkOffline ? sortedAddressHashes : allAddressHashes,
+    data: !isLoading && !isNetworkOffline && sortedAddressHashes.length > 0 ? sortedAddressHashes : allAddressHashes,
     isLoading
   }
 }

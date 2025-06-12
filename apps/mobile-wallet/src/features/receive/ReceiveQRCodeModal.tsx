@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import ReceiveQRCodeSection from '~/features/receive/ReceiveQRCodeSection'
 
 interface ReceiveQRCodeModalProps {
@@ -11,9 +12,10 @@ interface ReceiveQRCodeModalProps {
 
 const ReceiveQRCodeModal = memo<ReceiveQRCodeModalProps & ModalBaseProp>(({ id, addressHash }) => {
   const { t } = useTranslation()
+  const { onDismiss } = useModalDismiss({ id })
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Receive')}>
+    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Receive')}>
       <ReceiveQRCodeSection addressHash={addressHash} />
     </BottomModal2>
   )

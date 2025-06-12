@@ -8,14 +8,17 @@ import ListItem from '~/components/ListItem'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 
 const SelectTokenToHideModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
   const { data: knownFungibleTokens } = useFetchWalletFtsSorted()
-  const handleTokenSelection = useHideToken('app_settings', id)
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const handleTokenSelection = useHideToken('app_settings', dismissModal)
 
   return (
     <BottomModal2
+      onDismiss={onDismiss}
       modalId={id}
       title={t('Asset to hide')}
       flashListProps={{

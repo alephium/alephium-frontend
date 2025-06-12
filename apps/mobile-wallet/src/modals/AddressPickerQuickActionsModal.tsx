@@ -1,5 +1,4 @@
 import { AddressHash } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent } from 'react-native'
@@ -11,6 +10,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressPickerQuickActionsModalProps {
@@ -20,21 +20,22 @@ interface AddressPickerQuickActionsModalProps {
 
 const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps & ModalBaseProp>(
   ({ id, addressHash, onSelectAddress }) => {
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal, onDismiss } = useModalDismiss({ id })
     const { t } = useTranslation()
 
     const handleOpenAddressDetailsModal = () => {
       openModal({ name: 'AddressDetailsModal', props: { addressHash } })
-      dismiss(id)
+      dismissModal()
     }
 
     const handleSelectAddress = (e: GestureResponderEvent) => {
       onSelectAddress(e)
-      dismiss(id)
+      dismissModal()
     }
 
     return (
       <BottomModal2
+        onDismiss={onDismiss}
         notScrollable
         modalId={id}
         noPadding

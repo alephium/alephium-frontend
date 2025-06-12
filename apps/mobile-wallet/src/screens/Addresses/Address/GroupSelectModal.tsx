@@ -1,5 +1,4 @@
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { map } from 'lodash'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,6 +7,7 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface GroupSelectModalProps {
   selectedGroup?: number
@@ -20,16 +20,16 @@ const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
 }))
 
 const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ id, onSelect, selectedGroup }) => {
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
   const { t } = useTranslation()
 
   const onGroupSelect = (group?: number) => {
     onSelect(group)
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Address group')}>
+    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}
