@@ -6,7 +6,8 @@ import {
   MessageType,
   RequestOptions,
   SignMessageMessageData,
-  SignUnsignedTxMessageData
+  SignUnsignedTxMessageData,
+  TransactionResult
 } from '@alephium/wallet-dapp-provider'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
@@ -352,32 +353,30 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               )
             }
           }
+        } else {
+          // Check that all transactions have the same networkId
+          const networkId = data.txParams[0].params.networkId
+          const allSameNetwork = data.txParams
+            .slice(1)
+            .every((transaction) => transaction.params.networkId === networkId)
 
-          // const { signature } = await executeTransactionAction(
-          //   transaction,
-          //   transaction.signature,
-          //   background,
-          //   transaction.params.networkId,
-          // )
+          if (!allSameNetwork) throw Error('All transactions must have the same networkId')
 
-          // transactionWatcher.refresh()
+          throw Error('Chained txs not supported yet')
 
-          // results = [
+          // For each transaction, use the same logic as above
+          // Collect the results and signatures for each transaction
+          // The extension wallet does sth like this:
+          // results = transactions.map((transaction, index) => (
           //   {
           //     type: transaction.type,
           //     result: {
           //       ...transaction.result,
-          //       signature
+          //       signature: signatures[index],
           //     }
           //   }
-          // ] as TransactionResult[]
-        } else {
-          // TODO:
-          throw Error('Chained txs not supported yet')
+          // )) as TransactionResult[]
         }
-        // ALPH_TRANSACTION_SUBMITTED with TransactionResult[]
-        // or
-        // ALPH_TRANSACTION_FAILED
       } catch (error) {
         dispatch(deactivateAppLoading())
         const errorMessage = `${error}`
