@@ -26,12 +26,12 @@ export const useFetchWalletWorth = () => {
     data: { listedFts },
     isLoading: isLoadingTokensByListing
   } = useFetchTokensSeparatedByListing(allTokensBalances)
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth(listedFts)
+  const { data: worth, isLoading: isLoadingWorth, error: errorWorth } = useFetchListedFtsWorth(listedFts)
 
   return {
     data: worth,
     isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingAlphBalances || isLoadingTokensBalances,
     isFetching: isFetchingAlphBalances || isFetchingTokensBalances,
-    error: errorAlphBalances || errorTokensBalances
+    error: errorAlphBalances || errorTokensBalances || errorWorth
   }
 }

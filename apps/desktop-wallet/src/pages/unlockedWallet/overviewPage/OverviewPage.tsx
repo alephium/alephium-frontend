@@ -52,7 +52,6 @@ const WorthOverviewPanel = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-huge);
-  overflow: hidden;
   z-index: 1;
   gap: 30px;
 `
