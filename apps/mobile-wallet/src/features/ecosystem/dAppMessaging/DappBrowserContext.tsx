@@ -95,54 +95,62 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
       if (authorizedConnection) {
         const address = addresses.find((a) => a.hash === authorizedConnection.address)
-        if (!address) return
-        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host)
-        handleApproveDappConnection(connectedAddressPayload, messageId)
-      } else if (
-        // Wrong network
+        if (!address) {
+          return
+        }
+
+        return
+      }
+
+      const isWrongNetwork =
         data.networkId !== undefined &&
         currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
-      ) {
+
+      if (isWrongNetwork) {
         dispatch(
           openModal({
             name: 'NetworkSwitchModal',
-            props: {
-              ...data,
-              dAppName,
-              onReject: () => handleRejectDappConnection(data.host, messageId)
-            }
+            props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
           })
         )
-      } else {
-        // TODO: handle keyType and groupless addresses
-        const addressesInGroup = data.group !== undefined ? addresses.filter((a) => a.group === data.group) : addresses
 
-        if (addressesInGroup.length === 0) {
-          // Show new address modal (won't be needed after integrating groupless addresses since 1 groupless address will be enough)
-          dispatch(
-            openModal({
-              name: 'NewAddressModal',
-              props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
-            })
-          )
-        } else if (addressesInGroup.length === 1) {
-          // Select address automatically
-          const connectedAddressPayload = await getConnectedAddressPayload(network, addressesInGroup[0], data.host)
-          handleApproveDappConnection(connectedAddressPayload, messageId)
-        } else {
-          dispatch(
-            openModal({
-              name: 'ConnectDappModal',
-              props: {
-                ...data,
-                dAppName,
-                onReject: () => handleRejectDappConnection(data.host, messageId),
-                onApprove: (data) => handleApproveDappConnection(data, messageId)
-              }
-            })
-          )
-        }
+        return
       }
+
+      // TODO: handle keyType and groupless addresses
+      const addressesInGroup = data.group !== undefined ? addresses.filter((a) => a.group === data.group) : addresses
+
+      // Show new address modal (won't be needed after integrating groupless addresses since 1 groupless address will be enough)
+      if (addressesInGroup.length === 0) {
+        dispatch(
+          openModal({
+            name: 'NewAddressModal',
+            props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
+          })
+        )
+
+        return
+      }
+
+      // Select address automatically if there is only one address in the group
+      if (addressesInGroup.length === 1) {
+        const connectedAddressPayload = await getConnectedAddressPayload(network, addressesInGroup[0], data.host)
+        handleApproveDappConnection(connectedAddressPayload, messageId)
+
+        return
+      }
+
+      dispatch(
+        openModal({
+          name: 'ConnectDappModal',
+          props: {
+            ...data,
+            dAppName,
+            onReject: () => handleRejectDappConnection(data.host, messageId),
+            onApprove: (data) => handleApproveDappConnection(data, messageId)
+          }
+        })
+      )
     },
     [
       addresses,
@@ -156,36 +164,38 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   const handleExecuteTransaction = useCallback(
-    async (data: ExecuteTransactionMessageData, messageId: string) => {
+    async ({ txParams, icon: dAppIcon }: ExecuteTransactionMessageData, messageId: string) => {
       const actionHash = messageId
       replyToDapp({ type: 'ALPH_EXECUTE_TRANSACTION_RES', data: { actionHash } }, messageId)
 
       try {
-        if (data.txParams.length === 0) {
+        if (txParams.length === 0) {
           replyToDapp(
             { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'No transactions to execute' } },
             messageId
           )
+
+          return
         }
 
-        if (data.txParams.length === 1) {
-          const transaction = data.txParams[0]
+        if (txParams.length === 1) {
+          const { type, params } = txParams[0]
 
           const commonModalProps: SignTxModalCommonProps = {
-            dAppUrl: transaction.params.host ?? dAppUrl,
-            dAppIcon: data.icon,
+            dAppUrl: params.host ?? dAppUrl,
+            dAppIcon,
             origin: 'in-app-browser',
-            onError: (message) => {
-              replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: message } }, messageId)
-            },
+            onError: (error) =>
+              replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId),
             onReject: () =>
               replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } }, messageId)
           }
 
-          switch (transaction.type) {
+          switch (type) {
             case 'TRANSFER': {
+              // TODO: Handle multiple destinations
               const { txParamsSingleDestination, buildTransactionTxResult } =
-                await processSignTransferTxParamsAndBuildTx(transaction.params)
+                await processSignTransferTxParamsAndBuildTx(params)
 
               dispatch(
                 openModal({
@@ -195,10 +205,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     unsignedData: buildTransactionTxResult,
                     onSuccess: (result) =>
                       replyToDapp(
-                        {
-                          type: 'ALPH_TRANSACTION_SUBMITTED',
-                          data: { result: [{ type: transaction.type, result }], actionHash }
-                        },
+                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
                         messageId
                       ),
                     ...commonModalProps
@@ -211,7 +218,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
             case 'EXECUTE_SCRIPT': {
               const { txParamsWithAmounts, buildCallContractTxResult } =
-                await processSignExecuteScriptTxParamsAndBuildTx(transaction.params)
+                await processSignExecuteScriptTxParamsAndBuildTx(params)
 
               dispatch(
                 openModal({
@@ -221,10 +228,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     unsignedData: buildCallContractTxResult,
                     onSuccess: (result) =>
                       replyToDapp(
-                        {
-                          type: 'ALPH_TRANSACTION_SUBMITTED',
-                          data: { result: [{ type: transaction.type, result }], actionHash }
-                        },
+                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
                         messageId
                       ),
                     ...commonModalProps
@@ -236,21 +240,18 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'DEPLOY_CONTRACT': {
               dispatch(activateAppLoading('Loading'))
-              const buildDeployContractTxResult = await buildDeployContractTransaction(transaction.params)
+              const buildDeployContractTxResult = await buildDeployContractTransaction(params)
               dispatch(deactivateAppLoading())
 
               dispatch(
                 openModal({
                   name: 'SignDeployContractTxModal',
                   props: {
-                    txParams: transaction.params,
+                    txParams: params,
                     unsignedData: buildDeployContractTxResult,
                     onSuccess: (result) =>
                       replyToDapp(
-                        {
-                          type: 'ALPH_TRANSACTION_SUBMITTED',
-                          data: { result: [{ type: transaction.type, result }], actionHash }
-                        },
+                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
                         messageId
                       ),
                     ...commonModalProps
@@ -262,7 +263,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             case 'UNSIGNED_TX': {
               dispatch(activateAppLoading('Loading'))
               const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-                unsignedTx: transaction.params.unsignedTx
+                unsignedTx: params.unsignedTx
               })
               dispatch(deactivateAppLoading())
 
@@ -270,15 +271,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 openModal({
                   name: 'SignUnsignedTxModal',
                   props: {
-                    txParams: transaction.params,
+                    txParams: params,
                     unsignedData: decodedResult,
                     submitAfterSign: true,
                     onSuccess: (result) =>
                       replyToDapp(
-                        {
-                          type: 'ALPH_TRANSACTION_SUBMITTED',
-                          data: { result: [{ type: transaction.type, result }], actionHash }
-                        },
+                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
                         messageId
                       ),
                     ...commonModalProps
@@ -289,10 +287,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           }
         } else {
           // Check that all transactions have the same networkId
-          const networkId = data.txParams[0].params.networkId
-          const allSameNetwork = data.txParams
-            .slice(1)
-            .every((transaction) => transaction.params.networkId === networkId)
+          const networkId = txParams[0].params.networkId
+          const allSameNetwork = txParams.slice(1).every((tx) => tx.params.networkId === networkId)
 
           if (!allSameNetwork) throw Error('All transactions must have the same networkId')
 
@@ -311,45 +307,40 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           //   }
           // )) as TransactionResult[]
         }
-      } catch (error) {
+      } catch (errorMessage) {
         dispatch(deactivateAppLoading())
-        const errorMessage = `${error}`
-        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: errorMessage } }, messageId)
-        showToast({
-          text1: errorMessage,
-          type: 'error'
-        })
+        const error = `${errorMessage}`
+
+        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
+        showToast({ text1: error, type: 'error' })
       }
     },
     [dAppUrl, dispatch, replyToDapp]
   )
 
-  // TODO: Dry with UNSIGNED_TX of ALPH_EXECUTE_TRANSACTION?
   const handleSignUnsignedTx = useCallback(
     async (data: SignUnsignedTxMessageData, messageId: string) => {
+      const { unsignedTx, host, icon } = data
       const actionHash = messageId
 
       replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_RES', data: { actionHash } }, messageId)
 
       dispatch(activateAppLoading('Loading'))
-      const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-        unsignedTx: data.unsignedTx
-      })
+      const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
       dispatch(deactivateAppLoading())
 
       dispatch(
         openModal({
           name: 'SignUnsignedTxModal',
           props: {
-            dAppUrl: data.host ?? dAppUrl,
-            dAppIcon: data.icon,
+            dAppUrl: host ?? dAppUrl,
+            dAppIcon: icon,
             txParams: data,
             unsignedData: decodedResult,
             submitAfterSign: false,
             origin: 'in-app-browser',
-            onError: (message) => {
-              replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: message } }, messageId)
-            },
+            onError: (error) =>
+              replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
             onReject: () =>
               replyToDapp(
                 { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
@@ -367,6 +358,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const handleSignMessage = useCallback(
     async (data: SignMessageMessageData, messageId: string) => {
       const actionHash = messageId
+
       replyToDapp({ type: 'ALPH_SIGN_MESSAGE_RES', data: { actionHash } }, messageId)
 
       dispatch(
@@ -378,9 +370,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             txParams: data,
             unsignedData: data.message,
             origin: 'in-app-browser',
-            onError: (message) => {
-              replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: message } }, messageId)
-            },
+            onError: (error) =>
+              replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error } }, messageId),
             onReject: () =>
               replyToDapp(
                 { type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } },
