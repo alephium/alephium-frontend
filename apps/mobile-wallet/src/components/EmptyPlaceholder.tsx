@@ -23,8 +23,8 @@ const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
 
   margin-top: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
   margin-bottom: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
-  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
-  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)}px;
+  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)}px;
 
   ${({ noMargin }) =>
     noMargin &&
