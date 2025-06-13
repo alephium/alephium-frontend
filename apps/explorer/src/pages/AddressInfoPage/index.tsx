@@ -17,9 +17,9 @@ const AddressInfoPage = () => {
 
   const addressHash = id && isValidAddress(id) ? id : ''
 
-  if (!addressHash) {
+  if (!addressHash || !isValidAddress(addressHash)) {
     displaySnackbar({ text: t('The address format seems invalid'), type: 'alert' })
-    navigate('404')
+    navigate('/404')
   }
 
   return <AddressPage addressStr={addressHash} />
