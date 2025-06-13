@@ -20,6 +20,7 @@ const AddressInfoPage = () => {
   if (!addressHash || !isValidAddress(addressHash)) {
     displaySnackbar({ text: t('The address format seems invalid'), type: 'alert' })
     navigate('/404')
+    return
   }
 
   return <AddressPage addressStr={addressHash} />
