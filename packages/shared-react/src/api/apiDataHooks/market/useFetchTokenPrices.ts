@@ -12,7 +12,7 @@ export const useFetchTokenPrices = () => {
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
-  const { data, isLoading } = useQuery(
+  const { data, error } = useQuery(
     tokensPriceQuery({
       symbols,
       currency: fiatCurrency.toLowerCase(),
@@ -22,7 +22,8 @@ export const useFetchTokenPrices = () => {
 
   return {
     data,
-    isLoading: isLoading || isLoadingFtSymbols
+    error,
+    isLoading: isLoadingFtSymbols
   }
 }
 
