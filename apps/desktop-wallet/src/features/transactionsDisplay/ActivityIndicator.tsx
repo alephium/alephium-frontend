@@ -29,6 +29,7 @@ const ActivityIndicatorStyled = styled.div`
   padding: 2px 5px;
   border-radius: var(--radius-small);
   font-size: 10px;
+  color: #fff;
 
   @media (min-width: ${sidebarExpandThresholdPx}px) {
     right: 20px;

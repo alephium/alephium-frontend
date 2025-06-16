@@ -5,7 +5,7 @@ import { useFetchTokenPrices } from '@/api/apiDataHooks/market/useFetchTokenPric
 import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
 
 export const useFetchListedFtsWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
-  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
+  const { data: tokenPrices, isLoading: isLoadingTokenPrices, error } = useFetchTokenPrices()
 
   const worth = useMemo(
     () => listedFts.reduce((totalWorth, token) => totalWorth + (getTokenWorth(token, tokenPrices) ?? 0), 0),
@@ -14,6 +14,7 @@ export const useFetchListedFtsWorth = (listedFts: (ListedFT & ApiBalances)[]) =>
 
   return {
     data: worth,
+    error,
     isLoading: isLoadingTokenPrices
   }
 }

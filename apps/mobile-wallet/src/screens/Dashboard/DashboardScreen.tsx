@@ -129,9 +129,9 @@ const WalletEmptyPlaceholder = () => {
 
 const WalletBalanceSummary = () => {
   const { t } = useTranslation()
-  const { data: worth, isLoading } = useFetchWalletWorth()
+  const { data: worth, isLoading, error } = useFetchWalletWorth()
 
-  return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} />
+  return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} error={error} />
 }
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`

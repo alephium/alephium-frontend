@@ -42,6 +42,7 @@ import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPa
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
+import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
@@ -142,6 +143,8 @@ const AppModals = () => {
             return <UnknownTokensModal key={id} id={id} />
           case 'EditDappUrlModal':
             return <EditDappUrlModal key={id} id={id} {...params.props} />
+          case 'DataFetchErrorModal':
+            return <DataFetchErrorModal key={id} id={id} {...params.props} />
           default:
             return null
         }
