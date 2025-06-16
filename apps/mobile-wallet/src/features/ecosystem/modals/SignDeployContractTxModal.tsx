@@ -25,7 +25,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
@@ -35,23 +34,11 @@ interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignDeployContractTxModal = memo(
-  ({
-    id,
-    txParams,
-    unsignedData,
-    dAppUrl,
-    dAppIcon,
-    origin,
-    onError,
-    onReject,
-    onSuccess
-  }: SignDeployContractTxModalProps & ModalBaseProp) => {
+  ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignDeployContractTxModalProps) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss, fees } = useSignModal({
-      id,
-      onReject,
+    const { handleApprovePress, handleRejectPress, fees } = useSignModal({
       onError,
       unsignedData,
       sign: async () => {
@@ -84,7 +71,7 @@ const SignDeployContractTxModal = memo(
     })
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('From')} titleColor="secondary">

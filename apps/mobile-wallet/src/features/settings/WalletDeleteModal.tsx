@@ -11,8 +11,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { showExceptionToast } from '~/utils/layout'
@@ -21,14 +20,14 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, onDelete }) => {
+const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const walletId = useAppSelector((s) => s.wallet.id)
   const { resetWalletConnectStorage } = useWalletConnectContext()
   const { t } = useTranslation()
   const { deletePersistedCache } = usePersistQueryClientContext()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const [inputWalletName, setInputWalletName] = useState('')
 
@@ -53,7 +52,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, on
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>

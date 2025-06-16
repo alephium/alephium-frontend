@@ -14,7 +14,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
 interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
@@ -25,21 +24,10 @@ interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignUnsignedTxModal = memo(
-  ({
-    id,
-    txParams,
-    unsignedData,
-    origin,
-    onError,
-    onReject,
-    onSuccess,
-    submitAfterSign
-  }: SignUnsignedTxModalProps & ModalBaseProp) => {
+  ({ txParams, unsignedData, origin, onError, onSuccess, submitAfterSign }: SignUnsignedTxModalProps) => {
     const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss } = useSignModal({
-      id,
-      onReject,
+    const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
       unsignedData,
       sign: async () => {
@@ -68,7 +56,7 @@ const SignUnsignedTxModal = memo(
     })
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('Signing with')} titleColor="secondary">

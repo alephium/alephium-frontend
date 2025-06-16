@@ -6,16 +6,15 @@ import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const AutoLockOptionsModal = memo<ModalBaseProp>(({ id }) => {
+const AutoLockOptionsModal = memo(() => {
   const { t } = useTranslation()
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleAutoLockChange = (seconds: number) => {
     dispatch(autoLockSecondsChanged(seconds))
@@ -23,7 +22,7 @@ const AutoLockOptionsModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Auto-lock')}>
+    <BottomModal2 notScrollable title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (

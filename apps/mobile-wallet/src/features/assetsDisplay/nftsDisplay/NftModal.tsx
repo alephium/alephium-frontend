@@ -10,8 +10,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import SendButton from '~/features/send/SendButton'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -20,9 +19,9 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
+const NftModal = memo<NftModalProps>(({ nftId }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const { data: nft } = useFetchNft({ id: nftId })
   const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
@@ -33,7 +32,7 @@ const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
   const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} title={nft.name}>
+    <BottomModal2 title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>

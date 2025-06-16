@@ -5,25 +5,23 @@ import { useTranslation } from 'react-i18next'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalContent'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 
-interface NewAddressModalProps extends ConnectDappMessageData, ModalBaseProp {
-  onReject: () => void
+interface NewAddressModalProps extends ConnectDappMessageData {
   dAppName?: string
 }
 
-const NewAddressModal = memo<NewAddressModalProps>(({ id, icon, dAppName, host, group, onReject }) => {
+const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, group }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss: onReject })
+  const { dismissModal, onUserDismiss } = useModalContext()
 
   const handleDeclinePress = () => {
     dismissModal()
-    onReject()
+    onUserDismiss?.()
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('New address')} contentVerticalGap>
+    <BottomModal2 title={t('New address')} contentVerticalGap>
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
       <NewAddressModalContent group={group} onDeclinePress={handleDeclinePress} />

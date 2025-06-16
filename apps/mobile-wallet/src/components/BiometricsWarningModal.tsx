@@ -6,8 +6,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
@@ -15,9 +14,9 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>(({ id, onConfirm, confirmText }) => {
+const BiometricsWarningModal = memo<BiometricsWarningModalProps>(({ onConfirm, confirmText }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleConfirm = () => {
     onConfirm()
@@ -29,7 +28,7 @@ const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
+    <BottomModal2 notScrollable title={`⚠️ ${t('Are you sure?')}`} noPadding>
       <ScreenSection verticalGap>
         <AppText color="secondary" size={18} style={{ textAlign: 'center', paddingTop: VERTICAL_GAP }}>
           {t(

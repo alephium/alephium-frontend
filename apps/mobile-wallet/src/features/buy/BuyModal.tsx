@@ -11,8 +11,7 @@ import Button from '~/components/buttons/Button'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
 export interface BuyModalProps {
@@ -21,13 +20,13 @@ export interface BuyModalProps {
 
 const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 
-const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ id, receiveAddressHash }) => {
+const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
   const providerUrl = useOnramperUrl(receiveAddressHash)
   const deeplink = useURL()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   useEffect(() => {
     if (deeplink?.includes(CLOSE_ONRAMP_TAB_DEEP_LINK)) {
@@ -48,7 +47,7 @@ const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ id, receiveAddressHash }
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Disclaimer')}>
+    <BottomModal2 notScrollable title={t('Disclaimer')}>
       <AppText>
         <Trans
           t={t}

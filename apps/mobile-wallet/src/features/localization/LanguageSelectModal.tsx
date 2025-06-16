@@ -5,13 +5,12 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = memo<ModalBaseProp>(({ id }) => {
+const LanguageSelectModal = memo(() => {
   const dispatch = useAppDispatch()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const currentLanguage = useAppSelector((s) => s.settings.language)
 
@@ -21,7 +20,7 @@ const LanguageSelectModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} title="Language">
+    <BottomModal2 title="Language">
       <Surface>
         {languageOptions.map((languageOption, index) => (
           <RadioButtonRow

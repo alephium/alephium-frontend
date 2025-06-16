@@ -14,8 +14,7 @@ import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddr
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -25,17 +24,11 @@ interface AddressQuickActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQuickActionsModal = memo<AddressQuickActionsModalProps & ModalBaseProp>(({ id, addressHash }) => {
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+const AddressQuickActionsModal = memo<AddressQuickActionsModalProps>(({ addressHash }) => {
+  const { dismissModal } = useModalContext()
 
   return (
-    <BottomModal2
-      onDismiss={onDismiss}
-      notScrollable
-      modalId={id}
-      noPadding
-      title={<AddressBadge addressHash={addressHash} fontSize={16} />}
-    >
+    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />

@@ -7,8 +7,7 @@ import { View } from 'react-native'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -16,11 +15,11 @@ export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = memo<SwitchNetworkModalProps & ModalBaseProp>(({ id, onCustomNetworkPress }) => {
+const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
@@ -43,7 +42,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps & ModalBaseProp>(({ id, 
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 notScrollable title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (

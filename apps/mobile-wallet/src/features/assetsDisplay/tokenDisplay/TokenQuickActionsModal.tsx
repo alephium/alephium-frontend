@@ -14,18 +14,17 @@ import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
 }
 
-const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ id, tokenId }) => {
+const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
   const hideToken = useHideToken('quick_actions', dismissModal)
 
   const { data: token } = useFetchToken(tokenId)
@@ -42,9 +41,7 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>
 
   return (
     <BottomModal2
-      onDismiss={onDismiss}
       notScrollable
-      modalId={id}
       title={
         <Title>
           <AssetLogo assetId={tokenId} size={26} />

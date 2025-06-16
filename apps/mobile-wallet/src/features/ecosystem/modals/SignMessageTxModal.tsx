@@ -12,7 +12,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
 interface SignMessageTxModalProps extends SignTxModalCommonProps {
@@ -21,47 +20,43 @@ interface SignMessageTxModalProps extends SignTxModalCommonProps {
   onSuccess: (signResult: SignMessageResult) => void
 }
 
-const SignMessageTxModal = memo(
-  ({ id, txParams, unsignedData, origin, onError, onReject, onSuccess }: SignMessageTxModalProps & ModalBaseProp) => {
-    const { t } = useTranslation()
+const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignMessageTxModalProps) => {
+  const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss } = useSignModal({
-      id,
-      onReject,
-      onError,
-      unsignedData,
-      sign: async () => {
-        const messageHash = hashMessage(txParams.message, txParams.messageHasher)
-        const signature = sign(messageHash, await getAddressAsymetricKey(txParams.signerAddress, 'private'))
+  const { handleApprovePress, handleRejectPress } = useSignModal({
+    onError,
+    unsignedData,
+    sign: async () => {
+      const messageHash = hashMessage(txParams.message, txParams.messageHasher)
+      const signature = sign(messageHash, await getAddressAsymetricKey(txParams.signerAddress, 'private'))
 
-        sendAnalytics({ event: 'Approved message signing', props: { origin } })
+      sendAnalytics({ event: 'Approved message signing', props: { origin } })
 
-        onSuccess({ signature })
-      }
-    })
+      onSuccess({ signature })
+    }
+  })
 
-    return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
-        <ScreenSection>
-          <Surface>
-            <Row title={t('Signing with')} titleColor="secondary">
-              <AddressBadge addressHash={txParams.signerAddress} />
-            </Row>
+  return (
+    <BottomModal2 contentVerticalGap>
+      <ScreenSection>
+        <Surface>
+          <Row title={t('Signing with')} titleColor="secondary">
+            <AddressBadge addressHash={txParams.signerAddress} />
+          </Row>
 
-            <Row isVertical title={t('Message')} titleColor="secondary">
-              <AppText>{txParams.message}</AppText>
-            </Row>
-          </Surface>
-        </ScreenSection>
+          <Row isVertical title={t('Message')} titleColor="secondary">
+            <AppText>{txParams.message}</AppText>
+          </Row>
+        </Surface>
+      </ScreenSection>
 
-        <SignTxModalFooterButtonsSection
-          onReject={handleRejectPress}
-          onApprove={handleApprovePress}
-          approveButtonTitle={t('Sign')}
-        />
-      </BottomModal2>
-    )
-  }
-)
+      <SignTxModalFooterButtonsSection
+        onReject={handleRejectPress}
+        onApprove={handleApprovePress}
+        approveButtonTitle={t('Sign')}
+      />
+    </BottomModal2>
+  )
+})
 
 export default SignMessageTxModal

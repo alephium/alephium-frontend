@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 
 interface GroupSelectModalProps {
   selectedGroup?: number
@@ -19,8 +18,8 @@ const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   label: i === 0 ? i18n.t('Default') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
 }))
 
-const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ id, onSelect, selectedGroup }) => {
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+const GroupSelectModal = memo<GroupSelectModalProps>(({ onSelect, selectedGroup }) => {
+  const { dismissModal } = useModalContext()
   const { t } = useTranslation()
 
   const onGroupSelect = (group?: number) => {
@@ -29,7 +28,7 @@ const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ id, onSe
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Address group')}>
+    <BottomModal2 notScrollable title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}

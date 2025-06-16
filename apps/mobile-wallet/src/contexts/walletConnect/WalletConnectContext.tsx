@@ -456,6 +456,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             dispatch(
               openModal({
                 name: 'SignTransferTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
@@ -468,7 +469,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
                     })
                   },
-                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                   onSuccess: (result) =>
                     respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
@@ -487,6 +487,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             dispatch(
               openModal({
                 name: 'SignDeployContractTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
@@ -499,7 +500,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
                     })
                   },
-                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                   onSuccess: (result) =>
                     respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
@@ -517,6 +517,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             dispatch(
               openModal({
                 name: 'SignExecuteScriptTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
@@ -529,7 +530,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
                     })
                   },
-                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                   onSuccess: (result) =>
                     respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
@@ -544,6 +544,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             dispatch(
               openModal({
                 name: 'SignMessageTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
@@ -556,7 +557,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
                     })
                   },
-                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                   onSuccess: (result) =>
                     respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }
@@ -579,6 +579,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             dispatch(
               openModal({
                 name: 'SignUnsignedTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
@@ -594,7 +595,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                         : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
                     })
                   },
-                  onReject: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
                   onSuccess: (result) =>
                     respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
                 }

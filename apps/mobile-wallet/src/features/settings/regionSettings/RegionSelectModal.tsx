@@ -10,17 +10,18 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import SearchInput from '~/components/SearchInput'
 import BottomModalFlashList, { FlashListRenderProps } from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalBaseProp, ModalInstance } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { numberFormatRegionChanged } from '~/features/settings/regionSettings/regionSettingsActions'
 import { regionOptions } from '~/features/settings/regionSettings/regionsUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const RegionSelectModal = memo<ModalBaseProp>(({ id }) => {
+const RegionSelectModal = memo(() => {
   const { t } = useTranslation()
+  const { id } = useModalContext()
 
   return (
     <BottomModalFlashList
-      modalId={id}
       title={t('Region')}
       flashListRender={(props) => <RegionsFlashList parentModalId={id} {...props} />}
       keyboardAvoidingViewBehavior="padding"

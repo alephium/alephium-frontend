@@ -27,23 +27,20 @@ import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 interface TransactionModalProps {
   txHash: string
 }
 
-const TransactionModal = memo<TransactionModalProps & ModalBaseProp>(({ id, txHash }) => {
+const TransactionModal = memo<TransactionModalProps>(({ txHash }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
-  const { onDismiss } = useModalDismiss({ id })
 
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('Transaction')}>
+    <BottomModal2 title={t('Transaction')}>
       <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>

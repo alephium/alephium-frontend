@@ -14,11 +14,10 @@ import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type BottomModal2Props<T> = (BottomModalWithChildrenProps | BottomModalFlashListProps<T>) & {
-  onDismiss: NonNullable<BottomSheetModalProps['onDismiss']>
-}
+export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
 
 interface BottomModalWithChildrenProps extends BottomModalBaseProps {
   notScrollable?: boolean
@@ -33,6 +32,7 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
 const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const safeAreaInsets = useSafeAreaInsets()
+  const { id, onDismiss } = useModalContext()
 
   useEffect(() => {
     bottomSheetModalRef.current?.present()
@@ -60,9 +60,9 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
       handleComponent={() => <BottomModalHandle />}
       topInset={safeAreaInsets.top}
-      name={props.modalId}
+      name={id}
       {...props.bottomSheetModalProps}
-      onDismiss={props.onDismiss}
+      onDismiss={onDismiss}
     >
       {isFlashList(props) && props.flashListProps ? (
         <BottomSheetFlashList

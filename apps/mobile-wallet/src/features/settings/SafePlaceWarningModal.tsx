@@ -7,17 +7,16 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 
-const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
+const SafePlaceWarningModal = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const openMnemonicModal = () => {
     dismissModal()
@@ -25,7 +24,7 @@ const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
       </ScreenSection>

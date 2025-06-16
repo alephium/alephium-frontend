@@ -8,21 +8,18 @@ import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDet
 import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ id, addressHash }) => {
+const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => {
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   return (
     <BottomModal2
-      modalId={id}
-      onDismiss={onDismiss}
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
       flashListProps={{
         data: sortedFts,

@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 
@@ -14,9 +13,9 @@ interface MnemonicModalProps {
   onVerifyPress?: () => void
 }
 
-const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPress }) => {
+const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const [mnemonic, setMnemonic] = useState<string>()
 
@@ -36,7 +35,7 @@ const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPr
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
 
       {onVerifyPress && (
