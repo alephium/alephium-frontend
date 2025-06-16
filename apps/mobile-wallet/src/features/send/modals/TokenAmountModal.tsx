@@ -11,7 +11,7 @@ import {
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { BottomSheetTextInput, useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
@@ -22,6 +22,7 @@ import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -38,7 +39,7 @@ const MAX_FONT_LENGTH = 10
 const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const theme = useTheme()
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal, onDismiss } = useModalDismiss({ id })
 
     const { data: token } = useFetchToken(tokenId)
     const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
@@ -84,7 +85,7 @@ const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
 
     const handleAmountValidate = () => {
       onAmountValidate(amount ? fromHumanReadableAmount(amount, tokenDecimals) : BigInt(0), tokenName)
-      dismiss(id)
+      dismissModal()
     }
 
     const handleClearAmountPress = () => setAmount('')
@@ -94,6 +95,7 @@ const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
 
     return (
       <BottomModal2
+        onDismiss={onDismiss}
         modalId={id}
         titleAlign="left"
         title={

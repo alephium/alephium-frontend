@@ -2,7 +2,6 @@ import { isFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -16,6 +15,7 @@ import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
@@ -25,8 +25,8 @@ interface TokenQuickActionsModalProps {
 const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ id, tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const hideToken = useHideToken('quick_actions', id)
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const hideToken = useHideToken('quick_actions', dismissModal)
 
   const { data: token } = useFetchToken(tokenId)
 
@@ -35,13 +35,14 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>
   const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
-    dismiss(id)
+    dismissModal()
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
   return (
     <BottomModal2
+      onDismiss={onDismiss}
       notScrollable
       modalId={id}
       title={

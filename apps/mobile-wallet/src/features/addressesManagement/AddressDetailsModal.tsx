@@ -9,6 +9,7 @@ import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
@@ -16,16 +17,26 @@ export interface AddressDetailsModalProps {
 
 const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ id, addressHash }) => {
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   return (
     <BottomModal2
       modalId={id}
+      onDismiss={onDismiss}
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
       flashListProps={{
         data: sortedFts,
         estimatedItemSize: 70,
-        ListHeaderComponent: () => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={id} />,
-        ListFooterComponent: () => <AddressTokensListFooter addressHash={addressHash} parentModalId={id} />,
+        ListHeaderComponent: () => (
+          <AddressDetailsModalHeader
+            addressHash={addressHash}
+            onForgetAddress={dismissModal}
+            onSendPress={dismissModal}
+          />
+        ),
+        ListFooterComponent: () => (
+          <AddressTokensListFooter addressHash={addressHash} onHiddenTokensButtonPress={dismissModal} />
+        ),
         ListEmptyComponent: () => <AddressesTokensListEmpty addressHash={addressHash} />,
         renderItem: ({ item: { id: itemId }, index }) => (
           <AddressFtListItem
@@ -33,7 +44,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ id
             tokenId={itemId}
             hideSeparator={index === sortedFts.length - 1}
             addressHash={addressHash}
-            parentModalId={id}
+            onTokenDetailsModalClose={dismissModal}
           />
         )
       }}

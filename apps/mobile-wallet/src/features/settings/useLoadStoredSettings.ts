@@ -7,8 +7,8 @@ import {
 import { useEffect } from 'react'
 
 import { getHiddenTokensIds } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'
-import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDAppsActions'
-import { getFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
+import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
+import { getFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsStorage'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { loadSettings } from '~/features/settings/settingsPersistentStorage'

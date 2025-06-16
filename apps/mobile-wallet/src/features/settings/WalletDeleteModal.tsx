@@ -1,6 +1,5 @@
 import { activeWalletDeleted } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -13,6 +12,7 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { showExceptionToast } from '~/utils/layout'
@@ -28,7 +28,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, on
   const { resetWalletConnectStorage } = useWalletConnectContext()
   const { t } = useTranslation()
   const { deletePersistedCache } = usePersistQueryClientContext()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal, onDismiss } = useModalDismiss({ id })
 
   const [inputWalletName, setInputWalletName] = useState('')
 
@@ -48,12 +48,12 @@ const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, on
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       dispatch(deactivateAppLoading())
-      dismiss(id)
+      dismissModal()
     }
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>

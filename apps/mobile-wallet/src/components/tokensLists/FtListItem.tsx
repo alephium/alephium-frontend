@@ -9,17 +9,16 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface FtListItemProps extends Optional<ListItemProps, 'title' | 'icon'> {
   tokenId: TokenId
   addressHash?: AddressHash
-  parentModalId?: ModalInstance['id']
+  onTokenDetailsModalClose?: () => void
 }
 
-const FtListItem = ({ tokenId, addressHash, parentModalId, ...props }: FtListItemProps) => {
+const FtListItem = ({ tokenId, addressHash, ...props }: FtListItemProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -28,7 +27,9 @@ const FtListItem = ({ tokenId, addressHash, parentModalId, ...props }: FtListIte
   if (!token || !isFT(token)) return null
 
   const openTokenDetailsModal = () => {
-    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId, addressHash, parentModalId } }))
+    dispatch(
+      openModal({ name: 'TokenDetailsModal', props: { tokenId, addressHash, onClose: props.onTokenDetailsModalClose } })
+    )
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'token_list_item' } })
   }
 

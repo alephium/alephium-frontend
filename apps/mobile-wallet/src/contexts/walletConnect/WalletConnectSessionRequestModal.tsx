@@ -20,7 +20,6 @@ import {
   SignUnsignedTxResult,
   transactionSign
 } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { getSdkError } from '@walletconnect/utils'
 import * as Clipboard from 'expo-clipboard'
 import { memo, useState } from 'react'
@@ -44,6 +43,7 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
+import useModalDismiss from '~/features/modals/useModalDismiss'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
 import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -71,7 +71,7 @@ const WalletConnectSessionRequestModal = memo(
     const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
     const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal, onDismiss } = useModalDismiss({ id })
 
     const [isApproving, setIsApproving] = useState(false)
 
@@ -246,7 +246,7 @@ const WalletConnectSessionRequestModal = memo(
               : WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
         })
       } finally {
-        dismiss(id)
+        dismissModal()
       }
     }
 
@@ -270,7 +270,7 @@ const WalletConnectSessionRequestModal = memo(
         console.error('❌ INFORMING: FAILED.')
       } finally {
         showRejectedToast()
-        dismiss(id)
+        dismissModal()
       }
     }
 
@@ -282,7 +282,7 @@ const WalletConnectSessionRequestModal = memo(
       } catch (e) {
         console.error('❌ INFORMING: FAILED.')
       } finally {
-        dismiss(id)
+        dismissModal()
       }
     }
 
@@ -325,14 +325,14 @@ const WalletConnectSessionRequestModal = memo(
                 console.log('👉 RESETTING SESSION REQUEST EVENT.')
                 dispatch(deactivateAppLoading())
                 showApprovedToast()
-                dismiss(id)
+                dismissModal()
               }
             }
           })
       })
 
     return (
-      <BottomModal2 modalId={id} onClose={!isApproving ? onReject : undefined} contentVerticalGap>
+      <BottomModal2 onDismiss={onDismiss} modalId={id} onClose={!isApproving ? onReject : undefined} contentVerticalGap>
         {metadata && (
           <ScreenSection>
             {metadata.icons && metadata.icons.length > 0 && metadata.icons[0] && (
