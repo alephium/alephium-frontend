@@ -27,14 +27,13 @@ import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalC
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps & ModalBaseProp>(
+const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps>(
   ({
     proposalEventId,
     relayProtocol,

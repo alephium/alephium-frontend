@@ -8,13 +8,12 @@ import { ScreenSection } from '~/components/layout/Screen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
-const EditWalletNameModal = memo<ModalBaseProp>(() => {
+const EditWalletNameModal = memo(() => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()

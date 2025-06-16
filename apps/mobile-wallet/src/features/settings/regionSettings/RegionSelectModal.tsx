@@ -11,12 +11,12 @@ import SearchInput from '~/components/SearchInput'
 import BottomModalFlashList, { FlashListRenderProps } from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp, ModalInstance } from '~/features/modals/modalTypes'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { numberFormatRegionChanged } from '~/features/settings/regionSettings/regionSettingsActions'
 import { regionOptions } from '~/features/settings/regionSettings/regionsUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const RegionSelectModal = memo<ModalBaseProp>(() => {
+const RegionSelectModal = memo(() => {
   const { t } = useTranslation()
   const { id } = useModalContext()
 

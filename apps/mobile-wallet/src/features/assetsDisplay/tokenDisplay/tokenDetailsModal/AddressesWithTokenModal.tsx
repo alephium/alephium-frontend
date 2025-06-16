@@ -16,7 +16,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -24,7 +23,7 @@ interface AddressesWithTokenModalProps {
   tokenId: Token['id']
 }
 
-const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBaseProp>(({ tokenId }) => {
+const AddressesWithTokenModal = memo<AddressesWithTokenModalProps>(({ tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useUnsortedAddressesHashes().length
   const { dismissModal } = useModalContext()

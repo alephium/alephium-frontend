@@ -8,10 +8,9 @@ import { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import ListItem from '~/components/ListItem'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { showToast } from '~/utils/layout'
 
-const UnknownTokensModal = memo<ModalBaseProp>(() => {
+const UnknownTokensModal = memo(() => {
   const { t } = useTranslation()
   const theme = useTheme()
 

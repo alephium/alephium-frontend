@@ -114,14 +114,10 @@ type ModalPropsMap = {
 
 export type OpenModalParams = {
   [K in ModalName]: ModalParams<K>
-}[ModalName]
+}[ModalName] & { onUserDismiss?: () => void }
 
 export type ModalInstance = {
   id: string
   params: OpenModalParams
   isClosing: boolean
-}
-
-export interface ModalBaseProp {
-  onUserDismiss?: () => void
 }

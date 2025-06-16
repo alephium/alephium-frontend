@@ -9,7 +9,6 @@ import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -20,7 +19,7 @@ interface AddressQRCodeScanActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(({ addressHash }) => {
+const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps>(({ addressHash }) => {
   const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
   const { dismissModal } = useModalContext()
 

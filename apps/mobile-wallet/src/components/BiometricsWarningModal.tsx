@@ -7,7 +7,6 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
@@ -15,7 +14,7 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>(({ onConfirm, confirmText }) => {
+const BiometricsWarningModal = memo<BiometricsWarningModalProps>(({ onConfirm, confirmText }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 

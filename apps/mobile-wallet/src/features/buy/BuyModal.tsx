@@ -12,7 +12,6 @@ import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 
 export interface BuyModalProps {
@@ -21,7 +20,7 @@ export interface BuyModalProps {
 
 const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 
-const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ receiveAddressHash }) => {
+const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))

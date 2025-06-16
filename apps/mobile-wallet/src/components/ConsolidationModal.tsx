@@ -10,14 +10,13 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void
   fees: bigint
 }
 
-const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ onConsolidate, fees }) => {
+const ConsolidationModal = memo<ConsolidationModalProps>(({ onConsolidate, fees }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 

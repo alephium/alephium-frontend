@@ -32,20 +32,18 @@ interface UseSignModalProps<T extends UnsignedTxData> {
   sign: () => Promise<void>
   onError: (message: string) => void
   unsignedData: T
-  onUserDismiss?: () => void
 }
 
 const useSignModal = <T extends UnsignedTxData>({
   unsignedData,
   sign,
-  onUserDismiss,
   onError
 }: UseSignModalProps<T>): SignModalReturn<T> => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { dismissModal } = useModalContext()
+  const { dismissModal, onUserDismiss } = useModalContext()
 
   const handleApprovePress = () => {
     triggerBiometricsAuthGuard({

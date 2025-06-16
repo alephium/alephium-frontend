@@ -10,7 +10,6 @@ import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddr
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -21,7 +20,7 @@ interface AddressSettingsModalProps {
   onForgetAddress?: () => void
 }
 
-const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ addressHash, onForgetAddress }) => {
+const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onForgetAddress }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()

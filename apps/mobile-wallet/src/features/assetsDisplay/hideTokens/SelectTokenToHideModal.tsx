@@ -8,9 +8,8 @@ import ListItem from '~/components/ListItem'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
-const SelectTokenToHideModal = memo<ModalBaseProp>(() => {
+const SelectTokenToHideModal = memo(() => {
   const { t } = useTranslation()
   const { data: knownFungibleTokens } = useFetchWalletFtsSorted()
   const { dismissModal } = useModalContext()

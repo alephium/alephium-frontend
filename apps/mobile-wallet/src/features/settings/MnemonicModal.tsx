@@ -6,7 +6,6 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 
@@ -14,7 +13,7 @@ interface MnemonicModalProps {
   onVerifyPress?: () => void
 }
 
-const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ onVerifyPress }) => {
+const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 

@@ -11,53 +11,50 @@ import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
   onScanQRCodePress: () => void
 }
 
-const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalBaseProp>(
-  ({ onPasteWcUrlPress, onScanQRCodePress }) => {
-    const { t } = useTranslation()
-    const { dismissModal } = useModalContext()
-    const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
+const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps>(({ onPasteWcUrlPress, onScanQRCodePress }) => {
+  const { t } = useTranslation()
+  const { dismissModal } = useModalContext()
+  const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
-    useEffect(() => {
-      if (!walletConnectClient) dismissModal()
-    }, [activeSessions.length, dismissModal, walletConnectClient])
+  useEffect(() => {
+    if (!walletConnectClient) dismissModal()
+  }, [activeSessions.length, dismissModal, walletConnectClient])
 
-    const handleDisconnectPress = async (pairingTopic: string) => {
-      await unpairFromDapp(pairingTopic)
-    }
-
-    return (
-      <BottomModal2 title={t('Current connections')} contentVerticalGap>
-        {activeSessions.map(({ topic, peer: { metadata } }, index) => (
-          <ListItem
-            key={topic}
-            title={metadata.url.replace('https://', '')}
-            isLast={index === activeSessions.length - 1}
-            icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
-            rightSideContent={
-              <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
-            }
-          />
-        ))}
-        {activeSessions.length === 0 && (
-          <EmptyPlaceholder>
-            <AppText>{t('There are no connections yet.')} 🔌</AppText>
-          </EmptyPlaceholder>
-        )}
-        <BottomButtons fullWidth backgroundColor="back1">
-          <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
-          <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
-        </BottomButtons>
-      </BottomModal2>
-    )
+  const handleDisconnectPress = async (pairingTopic: string) => {
+    await unpairFromDapp(pairingTopic)
   }
-)
+
+  return (
+    <BottomModal2 title={t('Current connections')} contentVerticalGap>
+      {activeSessions.map(({ topic, peer: { metadata } }, index) => (
+        <ListItem
+          key={topic}
+          title={metadata.url.replace('https://', '')}
+          isLast={index === activeSessions.length - 1}
+          icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
+          rightSideContent={
+            <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
+          }
+        />
+      ))}
+      {activeSessions.length === 0 && (
+        <EmptyPlaceholder>
+          <AppText>{t('There are no connections yet.')} 🔌</AppText>
+        </EmptyPlaceholder>
+      )}
+      <BottomButtons fullWidth backgroundColor="back1">
+        <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
+        <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
+      </BottomButtons>
+    </BottomModal2>
+  )
+})
 
 export default WalletConnectPairingsModal
 

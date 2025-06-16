@@ -11,7 +11,6 @@ import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import SendButton from '~/features/send/SendButton'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -20,7 +19,7 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = memo<NftModalProps & ModalBaseProp>(({ nftId }) => {
+const NftModal = memo<NftModalProps>(({ nftId }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 

@@ -7,11 +7,10 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const AutoLockOptionsModal = memo<ModalBaseProp>(() => {
+const AutoLockOptionsModal = memo(() => {
   const { t } = useTranslation()
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()

@@ -68,7 +68,7 @@ const AppModals = () => {
         const { id, params } = modal
 
         return (
-          <ModalContextProvider id={id} onUserDismiss={params?.props?.onUserDismiss} key={id}>
+          <ModalContextProvider id={id} onUserDismiss={params.onUserDismiss} key={id}>
             <Modal params={params} />
           </ModalContextProvider>
         )
@@ -118,11 +118,11 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
     case 'ConsolidationModal':
       return <ConsolidationModal {...params.props} />
     case 'WalletConnectErrorModal':
-      return <WalletConnectErrorModal {...params.props} />
+      return <WalletConnectErrorModal />
     case 'WalletConnectPairingsModal':
       return <WalletConnectPairingsModal {...params.props} />
     case 'WalletConnectPasteUrlModal':
-      return <WalletConnectPasteUrlModal {...params.props} />
+      return <WalletConnectPasteUrlModal />
     case 'WalletConnectSessionProposalModal':
       return <WalletConnectSessionProposalModal {...params.props} />
     case 'GroupSelectModal':

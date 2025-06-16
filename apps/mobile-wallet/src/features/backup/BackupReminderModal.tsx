@@ -7,14 +7,13 @@ import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ isNewWallet }) => {
+const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()

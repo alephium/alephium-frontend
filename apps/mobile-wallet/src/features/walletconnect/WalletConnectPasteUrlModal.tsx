@@ -10,11 +10,10 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectPasteUrlModal = memo<ModalBaseProp>(() => {
+const WalletConnectPasteUrlModal = memo(() => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()

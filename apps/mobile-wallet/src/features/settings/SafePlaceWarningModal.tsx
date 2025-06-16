@@ -8,11 +8,10 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 
-const SafePlaceWarningModal = memo<ModalBaseProp>(() => {
+const SafePlaceWarningModal = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()

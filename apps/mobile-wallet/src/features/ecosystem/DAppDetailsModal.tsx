@@ -16,10 +16,9 @@ import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ dAppName }) => {
+const DAppDetailsModal = memo<DAppProps>(({ dAppName }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 

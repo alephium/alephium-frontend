@@ -10,10 +10,9 @@ import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAp
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 
-interface ConnectDappModalProps extends ConnectDappMessageData, ModalBaseProp {
+interface ConnectDappModalProps extends ConnectDappMessageData {
   dAppName?: string
   onApprove: (data: ConnectedAddressPayload) => void
 }

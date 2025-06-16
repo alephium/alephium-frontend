@@ -5,5 +5,4 @@ export type SignTxModalCommonProps = {
   origin: ModalOrigin
   dAppUrl?: string
   dAppIcon?: string
-  onUserDismiss?: () => void
 }

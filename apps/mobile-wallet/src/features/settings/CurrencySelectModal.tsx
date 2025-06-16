@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
@@ -13,7 +12,7 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = memo<ModalBaseProp>(() => {
+const CurrencySelectModal = memo(() => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const currentCurrency = useAppSelector((s) => s.settings.currency)

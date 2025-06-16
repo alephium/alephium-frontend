@@ -6,15 +6,14 @@ import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModal
 import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalContent'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
-interface NewAddressModalProps extends ConnectDappMessageData, ModalBaseProp {
+interface NewAddressModalProps extends ConnectDappMessageData {
   dAppName?: string
 }
 
-const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, group, onUserDismiss }) => {
+const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, group }) => {
   const { t } = useTranslation()
-  const { dismissModal } = useModalContext()
+  const { dismissModal, onUserDismiss } = useModalContext()
 
   const handleDeclinePress = () => {
     dismissModal()

@@ -26,14 +26,13 @@ import {
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
-const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ tokenId, addressHash, onClose }) => {
+const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, onClose }) => {
   const { dismissModal } = useModalContext()
 
   const handleClose = () => {

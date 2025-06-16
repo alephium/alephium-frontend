@@ -114,7 +114,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(
           openModal({
             name: 'NetworkSwitchModal',
-            props: { ...data, dAppName, onUserDismiss: () => handleRejectDappConnection(data.host, messageId) }
+            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
+            props: { ...data, dAppName }
           })
         )
 
@@ -129,7 +130,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(
           openModal({
             name: 'NewAddressModal',
-            props: { ...data, dAppName, onUserDismiss: () => handleRejectDappConnection(data.host, messageId) }
+            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
+            props: { ...data, dAppName }
           })
         )
 
@@ -147,10 +149,10 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       dispatch(
         openModal({
           name: 'ConnectDappModal',
+          onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
           props: {
             ...data,
             dAppName,
-            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
             onApprove: (data) => handleApproveDappConnection(data, messageId)
           }
         })
@@ -189,10 +191,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             dAppUrl: params.host ?? dAppUrl,
             dAppIcon,
             origin: 'in-app-browser',
-            onError: (error) =>
-              replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId),
-            onUserDismiss: () =>
-              replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } }, messageId)
+            onError: (error) => replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
           }
 
           switch (type) {
@@ -204,6 +203,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               dispatch(
                 openModal({
                   name: 'SignTransferTxModal',
+                  onUserDismiss: () =>
+                    replyToDapp(
+                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                      messageId
+                    ),
                   props: {
                     txParams: txParamsSingleDestination,
                     unsignedData: buildTransactionTxResult,
@@ -227,6 +231,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               dispatch(
                 openModal({
                   name: 'SignExecuteScriptTxModal',
+                  onUserDismiss: () =>
+                    replyToDapp(
+                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                      messageId
+                    ),
                   props: {
                     txParams: txParamsWithAmounts,
                     unsignedData: buildCallContractTxResult,
@@ -250,6 +259,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               dispatch(
                 openModal({
                   name: 'SignDeployContractTxModal',
+                  onUserDismiss: () =>
+                    replyToDapp(
+                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                      messageId
+                    ),
                   props: {
                     txParams: params,
                     unsignedData: buildDeployContractTxResult,
@@ -274,6 +288,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               dispatch(
                 openModal({
                   name: 'SignUnsignedTxModal',
+                  onUserDismiss: () =>
+                    replyToDapp(
+                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                      messageId
+                    ),
                   props: {
                     txParams: params,
                     unsignedData: decodedResult,
@@ -336,6 +355,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       dispatch(
         openModal({
           name: 'SignUnsignedTxModal',
+          onUserDismiss: () =>
+            replyToDapp(
+              { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
+              messageId
+            ),
           props: {
             dAppUrl: host ?? dAppUrl,
             dAppIcon: icon,
@@ -345,11 +369,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             origin: 'in-app-browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
-            onUserDismiss: () =>
-              replyToDapp(
-                { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
-                messageId
-              ),
             onSuccess: (result) =>
               replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS', data: { result, actionHash } }, messageId)
           }
@@ -368,6 +387,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       dispatch(
         openModal({
           name: 'SignMessageTxModal',
+          onUserDismiss: () =>
+            replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } }, messageId),
           props: {
             dAppUrl: data.host ?? dAppUrl,
             dAppIcon: data.icon,
@@ -376,11 +397,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             origin: 'in-app-browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error } }, messageId),
-            onUserDismiss: () =>
-              replyToDapp(
-                { type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } },
-                messageId
-              ),
             onSuccess: (result) =>
               replyToDapp({ type: 'ALPH_SIGN_MESSAGE_SUCCESS', data: { ...result, actionHash } }, messageId)
           }

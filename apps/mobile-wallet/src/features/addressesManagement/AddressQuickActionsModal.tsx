@@ -15,7 +15,6 @@ import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -25,7 +24,7 @@ interface AddressQuickActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQuickActionsModal = memo<AddressQuickActionsModalProps & ModalBaseProp>(({ addressHash }) => {
+const AddressQuickActionsModal = memo<AddressQuickActionsModalProps>(({ addressHash }) => {
   const { dismissModal } = useModalContext()
 
   return (

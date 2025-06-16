@@ -12,14 +12,13 @@ import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface DAppQuickActionsModalProps {
   dAppName: DApp['name']
 }
 
-const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>(({ dAppName }) => {
+const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()

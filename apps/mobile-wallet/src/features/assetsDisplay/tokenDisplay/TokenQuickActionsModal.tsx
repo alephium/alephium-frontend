@@ -15,14 +15,13 @@ import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
 }
 
-const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ tokenId }) => {
+const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()

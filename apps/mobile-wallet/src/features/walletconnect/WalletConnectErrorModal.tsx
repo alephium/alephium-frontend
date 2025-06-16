@@ -10,10 +10,9 @@ import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 
-const WalletConnectErrorModal = memo<ModalBaseProp>(() => {
+const WalletConnectErrorModal = memo(() => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)

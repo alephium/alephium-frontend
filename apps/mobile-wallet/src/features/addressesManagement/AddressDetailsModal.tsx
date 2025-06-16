@@ -9,13 +9,12 @@ import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ addressHash }) => {
+const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => {
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
   const { dismissModal } = useModalContext()
 

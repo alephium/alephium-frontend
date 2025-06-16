@@ -12,7 +12,6 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { showExceptionToast } from '~/utils/layout'
@@ -21,7 +20,7 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ onDelete }) => {
+const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const walletId = useAppSelector((s) => s.wallet.id)

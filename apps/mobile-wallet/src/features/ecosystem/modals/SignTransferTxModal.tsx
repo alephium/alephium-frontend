@@ -15,7 +15,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
@@ -26,68 +25,65 @@ interface SignTransferTxModalProps extends SignTxModalCommonProps {
   onSuccess: (signResult: SignTransferTxResult) => void
 }
 
-const SignTransferTxModal = memo(
-  ({ txParams, unsignedData, origin, onError, onUserDismiss, onSuccess }: SignTransferTxModalProps & ModalBaseProp) => {
-    const dispatch = useAppDispatch()
-    const { t } = useTranslation()
+const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
+  const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, fees } = useSignModal({
-      onUserDismiss,
-      onError,
-      unsignedData,
-      sign: async () => {
-        const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
-        const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
+  const { handleApprovePress, handleRejectPress, fees } = useSignModal({
+    onError,
+    unsignedData,
+    sign: async () => {
+      const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
+      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
 
-        dispatch(
-          transactionSent({
-            hash: data.txId,
-            fromAddress: txParams.signerAddress,
-            toAddress: txParams.toAddress,
-            amount: attoAlphAmount,
-            tokens,
-            timestamp: new Date().getTime(),
-            status: 'sent',
-            type: 'transfer'
-          })
-        )
-
-        sendAnalytics({ event: 'Approved transfer', props: { origin } })
-
-        onSuccess({
-          fromGroup: unsignedData.fromGroup,
-          toGroup: unsignedData.toGroup,
-          unsignedTx: unsignedData.unsignedTx,
-          txId: unsignedData.txId,
-          signature: data.signature,
-          gasAmount: unsignedData.gasAmount,
-          gasPrice: BigInt(unsignedData.gasPrice)
+      dispatch(
+        transactionSent({
+          hash: data.txId,
+          fromAddress: txParams.signerAddress,
+          toAddress: txParams.toAddress,
+          amount: attoAlphAmount,
+          tokens,
+          timestamp: new Date().getTime(),
+          status: 'sent',
+          type: 'transfer'
         })
-      }
-    })
+      )
 
-    return (
-      <BottomModal2 contentVerticalGap>
-        <ScreenSection>
-          <Surface>
-            <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />
+      sendAnalytics({ event: 'Approved transfer', props: { origin } })
 
-            <Row title={t('From')} titleColor="secondary">
-              <AddressBadge addressHash={txParams.signerAddress} />
-            </Row>
+      onSuccess({
+        fromGroup: unsignedData.fromGroup,
+        toGroup: unsignedData.toGroup,
+        unsignedTx: unsignedData.unsignedTx,
+        txId: unsignedData.txId,
+        signature: data.signature,
+        gasAmount: unsignedData.gasAmount,
+        gasPrice: BigInt(unsignedData.gasPrice)
+      })
+    }
+  })
 
-            <Row title={t('To')} titleColor="secondary">
-              <AddressBadge addressHash={txParams.toAddress} />
-            </Row>
+  return (
+    <BottomModal2 contentVerticalGap>
+      <ScreenSection>
+        <Surface>
+          <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />
 
-            <FeesRow fees={fees} />
-          </Surface>
-        </ScreenSection>
+          <Row title={t('From')} titleColor="secondary">
+            <AddressBadge addressHash={txParams.signerAddress} />
+          </Row>
 
-        <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-      </BottomModal2>
-    )
-  }
-)
+          <Row title={t('To')} titleColor="secondary">
+            <AddressBadge addressHash={txParams.toAddress} />
+          </Row>
+
+          <FeesRow fees={fees} />
+        </Surface>
+      </ScreenSection>
+
+      <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
+    </BottomModal2>
+  )
+})
 
 export default SignTransferTxModal

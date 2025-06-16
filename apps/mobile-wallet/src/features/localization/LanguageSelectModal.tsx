@@ -6,10 +6,9 @@ import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = memo<ModalBaseProp>(() => {
+const LanguageSelectModal = memo(() => {
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()
 

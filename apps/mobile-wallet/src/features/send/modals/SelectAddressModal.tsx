@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next'
 import AddressBox from '~/components/AddressBox'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
 }
 
-const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ onAddressPress }) => {
+const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress }) => {
   const { data } = useFetchAddressesHashesSortedByLastUse()
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()

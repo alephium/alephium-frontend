@@ -17,7 +17,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
@@ -29,21 +28,11 @@ interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignExecuteScriptTxModal = memo(
-  ({
-    txParams,
-    unsignedData,
-    dAppUrl,
-    dAppIcon,
-    origin,
-    onError,
-    onUserDismiss,
-    onSuccess
-  }: SignExecuteScriptTxModalProps & ModalBaseProp) => {
+  ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignExecuteScriptTxModalProps) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
     const { handleApprovePress, handleRejectPress, fees } = useSignModal({
-      onUserDismiss,
       onError,
       unsignedData,
       sign: async () => {

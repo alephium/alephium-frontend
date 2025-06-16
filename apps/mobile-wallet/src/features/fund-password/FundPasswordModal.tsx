@@ -8,7 +8,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
@@ -16,7 +15,7 @@ export interface FundPasswordModalProps {
   successCallback: () => void
 }
 
-const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ successCallback }) => {
+const FundPasswordModal = memo<FundPasswordModalProps>(({ successCallback }) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()
