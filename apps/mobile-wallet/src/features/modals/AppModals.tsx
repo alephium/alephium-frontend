@@ -22,6 +22,10 @@ import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import NewAddressModal from '~/features/ecosystem/modals/NewAddressModal'
+import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
+import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
+import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -145,6 +149,14 @@ const AppModals = () => {
             return <ConnectDappModal key={id} id={id} {...params.props} />
           case 'NetworkSwitchModal':
             return <NetworkSwitchModal key={id} id={id} {...params.props} />
+          case 'NewAddressModal':
+            return <NewAddressModal key={id} id={id} {...params.props} />
+          case 'SignExecuteScriptTxModal':
+            return <SignExecuteScriptTxModal key={id} id={id} {...params.props} />
+          case 'SignDeployContractTxModal':
+            return <SignDeployContractTxModal key={id} id={id} {...params.props} />
+          case 'SignTransferTxModal':
+            return <SignTransferTxModal key={id} id={id} {...params.props} />
           default:
             return null
         }
