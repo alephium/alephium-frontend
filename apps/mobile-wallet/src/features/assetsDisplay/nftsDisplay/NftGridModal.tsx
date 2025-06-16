@@ -9,10 +9,10 @@ interface NftGridModalProps {
   nftsData?: NFT[]
 }
 
-const NftGridModal = memo<NftGridModalProps & ModalBaseProp>(({ id, nftsData }) => {
+const NftGridModal = memo<NftGridModalProps & ModalBaseProp>(({ nftsData }) => {
   const flashListProps = useNftsGridFlashListProps({ nfts: nftsData })
 
-  return <BottomModal2 modalId={id} flashListProps={flashListProps} />
+  return <BottomModal2 flashListProps={flashListProps} />
 })
 
 export default NftGridModal

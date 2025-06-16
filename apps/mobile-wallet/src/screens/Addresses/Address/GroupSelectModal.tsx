@@ -19,7 +19,7 @@ const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   label: i === 0 ? i18n.t('Default') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
 }))
 
-const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ id, onSelect, selectedGroup }) => {
+const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ onSelect, selectedGroup }) => {
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()
 
@@ -29,7 +29,7 @@ const GroupSelectModal = memo<GroupSelectModalProps & ModalBaseProp>(({ id, onSe
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Address group')}>
+    <BottomModal2 notScrollable title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}

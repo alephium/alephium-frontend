@@ -21,7 +21,7 @@ export interface BuyModalProps {
 
 const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 
-const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ id, receiveAddressHash }) => {
+const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
@@ -48,7 +48,7 @@ const BuyModal = memo<BuyModalProps & ModalBaseProp>(({ id, receiveAddressHash }
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Disclaimer')}>
+    <BottomModal2 notScrollable title={t('Disclaimer')}>
       <AppText>
         <Trans
           t={t}

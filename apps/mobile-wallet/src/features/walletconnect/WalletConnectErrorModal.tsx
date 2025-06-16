@@ -13,14 +13,14 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 
-const WalletConnectErrorModal = memo<ModalBaseProp>(({ id }) => {
+const WalletConnectErrorModal = memo<ModalBaseProp>(() => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
       </ScreenSection>

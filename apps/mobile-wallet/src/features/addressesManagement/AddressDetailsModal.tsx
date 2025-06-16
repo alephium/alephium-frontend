@@ -15,13 +15,12 @@ export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ id, addressHash }) => {
+const AddressDetailsModal = memo<AddressDetailsModalProps & ModalBaseProp>(({ addressHash }) => {
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
   const { dismissModal } = useModalContext()
 
   return (
     <BottomModal2
-      modalId={id}
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
       flashListProps={{
         data: sortedFts,

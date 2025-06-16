@@ -34,14 +34,14 @@ interface TransactionModalProps {
   txHash: string
 }
 
-const TransactionModal = memo<TransactionModalProps & ModalBaseProp>(({ id, txHash }) => {
+const TransactionModal = memo<TransactionModalProps & ModalBaseProp>(({ txHash }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
 
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal2 modalId={id} title={t('Transaction')}>
+    <BottomModal2 title={t('Transaction')}>
       <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>

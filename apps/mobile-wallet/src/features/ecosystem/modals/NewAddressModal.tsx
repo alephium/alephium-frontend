@@ -12,7 +12,7 @@ interface NewAddressModalProps extends ConnectDappMessageData, ModalBaseProp {
   dAppName?: string
 }
 
-const NewAddressModal = memo<NewAddressModalProps>(({ id, icon, dAppName, host, group, onUserDismiss }) => {
+const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, group, onUserDismiss }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -22,7 +22,7 @@ const NewAddressModal = memo<NewAddressModalProps>(({ id, icon, dAppName, host, 
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('New address')} contentVerticalGap>
+    <BottomModal2 title={t('New address')} contentVerticalGap>
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
       <NewAddressModalContent group={group} onDeclinePress={handleDeclinePress} />

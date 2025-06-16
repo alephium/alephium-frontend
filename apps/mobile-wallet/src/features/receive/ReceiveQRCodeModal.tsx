@@ -9,11 +9,11 @@ interface ReceiveQRCodeModalProps {
   addressHash: string
 }
 
-const ReceiveQRCodeModal = memo<ReceiveQRCodeModalProps & ModalBaseProp>(({ id, addressHash }) => {
+const ReceiveQRCodeModal = memo<ReceiveQRCodeModalProps & ModalBaseProp>(({ addressHash }) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Receive')}>
+    <BottomModal2 notScrollable title={t('Receive')}>
       <ReceiveQRCodeSection addressHash={addressHash} />
     </BottomModal2>
   )

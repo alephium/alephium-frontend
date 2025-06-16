@@ -20,33 +20,26 @@ interface AddressQRCodeScanActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(
-  ({ id, addressHash }) => {
-    const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
-    const { dismissModal } = useModalContext()
+const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(({ addressHash }) => {
+  const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
+  const { dismissModal } = useModalContext()
 
-    return (
-      <BottomModal2
-        notScrollable
-        modalId={id}
-        noPadding
-        title={<AddressBadge addressHash={addressHash} fontSize={16} />}
-      >
-        <ScreenSection>
-          <ActionButtons>
-            <SendButton
-              origin="qrCodeScan"
-              destinationAddressHash={addressHash}
-              onPress={dismissModal}
-              buttonType="quick-action"
-            />
-            {!contact && <AddContactButton addressHash={addressHash} onPress={dismissModal} />}
-          </ActionButtons>
-        </ScreenSection>
-      </BottomModal2>
-    )
-  }
-)
+  return (
+    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+      <ScreenSection>
+        <ActionButtons>
+          <SendButton
+            origin="qrCodeScan"
+            destinationAddressHash={addressHash}
+            onPress={dismissModal}
+            buttonType="quick-action"
+          />
+          {!contact && <AddContactButton addressHash={addressHash} onPress={dismissModal} />}
+        </ActionButtons>
+      </ScreenSection>
+    </BottomModal2>
+  )
+})
 
 export default AddressQRCodeScanActionsModal
 

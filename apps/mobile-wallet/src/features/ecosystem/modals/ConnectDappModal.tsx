@@ -18,7 +18,7 @@ interface ConnectDappModalProps extends ConnectDappMessageData, ModalBaseProp {
   onApprove: (data: ConnectedAddressPayload) => void
 }
 
-const ConnectDappModal = memo<ConnectDappModalProps>(({ id, icon, dAppName, keyType, group, host, onApprove }) => {
+const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType, group, host, onApprove }) => {
   // TODO: use keyType after integrating groupless addresses
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
@@ -42,7 +42,6 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ id, icon, dAppName, keyT
 
   return (
     <BottomModal2
-      modalId={id}
       title={t('Connect to dApp')}
       contentVerticalGap={allAddressesStrInGroup.length > 1}
       flashListProps={{

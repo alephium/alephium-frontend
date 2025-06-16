@@ -19,7 +19,7 @@ interface NetworkSwitchModalProps extends ConnectDappMessageData, ModalBaseProp 
 }
 
 const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
-  ({ id, icon, dAppName, host, networkId: networkName, onUserDismiss }) => {
+  ({ icon, dAppName, host, networkId: networkName, onUserDismiss }) => {
     const { t } = useTranslation()
     const { dismissModal } = useModalContext()
     const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
@@ -46,7 +46,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
     }
 
     return (
-      <BottomModal2 modalId={id} title={t('Switch network')} contentVerticalGap>
+      <BottomModal2 title={t('Switch network')} contentVerticalGap>
         <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
         <NetworkSwitchModalContent

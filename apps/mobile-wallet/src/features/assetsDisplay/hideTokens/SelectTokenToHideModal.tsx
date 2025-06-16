@@ -10,7 +10,7 @@ import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 
-const SelectTokenToHideModal = memo<ModalBaseProp>(({ id }) => {
+const SelectTokenToHideModal = memo<ModalBaseProp>(() => {
   const { t } = useTranslation()
   const { data: knownFungibleTokens } = useFetchWalletFtsSorted()
   const { dismissModal } = useModalContext()
@@ -18,7 +18,6 @@ const SelectTokenToHideModal = memo<ModalBaseProp>(({ id }) => {
 
   return (
     <BottomModal2
-      modalId={id}
       title={t('Asset to hide')}
       flashListProps={{
         data: knownFungibleTokens.filter(({ id }) => id !== ALPH.id),

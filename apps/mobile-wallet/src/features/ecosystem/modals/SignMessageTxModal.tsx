@@ -22,15 +22,7 @@ interface SignMessageTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignMessageTxModal = memo(
-  ({
-    id,
-    txParams,
-    unsignedData,
-    origin,
-    onError,
-    onUserDismiss,
-    onSuccess
-  }: SignMessageTxModalProps & ModalBaseProp) => {
+  ({ txParams, unsignedData, origin, onError, onUserDismiss, onSuccess }: SignMessageTxModalProps & ModalBaseProp) => {
     const { t } = useTranslation()
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
@@ -48,7 +40,7 @@ const SignMessageTxModal = memo(
     })
 
     return (
-      <BottomModal2 modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('Signing with')} titleColor="secondary">

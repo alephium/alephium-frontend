@@ -17,7 +17,7 @@ interface ConsolidationModalProps {
   fees: bigint
 }
 
-const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, onConsolidate, fees }) => {
+const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ onConsolidate, fees }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -31,7 +31,7 @@ const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, 
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id}>
+    <BottomModal2 notScrollable>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>

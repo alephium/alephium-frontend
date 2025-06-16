@@ -24,7 +24,7 @@ interface AddressesWithTokenModalProps {
   tokenId: Token['id']
 }
 
-const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBaseProp>(({ id, tokenId }) => {
+const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBaseProp>(({ tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useUnsortedAddressesHashes().length
   const { dismissModal } = useModalContext()
@@ -38,7 +38,7 @@ const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBasePro
   }
 
   return (
-    <BottomModal2 modalId={id} title={<Header tokenId={tokenId} />}>
+    <BottomModal2 title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
         {addresses.map((addressHash, i) => (

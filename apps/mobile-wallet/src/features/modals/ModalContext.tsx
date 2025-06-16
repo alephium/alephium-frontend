@@ -3,11 +3,13 @@ import { createContext, ReactNode, useContext } from 'react'
 import useModalDismiss, { UseModalDismissProps } from '~/features/modals/useModalDismiss'
 
 interface ModalContextType {
+  id: string
   dismissModal: () => void
   onDismiss: () => void
 }
 
 const ModalContext = createContext<ModalContextType>({
+  id: '',
   dismissModal: () => {},
   onDismiss: () => {}
 })
@@ -19,7 +21,7 @@ interface ModalContextProviderProps extends UseModalDismissProps {
 const ModalContextProvider = ({ id, onUserDismiss, children }: ModalContextProviderProps) => {
   const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss })
 
-  return <ModalContext.Provider value={{ dismissModal, onDismiss }}>{children}</ModalContext.Provider>
+  return <ModalContext.Provider value={{ id, dismissModal, onDismiss }}>{children}</ModalContext.Provider>
 }
 
 export default ModalContextProvider

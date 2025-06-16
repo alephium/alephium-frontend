@@ -25,11 +25,11 @@ interface AddressQuickActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQuickActionsModal = memo<AddressQuickActionsModalProps & ModalBaseProp>(({ id, addressHash }) => {
+const AddressQuickActionsModal = memo<AddressQuickActionsModalProps & ModalBaseProp>(({ addressHash }) => {
   const { dismissModal } = useModalContext()
 
   return (
-    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />

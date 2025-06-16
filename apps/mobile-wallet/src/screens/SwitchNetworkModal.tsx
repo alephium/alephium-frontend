@@ -16,7 +16,7 @@ export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = memo<SwitchNetworkModalProps & ModalBaseProp>(({ id, onCustomNetworkPress }) => {
+const SwitchNetworkModal = memo<SwitchNetworkModalProps & ModalBaseProp>(({ onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -43,7 +43,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps & ModalBaseProp>(({ id, 
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 notScrollable title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (

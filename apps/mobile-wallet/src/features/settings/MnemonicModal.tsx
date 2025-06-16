@@ -14,7 +14,7 @@ interface MnemonicModalProps {
   onVerifyPress?: () => void
 }
 
-const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPress }) => {
+const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ onVerifyPress }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -36,7 +36,7 @@ const MnemonicModal = memo<MnemonicModalProps & ModalBaseProp>(({ id, onVerifyPr
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
 
       {onVerifyPress && (

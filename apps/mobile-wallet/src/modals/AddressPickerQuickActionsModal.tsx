@@ -19,7 +19,7 @@ interface AddressPickerQuickActionsModalProps {
 }
 
 const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps & ModalBaseProp>(
-  ({ id, addressHash, onSelectAddress }) => {
+  ({ addressHash, onSelectAddress }) => {
     const { dismissModal } = useModalContext()
     const { t } = useTranslation()
 
@@ -34,12 +34,7 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps 
     }
 
     return (
-      <BottomModal2
-        notScrollable
-        modalId={id}
-        noPadding
-        title={<AddressBadge addressHash={addressHash} fontSize={16} />}
-      >
+      <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
         <ScreenSection>
           <ActionButtons>
             <QuickActionButton

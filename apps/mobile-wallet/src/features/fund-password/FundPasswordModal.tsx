@@ -16,7 +16,7 @@ export interface FundPasswordModalProps {
   successCallback: () => void
 }
 
-const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, successCallback }) => {
+const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ successCallback }) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()
@@ -45,7 +45,7 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>

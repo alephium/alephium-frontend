@@ -37,7 +37,7 @@ const MIN_FONT_SIZE = 22
 const MAX_FONT_LENGTH = 10
 
 const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
-  ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
+  ({ tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const theme = useTheme()
     const { dismissModal } = useModalContext()
 
@@ -95,7 +95,6 @@ const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
 
     return (
       <BottomModal2
-        modalId={id}
         titleAlign="left"
         title={
           <ModalHeader>

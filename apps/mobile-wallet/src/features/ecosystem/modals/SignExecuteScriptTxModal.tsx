@@ -30,7 +30,6 @@ interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
 
 const SignExecuteScriptTxModal = memo(
   ({
-    id,
     txParams,
     unsignedData,
     dAppUrl,
@@ -79,7 +78,7 @@ const SignExecuteScriptTxModal = memo(
     })
 
     return (
-      <BottomModal2 modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />

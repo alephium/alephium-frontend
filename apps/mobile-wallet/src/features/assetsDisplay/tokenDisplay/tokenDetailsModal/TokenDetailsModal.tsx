@@ -33,7 +33,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
-const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ id, tokenId, addressHash, onClose }) => {
+const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ tokenId, addressHash, onClose }) => {
   const { dismissModal } = useModalContext()
 
   const handleClose = () => {
@@ -42,7 +42,7 @@ const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ id, to
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>

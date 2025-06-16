@@ -11,7 +11,7 @@ import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const AutoLockOptionsModal = memo<ModalBaseProp>(({ id }) => {
+const AutoLockOptionsModal = memo<ModalBaseProp>(() => {
   const { t } = useTranslation()
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
@@ -23,7 +23,7 @@ const AutoLockOptionsModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Auto-lock')}>
+    <BottomModal2 notScrollable title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (

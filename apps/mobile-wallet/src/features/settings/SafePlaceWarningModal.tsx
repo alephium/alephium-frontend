@@ -12,7 +12,7 @@ import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 
-const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
+const SafePlaceWarningModal = memo<ModalBaseProp>(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
@@ -25,7 +25,7 @@ const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
       </ScreenSection>

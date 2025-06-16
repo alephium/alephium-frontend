@@ -19,7 +19,7 @@ interface WalletConnectPairingsModalProps {
 }
 
 const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalBaseProp>(
-  ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
+  ({ onPasteWcUrlPress, onScanQRCodePress }) => {
     const { t } = useTranslation()
     const { dismissModal } = useModalContext()
     const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
@@ -33,7 +33,7 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalB
     }
 
     return (
-      <BottomModal2 modalId={id} title={t('Current connections')} contentVerticalGap>
+      <BottomModal2 title={t('Current connections')} contentVerticalGap>
         {activeSessions.map(({ topic, peer: { metadata } }, index) => (
           <ListItem
             key={topic}

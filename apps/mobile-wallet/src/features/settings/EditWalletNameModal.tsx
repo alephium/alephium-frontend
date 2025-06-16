@@ -14,7 +14,7 @@ import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
-const EditWalletNameModal = memo<ModalBaseProp>(({ id }) => {
+const EditWalletNameModal = memo<ModalBaseProp>(() => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -42,7 +42,7 @@ const EditWalletNameModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Wallet name')}>
+    <BottomModal2 notScrollable title={t('Wallet name')}>
       <ScreenSection verticalGap>
         <Input isInModal value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />

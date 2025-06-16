@@ -19,7 +19,7 @@ interface DAppQuickActionsModalProps {
   dAppName: DApp['name']
 }
 
-const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>(({ id, dAppName }) => {
+const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>(({ dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()
@@ -31,7 +31,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>((
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}

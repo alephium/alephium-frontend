@@ -27,15 +27,7 @@ interface SignTransferTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignTransferTxModal = memo(
-  ({
-    id,
-    txParams,
-    unsignedData,
-    origin,
-    onError,
-    onUserDismiss,
-    onSuccess
-  }: SignTransferTxModalProps & ModalBaseProp) => {
+  ({ txParams, unsignedData, origin, onError, onUserDismiss, onSuccess }: SignTransferTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
@@ -75,7 +67,7 @@ const SignTransferTxModal = memo(
     })
 
     return (
-      <BottomModal2 modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />

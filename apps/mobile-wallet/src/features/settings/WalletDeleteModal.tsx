@@ -21,7 +21,7 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, onDelete }) => {
+const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const walletId = useAppSelector((s) => s.wallet.id)
@@ -53,7 +53,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, on
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>

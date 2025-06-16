@@ -22,7 +22,7 @@ interface TokenQuickActionsModalProps {
   tokenId: Token['id']
 }
 
-const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ id, tokenId }) => {
+const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>(({ tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()
@@ -43,7 +43,6 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps & ModalBaseProp>
   return (
     <BottomModal2
       notScrollable
-      modalId={id}
       title={
         <Title>
           <AssetLogo assetId={tokenId} size={26} />

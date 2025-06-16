@@ -15,7 +15,7 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>(({ id, onConfirm, confirmText }) => {
+const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>(({ onConfirm, confirmText }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -29,7 +29,7 @@ const BiometricsWarningModal = memo<BiometricsWarningModalProps & ModalBaseProp>
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
+    <BottomModal2 notScrollable title={`⚠️ ${t('Are you sure?')}`} noPadding>
       <ScreenSection verticalGap>
         <AppText color="secondary" size={18} style={{ textAlign: 'center', paddingTop: VERTICAL_GAP }}>
           {t(

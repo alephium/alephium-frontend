@@ -32,7 +32,7 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
 const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const safeAreaInsets = useSafeAreaInsets()
-  const { onDismiss } = useModalContext()
+  const { id, onDismiss } = useModalContext()
 
   useEffect(() => {
     bottomSheetModalRef.current?.present()
@@ -60,7 +60,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
       handleComponent={() => <BottomModalHandle />}
       topInset={safeAreaInsets.top}
-      name={props.modalId}
+      name={id}
       {...props.bottomSheetModalProps}
       onDismiss={onDismiss}
     >

@@ -10,7 +10,7 @@ interface SelectContactModalProps {
   onContactPress: (contactId: Contact['id']) => void
 }
 
-const SelectContactModal = memo<SelectContactModalProps & ModalBaseProp>(({ id, onContactPress }) => {
+const SelectContactModal = memo<SelectContactModalProps & ModalBaseProp>(({ onContactPress }) => {
   const { dismissModal } = useModalContext()
 
   const handleContactPress = (contactId: string) => {
@@ -23,7 +23,7 @@ const SelectContactModal = memo<SelectContactModalProps & ModalBaseProp>(({ id, 
   }
 
   return (
-    <BottomModal2 modalId={id}>
+    <BottomModal2>
       <ContactListScreenBase isInModal onContactPress={handleContactPress} onNewContactPress={handleNewContactPress} />
     </BottomModal2>
   )

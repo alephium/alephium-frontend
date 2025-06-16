@@ -26,7 +26,6 @@ interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
 
 const SignUnsignedTxModal = memo(
   ({
-    id,
     txParams,
     unsignedData,
     origin,
@@ -67,7 +66,7 @@ const SignUnsignedTxModal = memo(
     })
 
     return (
-      <BottomModal2 modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('Signing with')} titleColor="secondary">

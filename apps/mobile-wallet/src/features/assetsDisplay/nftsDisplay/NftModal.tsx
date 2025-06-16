@@ -20,7 +20,7 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
+const NftModal = memo<NftModalProps & ModalBaseProp>(({ nftId }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -33,7 +33,7 @@ const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
   const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
-    <BottomModal2 modalId={id} title={nft.name}>
+    <BottomModal2 title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>

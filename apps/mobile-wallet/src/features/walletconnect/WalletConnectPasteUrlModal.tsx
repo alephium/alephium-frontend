@@ -14,7 +14,7 @@ import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectPasteUrlModal = memo<ModalBaseProp>(({ id }) => {
+const WalletConnectPasteUrlModal = memo<ModalBaseProp>(() => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -47,12 +47,7 @@ const WalletConnectPasteUrlModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2
-      modalId={id}
-      title={t('Connect to dApp')}
-      contentVerticalGap
-      bottomSheetModalProps={{ stackBehavior: 'replace' }}
-    >
+    <BottomModal2 title={t('Connect to dApp')} contentVerticalGap bottomSheetModalProps={{ stackBehavior: 'replace' }}>
       <ScreenSection>
         <AppText color="secondary" size={18}>
           {t('Paste the WalletConnect URI you copied from the dApp')}:

@@ -36,7 +36,6 @@ import { showToast } from '~/utils/layout'
 
 const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps & ModalBaseProp>(
   ({
-    id: modalId,
     proposalEventId,
     relayProtocol,
     requiredNamespaceMethods,
@@ -159,7 +158,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     }
 
     return (
-      <BottomModal2 modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
+      <BottomModal2 title={t('Connect to dApp')} contentVerticalGap>
         <ConnectDappModalHeader
           dAppName={metadata?.description}
           dAppUrl={metadata?.url}

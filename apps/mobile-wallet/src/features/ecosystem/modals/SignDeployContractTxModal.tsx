@@ -36,7 +36,6 @@ interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
 
 const SignDeployContractTxModal = memo(
   ({
-    id,
     txParams,
     unsignedData,
     dAppUrl,
@@ -83,7 +82,7 @@ const SignDeployContractTxModal = memo(
     })
 
     return (
-      <BottomModal2 modalId={id} contentVerticalGap>
+      <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('From')} titleColor="secondary">

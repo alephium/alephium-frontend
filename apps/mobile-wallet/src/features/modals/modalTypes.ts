@@ -123,6 +123,5 @@ export type ModalInstance = {
 }
 
 export interface ModalBaseProp {
-  id: ModalInstance['id']
   onUserDismiss?: () => void
 }

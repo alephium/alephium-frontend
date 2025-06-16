@@ -12,7 +12,7 @@ interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
 }
 
-const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ id, onAddressPress }) => {
+const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ onAddressPress }) => {
   const { data } = useFetchAddressesHashesSortedByLastUse()
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()
@@ -24,7 +24,6 @@ const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ id, 
 
   return (
     <BottomModal2
-      modalId={id}
       title={t('Addresses')}
       flashListProps={{
         data,

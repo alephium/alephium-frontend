@@ -14,7 +14,7 @@ export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id, isNewWallet }) => {
+const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
@@ -25,7 +25,7 @@ const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       </ScreenSection>

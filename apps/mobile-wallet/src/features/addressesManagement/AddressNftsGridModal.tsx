@@ -10,13 +10,11 @@ export interface AddressNftsGridModalProps {
   addressHash: string
 }
 
-const AddressNftsGridModal = memo<AddressNftsGridModalProps & ModalBaseProp>(({ id, addressHash }) => {
+const AddressNftsGridModal = memo<AddressNftsGridModalProps & ModalBaseProp>(({ addressHash }) => {
   const { data: nfts } = useFetchAddressNfts(addressHash)
   const flashListProps = useNftsGridFlashListProps({ nfts })
 
-  return (
-    <BottomModal2 modalId={id} title={<AddressBadge addressHash={addressHash} />} flashListProps={flashListProps} />
-  )
+  return <BottomModal2 title={<AddressBadge addressHash={addressHash} />} flashListProps={flashListProps} />
 })
 
 export default AddressNftsGridModal

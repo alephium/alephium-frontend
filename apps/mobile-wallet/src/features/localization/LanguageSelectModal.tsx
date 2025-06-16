@@ -9,7 +9,7 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = memo<ModalBaseProp>(({ id }) => {
+const LanguageSelectModal = memo<ModalBaseProp>(() => {
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()
 
@@ -21,7 +21,7 @@ const LanguageSelectModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 modalId={id} title="Language">
+    <BottomModal2 title="Language">
       <Surface>
         {languageOptions.map((languageOption, index) => (
           <RadioButtonRow

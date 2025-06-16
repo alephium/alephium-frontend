@@ -13,7 +13,7 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = memo<ModalBaseProp>(({ id }) => {
+const CurrencySelectModal = memo<ModalBaseProp>(() => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
@@ -25,7 +25,7 @@ const CurrencySelectModal = memo<ModalBaseProp>(({ id }) => {
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('Currency')}>
+    <BottomModal2 title={t('Currency')}>
       {currencyOptions.map((currencyOption, index) => (
         <RadioButtonRow
           key={currencyOption.label}

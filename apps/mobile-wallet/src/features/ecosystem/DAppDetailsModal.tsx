@@ -19,14 +19,14 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ id, dAppName }) => {
+const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ dAppName }) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />

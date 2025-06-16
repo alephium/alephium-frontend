@@ -21,7 +21,7 @@ interface AddressSettingsModalProps {
   onForgetAddress?: () => void
 }
 
-const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ id, addressHash, onForgetAddress }) => {
+const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ addressHash, onForgetAddress }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
@@ -69,7 +69,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ 
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Address settings')}>
+    <BottomModal2 notScrollable title={t('Address settings')}>
       <AddressForm
         initialValues={initialSettings}
         onValuesChange={setSettings}
