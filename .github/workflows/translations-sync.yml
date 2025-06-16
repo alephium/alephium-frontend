@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths: ['apps/desktop-wallet/locales/**', 'apps/mobile-wallet/locales/**', 'apps/explorer/locales/**']
-    branches: [next]
+    branches: [master]
 
 permissions:
   contents: write
@@ -31,7 +31,7 @@ jobs:
           create_pull_request: true
           pull_request_title: 'New Crowdin translations'
           pull_request_body: 'New translations from Crowdin.'
-          pull_request_base_branch_name: 'next'
+          pull_request_base_branch_name: 'master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}

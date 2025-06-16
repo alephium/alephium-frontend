@@ -7,11 +7,11 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Row from '~/components/Row'
 import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 
-interface AssetsAmountsRowsProps {
+interface SignModalAssetsAmountsRowsProps {
   assetAmounts: AssetAmount[]
 }
 
-const AssetsAmountsRows = memo(({ assetAmounts }: AssetsAmountsRowsProps) => {
+const SignModalAssetsAmountsRows = memo(({ assetAmounts }: SignModalAssetsAmountsRowsProps) => {
   const { t } = useTranslation()
 
   if (assetAmounts.length === 0) return null
@@ -31,7 +31,7 @@ const AssetsAmountsRows = memo(({ assetAmounts }: AssetsAmountsRowsProps) => {
   )
 })
 
-export default AssetsAmountsRows
+export default SignModalAssetsAmountsRows
 
 const AssetAmounts = styled.View`
   gap: 5px;

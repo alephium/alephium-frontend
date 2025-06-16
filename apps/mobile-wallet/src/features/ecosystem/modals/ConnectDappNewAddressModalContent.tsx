@@ -16,12 +16,12 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 
-interface NewAddressModalContentProps {
+interface ConnectDappNewAddressModalContentProps {
   group: AddressGroup
   onDeclinePress: () => void
 }
 
-const NewAddressModalContent = ({ group, onDeclinePress }: NewAddressModalContentProps) => {
+const ConnectDappNewAddressModalContent = ({ group, onDeclinePress }: ConnectDappNewAddressModalContentProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const allAddressesIndexes = useAppSelector(selectAllAddressIndexes)
@@ -73,4 +73,4 @@ const NewAddressModalContent = ({ group, onDeclinePress }: NewAddressModalConten
   )
 }
 
-export default NewAddressModalContent
+export default ConnectDappNewAddressModalContent

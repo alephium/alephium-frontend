@@ -5,12 +5,12 @@ import Button from '~/components/buttons/Button'
 import Row from '~/components/Row'
 import { showToast } from '~/utils/layout'
 
-interface CopyEncodedTextRowProps {
+interface SignModalCopyEncodedTextRowProps {
   text: string
   title: string
 }
 
-const CopyEncodedTextRow = ({ text, title }: CopyEncodedTextRowProps) => {
+const SignModalCopyEncodedTextRow = ({ text, title }: SignModalCopyEncodedTextRowProps) => {
   const { t } = useTranslation()
 
   const handleCopy = () => {
@@ -25,4 +25,4 @@ const CopyEncodedTextRow = ({ text, title }: CopyEncodedTextRowProps) => {
   )
 }
 
-export default CopyEncodedTextRow
+export default SignModalCopyEncodedTextRow

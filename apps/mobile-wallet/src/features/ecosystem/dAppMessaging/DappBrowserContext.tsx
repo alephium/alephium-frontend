@@ -129,7 +129,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       if (addressesInGroup.length === 0) {
         dispatch(
           openModal({
-            name: 'NewAddressModal',
+            name: 'ConnectDappNewAddressModal',
             onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
             props: { ...data, dAppName }
           })

@@ -5,12 +5,12 @@ import { styled } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Row from '~/components/Row'
 
-interface DestinationDappRowProps {
+interface SignModalDestinationDappRowProps {
   dAppUrl: string
   dAppIcon?: string
 }
 
-const DestinationDappRow = ({ dAppUrl, dAppIcon }: DestinationDappRowProps) => {
+const SignModalDestinationDappRow = ({ dAppUrl, dAppIcon }: SignModalDestinationDappRowProps) => {
   const { t } = useTranslation()
 
   return (
@@ -21,7 +21,7 @@ const DestinationDappRow = ({ dAppUrl, dAppIcon }: DestinationDappRowProps) => {
   )
 }
 
-export default DestinationDappRow
+export default SignModalDestinationDappRow
 
 const DappIcon = styled(Image)`
   width: 20px;

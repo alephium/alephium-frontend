@@ -22,8 +22,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToasts'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
+import ConnectDappNewAddressModalContent from '~/features/ecosystem/modals/ConnectDappNewAddressModalContent'
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
-import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
@@ -172,7 +172,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
             onDeclinePress={handleRejectProposal}
           />
         ) : !signerAddress ? (
-          <NewAddressModalContent group={group} onDeclinePress={handleRejectProposal} />
+          <ConnectDappNewAddressModalContent group={group} onDeclinePress={handleRejectProposal} />
         ) : (
           <>
             {showAlternativeSignerAddresses ? (

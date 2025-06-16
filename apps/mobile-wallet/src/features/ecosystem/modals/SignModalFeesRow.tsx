@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next'
 import Row from '~/components/Row'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
 
-interface FeesRowProps {
+interface SignModalFeesRowProps {
   fees: bigint
 }
 
-const FeesRow = ({ fees }: FeesRowProps) => {
+const SignModalFeesRow = ({ fees }: SignModalFeesRowProps) => {
   const { t } = useTranslation()
 
   return (
@@ -17,4 +17,4 @@ const FeesRow = ({ fees }: FeesRowProps) => {
   )
 }
 
-export default FeesRow
+export default SignModalFeesRow
