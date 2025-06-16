@@ -1,5 +1,6 @@
 import { AlephiumWindowObject, providerInitializedEvent } from '@alephium/get-extension-wallet'
 import isPlainObject from 'lodash.isplainobject'
+import { MessageType } from 'src/types/messages'
 
 import { alephiumWindowObject } from './alephiumWindowObject'
 
@@ -30,6 +31,10 @@ export const announceProvider = () => {
   handler()
 
   window.addEventListener('requestAlephiumProvider', handler)
+
+  window.addEventListener('message', ({ data }: MessageEvent<MessageType>) => {
+    if (data.type === 'ALPH_DISCONNECT_ACCOUNT') alephiumWindowObject.disconnect()
+  })
 }
 
 export const attachAlephiumProvider = () => {
@@ -62,9 +67,3 @@ export const attachAlephiumProvider = () => {
     window.dispatchEvent(new Event(providerInitializedEvent('alephium')))
   })
 }
-
-// window.addEventListener('message', async ({ data }: MessageEvent<MessageType>) => {
-//   if (data.type === 'ALPH_DISCONNECT_ACCOUNT') {
-//     await alephiumWindowObject.disconnect()
-//   }
-// })

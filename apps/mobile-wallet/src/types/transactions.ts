@@ -1,11 +1,5 @@
 import { Address, AddressHash, AssetAmount } from '@alephium/shared'
-import {
-  explorer,
-  SignExecuteScriptTxParams,
-  SignMessageParams,
-  SignTransferTxParams,
-  SignUnsignedTxParams
-} from '@alephium/web3'
+import { explorer, SignExecuteScriptTxParams, SignMessageParams, SignTransferTxParams } from '@alephium/web3'
 
 export type PendingTransaction =
   | {
@@ -62,9 +56,5 @@ export interface SignExecuteScriptTxParamsWithAmounts extends SignExecuteScriptT
 }
 
 export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
-  fromAddress: AddressHash
-}
-
-export interface SignUnsignedTxData extends Pick<SignUnsignedTxParams, 'signerKeyType' | 'unsignedTx'> {
   fromAddress: AddressHash
 }

@@ -4,7 +4,6 @@ import styled from 'styled-components/native'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
@@ -25,7 +24,9 @@ import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import NewAddressModal from '~/features/ecosystem/modals/NewAddressModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
+import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
 import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
+import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -113,8 +114,6 @@ const AppModals = () => {
             return <WalletConnectSessionProposalModal key={id} id={id} {...params.props} />
           case 'GroupSelectModal':
             return <GroupSelectModal key={id} id={id} {...params.props} />
-          case 'WalletConnectSessionRequestModal':
-            return <WalletConnectSessionRequestModal key={id} id={id} {...params.props} />
           case 'TokenAmountModal':
             return <TokenAmountModal key={id} id={id} {...params.props} />
           case 'AddressDetailsModal':
@@ -157,6 +156,10 @@ const AppModals = () => {
             return <SignDeployContractTxModal key={id} id={id} {...params.props} />
           case 'SignTransferTxModal':
             return <SignTransferTxModal key={id} id={id} {...params.props} />
+          case 'SignUnsignedTxModal':
+            return <SignUnsignedTxModal key={id} id={id} {...params.props} />
+          case 'SignMessageTxModal':
+            return <SignMessageTxModal key={id} id={id} {...params.props} />
           default:
             return null
         }

@@ -11,15 +11,40 @@ import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { showExceptionToast } from '~/utils/layout'
 
-interface UseSignModalProps {
-  id: ModalInstance['id']
-  sendTransaction: () => Promise<void>
-  onReject: () => void
-  onError: (message: string) => void
-  unsignedData: n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult | n.BuildTransferTxResult
+type UnsignedTxData =
+  | n.BuildExecuteScriptTxResult
+  | n.BuildDeployContractTxResult
+  | n.BuildTransferTxResult
+  | n.DecodeUnsignedTxResult
+  | string
+
+type TxResultsWithGas = n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult | n.BuildTransferTxResult
+
+type BaseSignModalReturn = {
+  handleApprovePress: () => void
+  handleRejectPress: () => void
+  onDismiss: () => void
 }
 
-const useSignModal = ({ id, unsignedData, sendTransaction, onReject, onError }: UseSignModalProps) => {
+type SignModalReturn<T extends UnsignedTxData> = T extends TxResultsWithGas
+  ? BaseSignModalReturn & { fees: bigint }
+  : BaseSignModalReturn
+
+interface UseSignModalProps<T extends UnsignedTxData> {
+  id: ModalInstance['id']
+  sign: () => Promise<void>
+  onReject: () => void
+  onError: (message: string) => void
+  unsignedData: T
+}
+
+const useSignModal = <T extends UnsignedTxData>({
+  id,
+  unsignedData,
+  sign,
+  onReject,
+  onError
+}: UseSignModalProps<T>): SignModalReturn<T> => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
@@ -35,9 +60,14 @@ const useSignModal = ({ id, unsignedData, sendTransaction, onReject, onError }: 
             dispatch(activateAppLoading(t('Approving')))
 
             try {
-              await sendTransaction()
+              await sign()
             } catch (error) {
-              const message = 'Could not send transaction'
+              const message =
+                typeof unsignedData === 'string'
+                  ? 'Could not sign message'
+                  : hasGasProperties(unsignedData)
+                    ? 'Could not send transaction'
+                    : 'Could not sign unsigned transaction'
               const translatedMessage = t(message)
 
               onError(getHumanReadableError(error, translatedMessage))
@@ -58,14 +88,23 @@ const useSignModal = ({ id, unsignedData, sendTransaction, onReject, onError }: 
     dismissModal()
   }
 
-  const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
-
-  return {
+  const baseReturn: BaseSignModalReturn = {
     handleApprovePress,
     handleRejectPress,
-    onDismiss,
-    fees
+    onDismiss
   }
+
+  if (hasGasProperties(unsignedData)) {
+    return {
+      ...baseReturn,
+      fees: BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+    } as SignModalReturn<T>
+  }
+
+  return baseReturn as SignModalReturn<T>
 }
 
 export default useSignModal
+
+const hasGasProperties = (data: UnsignedTxData): data is TxResultsWithGas =>
+  typeof data === 'object' && 'gasAmount' in data && 'gasPrice' in data

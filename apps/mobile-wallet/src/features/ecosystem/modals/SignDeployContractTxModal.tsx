@@ -18,25 +18,20 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import CopyBytecodeRow from '~/features/ecosystem/modals/CopyBytecodeRow'
+import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
 import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
 import FeesRow from '~/features/ecosystem/modals/FeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { ModalOrigin } from '~/features/ecosystem/modals/SignTxModalTypes'
+import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
-interface SignDeployContractTxModalProps {
+interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
   txParams: SignDeployContractTxParams
   unsignedData: n.BuildDeployContractTxResult
-  onError: (message: string) => void
   onSuccess: (signResult: SignDeployContractTxResult) => void
-  onReject: () => void
-  origin: ModalOrigin
-  dAppUrl?: string
-  dAppIcon?: string
 }
 
 const SignDeployContractTxModal = memo(
@@ -59,7 +54,7 @@ const SignDeployContractTxModal = memo(
       onReject,
       onError,
       unsignedData,
-      sendTransaction: async () => {
+      sign: async () => {
         const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
 
         dispatch(
@@ -110,7 +105,7 @@ const SignDeployContractTxModal = memo(
               </Row>
             )}
 
-            <CopyBytecodeRow bytecode={txParams.bytecode} />
+            <CopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
 
             <FeesRow fees={fees} />
           </Surface>
