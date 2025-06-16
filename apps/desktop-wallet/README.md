@@ -35,7 +35,7 @@ pnpm ci:build:electron:linux:arm64
 
 If the current version is `1.0.0` and you want to release the first release candidate or the next minor release, then:
 
-1. Check out the feature branch, or `next`
+1. Check out the feature branch, or `master`
 2. Manually change the version in `package.json` to `1.1.0-rc.0`
 3. Commit the change with a message `Bump desktop wallet version to 1.1.0-rc.0`
 4. Push to remote
@@ -51,8 +51,8 @@ If the current version is `1.0.0` and you want to release the first release cand
 
 ### Releasing a production version
 
-1. All feature branches must have been merged into `next`.
-2. Check out `next`
+1. All feature branches must have been merged into `master`.
+2. Check out `master`
 3. Create changelog and bump version with `pnpm exec changeset version`
    1. If more projects in the monorepo got their version updated, you can skip them from the following commit.
 4. Continue from step 3 like above (without the `-rc.0` part).
