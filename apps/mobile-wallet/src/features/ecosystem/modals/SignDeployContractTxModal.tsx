@@ -18,9 +18,9 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
-import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
-import FeesRow from '~/features/ecosystem/modals/FeesRow'
+import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
+import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
+import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
@@ -78,7 +78,7 @@ const SignDeployContractTxModal = memo(
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
-            {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
+            {dAppUrl && <SignModalDestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
             {!!txParams.initialAttoAlphAmount && (
               <Row title={t('Initial amount')} titleColor="secondary">
@@ -92,9 +92,9 @@ const SignDeployContractTxModal = memo(
               </Row>
             )}
 
-            <CopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
+            <SignModalCopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
 
-            <FeesRow fees={fees} />
+            <SignModalFeesRow fees={fees} />
           </Surface>
         </ScreenSection>
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />

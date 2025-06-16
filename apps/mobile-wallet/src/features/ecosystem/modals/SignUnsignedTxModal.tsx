@@ -9,7 +9,7 @@ import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
+import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
@@ -67,7 +67,7 @@ const SignUnsignedTxModal = memo(
               <AppText>{unsignedData.unsignedTx.txId}</AppText>
             </Row>
 
-            <CopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
+            <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
           </Surface>
         </ScreenSection>
 

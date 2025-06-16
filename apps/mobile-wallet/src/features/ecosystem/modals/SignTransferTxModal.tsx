@@ -9,8 +9,8 @@ import AddressBadge from '~/components/AddressBadge'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
-import FeesRow from '~/features/ecosystem/modals/FeesRow'
+import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
+import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
@@ -67,7 +67,7 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
     <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <Surface>
-          <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />
+          <SignModalAssetsAmountsRows assetAmounts={txParams.assetAmounts} />
 
           <Row title={t('From')} titleColor="secondary">
             <AddressBadge addressHash={txParams.signerAddress} />
@@ -77,7 +77,7 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
             <AddressBadge addressHash={txParams.toAddress} />
           </Row>
 
-          <FeesRow fees={fees} />
+          <SignModalFeesRow fees={fees} />
         </Surface>
       </ScreenSection>
 

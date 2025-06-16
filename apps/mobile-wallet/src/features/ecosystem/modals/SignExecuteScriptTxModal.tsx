@@ -9,10 +9,10 @@ import AddressBadge from '~/components/AddressBadge'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import AssetsAmountsRows from '~/features/ecosystem/modals/AssetsAmountsRows'
-import CopyEncodedTextRow from '~/features/ecosystem/modals/CopyEncodedTextRow'
-import DestinationDappRow from '~/features/ecosystem/modals/DestinationDappRow'
-import FeesRow from '~/features/ecosystem/modals/FeesRow'
+import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
+import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
+import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
+import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
@@ -70,17 +70,17 @@ const SignExecuteScriptTxModal = memo(
       <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
-            <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />
+            <SignModalAssetsAmountsRows assetAmounts={txParams.assetAmounts} />
 
             <Row title={t('From')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
-            {dAppUrl && <DestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
+            {dAppUrl && <SignModalDestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
-            <CopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
+            <SignModalCopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
 
-            <FeesRow fees={fees} />
+            <SignModalFeesRow fees={fees} />
           </Surface>
         </ScreenSection>
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
