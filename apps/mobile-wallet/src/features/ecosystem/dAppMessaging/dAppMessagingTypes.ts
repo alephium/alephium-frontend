@@ -4,6 +4,7 @@ export type ConnectedAddressPayload = WalletAccountWithNetwork & {
   host: string
 }
 
+// TODO: Share with extension wallet
 export const familiarDappMessageTypes: MessageType['type'][] = [
   'ALPH_IS_PREAUTHORIZED',
   'ALPH_REMOVE_PREAUTHORIZATION',
