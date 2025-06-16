@@ -4,7 +4,6 @@ Prefer using the ScreenAnimatedBackground when using it on a screen.
 */
 
 import { Blur, Canvas as SkiaCanvas, Group } from '@shopify/react-native-skia'
-// 1) Import colord (and extend if needed)
 import { ReactNode } from 'react'
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -12,9 +11,6 @@ import styled, { useTheme } from 'styled-components/native'
 import { AnimatedBackgroundProps } from '~/components/animatedBackground/animatedBackgroundTypes'
 import { Circles, GyroscopeCircles } from '~/components/animatedBackground/Circles'
 import useCanvasDimensions, { CanvasDimensions } from '~/components/animatedBackground/useCanvasDimentions'
-// If you need plugins (like `colord` plugins), you can import and `extend` them here
-// import { extend } from 'colord'
-// extend([/* plugins */])
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
 const AnimatedBackground = ({
@@ -36,7 +32,6 @@ const AnimatedBackground = ({
     <ParallaxAnimatedContainer scrollY={scrollY}>
       <AnimatedCanvas canvasHeight={canvasHeight} canvasWidth={canvasWidth}>
         <Group>{usesGyroscope ? <GyroscopeCircles {...circlesProps} /> : <Circles {...circlesProps} />}</Group>
-        <Blur blur={70} />
       </AnimatedCanvas>
 
       {showAlephiumLogo && (
@@ -78,7 +73,12 @@ const AnimatedCanvas = ({ children, canvasHeight, canvasWidth }: AnimatedCanvasP
 
   return (
     <Animated.View style={animatedCanvasStyle}>
-      <SkiaCanvas style={{ flex: 1 }}>{children}</SkiaCanvas>
+      <SkiaCanvas style={{ flex: 1 }}>
+        <Group>
+          <Blur blur={70} />
+          {children}
+        </Group>
+      </SkiaCanvas>
     </Animated.View>
   )
 }

@@ -1762,7 +1762,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-skia (1.5.0):
+  - react-native-skia (1.12.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2349,7 +2349,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Sentry/HybridSDK (= 8.48.0)
     - Yoga
-  - RNSVG (15.8.0):
+  - RNSVG (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2369,9 +2369,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.8.0)
+    - RNSVG/common (= 15.12.0)
     - Yoga
-  - RNSVG/common (15.8.0):
+  - RNSVG/common (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2854,7 +2854,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-pager-view: 9517b214fb7321493339fbcf53a30abd54fea07b
   react-native-safe-area-context: cd916088cac5300c3266876218377518987b995e
-  react-native-skia: 9b4e1185bdc0d4e7e6488c5419b5643cc456dd2e
+  react-native-skia: 304147b8b355c1af97fcebf34efa5032c0e43b6a
   react-native-webview: 6b9fc65c1951203a3e958ff3cc0a858d4b6be901
   React-nativeconfig: 8efdb1ef1e9158c77098a93085438f7e7b463678
   React-NativeModulesApple: cebca2e5320a3d66e123cade23bd90a167ffce5e
@@ -2890,7 +2890,7 @@ SPEC CHECKSUMS:
   RNReanimated: a15310f0d41bf77ba9fe2c6e85e9256c92d10552
   RNScreens: 362f4c861dd155f898908d5035d97b07a3f1a9d1
   RNSentry: ac7beae04304d95491a512b5abf6926d4501c73c
-  RNSVG: b889dc9c1948eeea0576a16cc405c91c37a12c19
+  RNSVG: 43aff28bae846abe9c45625fe8b4816b7ac73ffd
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
