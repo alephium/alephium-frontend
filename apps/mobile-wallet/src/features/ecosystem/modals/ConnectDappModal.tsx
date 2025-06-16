@@ -32,11 +32,11 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
 
   const handleAddressSelect = useCallback(
     async (address: Address) => {
-      const connectedAddressPayload = await getConnectedAddressPayload(network, address, host)
+      const connectedAddressPayload = await getConnectedAddressPayload(network, address, host, icon)
       onApprove(connectedAddressPayload)
       dismissModal()
     },
-    [dismissModal, host, network, onApprove]
+    [dismissModal, host, icon, network, onApprove]
   )
 
   return (

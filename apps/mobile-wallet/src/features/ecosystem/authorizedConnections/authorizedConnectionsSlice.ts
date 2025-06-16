@@ -19,11 +19,10 @@ const sliceName = 'authorizedConnections'
 // TODO: CONNECTION_EXPIRY (see extension wallet, should expire after 7 days)
 
 const initialState = connectionsAdapter.getInitialState()
-connectionsAdapter.setAll(initialState, loadAuthorizedConnections())
 
 const authorizedConnectionsSlice = createSlice({
   name: sliceName,
-  initialState,
+  initialState: connectionsAdapter.setAll(initialState, loadAuthorizedConnections()),
   reducers: {},
   extraReducers(builder) {
     builder.addCase(connectionAuthorized, (state, action) => {
@@ -31,7 +30,8 @@ const authorizedConnectionsSlice = createSlice({
         dateTime: new Date().getTime(),
         host: action.payload.host,
         address: action.payload.address,
-        networkName: action.payload.network.id as NetworkPreset
+        networkName: action.payload.network.id as NetworkPreset,
+        icon: action.payload.icon
       }
       connectionsAdapter.addOne(state, connection)
     })

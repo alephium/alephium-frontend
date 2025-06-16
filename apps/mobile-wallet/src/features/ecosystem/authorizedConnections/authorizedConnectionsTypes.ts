@@ -5,4 +5,5 @@ export type AuthorizedConnection = {
   address: string
   host: string
   networkName?: NetworkPreset
+  icon?: string
 }

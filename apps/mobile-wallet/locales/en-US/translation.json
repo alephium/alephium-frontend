@@ -467,5 +467,11 @@
   "Worth": "Worth",
   "Group": "Group",
   "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.",
-  "Unknown error": "Unknown error"
+  "Unknown error": "Unknown error",
+  "Connected at {{ datetime }}": "Connected at {{ datetime }}",
+  "Connected at {{ datetime }} on {{ network }}": "Connected at {{ datetime }} on {{ network }}",
+  "DApps": "DApps",
+  "Manage dApp connections": "Manage dApp connections",
+  "Preauthorized connections": "Preauthorized connections",
+  "Revoked connection to {{ host }}": "Revoked connection to {{ host }}"
 }

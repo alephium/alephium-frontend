@@ -20,7 +20,8 @@ export const useNetwork = (): ConnectedAddressPayload['network'] => {
 export const getConnectedAddressPayload = async (
   network: ConnectedAddressPayload['network'],
   address: Address,
-  host: string
+  host: string,
+  icon?: string
 ): Promise<ConnectedAddressPayload> => {
   const signer = await getSigner(address)
 
@@ -29,7 +30,8 @@ export const getConnectedAddressPayload = async (
     network,
     type: 'alephium',
     signer,
-    host
+    host,
+    icon
   }
 }
 
