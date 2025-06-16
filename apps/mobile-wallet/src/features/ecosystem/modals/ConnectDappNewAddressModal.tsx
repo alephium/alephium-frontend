@@ -3,15 +3,15 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
-import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalContent'
+import ConnectDappNewAddressModalContent from '~/features/ecosystem/modals/ConnectDappNewAddressModalContent'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 
-interface NewAddressModalProps extends ConnectDappMessageData {
+interface ConnectDappNewAddressModalProps extends ConnectDappMessageData {
   dAppName?: string
 }
 
-const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, group }) => {
+const ConnectDappNewAddressModal = memo<ConnectDappNewAddressModalProps>(({ icon, dAppName, host, group }) => {
   const { t } = useTranslation()
   const { dismissModal, onUserDismiss } = useModalContext()
 
@@ -24,9 +24,9 @@ const NewAddressModal = memo<NewAddressModalProps>(({ icon, dAppName, host, grou
     <BottomModal2 title={t('New address')} contentVerticalGap>
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
-      <NewAddressModalContent group={group} onDeclinePress={handleDeclinePress} />
+      <ConnectDappNewAddressModalContent group={group} onDeclinePress={handleDeclinePress} />
     </BottomModal2>
   )
 })
 
-export default NewAddressModal
+export default ConnectDappNewAddressModal
