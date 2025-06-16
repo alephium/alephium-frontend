@@ -96,8 +96,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       if (authorizedConnection) {
         const address = addresses.find((a) => a.hash === authorizedConnection.address)
         if (!address) {
+          handleRejectDappConnection(data.host, messageId)
           return
         }
+
+        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host)
+        handleApproveDappConnection(connectedAddressPayload, messageId)
 
         return
       }
