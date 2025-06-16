@@ -9,8 +9,8 @@ import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressPickerQuickActionsModalProps {
@@ -20,7 +20,7 @@ interface AddressPickerQuickActionsModalProps {
 
 const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps & ModalBaseProp>(
   ({ id, addressHash, onSelectAddress }) => {
-    const { dismissModal, onDismiss } = useModalDismiss({ id })
+    const { dismissModal } = useModalContext()
     const { t } = useTranslation()
 
     const handleOpenAddressDetailsModal = () => {
@@ -35,7 +35,6 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps 
 
     return (
       <BottomModal2
-        onDismiss={onDismiss}
         notScrollable
         modalId={id}
         noPadding

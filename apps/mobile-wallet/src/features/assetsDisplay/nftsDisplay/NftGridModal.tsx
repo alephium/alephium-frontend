@@ -4,7 +4,6 @@ import { memo } from 'react'
 import useNftsGridFlashListProps from '~/features/assetsDisplay/nftsDisplay/useNftsGridFlashListProps'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface NftGridModalProps {
   nftsData?: NFT[]
@@ -12,9 +11,8 @@ interface NftGridModalProps {
 
 const NftGridModal = memo<NftGridModalProps & ModalBaseProp>(({ id, nftsData }) => {
   const flashListProps = useNftsGridFlashListProps({ nfts: nftsData })
-  const { onDismiss } = useModalDismiss({ id })
 
-  return <BottomModal2 onDismiss={onDismiss} modalId={id} flashListProps={flashListProps} />
+  return <BottomModal2 modalId={id} flashListProps={flashListProps} />
 })
 
 export default NftGridModal

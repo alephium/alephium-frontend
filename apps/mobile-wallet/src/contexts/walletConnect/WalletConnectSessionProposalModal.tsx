@@ -26,8 +26,8 @@ import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitch
 import NewAddressModalContent from '~/features/ecosystem/modals/NewAddressModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -54,7 +54,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
-    const { dismissModal, onDismiss } = useModalDismiss({ id: modalId })
+    const { dismissModal } = useModalContext()
 
     const [signerAddress, setSignerAddress] = useState<AddressHash>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
@@ -159,7 +159,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     }
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
+      <BottomModal2 modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
         <ConnectDappModalHeader
           dAppName={metadata?.description}
           dAppUrl={metadata?.url}

@@ -31,15 +31,14 @@ const SignUnsignedTxModal = memo(
     unsignedData,
     origin,
     onError,
-    onReject,
+    onUserDismiss,
     onSuccess,
     submitAfterSign
   }: SignUnsignedTxModalProps & ModalBaseProp) => {
     const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss } = useSignModal({
-      id,
-      onReject,
+    const { handleApprovePress, handleRejectPress } = useSignModal({
+      onUserDismiss,
       onError,
       unsignedData,
       sign: async () => {
@@ -68,7 +67,7 @@ const SignUnsignedTxModal = memo(
     })
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+      <BottomModal2 modalId={id} contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('Signing with')} titleColor="secondary">

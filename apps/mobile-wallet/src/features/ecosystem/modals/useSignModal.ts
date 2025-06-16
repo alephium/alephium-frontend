@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { sendAnalytics } from '~/analytics'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { showExceptionToast } from '~/utils/layout'
@@ -23,7 +22,6 @@ type TxResultsWithGas = n.BuildExecuteScriptTxResult | n.BuildDeployContractTxRe
 type BaseSignModalReturn = {
   handleApprovePress: () => void
   handleRejectPress: () => void
-  onDismiss: () => void
 }
 
 type SignModalReturn<T extends UnsignedTxData> = T extends TxResultsWithGas
@@ -31,25 +29,23 @@ type SignModalReturn<T extends UnsignedTxData> = T extends TxResultsWithGas
   : BaseSignModalReturn
 
 interface UseSignModalProps<T extends UnsignedTxData> {
-  id: ModalInstance['id']
   sign: () => Promise<void>
-  onReject: () => void
   onError: (message: string) => void
   unsignedData: T
+  onUserDismiss?: () => void
 }
 
 const useSignModal = <T extends UnsignedTxData>({
-  id,
   unsignedData,
   sign,
-  onReject,
+  onUserDismiss,
   onError
 }: UseSignModalProps<T>): SignModalReturn<T> => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss: onReject })
+  const { dismissModal } = useModalContext()
 
   const handleApprovePress = () => {
     triggerBiometricsAuthGuard({
@@ -84,14 +80,13 @@ const useSignModal = <T extends UnsignedTxData>({
   }
 
   const handleRejectPress = () => {
-    onReject()
+    onUserDismiss?.()
     dismissModal()
   }
 
   const baseReturn: BaseSignModalReturn = {
     handleApprovePress,
-    handleRejectPress,
-    onDismiss
+    handleRejectPress
   }
 
   if (hasGasProperties(unsignedData)) {

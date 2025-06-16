@@ -114,7 +114,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(
           openModal({
             name: 'NetworkSwitchModal',
-            props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
+            props: { ...data, dAppName, onUserDismiss: () => handleRejectDappConnection(data.host, messageId) }
           })
         )
 
@@ -129,7 +129,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(
           openModal({
             name: 'NewAddressModal',
-            props: { ...data, dAppName, onReject: () => handleRejectDappConnection(data.host, messageId) }
+            props: { ...data, dAppName, onUserDismiss: () => handleRejectDappConnection(data.host, messageId) }
           })
         )
 
@@ -150,7 +150,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           props: {
             ...data,
             dAppName,
-            onReject: () => handleRejectDappConnection(data.host, messageId),
+            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
             onApprove: (data) => handleApproveDappConnection(data, messageId)
           }
         })
@@ -191,7 +191,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             origin: 'in-app-browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId),
-            onReject: () =>
+            onUserDismiss: () =>
               replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } }, messageId)
           }
 
@@ -345,7 +345,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             origin: 'in-app-browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
-            onReject: () =>
+            onUserDismiss: () =>
               replyToDapp(
                 { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
                 messageId
@@ -376,7 +376,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             origin: 'in-app-browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error } }, messageId),
-            onReject: () =>
+            onUserDismiss: () =>
               replyToDapp(
                 { type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } },
                 messageId

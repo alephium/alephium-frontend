@@ -9,20 +9,16 @@ import { ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-interface WalletConnectPasteUrlModalProps {
-  onClose?: () => void
-}
-
-const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalBaseProp>(({ id, onClose }) => {
+const WalletConnectPasteUrlModal = memo<ModalBaseProp>(({ id }) => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
@@ -39,8 +35,6 @@ const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalB
       await pairWithDapp(inputWcUrl)
 
       dispatch(deactivateAppLoading())
-
-      onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
       dismissModal()
     } else {
@@ -54,7 +48,6 @@ const WalletConnectPasteUrlModal = memo<WalletConnectPasteUrlModalProps & ModalB
 
   return (
     <BottomModal2
-      onDismiss={onDismiss}
       modalId={id}
       title={t('Connect to dApp')}
       contentVerticalGap

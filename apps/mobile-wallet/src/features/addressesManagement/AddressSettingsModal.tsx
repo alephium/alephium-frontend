@@ -9,8 +9,8 @@ import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -27,7 +27,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ 
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
   const canDeleteAddress = useCanDeleteAddress(addressHash)
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const forgetAddress = useForgetAddress({
     addressHash,
@@ -69,7 +69,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps & ModalBaseProp>(({ 
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} title={t('Address settings')}>
+    <BottomModal2 notScrollable modalId={id} title={t('Address settings')}>
       <AddressForm
         initialValues={initialSettings}
         onValuesChange={setSettings}

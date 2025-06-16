@@ -11,8 +11,8 @@ import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleF
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface DAppQuickActionsModalProps {
@@ -22,7 +22,7 @@ interface DAppQuickActionsModalProps {
 const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>(({ id, dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleShowDetails = () => {
     dismissModal()
@@ -31,13 +31,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps & ModalBaseProp>((
   }
 
   return (
-    <BottomModal2
-      onDismiss={onDismiss}
-      notScrollable
-      modalId={id}
-      title={<DAppDetailsModalHeader dAppName={dAppName} />}
-      titleAlign="left"
-    >
+    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}

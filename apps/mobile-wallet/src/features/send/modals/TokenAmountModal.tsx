@@ -21,8 +21,8 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -39,7 +39,7 @@ const MAX_FONT_LENGTH = 10
 const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
   ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
     const theme = useTheme()
-    const { dismissModal, onDismiss } = useModalDismiss({ id })
+    const { dismissModal } = useModalContext()
 
     const { data: token } = useFetchToken(tokenId)
     const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
@@ -95,7 +95,6 @@ const TokenAmountModal = memo<TokenAmountModalProps & ModalBaseProp>(
 
     return (
       <BottomModal2
-        onDismiss={onDismiss}
         modalId={id}
         titleAlign="left"
         title={

@@ -15,8 +15,8 @@ import AssetLogo from '~/components/AssetLogo'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -27,7 +27,7 @@ interface AddressesWithTokenModalProps {
 const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBaseProp>(({ id, tokenId }) => {
   const { data: addresses } = useFetchAddressesHashesWithBalanceSortedByLastUse(tokenId)
   const totalNumberOfAddresses = useUnsortedAddressesHashes().length
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
   const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
@@ -38,7 +38,7 @@ const AddressesWithTokenModal = memo<AddressesWithTokenModalProps & ModalBasePro
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} title={<Header tokenId={tokenId} />}>
+    <BottomModal2 modalId={id} title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
         {addresses.map((addressHash, i) => (

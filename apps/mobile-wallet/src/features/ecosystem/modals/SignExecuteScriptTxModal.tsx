@@ -37,15 +37,14 @@ const SignExecuteScriptTxModal = memo(
     dAppIcon,
     origin,
     onError,
-    onReject,
+    onUserDismiss,
     onSuccess
   }: SignExecuteScriptTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss, fees } = useSignModal({
-      id,
-      onReject,
+    const { handleApprovePress, handleRejectPress, fees } = useSignModal({
+      onUserDismiss,
       onError,
       unsignedData,
       sign: async () => {
@@ -80,7 +79,7 @@ const SignExecuteScriptTxModal = memo(
     })
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+      <BottomModal2 modalId={id} contentVerticalGap>
         <ScreenSection>
           <Surface>
             <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />

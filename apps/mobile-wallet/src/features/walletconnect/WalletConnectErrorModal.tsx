@@ -9,27 +9,18 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppSelector } from '~/hooks/redux'
 
-interface WalletConnectErrorModalProps {
-  onClose?: () => void
-}
-
-const WalletConnectErrorModal = memo<WalletConnectErrorModalProps & ModalBaseProp>(({ id, onClose }) => {
+const WalletConnectErrorModal = memo<ModalBaseProp>(({ id }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
-  const handleClose = () => {
-    onClose?.()
-    dismissModal()
-  }
-
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
       </ScreenSection>
@@ -42,7 +33,7 @@ const WalletConnectErrorModal = memo<WalletConnectErrorModalProps & ModalBasePro
       )}
       <ScreenSection centered>
         <ButtonsRow>
-          <Button title={t('Close')} onPress={handleClose} flex />
+          <Button title={t('Close')} onPress={dismissModal} flex />
           <Button
             title={t('Retry')}
             variant="accent"

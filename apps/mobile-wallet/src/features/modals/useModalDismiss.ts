@@ -5,7 +5,7 @@ import { closeModal, removeModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
-interface UseModalDismissProps {
+export interface UseModalDismissProps {
   id: ModalInstance['id']
   onUserDismiss?: () => void
 }

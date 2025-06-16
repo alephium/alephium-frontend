@@ -9,20 +9,19 @@ import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModal
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface NetworkSwitchModalProps extends ConnectDappMessageData, ModalBaseProp {
   dAppName?: string
-  onReject: () => void
 }
 
 const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
-  ({ id, icon, dAppName, host, networkId: networkName, onReject }) => {
+  ({ id, icon, dAppName, host, networkId: networkName, onUserDismiss }) => {
     const { t } = useTranslation()
-    const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss: onReject })
+    const { dismissModal } = useModalContext()
     const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
     const currentNetworkName = getNetworkNameFromNetworkId(currentlyOnlineNetworkId)
     const requiredNetworkName = networkName as NetworkPreset
@@ -35,7 +34,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
 
     const handleDeclinePress = () => {
       dismissModal()
-      onReject()
+      onUserDismiss?.()
     }
 
     const handleSwitchToRequiredNetwork = async () => {
@@ -47,7 +46,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(
     }
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('Switch network')} contentVerticalGap>
+      <BottomModal2 modalId={id} title={t('Switch network')} contentVerticalGap>
         <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
         <NetworkSwitchModalContent

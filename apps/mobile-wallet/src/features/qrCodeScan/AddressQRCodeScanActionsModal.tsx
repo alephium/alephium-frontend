@@ -8,8 +8,8 @@ import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -23,11 +23,10 @@ interface AddressQRCodeScanActionsModalProps {
 const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps & ModalBaseProp>(
   ({ id, addressHash }) => {
     const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
-    const { dismissModal, onDismiss } = useModalDismiss({ id })
+    const { dismissModal } = useModalContext()
 
     return (
       <BottomModal2
-        onDismiss={onDismiss}
         notScrollable
         modalId={id}
         noPadding

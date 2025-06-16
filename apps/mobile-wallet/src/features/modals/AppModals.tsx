@@ -29,7 +29,9 @@ import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal
 import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
+import ModalContextProvider from '~/features/modals/ModalContext'
 import { selectAllModals } from '~/features/modals/modalSelectors'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
@@ -65,107 +67,115 @@ const AppModals = () => {
       {openedModals.map((modal) => {
         const { id, params } = modal
 
-        switch (params.name) {
-          case 'BuyModal':
-            return <BuyModal key={id} id={id} {...params.props} />
-          case 'BackupReminderModal':
-            return <BackupReminderModal key={id} id={id} {...params.props} />
-          case 'SwitchNetworkModal':
-            return <SwitchNetworkModal key={id} id={id} {...params.props} />
-          case 'TransactionModal':
-            return <TransactionModal key={id} id={id} {...params.props} />
-          case 'NftModal':
-            return <NftModal key={id} id={id} {...params.props} />
-          case 'NftGridModal':
-            return <NftGridModal key={id} id={id} {...params.props} />
-          case 'AddressNftsGridModal':
-            return <AddressNftsGridModal key={id} id={id} {...params.props} />
-          case 'WalletDeleteModal':
-            return <WalletDeleteModal key={id} id={id} {...params.props} />
-          case 'BiometricsWarningModal':
-            return <BiometricsWarningModal key={id} id={id} {...params.props} />
-          case 'MnemonicModal':
-            return <MnemonicModal key={id} id={id} {...params.props} />
-          case 'AutoLockOptionsModal':
-            return <AutoLockOptionsModal key={id} id={id} />
-          case 'CurrencySelectModal':
-            return <CurrencySelectModal key={id} id={id} />
-          case 'LanguageSelectModal':
-            return <LanguageSelectModal key={id} id={id} />
-          case 'EditWalletNameModal':
-            return <EditWalletNameModal key={id} id={id} />
-          case 'FundPasswordModal':
-            return <FundPasswordModal key={id} id={id} {...params.props} />
-          case 'SafePlaceWarningModal':
-            return <SafePlaceWarningModal key={id} id={id} />
-          case 'SelectAddressModal':
-            return <SelectAddressModal key={id} id={id} {...params.props} />
-          case 'SelectContactModal':
-            return <SelectContactModal key={id} id={id} {...params.props} />
-          case 'ConsolidationModal':
-            return <ConsolidationModal key={id} id={id} {...params.props} />
-          case 'WalletConnectErrorModal':
-            return <WalletConnectErrorModal key={id} id={id} {...params.props} />
-          case 'WalletConnectPairingsModal':
-            return <WalletConnectPairingsModal key={id} id={id} {...params.props} />
-          case 'WalletConnectPasteUrlModal':
-            return <WalletConnectPasteUrlModal key={id} id={id} {...params.props} />
-          case 'WalletConnectSessionProposalModal':
-            return <WalletConnectSessionProposalModal key={id} id={id} {...params.props} />
-          case 'GroupSelectModal':
-            return <GroupSelectModal key={id} id={id} {...params.props} />
-          case 'TokenAmountModal':
-            return <TokenAmountModal key={id} id={id} {...params.props} />
-          case 'AddressDetailsModal':
-            return <AddressDetailsModal key={id} id={id} {...params.props} />
-          case 'ReceiveQRCodeModal':
-            return <ReceiveQRCodeModal key={id} id={id} {...params.props} />
-          case 'AddressSettingsModal':
-            return <AddressSettingsModal key={id} id={id} {...params.props} />
-          case 'TokenDetailsModal':
-            return <TokenDetailsModal key={id} id={id} {...params.props} />
-          case 'AddressQuickActionsModal':
-            return <AddressQuickActionsModal key={id} id={id} {...params.props} />
-          case 'AddressesWithTokenModal':
-            return <AddressesWithTokenModal key={id} id={id} {...params.props} />
-          case 'SelectTokenToHideModal':
-            return <SelectTokenToHideModal key={id} id={id} />
-          case 'TokenQuickActionsModal':
-            return <TokenQuickActionsModal key={id} id={id} {...params.props} />
-          case 'AddressQRCodeScanActionsModal':
-            return <AddressQRCodeScanActionsModal key={id} id={id} {...params.props} />
-          case 'AddressPickerQuickActionsModal':
-            return <AddressPickerQuickActionsModal key={id} id={id} {...params.props} />
-          case 'DAppQuickActionsModal':
-            return <DAppQuickActionsModal key={id} id={id} {...params.props} />
-          case 'DAppDetailsModal':
-            return <DAppDetailsModal key={id} id={id} {...params.props} />
-          case 'RegionSelectModal':
-            return <RegionSelectModal key={id} id={id} />
-          case 'UnknownTokensModal':
-            return <UnknownTokensModal key={id} id={id} />
-          case 'ConnectDappModal':
-            return <ConnectDappModal key={id} id={id} {...params.props} />
-          case 'NetworkSwitchModal':
-            return <NetworkSwitchModal key={id} id={id} {...params.props} />
-          case 'NewAddressModal':
-            return <NewAddressModal key={id} id={id} {...params.props} />
-          case 'SignExecuteScriptTxModal':
-            return <SignExecuteScriptTxModal key={id} id={id} {...params.props} />
-          case 'SignDeployContractTxModal':
-            return <SignDeployContractTxModal key={id} id={id} {...params.props} />
-          case 'SignTransferTxModal':
-            return <SignTransferTxModal key={id} id={id} {...params.props} />
-          case 'SignUnsignedTxModal':
-            return <SignUnsignedTxModal key={id} id={id} {...params.props} />
-          case 'SignMessageTxModal':
-            return <SignMessageTxModal key={id} id={id} {...params.props} />
-          default:
-            return null
-        }
+        return (
+          <ModalContextProvider id={id} onUserDismiss={params?.props?.onUserDismiss} key={id}>
+            <Modal id={id} params={params} />
+          </ModalContextProvider>
+        )
       })}
     </ModalsContainer>
   )
+}
+
+const Modal = ({ id, params }: Omit<ModalInstance, 'isClosing'>) => {
+  switch (params.name) {
+    case 'BuyModal':
+      return <BuyModal id={id} {...params.props} />
+    case 'BackupReminderModal':
+      return <BackupReminderModal id={id} {...params.props} />
+    case 'SwitchNetworkModal':
+      return <SwitchNetworkModal id={id} {...params.props} />
+    case 'TransactionModal':
+      return <TransactionModal id={id} {...params.props} />
+    case 'NftModal':
+      return <NftModal id={id} {...params.props} />
+    case 'NftGridModal':
+      return <NftGridModal id={id} {...params.props} />
+    case 'AddressNftsGridModal':
+      return <AddressNftsGridModal id={id} {...params.props} />
+    case 'WalletDeleteModal':
+      return <WalletDeleteModal id={id} {...params.props} />
+    case 'BiometricsWarningModal':
+      return <BiometricsWarningModal id={id} {...params.props} />
+    case 'MnemonicModal':
+      return <MnemonicModal id={id} {...params.props} />
+    case 'AutoLockOptionsModal':
+      return <AutoLockOptionsModal id={id} />
+    case 'CurrencySelectModal':
+      return <CurrencySelectModal id={id} />
+    case 'LanguageSelectModal':
+      return <LanguageSelectModal id={id} />
+    case 'EditWalletNameModal':
+      return <EditWalletNameModal id={id} />
+    case 'FundPasswordModal':
+      return <FundPasswordModal id={id} {...params.props} />
+    case 'SafePlaceWarningModal':
+      return <SafePlaceWarningModal id={id} />
+    case 'SelectAddressModal':
+      return <SelectAddressModal id={id} {...params.props} />
+    case 'SelectContactModal':
+      return <SelectContactModal id={id} {...params.props} />
+    case 'ConsolidationModal':
+      return <ConsolidationModal id={id} {...params.props} />
+    case 'WalletConnectErrorModal':
+      return <WalletConnectErrorModal id={id} {...params.props} />
+    case 'WalletConnectPairingsModal':
+      return <WalletConnectPairingsModal id={id} {...params.props} />
+    case 'WalletConnectPasteUrlModal':
+      return <WalletConnectPasteUrlModal id={id} {...params.props} />
+    case 'WalletConnectSessionProposalModal':
+      return <WalletConnectSessionProposalModal id={id} {...params.props} />
+    case 'GroupSelectModal':
+      return <GroupSelectModal id={id} {...params.props} />
+    case 'TokenAmountModal':
+      return <TokenAmountModal id={id} {...params.props} />
+    case 'AddressDetailsModal':
+      return <AddressDetailsModal id={id} {...params.props} />
+    case 'ReceiveQRCodeModal':
+      return <ReceiveQRCodeModal id={id} {...params.props} />
+    case 'AddressSettingsModal':
+      return <AddressSettingsModal id={id} {...params.props} />
+    case 'TokenDetailsModal':
+      return <TokenDetailsModal id={id} {...params.props} />
+    case 'AddressQuickActionsModal':
+      return <AddressQuickActionsModal id={id} {...params.props} />
+    case 'AddressesWithTokenModal':
+      return <AddressesWithTokenModal id={id} {...params.props} />
+    case 'SelectTokenToHideModal':
+      return <SelectTokenToHideModal id={id} />
+    case 'TokenQuickActionsModal':
+      return <TokenQuickActionsModal id={id} {...params.props} />
+    case 'AddressQRCodeScanActionsModal':
+      return <AddressQRCodeScanActionsModal id={id} {...params.props} />
+    case 'AddressPickerQuickActionsModal':
+      return <AddressPickerQuickActionsModal id={id} {...params.props} />
+    case 'DAppQuickActionsModal':
+      return <DAppQuickActionsModal id={id} {...params.props} />
+    case 'DAppDetailsModal':
+      return <DAppDetailsModal id={id} {...params.props} />
+    case 'RegionSelectModal':
+      return <RegionSelectModal id={id} />
+    case 'UnknownTokensModal':
+      return <UnknownTokensModal id={id} />
+    case 'ConnectDappModal':
+      return <ConnectDappModal id={id} {...params.props} />
+    case 'NetworkSwitchModal':
+      return <NetworkSwitchModal id={id} {...params.props} />
+    case 'NewAddressModal':
+      return <NewAddressModal id={id} {...params.props} />
+    case 'SignExecuteScriptTxModal':
+      return <SignExecuteScriptTxModal id={id} {...params.props} />
+    case 'SignDeployContractTxModal':
+      return <SignDeployContractTxModal id={id} {...params.props} />
+    case 'SignTransferTxModal':
+      return <SignTransferTxModal id={id} {...params.props} />
+    case 'SignUnsignedTxModal':
+      return <SignUnsignedTxModal id={id} {...params.props} />
+    case 'SignMessageTxModal':
+      return <SignMessageTxModal id={id} {...params.props} />
+    default:
+      return null
+  }
 }
 
 interface ModalsContainerProps {

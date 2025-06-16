@@ -7,8 +7,8 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
@@ -24,7 +24,7 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
     correctPassword: fundPassword ?? '',
     errorMessage: t('Provided fund password is wrong')
   })
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const [displayedError, setDisplayedError] = useState<string | undefined>()
 
@@ -45,7 +45,7 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+    <BottomModal2 modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>

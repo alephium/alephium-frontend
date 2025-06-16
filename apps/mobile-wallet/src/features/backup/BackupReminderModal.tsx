@@ -6,8 +6,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
@@ -17,7 +17,7 @@ export interface BackupReminderModalProps {
 const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleValidatePress = () => {
     dismissModal()
@@ -25,7 +25,7 @@ const BackupReminderModal = memo<BackupReminderModalProps & ModalBaseProp>(({ id
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+    <BottomModal2 modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       </ScreenSection>

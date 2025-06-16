@@ -27,13 +27,20 @@ interface SignTransferTxModalProps extends SignTxModalCommonProps {
 }
 
 const SignTransferTxModal = memo(
-  ({ id, txParams, unsignedData, origin, onError, onReject, onSuccess }: SignTransferTxModalProps & ModalBaseProp) => {
+  ({
+    id,
+    txParams,
+    unsignedData,
+    origin,
+    onError,
+    onUserDismiss,
+    onSuccess
+  }: SignTransferTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
-    const { handleApprovePress, handleRejectPress, onDismiss, fees } = useSignModal({
-      id,
-      onReject,
+    const { handleApprovePress, handleRejectPress, fees } = useSignModal({
+      onUserDismiss,
       onError,
       unsignedData,
       sign: async () => {
@@ -68,7 +75,7 @@ const SignTransferTxModal = memo(
     })
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} contentVerticalGap>
+      <BottomModal2 modalId={id} contentVerticalGap>
         <ScreenSection>
           <Surface>
             <AssetsAmountsRows assetAmounts={txParams.assetAmounts} />

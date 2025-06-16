@@ -5,7 +5,6 @@ import AddressBadge from '~/components/AddressBadge'
 import useNftsGridFlashListProps from '~/features/assetsDisplay/nftsDisplay/useNftsGridFlashListProps'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 
 export interface AddressNftsGridModalProps {
   addressHash: string
@@ -14,15 +13,9 @@ export interface AddressNftsGridModalProps {
 const AddressNftsGridModal = memo<AddressNftsGridModalProps & ModalBaseProp>(({ id, addressHash }) => {
   const { data: nfts } = useFetchAddressNfts(addressHash)
   const flashListProps = useNftsGridFlashListProps({ nfts })
-  const { onDismiss } = useModalDismiss({ id })
 
   return (
-    <BottomModal2
-      modalId={id}
-      onDismiss={onDismiss}
-      title={<AddressBadge addressHash={addressHash} />}
-      flashListProps={flashListProps}
-    />
+    <BottomModal2 modalId={id} title={<AddressBadge addressHash={addressHash} />} flashListProps={flashListProps} />
   )
 })
 

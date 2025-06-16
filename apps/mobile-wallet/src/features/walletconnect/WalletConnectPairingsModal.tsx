@@ -10,8 +10,8 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
@@ -21,7 +21,7 @@ interface WalletConnectPairingsModalProps {
 const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalBaseProp>(
   ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
     const { t } = useTranslation()
-    const { dismissModal, onDismiss } = useModalDismiss({ id })
+    const { dismissModal } = useModalContext()
     const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
     useEffect(() => {
@@ -33,7 +33,7 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps & ModalB
     }
 
     return (
-      <BottomModal2 onDismiss={onDismiss} modalId={id} title={t('Current connections')} contentVerticalGap>
+      <BottomModal2 modalId={id} title={t('Current connections')} contentVerticalGap>
         {activeSessions.map(({ topic, peer: { metadata } }, index) => (
           <ListItem
             key={topic}

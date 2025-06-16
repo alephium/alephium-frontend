@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
@@ -14,7 +14,7 @@ interface SelectAddressModalProps {
 
 const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ id, onAddressPress }) => {
   const { data } = useFetchAddressesHashesSortedByLastUse()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
   const { t } = useTranslation()
 
   const handleAddressPress = (addressHash: AddressHash) => {
@@ -24,7 +24,6 @@ const SelectAddressModal = memo<SelectAddressModalProps & ModalBaseProp>(({ id, 
 
   return (
     <BottomModal2
-      onDismiss={onDismiss}
       modalId={id}
       title={t('Addresses')}
       flashListProps={{

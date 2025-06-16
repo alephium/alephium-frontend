@@ -25,8 +25,8 @@ import {
 } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
@@ -34,7 +34,7 @@ import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ id, tokenId, addressHash, onClose }) => {
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleClose = () => {
     dismissModal()
@@ -42,13 +42,7 @@ const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ id, to
   }
 
   return (
-    <BottomModal2
-      onDismiss={onDismiss}
-      notScrollable
-      modalId={id}
-      title={<TokenDetailsModalHeader tokenId={tokenId} />}
-      titleAlign="left"
-    >
+    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>

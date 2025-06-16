@@ -9,8 +9,8 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
-import useModalDismiss from '~/features/modals/useModalDismiss'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void
@@ -19,7 +19,7 @@ interface ConsolidationModalProps {
 
 const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, onConsolidate, fees }) => {
   const { t } = useTranslation()
-  const { dismissModal, onDismiss } = useModalDismiss({ id })
+  const { dismissModal } = useModalContext()
 
   const handleConsolidate = () => {
     onConsolidate()
@@ -31,7 +31,7 @@ const ConsolidationModal = memo<ConsolidationModalProps & ModalBaseProp>(({ id, 
   }
 
   return (
-    <BottomModal2 onDismiss={onDismiss} notScrollable modalId={id}>
+    <BottomModal2 notScrollable modalId={id}>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
