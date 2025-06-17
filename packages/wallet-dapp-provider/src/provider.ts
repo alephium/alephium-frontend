@@ -4,7 +4,7 @@ import { MessageType } from 'src/types/messages'
 
 import { alephiumWindowObject } from './alephiumWindowObject'
 
-const INJECT_NAMES = ['alephium']
+const INJECT_NAMES = ['alephiumMobile']
 
 declare global {
   interface Window {
@@ -64,6 +64,6 @@ export const attachAlephiumProvider = () => {
     } catch {
       // ignore
     }
-    window.dispatchEvent(new Event(providerInitializedEvent('alephium')))
+    window.dispatchEvent(new Event(providerInitializedEvent('alephiumMobile')))
   })
 }
