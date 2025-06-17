@@ -65,7 +65,14 @@ const AddressForm = ({
   return (
     <View>
       <Row title={t('Label')}>
-        <Input isInModal={isInModal} value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
+        <Input
+          isInModal={isInModal}
+          defaultValue={label}
+          onChangeText={setLabel}
+          label={t('Label')}
+          maxLength={50}
+          short
+        />
       </Row>
       <ColorPicker value={color} onChange={setColor} />
       <Row

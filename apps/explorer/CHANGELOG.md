@@ -1,5 +1,18 @@
 # @alephium/explorer
 
+## 1.10.14
+
+### Patch Changes
+
+- 8e47c0b: Fix display of newly confirmed transactions
+
+## 1.10.13
+
+### Patch Changes
+
+- 93e9342: Fix display of prices
+- 1087424: Improve layout
+
 ## 1.10.12
 
 ### Patch Changes

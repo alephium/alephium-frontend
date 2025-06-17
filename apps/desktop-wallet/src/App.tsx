@@ -1,7 +1,7 @@
 import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { clear as clearIndexedDB } from 'idb-keyval'
-import { memo, ReactNode, useCallback, useEffect } from 'react'
+import { memo, ReactNode, useCallback, useEffect, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
@@ -243,7 +243,19 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
 const LoginAnimatedBackground = () => {
   const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
 
-  if (isWalletUnlocked) return null
+  const [isWindowFocused, setIsWindowFocused] = useState(true)
+
+  useEffect(() => {
+    if (window.electron) {
+      const removeFocusListener = window.electron.window.onFocusChange((focused) => {
+        setIsWindowFocused(focused)
+      })
+
+      return removeFocusListener
+    }
+  }, [])
+
+  if (isWalletUnlocked || !isWindowFocused) return null
 
   return <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-100} hiddenOverflow />
 }

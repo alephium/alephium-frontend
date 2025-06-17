@@ -10,3 +10,6 @@ export const matchRequestOptionsToAuthorizedConnection =
     (requestOptions.networkId === undefined || storedConnection.networkName === requestOptions.networkId) &&
     (requestOptions.addressGroup === undefined ||
       groupOfAddress(storedConnection.address) === requestOptions.addressGroup)
+
+export const getAuthorizedConnectionId = (connection: AuthorizedConnection) =>
+  `${connection.host}-${connection.networkName}`

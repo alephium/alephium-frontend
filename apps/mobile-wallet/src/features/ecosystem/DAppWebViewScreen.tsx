@@ -12,18 +12,17 @@ import DappBrowserHeader from '~/features/ecosystem/dAppBrowser/DappBrowserHeade
 import DappBrowserWebView from '~/features/ecosystem/dAppBrowser/DappBrowserWebView'
 import { DappBrowserContextProvider } from '~/features/ecosystem/dAppMessaging/DappBrowserContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { showToast, ToastDuration } from '~/utils/layout'
 
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
-  const { dAppUrl, dAppName } = route.params
-
+  const { dAppUrl: dAppUrlFromParams, dAppName: dAppNameFromParams } = route.params
   const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
 
-  const [currentUrl, setCurrentUrl] = useState(dAppUrl)
+  const [currentUrl, setCurrentUrl] = useState(dAppUrlFromParams)
+  const [currentDappName, setCurrentDappName] = useState<string | undefined>(dAppNameFromParams)
   const [canGoBack, setCanGoBack] = useState(false)
   const [canGoForward, setCanGoForward] = useState(false)
 
@@ -37,7 +36,12 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
     }, [setIsInEcosystemInAppBrowser])
   )
 
-  if (!dAppUrl) return null
+  const handleUrlChange = useCallback((url: string) => {
+    setCurrentUrl(url)
+    setCurrentDappName(undefined)
+  }, [])
+
+  if (!currentUrl) return null
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     setCanGoBack(navState.canGoBack)
@@ -45,12 +49,11 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
   }
 
   return (
-    <DappBrowserContextProvider dAppUrl={dAppUrl} dAppName={dAppName}>
+    <DappBrowserContextProvider dAppUrl={currentUrl} dAppName={currentDappName}>
       <Screen {...props}>
-        <DappBrowserHeader dAppName={dAppName} currentUrl={currentUrl} />
+        <DappBrowserHeader dAppName={currentDappName} currentUrl={currentUrl} onUrlChange={handleUrlChange} />
         <DappBrowserWebView
-          dAppName={dAppName}
-          dAppUrl={dAppUrl}
+          dAppUrl={currentUrl}
           onNavigationStateChange={handleNavigationStateChange}
           onLoad={(e) => setCurrentUrl(e.nativeEvent.url)}
         />
@@ -66,7 +69,6 @@ const useDetectWCUrlInClipboardAndPair = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { pairWithDapp } = useWalletConnectContext()
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   useEffect(() => {
@@ -76,21 +78,11 @@ const useDetectWCUrlInClipboardAndPair = () => {
       if (content.startsWith('wc:')) {
         Clipboard.setStringAsync('')
 
-        if (!isWalletConnectEnabled) {
-          showToast({
-            text1: t('Experimental feature'),
-            text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
-            type: 'info',
-            visibilityTime: ToastDuration.LONG,
-            onPress: () => navigation.navigate('SettingsScreen')
-          })
-        } else {
-          dispatch(activateAppLoading(t('Connecting')))
+        dispatch(activateAppLoading(t('Connecting')))
 
-          await pairWithDapp(content)
+        await pairWithDapp(content)
 
-          dispatch(deactivateAppLoading())
-        }
+        dispatch(deactivateAppLoading())
       }
     }
 
@@ -99,5 +91,5 @@ const useDetectWCUrlInClipboardAndPair = () => {
     const intervalId = setInterval(checkClipboard, 1000)
 
     return () => clearInterval(intervalId)
-  }, [dispatch, isWalletConnectEnabled, navigation, pairWithDapp, t])
+  }, [dispatch, navigation, pairWithDapp, t])
 }

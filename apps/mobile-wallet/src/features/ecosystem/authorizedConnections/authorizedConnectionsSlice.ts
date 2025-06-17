@@ -4,10 +4,12 @@ import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit
 import {
   connectionAuthorized,
   connectionRemoved,
-  connectionsCleared
+  connectionsCleared,
+  hostConnectionRemoved
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsActions'
 import { connectionsAdapter } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsAdapter'
 import { selectAllAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSelectors'
+import { getAuthorizedConnectionId } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsUtils'
 import {
   loadAuthorizedConnections,
   persistAuthorizedConnections
@@ -34,7 +36,11 @@ const authorizedConnectionsSlice = createSlice({
       connectionsAdapter.addOne(state, connection)
     })
     builder.addCase(connectionRemoved, (state, action) => {
-      connectionsAdapter.removeOne(state, action.payload)
+      connectionsAdapter.removeOne(state, getAuthorizedConnectionId(action.payload))
+    })
+    builder.addCase(hostConnectionRemoved, (state, action) => {
+      const ids = state.ids.filter((id) => id.toString().startsWith(action.payload))
+      connectionsAdapter.removeMany(state, ids)
     })
     builder.addCase(connectionsCleared, (state) => {
       connectionsAdapter.removeAll(state)

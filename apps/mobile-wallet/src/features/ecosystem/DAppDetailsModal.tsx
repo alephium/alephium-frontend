@@ -33,7 +33,7 @@ const DAppDetailsModal = memo<DAppProps>(({ dAppName }) => {
           <Button
             title={t('More details on Alph.land')}
             onPress={handleOpenAlphLand}
-            iconProps={{ name: 'external-link' }}
+            iconProps={{ name: 'open-outline' }}
           />
           <VisitDAppButton
             dAppName={dAppName}

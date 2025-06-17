@@ -34,24 +34,24 @@ export const TextStyled = styled(Text)<AppTextProps>`
     return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
-  font-family: 'Inter18pt-Medium';
+  font-family: 'Geist-Medium';
 
   ${({ bold }) =>
     bold &&
     css`
-      font-family: 'Inter18pt-Bold';
+      font-family: 'Geist-Bold';
     `}
 
   ${({ semiBold }) =>
     semiBold &&
     css`
-      font-family: 'Inter18pt-SemiBold';
+      font-family: 'Geist-SemiBold';
     `}
 
   ${({ medium }) =>
     medium &&
     css`
-      font-family: 'Inter18pt-Medium';
+      font-family: 'Geist-Medium';
     `}
 
   ${({ size = 15 }) =>

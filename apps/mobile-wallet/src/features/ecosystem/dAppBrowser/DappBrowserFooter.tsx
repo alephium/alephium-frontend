@@ -23,20 +23,20 @@ const DappBrowserFooter = ({ canGoBack, canGoForward }: DappBrowserFooterProps) 
       <ButtonsList>
         <Button
           onPress={handleGoBack}
-          iconProps={{ name: 'arrow-left' }}
+          iconProps={{ name: 'arrow-back' }}
           squared
           type="transparent"
           disabled={!canGoBack}
         />
         <Button
           onPress={handleGoForward}
-          iconProps={{ name: 'arrow-right' }}
+          iconProps={{ name: 'arrow-forward' }}
           squared
           type="transparent"
           disabled={!canGoForward}
         />
       </ButtonsList>
-      <Button onPress={handleReload} iconProps={{ name: 'refresh-cw' }} squared type="transparent" />
+      <Button onPress={handleReload} iconProps={{ name: 'refresh-outline' }} squared type="transparent" />
     </BrowserBottomStyled>
   )
 }

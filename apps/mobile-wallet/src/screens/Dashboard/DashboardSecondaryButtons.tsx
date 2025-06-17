@@ -1,4 +1,5 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -11,7 +12,6 @@ import { showToast } from '~/utils/layout'
 const DashboardSecondaryButtons = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
@@ -23,22 +23,23 @@ const DashboardSecondaryButtons = () => {
       onPress: () => navigation.navigate('SettingsScreen')
     })
 
-  const areNoButtonsVisible = !isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-  const onlySideButtonVisible = isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-
-  if (areNoButtonsVisible) return null
-
   return (
-    <DashboardSecondaryButtonsStyled style={{ height: onlySideButtonVisible ? 15 : 30 }}>
+    <DashboardSecondaryButtonsStyled style={{ height: 15 }}>
       <Buttons>
-        {isWalletConnectEnabled && <WalletConnectButton />}
+        <WalletConnectButton />
         {networkStatus === 'offline' && (
-          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared compact />
+          <Button
+            onPress={showOfflineMessage}
+            iconProps={{ name: 'cloud-offline-outline' }}
+            variant="alert"
+            squared
+            compact
+          />
         )}
         {!isMnemonicBackedUp && (
-          <Button
+          <AlertButton
             onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-            iconProps={{ name: 'alert-triangle' }}
+            iconProps={{ name: 'alert-outline' }}
             variant="alert"
             squared
             compact
@@ -60,4 +61,8 @@ const Buttons = styled.View`
   flex-direction: row-reverse;
   justify-content: space-between;
   gap: 10px;
+`
+
+const AlertButton = styled(Button)`
+  border: 1px solid ${({ theme }) => colord(theme.global.alert).alpha(0.2).toRgbString()};
 `

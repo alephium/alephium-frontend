@@ -14,7 +14,7 @@ import WebView from 'react-native-webview'
 import { buildDeployContractTransaction } from '~/api/transactions'
 import {
   connectionAuthorized,
-  connectionRemoved
+  hostConnectionRemoved
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsActions'
 import {
   getAuthorizedConnection,
@@ -41,7 +41,7 @@ const DappBrowserContext = createContext<DappBrowserContextValue | null>(null)
 interface DappBrowserContextProviderProps {
   children: ReactNode
   dAppUrl: string
-  dAppName: string
+  dAppName?: string
 }
 
 export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: DappBrowserContextProviderProps) => {
@@ -75,7 +75,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
   const handleRemovePreAuthorization = useCallback(
     (host: string, messageId: string) => {
-      dispatch(connectionRemoved(host))
+      dispatch(hostConnectionRemoved(host))
       replyToDapp({ type: 'ALPH_REMOVE_PREAUTHORIZATION_RES' }, messageId)
     },
     [dispatch, replyToDapp]

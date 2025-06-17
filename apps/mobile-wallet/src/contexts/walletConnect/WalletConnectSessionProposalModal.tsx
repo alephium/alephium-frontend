@@ -118,14 +118,15 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
           }
         }
 
-        const { topic, acknowledged } = await walletConnectClient.approveSession({
+        const approvalResponse = await walletConnectClient.approveSession({
           id: proposalEventId,
           relayProtocol,
           namespaces
         })
-        console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
+
+        console.log('👉 APPROVAL TOPIC RECEIVED:', approvalResponse.topic)
         console.log('✅ APPROVING: DONE!')
-        console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', acknowledged)
+        console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', approvalResponse.acknowledged)
 
         sendAnalytics({ event: 'WC: Approved connection' })
       } catch (e) {

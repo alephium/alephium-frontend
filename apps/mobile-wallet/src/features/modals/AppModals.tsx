@@ -19,6 +19,7 @@ import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
+import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
@@ -50,6 +51,7 @@ import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPa
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
+import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
@@ -173,6 +175,10 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <SignUnsignedTxModal {...params.props} />
     case 'SignMessageTxModal':
       return <SignMessageTxModal {...params.props} />
+    case 'EditDappUrlModal':
+      return <EditDappUrlModal {...params.props} />
+    case 'DataFetchErrorModal':
+      return <DataFetchErrorModal {...params.props} />
     default:
       return null
   }

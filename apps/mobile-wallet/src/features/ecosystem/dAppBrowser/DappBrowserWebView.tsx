@@ -6,13 +6,12 @@ import { INJECTED_JAVASCRIPT } from '~/features/ecosystem/dAppMessaging/injected
 import useHandleDappMessages from '~/features/ecosystem/dAppMessaging/useHandleDappMessages'
 
 interface DappBrowserWebViewProps extends WebViewProps {
-  dAppName: string
   dAppUrl: string
 }
 
-const DappBrowserWebView = ({ dAppName, dAppUrl, ...props }: DappBrowserWebViewProps) => {
+const DappBrowserWebView = ({ dAppUrl, ...props }: DappBrowserWebViewProps) => {
   const webViewRef = useDappBrowserContext()
-  const { handleDappMessage } = useHandleDappMessages({ dAppName })
+  const { handleDappMessage } = useHandleDappMessages()
 
   return (
     <WebViewStyled

@@ -35,7 +35,7 @@ const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
   }
 
   return (
-    <BottomModal2 notScrollable contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
 
       {onVerifyPress && (

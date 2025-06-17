@@ -38,14 +38,14 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps>(({ onPa
           isLast={index === activeSessions.length - 1}
           icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
           rightSideContent={
-            <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleDisconnectPress(topic)} />
+            <Button iconProps={{ name: 'close' }} squared compact onPress={() => handleDisconnectPress(topic)} />
           }
         />
       ))}
       {activeSessions.length === 0 && <AuthorizedConnectionsEmptyList />}
       <BottomButtons fullWidth backgroundColor="back1">
         <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
-        <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
+        <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'scan-outline' }} />
       </BottomButtons>
     </BottomModal2>
   )

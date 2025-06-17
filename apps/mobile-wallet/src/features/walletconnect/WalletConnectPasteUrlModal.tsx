@@ -56,7 +56,7 @@ const WalletConnectPasteUrlModal = memo(() => {
         <Input
           isInModal
           label={t('WalletConnect URI')}
-          value={inputWcUrl}
+          defaultValue={inputWcUrl}
           onChangeText={handleInputChange}
           error={error}
           autoFocus

@@ -3,7 +3,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '2.1.3',
+    version: '2.1.4',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -93,9 +93,9 @@ export default {
         'expo-font',
         {
           fonts: [
-            './assets/fonts/Inter18pt-Medium.ttf',
-            './assets/fonts/Inter18pt-SemiBold.ttf',
-            './assets/fonts/Inter18pt-Bold.ttf'
+            './assets/fonts/Geist-Medium.ttf',
+            './assets/fonts/Geist-SemiBold.ttf',
+            './assets/fonts/Geist-Bold.ttf'
           ]
         }
       ],

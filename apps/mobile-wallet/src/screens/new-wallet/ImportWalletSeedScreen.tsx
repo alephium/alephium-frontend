@@ -162,7 +162,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
             <InputZone>
               <WordInput
-                value={typedInput}
+                defaultValue={typedInput}
                 onChangeText={handleWordInputChange}
                 contextMenuHidden={true}
                 onSubmitEditing={handleEnterPress}
@@ -176,7 +176,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
                 <Button
                   variant="highlight"
                   onPress={importWallet}
-                  iconProps={{ name: 'arrow-right' }}
+                  iconProps={{ name: 'arrow-forward' }}
                   squared
                   loading={loading}
                 />

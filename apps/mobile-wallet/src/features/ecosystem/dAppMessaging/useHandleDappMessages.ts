@@ -6,16 +6,12 @@ import { receivedDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dApp
 import { familiarDappMessageTypes } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { useAppDispatch } from '~/hooks/redux'
 
-interface UseHandleDappMessagesProps {
-  dAppName: string
-}
-
-const useHandleDappMessages = ({ dAppName }: UseHandleDappMessagesProps) => {
+const useHandleDappMessages = () => {
   const dispatch = useAppDispatch()
 
   const handleDappMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      console.log('🆕 RECEIVED EVENT FROM DAPP:', event.nativeEvent.data)
+      // console.log('🆕 RECEIVED EVENT FROM DAPP:', event.nativeEvent.data)
 
       try {
         const message = JSON.parse(event.nativeEvent.data) as MessageType

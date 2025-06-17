@@ -47,7 +47,11 @@ const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }
         <AddressSendButton addressHash={addressHash} onSendPress={onSendPress} />
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
-        <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
+        <ActionCardButton
+          title={t('Settings')}
+          onPress={handleSettingsPress}
+          iconProps={{ name: 'settings-outline' }}
+        />
       </ActionButtons>
 
       <AddressDetailsBox>

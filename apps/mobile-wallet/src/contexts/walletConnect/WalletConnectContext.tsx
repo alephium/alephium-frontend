@@ -58,7 +58,7 @@ import {
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { showExceptionToast, showToast } from '~/utils/layout'
+import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
 
@@ -104,7 +104,6 @@ const core = new Core({
 })
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
-  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
@@ -117,12 +116,45 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
   const [isInEcosystemInAppBrowser, setIsInEcosystemInAppBrowser] = useState(false)
 
-  const isWalletConnectClientReady =
-    isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
+  const isWalletConnectClientReady = walletConnectClient && walletConnectClientStatus === 'initialized'
 
   const refreshActiveSessions = useCallback(() => {
     if (walletConnectClient) setActiveSessions(Object.values(walletConnectClient.getActiveSessions()))
   }, [walletConnectClient])
+
+  // Since WalletConnect doesn't give us an event to listen to when a session gets dropped, we implement a polling
+  // mechamism.
+  useInterval(
+    () => {
+      if (
+        walletConnectClient &&
+        Object.keys(walletConnectClient.getActiveSessions()).length !== activeSessions.length
+      ) {
+        const droppedSessions = activeSessions.filter(
+          (session) => !Object.keys(walletConnectClient.getActiveSessions()).includes(session.topic)
+        )
+
+        // Inform the dApp that the session has been dropped.
+        droppedSessions.forEach((session) => {
+          walletConnectClient.disconnectSession({
+            topic: session.topic,
+            reason: getSdkError('SESSION_SETTLEMENT_FAILED') // There's no error called "WC_SUCKS", so using the next best thing
+          })
+          showToast({
+            text1: t('WalletConnect connection unexpectedly dropped.'),
+            text2: t('Please, refresh {{ dAppUrl }}.', { dAppUrl: session.peer.metadata.url }),
+            type: 'error',
+            visibilityTime: ToastDuration.LONG
+          })
+        })
+
+        // Update the list of active sessions.
+        refreshActiveSessions()
+      }
+    },
+    2000,
+    !walletConnectClient || activeSessions.length === 0
+  )
 
   const initializeWalletConnectClient = useCallback(async () => {
     let client
@@ -180,7 +212,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [dispatch, t, walletConnectClient, walletConnectClientStatus])
 
   const shouldInitializeImmediately =
-    isWalletConnectEnabled &&
     walletConnectClientInitializationAttempts === 0 &&
     (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
   useEffect(() => {
@@ -188,7 +219,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [initializeWalletConnectClient, shouldInitializeImmediately])
 
   const shouldRetryInitializationAfterWaiting =
-    isWalletConnectEnabled &&
     walletConnectClientStatus === 'uninitialized' &&
     walletConnectClientInitializationAttempts > 0 &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
@@ -689,20 +719,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   ])
 
   useEffect(() => {
-    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url || !walletConnectClient)
+      return
 
-    if (!isWalletConnectEnabled) {
-      showToast({
-        text1: t('Experimental feature'),
-        text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
-        type: 'info'
-      })
-    } else if (walletConnectClient) {
-      pairWithDapp(url)
+    pairWithDapp(url)
 
-      wcDeepLink.current = url
-    }
-  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient, t])
+    wcDeepLink.current = url
+  }, [isWalletUnlocked, pairWithDapp, url, walletConnectClient, t])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
@@ -718,8 +741,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     try {
       console.log('Disconnect all sessions')
+
+      dispatch(activateAppLoading(t('Disconnecting')))
+
       const topics = Object.keys(walletConnectClient.getActiveSessions())
       const reason = getSdkError('USER_DISCONNECTED')
+
       for (const topic of topics) {
         try {
           await walletConnectClient.disconnectSession({ topic, reason })
@@ -740,10 +767,17 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       console.log('Clear walletconnect storage')
       await clearWCStorage(walletConnectClient)
+
+      showToast({
+        text1: t('WalletConnect cache cleared'),
+        type: 'success'
+      })
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
+    } finally {
+      dispatch(deactivateAppLoading())
     }
-  }, [refreshActiveSessions, walletConnectClient])
+  }, [dispatch, refreshActiveSessions, walletConnectClient, t])
 
   return (
     <WalletConnectContext.Provider

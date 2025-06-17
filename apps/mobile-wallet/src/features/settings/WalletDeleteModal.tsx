@@ -68,7 +68,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
         </AppText>
       </ScreenSection>
       <ScreenSection>
-        <Input isInModal label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
+        <Input isInModal label={t('Wallet name')} defaultValue={inputWalletName} onChangeText={setInputWalletName} />
       </ScreenSection>
       <ScreenSection>
         <Button
@@ -76,7 +76,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
           variant="alert"
           onPress={handleDeleteConfirmPress}
           disabled={inputWalletName !== walletName}
-          iconProps={{ name: 'trash' }}
+          iconProps={{ name: 'trash-outline' }}
         />
       </ScreenSection>
     </BottomModal2>

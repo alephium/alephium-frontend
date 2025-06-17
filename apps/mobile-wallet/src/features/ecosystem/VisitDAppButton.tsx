@@ -35,7 +35,7 @@ const VisitDAppButton = ({ dAppName, onVisitDappButtonPress, buttonType, ...prop
     <ButtonComponent
       title={t('Visit dApp')}
       onPress={handleVisitDApp}
-      iconProps={{ name: 'arrow-up-right' }}
+      iconProps={{ name: 'open-outline' }}
       {...props}
     />
   )

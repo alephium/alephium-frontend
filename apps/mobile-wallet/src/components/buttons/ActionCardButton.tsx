@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Feather'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import Animated, { LinearTransition } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -14,11 +14,11 @@ const ActionCardButton = ({ title, iconProps, color, ...props }: ActionCardButto
   const theme = useTheme()
 
   return (
-    <ButtonStyled flex {...props}>
+    <ButtonStyled flex variant="accent" {...props}>
       {iconProps && (
-        <AnimatedIonicons layout={LinearTransition} color={color || theme.font.primary} size={22} {...iconProps} />
+        <AnimatedIonicons layout={LinearTransition} color={color || theme.global.accent} size={22} {...iconProps} />
       )}
-      <AppText semiBold size={13} color={color} style={{ textAlign: 'center' }}>
+      <AppText semiBold size={13} color={color || theme.global.accent} style={{ textAlign: 'center' }}>
         {title}
       </AppText>
     </ButtonStyled>

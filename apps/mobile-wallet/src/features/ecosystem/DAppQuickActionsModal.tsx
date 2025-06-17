@@ -35,7 +35,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) =>
         <QuickActionButton
           title={t('Show details')}
           onPress={handleShowDetails}
-          iconProps={{ name: 'more-horizontal' }}
+          iconProps={{ name: 'ellipsis-horizontal' }}
         />
         <VisitDAppButton dAppName={dAppName} onVisitDappButtonPress={dismissModal} buttonType="quickAction" />
         <AddToFavoritesButton dAppName={dAppName} />
@@ -55,7 +55,7 @@ const AddToFavoritesButton = ({ dAppName }: DAppQuickActionsModalProps) => {
     <QuickActionButton
       title={isFavorite ? t('Remove from favorites') : t('Add to favorites')}
       onPress={toggleFavorite}
-      iconProps={{ name: 'star', color: isFavorite ? theme.font.highlight : theme.font.primary }}
+      iconProps={{ name: 'heart', color: isFavorite ? theme.global.alert : theme.font.primary }}
     />
   )
 }

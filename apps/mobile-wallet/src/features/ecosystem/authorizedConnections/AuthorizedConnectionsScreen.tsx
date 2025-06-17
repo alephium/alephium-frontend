@@ -22,11 +22,11 @@ const AuthorizedConnectionsScreen = () => {
   const { t } = useTranslation()
   const connections = useAppSelector(selectAllAuthorizedConnections)
 
-  const handleDisconnectPress = (host: string) => {
+  const handleDisconnectPress = (connection: AuthorizedConnection) => {
     vibrate(ImpactStyle.Light)
-    dispatch(connectionRemoved(host))
+    dispatch(connectionRemoved(connection))
     showToast({
-      text1: t('Revoked connection to {{ host }}', { host }),
+      text1: t('Revoked connection to {{ host }}', { host: connection.host }),
       type: 'success'
     })
   }
@@ -48,7 +48,7 @@ const AuthorizedConnectionsScreen = () => {
           isLast={index === connections.length - 1}
           icon={undefined}
           rightSideContent={
-            <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleDisconnectPress(connection.host)} />
+            <Button iconProps={{ name: 'close' }} squared compact onPress={() => handleDisconnectPress(connection)} />
           }
         />
       )}
