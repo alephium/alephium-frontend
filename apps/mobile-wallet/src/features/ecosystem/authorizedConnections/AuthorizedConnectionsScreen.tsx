@@ -41,11 +41,11 @@ const AuthorizedConnectionsScreen = () => {
       renderItem={({ item: connection, index }) => (
         <ListItemStyled
           key={connection.host}
-          title={connection.host}
+          title={<Title connection={connection} />}
           expandedSubtitle
           subtitle={<Subtitle connection={connection} />}
           isLast={index === connections.length - 1}
-          icon={connection.icon ? <DappIcon source={{ uri: connection.icon }} /> : undefined}
+          icon={undefined}
           rightSideContent={
             <Button
               onPress={() => handleDisconnectPress(connection.host)}
@@ -66,28 +66,45 @@ const ListItemStyled = styled(ListItem)`
   padding: 0 ${DEFAULT_MARGIN}px;
 `
 
+const Title = ({ connection }: { connection: AuthorizedConnection }) => (
+  <TitleStyled>
+    {connection.icon ? <DappIcon source={{ uri: connection.icon }} /> : undefined}
+    <AppText bold>{connection.host}</AppText>
+  </TitleStyled>
+)
+
+const TitleStyled = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`
+
 const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
   const { t } = useTranslation()
 
   return (
     <SubtitleStyled>
       <AddressBadge addressHash={connection.address} />
-      <AppText color="secondary">
+      <AppTextStyled color="secondary">
         {connection.networkName
-          ? t('Connected at {{ datetime }}', {
-              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm')
-            })
-          : t('Connected at {{ datetime }} on {{ network }}', {
+          ? t('Connected at {{ datetime }} on {{ network }}', {
               datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm'),
               network: connection.networkName
+            })
+          : t('Connected at {{ datetime }}', {
+              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm')
             })}
-      </AppText>
+      </AppTextStyled>
     </SubtitleStyled>
   )
 }
 
 const SubtitleStyled = styled.View`
-  margin-top: ${VERTICAL_GAP / 2}px;
+  margin-top: ${VERTICAL_GAP / 3}px;
+`
+
+const AppTextStyled = styled(AppText)`
+  margin-top: ${VERTICAL_GAP / 3}px;
 `
 
 const DappIcon = styled(Image)`
