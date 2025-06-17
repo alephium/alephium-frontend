@@ -48,11 +48,7 @@ const AuthorizedConnectionsScreen = () => {
           isLast={index === connections.length - 1}
           icon={undefined}
           rightSideContent={
-            <Button
-              onPress={() => handleDisconnectPress(connection.host)}
-              iconProps={{ name: 'trash' }}
-              type="transparent"
-            />
+            <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleDisconnectPress(connection.host)} />
           }
         />
       )}

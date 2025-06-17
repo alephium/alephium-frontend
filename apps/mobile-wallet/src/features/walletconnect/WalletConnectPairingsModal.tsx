@@ -38,7 +38,7 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps>(({ onPa
           isLast={index === activeSessions.length - 1}
           icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
           rightSideContent={
-            <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
+            <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleDisconnectPress(topic)} />
           }
         />
       ))}
