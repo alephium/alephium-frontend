@@ -100,7 +100,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           return
         }
 
-        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host)
+        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
         handleApproveDappConnection(connectedAddressPayload, messageId)
 
         return
@@ -140,7 +140,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
       // Select address automatically if there is only one address in the group
       if (addressesInGroup.length === 1) {
-        const connectedAddressPayload = await getConnectedAddressPayload(network, addressesInGroup[0], data.host)
+        const connectedAddressPayload = await getConnectedAddressPayload(
+          network,
+          addressesInGroup[0],
+          data.host,
+          data.icon
+        )
         handleApproveDappConnection(connectedAddressPayload, messageId)
 
         return

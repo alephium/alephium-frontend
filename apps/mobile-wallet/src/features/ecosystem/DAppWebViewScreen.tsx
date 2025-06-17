@@ -19,10 +19,7 @@ import { showToast, ToastDuration } from '~/utils/layout'
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { dAppUrl: dAppUrl_, dAppName } = route.params
-
-  const dAppUrl = 'http://localhost:3000'
+  const { dAppUrl, dAppName } = route.params
 
   const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
 

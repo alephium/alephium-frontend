@@ -13,6 +13,7 @@ import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
+import AuthorizedConnectionsScreen from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsScreen'
 import DAppWebViewScreen from '~/features/ecosystem/DAppWebViewScreen'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
@@ -123,6 +124,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}
                 />
+                <RootStack.Screen name="AuthorizedConnectionsScreen" component={AuthorizedConnectionsScreen} />
               </RootStack.Navigator>
               <AppModals />
             </WalletConnectContextProvider>

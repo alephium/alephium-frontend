@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components/native'
 import Box from '~/components/layout/Box'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-type EmptyPlaceholderProps = ViewProps & {
+export type EmptyPlaceholderProps = ViewProps & {
   noMargin?: boolean
   hasHorizontalMargin?: boolean
   hasVerticalMargin?: boolean

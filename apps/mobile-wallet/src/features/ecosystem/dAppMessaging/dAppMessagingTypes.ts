@@ -2,6 +2,7 @@ import { MessageType, WalletAccountWithNetwork } from '@alephium/wallet-dapp-pro
 
 export type ConnectedAddressPayload = WalletAccountWithNetwork & {
   host: string
+  icon?: string
 }
 
 // TODO: Share with extension wallet
