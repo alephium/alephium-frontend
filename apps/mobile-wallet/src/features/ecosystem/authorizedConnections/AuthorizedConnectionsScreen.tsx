@@ -9,6 +9,7 @@ import Button from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import ListItem from '~/components/ListItem'
 import { connectionRemoved } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsActions'
+import AuthorizedConnectionsEmptyList from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsEmptyList'
 import { selectAllAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSelectors'
 import { AuthorizedConnection } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -56,6 +57,7 @@ const AuthorizedConnectionsScreen = () => {
         />
       )}
       shouldUseGaps
+      ListEmptyComponent={<AuthorizedConnectionsEmptyList hasHorizontalMargin />}
     />
   )
 }

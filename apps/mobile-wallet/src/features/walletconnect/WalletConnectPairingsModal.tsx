@@ -3,12 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import AuthorizedConnectionsEmptyList from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsEmptyList'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 
@@ -43,11 +42,7 @@ const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps>(({ onPa
           }
         />
       ))}
-      {activeSessions.length === 0 && (
-        <EmptyPlaceholder>
-          <AppText>{t('There are no connections yet.')} 🔌</AppText>
-        </EmptyPlaceholder>
-      )}
+      {activeSessions.length === 0 && <AuthorizedConnectionsEmptyList />}
       <BottomButtons fullWidth backgroundColor="back1">
         <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
         <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
