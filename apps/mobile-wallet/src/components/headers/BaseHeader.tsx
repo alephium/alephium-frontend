@@ -1,9 +1,11 @@
+import MaskedView from '@react-native-masked-view/masked-view'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
+import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useState } from 'react'
-import { LayoutChangeEvent, useWindowDimensions, ViewProps } from 'react-native'
+import { LayoutChangeEvent, Platform, useWindowDimensions, ViewProps } from 'react-native'
 import Animated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
@@ -87,13 +89,31 @@ const BaseHeader = ({
         pointerEvents="none"
         style={[gradientOpacityAnimatedStyle, { width: screenWidth, height: gradientHeight }]}
       >
-        <HeaderGradient
-          pointerEvents="none"
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-          locations={[0.7, 1]}
-          colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
-        />
+        {Platform.OS === 'ios' ? (
+          <MaskedView
+            style={{ flex: 1 }}
+            maskElement={
+              <GradientMask
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                locations={[0.5, 0.7, 1]}
+                colors={['black', 'rgba(0, 0, 0, 0.8)', 'transparent']}
+                style={{ flex: 1 }}
+                pointerEvents="none"
+              />
+            }
+          >
+            <BlurView tint={theme.name} intensity={80} style={{ flex: 1 }} />
+          </MaskedView>
+        ) : (
+          <SimpleGradient
+            pointerEvents="none"
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            locations={[0.7, 1]}
+            colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
+          />
+        )}
       </HeaderGradientContainer>
       <HeaderContainer>
         <Header style={{ marginTop }}>
@@ -142,7 +162,12 @@ const HeaderGradientContainer = styled(Animated.View)`
   opacity: 0;
 `
 
-const HeaderGradient = styled(LinearGradient)`
+const GradientMask = styled(LinearGradient)`
+  height: 100%;
+  width: 100%;
+`
+
+const SimpleGradient = styled(LinearGradient)`
   height: 100%;
   width: 100%;
 `

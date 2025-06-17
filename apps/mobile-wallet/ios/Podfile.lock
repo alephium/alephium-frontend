@@ -2099,6 +2099,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNCMaskedView (0.3.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNFlashList (1.7.3):
     - DoubleConversion
     - glog
@@ -2519,6 +2540,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../../../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCMaskedView (from `../../../node_modules/@react-native-masked-view/masked-view`)"
   - "RNFlashList (from `../../../node_modules/@shopify/flash-list`)"
   - RNGestureHandler (from `../../../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../../../node_modules/react-native-localize`)
@@ -2756,6 +2778,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../../../node_modules/@react-native-async-storage/async-storage"
+  RNCMaskedView:
+    :path: "../../../node_modules/@react-native-masked-view/masked-view"
   RNFlashList:
     :path: "../../../node_modules/@shopify/flash-list"
   RNGestureHandler:
@@ -2884,6 +2908,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 2a46abb2e345dc8efaff0a724f5f8639230eb974
   ReactCommon: 300d8d9c5cb1a6cd79a67cf5d8f91e4d477195f9
   RNCAsyncStorage: 66991bb6672ed988a8c56289a08bf4fc3a29d4b3
+  RNCMaskedView: b3aee2f4fa81807ec035be51c057aa2eed166173
   RNFlashList: 648e2273693600985aaa72a2ef4700e815500901
   RNGestureHandler: fffddeb8af59709c6d8de11b6461a6af63cad532
   RNLocalize: 5c71b587849ef46ca83671ca45836a218366d615

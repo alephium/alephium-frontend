@@ -47,7 +47,7 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Disclaimer')}>
+    <BottomModal2 notScrollable title={t('Disclaimer')} contentVerticalGap>
       <AppText>
         <Trans
           t={t}

@@ -1,5 +1,7 @@
+import MaskedView from '@react-native-masked-view/masked-view'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { colord } from 'colord'
+import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
 import { LayoutChangeEvent, Platform, StyleProp, View, ViewStyle } from 'react-native'
@@ -40,14 +42,34 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
 
   return (
     <View style={style} onLayout={handleFooterLayout}>
-      <FooterGradient
-        start={{ x: 0.5, y: 1 }}
-        end={{ x: 0.5, y: 0 }}
-        locations={[0.45, 1]}
-        colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
-        style={{ height: gradientHeight }}
-        pointerEvents="none"
-      />
+      <FooterBlurContainer style={{ height: gradientHeight }}>
+        {Platform.OS === 'ios' ? (
+          <MaskedView
+            style={{ flex: 1 }}
+            maskElement={
+              <GradientMask
+                start={{ x: 0.5, y: 1 }}
+                end={{ x: 0.5, y: 0 }}
+                locations={[0.4, 0.6, 1]}
+                colors={['black', 'rgba(0, 0, 0, 0.75)', 'transparent']}
+                style={{ flex: 1 }}
+                pointerEvents="none"
+              />
+            }
+          >
+            <BlurView tint={theme.name} intensity={80} style={{ flex: 1 }} />
+          </MaskedView>
+        ) : (
+          <SimpleGradient
+            start={{ x: 0.5, y: 1 }}
+            end={{ x: 0.5, y: 0 }}
+            locations={[0.45, 1]}
+            colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
+            style={{ height: gradientHeight }}
+            pointerEvents="none"
+          />
+        )}
+      </FooterBlurContainer>
       <FooterMenuContent style={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18 }}>
         {footerContent}
       </FooterMenuContent>
@@ -74,10 +96,25 @@ const FooterMenuContent = styled.View`
   ${footerMenuStyles}
 `
 
-// Bottom value is to avoid glitch on Android
-const FooterGradient = styled(LinearGradient)`
+const FooterBlurContainer = styled.View`
   position: absolute;
   bottom: -1px;
   left: 0;
   right: 0;
+`
+
+const GradientMask = styled(LinearGradient)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`
+
+const SimpleGradient = styled(LinearGradient)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `
