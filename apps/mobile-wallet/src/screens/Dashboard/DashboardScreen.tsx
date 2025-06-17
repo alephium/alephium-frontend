@@ -1,5 +1,7 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
 import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
+import { useNavigation } from '@react-navigation/native'
+import { NavigationProp } from '@react-navigation/native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
@@ -10,6 +12,7 @@ import Amount from '~/components/Amount'
 import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
+import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -21,13 +24,14 @@ import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import AlephiumLogo from '~/images/logos/AlephiumLogo'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
-import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
+import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
+import { showToast } from '~/utils/layout'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -37,6 +41,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
+  const networkStatus = useAppSelector((s) => s.network.status)
 
   useEffect(() => {
     const isNewWallet = getIsNewWallet()
@@ -57,9 +62,9 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       contentPaddingTop={60 + HEADER_OFFSET_TOP}
       headerScrollEffectOffset={30}
       headerOptions={{
-        headerLeft: () => <CameraScanButton />,
-        headerRight: () => <WalletSettingsButton />,
-        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 40, height: 20 }} />,
+        headerLeft: () => <HeaderLeft />,
+        headerRight: () => <HeaderRight />,
+        headerTitle: () => null,
         headerTitleScrolled: () => <WalletWorth />
       }}
       {...props}
@@ -67,7 +72,6 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCardStyled>
           <ScreenAnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
-          <DashboardSecondaryButtons />
           <WalletBalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
@@ -133,6 +137,63 @@ const WalletBalanceSummary = () => {
 
   return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} error={error} />
 }
+
+const HeaderLeft = () => {
+  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+  return (
+    <HeaderButtonsContainer>
+      <CameraScanButton />
+      {!isMnemonicBackedUp && (
+        <Button
+          onPress={() => navigation.navigate('BackupMnemonicNavigation')}
+          iconProps={{ name: 'alert-outline' }}
+          variant="alert"
+          squared
+          compact
+          style={{ marginRight: 10 }}
+        />
+      )}
+    </HeaderButtonsContainer>
+  )
+}
+
+const HeaderRight = () => {
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const { t } = useTranslation()
+
+  const showOfflineMessage = () =>
+    showToast({
+      text1: `${t('Reconnecting')}...`,
+      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
+      type: 'info',
+      onPress: () => navigation.navigate('SettingsScreen')
+    })
+
+  return (
+    <HeaderButtonsContainer>
+      <WalletConnectButton />
+      {networkStatus === 'offline' && (
+        <Button
+          onPress={showOfflineMessage}
+          iconProps={{ name: 'cloud-offline-outline' }}
+          variant="alert"
+          squared
+          compact
+        />
+      )}
+      <WalletSettingsButton />
+    </HeaderButtonsContainer>
+  )
+}
+
+const HeaderButtonsContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+`
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
   gap: 15px;
