@@ -16,8 +16,6 @@ import { RootState } from '~/store/store'
 
 const sliceName = 'authorizedConnections'
 
-// TODO: CONNECTION_EXPIRY (see extension wallet, should expire after 7 days)
-
 const initialState = connectionsAdapter.getInitialState()
 
 const authorizedConnectionsSlice = createSlice({
