@@ -7,7 +7,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
-import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -114,9 +113,6 @@ const WelcomeCard = () => {
     <WelcomeCardStyled>
       <ScreenAnimatedBackground isAnimated isFullScreen />
       <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
-      <Title size={32} semiBold>
-        {t('Welcome to Alephium')}
-      </Title>
     </WelcomeCardStyled>
   )
 }
@@ -126,10 +122,6 @@ const WelcomeCardStyled = styled(RoundedCard)`
   padding: ${DEFAULT_MARGIN * 2}px;
   justify-content: center;
   align-items: center;
-`
-
-const Title = styled(AppText)`
-  text-align: center;
 `
 
 const ButtonsContainer = styled(BottomButtons)`
