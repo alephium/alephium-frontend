@@ -121,7 +121,6 @@
   "Saved!": "已保存！",
   "Copy address": "复制地址",
   "Copy": "复制",
-  "Bytecode copied": "已复制字节码",
   "Paste": "粘贴",
   "Edit": "编辑",
   "Share": "分享",
@@ -133,7 +132,6 @@
   "dAppRequiredNetwork": "您当前连接到 <1>{{ currentNetwork }}</1>，但 dApp 要求连接到 <1>{{ requiredNetwork }}</1>。",
   "dAppRequiredGroup": "dApp 要求输入地址组别 <1>{{ group }}</1> 中的地址。点击以下链接生成一个地址！",
   "Tap to select another one": "点击选择另一个",
-  "If none of the above addresses fit your needs, you can generate a new one.": "如果上述任何地址都不符合您的需要，您可以生成一个新地址。",
   "Connect with address": "与地址连接",
   "Tap to change the address to connect with.": "点击更改要连接的地址。",
   "Transfer request": "转账请求",
@@ -261,7 +259,6 @@
   "Scan QR code": "扫描二维码",
   "Scan an Alephium address QR code": "扫描Alephium地址二维码",
   "Scan an Alephium address QR code to add to your contacts list.": "扫描Alphium地址二维码以添加到您的联系人列表。",
-  "Scan an Alephium address QR code to send funds to.": "扫描一个Alephium地址二维码以发送资金。",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "扫描Alephium地址二维码发送资金或WalletConnect二维码以连接到 dApp",
   "Could not connect to WalletConnect": "无法连接到 WalletConnect",
   "Current connections": "当前连接",
@@ -431,9 +428,7 @@
   "Could not load dApps": "无法加载 dApps",
   "Coming soon!": "即将到来！",
   "Add to favorites": "添加到收藏",
-  "Added to favorites": "添加到收藏",
   "Remove from favorites": "从收藏中移除",
-  "Removed from favorites": "从收藏中删除",
   "Favorites": "收藏",
   "No dApps added to your favorites yet": "尚无添加到你的收藏的dApps",
   "Hide assets you're not interested in": "隐藏您不感兴趣的资产",
@@ -464,5 +459,6 @@
   "More details on Alph.land": "更多详细信息在Alph.land",
   "Worth": "价值",
   "Group": "群组",
-  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "这些在你的钱包中的代币不遵守Alephium 代币标准。找不到有关他们的信息。"
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "这些在你的钱包中的代币不遵守Alephium 代币标准。找不到有关他们的信息。",
+  "Unknown error": "未知错误"
 }

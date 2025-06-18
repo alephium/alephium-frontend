@@ -121,7 +121,6 @@
   "Saved!": "Gespeichert!",
   "Copy address": "Adresse kopieren",
   "Copy": "Kopieren",
-  "Bytecode copied": "Bytecode kopiert",
   "Paste": "Einfügen",
   "Edit": "Bearbeiten",
   "Share": "Teilen",
@@ -133,7 +132,6 @@
   "dAppRequiredNetwork": "Sie sind derzeit mit <1>{{ currentNetwork }}</1> verbunden, aber die dApp benötigt eine Verbindung zu <1>{{ requiredNetwork }}</1>.",
   "dAppRequiredGroup": "Die dApp benötigt eine Adresse in der Gruppe <1>{{ group }}</1>. Klicken Sie unten, um eine zu generieren!",
   "Tap to select another one": "Tippen, um eine andere auszuwählen",
-  "If none of the above addresses fit your needs, you can generate a new one.": "Wenn keine der oben genannten Adressen Ihren Bedürfnissen entspricht, können Sie eine neue generieren.",
   "Connect with address": "Mit Adresse verbinden",
   "Tap to change the address to connect with.": "Tippen, um die Adresse zu ändern, mit der eine Verbindung hergestellt werden soll.",
   "Transfer request": "Transferanfrage",
@@ -261,7 +259,6 @@
   "Scan QR code": "QR-Code scannen",
   "Scan an Alephium address QR code": "Scannen Sie einen QR-Code einer Alephium-Adresse",
   "Scan an Alephium address QR code to add to your contacts list.": "Scannen Sie einen Alephium Adresse QR-Code, um sie Ihrer Kontaktliste hinzuzufügen.",
-  "Scan an Alephium address QR code to send funds to.": "Scannen Sie einen QR-Code einer Alephium-Adresse, um Gelder zu senden.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Scannen Sie einen QR-Code einer Alephium-Adresse, um Gelder zu senden, oder scannen Sie einen WalletConnect QR-Code, um sich mit einer dApp zu verbinden.",
   "Could not connect to WalletConnect": "Verbindung mit WalletConnect nicht möglich",
   "Current connections": "Aktuelle Verbindungen",
@@ -431,9 +428,7 @@
   "Could not load dApps": "DApps konnten nicht geladen werden",
   "Coming soon!": "In Kürze verfügbar!",
   "Add to favorites": "Zu Favoriten hinzufügen",
-  "Added to favorites": "Zu Favoriten hinzugefügt",
   "Remove from favorites": "Aus Favoriten entfernen",
-  "Removed from favorites": "Von Favoriten entfernt",
   "Favorites": "Favoriten",
   "No dApps added to your favorites yet": "Noch keine dApps zu Ihren Favoriten hinzugefügt",
   "Hide assets you're not interested in": "Blenden Sie Guthaben, an denen Sie nicht interessiert sind, aus",
@@ -464,5 +459,6 @@
   "More details on Alph.land": "Mehr Details auf Alph.land",
   "Worth": "Wert",
   "Group": "Gruppe",
-  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Diese Token in Ihrer Wallet respektieren nicht die Alephium Token Standards. Es konnten keine Informationen darüber gefunden werden."
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Diese Token in Ihrer Wallet respektieren nicht die Alephium Token Standards. Es konnten keine Informationen darüber gefunden werden.",
+  "Unknown error": "Unbekannter Fehler"
 }
