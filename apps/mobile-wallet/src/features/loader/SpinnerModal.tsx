@@ -1,58 +1,59 @@
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
-import LottieView from 'lottie-react-native'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
-import successAnimationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import { LoaderConfig } from '~/features/loader/loaderTypes'
 
 type FontColor = keyof DefaultTheme['font']
 
-interface SpinnerProps {
-  text?: string
-  bg?: 'faded' | 'full'
+interface SpinnerProps extends Omit<LoaderConfig, 'blur'> {
   color?: FontColor
   progress?: number
   animated?: boolean
 }
 
-interface SpinnerModalProps extends SpinnerProps {
+interface SpinnerModalProps extends SpinnerProps, LoaderConfig {
   isActive: boolean
-  blur?: boolean
 }
 
-const SpinnerModal = ({ isActive, text, blur = false, bg = 'full', progress }: SpinnerModalProps) => {
+const SpinnerModal = ({ isActive, text, blur = true, bg = 'faded', progress, minDurationMs }: SpinnerModalProps) => {
   const theme = useTheme()
 
-  const [shouldRender, setShouldRender] = useState(false)
+  const [config, setConfig] = useState({ isActive, text, bg, blur, progress, minDurationMs })
+  const minDurationMsRef = useRef(minDurationMs)
 
   useEffect(() => {
     if (isActive) {
-      setShouldRender(true)
+      setConfig({ isActive, text, bg, blur, progress, minDurationMs })
+      minDurationMsRef.current = minDurationMs
     } else {
-      const timeout = setTimeout(() => setShouldRender(false), 300)
+      const timeout = setTimeout(() => {
+        setConfig({ isActive, text, bg, blur, progress, minDurationMs })
+      }, minDurationMsRef.current || 300)
 
       return () => clearTimeout(timeout)
     }
-  }, [isActive])
+  }, [bg, blur, isActive, minDurationMs, progress, text])
 
-  if (!shouldRender) return null
+  if (!config.isActive) return null
 
   return (
-    <ModalWithBackdrop animationType="fade" visible={isActive}>
+    <ModalWithBackdrop animationType="fade" visible={config.isActive}>
       {blur ? (
         <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
-          <Spinner bg={bg} text={text} color="primary" progress={progress} />
+          <Spinner bg={config.bg} text={config.text} color="primary" progress={config.progress} />
         </BlurView>
       ) : (
         <Spinner
-          bg={bg}
-          text={text}
-          color={bg === 'full' ? 'secondary' : theme.name === 'dark' ? 'secondary' : 'contrast'}
-          progress={progress}
+          bg={config.bg}
+          text={config.text}
+          color={config.bg === 'full' ? 'secondary' : theme.name === 'dark' ? 'secondary' : 'contrast'}
+          progress={config.progress}
         />
       )}
     </ModalWithBackdrop>
@@ -78,11 +79,10 @@ export const Spinner = ({ text, color = 'tertiary', animated = true, bg, progres
           animated={animated}
         />
       ) : (
-        // TODO: Show a more appropriate cool animation? I like the confetti tbh! This is so much more fun!
-        <StyledAnimation source={successAnimationSrc} autoPlay />
+        <ActivityIndicator size={72} color={theme.font[color]} />
       )}
       {text && (
-        <LoadingText semiBold size={16} color={color}>
+        <LoadingText semiBold size={20} color={color}>
           {text}
         </LoadingText>
       )}
@@ -101,9 +101,4 @@ const SpinnerStyled = styled.View<{ bg?: SpinnerProps['bg'] }>`
 
 const LoadingText = styled(AppText)`
   margin-top: 50px;
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 100%;
-  height: 50%;
 `

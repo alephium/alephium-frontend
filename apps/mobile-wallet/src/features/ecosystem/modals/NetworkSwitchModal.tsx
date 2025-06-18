@@ -1,7 +1,6 @@
 import { getNetworkNameFromNetworkId, NetworkPreset, networkSettingsPresets } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useWalletConnectNetwork } from '@alephium/shared-react'
 import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
-import { sleep } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -36,10 +35,9 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   }
 
   const handleSwitchToRequiredNetwork = async () => {
-    dispatch(activateAppLoading(t('Welcome to {{ networkName }}!', { networkName: requiredNetworkName })))
+    dispatch(activateAppLoading({ text: t('Switching networks'), bg: 'full', blur: false, minDurationMs: 3000 }))
     await handleSwitchNetworkPress()
     dismissModal()
-    await sleep(2000) // Give some time for the UI to update
     dispatch(deactivateAppLoading())
   }
 
