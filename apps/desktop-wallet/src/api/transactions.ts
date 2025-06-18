@@ -11,7 +11,7 @@ export const buildSweepTransactions = async (
 ) => {
   const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
     fromPublicKey,
-    // fromPublicKeyType: keyType, // TODO: Fix when SDK gets updated to support this field
+    fromPublicKeyType: keyType,
     toAddress: toAddressHash
   })
 

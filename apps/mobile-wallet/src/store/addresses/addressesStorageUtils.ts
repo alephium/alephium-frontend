@@ -14,7 +14,7 @@ export const importAddresses = async (walletId: WalletMetadataMobile['id'], addr
     for (const { index, ...addressMetadata } of addressesMetadata) {
       const newAddressNonSensitiveData = keyring.generateAndCacheAddress({
         addressIndex: index,
-        keyType: 'default' // TODO: Support groupless addresses
+        keyType: 'default' // TODO: handle groupless
       })
       const newAddress = { ...newAddressNonSensitiveData, ...addressMetadata }
 

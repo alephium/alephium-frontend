@@ -144,7 +144,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
-                keyType: 'default', // TODO: Support groupless addresses
+                keyType: 'default', // TODO: handle groupless
                 isDefault: true,
                 color: getRandomLabelColor()
               }
@@ -420,7 +420,7 @@ export const migrateAddressMetadata = async () => {
     for (const address of addresses) {
       const { hash, publicKey } = keyring.generateAndCacheAddress({
         addressIndex: address.index,
-        keyType: 'default' // TODO: Support groupless addresses
+        keyType: 'default' // TODO: handle groupless
       })
       let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
@@ -504,7 +504,7 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   addresses: [
     {
       index: 0,
-      keyType: 'default', // TODO: Support groupless addresses
+      keyType: 'default', // TODO: handle groupless
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
@@ -557,7 +557,7 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
 
     const nonSensitiveAddressData = keyring.generateAndCacheAddress({
       addressIndex,
-      keyType: 'default' // TODO: Support groupless addresses
+      keyType: 'default' // TODO: handle groupless
     })
     let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
