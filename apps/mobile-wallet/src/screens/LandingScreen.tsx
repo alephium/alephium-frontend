@@ -6,7 +6,7 @@ import { StatusBar } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -106,12 +106,11 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 export default LandingScreen
 
 const WelcomeCard = () => {
-  const { t } = useTranslation()
   const theme = useTheme()
 
   return (
     <WelcomeCardStyled>
-      <ScreenAnimatedBackground isAnimated isFullScreen />
+      <AnimatedBackground />
       <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
     </WelcomeCardStyled>
   )

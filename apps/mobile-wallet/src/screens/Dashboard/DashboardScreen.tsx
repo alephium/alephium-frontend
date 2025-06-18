@@ -1,7 +1,6 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
 import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
-import { useNavigation } from '@react-navigation/native'
-import { NavigationProp } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
@@ -9,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
-import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
@@ -22,7 +21,6 @@ import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
-import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
@@ -36,7 +34,6 @@ import { showToast } from '~/utils/layout'
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
-  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
@@ -56,7 +53,6 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       refreshControl={<RefreshSpinner progressViewOffset={100} />}
       hasBottomBar
       verticalGap
-      onScroll={screenScrollHandler}
       contentPaddingTop={60 + HEADER_OFFSET_TOP}
       headerScrollEffectOffset={30}
       headerOptions={{
@@ -69,7 +65,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCardStyled>
-          <ScreenAnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
+          <AnimatedBackground />
           <WalletBalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
