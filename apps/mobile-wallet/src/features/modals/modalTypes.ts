@@ -17,6 +17,7 @@ import TokenQuickActionsModal from '~/features/assetsDisplay/tokenDisplay/TokenQ
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
+import ConnectTipModal from '~/features/connectTip/ConnectTipModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
@@ -100,7 +101,8 @@ export const ModalComponents = {
   SignUnsignedTxModal,
   SignMessageTxModal,
   EditDappUrlModal,
-  DataFetchErrorModal
+  DataFetchErrorModal,
+  ConnectTipModal
 }
 
 export type ModalName = keyof typeof ModalComponents

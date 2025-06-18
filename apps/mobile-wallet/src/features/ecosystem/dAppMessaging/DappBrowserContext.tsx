@@ -12,6 +12,7 @@ import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect
 import WebView from 'react-native-webview'
 
 import { buildDeployContractTransaction } from '~/api/transactions'
+import { isConnectTipShownOnce, setConnectTipShownOnce } from '~/features/connectTip/connectTipStorage'
 import {
   connectionAuthorized,
   hostConnectionRemoved
@@ -62,9 +63,17 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   const handleIsDappPreauthorized = useCallback(
-    (data: RequestOptions, messageId: string) =>
-      replyToDapp({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isConnectionAuthorized(data) }, messageId),
-    [replyToDapp]
+    (data: RequestOptions, messageId: string) => {
+      const isPreauthorized = isConnectionAuthorized(data)
+
+      if (!isPreauthorized && !isConnectTipShownOnce()) {
+        dispatch(openModal({ name: 'ConnectTipModal' }))
+        setConnectTipShownOnce()
+      }
+
+      replyToDapp({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isPreauthorized }, messageId)
+    },
+    [dispatch, replyToDapp]
   )
 
   const handleRejectDappConnection = useCallback(

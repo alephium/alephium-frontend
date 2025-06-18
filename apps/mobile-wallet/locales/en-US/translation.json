@@ -481,5 +481,7 @@
   "Connected at {{ datetime }} on {{ network }}": "Connected at {{ datetime }} on {{ network }}",
   "Manage dApp connections": "Manage dApp connections",
   "Preauthorized connections": "Preauthorized connections",
-  "Revoked connection to {{ host }}": "Revoked connection to {{ host }}"
+  "Revoked connection to {{ host }}": "Revoked connection to {{ host }}",
+  "Useful tip": "Useful tip",
+  "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect."
 }
