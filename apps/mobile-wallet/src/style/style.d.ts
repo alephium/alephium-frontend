@@ -51,6 +51,12 @@ declare module 'styled-components/native' {
       send: string
       receive: string
       gray: string
+      palette1: string
+      palette2: string
+      palette3: string
+      palette4: string
+      palette5: string
+      palette6: string
     }
     gradient: {
       yellow: string

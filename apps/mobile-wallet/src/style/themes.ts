@@ -50,7 +50,13 @@ export const lightTheme: DefaultTheme = {
     complementary: '#b07dcb',
     send: '#f75d57',
     gray: 'rgb(145, 145, 145)',
-    receive: '#61b15b'
+    receive: '#61b15b',
+    palette1: '#8ee4f9',
+    palette2: '#ffd69f',
+    palette3: '#8ec7ff',
+    palette4: '#ffa7fa',
+    palette5: '#ffa2bd',
+    palette6: '#ffd691'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -108,7 +114,13 @@ export const darkTheme: DefaultTheme = {
     complementary: '#d488eb',
     send: '#fdb866',
     receive: '#71c56b',
-    gray: 'rgb(121, 121, 121)'
+    gray: 'rgb(121, 121, 121)',
+    palette1: '#89cbff',
+    palette2: '#ffeeb7',
+    palette3: '#7d8dff',
+    palette4: '#ef9cee',
+    palette5: '#ff9db6',
+    palette6: '#ffce97'
   },
   gradient: {
     yellow: '#FFCD82',

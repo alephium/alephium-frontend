@@ -30,7 +30,6 @@ import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, onClose }) => {
   const { dismissModal } = useModalContext()
@@ -73,15 +72,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
   const [dominantColor, setDominantColor] = useState<string>()
   const { data: token } = useFetchToken(tokenId)
 
-  const fontColor =
-    dominantColor &&
-    (theme.name === 'light'
-      ? colord(dominantColor).brightness() < 0.3
-        ? darkTheme.font.primary
-        : lightTheme.font.primary
-      : colord(dominantColor).brightness() > 0.6
-        ? lightTheme.font.primary
-        : darkTheme.font.primary)
+  const fontColor = theme.font.primary
 
   useEffect(() => {
     if (tokenId === ALPH.id || !token) return

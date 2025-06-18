@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
@@ -35,13 +35,11 @@ import { showToast } from '~/utils/layout'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
-  const networkStatus = useAppSelector((s) => s.network.status)
 
   useEffect(() => {
     const isNewWallet = getIsNewWallet()

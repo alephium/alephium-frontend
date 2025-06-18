@@ -1,101 +1,74 @@
-/*
-This component is energy intensive and should be used consciously.
-Prefer using the ScreenAnimatedBackground when using it on a screen.
-*/
-
-import { Blur, Canvas as SkiaCanvas, Group } from '@shopify/react-native-skia'
-import { ReactNode } from 'react'
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated'
+import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
+import { colord } from 'colord'
+import { Group } from 'lucide-react-native'
+import { memo, useState } from 'react'
+import { LayoutChangeEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { AnimatedBackgroundProps } from '~/components/animatedBackground/animatedBackgroundTypes'
-import { Circles, GyroscopeCircles } from '~/components/animatedBackground/Circles'
-import useCanvasDimensions, { CanvasDimensions } from '~/components/animatedBackground/useCanvasDimentions'
-import AlephiumLogo from '~/images/logos/AlephiumLogo'
+interface AnimatedBackgroundProps {
+  offsetTop?: number
+  shade?: string
+}
 
-const AnimatedBackground = ({
-  height,
-  width,
-  scrollY,
-  isAnimated = true,
-  usesGyroscope = true,
-  isFullScreen,
-  showAlephiumLogo,
-  shade
-}: AnimatedBackgroundProps) => {
-  const { canvasHeight, canvasWidth } = useCanvasDimensions({ height, width, isFullScreen })
-  const isDark = useTheme().name === 'dark'
+const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
+  const theme = useTheme()
+  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
 
-  const circlesProps = { canvasHeight, canvasWidth, shade, isAnimated, isDark }
+  const linearGradientPositions = [0.1, 0.2, 0.6, 0.7, 0.75, 1]
+  const radialGradientPositions = [0.4, 0.5, 0.6, 0.7, 0.75, 1]
+
+  const getGradientColors = (opacity: number) => [
+    colord(shade || theme.global.palette2)
+      .alpha(opacity)
+      .toHex(),
+    colord(shade || theme.global.palette5)
+      .alpha(opacity)
+      .toHex(),
+    colord(theme.global.palette4).alpha(opacity).toHex(),
+    colord(theme.global.palette1).alpha(opacity).toHex(),
+    colord(theme.global.palette3).alpha(opacity).toHex(),
+    theme.bg.back2
+  ]
+
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout
+    setContainerDimensions({ width, height })
+  }
 
   return (
-    <ParallaxAnimatedContainer scrollY={scrollY}>
-      <AnimatedCanvas canvasHeight={canvasHeight} canvasWidth={canvasWidth}>
-        <Group>{usesGyroscope ? <GyroscopeCircles {...circlesProps} /> : <Circles {...circlesProps} />}</Group>
-      </AnimatedCanvas>
-
-      {showAlephiumLogo && (
-        <AlephiumLogoContainer>
-          <AlephiumLogo color="white" style={{ width: '15%' }} />
-        </AlephiumLogoContainer>
-      )}
-    </ParallaxAnimatedContainer>
+    <Container onLayout={handleLayout} style={{ top: offsetTop }}>
+      <Canvas style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+        <Group>
+          <Fill color={theme.bg.primary} />
+          <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height}>
+            <LinearGradient
+              colors={getGradientColors(1)}
+              positions={linearGradientPositions}
+              start={vec(0, 0)}
+              end={vec(containerDimensions.width, containerDimensions.height)}
+            />
+          </Rect>
+          <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height} opacity={0.9}>
+            <RadialGradient
+              c={vec(containerDimensions.width / 2, containerDimensions.height + 50)}
+              r={containerDimensions.width * 0.5}
+              colors={getGradientColors(theme.name === 'light' ? 0.5 : 0.9)}
+              positions={radialGradientPositions}
+            />
+          </Rect>
+          <Blur blur={20} />
+        </Group>
+      </Canvas>
+    </Container>
   )
-}
+})
 
 export default AnimatedBackground
 
-interface ParallaxAnimatedContainerProps extends Pick<AnimatedBackgroundProps, 'scrollY'> {
-  children: ReactNode
-}
-
-const ParallaxAnimatedContainer = ({ children, scrollY }: ParallaxAnimatedContainerProps) => {
-  const parallaxAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: interpolate(scrollY?.get() || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
-      }
-    ]
-  }))
-
-  return <AnimatedContainer style={parallaxAnimatedStyle}>{children}</AnimatedContainer>
-}
-
-interface AnimatedCanvasProps extends CanvasDimensions {
-  children: ReactNode
-}
-
-const AnimatedCanvas = ({ children, canvasHeight, canvasWidth }: AnimatedCanvasProps) => {
-  const animatedCanvasStyle = useAnimatedStyle(() => ({
-    height: canvasHeight.get(),
-    width: canvasWidth.get()
-  }))
-
-  return (
-    <Animated.View style={animatedCanvasStyle}>
-      <SkiaCanvas style={{ flex: 1 }}>
-        <Group>
-          <Blur blur={70} />
-          {children}
-        </Group>
-      </SkiaCanvas>
-    </Animated.View>
-  )
-}
-
-const AnimatedContainer = styled(Animated.View)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-`
-
-const AlephiumLogoContainer = styled.View`
+const Container = styled.View`
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
-  align-items: center;
-  justify-content: center;
 `

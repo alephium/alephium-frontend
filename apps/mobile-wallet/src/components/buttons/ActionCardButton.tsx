@@ -4,7 +4,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button, { ButtonProps } from '~/components/buttons/Button'
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface ActionCardButtonCardButtonProps extends ButtonProps {}
 
@@ -30,7 +30,7 @@ export default ActionCardButton
 const ButtonStyled = styled(Button)`
   flex-direction: column;
   gap: 4px;
-  border-radius: ${BORDER_RADIUS_BIG}px;
+  border-radius: ${BORDER_RADIUS}px;
   height: 60px;
   padding: 0;
 
