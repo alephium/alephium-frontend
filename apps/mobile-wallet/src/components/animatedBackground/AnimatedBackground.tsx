@@ -20,6 +20,7 @@ interface AnimatedBackgroundProps {
 }
 
 const GYRO_MULTIPLIER = 100
+const FPS_60 = 1000 / 60 // ~16.67ms for 60fps
 
 const springConfig = {
   damping: 10,
@@ -30,8 +31,13 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
   const theme = useTheme()
   const isFocused = useIsFocused()
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
-  const gyroscope = useAnimatedSensor(SensorType.ROTATION, { interval: isFocused ? 'auto' : 1000000 })
+  const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
+    interval: isFocused ? FPS_60 : 1000000
+  })
   const opacity = useSharedValue(1)
+  const lastUpdate = useSharedValue(0)
+  const lastRollValue = useSharedValue(0)
+  const lastPitchValue = useSharedValue(0)
 
   useEffect(() => {
     opacity.value = withSpring(isFocused ? 1 : 0, springConfig)
@@ -58,8 +64,31 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
     setContainerDimensions({ width, height })
   }
 
-  const sinRoll = useDerivedValue(() => (isFocused ? Math.sin(gyroscope?.sensor.get().roll || 0) : 0))
-  const sinZ = useDerivedValue(() => (isFocused ? Math.sin(gyroscope?.sensor.get().pitch || 0) : 0))
+  const shouldUpdate = () => {
+    'worklet'
+    const now = Date.now()
+    if (now - lastUpdate.value < FPS_60) {
+      return false
+    }
+    lastUpdate.value = now
+    return true
+  }
+
+  const sinRoll = useDerivedValue(() => {
+    if (!shouldUpdate()) return lastRollValue.value
+
+    const newValue = isFocused ? Math.sin(gyroscope?.sensor.get().roll || 0) : 0
+    lastRollValue.value = newValue
+    return newValue
+  })
+
+  const sinZ = useDerivedValue(() => {
+    if (!shouldUpdate()) return lastPitchValue.value
+
+    const newValue = isFocused ? Math.sin(gyroscope?.sensor.get().pitch || 0) : 0
+    lastPitchValue.value = newValue
+    return newValue
+  })
 
   const radialGradientCenter = useDerivedValue(() => {
     if (!isFocused) {
