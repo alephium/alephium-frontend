@@ -1,5 +1,8 @@
-import { createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
+import { createNavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native'
+import { useCallback, useSyncExternalStore } from 'react'
 
+import { selectAllModals } from '~/features/modals/modalSelectors'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export const getInitialNavigationState = (initialRouteName: keyof RootStackParamList = 'InWalletTabsNavigation') => ({
@@ -21,4 +24,28 @@ export const resetNavigation = (
   initialRouteName?: keyof RootStackParamList
 ) => {
   navigation.reset(getInitialNavigationState(initialRouteName))
+}
+
+export const useAppScreenIsFocused = () => {
+  const navigation = useNavigation()
+
+  const openedModals = useAppSelector(selectAllModals)
+  const isBottomModalOpen = openedModals.length > 0
+
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      const unsubscribeFocus = navigation.addListener('focus', callback)
+      const unsubscribeBlur = navigation.addListener('blur', callback)
+
+      return () => {
+        unsubscribeFocus()
+        unsubscribeBlur()
+      }
+    },
+    [navigation]
+  )
+
+  const value = !!useSyncExternalStore(subscribe, navigation.isFocused, navigation.isFocused)
+
+  return value && !isBottomModalOpen
 }

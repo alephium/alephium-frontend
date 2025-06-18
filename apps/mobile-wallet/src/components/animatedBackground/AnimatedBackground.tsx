@@ -1,4 +1,3 @@
-import { useIsFocused } from '@react-navigation/native'
 import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import { colord } from 'colord'
 import { Group } from 'lucide-react-native'
@@ -13,6 +12,8 @@ import Animated, {
   withSpring
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
+
+import { useAppScreenIsFocused } from '~/utils/navigation'
 
 interface AnimatedBackgroundProps {
   offsetTop?: number
@@ -29,7 +30,7 @@ const springConfig = {
 
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
-  const isFocused = useIsFocused()
+  const isFocused = useAppScreenIsFocused()
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
   const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
     interval: isFocused ? FPS_60 : 1000000
