@@ -6,6 +6,7 @@ import { View } from 'react-native'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
@@ -25,6 +26,8 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
 
   const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkNames.custom) => {
+    dispatch(activateAppLoading({ text: t('Switching networks'), bg: 'full', blur: false, minDurationMs: 3000 }))
+
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkNames.custom) {
@@ -37,6 +40,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
     }
 
     dismissModal()
+    dispatch(deactivateAppLoading())
   }
 
   const networkNames = Object.values(NetworkNames)
