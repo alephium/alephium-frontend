@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
@@ -8,24 +7,24 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 
-const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
+const SafePlaceWarningModal = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const openMnemonicModal = () => {
-    dismiss(id)
+    dismissModal()
     dispatch(openModal({ name: 'MnemonicModal' }))
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
       </ScreenSection>
@@ -50,7 +49,7 @@ const SafePlaceWarningModal = memo<ModalBaseProp>(({ id }) => {
           title={t('I understand')}
           variant="contrast"
           onPress={() => {
-            dismiss(id)
+            dismissModal()
 
             triggerBiometricsAuthGuard({
               settingsToCheck: 'appAccessOrTransactions',

@@ -6,7 +6,6 @@ import {
 } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,38 +25,35 @@ import {
 } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
-const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(
-  ({ id, tokenId, addressHash, parentModalId }) => {
-    const { dismiss } = useBottomSheetModal()
+const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, onClose }) => {
+  const { dismissModal } = useModalContext()
 
-    const handleClose = () => {
-      dismiss(id)
-
-      if (parentModalId) dismiss(parentModalId)
-    }
-
-    return (
-      <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
-        <Content>
-          <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
-          <ActionButtons>
-            <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
-            <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
-            <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
-          </ActionButtons>
-          <TokenDetailsModalDescription tokenId={tokenId} />
-        </Content>
-      </BottomModal2>
-    )
+  const handleClose = () => {
+    dismissModal()
+    onClose?.()
   }
-)
+
+  return (
+    <BottomModal2 notScrollable title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
+      <Content>
+        <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
+        <ActionButtons>
+          <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
+          <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
+          <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
+        </ActionButtons>
+        <TokenDetailsModalDescription tokenId={tokenId} />
+      </Content>
+    </BottomModal2>
+  )
+})
 
 const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)

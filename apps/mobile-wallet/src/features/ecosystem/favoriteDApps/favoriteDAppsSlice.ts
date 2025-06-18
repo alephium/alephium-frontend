@@ -7,8 +7,8 @@ import {
   loadFavoriteDApps,
   removeFavoriteDApp,
   setFavoriteDApps
-} from '~/features/ecosystem/favoriteDAppsActions'
-import { storeFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
+} from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
+import { storeFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsStorage'
 import { RootState } from '~/store/store'
 
 const sliceName = 'favoriteDApps'

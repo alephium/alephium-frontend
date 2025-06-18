@@ -15,8 +15,7 @@ import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
-import { closeModal, removeModal } from '~/features/modals/modalActions'
-import { useAppDispatch } from '~/hooks/redux'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
@@ -33,8 +32,8 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
 
 const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const dispatch = useAppDispatch()
   const safeAreaInsets = useSafeAreaInsets()
+  const { id, onDismiss } = useModalContext()
   const theme = useTheme()
 
   useEffect(() => {
@@ -44,11 +43,6 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const handleClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss()
   }, [])
-
-  const handleDismiss = useCallback(() => {
-    dispatch(closeModal({ id: props.modalId }))
-    dispatch(removeModal({ id: props.modalId }))
-  }, [dispatch, props.modalId])
 
   const BottomSheetComponent = !isFlashList(props)
     ? props.notScrollable
@@ -67,11 +61,11 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       ref={bottomSheetModalRef}
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
       handleComponent={() => <BottomModalHandle />}
-      onDismiss={handleDismiss}
       topInset={safeAreaInsets.top}
-      name={props.modalId}
+      name={id}
       backgroundStyle={{ backgroundColor: theme.bg.back1 }}
       {...props.bottomSheetModalProps}
+      onDismiss={onDismiss}
     >
       {isFlashList(props) && props.flashListProps ? (
         <BottomSheetFlashList

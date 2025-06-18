@@ -1,4 +1,3 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,7 +7,7 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
@@ -16,7 +15,7 @@ export interface FundPasswordModalProps {
   successCallback: () => void
 }
 
-const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, successCallback }) => {
+const FundPasswordModal = memo<FundPasswordModalProps>(({ successCallback }) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()
@@ -24,7 +23,7 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
     correctPassword: fundPassword ?? '',
     errorMessage: t('Provided fund password is wrong')
   })
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const [displayedError, setDisplayedError] = useState<string | undefined>()
 
@@ -38,14 +37,14 @@ const FundPasswordModal = memo<FundPasswordModalProps & ModalBaseProp>(({ id, su
   const handleSubmit = () => {
     if (isPasswordCorrect) {
       successCallback()
-      dismiss(id)
+      dismissModal()
     } else {
       setDisplayedError(error)
     }
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>

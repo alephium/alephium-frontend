@@ -1,6 +1,5 @@
 import { activeWalletDeleted } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,7 +11,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { showExceptionToast } from '~/utils/layout'
@@ -21,14 +20,14 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, onDelete }) => {
+const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const walletId = useAppSelector((s) => s.wallet.id)
   const { resetWalletConnectStorage } = useWalletConnectContext()
   const { t } = useTranslation()
   const { deletePersistedCache } = usePersistQueryClientContext()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const [inputWalletName, setInputWalletName] = useState('')
 
@@ -48,12 +47,12 @@ const WalletDeleteModal = memo<WalletDeleteModalProps & ModalBaseProp>(({ id, on
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       dispatch(deactivateAppLoading())
-      dismiss(id)
+      dismissModal()
     }
   }
 
   return (
-    <BottomModal2 modalId={id} contentVerticalGap>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>

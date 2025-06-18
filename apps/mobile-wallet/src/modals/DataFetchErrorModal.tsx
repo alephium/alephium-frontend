@@ -5,17 +5,16 @@ import { useTranslation } from 'react-i18next'
 import AppText from '~/components/AppText'
 import InfoBox from '~/components/InfoBox'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
 
-interface DataFetchErrorModalProps extends ModalBaseProp {
+interface DataFetchErrorModalProps {
   message?: string
 }
 
-const DataFetchErrorModal = memo<DataFetchErrorModalProps>(({ id, message }) => {
+const DataFetchErrorModal = memo<DataFetchErrorModalProps>(({ message }) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 modalId={id} title={t('Temporarily unavailable data')} contentVerticalGap>
+    <BottomModal2 title={t('Temporarily unavailable data')} contentVerticalGap>
       <AppText>{t('We are working on addressing this issue. Please try again later.')}</AppText>
 
       {message && (

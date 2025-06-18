@@ -10,7 +10,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
-import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
+import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 

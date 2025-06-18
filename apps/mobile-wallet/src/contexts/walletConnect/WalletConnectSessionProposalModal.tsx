@@ -1,21 +1,16 @@
-import { keyring } from '@alephium/keyring'
 import {
   AddressHash,
   isNetworkValid,
   networkSettingsPresets,
-  newAddressesSaved,
   selectAddressesInGroup,
   selectDefaultAddressHash,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
-import { useUnsortedAddresses, useWalletConnectNetwork } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
-import { AlertTriangle, PlusSquare } from 'lucide-react-native'
-import { memo, useEffect, useRef, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import { Image } from 'react-native'
+import { memo, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -23,25 +18,23 @@ import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
-import InfoBox from '~/components/InfoBox'
 import { ScreenSection } from '~/components/layout/Screen'
 import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToasts'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
+import ConnectDappNewAddressModalContent from '~/features/ecosystem/modals/ConnectDappNewAddressModalContent'
+import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
-import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey, initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { getRandomLabelColor } from '~/utils/colors'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps & ModalBaseProp>(
+const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModalProps>(
   ({
-    id: modalId,
     proposalEventId,
     relayProtocol,
     requiredNamespaceMethods,
@@ -52,17 +45,14 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
   }) => {
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
-    const addresses = useUnsortedAddresses()
     const dispatch = useAppDispatch()
     const group = chainInfo.addressGroup
     const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
     const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
-    const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
-    const persistAddressSettings = usePersistAddressSettings()
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
-    const { dismiss } = useBottomSheetModal()
+    const { dismissModal } = useModalContext()
 
     const [signerAddress, setSignerAddress] = useState<AddressHash>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
@@ -78,31 +68,6 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
           : undefined
       )
     }, [addressesInGroup, defaultAddressHash])
-
-    const handleAddressGeneratePress = async () => {
-      dispatch(activateAppLoading(t('Generating new address')))
-
-      try {
-        await initializeKeyringWithStoredWallet()
-        const newAddress = {
-          ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
-          label: '',
-          color: getRandomLabelColor(),
-          isDefault: false
-        }
-
-        await persistAddressSettings(newAddress)
-        dispatch(newAddressesSaved([newAddress]))
-
-        sendAnalytics({ event: 'WC: Generated new address' })
-      } catch (error) {
-        sendAnalytics({ type: 'error', error, message: 'WC: Could not save new address' })
-      } finally {
-        keyring.clear()
-      }
-
-      dispatch(deactivateAppLoading())
-    }
 
     const handleApproveProposal = async (signerAddressHash: AddressHash) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
@@ -170,7 +135,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showApprovedToast()
-        dismiss(modalId)
+        dismissModal()
       }
     }
 
@@ -188,83 +153,27 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
         showRejectedToast()
-        dismiss(modalId)
+        dismissModal()
       }
     }
 
     return (
-      <BottomModal2 modalId={modalId} title={t('Connect to dApp')} contentVerticalGap>
-        <ScreenSection>
-          <DAppInfo>
-            {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
-              <DAppIcon source={{ uri: metadata.icons[0] }} />
-            )}
+      <BottomModal2 title={t('Connect to dApp')} contentVerticalGap>
+        <ConnectDappModalHeader
+          dAppName={metadata?.description}
+          dAppUrl={metadata?.url}
+          dAppIcon={metadata?.icons?.[0]}
+        />
 
-            <DAppName>
-              {metadata?.description && (
-                <AppText color="secondary" size={16}>
-                  {metadata.description}
-                </AppText>
-              )}
-              {metadata?.url && (
-                <AppText color="tertiary" size={13}>
-                  {metadata.url}
-                </AppText>
-              )}
-            </DAppName>
-          </DAppInfo>
-        </ScreenSection>
         {showNetworkWarning ? (
-          <>
-            <ScreenSection>
-              <InfoBox title={t('Switch network')} Icon={AlertTriangle}>
-                <AppText>
-                  <Trans
-                    t={t}
-                    i18nKey="dAppRequiredNetwork"
-                    values={{
-                      currentNetwork: currentNetworkName,
-                      requiredNetwork: chainInfo.networkId
-                    }}
-                    components={{ 1: <AppText color="accent" /> }}
-                  >
-                    {
-                      'You are currently connected to <1>{{ currentNetwork }}</1>, but the dApp requires a connection to <1>{{ requiredNetwork }}</1>.'
-                    }
-                  </Trans>
-                </AppText>
-              </InfoBox>
-            </ScreenSection>
-            <ScreenSection centered>
-              <ButtonsRow>
-                <Button title={t('Decline')} variant="alert" onPress={handleRejectProposal} flex />
-                <Button title={t('Switch network')} variant="accent" onPress={handleSwitchNetworkPress} flex />
-              </ButtonsRow>
-            </ScreenSection>
-          </>
+          <NetworkSwitchModalContent
+            currentNetworkName={currentNetworkName}
+            requiredNetworkName={chainInfo.networkId}
+            onSwitchNetworkPress={handleSwitchNetworkPress}
+            onDeclinePress={handleRejectProposal}
+          />
         ) : !signerAddress ? (
-          <>
-            <ScreenSection>
-              <InfoBox title="New address needed" Icon={PlusSquare}>
-                <AppText>
-                  <Trans
-                    t={t}
-                    i18nKey="dAppRequiredGroup"
-                    values={{ group }}
-                    components={{ 1: <AppText color="accent" /> }}
-                  >
-                    {'The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!'}
-                  </Trans>
-                </AppText>
-              </InfoBox>
-            </ScreenSection>
-            <ScreenSection centered>
-              <ButtonsRow>
-                <Button title={t('Decline')} variant="alert" onPress={handleRejectProposal} flex />
-                <Button title={t('Generate new address')} variant="accent" onPress={handleAddressGeneratePress} flex />
-              </ButtonsRow>
-            </ScreenSection>
-          </>
+          <ConnectDappNewAddressModalContent group={group} onDeclinePress={handleRejectProposal} />
         ) : (
           <>
             {showAlternativeSignerAddresses ? (
@@ -290,12 +199,6 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                       origin="walletConnectPairing"
                     />
                   ))}
-                  <PlaceholderBox>
-                    <SectionSubtitle>
-                      {t('If none of the above addresses fit your needs, you can generate a new one.')}
-                    </SectionSubtitle>
-                    <Button title={t('Generate new address')} variant="accent" onPress={handleAddressGeneratePress} />
-                  </PlaceholderBox>
                 </AddressList>
               </ScreenSection>
             ) : (
@@ -334,11 +237,6 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
 
 export default WalletConnectSessionProposalModal
 
-const DAppIcon = styled(Image)`
-  width: 50px;
-  height: 50px;
-`
-
 const SectionTitle = styled(AppText)`
   font-size: 18px;
 `
@@ -350,17 +248,3 @@ const AddressList = styled.View`
   gap: 10px;
   margin-top: ${VERTICAL_GAP}px;
 `
-
-const PlaceholderBox = styled.View`
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  border-radius: 9px;
-  padding: 15px;
-`
-
-const DAppInfo = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-`
-
-const DAppName = styled.View``

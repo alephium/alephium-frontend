@@ -2,6 +2,7 @@ import { ContentStyle } from '@shopify/flash-list'
 import { ReactNode } from 'react'
 
 import BottomModalBase, { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -23,8 +24,9 @@ const BottomModalFlashList = ({
   flashListRender,
   ...props
 }: BottomModalFlashListProps) => {
+  const { id } = useModalContext()
   const modalState = useBottomModalState({
-    modalId: props.modalId,
+    modalId: id,
     maximisedContent,
     minHeight,
     navHeight,

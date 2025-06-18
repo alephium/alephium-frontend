@@ -1,6 +1,5 @@
 import { selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
@@ -17,7 +16,6 @@ import RoundedCard from '~/components/RoundedCard'
 import Row from '~/components/Row'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -26,15 +24,16 @@ import { copyAddressToClipboard } from '~/utils/addresses'
 
 interface AddressDetailsModalHeaderProps {
   addressHash: string
-  parentModalId: ModalInstance['id']
+  onForgetAddress: () => void
+  onSendPress: () => void
 }
 
-const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
+const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const handleSettingsPress = () => {
-    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, parentModalId } }))
+    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, onForgetAddress } }))
   }
 
   return (
@@ -45,7 +44,7 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
       </RoundedCard>
 
       <ActionButtons>
-        <AddressSendButton addressHash={addressHash} parentModalId={parentModalId} />
+        <AddressSendButton addressHash={addressHash} onSendPress={onSendPress} />
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
         <ActionCardButton
@@ -80,15 +79,15 @@ const AddressBalanceSummary = ({ addressHash }: Pick<AddressDetailsModalHeaderPr
   return <BalanceSummary label={t('Address worth')} worth={worth} isLoading={isLoading} />
 }
 
-const AddressSendButton = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
+const AddressSendButton = ({
+  addressHash,
+  onSendPress
+}: Pick<AddressDetailsModalHeaderProps, 'addressHash' | 'onSendPress'>) => {
   const { data: addressBalances } = useFetchAddressBalances(addressHash)
-  const { dismiss } = useBottomSheetModal()
 
   if (!addressBalances?.length) return null
 
-  const handleClose = () => dismiss(parentModalId)
-
-  return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />
+  return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={onSendPress} />
 }
 
 const AddressTokensBadges = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {

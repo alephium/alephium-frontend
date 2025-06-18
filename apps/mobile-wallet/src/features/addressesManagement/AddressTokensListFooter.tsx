@@ -1,31 +1,23 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressHiddenTokens, useFetchAddressTokensByType } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import styled from 'styled-components/native'
 
 import { ButtonProps } from '~/components/buttons/Button'
 import HiddenTokensButton from '~/components/tokensLists/HiddenTokensButton'
 import UnknownTokensButton from '~/components/tokensLists/UnknownTokensButton'
-import { ModalInstance } from '~/features/modals/modalTypes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressTokensListFooterProps {
   addressHash: AddressHash
-  parentModalId?: ModalInstance['id']
+  onHiddenTokensButtonPress?: () => void
 }
 
-const AddressTokensListFooter = ({ addressHash, parentModalId }: AddressTokensListFooterProps) => {
-  const { dismiss } = useBottomSheetModal()
-
-  const handleHiddenTokensButtonPress = () => dismiss(parentModalId)
-
-  return (
-    <AddressTokensListFooterStyled>
-      <AddressHiddenTokensButton addressHash={addressHash} onPress={handleHiddenTokensButtonPress} />
-      <AddressUknownTokensButton addressHash={addressHash} />
-    </AddressTokensListFooterStyled>
-  )
-}
+const AddressTokensListFooter = ({ addressHash, onHiddenTokensButtonPress }: AddressTokensListFooterProps) => (
+  <AddressTokensListFooterStyled>
+    <AddressHiddenTokensButton addressHash={addressHash} onPress={onHiddenTokensButtonPress} />
+    <AddressUknownTokensButton addressHash={addressHash} />
+  </AddressTokensListFooterStyled>
+)
 
 export default AddressTokensListFooter
 

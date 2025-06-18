@@ -19,6 +19,7 @@ import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
 import RegionSettingsRow from '~/features/settings/regionSettings/RegionSettingsRow'
 import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
+import SettingsDappsSection from '~/features/settings/settingsScreen/SettingsDappsSection'
 import SettingsDevSection from '~/features/settings/settingsScreen/SettingsDevSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import { analyticsToggled, discreetModeToggled, themeChanged } from '~/features/settings/settingsSlice'
@@ -130,6 +131,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Button title={t('Clear cache')} short onPress={handleWalletConnectClearCache} />
           </Row>
         </ScreenSection>
+
+        <SettingsDappsSection />
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Wallet')}</ScreenSectionTitle>

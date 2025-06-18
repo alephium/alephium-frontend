@@ -4,7 +4,6 @@ import { ComponentProps } from 'react'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
@@ -18,9 +17,18 @@ import TokenQuickActionsModal from '~/features/assetsDisplay/tokenDisplay/TokenQ
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
+import ConnectTipModal from '~/features/connectTip/ConnectTipModal'
 import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
+import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
+import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
+import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
+import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
+import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
+import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
+import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -67,7 +75,6 @@ export const ModalComponents = {
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
   WalletConnectSessionProposalModal,
-  WalletConnectSessionRequestModal,
   GroupSelectModal,
   TokenAmountModal,
   AddressDetailsModal,
@@ -85,8 +92,17 @@ export const ModalComponents = {
   RegionSelectModal,
   UnknownTokensModal,
   AddressNftsGridModal,
+  ConnectDappModal,
+  NetworkSwitchModal,
+  ConnectDappNewAddressModal,
+  SignExecuteScriptTxModal,
+  SignDeployContractTxModal,
+  SignTransferTxModal,
+  SignUnsignedTxModal,
+  SignMessageTxModal,
   EditDappUrlModal,
-  DataFetchErrorModal
+  DataFetchErrorModal,
+  ConnectTipModal
 }
 
 export type ModalName = keyof typeof ModalComponents
@@ -104,14 +120,10 @@ type ModalPropsMap = {
 
 export type OpenModalParams = {
   [K in ModalName]: ModalParams<K>
-}[ModalName]
+}[ModalName] & { onUserDismiss?: () => void }
 
 export type ModalInstance = {
   id: string
   params: OpenModalParams
   isClosing: boolean
-}
-
-export interface ModalBaseProp {
-  id: ModalInstance['id']
 }

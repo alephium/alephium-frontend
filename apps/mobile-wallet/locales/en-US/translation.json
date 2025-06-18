@@ -92,6 +92,7 @@
   "Connect to dApp": "Connect to dApp",
   "Connect to dApps": "Connect to dApps",
   "Switch network": "Switch network",
+  "Switching networks": "Switching networks",
   "Approve": "Approve",
   "Decline": "Decline",
   "Accept": "Accept",
@@ -121,7 +122,7 @@
   "Saved!": "Saved!",
   "Copy address": "Copy address",
   "Copy": "Copy",
-  "Bytecode copied": "Bytecode copied",
+  "Copied": "Copied",
   "Paste": "Paste",
   "Edit": "Edit",
   "Share": "Share",
@@ -133,7 +134,6 @@
   "dAppRequiredNetwork": "You are currently connected to <1>{{ currentNetwork }}</1>, but the dApp requires a connection to <1>{{ requiredNetwork }}</1>.",
   "dAppRequiredGroup": "The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!",
   "Tap to select another one": "Tap to select another one",
-  "If none of the above addresses fit your needs, you can generate a new one.": "If none of the above addresses fit your needs, you can generate a new one.",
   "Connect with address": "Connect with address",
   "Tap to change the address to connect with.": "Tap to change the address to connect with.",
   "Transfer request": "Transfer request",
@@ -476,5 +476,12 @@
   "WalletConnect cache cleared": "WalletConnect cache cleared",
   "Temporarily unavailable data": "Temporarily unavailable data",
   "We are working on addressing this issue. Please try again later.": "We are working on addressing this issue. Please try again later.",
-  "Error details": "Error details"
+  "Error details": "Error details",
+  "Connected at {{ datetime }}": "Connected at {{ datetime }}",
+  "Connected at {{ datetime }} on {{ network }}": "Connected at {{ datetime }} on {{ network }}",
+  "Manage dApp connections": "Manage dApp connections",
+  "Preauthorized connections": "Preauthorized connections",
+  "Revoked connection to {{ host }}": "Revoked connection to {{ host }}",
+  "Useful tip": "Useful tip",
+  "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect."
 }

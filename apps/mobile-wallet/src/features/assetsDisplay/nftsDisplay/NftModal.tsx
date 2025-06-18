@@ -1,5 +1,4 @@
 import { useFetchAddressesHashesWithBalance, useFetchNft } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { openBrowserAsync } from 'expo-web-browser'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +10,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import SendButton from '~/features/send/SendButton'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -20,22 +19,20 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
+const NftModal = memo<NftModalProps>(({ nftId }) => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const { data: nft } = useFetchNft({ id: nftId })
   const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
 
   if (!nft) return null
 
-  const handleClose = () => dismiss(id)
-
   const attributes = nft.attributes
   const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
-    <BottomModal2 modalId={id} title={nft.name}>
+    <BottomModal2 title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>
@@ -43,7 +40,7 @@ const NftModal = memo<NftModalProps & ModalBaseProp>(({ id, nftId }) => {
       <ActionButtons>
         <SendButton
           origin="addressDetails"
-          onPress={handleClose}
+          onPress={dismissModal}
           tokenId={nftId}
           isNft
           originAddressHash={addressesWithToken.at(0)}

@@ -1,5 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export const activateAppLoading = createAction<string>('loader/activateAppLoading')
+import { LoaderConfig } from '~/features/loader/loaderTypes'
+
+export const activateAppLoading = createAction<LoaderConfig | LoaderConfig['text']>('loader/activateAppLoading')
 
 export const deactivateAppLoading = createAction('loader/deactivateAppLoading')

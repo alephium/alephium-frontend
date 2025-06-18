@@ -15,16 +15,17 @@ import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ id, dAppName }) => {
+const DAppDetailsModal = memo<DAppProps>(({ dAppName }) => {
   const { t } = useTranslation()
+  const { dismissModal } = useModalContext()
 
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />
@@ -34,7 +35,12 @@ const DAppDetailsModal = memo<DAppProps & ModalBaseProp>(({ id, dAppName }) => {
             onPress={handleOpenAlphLand}
             iconProps={{ name: 'open-outline' }}
           />
-          <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
+          <VisitDAppButton
+            dAppName={dAppName}
+            onVisitDappButtonPress={dismissModal}
+            buttonType="default"
+            variant="contrast"
+          />
         </BottomButtons>
       </Content>
     </BottomModal2>

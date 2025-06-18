@@ -52,6 +52,7 @@ type RootStackParamList = {
     dAppName: string
   }
   HiddenTokensScreen: undefined
+  AuthorizedConnectionsScreen: undefined
 }
 
 export default RootStackParamList

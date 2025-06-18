@@ -1,4 +1,4 @@
-import { AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
+import { Address, AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,
@@ -8,7 +8,7 @@ import {
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
-import { GestureResponderEvent, PressableProps } from 'react-native'
+import { PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -26,14 +26,21 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
-export interface AddressBoxProps extends PressableProps {
+export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
   addressHash: AddressHash
-  origin: 'addressesScreen' | 'originAddress' | 'destinationAddress' | 'walletConnectPairing' | 'selectAddressModal'
+  origin:
+    | 'addressesScreen'
+    | 'originAddress'
+    | 'destinationAddress'
+    | 'walletConnectPairing'
+    | 'selectAddressModal'
+    | 'connectDappModal'
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
   showGroup?: boolean
   tokenId?: Token['id']
+  onPress?: (address: Address) => void
 }
 
 const maxNbOfTokenLogos = 5
@@ -59,9 +66,9 @@ const AddressBox = ({
 
   if (!address) return
 
-  const handlePress = (e: GestureResponderEvent) => {
+  const handlePress = () => {
     vibrate(ImpactStyle.Heavy)
-    onPress?.(e)
+    onPress?.(address)
   }
 
   const handleLongPress = () => {

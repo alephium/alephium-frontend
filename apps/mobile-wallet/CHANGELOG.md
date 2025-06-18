@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.2.0
+
+### Minor Changes
+
+- 812438b: Connect to dApps using browser connector
+
 ## 2.1.4
 
 ### Patch Changes

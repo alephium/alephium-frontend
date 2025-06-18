@@ -1,6 +1,6 @@
 import { sendAnalytics } from '~/analytics'
-import { addFavoriteDApp, removeFavoriteDApp } from '~/features/ecosystem/favoriteDAppsActions'
-import { selectIsDAppFavorite } from '~/features/ecosystem/favoriteDAppsSelectors'
+import { addFavoriteDApp, removeFavoriteDApp } from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
+import { selectIsDAppFavorite } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const useToggleFavoriteDApp = (dAppName: string) => {
