@@ -52,7 +52,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
 
   const styles = {
     paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
-    paddingBottom: props.noPadding ? 0 : VERTICAL_GAP,
+    paddingBottom: props.noPadding ? 0 : safeAreaInsets.bottom || VERTICAL_GAP,
     gap: props.contentVerticalGap ? VERTICAL_GAP : undefined
   }
 

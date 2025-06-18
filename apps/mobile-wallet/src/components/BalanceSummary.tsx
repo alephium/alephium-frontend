@@ -38,19 +38,6 @@ const BalanceSummary = ({ worth, isLoading, label, error }: BalanceSummaryProps)
   )
 }
 
-export default BalanceSummary
-
-export const BalanceSummaryBox = styled.View`
-  justify-content: center;
-  align-items: center;
-  margin: 10px 0 16px 0;
-`
-
-const TextContainer = styled.View`
-  align-items: center;
-  margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
-`
-
 const DataFetchErrorIndicator = ({ error }: Pick<BalanceSummaryProps, 'error'>) => {
   const dispatch = useAppDispatch()
 
@@ -66,6 +53,19 @@ const DataFetchErrorIndicator = ({ error }: Pick<BalanceSummaryProps, 'error'>) 
     </DataFetchIndicatorStyled>
   )
 }
+
+export default BalanceSummary
+
+export const BalanceSummaryBox = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+
+const TextContainer = styled.View`
+  align-items: center;
+  margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
+`
 
 const DataFetchIndicatorStyled = styled.Pressable`
   position: absolute;
