@@ -23,21 +23,21 @@ window.addEventListener("load", () => {
   }
 });
 
-window.onerror = function(message, source, lineno, colno, error) {
-  window.ReactNativeWebView.postMessage(JSON.stringify({
-    type: 'CONSOLE_ERROR',
-    data: { message, source, lineno, colno, error: error?.toString() }
-  }));
-  return true;
-};
+// window.onerror = function(message, source, lineno, colno, error) {
+//   window.ReactNativeWebView.postMessage(JSON.stringify({
+//     type: 'CONSOLE_ERROR',
+//     data: { message, source, lineno, colno, error: error?.toString() }
+//   }));
+//   return true;
+// };
 
-window.console.log = function(...args) {
-  window.ReactNativeWebView.postMessage(JSON.stringify({
-    type: 'CONSOLE_LOG',
-    data: args
-  }));
-  return true;
-};
+// window.console.log = function(...args) {
+//   window.ReactNativeWebView.postMessage(JSON.stringify({
+//     type: 'CONSOLE_LOG',
+//     data: args
+//   }));
+//   return true;
+// };
 
 true; // note: this is required, or you'll sometimes get silent failures
 `
