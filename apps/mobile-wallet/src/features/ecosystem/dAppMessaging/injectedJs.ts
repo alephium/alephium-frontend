@@ -1,6 +1,20 @@
 import alephiumProvider from '@alephium/wallet-dapp-provider/lib/provider.umd.json'
+import { Platform } from 'react-native'
+
+const windowMessagePolyfill =
+  Platform.OS === 'android'
+    ? `
+if (window.originalPostMessage) return;
+window.originalPostMessage = window.postMessage;
+document.addEventListener('message', function(event) {
+  window.dispatchEvent(new MessageEvent('message', { data: event.data }));
+});
+`
+    : ''
 
 export const INJECTED_JAVASCRIPT = `
+${windowMessagePolyfill}
+
 ${alephiumProvider.code}
 
 window.addEventListener("load", () => {
