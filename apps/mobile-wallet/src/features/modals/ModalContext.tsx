@@ -9,12 +9,7 @@ interface ModalContextType {
   onUserDismiss?: () => void
 }
 
-const ModalContext = createContext<ModalContextType>({
-  id: '',
-  dismissModal: () => null,
-  onDismiss: () => null,
-  onUserDismiss: undefined
-})
+const ModalContext = createContext<ModalContextType | null>(null)
 
 interface ModalContextProviderProps extends UseModalDismissProps {
   children: ReactNode
