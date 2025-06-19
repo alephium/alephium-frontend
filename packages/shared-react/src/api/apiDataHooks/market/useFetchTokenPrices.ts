@@ -1,19 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { useFetchWalletTokensByType } from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useCurrentlyOnlineNetworkId } from '@/network'
 import { useSharedSelector } from '@/redux'
 
-export const useFetchTokenPrices = (props?: SkipProp) => {
+export const useFetchTokenPrices = () => {
   const fiatCurrency = useSharedSelector((s) => s.sharedSettings.fiatCurrency)
   const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
-  const { data, isLoading } = useQuery(
+  const { data, error } = useQuery(
     tokensPriceQuery({
       symbols,
       currency: fiatCurrency.toLowerCase(),
@@ -23,7 +22,8 @@ export const useFetchTokenPrices = (props?: SkipProp) => {
 
   return {
     data,
-    isLoading: isLoading || isLoadingFtSymbols
+    error,
+    isLoading: isLoadingFtSymbols
   }
 }
 

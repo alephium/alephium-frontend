@@ -1,9 +1,10 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
-import { SharedValue, useSharedValue } from 'react-native-reanimated'
+import { SharedValue } from 'react-native-reanimated'
 
 import { BaseHeaderOptions } from '~/components/headers/BaseHeader'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface HeaderContextValue {
@@ -26,12 +27,8 @@ const HeaderContext = createContext(initialValues)
 
 export const HeaderContextProvider = ({ children }: { children: ReactNode }) => {
   const [headerOptions, setHeaderOptions] = useState<HeaderContextValue['headerOptions']>(initialValues.headerOptions)
-  const screenScrollY = useSharedValue(0)
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const parentNavigation = useNavigation<NavigationProp<RootStackParamList>>()
-
-  const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    screenScrollY.set(e.nativeEvent.contentOffset.y)
-  }
 
   return (
     <HeaderContext.Provider

@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.025)',
     back1: '#fff',
     back2: '#fff',
-    accent: colord('#133de2').alpha(0.1).toHex(),
+    accent: colord('#1485ea').alpha(0.1).toHex(),
     contrast: '#111114'
   },
   font: {
@@ -41,7 +41,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#133de2',
+    accent: '#1485ea',
     alert: '#ed4a34',
     warning: '#f48826',
     valid: '#20942d',
@@ -50,7 +50,13 @@ export const lightTheme: DefaultTheme = {
     complementary: '#b07dcb',
     send: '#f75d57',
     gray: 'rgb(145, 145, 145)',
-    receive: '#61b15b'
+    receive: '#61b15b',
+    palette1: '#8ee4f9',
+    palette2: '#ffd69f',
+    palette3: '#8ec7ff',
+    palette4: '#ffa7fa',
+    palette5: '#ffa2bd',
+    palette6: '#ffd691'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -70,7 +76,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '#121214',
     back1: '#0f0f12',
     back2: '#0a0a0d',
-    accent: colord('#5086f9').alpha(0.15).toHex(),
+    accent: colord('#66a4fa').alpha(0.12).toHex(),
     contrast: '#E3E3E3'
   },
   font: {
@@ -81,7 +87,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: 'rgba(255, 255, 255, 0.07)',
+    primary: 'rgba(255, 255, 255, 0.09)',
     secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
   },
@@ -99,7 +105,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#416df9',
+    accent: '#66a4fa',
     alert: '#ed4a34',
     warning: '#ed882d',
     valid: '#16a324',
@@ -108,7 +114,13 @@ export const darkTheme: DefaultTheme = {
     complementary: '#d488eb',
     send: '#fdb866',
     receive: '#71c56b',
-    gray: 'rgb(121, 121, 121)'
+    gray: 'rgb(121, 121, 121)',
+    palette1: '#89cbff',
+    palette2: '#ffeeb7',
+    palette3: '#7d8dff',
+    palette4: '#ef9cee',
+    palette5: '#ff9db6',
+    palette6: '#ffce97'
   },
   gradient: {
     yellow: '#FFCD82',

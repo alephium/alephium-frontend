@@ -25,7 +25,7 @@ const SearchInput = ({ isInModal, ...props }: SearchInputProps) => {
 
       {props.value && (
         <ClearButtonContainer>
-          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact variant="transparent" />
+          <Button iconProps={{ name: 'close' }} onPress={handleClearPress} squared compact variant="transparent" />
         </ClearButtonContainer>
       )}
     </SearchInputStyled>

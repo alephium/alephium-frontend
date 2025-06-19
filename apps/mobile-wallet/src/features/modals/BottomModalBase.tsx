@@ -6,11 +6,9 @@ import styled from 'styled-components/native'
 
 import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
-import { ModalInstance } from '~/features/modals/modalTypes'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
 
 export interface BottomModalBaseProps {
-  modalId: ModalInstance['id']
   children: ReactNode
   onClose?: () => void
   title?: string | ReactNode

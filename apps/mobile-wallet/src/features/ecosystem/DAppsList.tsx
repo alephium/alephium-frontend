@@ -10,7 +10,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
-import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
+import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -71,7 +71,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
-          <AppText size={32}>⭐️</AppText>
+          <AppText size={32}>💔</AppText>
           <AppText>{t('No dApps added to your favorites yet')}</AppText>
         </EmptyPlaceholder>
       </DAppsListStyled>

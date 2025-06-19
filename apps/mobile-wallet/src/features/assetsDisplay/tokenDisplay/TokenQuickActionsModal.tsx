@@ -2,7 +2,7 @@ import { isFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -14,18 +14,18 @@ import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
 }
 
-const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tokenId }) => {
+const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const hideToken = useHideToken('quick_actions', id)
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
+  const hideToken = useHideToken('quick_actions', dismissModal)
 
   const { data: token } = useFetchToken(tokenId)
 
@@ -34,7 +34,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const handleAssetHide = () => hideToken(tokenId)
 
   const openTokenDetailsModal = () => {
-    dismiss(id)
+    dismissModal()
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
@@ -42,7 +42,6 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   return (
     <BottomModal2
       notScrollable
-      modalId={id}
       title={
         <Title>
           <AssetLogo assetId={tokenId} size={26} />
@@ -58,14 +57,14 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
           <QuickActionButton
             title={t('Hide asset')}
             onPress={handleAssetHide}
-            iconProps={{ name: 'eye-off' }}
+            iconProps={{ name: 'eye-off-outline' }}
             variant="alert"
           />
         )}
         <QuickActionButton
           title={t('Show details')}
           onPress={openTokenDetailsModal}
-          iconProps={{ name: 'more-horizontal' }}
+          iconProps={{ name: 'ellipsis-horizontal' }}
         />
       </QuickActionButtons>
     </BottomModal2>

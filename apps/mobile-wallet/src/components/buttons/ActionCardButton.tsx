@@ -1,10 +1,10 @@
-import Ionicons from '@expo/vector-icons/Feather'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import Animated, { LinearTransition } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button, { ButtonProps } from '~/components/buttons/Button'
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface ActionCardButtonCardButtonProps extends ButtonProps {}
 
@@ -14,11 +14,11 @@ const ActionCardButton = ({ title, iconProps, color, ...props }: ActionCardButto
   const theme = useTheme()
 
   return (
-    <ButtonStyled flex {...props}>
+    <ButtonStyled flex variant="accent" {...props}>
       {iconProps && (
-        <AnimatedIonicons layout={LinearTransition} color={color || theme.font.primary} size={22} {...iconProps} />
+        <AnimatedIonicons layout={LinearTransition} color={color || theme.global.accent} size={22} {...iconProps} />
       )}
-      <AppText semiBold size={13} color={color} style={{ textAlign: 'center' }}>
+      <AppText semiBold size={13} color={color || theme.global.accent} style={{ textAlign: 'center' }}>
         {title}
       </AppText>
     </ButtonStyled>
@@ -30,7 +30,7 @@ export default ActionCardButton
 const ButtonStyled = styled(Button)`
   flex-direction: column;
   gap: 4px;
-  border-radius: ${BORDER_RADIUS_BIG}px;
+  border-radius: ${BORDER_RADIUS}px;
   height: 60px;
   padding: 0;
 

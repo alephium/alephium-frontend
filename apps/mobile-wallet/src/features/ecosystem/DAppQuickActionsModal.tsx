@@ -1,4 +1,4 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -11,35 +11,34 @@ import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleF
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface DAppQuickActionsModalProps {
   dAppName: DApp['name']
 }
 
-const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppName }) => {
+const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const handleShowDetails = () => {
-    dismiss(id)
+    dismissModal()
     dispatch(openModal({ name: 'DAppDetailsModal', props: { dAppName } }))
     sendAnalytics({ event: 'Opened dApp details modal', props: { origin: 'quick_actions' } })
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}
           onPress={handleShowDetails}
-          iconProps={{ name: 'more-horizontal' }}
+          iconProps={{ name: 'ellipsis-horizontal' }}
         />
-        <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="quickAction" />
-        <AddToFavoritesButton dAppName={dAppName} parentModalId={id} />
+        <VisitDAppButton dAppName={dAppName} onVisitDappButtonPress={dismissModal} buttonType="quickAction" />
+        <AddToFavoritesButton dAppName={dAppName} />
       </QuickActionButtons>
     </BottomModal2>
   )
@@ -47,11 +46,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
 
 export default DAppQuickActionsModal
 
-interface QuickActionButtonProps extends DAppQuickActionsModalProps {
-  parentModalId: ModalInstance['id']
-}
-
-const AddToFavoritesButton = ({ dAppName }: QuickActionButtonProps) => {
+const AddToFavoritesButton = ({ dAppName }: DAppQuickActionsModalProps) => {
   const { isFavorite, toggleFavorite } = useToggleFavoriteDApp(dAppName)
   const { t } = useTranslation()
   const theme = useTheme()
@@ -60,7 +55,7 @@ const AddToFavoritesButton = ({ dAppName }: QuickActionButtonProps) => {
     <QuickActionButton
       title={isFavorite ? t('Remove from favorites') : t('Add to favorites')}
       onPress={toggleFavorite}
-      iconProps={{ name: 'star', color: isFavorite ? theme.font.highlight : theme.font.primary }}
+      iconProps={{ name: 'heart', color: isFavorite ? theme.global.alert : theme.font.primary }}
     />
   )
 }

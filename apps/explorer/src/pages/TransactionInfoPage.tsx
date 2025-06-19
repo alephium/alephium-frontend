@@ -1,12 +1,7 @@
-import { MAX_API_RETRIES } from '@alephium/shared'
+import { isConfirmedTx, MAX_API_RETRIES } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import {
-  AcceptedTransaction,
-  PendingTransaction,
-  PerChainHeight,
-  Transaction
-} from '@alephium/web3/dist/src/api/api-explorer'
+import { PerChainHeight } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import _, { sortBy, uniq } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
@@ -65,7 +60,9 @@ const TransactionInfoPage = () => {
     }
   })
 
-  useEffect(() => setIsTxConfirmed(isConfirmedTx(transactionData)), [transactionData])
+  const isConfirmed = transactionData ? isConfirmedTx(transactionData) : false
+
+  useEffect(() => setIsTxConfirmed(isConfirmed), [isConfirmed, transactionData])
 
   useEffect(() => {
     if (transactionInfoError) {
@@ -79,7 +76,7 @@ const TransactionInfoPage = () => {
     }
   }, [transactionInfoError])
 
-  const confirmedTxInfo = isConfirmedTx(transactionData) ? transactionData : undefined
+  const confirmedTxInfo = transactionData && isConfirmedTx(transactionData) ? transactionData : undefined
 
   const { data: txBlock } = useQuery({
     ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
@@ -339,9 +336,6 @@ const TransactionInfoPage = () => {
     </Section>
   )
 }
-
-const isConfirmedTx = (tx?: Transaction | AcceptedTransaction | PendingTransaction): tx is Transaction =>
-  !!tx && (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
   let confirmations = 0

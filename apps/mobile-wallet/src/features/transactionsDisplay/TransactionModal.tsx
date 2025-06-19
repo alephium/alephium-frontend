@@ -10,7 +10,7 @@ import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { groupBy } from 'lodash'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -27,26 +27,25 @@ import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
-import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 interface TransactionModalProps {
   txHash: string
 }
 
-const TransactionModal = withModal<TransactionModalProps>(({ id, txHash }) => {
+const TransactionModal = memo<TransactionModalProps>(({ txHash }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
 
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal2 modalId={id} title={t('Transaction')}>
+    <BottomModal2 title={t('Transaction')}>
       <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>
         <Button
-          iconProps={{ name: 'arrow-up-right' }}
+          iconProps={{ name: 'open-outline' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           title={t('Explorer')}
         />

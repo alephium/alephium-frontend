@@ -1,14 +1,14 @@
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { capitalize } from 'lodash'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -16,16 +16,18 @@ export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNetworkPress }) => {
+const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
 
   const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkNames.custom) => {
+    dispatch(activateAppLoading({ text: t('Switching networks'), bg: 'full', blur: false, minDurationMs: 3000 }))
+
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkNames.custom) {
@@ -37,13 +39,14 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
 
-    dismiss(id)
+    dismissModal()
+    dispatch(deactivateAppLoading())
   }
 
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Current network')} contentVerticalGap>
+    <BottomModal2 notScrollable title={t('Current network')} contentVerticalGap>
       <View>
         <Surface>
           {networkNames.map((networkName, index) => (

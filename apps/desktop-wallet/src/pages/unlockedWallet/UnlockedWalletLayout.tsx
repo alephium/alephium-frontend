@@ -12,6 +12,7 @@ import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
 import WalletNameButton from '@/components/WalletNameButton'
+import ActivityIndicator from '@/features/transactionsDisplay/ActivityIndicator'
 import { useAppSelector } from '@/hooks/redux'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 
@@ -35,7 +36,10 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         <SideNavigation>
           <WalletNameButton />
           <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
-          <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+          <ActivityNavItemStyled>
+            <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+            <ActivityIndicator /> {/* Helps improve Activity page UX, see component for more details */}
+          </ActivityNavItemStyled>
           <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
         </SideNavigation>
       </SideBar>
@@ -49,6 +53,10 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
     </motion.div>
   )
 }
+
+const ActivityNavItemStyled = styled.div`
+  position: relative;
+`
 
 export const UnlockedWalletPanel = styled.div<{
   top?: boolean

@@ -1,9 +1,10 @@
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { ShortcutButtonsGroupToken } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
-import withModal from '@/features/modals/withModal'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SideModal from '@/modals/SideModal'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import TokenBalances from '@/modals/tokenDetails/TokenBalances'
@@ -11,7 +12,7 @@ import TokenDescription from '@/modals/tokenDetails/TokenDescription'
 import TokenDetailsModalHeader from '@/modals/tokenDetails/TokenDetailsModalHeader'
 import { TokenDetailsModalTabs } from '@/modals/tokenDetails/TokenDetailsModalTabs'
 
-const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) => {
+const TokenDetailsModal = memo<TokenDetailsModalProps & ModalBaseProp>(({ id, tokenId }) => {
   const { t } = useTranslation()
 
   return (

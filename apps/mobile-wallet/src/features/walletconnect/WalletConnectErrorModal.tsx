@@ -1,4 +1,4 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -9,26 +9,17 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
-interface WalletConnectErrorModalProps {
-  onClose?: () => void
-}
-
-const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, onClose }) => {
+const WalletConnectErrorModal = memo(() => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
-  const handleClose = () => {
-    onClose?.()
-    dismiss(id)
-  }
-
   return (
-    <BottomModal2 notScrollable modalId={id} contentVerticalGap>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
       </ScreenSection>
@@ -41,13 +32,13 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
       )}
       <ScreenSection centered>
         <ButtonsRow>
-          <Button title={t('Close')} onPress={handleClose} flex />
+          <Button title={t('Close')} onPress={dismissModal} flex />
           <Button
             title={t('Retry')}
             variant="accent"
             onPress={() => {
               resetWalletConnectClientInitializationAttempts()
-              dismiss(id)
+              dismissModal()
             }}
             flex
           />

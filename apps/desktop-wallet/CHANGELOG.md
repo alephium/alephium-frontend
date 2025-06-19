@@ -1,5 +1,16 @@
 # alephium-desktop-wallet
 
+## 3.0.2
+
+### Patch Changes
+
+- bcd9ac8: Improve CPU usage
+- dc8ecdd: Fix error display on failed data fetch
+- 863d781: Display activity indicator when new transactions arrive
+- 9d06b72: Fix missing tokens metadata in Ledger wallets
+- 8e47c0b: Fix display of newly confirmed transactions
+- 863d781: Improve transactions loading in activity page
+
 ## 3.0.1
 
 ### Patch Changes

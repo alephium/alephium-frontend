@@ -21,7 +21,7 @@ const ActionCardBuyButton = ({ receiveAddressHash, origin }: ActionCardBuyButton
     dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash } }))
   }
 
-  return <ActionCardButton title={t('Buy')} onPress={handleBuyPress} iconProps={{ name: 'credit-card' }} />
+  return <ActionCardButton title={t('Buy')} onPress={handleBuyPress} iconProps={{ name: 'card-outline' }} />
 }
 
 export default ActionCardBuyButton

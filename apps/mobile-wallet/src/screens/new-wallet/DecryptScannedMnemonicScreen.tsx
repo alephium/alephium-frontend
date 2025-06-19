@@ -144,7 +144,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       <ScreenSection fill>
         <Input
           label={t('Password')}
-          value={password}
+          defaultValue={password}
           onChangeText={handleChangeText}
           secureTextEntry
           autoCapitalize="none"

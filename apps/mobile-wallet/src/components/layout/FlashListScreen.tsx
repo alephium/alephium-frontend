@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import BottomButtons from '~/components/buttons/BottomButtons'
-import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
@@ -42,8 +41,7 @@ const FlashListScreen = <T,>({
   }
 
   return (
-    <Screen>
-      {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
+    <Screen headerOptions={headerOptions}>
       <FlashList
         ref={FlashListRef}
         onScroll={screenScrollHandler}

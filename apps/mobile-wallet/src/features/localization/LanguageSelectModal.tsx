@@ -1,26 +1,26 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = withModal(({ id }) => {
+const LanguageSelectModal = memo(() => {
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const currentLanguage = useAppSelector((s) => s.settings.language)
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 modalId={id} title="Language">
+    <BottomModal2 title="Language">
       <Surface>
         {languageOptions.map((languageOption, index) => (
           <RadioButtonRow

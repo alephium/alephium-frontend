@@ -90,7 +90,10 @@ export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.M
 
 export const isConfirmedTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
-): tx is e.Transaction => 'blockHash' in tx
+): tx is e.Transaction =>
+  'blockHash' in tx &&
+  // See https://github.com/alephium/alephium-frontend/issues/1367
+  !tx.inputs?.some((input) => input.txHashRef === undefined)
 
 export const isSentTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction

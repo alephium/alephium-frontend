@@ -1,7 +1,7 @@
 {
   "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
-  "version": "1.10.12",
+  "version": "1.10.14",
   "private": true,
   "scripts": {
     "start": "turbo start:app",
@@ -40,6 +40,7 @@
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.19",
     "@alephium/web3": "2.0.0-rc.2",
+    "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/query-sync-storage-persister": "5.45.0",
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-persist-client": "^5.45.0",
@@ -62,8 +63,10 @@
     "react-is": "^18.3.1",
     "react-middle-ellipsis": "^1.2.1",
     "react-page-visibility": "^7.0.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.3.0",
     "react-tooltip": "^5.25.1",
+    "redux": "^4.2.0",
     "styled-components": "^6.1.8",
     "styled-normalize": "^8.0.7",
     "stylis": "^4.0.0"

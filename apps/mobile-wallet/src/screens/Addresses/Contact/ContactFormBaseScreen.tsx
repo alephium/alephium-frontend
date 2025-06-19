@@ -51,7 +51,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               label={t('Contact name')}
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
               error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
@@ -68,7 +68,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               label={t('Contact address')}
-              value={value}
+              defaultValue={value}
               onChangeText={onChange}
               onBlur={onBlur}
               error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}

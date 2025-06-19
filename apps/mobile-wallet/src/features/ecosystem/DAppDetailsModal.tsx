@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Image } from 'expo-image'
 import { openBrowserAsync } from 'expo-web-browser'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Image as RNImage } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -15,16 +15,17 @@ import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
+const DAppDetailsModal = memo<DAppProps>(({ dAppName }) => {
   const { t } = useTranslation()
+  const { dismissModal } = useModalContext()
 
   const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />
@@ -32,9 +33,14 @@ const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
           <Button
             title={t('More details on Alph.land')}
             onPress={handleOpenAlphLand}
-            iconProps={{ name: 'external-link' }}
+            iconProps={{ name: 'open-outline' }}
           />
-          <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
+          <VisitDAppButton
+            dAppName={dAppName}
+            onVisitDappButtonPress={dismissModal}
+            buttonType="default"
+            variant="contrast"
+          />
         </BottomButtons>
       </Content>
     </BottomModal2>

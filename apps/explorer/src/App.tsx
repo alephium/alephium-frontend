@@ -1,4 +1,5 @@
-import { MAX_API_RETRIES, ONE_DAY_MS } from '@alephium/shared'
+import { MAX_API_RETRIES, networkPresetSwitched, ONE_DAY_MS } from '@alephium/shared'
+import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -8,12 +9,14 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
+import { getNetworkSettings } from '@/api/getNetworkSettings'
 import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
 import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
 import Tooltips from '@/components/Tooltips'
 import { useSettings } from '@/contexts/settingsContext'
 import { StaticDataProvider } from '@/contexts/staticDataContext'
+import { useAppDispatch } from '@/hooks/redux'
 import { isHostGhPages } from '@/index'
 import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
@@ -48,6 +51,14 @@ const App = () => {
   const { theme } = useSettings()
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    const { netType } = getNetworkSettings()
+    dispatch(networkPresetSwitched(netType))
+  }, [dispatch])
+
+  useInitializeThrottledClient()
 
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -56,7 +56,7 @@ const HiddenTokensScreen = ({ navigation, ...props }: HiddenTokensScreenProps) =
         )}
       </ScreenSection>
       <BottomButtons>
-        <Button title={t('Hide an asset')} type="primary" onPress={handleAddAssetPress} iconProps={{ name: 'plus' }} />
+        <Button title={t('Hide an asset')} type="primary" onPress={handleAddAssetPress} iconProps={{ name: 'add' }} />
       </BottomButtons>
     </ScrollScreen>
   )
@@ -90,7 +90,7 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
     <ListItem
       icon={<AssetLogo assetId={token.id} size={32} />}
       title={token.name}
-      rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleTokenUnhide} />}
+      rightSideContent={<Button iconProps={{ name: 'close' }} squared compact onPress={handleTokenUnhide} />}
       isLast={isLast}
       onPress={openTokenDetailsModal}
     />

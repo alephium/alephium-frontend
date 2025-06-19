@@ -1,6 +1,6 @@
 import { useFetchAddressesHashesWithBalance, useFetchNft } from '@alephium/shared-react'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { openBrowserAsync } from 'expo-web-browser'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
 import styled from 'styled-components/native'
@@ -10,7 +10,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import SendButton from '~/features/send/SendButton'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -19,22 +19,20 @@ type NftModalProps = Pick<NFTImageProps, 'nftId'>
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
-const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
+const NftModal = memo<NftModalProps>(({ nftId }) => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const { data: nft } = useFetchNft({ id: nftId })
   const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
 
   if (!nft) return null
 
-  const handleClose = () => dismiss(id)
-
   const attributes = nft.attributes
   const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
-    <BottomModal2 modalId={id} title={nft.name}>
+    <BottomModal2 title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>
@@ -42,7 +40,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
       <ActionButtons>
         <SendButton
           origin="addressDetails"
-          onPress={handleClose}
+          onPress={dismissModal}
           tokenId={nftId}
           isNft
           originAddressHash={addressesWithToken.at(0)}
@@ -51,7 +49,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
           <ActionCardButton
             title={t('View full size')}
             onPress={() => openBrowserAsync(nft.image)}
-            iconProps={{ name: 'external-link' }}
+            iconProps={{ name: 'open-outline' }}
           />
         )}
       </ActionButtons>

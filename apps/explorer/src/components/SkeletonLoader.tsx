@@ -10,7 +10,7 @@ interface SkeletonLoaderProps {
 
 const SkeletonLoader = ({ className, style }: SkeletonLoaderProps) => (
   <div className={className} style={style}>
-    <AnimatedBackground />
+    <AnimatedSkeletonLoaderBackground />
   </div>
 )
 
@@ -22,7 +22,7 @@ export default styled(SkeletonLoader)`
   overflow: hidden;
 `
 
-const AnimatedBackground = styled.div`
+const AnimatedSkeletonLoaderBackground = styled.div`
   width: 100%;
   height: 100%;
 

@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -8,7 +8,7 @@ import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -19,23 +19,21 @@ interface AddressQRCodeScanActionsModalProps {
   addressHash: AddressHash
 }
 
-const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalProps>(({ id, addressHash }) => {
+const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps>(({ addressHash }) => {
   const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
-  const { dismiss } = useBottomSheetModal()
-
-  const handleClose = () => dismiss(id)
+  const { dismissModal } = useModalContext()
 
   return (
-    <BottomModal2 notScrollable modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <SendButton
             origin="qrCodeScan"
             destinationAddressHash={addressHash}
-            onPress={handleClose}
+            onPress={dismissModal}
             buttonType="quick-action"
           />
-          {!contact && <AddContactButton addressHash={addressHash} onPress={handleClose} />}
+          {!contact && <AddContactButton addressHash={addressHash} onPress={dismissModal} />}
         </ActionButtons>
       </ScreenSection>
     </BottomModal2>
@@ -57,7 +55,7 @@ const AddContactButton = ({ addressHash, onPress }: ActionButtonProps) => {
     onPress()
   }
 
-  return <QuickActionButton title={t('Add to contacts')} onPress={handlePress} iconProps={{ name: 'plus' }} />
+  return <QuickActionButton title={t('Add to contacts')} onPress={handlePress} iconProps={{ name: 'add' }} />
 }
 
 // TODO: DRY

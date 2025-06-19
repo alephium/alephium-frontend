@@ -6,8 +6,7 @@ import { StatusBar } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
-import AppText from '~/components/AppText'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -89,12 +88,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
                 type="primary"
                 onPress={() => handleButtonPress('create')}
                 variant="highlight"
-                iconProps={{ name: 'sun' }}
+                iconProps={{ name: 'sunny-outline' }}
               />
               <Button
                 title={t('Import wallet')}
                 onPress={() => handleButtonPress('import')}
-                iconProps={{ name: 'download' }}
+                iconProps={{ name: 'download-outline' }}
               />
             </ButtonsContainer>
           </ScreenSection>
@@ -107,16 +106,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 export default LandingScreen
 
 const WelcomeCard = () => {
-  const { t } = useTranslation()
   const theme = useTheme()
 
   return (
     <WelcomeCardStyled>
-      <ScreenAnimatedBackground isAnimated isFullScreen />
+      <AnimatedBackground />
       <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
-      <Title size={32} semiBold>
-        {t('Welcome to Alephium')}
-      </Title>
     </WelcomeCardStyled>
   )
 }
@@ -126,10 +121,6 @@ const WelcomeCardStyled = styled(RoundedCard)`
   padding: ${DEFAULT_MARGIN * 2}px;
   justify-content: center;
   align-items: center;
-`
-
-const Title = styled(AppText)`
-  text-align: center;
 `
 
 const ButtonsContainer = styled(BottomButtons)`

@@ -1,6 +1,7 @@
 import {
   AddressHash,
   FIVE_MINUTES_MS,
+  isConfirmedTx,
   ONE_MINUTE_MS,
   throttledClient,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
@@ -31,7 +32,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
-            let latestTx = undefined
+            let latestTx: { hash: string; timestamp: number } | undefined = undefined
 
             // Backend returns 404 if the address has no transactions and Tanstack will consider it an error. This will
             // result in isLoading to be set to true more often than needed, leading to unnecessary re-renders. By
@@ -53,10 +54,28 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
               // The backend needs some time to update the results of the following queries
               // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
               await sleep(2000)
-              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
-              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
-              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+
+              // This is required because the backend returns incomplete confirmed tx data.
+              // See https://github.com/alephium/alephium-frontend/issues/1367
+              const [fullDataLatestTx] = await throttledClient.explorer.addresses.getAddressesAddressTransactions(
+                addressHash,
+                {
+                  page: 1,
+                  limit: 1
+                }
+              )
+
+              if (isConfirmedTx(fullDataLatestTx)) {
+                latestTx.hash = fullDataLatestTx.hash
+                latestTx.timestamp = fullDataLatestTx.timestamp
+
+                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
+                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
+                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
+                queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+              } else {
+                latestTx = cachedData?.latestTx
+              }
             }
 
             return {
@@ -113,8 +132,8 @@ export const walletTransactionsInfiniteQuery = ({
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
-    // When the user navigates away from the Transfers page for 5 minutes or when addresses are generated/removed the
-    // cached data will be deleted.
+    // When there are no active instances of this query or when addresses are generated/removed the cached data will be
+    // deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
@@ -200,4 +219,11 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTran
           return throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
         }
       : skipToken
+  })
+
+export const addressTransactionsCountQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'transactions', 'count', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: () => throttledClient.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
   })

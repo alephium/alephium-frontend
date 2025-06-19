@@ -1,6 +1,5 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -10,8 +9,7 @@ import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { ModalInstance } from '~/features/modals/modalTypes'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -19,23 +17,23 @@ import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
-  parentModalId?: ModalInstance['id']
+  onForgetAddress?: () => void
 }
 
-const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash, parentModalId }) => {
+const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onForgetAddress }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
   const canDeleteAddress = useCanDeleteAddress(addressHash)
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const forgetAddress = useForgetAddress({
     addressHash,
     origin: 'addressSettings',
     onConfirm: () => {
-      if (parentModalId) dismiss(parentModalId)
-      dismiss(id)
+      onForgetAddress?.()
+      dismissModal()
     }
   })
 
@@ -66,11 +64,11 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       sendAnalytics({ type: 'error', message })
     }
 
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={t('Address settings')}>
+    <BottomModal2 notScrollable title={t('Address settings')}>
       <AddressForm
         initialValues={initialSettings}
         onValuesChange={setSettings}
@@ -81,7 +79,13 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       />
       {canDeleteAddress && (
         <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
-          <Button title={t('Forget')} iconProps={{ name: 'trash-2' }} short variant="alert" onPress={forgetAddress} />
+          <Button
+            title={t('Forget')}
+            iconProps={{ name: 'trash-outline' }}
+            short
+            variant="alert"
+            onPress={forgetAddress}
+          />
         </Row>
       )}
 

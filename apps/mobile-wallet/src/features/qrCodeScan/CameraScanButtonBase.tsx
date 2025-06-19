@@ -1,6 +1,5 @@
 import { AddressHash } from '@alephium/shared'
 import { isValidAddress } from '@alephium/web3'
-import { useIsFocused } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { Linking } from 'react-native'
 import { isAddress as isEthereumAddress } from 'web3-validator'
@@ -11,6 +10,7 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
+import { useAppScreenIsFocused } from '~/utils/navigation'
 
 interface CameraScanButtonBaseProps extends ButtonProps {
   onValidAddressScanned: (addressHash: AddressHash) => void
@@ -28,7 +28,7 @@ const CameraScanButtonBase = ({
   generateInvalidDataText,
   ...props
 }: CameraScanButtonBaseProps) => {
-  const isFocused = useIsFocused()
+  const isFocused = useAppScreenIsFocused()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -65,7 +65,7 @@ const CameraScanButtonBase = ({
 
   return (
     <>
-      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared {...props} />
+      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'scan-outline' }} squared {...props} />
       {isCameraOpen && isFocused && (
         <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} text={text} />
       )}

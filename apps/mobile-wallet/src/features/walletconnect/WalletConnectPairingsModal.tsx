@@ -1,63 +1,55 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import AuthorizedConnectionsEmptyList from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsEmptyList'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 
 interface WalletConnectPairingsModalProps {
   onPasteWcUrlPress: () => void
   onScanQRCodePress: () => void
 }
 
-const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
-  ({ id, onPasteWcUrlPress, onScanQRCodePress }) => {
-    const { t } = useTranslation()
-    const { dismiss } = useBottomSheetModal()
-    const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
+const WalletConnectPairingsModal = memo<WalletConnectPairingsModalProps>(({ onPasteWcUrlPress, onScanQRCodePress }) => {
+  const { t } = useTranslation()
+  const { dismissModal } = useModalContext()
+  const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
-    useEffect(() => {
-      if (!walletConnectClient) dismiss(id)
-    }, [activeSessions.length, dismiss, id, walletConnectClient])
+  useEffect(() => {
+    if (!walletConnectClient) dismissModal()
+  }, [activeSessions.length, dismissModal, walletConnectClient])
 
-    const handleDisconnectPress = async (pairingTopic: string) => {
-      await unpairFromDapp(pairingTopic)
-    }
-
-    return (
-      <BottomModal2 modalId={id} title={t('Current connections')} contentVerticalGap>
-        {activeSessions.map(({ topic, peer: { metadata } }, index) => (
-          <ListItem
-            key={topic}
-            title={metadata.url.replace('https://', '')}
-            isLast={index === activeSessions.length - 1}
-            icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
-            rightSideContent={
-              <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
-            }
-          />
-        ))}
-        {activeSessions.length === 0 && (
-          <EmptyPlaceholder>
-            <AppText>{t('There are no connections yet.')} 🔌</AppText>
-          </EmptyPlaceholder>
-        )}
-        <BottomButtons fullWidth backgroundColor="back1">
-          <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
-          <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
-        </BottomButtons>
-      </BottomModal2>
-    )
+  const handleDisconnectPress = async (pairingTopic: string) => {
+    await unpairFromDapp(pairingTopic)
   }
-)
+
+  return (
+    <BottomModal2 title={t('Current connections')} contentVerticalGap>
+      {activeSessions.map(({ topic, peer: { metadata } }, index) => (
+        <ListItem
+          key={topic}
+          title={metadata.url.replace('https://', '')}
+          isLast={index === activeSessions.length - 1}
+          icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
+          rightSideContent={
+            <Button iconProps={{ name: 'close' }} squared compact onPress={() => handleDisconnectPress(topic)} />
+          }
+        />
+      ))}
+      {activeSessions.length === 0 && <AuthorizedConnectionsEmptyList />}
+      <BottomButtons fullWidth backgroundColor="back1">
+        <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
+        <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'scan-outline' }} />
+      </BottomButtons>
+    </BottomModal2>
+  )
+})
 
 export default WalletConnectPairingsModal
 

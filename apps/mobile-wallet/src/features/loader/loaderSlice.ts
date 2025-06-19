@@ -1,15 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { LoaderConfig } from '~/features/loader/loaderTypes'
 
 const sliceName = 'loader'
 
-export interface AppMetadataState {
-  loadingText: string
-}
-
-const initialState: AppMetadataState = {
-  loadingText: ''
+const initialState: LoaderConfig = {
+  text: ''
 }
 
 const loaderSlice = createSlice({
@@ -18,12 +15,10 @@ const loaderSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(activateAppLoading, (state, action) => {
-        state.loadingText = action.payload
-      })
-      .addCase(deactivateAppLoading, (state) => {
-        state.loadingText = ''
-      })
+      .addCase(activateAppLoading, (_, action) =>
+        typeof action.payload === 'string' ? { text: action.payload } : action.payload
+      )
+      .addCase(deactivateAppLoading, () => initialState)
   }
 })
 

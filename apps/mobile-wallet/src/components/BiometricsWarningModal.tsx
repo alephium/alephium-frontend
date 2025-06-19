@@ -1,4 +1,4 @@
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -6,7 +6,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
@@ -14,21 +14,21 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onConfirm, confirmText }) => {
+const BiometricsWarningModal = memo<BiometricsWarningModalProps>(({ onConfirm, confirmText }) => {
   const { t } = useTranslation()
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const handleConfirm = () => {
     onConfirm()
-    dismiss(id)
+    dismissModal()
   }
 
   const handleCancel = () => {
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
+    <BottomModal2 notScrollable title={`⚠️ ${t('Are you sure?')}`} noPadding>
       <ScreenSection verticalGap>
         <AppText color="secondary" size={18} style={{ textAlign: 'center', paddingTop: VERTICAL_GAP }}>
           {t(

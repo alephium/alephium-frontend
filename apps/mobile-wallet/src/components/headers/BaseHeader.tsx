@@ -1,16 +1,12 @@
+import MaskedView from '@react-native-masked-view/masked-view'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
+import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useState } from 'react'
-import { LayoutChangeEvent, useWindowDimensions, View, ViewProps } from 'react-native'
-import Animated, {
-  Extrapolation,
-  interpolate,
-  SharedValue,
-  useAnimatedStyle,
-  useDerivedValue
-} from 'react-native-reanimated'
+import { LayoutChangeEvent, Platform, useWindowDimensions, ViewProps } from 'react-native'
+import Animated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -33,8 +29,6 @@ export interface BaseHeaderProps extends ViewProps {
   progress?: SceneProgress
   isCentered?: boolean
 }
-
-const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight, headerTitleScrolled },
@@ -61,26 +55,18 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.get() || 0, defaultScrollRange, [0, 1]))
+  const gradientOpacityAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY?.get() || 0, defaultScrollRange, [0, 1])
+  }))
 
   const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle && !headerTitleScrolled && !titleAlwaysVisible
       ? {
-          opacity: interpolate(
-            scrollY?.get() || 0,
-            [30 + scrollEffectOffset, 50 + scrollEffectOffset],
-            [0, 1],
-            Extrapolation.CLAMP
-          )
+          opacity: interpolate(scrollY?.get() || 0, [30 + scrollEffectOffset, 50 + scrollEffectOffset], [0, 1])
         }
       : headerTitle && headerTitleScrolled
         ? {
-            opacity: interpolate(
-              scrollY?.get() || 0,
-              [30 + scrollEffectOffset, 50 + scrollEffectOffset],
-              [1, 0],
-              Extrapolation.CLAMP
-            )
+            opacity: interpolate(scrollY?.get() || 0, [30 + scrollEffectOffset, 50 + scrollEffectOffset], [1, 0])
           }
         : { opacity: 1 }
   )
@@ -88,12 +74,7 @@ const BaseHeader = ({
   const headerTitleScrolledContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitleScrolled
       ? {
-          opacity: interpolate(
-            scrollY?.get() || 0,
-            [40 + scrollEffectOffset, 60 + scrollEffectOffset],
-            [0, 1],
-            Extrapolation.CLAMP
-          )
+          opacity: interpolate(scrollY?.get() || 0, [40 + scrollEffectOffset, 60 + scrollEffectOffset], [0, 1])
         }
       : { opacity: 0 }
   )
@@ -104,16 +85,36 @@ const BaseHeader = ({
 
   return (
     <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
-      <View pointerEvents="none">
-        <HeaderGradient
-          pointerEvents="none"
-          style={{ opacity: animatedGradientOpacity, width: screenWidth, height: gradientHeight }}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-          locations={[0.7, 1]}
-          colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
-        />
-      </View>
+      <HeaderGradientContainer
+        pointerEvents="none"
+        style={[gradientOpacityAnimatedStyle, { width: screenWidth, height: gradientHeight }]}
+      >
+        {Platform.OS === 'ios' ? (
+          <MaskedView
+            style={{ flex: 1 }}
+            maskElement={
+              <GradientMask
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                locations={[0.5, 0.7, 1]}
+                colors={['black', 'rgba(0, 0, 0, 0.8)', 'transparent']}
+                style={{ flex: 1 }}
+                pointerEvents="none"
+              />
+            }
+          >
+            <BlurView tint={theme.name} intensity={80} style={{ flex: 1 }} />
+          </MaskedView>
+        ) : (
+          <SimpleGradient
+            pointerEvents="none"
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            locations={[0.7, 1]}
+            colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
+          />
+        )}
+      </HeaderGradientContainer>
       <HeaderContainer>
         <Header style={{ marginTop }}>
           {!CustomContent ? (
@@ -150,17 +151,25 @@ const BaseHeader = ({
 export default BaseHeader
 
 const BaseHeaderStyled = styled(Animated.View)`
+  position: absolute;
   width: 100%;
   z-index: 1;
-  position: absolute;
 `
 
-const HeaderGradient = styled(AnimatedHeaderGradient)`
+const HeaderGradientContainer = styled(Animated.View)`
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
   opacity: 0;
+`
+
+const GradientMask = styled(LinearGradient)`
+  height: 100%;
+  width: 100%;
+`
+
+const SimpleGradient = styled(LinearGradient)`
+  height: 100%;
+  width: 100%;
 `
 
 const HeaderContainer = styled(Animated.View)`

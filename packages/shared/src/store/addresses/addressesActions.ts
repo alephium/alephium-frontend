@@ -25,3 +25,5 @@ export const addressDeleted = createAction<AddressHash>('addresses/addressDelete
 export const defaultAddressChanged = createAction<Address>('addresses/defaultAddressChanged')
 
 export const addressesImported = createAction<AddressBase[]>('addresses/addressesImported')
+
+export const initializeViewOnlyAddress = createAction<string>('addresses/initializeViewOnlyAddress')

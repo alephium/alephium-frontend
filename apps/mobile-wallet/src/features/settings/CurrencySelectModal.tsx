@@ -1,10 +1,10 @@
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
@@ -12,19 +12,19 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = withModal(({ id }) => {
+const CurrencySelectModal = memo(() => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
-  const { dismiss } = useBottomSheetModal()
+  const { dismissModal } = useModalContext()
 
   const handleCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
-    dismiss(id)
+    dismissModal()
   }
 
   return (
-    <BottomModal2 modalId={id} title={t('Currency')}>
+    <BottomModal2 title={t('Currency')}>
       {currencyOptions.map((currencyOption, index) => (
         <RadioButtonRow
           key={currencyOption.label}

@@ -6,9 +6,8 @@ import {
 } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
-import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { colord } from 'colord'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getColors } from 'react-native-image-colors'
 import styled, { useTheme } from 'styled-components/native'
@@ -26,24 +25,22 @@ import {
 } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import withModal from '~/features/modals/withModal'
+import { useModalContext } from '~/features/modals/ModalContext'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { darkTheme, lightTheme } from '~/style/themes'
 
-const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
-  const { dismiss } = useBottomSheetModal()
+const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, onClose }) => {
+  const { dismissModal } = useModalContext()
 
   const handleClose = () => {
-    dismiss(id)
-
-    if (parentModalId) dismiss(parentModalId)
+    dismissModal()
+    onClose?.()
   }
 
   return (
-    <BottomModal2 notScrollable modalId={id} title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
+    <BottomModal2 notScrollable title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
@@ -75,15 +72,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
   const [dominantColor, setDominantColor] = useState<string>()
   const { data: token } = useFetchToken(tokenId)
 
-  const fontColor =
-    dominantColor &&
-    (theme.name === 'light'
-      ? colord(dominantColor).brightness() < 0.3
-        ? darkTheme.font.primary
-        : lightTheme.font.primary
-      : colord(dominantColor).brightness() > 0.6
-        ? lightTheme.font.primary
-        : darkTheme.font.primary)
+  const fontColor = theme.font.primary
 
   useEffect(() => {
     if (tokenId === ALPH.id || !token) return

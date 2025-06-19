@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components/native'
 import Box from '~/components/layout/Box'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-type EmptyPlaceholderProps = ViewProps & {
+export type EmptyPlaceholderProps = ViewProps & {
   noMargin?: boolean
   hasHorizontalMargin?: boolean
   hasVerticalMargin?: boolean
@@ -23,8 +23,8 @@ const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
 
   margin-top: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
   margin-bottom: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
-  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
-  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)}px;
+  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)}px;
 
   ${({ noMargin }) =>
     noMargin &&

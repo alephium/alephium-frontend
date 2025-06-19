@@ -76,7 +76,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
       <BottomButtons>
         <Button
           title={t('Show secret recovery phrase')}
-          iconProps={{ name: 'key' }}
+          iconProps={{ name: 'key-outline' }}
           type="primary"
           variant="highlight"
           onPress={onShowSecretRecoveryPhraseButtonPress}

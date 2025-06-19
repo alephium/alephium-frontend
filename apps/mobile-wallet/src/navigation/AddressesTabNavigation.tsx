@@ -43,7 +43,7 @@ const CustomHeaderContent = ({ focusedTabIndex }: { focusedTabIndex: number }) =
       <AppText semiBold size={17} color="secondary">
         {t('Address book')}
       </AppText>
-      <Button iconProps={{ name: 'plus' }} squared onPress={handleButtonPress} compact />
+      <Button iconProps={{ name: 'add' }} squared onPress={handleButtonPress} compact />
     </CustomHeaderContentStyled>
   )
 }
