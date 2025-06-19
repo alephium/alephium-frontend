@@ -38,7 +38,7 @@ const SignUnsignedTxModal = memo(
 
         if (submitAfterSign)
           await throttledClient.node.transactions.postTransactionsSubmit({
-            unsignedTx: unsignedData.unsignedTx.txId,
+            unsignedTx: txParams.unsignedTx,
             signature
           })
 
