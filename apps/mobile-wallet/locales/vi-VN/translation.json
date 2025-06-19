@@ -121,7 +121,6 @@
   "Saved!": "Đã lưu!",
   "Copy address": "Sao chép địa chỉ",
   "Copy": "Sao chép",
-  "Bytecode copied": "Đã sao chép Bytecode",
   "Paste": "Dán",
   "Edit": "Sửa",
   "Share": "Chia sẻ",
@@ -133,7 +132,6 @@
   "dAppRequiredNetwork": "Bạn hiện đang được kết nối đến <1>{{ currentNetwork }}</1>, nhưng dApp yêu cầu kết nối đến <1>{{ requiredNetwork }}</1>.",
   "dAppRequiredGroup": "dApp yêu cầu một địa chỉ ở nhóm <1>{{ group }}</1>. Nhấn vào bên dưới để tạo!",
   "Tap to select another one": "Chạm để chọn một địa chỉ khác",
-  "If none of the above addresses fit your needs, you can generate a new one.": "Nếu không có địa chỉ nào phù hợp với bạn, hãy tạo một địa chỉ mới.",
   "Connect with address": "Kết nối với địa chỉ",
   "Tap to change the address to connect with.": "Chạm để thay đổi địa chỉ ví cần kết nối vào.",
   "Transfer request": "Yêu cầu giao dịch",
@@ -261,7 +259,6 @@
   "Scan QR code": "Quét mã QR",
   "Scan an Alephium address QR code": "Quét mã QR địa chỉ ví Alephium",
   "Scan an Alephium address QR code to add to your contacts list.": "Quét mã QR địa chỉ Alephium để thêm vào danh sách liên hệ của bạn.",
-  "Scan an Alephium address QR code to send funds to.": "Quét mã QR của địa chỉ ví Alephium để gửi tiền đến.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Quét mã QR của địa chỉ Alephium để gửi tiền đến hoặc mã QR WalletConnect để kết nối với dApp.",
   "Could not connect to WalletConnect": "Không thể kết nối đến WalletConnect",
   "Current connections": "Các kết nối hiện tại",
@@ -431,9 +428,7 @@
   "Could not load dApps": "Không thể tải các dApp",
   "Coming soon!": "Sắp ra mắt!",
   "Add to favorites": "Thêm vào mục yêu thích",
-  "Added to favorites": "Đã thêm vào mục yêu thích",
   "Remove from favorites": "Xoá khỏi mục yêu thích",
-  "Removed from favorites": "Đã xóa khỏi mục yêu thích",
   "Favorites": "Yêu thích",
   "No dApps added to your favorites yet": "Chưa có dApp nào được thêm vào mục yêu thích",
   "Hide assets you're not interested in": "Ẩn các tài sản mà bạn không quan tâm",
@@ -464,5 +459,6 @@
   "More details on Alph.land": "Thông tin chi tiết trên Alph.land",
   "Worth": "Giá trị",
   "Group": "Nhóm",
-  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Những token này trong ví của bạn không tuân thủ các tiêu chuẩn token trên Alephium. Không có thông tin nào về chúng được tìm thấy."
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Những token này trong ví của bạn không tuân thủ các tiêu chuẩn token trên Alephium. Không có thông tin nào về chúng được tìm thấy.",
+  "Unknown error": "Lỗi không xác định"
 }

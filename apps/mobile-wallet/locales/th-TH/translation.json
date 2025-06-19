@@ -121,7 +121,6 @@
   "Saved!": "บันทึกแล้ว",
   "Copy address": "คัดลอก ที่อยู่",
   "Copy": "คัดลอก",
-  "Bytecode copied": "Bytecode คัดลอกแล้ว",
   "Paste": "วาง",
   "Edit": "แก้ไข",
   "Share": "แชร์",
@@ -133,7 +132,6 @@
   "dAppRequiredNetwork": "ขณะนี้คุณกำลังเชื่อมต่อกับ <1>{{ currentNetwork }}</1> แต่ dApp ต้องการเชื่อมต่อกับ <1>{{ requiredNetwork }}</1>",
   "dAppRequiredGroup": "dApp จะขอที่อยู่ในกลุ่ม <1>{{ group }}</1> คลิกด้านล่างเพื่อสร้างที่อยู่!",
   "Tap to select another one": "แตะเพื่อเลือกรายการอื่น",
-  "If none of the above addresses fit your needs, you can generate a new one.": "หากที่อยู่ข้างต้นไม่ตรงกับความต้องการ คุณสามารถสร้างที่อยู่ใหม่ได้",
   "Connect with address": "เชื่อมต่อกับที่อยู่",
   "Tap to change the address to connect with.": "แตะเพื่อเปลี่ยนที่อยู่ที่จะเชื่อมต่อ",
   "Transfer request": "คำร้องขอโอนย้าย",
@@ -261,7 +259,6 @@
   "Scan QR code": "สแกนรหัส QR",
   "Scan an Alephium address QR code": "สแกนรหัส QR ที่อยู่ Alephium",
   "Scan an Alephium address QR code to add to your contacts list.": "สแกนรหัส QR  ของ Alephium เพื่อเพิ่มที่อยู่ในรายชื่อผู้ติดต่อ",
-  "Scan an Alephium address QR code to send funds to.": "สแกนรหัส QR ที่อยู่ Alephium เพื่อส่งเงินไปที่",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "สแกนรหัส QR ของที่อยู่ Alephium เพื่อส่งเงินหรือรหัส QR ของ WalletConnect เพื่อเชื่อมต่อกับ dApp",
   "Could not connect to WalletConnect": "ไม่สามารถเชื่อมต่อ WalletConnect ได้",
   "Current connections": "การเชื่อมต่อปัจจุบัน",
@@ -431,9 +428,7 @@
   "Could not load dApps": "ไม่สามารถโหลด dApps ได้",
   "Coming soon!": "กำลังจะมาเร็วๆ นี้",
   "Add to favorites": "เพิ่มไปยังรายการโปรด",
-  "Added to favorites": "เพิ่มไปยังรายการโปรดแล้ว",
   "Remove from favorites": "ลบออกจากรายการโปรด",
-  "Removed from favorites": "ลบออกจากรายการโปรด",
   "Favorites": "รายการโปรด",
   "No dApps added to your favorites yet": "ยังไม่มี dApps ที่เพิ่มไปยังรายการโปรด",
   "Hide assets you're not interested in": "ซ่อนสินทรัพย์ที่คุณไม่สนใจ",
@@ -464,5 +459,6 @@
   "More details on Alph.land": "รายละเอียดเพิ่มเติมที่ Alph.land",
   "Worth": "คุณค่า",
   "Group": "กลุ่ม",
-  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "โทเค็นเหล่านี้ในกระเป๋าเงินไม่เป็นไปตามมาตรฐานโทเค็น Alephium ไม่พบข้อมูลเกี่ยวกับโทเค็นเหล่านี้"
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "โทเค็นเหล่านี้ในกระเป๋าเงินไม่เป็นไปตามมาตรฐานโทเค็น Alephium ไม่พบข้อมูลเกี่ยวกับโทเค็นเหล่านี้",
+  "Unknown error": "ข้อผิดพลาดที่ไม่ทราบ"
 }
