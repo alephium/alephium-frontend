@@ -32,7 +32,8 @@ import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, onClose }) => {
-  const { dismissModal } = useModalContext()
+  const { dismissModal, id: modalId } = useModalContext()
+  console.log('modalId:', modalId)
 
   const handleClose = () => {
     dismissModal()

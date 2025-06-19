@@ -32,6 +32,7 @@ export default ModalContextProvider
 
 export const useModalContext = () => {
   const context = useContext(ModalContext)
+  console.log('context:', context)
 
   if (!context) {
     throw new Error('useModalContext must be used within a ModalContextProvider')

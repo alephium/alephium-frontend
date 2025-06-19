@@ -18,6 +18,7 @@ import { useAppScreenIsFocused } from '~/utils/navigation'
 interface AnimatedBackgroundProps {
   offsetTop?: number
   shade?: string
+  disabled?: boolean
 }
 
 const GYRO_MULTIPLIER = 100
@@ -31,6 +32,7 @@ const springConfig = {
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
   const isFocused = useAppScreenIsFocused()
+
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
   const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
     interval: isFocused ? FPS_60 : 1000000
