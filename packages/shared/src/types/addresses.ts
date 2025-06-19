@@ -25,19 +25,21 @@ export type AddressIndex = number
 // isDefault: boolean
 // color: string
 // label?: string
-export type AddressMetadata = AddressSettings & {
+export type AddressStoredMetadataWithoutHash = AddressSettings & {
   index: AddressIndex
   keyType?: KeyType
 }
 
-export type AddressMetadataWithHash = AddressMetadata & { hash: string }
+export type AddressStoredMetadataWithHash = AddressStoredMetadataWithoutHash & {
+  hash: string
+}
 
 // hash: AddressHash
 // index: number
 // isDefault: boolean
 // color: string
 // label?: string
-export type AddressBase = AddressMetadata & {
+export type AddressBase = AddressStoredMetadataWithoutHash & {
   hash: AddressHash
   publicKey: string // TODO: Replace by NonSensitiveAddressData by moving it to shared?
 }

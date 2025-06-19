@@ -1,6 +1,11 @@
 import { canHaveTargetGroup, GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
-import { AddressBase, AddressHash, AddressMetadata, findNextAvailableAddressIndex } from '@alephium/shared'
+import {
+  AddressBase,
+  AddressHash,
+  AddressStoredMetadataWithoutHash,
+  findNextAvailableAddressIndex
+} from '@alephium/shared'
 import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
@@ -154,7 +159,7 @@ export const generateUuidFromInitialAddress = async (addressHash: AddressHash) =
 }
 
 interface GenerateLedgerAddressesFromMetadataProps {
-  addressesMetadata: AddressMetadata[]
+  addressesMetadata: AddressStoredMetadataWithoutHash[]
   onError: (error: Error) => void
 }
 
