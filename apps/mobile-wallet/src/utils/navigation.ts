@@ -1,7 +1,8 @@
 import { createNavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native'
 import { useCallback, useSyncExternalStore } from 'react'
 
-import { selectAllModals } from '~/features/modals/modalSelectors'
+import { selectIsAnyModalOpened } from '~/features/modals/modalSelectors'
+import useIsTopModal from '~/features/modals/useIsTopModal'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -28,9 +29,8 @@ export const resetNavigation = (
 
 export const useAppScreenIsFocused = () => {
   const navigation = useNavigation()
-
-  const openedModals = useAppSelector(selectAllModals)
-  const isBottomModalOpen = openedModals.length > 0
+  const isAnyModalOpened = useAppSelector(selectIsAnyModalOpened)
+  const isTopModal = useIsTopModal()
 
   const subscribe = useCallback(
     (callback: () => void) => {
@@ -45,7 +45,7 @@ export const useAppScreenIsFocused = () => {
     [navigation]
   )
 
-  const value = !!useSyncExternalStore(subscribe, navigation.isFocused, navigation.isFocused)
+  const screenFocused = !!useSyncExternalStore(subscribe, navigation.isFocused, navigation.isFocused)
 
-  return value && !isBottomModalOpen
+  return isTopModal || (!isAnyModalOpened && screenFocused)
 }
