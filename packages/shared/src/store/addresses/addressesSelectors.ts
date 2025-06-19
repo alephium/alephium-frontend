@@ -37,6 +37,7 @@ export const selectInitialAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.index === 0)
 )
 
+// TODO: Support groupless
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) =>

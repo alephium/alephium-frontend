@@ -22,7 +22,6 @@ import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
-import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
@@ -164,8 +163,6 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <ConnectDappModal {...params.props} />
     case 'NetworkSwitchModal':
       return <NetworkSwitchModal {...params.props} />
-    case 'ConnectDappNewAddressModal':
-      return <ConnectDappNewAddressModal {...params.props} />
     case 'SignExecuteScriptTxModal':
       return <SignExecuteScriptTxModal {...params.props} />
     case 'SignDeployContractTxModal':

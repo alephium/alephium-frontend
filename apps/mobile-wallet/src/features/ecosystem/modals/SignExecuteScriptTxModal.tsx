@@ -61,7 +61,7 @@ const SignExecuteScriptTxModal = memo(
           signature: data.signature,
           gasAmount: unsignedData.gasAmount,
           gasPrice: BigInt(unsignedData.gasPrice),
-          simulatedOutputs: []
+          simulationResult: unsignedData.simulationResult
         })
       }
     })
