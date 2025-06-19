@@ -1,4 +1,4 @@
-import { explorer as e, KeyType, Optional } from '@alephium/web3'
+import { KeyType, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { StringAlias } from '@/types/utils'
@@ -50,15 +50,6 @@ export type AddressBase = AddressMetadata & {
 // label?: string
 export type Address = AddressBase & {
   group: number
-}
-
-export type AddressBalancesSyncResult = Omit<e.AddressInfo, 'txNumber'> & {
-  hash: AddressHash
-}
-
-export type AddressTokensSyncResult = {
-  hash: AddressHash
-  tokenBalances: e.AddressTokenBalance[]
 }
 
 export type AddressesState = EntityState<Address>
