@@ -1,4 +1,6 @@
-import { AddressStoredMetadataWithoutHash, AddressStoredMetadataWithHash } from '@/types/addresses'
+import { KeyType } from '@alephium/web3'
+
+import { AddressStoredMetadataWithHash, AddressStoredMetadataWithoutHash } from '@/types/addresses'
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
   let nextAvailableAddressIndex = startIndex
@@ -16,3 +18,6 @@ export const isAddressIndexValid = (addressIndex: number) =>
 export const addressMetadataIncludesHash = (
   metadata: AddressStoredMetadataWithoutHash | AddressStoredMetadataWithHash
 ): metadata is AddressStoredMetadataWithHash => (metadata as AddressStoredMetadataWithHash).hash !== undefined
+
+export const isGrouplessKeyType = (keyType: KeyType = 'default') =>
+  keyType === 'default' || keyType === 'bip340-schnorr'

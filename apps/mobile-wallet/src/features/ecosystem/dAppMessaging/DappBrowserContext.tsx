@@ -1,4 +1,4 @@
-import { getNetworkIdFromNetworkName, NetworkName, throttledClient } from '@alephium/shared'
+import { getNetworkIdFromNetworkName, isGrouplessKeyType, NetworkName, throttledClient } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
@@ -131,8 +131,10 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         return
       }
 
-      // TODO: handle keyType and groupless addresses
-      const addressesInGroup = data.group !== undefined ? addresses.filter((a) => a.group === data.group) : addresses
+      const addressesInGroup =
+        data.group !== undefined
+          ? addresses.filter((a) => a.group === data.group || isGrouplessKeyType(a.keyType))
+          : addresses
 
       // Select address automatically if there is only one address in the group
       if (addressesInGroup.length === 1) {

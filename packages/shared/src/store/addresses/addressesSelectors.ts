@@ -5,6 +5,7 @@ import { partition } from 'lodash'
 import { addressesAdapter } from '@/store/addresses/addressesAdapters'
 import { SharedRootState } from '@/store/store'
 import { AddressHash } from '@/types/addresses'
+import { isGrouplessKeyType } from '@/utils/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -37,9 +38,11 @@ export const selectInitialAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.index === 0)
 )
 
-// TODO: Support groupless
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) =>
-    (group !== undefined ? addresses.filter((address) => address.group === group) : addresses).map(({ hash }) => hash)
+    (group !== undefined
+      ? addresses.filter((address) => address.group === group || isGrouplessKeyType(address.keyType))
+      : addresses
+    ).map(({ hash }) => hash)
 )
