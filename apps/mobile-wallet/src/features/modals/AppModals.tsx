@@ -31,7 +31,7 @@ import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal
 import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
-import ModalContextProvider from '~/features/modals/ModalContext'
+import { ModalContextProvider } from '~/features/modals/ModalContext'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
