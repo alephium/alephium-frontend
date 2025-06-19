@@ -1,4 +1,4 @@
-import { explorer as e, Optional } from '@alephium/web3'
+import { explorer as e, KeyType, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { StringAlias } from '@/types/utils'
@@ -27,6 +27,7 @@ export type AddressIndex = number
 // label?: string
 export type AddressMetadata = AddressSettings & {
   index: AddressIndex
+  keyType?: KeyType
 }
 
 export type AddressMetadataWithHash = AddressMetadata & { hash: string }

@@ -1,13 +1,14 @@
-import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, isGrouplessTxResult, throttledClient } from '@alephium/shared'
 import { SignDeployContractTxParams, transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { SignExecuteScriptTxParamsWithAmounts, SignTransferTxParamsSingleDestination } from '~/types/transactions'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
-export const buildSweepTransactions = async (fromAddressHash: AddressHash, toAddressHash: AddressHash) => {
+export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey: await getAddressAsymetricKey(fromAddressHash, 'public'),
+    fromPublicKey: await getAddressAsymetricKey(fromAddress.hash, 'public'),
+    fromPublicKeyType: fromAddress.keyType,
     toAddress: toAddressHash
   })
 
@@ -24,7 +25,7 @@ export const buildUnsignedTransactions = async (
   shouldSweep: boolean
 ) => {
   if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress.publicKey, toAddressHash)
+    return await buildSweepTransactions(fromAddress, toAddressHash)
   } else {
     const data = await buildTransferTransaction({
       signerAddress: fromAddress.hash,
@@ -34,6 +35,9 @@ export const buildUnsignedTransactions = async (
     })
 
     if (!data) return
+
+    // TODO: handle groupless transfer txs
+    if (isGrouplessTxResult(data)) return
 
     return {
       unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],

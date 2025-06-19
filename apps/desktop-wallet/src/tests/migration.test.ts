@@ -558,11 +558,13 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
     const addressMetadata: AddressMetadata[] = [
       {
         index: 0,
+        keyType: 'default',
         isDefault: false,
         color: 'pink'
       },
       {
         index: 1,
+        keyType: 'default',
         isDefault: true,
         color: 'red',
         label: 'My main one'

@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, throttledClient, transactionSent } from '@alephium/shared'
+import { fromHumanReadableAmount, isGrouplessTxResult, throttledClient, transactionSent } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -27,7 +27,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
   context.setIsSweeping(shouldSweep)
 
   if (shouldSweep) {
-    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, toAddress)
+    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress.publicKey, fromAddress.keyType, toAddress)
     context.setSweepUnsignedTxs(unsignedTxs)
     context.setFees(fees)
   } else {
@@ -35,6 +35,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
 
     const data = await throttledClient.node.transactions.postTransactionsBuild({
       fromPublicKey: fromAddress.publicKey,
+      fromPublicKeyType: fromAddress.keyType,
       destinations: [
         {
           address: toAddress,
@@ -46,6 +47,10 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
       gasAmount: gasAmount ? gasAmount : undefined,
       gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
     })
+
+    // TODO: handle groupless addresses
+    if (isGrouplessTxResult(data)) return
+
     context.setUnsignedTransaction(data)
     context.setUnsignedTxId(data.txId)
     context.setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))

@@ -34,11 +34,11 @@ export default styled(TableHeader)`
   background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.secondary}`)};
 
   tr {
-    height: ${({ compact }) => (compact ? '20px' : '40px')} !important;
+    height: ${({ compact }) => (compact ? '34px' : '40px')} !important;
   }
 
   th {
-    padding: 12px;
+    padding: 0 10px;
     font-weight: 600;
     font-size: 13px;
     position: sticky;

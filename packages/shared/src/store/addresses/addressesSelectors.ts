@@ -1,5 +1,6 @@
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
+import { partition } from 'lodash'
 
 import { addressesAdapter } from '@/store/addresses/addressesAdapters'
 import { SharedRootState } from '@/store/store'
@@ -13,9 +14,17 @@ export const {
 
 export const selectAllAddressHashes = createSelector(selectAddressIds, (addresses) => addresses as AddressHash[])
 
-export const selectAllAddressIndexes = createSelector(selectAllAddresses, (addresses) =>
-  addresses.map(({ index }) => index)
-)
+export const selectAllAddressIndexes = createSelector(selectAllAddresses, (addresses) => {
+  const [addressesWithGroup, grouplessAddresses] = partition(
+    addresses,
+    ({ keyType }) => keyType === 'default' || keyType === 'bip340-schnorr'
+  )
+
+  return {
+    indexesOfAddressesWithGroup: addressesWithGroup.map(({ index }) => index),
+    indexesOfGrouplessAddresses: grouplessAddresses.map(({ index }) => index)
+  }
+})
 
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
@@ -28,6 +37,7 @@ export const selectInitialAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.index === 0)
 )
 
+// TODO: Support groupless
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) =>
