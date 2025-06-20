@@ -109,6 +109,9 @@ export default {
           project: 'alephium-mobile-wallet',
           organization: 'alephium'
         }
+      ],
+      [
+        'expo-web-browser'
       ]
     ],
     extra: {
