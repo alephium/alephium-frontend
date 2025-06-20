@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.2.1",
+  "version": "2.2.0",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -99,6 +99,7 @@
     "react-native-aes-crypto": "^2.1.0",
     "react-native-background-timer": "^2.4.1",
     "react-native-gesture-handler": "^2.24.0",
+    "react-native-get-random-values": "~1.11.0",
     "react-native-image-colors": "^2.4.0",
     "react-native-localize": "^3.2.0",
     "react-native-mmkv": "^3.2.0",
@@ -144,4 +145,4 @@
       "./jestSetupFile.ts"
     ]
   }
-}
+} 
