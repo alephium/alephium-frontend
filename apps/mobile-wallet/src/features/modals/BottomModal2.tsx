@@ -15,7 +15,7 @@ import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
-import { useModalContext } from '~/features/modals/ModalContext'
+import ModalContextProvider, { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
@@ -33,7 +33,7 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
 const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const safeAreaInsets = useSafeAreaInsets()
-  const { id, onDismiss } = useModalContext()
+  const modalContext = useModalContext()
   const theme = useTheme()
 
   useEffect(() => {
@@ -62,51 +62,57 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       backdropComponent={(props: BottomSheetBackdropProps) => <BottomModalBackdrop {...props} onPress={handleClose} />}
       handleComponent={() => <BottomModalHandle />}
       topInset={safeAreaInsets.top}
-      name={id}
+      name={modalContext.id}
       backgroundStyle={{ backgroundColor: theme.bg.back1 }}
       {...props.bottomSheetModalProps}
-      onDismiss={onDismiss}
+      onDismiss={modalContext.onDismiss}
     >
-      {isFlashList(props) && props.flashListProps ? (
-        <BottomSheetFlashList
-          contentContainerStyle={styles}
-          {...props.flashListProps}
-          ListHeaderComponent={
-            <>
-              {/* Note: The header is kept INSIDE the sheet so that it behaves properly. Moving it outside creates issues with calculating its height. To be looked into. */}
+      {/* @gorhom/bottom-sheet renders the PortalHost in the PortalProvider which is in BottomSheetModalProvider which
+      is outside of our ModalContextProvider, so the children of the modal do not have access to the modal context. To
+      fix that, we wrap the children of the modal in our ModalContextProvider.
+      See: https://github.com/gorhom/react-native-portal/blob/master/src/components/portalProvider/PortalProvider.tsx#L21 */}
+      <ModalContextProvider {...modalContext}>
+        {isFlashList(props) && props.flashListProps ? (
+          <BottomSheetFlashList
+            contentContainerStyle={styles}
+            {...props.flashListProps}
+            ListHeaderComponent={
+              <>
+                {/* Note: The header is kept INSIDE the sheet so that it behaves properly. Moving it outside creates issues with calculating its height. To be looked into. */}
+                <BottomModalHeader
+                  title={props.title}
+                  height={props.navHeight}
+                  onClose={handleClose}
+                  titleAlign={props.titleAlign}
+                />
+                {typeof props.flashListProps.ListHeaderComponent === 'function' ? (
+                  <props.flashListProps.ListHeaderComponent />
+                ) : (
+                  props.flashListProps.ListHeaderComponent
+                )}
+              </>
+            }
+          />
+        ) : (
+          !isFlashList(props) &&
+          BottomSheetComponent && (
+            <BottomSheetComponent
+              style={props.notScrollable ? styles : undefined}
+              contentContainerStyle={props.notScrollable ? undefined : styles}
+              // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
+            >
+              {/* Note: Same as above regarding header. */}
               <BottomModalHeader
                 title={props.title}
                 height={props.navHeight}
                 onClose={handleClose}
                 titleAlign={props.titleAlign}
               />
-              {typeof props.flashListProps.ListHeaderComponent === 'function' ? (
-                <props.flashListProps.ListHeaderComponent />
-              ) : (
-                props.flashListProps.ListHeaderComponent
-              )}
-            </>
-          }
-        />
-      ) : (
-        !isFlashList(props) &&
-        BottomSheetComponent && (
-          <BottomSheetComponent
-            style={props.notScrollable ? styles : undefined}
-            contentContainerStyle={props.notScrollable ? undefined : styles}
-            // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
-          >
-            {/* Note: Same as above regarding header. */}
-            <BottomModalHeader
-              title={props.title}
-              height={props.navHeight}
-              onClose={handleClose}
-              titleAlign={props.titleAlign}
-            />
-            {props.children}
-          </BottomSheetComponent>
-        )
-      )}
+              {props.children}
+            </BottomSheetComponent>
+          )
+        )}
+      </ModalContextProvider>
     </BottomSheetModal>
   )
 }

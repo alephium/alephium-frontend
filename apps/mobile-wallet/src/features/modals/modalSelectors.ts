@@ -15,3 +15,13 @@ export const selectHasNftModalOpened = createSelector(
       (modal) => modal?.params.name === 'NftModal' && modal.params.props.nftId === nftId
     )
 )
+
+export const selectIsAnyModalOpened = createSelector(
+  [(state: RootState) => state.modals],
+  (modals) => modals.ids.length > 0
+)
+
+export const selectIsTopModal = createSelector(
+  [(state: RootState) => state.modals, (_, modalId: string) => modalId],
+  (modals, modalId) => modals.ids[modals.ids.length - 1] === modalId
+)
