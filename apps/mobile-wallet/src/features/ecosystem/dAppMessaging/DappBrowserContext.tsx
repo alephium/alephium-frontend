@@ -26,13 +26,11 @@ import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppM
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
-import {
-  processSignExecuteScriptTxParamsAndBuildTx,
-  processSignTransferTxParamsAndBuildTx
-} from '~/features/ecosystem/utils'
+import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { showToast } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
@@ -199,9 +197,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
           switch (type) {
             case 'TRANSFER': {
-              // TODO: Handle multiple destinations
-              const { txParamsSingleDestination, buildTransactionTxResult } =
-                await processSignTransferTxParamsAndBuildTx(params)
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
+              dispatch(deactivateAppLoading())
 
               dispatch(
                 openModal({
@@ -212,8 +213,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       messageId
                     ),
                   props: {
-                    txParams: txParamsSingleDestination,
-                    unsignedData: buildTransactionTxResult,
+                    txParams: params,
+                    unsignedData: unsignedBuiltTx,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },

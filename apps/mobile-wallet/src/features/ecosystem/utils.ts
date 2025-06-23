@@ -1,12 +1,12 @@
 import { AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { SignExecuteScriptTxParams, SignTransferTxParams } from '@alephium/web3'
+import { SignExecuteScriptTxParams } from '@alephium/web3'
 import { partition } from 'lodash'
 
-import { buildCallContractTransaction, buildTransferTransaction } from '~/api/transactions'
+import { buildCallContractTransaction } from '~/api/transactions'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { store } from '~/store/store'
-import { SignExecuteScriptTxParamsWithAmounts, SignTransferTxParamsSingleDestination } from '~/types/transactions'
+import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
 
 export const calculateAssetAmountsSignExecuteScriptTx = ({
   tokens,
@@ -47,30 +47,5 @@ export const processSignExecuteScriptTxParamsAndBuildTx = async (txParams: SignE
   return {
     txParamsWithAmounts,
     buildCallContractTxResult
-  }
-}
-
-// TODO: Support multiple destinations
-export const processSignTransferTxParamsAndBuildTx = async (txParams: SignTransferTxParams) => {
-  const { address: toAddress, tokens, attoAlphAmount, lockTime } = txParams.destinations[0]
-  const assetAmounts = [
-    { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-    ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-  ]
-
-  const txParamsSingleDestination: SignTransferTxParamsSingleDestination = {
-    ...txParams,
-    toAddress,
-    assetAmounts,
-    lockTime: lockTime ? new Date(lockTime) : undefined
-  }
-
-  store.dispatch(activateAppLoading('Loading'))
-  const buildTransactionTxResult = await buildTransferTransaction(txParamsSingleDestination)
-  store.dispatch(deactivateAppLoading())
-
-  return {
-    txParamsSingleDestination,
-    buildTransactionTxResult
   }
 }

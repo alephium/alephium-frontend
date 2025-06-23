@@ -1,5 +1,5 @@
 import { getHumanReadableError } from '@alephium/shared'
-import { node as n } from '@alephium/web3'
+import { BuildTxResult, node as n, SignTransferTxResult } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -13,11 +13,14 @@ import { showExceptionToast } from '~/utils/layout'
 type UnsignedTxData =
   | n.BuildExecuteScriptTxResult
   | n.BuildDeployContractTxResult
-  | n.BuildTransferTxResult
+  | BuildTxResult<SignTransferTxResult>
   | n.DecodeUnsignedTxResult
   | string
 
-type TxResultsWithGas = n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult | n.BuildTransferTxResult
+type TxResultsWithGas =
+  | n.BuildExecuteScriptTxResult
+  | n.BuildDeployContractTxResult
+  | BuildTxResult<SignTransferTxResult>
 
 type BaseSignModalReturn = {
   handleApprovePress: () => void

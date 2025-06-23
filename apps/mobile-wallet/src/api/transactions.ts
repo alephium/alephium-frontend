@@ -1,8 +1,8 @@
-import { Address, AddressHash, AssetAmount, isGrouplessTxResult, throttledClient } from '@alephium/shared'
+import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
 import { SignDeployContractTxParams, transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { SignExecuteScriptTxParamsWithAmounts, SignTransferTxParamsSingleDestination } from '~/types/transactions'
+import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
@@ -27,49 +27,28 @@ export const buildUnsignedTransactions = async (
   if (shouldSweep) {
     return await buildSweepTransactions(fromAddress, toAddressHash)
   } else {
-    const data = await buildTransferTransaction({
-      signerAddress: fromAddress.hash,
-      toAddress: toAddressHash,
-      assetAmounts,
-      destinations: []
-    })
+    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
-    if (!data) return
-
-    // TODO: handle groupless transfer txs
-    if (isGrouplessTxResult(data)) return
+    const data = await throttledClient.txBuilder.buildTransferTx(
+      {
+        signerAddress: fromAddress.hash,
+        signerKeyType: fromAddress.keyType,
+        destinations: [
+          {
+            address: toAddressHash,
+            attoAlphAmount,
+            tokens
+          }
+        ]
+      },
+      await getAddressAsymetricKey(fromAddress.hash, 'public')
+    )
 
     return {
       unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],
       fees: BigInt(data.gasAmount) * BigInt(data.gasPrice)
     }
   }
-}
-
-export const buildTransferTransaction = async ({
-  signerAddress,
-  signerKeyType,
-  toAddress,
-  assetAmounts,
-  gasPrice,
-  ...props
-}: SignTransferTxParamsSingleDestination) => {
-  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
-  return await throttledClient.node.transactions.postTransactionsBuild({
-    fromPublicKey: await getAddressAsymetricKey(signerAddress, 'public'),
-    fromPublicKeyType: signerKeyType,
-    ...props,
-    // TODO: Remove when supporting multiple destinations
-    destinations: [
-      {
-        address: toAddress,
-        attoAlphAmount,
-        tokens
-      }
-    ],
-    gasPrice: gasPrice?.toString()
-  })
 }
 
 export const buildCallContractTransaction = async ({
