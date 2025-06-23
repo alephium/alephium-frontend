@@ -15,7 +15,7 @@ import BottomModalBackdrop from '~/features/modals/BottomModalBackdrop'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import BottomModalHandle from '~/features/modals/BottomModalHandle'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
-import { ModalContextProvider, useModalContext } from '~/features/modals/ModalContext'
+import ModalContextProvider, { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
@@ -67,6 +67,10 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       {...props.bottomSheetModalProps}
       onDismiss={modalContext.onDismiss}
     >
+      {/* @gorhom/bottom-sheet renders the PortalHost in the PortalProvider which is in BottomSheetModalProvider which
+      is outside of our ModalContextProvider, so the children of the modal do not have access to the modal context. To
+      fix that, we wrap the children of the modal in our ModalContextProvider.
+      See: https://github.com/gorhom/react-native-portal/blob/master/src/components/portalProvider/PortalProvider.tsx#L21 */}
       <ModalContextProvider {...modalContext}>
         {isFlashList(props) && props.flashListProps ? (
           <BottomSheetFlashList
