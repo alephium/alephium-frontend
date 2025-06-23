@@ -9,19 +9,21 @@ interface ModalContextType {
   onUserDismiss?: () => void
 }
 
-export const ModalContext = createContext<ModalContextType | null>(null)
+const ModalContext = createContext<ModalContextType | null>(null)
 
 interface ModalContextProviderProps extends UseModalDismissProps {
   children: ReactNode
 }
 
-export const ModalContextProvider = ({ id, onUserDismiss, children }: ModalContextProviderProps) => {
+const ModalContextProvider = ({ id, onUserDismiss, children }: ModalContextProviderProps) => {
   const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss })
 
   return (
     <ModalContext.Provider value={{ id, dismissModal, onDismiss, onUserDismiss }}>{children}</ModalContext.Provider>
   )
 }
+
+export default ModalContextProvider
 
 export const useModalContext = () => {
   const context = useContext(ModalContext)
@@ -31,4 +33,10 @@ export const useModalContext = () => {
   }
 
   return context
+}
+
+export const usePotentialModalId = () => {
+  const context = useContext(ModalContext)
+
+  return context?.id
 }
