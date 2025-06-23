@@ -1,4 +1,4 @@
-import { Children, isValidElement, ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
@@ -33,7 +33,6 @@ import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import ModalContextProvider from '~/features/modals/ModalContext'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { ModalInstance } from '~/features/modals/modalTypes'
-import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
@@ -190,14 +189,6 @@ interface ModalsContainerProps {
 
 const ModalsContainer = ({ children }: ModalsContainerProps) => {
   const hasOpenedModals = useAppSelector((s) => selectAllModals(s).length > 0)
-
-  useEffect(() => {
-    Children.forEach(children, (child) => {
-      if (isValidElement(child) && !isModalWrapped(child)) {
-        console.warn(`Warning: ${getElementName(child)} is not wrapped! Please wrap it with the memo function.`)
-      }
-    })
-  }, [children])
 
   return <ModalsContainerStyled pointerEvents={hasOpenedModals ? 'auto' : 'none'}>{children}</ModalsContainerStyled>
 }
