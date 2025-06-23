@@ -1,5 +1,11 @@
 import { getHumanReadableError } from '@alephium/shared'
-import { BuildTxResult, node as n, SignTransferTxResult } from '@alephium/web3'
+import {
+  BuildTxResult,
+  node as n,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxResult,
+  SignTransferTxResult
+} from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -11,15 +17,15 @@ import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { showExceptionToast } from '~/utils/layout'
 
 type UnsignedTxData =
-  | n.BuildExecuteScriptTxResult
-  | n.BuildDeployContractTxResult
+  | BuildTxResult<SignExecuteScriptTxResult>
+  | BuildTxResult<SignDeployContractTxResult>
   | BuildTxResult<SignTransferTxResult>
   | n.DecodeUnsignedTxResult
   | string
 
 type TxResultsWithGas =
-  | n.BuildExecuteScriptTxResult
-  | n.BuildDeployContractTxResult
+  | BuildTxResult<SignExecuteScriptTxResult>
+  | BuildTxResult<SignDeployContractTxResult>
   | BuildTxResult<SignTransferTxResult>
 
 type BaseSignModalReturn = {

@@ -11,7 +11,6 @@ import {
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
-import { buildDeployContractTransaction } from '~/api/transactions'
 import { isConnectTipShownOnce, setConnectTipShownOnce } from '~/features/connectTip/connectTipStorage'
 import {
   connectionAuthorized,
@@ -26,7 +25,6 @@ import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppM
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
-import { processSignExecuteScriptTxParamsAndBuildTx } from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -229,8 +227,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
 
             case 'EXECUTE_SCRIPT': {
-              const { txParamsWithAmounts, buildCallContractTxResult } =
-                await processSignExecuteScriptTxParamsAndBuildTx(params)
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
+              dispatch(deactivateAppLoading())
 
               dispatch(
                 openModal({
@@ -241,8 +243,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       messageId
                     ),
                   props: {
-                    txParams: txParamsWithAmounts,
-                    unsignedData: buildCallContractTxResult,
+                    txParams: params,
+                    unsignedData: unsignedBuiltTx,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -257,7 +259,10 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'DEPLOY_CONTRACT': {
               dispatch(activateAppLoading('Loading'))
-              const buildDeployContractTxResult = await buildDeployContractTransaction(params)
+              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -270,7 +275,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: buildDeployContractTxResult,
+                    unsignedData,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
