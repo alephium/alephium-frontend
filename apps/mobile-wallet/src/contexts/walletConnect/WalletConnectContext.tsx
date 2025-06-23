@@ -640,6 +640,15 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             break
           }
+          case 'alph_signAndSubmitChainedTx': {
+            // TODO: Implement chained transactions flow
+            showToast({
+              text1: t('Could not build transaction'),
+              text2: 'Chained transactions are not supported yet.',
+              type: 'error'
+            })
+            break
+          }
           case 'alph_requestNodeApi': {
             walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
