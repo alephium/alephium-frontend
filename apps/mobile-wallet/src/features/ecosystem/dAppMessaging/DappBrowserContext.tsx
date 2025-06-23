@@ -289,6 +289,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'UNSIGNED_TX': {
               dispatch(activateAppLoading('Loading'))
+              // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
+              // problems with unpolyfilled crypto Node JS module.
               const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
                 unsignedTx: params.unsignedTx
               })
@@ -304,7 +306,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: decodedResult,
+                    unsignedData: decodedResult.unsignedTx,
                     submitAfterSign: true,
                     onSuccess: (result) =>
                       replyToDapp(
@@ -373,7 +375,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             dAppUrl: host ?? dAppUrl,
             dAppIcon: icon,
             txParams: data,
-            unsignedData: decodedResult,
+            unsignedData: decodedResult.unsignedTx,
             submitAfterSign: false,
             origin: 'in-app-browser',
             onError: (error) =>

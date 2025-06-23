@@ -621,7 +621,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
                   txParams,
-                  unsignedData: decodedResult,
+                  unsignedData: decodedResult.unsignedTx,
                   submitAfterSign,
                   origin: 'walletconnect',
                   onError: (message) => {

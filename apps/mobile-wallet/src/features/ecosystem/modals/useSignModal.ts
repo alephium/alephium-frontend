@@ -20,7 +20,7 @@ type UnsignedTxData =
   | BuildTxResult<SignExecuteScriptTxResult>
   | BuildTxResult<SignDeployContractTxResult>
   | BuildTxResult<SignTransferTxResult>
-  | n.DecodeUnsignedTxResult
+  | n.UnsignedTx
   | string
 
 type TxResultsWithGas =
