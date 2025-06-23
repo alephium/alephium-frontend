@@ -396,6 +396,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - OpenSSL-Universal (3.3.3001)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1724,7 +1725,7 @@ PODS:
     - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-compat (2.17.2):
+  - react-native-compat (2.21.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1748,6 +1749,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-get-random-values (1.11.0):
+    - React-Core
   - react-native-mmkv (3.2.0):
     - DoubleConversion
     - glog
@@ -1781,6 +1784,32 @@ PODS:
     - RCT-Folly (= 2024.11.18.00)
     - RCTRequired
     - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-quick-crypto (0.7.14):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - OpenSSL-Universal
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
     - React-Core
     - React-debug
     - React-Fabric
@@ -2711,9 +2740,11 @@ DEPENDENCIES:
   - react-native-aes (from `../../../node_modules/react-native-aes-crypto`)
   - react-native-background-timer (from `../../../node_modules/react-native-background-timer`)
   - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
+  - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
   - react-native-mmkv (from `../../../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../../../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../../../node_modules/react-native-pager-view`)
+  - react-native-quick-crypto (from `../../../node_modules/react-native-quick-crypto`)
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../../../node_modules/@shopify/react-native-skia`)"
   - react-native-webview (from `../../../node_modules/react-native-webview`)
@@ -2765,6 +2796,7 @@ SPEC REPOS:
     - libdav1d
     - libwebp
     - lottie-ios
+    - OpenSSL-Universal
     - SDWebImage
     - SDWebImageAVIFCoder
     - SDWebImageSVGCoder
@@ -2923,12 +2955,16 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-background-timer"
   react-native-compat:
     :path: "../../../node_modules/@walletconnect/react-native-compat"
+  react-native-get-random-values:
+    :path: "../../../node_modules/react-native-get-random-values"
   react-native-mmkv:
     :path: "../../../node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../../../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../../../node_modules/react-native-pager-view"
+  react-native-quick-crypto:
+    :path: "../../../node_modules/react-native-quick-crypto"
   react-native-safe-area-context:
     :path: "../../../node_modules/react-native-safe-area-context"
   react-native-skia:
@@ -3063,6 +3099,7 @@ SPEC CHECKSUMS:
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 8bc11e10576d1a3f77f4e0ae5b70503c5c890a09
+  OpenSSL-Universal: 6082b0bf950e5636fe0d78def171184e2b3899c2
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 0418ac97b9f53b2e37f473da1663ef3061e46beb
   RCTRequired: b9fde7f981b11aa898f03a70d3d4d36b80f1b16d
@@ -3096,10 +3133,12 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: ef2292ca147fa8793305e4693586ad0caf3afad3
   react-native-aes: bed3ca6c47c5a5ebd5bac683efdf737c874f6d3f
   react-native-background-timer: 4638ae3bee00320753647900b21260b10587b6f7
-  react-native-compat: 05ecc6606fe51a0be7c978842a4d57fa7246959a
+  react-native-compat: ea068e8a464e6f22e9a654cbe656a7c89c5e7f82
+  react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
   react-native-mmkv: d3cc73d2554fafa20dc5b86386359034d1faf8ff
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-pager-view: f238ed7fb53458bd03366944a33686f067c83e9a
+  react-native-quick-crypto: dcf29d2a08af7b16fb0ee9ef2327585743300ed5
   react-native-safe-area-context: 562163222d999b79a51577eda2ea8ad2c32b4d06
   react-native-skia: 5c086469906cf854e26126b5b88dcbb6c93eb90f
   react-native-webview: 520bcb79c3f2af91e157cdd695732a34ab5f25c8
