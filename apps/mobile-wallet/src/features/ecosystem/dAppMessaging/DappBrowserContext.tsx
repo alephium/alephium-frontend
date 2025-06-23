@@ -98,19 +98,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     async (data: ConnectDappMessageData, messageId: string) => {
       const authorizedConnection = getAuthorizedConnection(data)
 
-      if (authorizedConnection) {
-        const address = addresses.find((a) => a.hash === authorizedConnection.address)
-        if (!address) {
-          handleRejectDappConnection(data.host, messageId)
-          return
-        }
-
-        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
-        handleApproveDappConnection(connectedAddressPayload, messageId)
-
-        return
-      }
-
       const isWrongNetwork =
         data.networkId !== undefined &&
         currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
@@ -123,6 +110,19 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             props: { ...data, dAppName }
           })
         )
+
+        return
+      }
+
+      if (authorizedConnection) {
+        const address = addresses.find((a) => a.hash === authorizedConnection.address)
+        if (!address) {
+          handleRejectDappConnection(data.host, messageId)
+          return
+        }
+
+        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
+        handleApproveDappConnection(connectedAddressPayload, messageId)
 
         return
       }
