@@ -61,7 +61,7 @@
     <key>NSCameraUsageDescription</key>
     <string>The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.</string>
     <key>NSFaceIDUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to use Face ID</string>
+    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSMotionUsageDescription</key>
