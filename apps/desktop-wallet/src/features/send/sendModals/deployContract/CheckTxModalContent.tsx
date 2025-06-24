@@ -28,7 +28,7 @@ const DeployContractCheckTxModalContent = ({
           <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasHorizontalPadding />
         )}
         {data.issueTokenAmount && <InfoRow label={t('Issue token amount')}>{data.issueTokenAmount}</InfoRow>}
-        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
+        <CheckAddressesBox fromAddressStr={data.fromAddress.hash} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
         {data.initialAlphAmount && (
           <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} hasBg hasBorder hasHorizontalPadding />
         )}

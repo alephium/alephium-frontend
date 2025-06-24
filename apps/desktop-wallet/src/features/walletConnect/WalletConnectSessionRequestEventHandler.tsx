@@ -2,7 +2,6 @@ import {
   AssetAmount,
   getHumanReadableError,
   SessionRequestEvent,
-  shouldBuildSweepTransactions,
   throttledClient,
   WALLETCONNECT_ERRORS
 } from '@alephium/shared'
@@ -23,7 +22,7 @@ import { memo, useCallback, useEffect } from 'react'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
+import { CallContractTxData, DeployContractTxData } from '@/features/send/sendTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
@@ -42,8 +41,9 @@ const processedSessionRequestIds = new Set<number>()
 
 const WalletConnectSessionRequestEventHandler = memo(
   ({ sessionRequestEvent }: WalletConnectSessionRequestEventHandlerProps) => {
-    const { data: addressesBalances, isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
-    const { walletConnectClient, respondToWalletConnectWithError, respondToWalletConnect } = useWalletConnectContext()
+    const { isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
+    const { walletConnectClient, respondToWalletConnectWithError, respondToWalletConnect, getDappIcon } =
+      useWalletConnectContext()
     const addresses = useUnsortedAddresses()
     const dispatch = useAppDispatch()
     const { sendAnalytics } = useAnalytics()
@@ -79,36 +79,36 @@ const WalletConnectSessionRequestEventHandler = memo(
         try {
           switch (request.method as RelayMethod) {
             case 'alph_signAndSubmitTransferTx': {
-              const p = request.params as SignTransferTxParams
-              const dest = p.destinations[0]
-              const assetAmounts = [
-                { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
-                ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-              ]
-              const addressBalances = addressesBalances[p.signerAddress] ?? []
-              const shouldSweep = shouldBuildSweepTransactions(assetAmounts, addressBalances)
+              const txParams = request.params as SignTransferTxParams
 
-              const txData: TransferTxData = {
-                fromAddress: getSignerAddressByHash(p.signerAddress),
-                toAddress: p.destinations[0].address,
-                assetAmounts,
-                gasAmount: p.gasAmount,
-                gasPrice: p.gasPrice?.toString(),
-                shouldSweep
-              }
+              dispatch(toggleAppLoading(true))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
+                txParams,
+                getSignerAddressByHash(txParams.signerAddress).publicKey
+              )
+              dispatch(toggleAppLoading(false))
 
               dispatch(
                 openModal({
-                  name: 'TransferSendModal',
+                  name: 'SignTransferTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
                   props: {
-                    initialStep: 'info-check',
-                    initialTxData: txData,
-                    txData,
-                    triggeredByWalletConnect: true,
+                    txParams,
+                    unsignedData: unsignedBuiltTx,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(event, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result }),
+                    dAppIcon: getDappIcon(event.topic),
                     dAppUrl: event.verifyContext.verified.origin
                   }
                 })
               )
+
               break
             }
             case 'alph_signAndSubmitDeployContractTx': {
@@ -252,13 +252,15 @@ const WalletConnectSessionRequestEventHandler = memo(
             message: getHumanReadableError(error, message),
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
           })
+
+          // TODO: Do consolidation check here
         }
       },
       [
         addresses,
-        addressesBalances,
         cleanStorage,
         dispatch,
+        getDappIcon,
         respondToWalletConnect,
         respondToWalletConnectWithError,
         sendAnalytics,

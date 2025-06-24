@@ -1,4 +1,4 @@
-import { Address, AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -11,13 +11,13 @@ import { useAppSelector } from '@/hooks/redux'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface CheckAddressesBoxProps extends BoxProps {
-  fromAddress: Address
+  fromAddressStr: string
   toAddressHash?: AddressHash
   dAppUrl?: string
   className?: string
 }
 
-const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: CheckAddressesBoxProps) => {
+const CheckAddressesBox = ({ fromAddressStr, toAddressHash, dAppUrl, ...props }: CheckAddressesBoxProps) => {
   const { t } = useTranslation()
 
   return (
@@ -25,7 +25,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: Ch
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
 
-        <AddressBadge addressHash={fromAddress.hash} truncate appendHash withBorders />
+        <AddressBadge addressHash={fromAddressStr} truncate appendHash withBorders />
       </AddressRow>
 
       {(toAddressHash || dAppUrl) && (

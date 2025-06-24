@@ -1,6 +1,5 @@
-import { AssetAmount, transactionSent } from '@alephium/shared'
+import { AssetAmount, SignExecuteScriptTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { BuildTxResult, SignExecuteScriptTxParams, SignExecuteScriptTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,17 +13,10 @@ import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCo
 import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppDispatch } from '~/hooks/redux'
 import { signer } from '~/signer'
-
-interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
-  txParams: SignExecuteScriptTxParams
-  unsignedData: BuildTxResult<SignExecuteScriptTxResult>
-  onSuccess: (signResult: SignExecuteScriptTxResult) => void
-}
 
 const SignExecuteScriptTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignExecuteScriptTxModalProps) => {

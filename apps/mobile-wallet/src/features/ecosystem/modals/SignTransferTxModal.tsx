@@ -1,6 +1,5 @@
-import { transactionSent } from '@alephium/shared'
+import { SignTransferTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { BuildTxResult, SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,17 +11,10 @@ import Row from '~/components/Row'
 import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppDispatch } from '~/hooks/redux'
 import { signer } from '~/signer'
-
-interface SignTransferTxModalProps extends SignTxModalCommonProps {
-  txParams: SignTransferTxParams
-  unsignedData: BuildTxResult<SignTransferTxResult>
-  onSuccess: (signResult: SignTransferTxResult) => void
-}
 
 const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
   const dispatch = useAppDispatch()

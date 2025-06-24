@@ -1,4 +1,10 @@
-import { getNetworkIdFromNetworkName, isGrouplessKeyType, NetworkName, throttledClient } from '@alephium/shared'
+import {
+  getNetworkIdFromNetworkName,
+  isGrouplessKeyType,
+  NetworkName,
+  SignTxModalCommonProps,
+  throttledClient
+} from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
@@ -24,7 +30,6 @@ import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/d
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'

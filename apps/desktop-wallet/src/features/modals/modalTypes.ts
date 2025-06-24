@@ -1,4 +1,4 @@
-import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import { AddressHash, SignTransferTxModalProps, WalletConnectSessionProposalModalProps } from '@alephium/shared'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
@@ -16,6 +16,7 @@ import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
+import { PasswordConfirmationModalProps } from '@/modals/PasswordConfirmationModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
@@ -54,12 +55,16 @@ const ModalNames = {
   DeleteAddressesModal: 'DeleteAddressesModal',
   BuyModal: 'BuyModal',
   WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
-  TokenDetailsModal: 'TokenDetailsModal'
+  TokenDetailsModal: 'TokenDetailsModal',
+  PasswordConfirmationModal: 'PasswordConfirmationModal',
+  SignTransferTxModal: 'SignTransferTxModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
 
-export type OpenModalParams =
+export type OpenModalParams = {
+  onUserDismiss?: () => void
+} & (
   | {
       name: typeof ModalNames.AddressDetailsModal
       props: AddressModalBaseProp
@@ -185,6 +190,15 @@ export type OpenModalParams =
       name: typeof ModalNames.TokenDetailsModal
       props: TokenDetailsModalProps
     }
+  | {
+      name: typeof ModalNames.PasswordConfirmationModal
+      props: PasswordConfirmationModalProps
+    }
+  | {
+      name: typeof ModalNames.SignTransferTxModal
+      props: SignTransferTxModalProps
+    }
+)
 
 export type ModalInstance = {
   id: number
@@ -193,6 +207,7 @@ export type ModalInstance = {
 
 export interface ModalBaseProp {
   id: ModalInstance['id']
+  onUserDismiss?: () => void
 }
 
 export interface AddressModalBaseProp {
