@@ -19,17 +19,17 @@
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.19",
     "@alephium/web3": "1.11.3",
-    "@tanstack/react-query": "5.45.1",
+    "@tanstack/react-query": "^5.81.2",
     "axios": "^1.8.2",
     "lodash": "^4.17.21",
-    "react": "^19.0.0",
-    "react-redux": "^8.0.5"
+    "react": "19.0.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "1.11.3",
-    "@types/react": "~19.1.8",
+    "@types/react": "~19.0.0",
     "tsup": "^8.4.0",
     "typescript": "~5.8.3"
   }
