@@ -1,15 +1,17 @@
 import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
-import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
-  const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey: await getAddressAsymetricKey(fromAddress.hash, 'public'),
-    fromPublicKeyType: fromAddress.keyType,
-    toAddress: toAddressHash
-  })
+  const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
+    {
+      signerAddress: fromAddress.hash,
+      signerKeyType: fromAddress.keyType,
+      toAddress: toAddressHash
+    },
+    await getAddressAsymetricKey(fromAddress.hash, 'public')
+  )
 
   return {
     unsignedTxs,
@@ -48,11 +50,4 @@ export const buildUnsignedTransactions = async (
       fees: BigInt(data.gasAmount) * BigInt(data.gasPrice)
     }
   }
-}
-
-export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
-  const signature = transactionSign(txId, await getAddressAsymetricKey(fromAddress, 'private'))
-  const data = await throttledClient.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
-
-  return { ...data, signature }
 }

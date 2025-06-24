@@ -4,11 +4,12 @@ import { createContext, ReactNode, useCallback, useContext, useState } from 'rea
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
+import { buildSweepTransactions, buildUnsignedTransactions } from '~/api/transactions'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import { signer } from '~/signer'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -119,8 +120,8 @@ export const SendContextProvider = ({
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
       try {
-        for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
-          const data = await signAndSendTransaction(address.hash, txId, unsignedTx)
+        for (const { unsignedTx } of unsignedTxData.unsignedTxs) {
+          const data = await signer.signAndSubmitUnsignedTx({ signerAddress: address.hash, unsignedTx })
 
           dispatch(
             transactionSent({

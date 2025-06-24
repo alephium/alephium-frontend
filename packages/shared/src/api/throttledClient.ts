@@ -1,7 +1,8 @@
-import { ExplorerProvider, NodeProvider, TransactionBuilder } from '@alephium/web3'
+import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 import pThrottle from 'p-throttle'
 
 import { defaultNetworkSettings } from '@/network'
+import { AlephiumWalletTxBuilder } from '@/txBuilder'
 import { NetworkSettings } from '@/types/network'
 
 const throttle = pThrottle({
@@ -14,7 +15,7 @@ export const throttledFetch = throttle((url, options = {}) => fetch(url, options
 class Client {
   explorer: ExplorerProvider
   node: NodeProvider
-  txBuilder: TransactionBuilder
+  txBuilder: AlephiumWalletTxBuilder
 
   constructor() {
     const { nodeHost, explorerApiHost } = defaultNetworkSettings
@@ -36,7 +37,7 @@ class Client {
   private getClients(nodeHost: NetworkSettings['nodeHost'], explorerApiHost: NetworkSettings['explorerApiHost']) {
     const explorer = new ExplorerProvider(explorerApiHost, undefined, throttledFetch)
     const node = new NodeProvider(nodeHost, undefined, throttledFetch)
-    const txBuilder = TransactionBuilder.from(nodeHost, undefined, throttledFetch)
+    const txBuilder = AlephiumWalletTxBuilder.from(nodeHost, undefined, throttledFetch)
 
     return {
       explorer,
