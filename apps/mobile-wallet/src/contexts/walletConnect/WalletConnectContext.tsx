@@ -50,14 +50,10 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { buildDeployContractTransaction } from '~/api/transactions'
-import {
-  processSignExecuteScriptTxParamsAndBuildTx,
-  processSignTransferTxParamsAndBuildTx
-} from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -480,8 +476,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           case 'alph_signAndSubmitTransferTx': {
             const txParams = requestEvent.params.request.params as SignTransferTxParams
 
-            const { txParamsSingleDestination, buildTransactionTxResult } =
-              await processSignTransferTxParamsAndBuildTx(txParams)
+            dispatch(activateAppLoading('Loading'))
+            const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
+              txParams,
+              await getAddressAsymetricKey(txParams.signerAddress, 'public')
+            )
+            dispatch(deactivateAppLoading())
 
             dispatch(
               openModal({
@@ -490,8 +490,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams: txParamsSingleDestination,
-                  unsignedData: buildTransactionTxResult,
+                  txParams,
+                  unsignedData: unsignedBuiltTx,
                   origin: 'walletconnect',
                   onError: (message) => {
                     respondToWalletConnectWithError(requestEvent, {
@@ -511,7 +511,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             const txParams = requestEvent.params.request.params as SignDeployContractTxParams
 
             dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            const buildDeployContractTxResult = await buildDeployContractTransaction(txParams)
+            const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
+              txParams,
+              await getAddressAsymetricKey(txParams.signerAddress, 'public')
+            )
             dispatch(deactivateAppLoading())
 
             dispatch(
@@ -522,7 +525,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
                   txParams,
-                  unsignedData: buildDeployContractTxResult,
+                  unsignedData,
                   origin: 'walletconnect',
                   onError: (message) => {
                     respondToWalletConnectWithError(requestEvent, {
@@ -541,8 +544,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           case 'alph_signAndSubmitExecuteScriptTx': {
             const txParams = requestEvent.params.request.params as SignExecuteScriptTxParams
 
-            const { txParamsWithAmounts, buildCallContractTxResult } =
-              await processSignExecuteScriptTxParamsAndBuildTx(txParams)
+            dispatch(activateAppLoading('Loading'))
+            const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
+              txParams,
+              await getAddressAsymetricKey(txParams.signerAddress, 'public')
+            )
+            dispatch(deactivateAppLoading())
 
             dispatch(
               openModal({
@@ -551,8 +558,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 props: {
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams: txParamsWithAmounts,
-                  unsignedData: buildCallContractTxResult,
+                  txParams,
+                  unsignedData: unsignedBuiltTx,
                   origin: 'walletconnect',
                   onError: (message) => {
                     respondToWalletConnectWithError(requestEvent, {
@@ -614,7 +621,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                   dAppUrl: requestEvent.verifyContext.verified.origin,
                   dAppIcon: getDappIcon(requestEvent.topic),
                   txParams,
-                  unsignedData: decodedResult,
+                  unsignedData: decodedResult.unsignedTx,
                   submitAfterSign,
                   origin: 'walletconnect',
                   onError: (message) => {
@@ -631,6 +638,15 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               })
             )
 
+            break
+          }
+          case 'alph_signAndSubmitChainedTx': {
+            // TODO: Implement chained transactions flow
+            showToast({
+              text1: t('Could not build transaction'),
+              text2: 'Chained transactions are not supported yet.',
+              type: 'error'
+            })
             break
           }
           case 'alph_requestNodeApi': {

@@ -7,7 +7,7 @@ import {
 import {
   AddressHash,
   addressMetadataIncludesHash,
-  AddressMetadataWithHash,
+  AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
   resetArray,
   WalletMetadataMobile
@@ -144,6 +144,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
+                keyType: 'default', // TODO: handle groupless
                 isDefault: true,
                 color: getRandomLabelColor()
               }
@@ -355,7 +356,10 @@ const deleteAddressKeyPair = async (addressHash: AddressHash) => {
   await deleteAddressPrivateKey(addressHash)
 }
 
-export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
+export const persistAddressesMetadata = async (
+  walletId: string,
+  addressesMetadata: AddressStoredMetadataWithHash[]
+) => {
   const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
@@ -414,10 +418,13 @@ export const migrateAddressMetadata = async () => {
     const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
-    const updatedAddressesMetadata: AddressMetadataWithHash[] = []
+    const updatedAddressesMetadata: AddressStoredMetadataWithHash[] = []
 
     for (const address of addresses) {
-      const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex: address.index })
+      const { hash, publicKey } = keyring.generateAndCacheAddress({
+        addressIndex: address.index,
+        keyType: 'default' // TODO: handle groupless
+      })
       let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
       await storeAddressPublicKey(hash, publicKey)
@@ -500,10 +507,11 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   addresses: [
     {
       index: 0,
+      keyType: 'default', // TODO: handle groupless
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
-    }
+    } as AddressStoredMetadataWithHash
   ],
   contacts: []
 })
@@ -550,7 +558,10 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
   try {
     if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
 
-    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex })
+    const nonSensitiveAddressData = keyring.generateAndCacheAddress({
+      addressIndex,
+      keyType: 'default' // TODO: handle groupless
+    })
     let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
     await storeAddressPublicKey(nonSensitiveAddressData.hash, nonSensitiveAddressData.publicKey)

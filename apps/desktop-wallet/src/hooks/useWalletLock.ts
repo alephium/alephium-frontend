@@ -1,12 +1,14 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
   hiddenTokensLoadedFromStorage,
+  newAddressesSaved,
   passphraseInitialAddressGenerated,
+  throttledClient,
   walletLocked,
   walletSwitchedDesktop,
   walletUnlockedDesktop
 } from '@alephium/shared'
-import { usePersistQueryClientContext } from '@alephium/shared-react'
+import { useCurrentlyOnlineNetworkId, usePersistQueryClientContext } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
 
@@ -21,6 +23,7 @@ import { toggleAppLoading, userDataMigrationFailed } from '@/storage/global/glob
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
+import { getRandomLabelColor } from '@/utils/colors'
 import { migrateUserData } from '@/utils/migration'
 
 interface UnlockWalletProps {
@@ -36,6 +39,7 @@ const useWalletLock = () => {
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
+  const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
 
   const lockWallet = useCallback(
     (lockedFrom?: string) => {
@@ -85,13 +89,6 @@ const useWalletLock = () => {
       sendAnalytics({ type: 'error', message: 'Loading hidden assets failed' })
     }
 
-    try {
-      initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0 })
-    } catch (e) {
-      console.error(e)
-      return
-    }
-
     const wallet = {
       id: encryptedWallet.id,
       name: encryptedWallet.name,
@@ -116,8 +113,35 @@ const useWalletLock = () => {
         }
       })
     } else {
+      try {
+        initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'gl-secp256k1' })
+      } catch (e) {
+        console.error(e)
+        return
+      }
+
       const address = { ...initialAddress, ...getInitialAddressSettings() }
       dispatch(passphraseInitialAddressGenerated(address))
+
+      const initialOldAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+      let isActive = false
+
+      if (currentlyOnlineNetworkId !== undefined) {
+        const response = await throttledClient.explorer.addresses.postAddressesUsed([initialOldAddress.hash])
+        isActive = response[0]
+      }
+
+      if (currentlyOnlineNetworkId === undefined || isActive) {
+        dispatch(
+          newAddressesSaved([
+            {
+              ...initialOldAddress,
+              isDefault: false,
+              color: getRandomLabelColor()
+            }
+          ])
+        )
+      }
     }
 
     dispatch(event === 'unlock' ? walletUnlockedDesktop(wallet) : walletSwitchedDesktop(wallet))

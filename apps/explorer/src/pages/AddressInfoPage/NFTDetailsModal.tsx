@@ -38,7 +38,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             {nft.image ? (
               <>
                 <NFTDetailsContainer>
-                  <Table bodyOnly>
+                  <Table bodyOnly noBorder>
                     <TableBody>
                       {nft.name && (
                         <TableRow>

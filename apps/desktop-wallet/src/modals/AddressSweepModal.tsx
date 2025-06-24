@@ -68,6 +68,7 @@ const AddressSweepModal = memo(
         try {
           const { unsignedTxs, fees } = await buildSweepTransactions(
             sweepAddresses.from.publicKey,
+            sweepAddresses.from.keyType,
             sweepAddresses.to.hash
           )
 

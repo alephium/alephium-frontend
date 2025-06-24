@@ -1,5 +1,4 @@
-import { throttledClient } from '@alephium/shared'
-import { node as n, SignUnsignedTxParams, SignUnsignedTxResult, transactionSign } from '@alephium/web3'
+import { node as n, SignUnsignedTxParams, SignUnsignedTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,11 +13,11 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { signer } from '~/signer'
 
 interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
   txParams: SignUnsignedTxParams
-  unsignedData: n.DecodeUnsignedTxResult
+  unsignedData: n.UnsignedTx
   submitAfterSign: boolean
   onSuccess: (signResult: SignUnsignedTxResult) => void
 }
@@ -31,27 +30,11 @@ const SignUnsignedTxModal = memo(
       onError,
       unsignedData,
       sign: async () => {
-        const signature = transactionSign(
-          unsignedData.unsignedTx.txId,
-          await getAddressAsymetricKey(txParams.signerAddress, 'private')
+        onSuccess(
+          submitAfterSign ? await signer.signAndSubmitUnsignedTx(txParams) : await signer.signUnsignedTx(txParams)
         )
 
-        if (submitAfterSign)
-          await throttledClient.node.transactions.postTransactionsSubmit({
-            unsignedTx: txParams.unsignedTx,
-            signature
-          })
-
         sendAnalytics({ event: 'Approved unsigned tx', props: { origin } })
-
-        onSuccess({
-          ...unsignedData,
-          signature,
-          txId: unsignedData.unsignedTx.txId,
-          gasAmount: unsignedData.unsignedTx.gasAmount,
-          gasPrice: BigInt(unsignedData.unsignedTx.gasPrice),
-          unsignedTx: txParams.unsignedTx
-        })
       }
     })
 
@@ -64,7 +47,7 @@ const SignUnsignedTxModal = memo(
             </Row>
 
             <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
-              <AppText>{unsignedData.unsignedTx.txId}</AppText>
+              <AppText>{unsignedData.txId}</AppText>
             </Row>
 
             <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />

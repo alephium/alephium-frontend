@@ -1,10 +1,10 @@
-import { AddressMetadata, AddressMetadataWithHash, Contact } from '@/types/addresses'
+import { AddressStoredMetadataWithoutHash, AddressStoredMetadataWithHash, Contact } from '@/types/addresses'
 
 export type WalletMetadataMobile = {
   id: string
   name: string
   isMnemonicBackedUp: boolean
-  addresses: AddressMetadataWithHash[]
+  addresses: AddressStoredMetadataWithHash[]
   contacts: Contact[]
 }
 
@@ -12,6 +12,6 @@ export type DeprecatedWalletMetadataMobile = {
   id: string
   name: string
   isMnemonicBackedUp: boolean
-  addresses: AddressMetadata[]
+  addresses: AddressStoredMetadataWithoutHash[]
   contacts: Contact[]
 }
