@@ -105,6 +105,8 @@ export class Keyring {
   public signMessageHash = (messageHash: string, addressHash: AddressHash): string =>
     sign(messageHash, this.exportPrivateKeyOfAddress(addressHash))
 
+  public exportPublicKeyOfAddress = (address: string): string => this._getAddress(address).publicKey
+
   public exportPrivateKeyOfAddress = (addressHash: AddressHash): string => {
     const address = this._getAddress(addressHash)
 

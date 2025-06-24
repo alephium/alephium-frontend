@@ -1,4 +1,4 @@
-import { Address, AddressHash, AddressMetadataWithHash, AddressSettings } from '@alephium/shared'
+import { Address, AddressHash, AddressStoredMetadataWithHash, AddressSettings } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as Clipboard from 'expo-clipboard'
 
@@ -43,7 +43,7 @@ export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
 }
 
 export const persistAddressesSettings = async (
-  addressesMetadata: AddressMetadataWithHash[],
+  addressesMetadata: AddressStoredMetadataWithHash[],
   metadataId: string,
   oldDefaultAddress?: Address
 ) => {

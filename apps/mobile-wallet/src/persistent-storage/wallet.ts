@@ -7,7 +7,7 @@ import {
 import {
   AddressHash,
   addressMetadataIncludesHash,
-  AddressMetadataWithHash,
+  AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
   resetArray,
   WalletMetadataMobile
@@ -356,7 +356,10 @@ const deleteAddressKeyPair = async (addressHash: AddressHash) => {
   await deleteAddressPrivateKey(addressHash)
 }
 
-export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
+export const persistAddressesMetadata = async (
+  walletId: string,
+  addressesMetadata: AddressStoredMetadataWithHash[]
+) => {
   const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
@@ -415,7 +418,7 @@ export const migrateAddressMetadata = async () => {
     const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
-    const updatedAddressesMetadata: AddressMetadataWithHash[] = []
+    const updatedAddressesMetadata: AddressStoredMetadataWithHash[] = []
 
     for (const address of addresses) {
       const { hash, publicKey } = keyring.generateAndCacheAddress({
@@ -508,7 +511,7 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
-    } as AddressMetadataWithHash
+    } as AddressStoredMetadataWithHash
   ],
   contacts: []
 })

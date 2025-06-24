@@ -1,5 +1,5 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBase, AddressMetadata, selectAllAddressIndexes } from '@alephium/shared'
+import { AddressBase, AddressStoredMetadataWithoutHash, selectAllAddressIndexes } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback } from 'react'
@@ -118,7 +118,7 @@ const useAddressGeneration = () => {
   }) => {
     if (isPassphraseUsed) return
 
-    const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
+    const addressesMetadata: AddressStoredMetadataWithoutHash[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
     if (addressesMetadata.length === 0) {

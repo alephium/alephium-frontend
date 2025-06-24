@@ -6,7 +6,7 @@ import {
   EncryptedMnemonicVersion,
   encryptMnemonic
 } from '@alephium/keyring'
-import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
@@ -278,17 +278,22 @@ export const _20230228_155100 = () => {
 
 // Change isMain to isDefault settings of each address and ensure it has a color
 export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryptedWallet['id']) => {
-  const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = addressMetadataStorage.load(walletId)
-  const newAddressesMetadata: AddressMetadata[] = []
+  const currentAddressMetadata: (AddressStoredMetadataWithoutHash | DeprecatedAddressMetadata)[] =
+    addressMetadataStorage.load(walletId)
+  const newAddressesMetadata: AddressStoredMetadataWithoutHash[] = []
 
-  currentAddressMetadata.forEach((currentMetadata: AddressMetadata | DeprecatedAddressMetadata) => {
-    let newMetadata: AddressMetadata
+  currentAddressMetadata.forEach((currentMetadata: AddressStoredMetadataWithoutHash | DeprecatedAddressMetadata) => {
+    let newMetadata: AddressStoredMetadataWithoutHash
 
     if (Object.prototype.hasOwnProperty.call(currentMetadata, 'isMain')) {
       const { isMain, color, ...rest } = currentMetadata as DeprecatedAddressMetadata
-      newMetadata = { ...rest, isDefault: isMain, color: color || getRandomLabelColor() } as AddressMetadata
+      newMetadata = {
+        ...rest,
+        isDefault: isMain,
+        color: color || getRandomLabelColor()
+      } as AddressStoredMetadataWithoutHash
     } else {
-      newMetadata = currentMetadata as AddressMetadata
+      newMetadata = currentMetadata as AddressStoredMetadataWithoutHash
     }
     newAddressesMetadata.push(newMetadata)
   })
@@ -362,7 +367,7 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = async (
         const metadata = (await decrypt(
           dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic),
           parsedMetadataJson.encrypted
-        )) as AddressMetadata[]
+        )) as AddressStoredMetadataWithoutHash[]
         addressMetadataStorage.store(walletId, metadata)
       }
 

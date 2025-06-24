@@ -1,17 +1,10 @@
 import { transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import {
-  binToHex,
-  contractIdFromAddress,
-  node as n,
-  SignDeployContractTxParams,
-  SignDeployContractTxResult
-} from '@alephium/web3'
+import { BuildTxResult, SignDeployContractTxParams, SignDeployContractTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { signAndSendTransaction } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
@@ -26,10 +19,11 @@ import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalT
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppDispatch } from '~/hooks/redux'
+import { signer } from '~/signer'
 
 interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
   txParams: SignDeployContractTxParams
-  unsignedData: n.BuildDeployContractTxResult
+  unsignedData: BuildTxResult<SignDeployContractTxResult>
   onSuccess: (signResult: SignDeployContractTxResult) => void
 }
 
@@ -42,7 +36,7 @@ const SignDeployContractTxModal = memo(
       onError,
       unsignedData,
       sign: async () => {
-        const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
+        const data = await signer.signAndSubmitDeployContractTx(txParams)
 
         dispatch(
           transactionSent({
@@ -57,16 +51,7 @@ const SignDeployContractTxModal = memo(
 
         sendAnalytics({ event: 'Approved contract deployment', props: { origin } })
 
-        onSuccess({
-          groupIndex: unsignedData.fromGroup,
-          unsignedTx: unsignedData.unsignedTx,
-          txId: unsignedData.txId,
-          signature: data.signature,
-          contractAddress: unsignedData.contractAddress,
-          contractId: binToHex(contractIdFromAddress(unsignedData.contractAddress)),
-          gasAmount: unsignedData.gasAmount,
-          gasPrice: BigInt(unsignedData.gasPrice)
-        })
+        onSuccess(data)
       }
     })
 

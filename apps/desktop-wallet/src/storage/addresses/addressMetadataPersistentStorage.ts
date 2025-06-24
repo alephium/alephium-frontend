@@ -1,4 +1,4 @@
-import { AddressMetadata, AddressSettings } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, AddressSettings } from '@alephium/shared'
 import { KeyType } from '@alephium/web3'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
@@ -10,7 +10,7 @@ interface AddressMetadataStorageStoreProps {
   settings: AddressSettings
 }
 
-class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
+class AddressMetadataStorage extends PersistentArrayStorage<AddressStoredMetadataWithoutHash> {
   deleteOne(walletId: StoredEncryptedWallet['id'], addressIndex: number) {
     const addressesMetadata = this.load(walletId)
     const existingAddressMetadata = addressesMetadata.find((address) => address.index === addressIndex)
