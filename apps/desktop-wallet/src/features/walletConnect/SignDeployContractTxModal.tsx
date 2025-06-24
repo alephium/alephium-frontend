@@ -1,57 +1,52 @@
 import {
   getHumanReadableError,
   selectAddressByHash,
-  SignTransferTxModalProps,
+  SignDeployContractTxModalProps,
   throttledClient,
   transactionSent
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { SignTransferTxResult } from '@alephium/web3'
-import { memo, useCallback, useMemo, useState } from 'react'
+import { SignDeployContractTxResult } from '@alephium/web3'
+import posthog from 'posthog-js'
+import { memo, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useLedger } from '@/features/ledger/useLedger'
 import { LedgerAlephium } from '@/features/ledger/utils'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
-import CheckLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
+import InfoRow from '@/features/send/InfoRow'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { signer } from '@/signer'
 
-const SignTransferTxModal = memo(
+const SignDeployContractTxModal = memo(
   ({
     id,
     dAppUrl,
     txParams,
     unsignedData,
+    onUserDismiss,
     onError,
-    onSuccess,
-    onUserDismiss
-  }: ModalBaseProp & SignTransferTxModalProps) => {
+    onSuccess
+  }: SignDeployContractTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
     const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
+    const [isLoading, setIsLoading] = useState(false)
 
-    const [isLoading, setIsLoading] = useState<boolean | string>(false)
-
-    const maxLockTime = useMemo(
-      () =>
-        txParams.destinations.reduce((max, { lockTime }) => {
-          if (lockTime && lockTime > max) {
-            return lockTime
-          }
-          return max
-        }, 0),
-      [txParams.destinations]
-    )
+    const handleRejectPress = useCallback(() => {
+      dispatch(closeModal({ id }))
+      onUserDismiss?.()
+    }, [dispatch, id, onUserDismiss])
 
     const signAndSend = useCallback(async () => {
       try {
@@ -59,14 +54,13 @@ const SignTransferTxModal = memo(
           throw Error('Signer address not found')
         }
 
-        // TODO: Check if sweep needs to be handled here, like in handleTransferSend
-
-        let result: SignTransferTxResult
+        let result: SignDeployContractTxResult
 
         if (isLedger) {
           setIsLoading(t('Please, confirm the transaction on your Ledger.'))
 
-          const buildResult = await throttledClient.txBuilder.buildTransferTx(txParams, signerAddress.publicKey)
+          const buildResult = await throttledClient.txBuilder.buildDeployContractTx(txParams, signerAddress.publicKey)
+
           const signature = await LedgerAlephium.create()
             .catch(onLedgerError)
             .then((app) => (app ? app.signUnsignedTx(signerAddress.index, buildResult.unsignedTx) : null))
@@ -81,12 +75,10 @@ const SignTransferTxModal = memo(
           })
 
           result = { signature, ...buildResult }
-
-          onSuccess(result)
         } else {
           setIsLoading(true)
 
-          result = await signer.signAndSubmitTransferTx(txParams)
+          result = await signer.signAndSubmitDeployContractTx(txParams)
         }
 
         onSuccess(result)
@@ -95,18 +87,14 @@ const SignTransferTxModal = memo(
           transactionSent({
             hash: result.txId,
             fromAddress: txParams.signerAddress,
-            toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
-            amount: txParams.destinations[0].attoAlphAmount.toString(),
-            tokens: txParams.destinations[0].tokens?.map((token) => ({
-              id: token.id,
-              amount: token.amount.toString()
-            })),
+            toAddress: '',
             timestamp: new Date().getTime(),
-            lockTime: txParams.destinations[0].lockTime, // TODO: Improve display of locked time per destination
-            type: 'transfer',
+            type: 'contract',
             status: 'sent'
           })
         )
+
+        posthog.capture('Deployed smart contract')
       } catch (error) {
         onError(getHumanReadableError(error, t('Error while sending the transaction')))
         // TODO: show toast
@@ -115,40 +103,31 @@ const SignTransferTxModal = memo(
         setIsLoading(false)
         dispatch(closeModal({ id }))
       }
-    }, [dispatch, id, isLedger, onError, onLedgerError, onSuccess, signerAddress, t, txParams])
-
-    const checkPassword = useCallback(() => {
-      if (passwordRequirement) {
-        dispatch(openModal({ name: 'PasswordConfirmationModal', props: { onCorrectPasswordEntered: signAndSend } }))
-      } else {
-        signAndSend()
-      }
-    }, [dispatch, signAndSend, passwordRequirement])
+    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, t, onLedgerError, onError, id])
 
     const handleApprovePress = useCallback(() => {
-      if (maxLockTime) {
+      if (passwordRequirement) {
         dispatch(
           openModal({
-            name: 'ConfirmLockTimeModal',
-            props: { lockTime: new Date(maxLockTime), onSubmit: checkPassword }
+            name: 'PasswordConfirmationModal',
+            props: { onCorrectPasswordEntered: signAndSend }
           })
         )
       } else {
-        checkPassword()
+        signAndSend()
       }
-    }, [dispatch, maxLockTime, checkPassword])
+    }, [dispatch, passwordRequirement, signAndSend])
 
-    const handleRejectPress = useCallback(() => {
-      dispatch(closeModal({ id }))
-      onUserDismiss?.()
-    }, [dispatch, id, onUserDismiss])
-
+    const initialAlphAmount = txParams.initialAttoAlphAmount
+      ? [{ id: ALPH.id, amount: BigInt(txParams.initialAttoAlphAmount) }]
+      : undefined
+    const issueTokenAmount = txParams.issueTokenAmount?.toString()
     const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
     return (
       <CenteredModal
         id={id}
-        title={t('Send')}
+        title={t('Deploy contract')}
         onClose={handleRejectPress}
         isLoading={isLoading}
         focusMode
@@ -156,37 +135,25 @@ const SignTransferTxModal = memo(
         hasFooterButtons
       >
         <CheckModalContent>
-          {txParams.destinations.map(({ address, attoAlphAmount, tokens, lockTime }) => {
-            const assetAmounts = [
-              { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-              ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-            ]
-            return (
-              <>
-                <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />
-                <CheckAddressesBox
-                  fromAddressStr={txParams.signerAddress}
-                  toAddressHash={address}
-                  dAppUrl={dAppUrl}
-                  hasBg
-                  hasHorizontalPadding
-                />
-                {lockTime && <CheckLockTimeBox lockTime={new Date(lockTime)} />}
-                <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
-              </>
-            )
-          })}
+          {initialAlphAmount && <CheckAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding />}
+          {issueTokenAmount && <InfoRow label={t('Issue token amount')}>{issueTokenAmount}</InfoRow>}
+          <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
+          {initialAlphAmount && (
+            <CheckWorthBox assetAmounts={initialAlphAmount} fee={fees} hasBg hasBorder hasHorizontalPadding />
+          )}
+          <BytecodeExpandableSection bytecode={txParams.bytecode} />
         </CheckModalContent>
-
         <ModalFooterButtons>
           <ModalFooterButton onClick={handleRejectPress} role="secondary">
             {t('Reject')}
           </ModalFooterButton>
-          <ModalFooterButton onClick={handleApprovePress}>{t('Approve')}</ModalFooterButton>
+          <ModalFooterButton onClick={handleApprovePress} variant="valid">
+            {t('Approve')}
+          </ModalFooterButton>
         </ModalFooterButtons>
       </CenteredModal>
     )
   }
 )
 
-export default SignTransferTxModal
+export default SignDeployContractTxModal

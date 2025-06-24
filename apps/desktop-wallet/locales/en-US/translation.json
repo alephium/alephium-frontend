@@ -535,5 +535,6 @@
   "Asset to send": "Asset to send",
   "No transactions before {{ date }}": "No transactions before {{ date }}",
   "Sort by": "Sort by",
-  "ALPH balance": "ALPH balance"
+  "ALPH balance": "ALPH balance",
+  "Approve": "Approve"
 }

@@ -1,7 +1,7 @@
 import { Address, AddressHash, getHumanReadableError, selectDefaultAddress } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { getSecp259K1Path } from '@alephium/web3-wallet'
-import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
+import { AlertOctagon, Download } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -51,8 +51,6 @@ const DevToolsSettingsSection = () => {
         <>
           <FaucetSection />
 
-          <SmartContractsSection />
-
           <KeyPairsSection />
         </>
       )}
@@ -98,36 +96,6 @@ const FaucetSection = () => {
           {t('Receive test tokens')}
         </Button>
       )}
-    </Section>
-  )
-}
-
-const SmartContractsSection = () => {
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-
-  if (!defaultAddress) return null
-
-  const openCallContractModal = () =>
-    dispatch(openModal({ name: 'CallContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
-
-  const openDeployContractModal = () =>
-    dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
-
-  return (
-    <Section align="flex-start" inList>
-      <h2 tabIndex={0} role="label">
-        {t('Smart contracts')}
-      </h2>
-      <ButtonsRow>
-        <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
-          {t('Deploy contract')}
-        </Button>
-        <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
-          {t('Call contract')}
-        </Button>
-      </ButtonsRow>
     </Section>
   )
 }
@@ -179,13 +147,6 @@ const KeyPairsSection = () => {
     </PrivateKeySection>
   )
 }
-
-const ButtonsRow = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  gap: var(--spacing-4);
-`
 
 const PrivateKeySection = styled(Section)`
   margin-top: var(--spacing-3);

@@ -22,7 +22,7 @@ import { memo, useCallback, useEffect } from 'react'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
-import { CallContractTxData, DeployContractTxData } from '@/features/send/sendTypes'
+import { CallContractTxData } from '@/features/send/sendTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
@@ -112,33 +112,36 @@ const WalletConnectSessionRequestEventHandler = memo(
               break
             }
             case 'alph_signAndSubmitDeployContractTx': {
-              const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
-                request.params as SignDeployContractTxParams
-              const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-                ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-                : undefined
+              const txParams = event.params.request.params as SignDeployContractTxParams
 
-              const txData: DeployContractTxData = {
-                fromAddress: getSignerAddressByHash(signerAddress),
-                bytecode,
-                initialAlphAmount,
-                issueTokenAmount: issueTokenAmount?.toString(),
-                gasAmount,
-                gasPrice: gasPrice?.toString()
-              }
+              dispatch(toggleAppLoading(true))
+              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
+                txParams,
+                getSignerAddressByHash(txParams.signerAddress).publicKey
+              )
+              dispatch(toggleAppLoading(false))
 
               dispatch(
                 openModal({
-                  name: 'DeployContractSendModal',
+                  name: 'SignDeployContractTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
                   props: {
-                    initialStep: 'info-check',
-                    initialTxData: txData,
-                    txData: txData as DeployContractTxData,
-                    triggeredByWalletConnect: true,
-                    dAppUrl: event.verifyContext.verified.origin
+                    dAppUrl: event.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(event.topic),
+                    txParams,
+                    unsignedData,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(event, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                   }
                 })
               )
+
               break
             }
             case 'alph_signAndSubmitExecuteScriptTx': {

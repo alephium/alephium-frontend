@@ -7,11 +7,11 @@ import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import CallContractSendModal from '@/features/send/sendModals/callContract/CallContractSendModal'
-import DeployContractSendModal from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
 import TransferSendModal from '@/features/send/sendModals/transfer/TransferSendModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
+import SignDeployContractTxModal from '@/features/walletConnect/SignDeployContractTxModal'
 import SignMessageModal from '@/features/walletConnect/SignMessageModal'
 import SignTransferTxModal from '@/features/walletConnect/SignTransferTxModal'
 import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
@@ -92,8 +92,6 @@ const AppModals = () => {
                 return <TransferSendModal key={modal.id} {...props} {...modal.params.props} />
               case 'CallContractSendModal':
                 return <CallContractSendModal key={modal.id} {...props} {...modal.params.props} />
-              case 'DeployContractSendModal':
-                return <DeployContractSendModal key={modal.id} {...props} {...modal.params.props} />
               case 'WalletConnectSessionProposalModal':
                 return <WalletConnectSessionProposalModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignUnsignedTxModal':
@@ -121,14 +119,9 @@ const AppModals = () => {
               case 'PasswordConfirmationModal':
                 return <PasswordConfirmationModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignTransferTxModal':
-                return (
-                  <SignTransferTxModal
-                    id={modal.id}
-                    key={modal.id}
-                    {...modal.params.props}
-                    onUserDismiss={modal.params.onUserDismiss}
-                  />
-                )
+                return <SignTransferTxModal key={modal.id} {...props} {...modal.params.props} />
+              case 'SignDeployContractTxModal':
+                return <SignDeployContractTxModal key={modal.id} {...props} {...modal.params.props} />
             }
           })
         : openedModals.map((modal) => {

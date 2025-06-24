@@ -21,31 +21,17 @@ export interface CallContractTxData {
   gasPrice?: string
 }
 
-export interface DeployContractTxData {
-  fromAddress: Address
-  bytecode: string
-
-  initialAlphAmount?: AssetAmount
-  issueTokenAmount?: string
-  gasAmount?: number
-  gasPrice?: string
-}
-
-export type TxData = TransferTxData | CallContractTxData | DeployContractTxData
+export type TxData = TransferTxData | CallContractTxData
 
 export type TransferTxModalData = PartialTxData<TransferTxData, 'fromAddress'>
 export type CallContractTxModalData = PartialTxData<CallContractTxData, 'fromAddress'>
-export type DeployContractTxModalData = PartialTxData<DeployContractTxData, 'fromAddress'>
 
 export type TransferAddressesTxModalOnSubmitData = PartialTxData<
   TransferTxData,
   'fromAddress' | 'toAddress' | 'tokenId'
 >
 
-export type AddressesTxModalData =
-  | TransferAddressesTxModalOnSubmitData
-  | DeployContractTxModalData
-  | CallContractTxModalData
+export type AddressesTxModalData = TransferAddressesTxModalOnSubmitData | CallContractTxModalData
 
 export interface TxPreparation {
   fromAddress: Address
@@ -83,7 +69,6 @@ export type TxContext = {
   setUnsignedTransaction: (tx: UnsignedTx | undefined) => void
   unsignedTxId: string
   setUnsignedTxId: (txId: string) => void
-  setContractAddress: (contractAddress: string) => void
   isSweeping: boolean
   buildExecuteScriptTxResult: node.BuildExecuteScriptTxResult | undefined
   setBuildExecuteScriptTxResult: (tx: node.BuildExecuteScriptTxResult | undefined) => void

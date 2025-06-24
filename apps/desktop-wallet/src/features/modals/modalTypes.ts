@@ -1,9 +1,13 @@
-import { AddressHash, SignTransferTxModalProps, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import {
+  AddressHash,
+  SignDeployContractTxModalProps,
+  SignTransferTxModalProps,
+  WalletConnectSessionProposalModalProps
+} from '@alephium/shared'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
-import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
 import { TransferSendModalProps } from '@/features/send/sendModals/transfer/TransferSendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
@@ -41,7 +45,6 @@ const ModalNames = {
   WalletUnlockModal: 'WalletUnlockModal',
   TransferSendModal: 'TransferSendModal',
   CallContractSendModal: 'CallContractSendModal',
-  DeployContractSendModal: 'DeployContractSendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageModal: 'SignMessageModal',
@@ -57,7 +60,8 @@ const ModalNames = {
   WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
   TokenDetailsModal: 'TokenDetailsModal',
   PasswordConfirmationModal: 'PasswordConfirmationModal',
-  SignTransferTxModal: 'SignTransferTxModal'
+  SignTransferTxModal: 'SignTransferTxModal',
+  SignDeployContractTxModal: 'SignDeployContractTxModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -132,10 +136,6 @@ export type OpenModalParams = {
       props: CallContractSendModalProps
     }
   | {
-      name: typeof ModalNames.DeployContractSendModal
-      props: DeployContractSendModalProps
-    }
-  | {
       name: typeof ModalNames.WalletConnectSessionProposalModal
       props: WalletConnectSessionProposalModalProps
     }
@@ -197,6 +197,10 @@ export type OpenModalParams = {
   | {
       name: typeof ModalNames.SignTransferTxModal
       props: SignTransferTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignDeployContractTxModal
+      props: SignDeployContractTxModalProps
     }
 )
 

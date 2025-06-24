@@ -1,11 +1,10 @@
 import { Address } from '@alephium/shared'
 import { SignMessageParams } from '@alephium/web3'
 
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
+import { CallContractTxData, TransferTxData } from '@/features/send/sendTypes'
 
 export enum TxType {
   TRANSFER,
-  DEPLOY_CONTRACT,
   SIGN_UNSIGNED_TX,
   SIGN_MESSAGE,
   SCRIPT
@@ -15,10 +14,6 @@ export type TxDataToModalType =
   | {
       modalType: TxType.TRANSFER
       txData: TransferTxData
-    }
-  | {
-      modalType: TxType.DEPLOY_CONTRACT
-      txData: DeployContractTxData
     }
   | {
       modalType: TxType.SIGN_UNSIGNED_TX
@@ -33,12 +28,7 @@ export type TxDataToModalType =
       txData: CallContractTxData
     }
 
-export type DappTxData =
-  | TransferTxData
-  | DeployContractTxData
-  | CallContractTxData
-  | SignUnsignedTxData
-  | SignMessageData
+export type DappTxData = TransferTxData | CallContractTxData | SignUnsignedTxData | SignMessageData
 
 export interface SignUnsignedTxData {
   fromAddress: Address

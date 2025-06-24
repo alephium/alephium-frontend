@@ -24,7 +24,7 @@ const CallContractCheckTxModalContent = ({
     <>
       <CheckModalContent>
         {data.assetAmounts && <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />}
-        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
+        <CheckAddressesBox fromAddressStr={data.fromAddress.hash} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
         {data.assetAmounts && (
           <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
         )}

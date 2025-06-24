@@ -15,8 +15,6 @@ export const transactionBuildFailed = createAction<Message>('tx/transactionBuild
 
 export const transactionSendFailed = createAction<Message>('tx/transactionSendFailed')
 
-export const transactionsSendSucceeded = createAction<{ nbOfTransactionsSent: number }>('tx/transactionsSendSucceeded')
-
 export const unsignedTransactionSignSucceeded = createAction('tx/unsignedTransactionSignSucceeded')
 
 export const unsignedTransactionSignFailed = createAction<Message>('tx/unsignedTransactionSignFailed')
