@@ -7,6 +7,7 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignTransferTxResult } from '@alephium/web3'
+import { usePostHog } from 'posthog-js/react'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -39,6 +40,7 @@ const SignTransferTxModal = memo(
     const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
+    const posthog = usePostHog()
 
     const [isLoading, setIsLoading] = useState<boolean | string>(false)
 
@@ -107,6 +109,11 @@ const SignTransferTxModal = memo(
             status: 'sent'
           })
         )
+
+        posthog.capture(
+          'Sent transaction'
+          // TODO:  { number_of_tokens: tokens.length, locked: !!lockTime }
+        )
       } catch (error) {
         onError(getHumanReadableError(error, t('Error while sending the transaction')))
         // TODO: show toast
@@ -115,7 +122,7 @@ const SignTransferTxModal = memo(
         setIsLoading(false)
         dispatch(closeModal({ id }))
       }
-    }, [dispatch, id, isLedger, onError, onLedgerError, onSuccess, signerAddress, t, txParams])
+    }, [dispatch, id, isLedger, onError, onLedgerError, onSuccess, posthog, signerAddress, t, txParams])
 
     const checkPassword = useCallback(() => {
       if (passwordRequirement) {

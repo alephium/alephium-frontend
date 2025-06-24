@@ -1,13 +1,13 @@
 import {
   AddressHash,
   SignDeployContractTxModalProps,
+  SignExecuteScriptTxModalProps,
   SignTransferTxModalProps,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
-import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
 import { TransferSendModalProps } from '@/features/send/sendModals/transfer/TransferSendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
@@ -44,7 +44,6 @@ const ModalNames = {
   ContactFormModal: 'ContactFormModal',
   WalletUnlockModal: 'WalletUnlockModal',
   TransferSendModal: 'TransferSendModal',
-  CallContractSendModal: 'CallContractSendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageModal: 'SignMessageModal',
@@ -61,7 +60,8 @@ const ModalNames = {
   TokenDetailsModal: 'TokenDetailsModal',
   PasswordConfirmationModal: 'PasswordConfirmationModal',
   SignTransferTxModal: 'SignTransferTxModal',
-  SignDeployContractTxModal: 'SignDeployContractTxModal'
+  SignDeployContractTxModal: 'SignDeployContractTxModal',
+  SignExecuteScriptTxModal: 'SignExecuteScriptTxModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -132,10 +132,6 @@ export type OpenModalParams = {
       props: TransferSendModalProps
     }
   | {
-      name: typeof ModalNames.CallContractSendModal
-      props: CallContractSendModalProps
-    }
-  | {
       name: typeof ModalNames.WalletConnectSessionProposalModal
       props: WalletConnectSessionProposalModalProps
     }
@@ -201,6 +197,10 @@ export type OpenModalParams = {
   | {
       name: typeof ModalNames.SignDeployContractTxModal
       props: SignDeployContractTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignExecuteScriptTxModal
+      props: SignExecuteScriptTxModalProps
     }
 )
 

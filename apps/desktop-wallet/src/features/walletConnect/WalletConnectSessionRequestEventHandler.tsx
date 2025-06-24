@@ -1,12 +1,5 @@
-import {
-  AssetAmount,
-  getHumanReadableError,
-  SessionRequestEvent,
-  throttledClient,
-  WALLETCONNECT_ERRORS
-} from '@alephium/shared'
+import { getHumanReadableError, SessionRequestEvent, throttledClient, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { useFetchWalletBalancesByAddress, useUnsortedAddresses } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
 import { RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
@@ -17,12 +10,10 @@ import {
   SignUnsignedTxParams
 } from '@alephium/web3'
 import { calcExpiry, getSdkError } from '@walletconnect/utils'
-import { partition } from 'lodash'
 import { memo, useCallback, useEffect } from 'react'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
-import { CallContractTxData } from '@/features/send/sendTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
@@ -145,46 +136,36 @@ const WalletConnectSessionRequestEventHandler = memo(
               break
             }
             case 'alph_signAndSubmitExecuteScriptTx': {
-              const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } =
-                request.params as SignExecuteScriptTxParams
-              let assetAmounts: AssetAmount[] = []
-              let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
+              const txParams = event.params.request.params as SignExecuteScriptTxParams
 
-              if (tokens) {
-                const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-                const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-
-                assetAmounts = tokenAssets
-                allAlphAssets = [...allAlphAssets, ...alphAssets]
-              }
-
-              if (allAlphAssets.length > 0) {
-                assetAmounts.push({
-                  id: ALPH.id,
-                  amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-                })
-              }
-
-              const txData: CallContractTxData = {
-                fromAddress: getSignerAddressByHash(signerAddress),
-                bytecode,
-                assetAmounts,
-                gasAmount,
-                gasPrice: gasPrice?.toString()
-              }
+              dispatch(toggleAppLoading(true))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
+                txParams,
+                getSignerAddressByHash(txParams.signerAddress).publicKey
+              )
+              dispatch(toggleAppLoading(false))
 
               dispatch(
                 openModal({
-                  name: 'CallContractSendModal',
+                  name: 'SignExecuteScriptTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
                   props: {
-                    initialStep: 'info-check',
-                    initialTxData: txData,
-                    txData,
-                    triggeredByWalletConnect: true,
-                    dAppUrl: event.verifyContext.verified.origin
+                    dAppUrl: event.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(event.topic),
+                    txParams,
+                    unsignedData: unsignedBuiltTx,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(event, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                   }
                 })
               )
+
               break
             }
             case 'alph_signMessage': {

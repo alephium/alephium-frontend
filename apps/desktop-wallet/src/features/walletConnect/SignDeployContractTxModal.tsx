@@ -7,8 +7,8 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignDeployContractTxResult } from '@alephium/web3'
-import posthog from 'posthog-js'
-import { memo, useCallback, useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useLedger } from '@/features/ledger/useLedger'
@@ -42,6 +42,7 @@ const SignDeployContractTxModal = memo(
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
     const [isLoading, setIsLoading] = useState(false)
+    const posthog = usePostHog()
 
     const handleRejectPress = useCallback(() => {
       dispatch(closeModal({ id }))
@@ -103,7 +104,7 @@ const SignDeployContractTxModal = memo(
         setIsLoading(false)
         dispatch(closeModal({ id }))
       }
-    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, t, onLedgerError, onError, id])
+    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, posthog, t, onLedgerError, onError, id])
 
     const handleApprovePress = useCallback(() => {
       if (passwordRequirement) {
@@ -122,7 +123,7 @@ const SignDeployContractTxModal = memo(
       ? [{ id: ALPH.id, amount: BigInt(txParams.initialAttoAlphAmount) }]
       : undefined
     const issueTokenAmount = txParams.issueTokenAmount?.toString()
-    const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+    const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 
     return (
       <CenteredModal
