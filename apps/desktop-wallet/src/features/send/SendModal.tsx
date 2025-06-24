@@ -1,15 +1,21 @@
-import { Address, getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import {
+  fromHumanReadableAmount,
+  getHumanReadableError,
+  isGrouplessTxResult,
+  throttledClient,
+  transactionSent
+} from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { buildSweepTransactions } from '@/api/transactions'
+import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
@@ -19,49 +25,30 @@ import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer
 import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
 import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
 import {
-  buildTransferTransaction,
-  getTransferWalletConnectResult,
-  handleTransferSend
-} from '@/features/send/sendModals/transfer/TransferSendModal'
-import { AddressesTxModalData, TransferTxData, TxContext, TxData, UnsignedTx } from '@/features/send/sendTypes'
+  TransferAddressesTxModalOnSubmitData,
+  TransferTxData,
+  TransferTxModalData,
+  UnsignedTx
+} from '@/features/send/sendTypes'
+import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
-import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
-export type ConfigurableSendModalProps<PT extends { fromAddress: Address }> = {
-  txData?: TxData
-  initialTxData: PT
-  triggeredByWalletConnect?: boolean
-  dAppUrl?: string
-}
+export type SendModalProps = TransferTxModalData
 
-export interface SendModalProps<PT extends { fromAddress: Address }> extends ConfigurableSendModalProps<PT> {
-  title: string
-  type: 'transfer'
-}
-
-function SendModal<PT extends { fromAddress: Address }>({
-  title,
-  initialTxData,
-  txData,
-  type,
-  id,
-  triggeredByWalletConnect,
-  dAppUrl
-}: ModalBaseProp & SendModalProps<PT>) {
+function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
-  const { sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
   const { isLedger, onLedgerError } = useLedger()
 
-  const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
-  const [transactionData, setTransactionData] = useState(txData)
+  const [addressesData, setAddressesData] = useState<TransferTxModalData>(initialTxData)
+  const [transactionData, setTransactionData] = useState<TransferTxData>()
   const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
   const [consolidationRequired, setConsolidationRequired] = useState(false)
@@ -71,27 +58,9 @@ function SendModal<PT extends { fromAddress: Address }>({
   const [unsignedTxId, setUnsignedTxId] = useState('')
 
   const [unsignedTransaction, setUnsignedTransaction] = useState<UnsignedTx>()
-  const [buildExecuteScriptTxResult, setBuildExecuteScriptTxResult] = useState<node.BuildExecuteScriptTxResult>()
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
-
-  const txContext: TxContext = useMemo(
-    () => ({
-      setIsSweeping,
-      sweepUnsignedTxs,
-      setSweepUnsignedTxs,
-      setFees,
-      unsignedTransaction,
-      setUnsignedTransaction,
-      unsignedTxId,
-      setUnsignedTxId,
-      isSweeping,
-      buildExecuteScriptTxResult,
-      setBuildExecuteScriptTxResult
-    }),
-    [buildExecuteScriptTxResult, isSweeping, sweepUnsignedTxs, unsignedTransaction, unsignedTxId]
-  )
 
   const handleSendExtended = useCallback(
     async (consolidationRequired: boolean) => {
@@ -100,50 +69,92 @@ function SendModal<PT extends { fromAddress: Address }>({
       setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
       try {
-        const signature = await handleTransferSend(
-          transactionData as TransferTxData,
-          txContext,
-          posthog,
-          isLedger,
-          onLedgerError,
-          consolidationRequired
-        )
+        const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
 
-        if (signature && triggeredByWalletConnect) {
-          const result = getTransferWalletConnectResult(txContext, signature)
+        if (toAddress) {
+          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+          const lockTime = lockDateTime?.getTime()
 
-          sendSuccessResponse(result)
+          if (isSweeping && sweepUnsignedTxs) {
+            const sendToAddress = consolidationRequired ? fromAddress.hash : toAddress
+            const type = consolidationRequired ? 'consolidation' : 'sweep'
+
+            for (const { txId, unsignedTx } of sweepUnsignedTxs) {
+              const data = await signAndSendTransaction(fromAddress, txId, unsignedTx, isLedger, onLedgerError)
+
+              if (!data) {
+                return
+              }
+
+              dispatch(
+                transactionSent({
+                  hash: data.txId,
+                  fromAddress: fromAddress.hash,
+                  toAddress: sendToAddress,
+                  amount: attoAlphAmount,
+                  tokens,
+                  timestamp: new Date().getTime(),
+                  lockTime,
+                  type,
+                  status: 'sent'
+                })
+              )
+            }
+
+            posthog.capture('Swept address assets', { from: 'button' })
+          } else if (unsignedTransaction) {
+            const data = await signAndSendTransaction(
+              fromAddress,
+              unsignedTxId,
+              unsignedTransaction.unsignedTx,
+              isLedger,
+              onLedgerError
+            )
+
+            if (!data) {
+              return
+            }
+
+            dispatch(
+              transactionSent({
+                hash: data.txId,
+                fromAddress: fromAddress.hash,
+                toAddress,
+                amount: attoAlphAmount,
+                tokens,
+                timestamp: new Date().getTime(),
+                lockTime,
+                type: 'transfer',
+                status: 'sent'
+              })
+            )
+
+            posthog.capture('Sent transaction', { number_of_tokens: tokens.length, locked: !!lockTime })
+
+            return data.txId
+          }
         }
 
         setStep('tx-sent')
       } catch (error) {
         dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
         sendAnalytics({ type: 'error', message: 'Could not send tx' })
-
-        if (triggeredByWalletConnect) {
-          sendFailureResponse({
-            message: getHumanReadableError(error, 'Error while sending the transaction'),
-            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-          })
-          dispatch(closeModal({ id }))
-        }
       } finally {
         setIsLoading(false)
       }
     },
     [
       dispatch,
-      id,
       isLedger,
+      isSweeping,
       onLedgerError,
       posthog,
       sendAnalytics,
-      sendFailureResponse,
-      sendSuccessResponse,
+      sweepUnsignedTxs,
       t,
       transactionData,
-      triggeredByWalletConnect,
-      txContext
+      unsignedTransaction,
+      unsignedTxId
     ]
   )
 
@@ -153,13 +164,47 @@ function SendModal<PT extends { fromAddress: Address }>({
   const goToPasswordCheck = useCallback(() => setStep('password-check'), [])
 
   const buildTransactionExtended = useCallback(
-    async (data: TxData) => {
+    async (data: TransferTxData) => {
       setTransactionData(data)
       setIsLoading(true)
 
       try {
-        if (type === 'transfer') {
-          await buildTransferTransaction(data as TransferTxData, txContext)
+        const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime, shouldSweep } = data
+
+        setIsSweeping(shouldSweep)
+
+        if (shouldSweep) {
+          const { unsignedTxs, fees } = await buildSweepTransactions(
+            fromAddress.publicKey,
+            fromAddress.keyType,
+            toAddress
+          )
+          setSweepUnsignedTxs(unsignedTxs)
+          setFees(fees)
+        } else {
+          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+          const data = await throttledClient.node.transactions.postTransactionsBuild({
+            fromPublicKey: fromAddress.publicKey,
+            fromPublicKeyType: fromAddress.keyType,
+            destinations: [
+              {
+                address: toAddress,
+                attoAlphAmount,
+                tokens,
+                lockTime: lockTime ? lockTime.getTime() : undefined
+              }
+            ],
+            gasAmount: gasAmount ? gasAmount : undefined,
+            gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
+          })
+
+          // TODO: handle groupless addresses
+          if (isGrouplessTxResult(data)) return
+
+          setUnsignedTransaction(data)
+          setUnsignedTxId(data.txId)
+          setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
         }
 
         setStep('info-check')
@@ -211,7 +256,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 
       setIsLoading(false)
     },
-    [dispatch, handleSendExtended, passwordRequirement, sendAnalytics, t, txContext, type]
+    [dispatch, handleSendExtended, passwordRequirement, sendAnalytics, t]
   )
 
   useEffect(() => {
@@ -221,7 +266,7 @@ function SendModal<PT extends { fromAddress: Address }>({
     }
   }, [buildTransactionExtended, isTransactionBuildTriggered, transactionData])
 
-  const moveToSecondStep = useCallback((data: AddressesTxModalData) => {
+  const moveToSecondStep = useCallback((data: TransferAddressesTxModalOnSubmitData) => {
     setAddressesData(data)
     setStep('build-tx')
   }, [])
@@ -233,7 +278,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   }, [dispatch, id, step])
 
   return (
-    <CenteredModal id={id} title={title} onClose={onClose} isLoading={isLoading} focusMode hasFooterButtons>
+    <CenteredModal id={id} title={t('Send')} onClose={onClose} isLoading={isLoading} focusMode hasFooterButtons>
       {step === 'addresses' && (
         <TransferAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
       )}
@@ -250,7 +295,6 @@ function SendModal<PT extends { fromAddress: Address }>({
           fees={fees}
           onSubmit={passwordRequirement ? goToPasswordCheck : () => handleSendExtended(consolidationRequired)}
           onBack={goToBuildTx}
-          dAppUrl={dAppUrl}
         />
       )}
       {step === 'password-check' && passwordRequirement && (

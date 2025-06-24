@@ -6,8 +6,8 @@ import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModa
 import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
+import SendModal from '@/features/send/SendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
-import TransferSendModal from '@/features/send/sendModals/transfer/TransferSendModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import SignDeployContractTxModal from '@/features/walletConnect/SignDeployContractTxModal'
@@ -88,8 +88,8 @@ const AppModals = () => {
                 return <ContactFormModal key={modal.id} {...props} {...modal.params.props} />
               case 'WalletUnlockModal':
                 return <WalletUnlockModal key={modal.id} {...props} {...modal.params.props} />
-              case 'TransferSendModal':
-                return <TransferSendModal key={modal.id} {...props} {...modal.params.props} />
+              case 'SendModal':
+                return <SendModal key={modal.id} {...props} {...modal.params.props} />
               case 'WalletConnectSessionProposalModal':
                 return <WalletConnectSessionProposalModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignUnsignedTxModal':

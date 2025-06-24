@@ -8,8 +8,8 @@ import {
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
+import { SendModalProps } from '@/features/send/SendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
-import { TransferSendModalProps } from '@/features/send/sendModals/transfer/TransferSendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
@@ -43,7 +43,7 @@ const ModalNames = {
   NewAddressModal: 'NewAddressModal',
   ContactFormModal: 'ContactFormModal',
   WalletUnlockModal: 'WalletUnlockModal',
-  TransferSendModal: 'TransferSendModal',
+  SendModal: 'SendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageModal: 'SignMessageModal',
@@ -128,8 +128,8 @@ export type OpenModalParams = {
       props: WalletUnlockModalProps
     }
   | {
-      name: typeof ModalNames.TransferSendModal
-      props: TransferSendModalProps
+      name: typeof ModalNames.SendModal
+      props: SendModalProps
     }
   | {
       name: typeof ModalNames.WalletConnectSessionProposalModal
