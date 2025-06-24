@@ -1,4 +1,4 @@
-import { Address, AddressHash, AddressStoredMetadataWithHash, AddressSettings } from '@alephium/shared'
+import { Address, AddressHash, AddressSettings, AddressStoredMetadataWithHash } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as Clipboard from 'expo-clipboard'
 
