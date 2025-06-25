@@ -8,10 +8,10 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { partition } from 'lodash'
-import { usePostHog } from 'posthog-js/react'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
@@ -33,7 +33,7 @@ const SignExecuteScriptTxModal = ({
   const dispatch = useAppDispatch()
   const { isLedger, onLedgerError } = useLedger()
   const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
   const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
@@ -72,8 +72,8 @@ const SignExecuteScriptTxModal = ({
       })
     )
 
-    posthog.capture('Called smart contract')
-  }, [dispatch, isLedger, onLedgerError, onSuccess, posthog, signerAddress, txParams])
+    sendAnalytics({ event: 'Called smart contract' })
+  }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
   return (
     <SignTxBaseModal

@@ -1,7 +1,6 @@
 import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, throttledClient, transactionSent, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
-import { usePostHog } from 'posthog-js/react'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -35,7 +34,6 @@ const SignUnsignedTxModal = memo(
     const dispatch = useAppDispatch()
     const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
     const { isLedger, onLedgerError } = useLedger()
-    const posthog = usePostHog()
 
     const [isLoading, setIsLoading] = useState(false)
     const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
@@ -112,7 +110,7 @@ const SignUnsignedTxModal = memo(
             })
           )
 
-          posthog.capture('Signed and submitted unsigned transaction')
+          sendAnalytics({ event: 'Signed and submitted unsigned transaction' })
         }
 
         await sendSuccessResponse(signResult, true)

@@ -33,14 +33,15 @@ const CheckAddressesBox = ({ fromAddressStr, toAddressHash, dAppUrl, ...props }:
           <HorizontalDivider secondary />
           <AddressRow>
             <AddressLabel>{t('To')}</AddressLabel>
-
-            {toAddressHash && (
-              <DestinationAddress>
-                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders fullWidthUnknownHash />
-                <ExplorerLink addressHash={toAddressHash} />
-              </DestinationAddress>
-            )}
-            {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
+            <DAppAndDestinationAddress>
+              {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
+              {toAddressHash && (
+                <DestinationAddress>
+                  <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders fullWidthUnknownHash />
+                  <ExplorerLink addressHash={toAddressHash} />
+                </DestinationAddress>
+              )}
+            </DAppAndDestinationAddress>
           </AddressRow>
         </>
       )}
@@ -89,4 +90,10 @@ const ActionLinkStyled = styled(ActionLink)`
   position: absolute;
   right: 7px;
   bottom: -17px;
+`
+
+const DAppAndDestinationAddress = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
 `

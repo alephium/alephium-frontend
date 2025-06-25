@@ -9,7 +9,6 @@ import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -43,7 +42,6 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
-  const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { isLedger, onLedgerError } = useLedger()
 
@@ -82,9 +80,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             for (const { txId, unsignedTx } of sweepUnsignedTxs) {
               const data = await signAndSendTransaction(fromAddress, txId, unsignedTx, isLedger, onLedgerError)
 
-              if (!data) {
-                return
-              }
+              if (!data) throw Error()
 
               dispatch(
                 transactionSent({
@@ -101,7 +97,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
               )
             }
 
-            posthog.capture('Swept address assets', { from: 'button' })
+            sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
           } else if (unsignedTransaction) {
             const data = await signAndSendTransaction(
               fromAddress,
@@ -111,9 +107,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
               onLedgerError
             )
 
-            if (!data) {
-              return
-            }
+            if (!data) throw Error()
 
             dispatch(
               transactionSent({
@@ -129,9 +123,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
               })
             )
 
-            posthog.capture('Sent transaction', { number_of_tokens: tokens.length, locked: !!lockTime })
-
-            return data.txId
+            sendAnalytics({ event: 'Sent transaction', props: { number_of_tokens: tokens.length, locked: !!lockTime } })
           }
         }
 
@@ -148,7 +140,6 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       isLedger,
       isSweeping,
       onLedgerError,
-      posthog,
       sendAnalytics,
       sweepUnsignedTxs,
       t,

@@ -1,10 +1,10 @@
 import { isGrouplessKeyType, selectAddressByHash, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignTransferTxResult } from '@alephium/web3'
-import { usePostHog } from 'posthog-js/react'
-import { memo, useCallback, useMemo } from 'react'
+import { Fragment, memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
@@ -21,7 +21,7 @@ const SignTransferTxModal = memo(
     const { t } = useTranslation()
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
-    const posthog = usePostHog()
+    const { sendAnalytics } = useAnalytics()
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
     const maxLockTime = useMemo(
@@ -76,11 +76,8 @@ const SignTransferTxModal = memo(
         })
       )
 
-      posthog.capture(
-        'Sent transaction'
-        // TODO:  { number_of_tokens: tokens.length, locked: !!lockTime }
-      )
-    }, [dispatch, isLedger, onLedgerError, onSuccess, posthog, signerAddress, txParams])
+      sendAnalytics({ event: 'Sent transaction' })
+    }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     return (
       <SignTxBaseModal
@@ -98,7 +95,7 @@ const SignTransferTxModal = memo(
             ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
           ]
           return (
-            <>
+            <Fragment key={address}>
               <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />
               <CheckAddressesBox
                 fromAddressStr={txParams.signerAddress}
@@ -109,7 +106,7 @@ const SignTransferTxModal = memo(
               />
               {lockTime && <CheckLockTimeBox lockTime={new Date(lockTime)} />}
               <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
-            </>
+            </Fragment>
           )
         })}
       </SignTxBaseModal>

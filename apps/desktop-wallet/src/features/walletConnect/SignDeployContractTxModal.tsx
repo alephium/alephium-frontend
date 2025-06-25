@@ -6,10 +6,10 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignDeployContractTxResult } from '@alephium/web3'
-import { usePostHog } from 'posthog-js/react'
 import { memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
@@ -27,7 +27,7 @@ const SignDeployContractTxModal = memo(
     const { t } = useTranslation()
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
-    const posthog = usePostHog()
+    const { sendAnalytics } = useAnalytics()
 
     const onSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
@@ -59,8 +59,8 @@ const SignDeployContractTxModal = memo(
         })
       )
 
-      posthog.capture('Deployed smart contract')
-    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, posthog, onLedgerError])
+      sendAnalytics({ event: 'Deployed smart contract' })
+    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])
 
     const initialAlphAmount = txParams.initialAttoAlphAmount
       ? [{ id: ALPH.id, amount: BigInt(txParams.initialAttoAlphAmount) }]
