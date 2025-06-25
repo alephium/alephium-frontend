@@ -38,12 +38,6 @@ export type AddressConfirmedTransaction = explorer.Transaction & { address: Addr
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
 export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
 
-export enum TxType {
-  TRANSFER,
-  DEPLOY_CONTRACT,
-  SCRIPT
-}
-
 // TODO: Support multiple destinations
 export interface SignTransferTxParamsSingleDestination extends SignTransferTxParams {
   toAddress: AddressHash

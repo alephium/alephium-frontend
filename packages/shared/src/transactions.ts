@@ -1,7 +1,9 @@
+import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
+import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
 import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
@@ -139,3 +141,36 @@ export const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.
 
 export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: e.Transaction) =>
   addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))
+
+export const calculateTransferTxAssetAmounts = (txParams: SignTransferTxModalProps['txParams']) => {
+  const assetAmounts = [] as Required<AssetAmount>[]
+
+  const res = txParams.destinations.reduce(
+    (acc, destination) => {
+      acc.attoAlphAmount += BigInt(destination.attoAlphAmount)
+
+      destination.tokens?.forEach((token) => {
+        const t = acc.tokens.find(({ id }) => id === token.id)
+
+        if (t) {
+          t.amount += BigInt(token.amount)
+        } else {
+          acc.tokens.push({ id: token.id, amount: BigInt(token.amount) })
+        }
+      })
+
+      return acc
+    },
+    { attoAlphAmount: BigInt(0), tokens: [] as { id: string; amount: bigint }[] }
+  )
+
+  if (res.attoAlphAmount > 0) {
+    assetAmounts.push({ id: ALPH.id, amount: res.attoAlphAmount })
+  }
+
+  if (res.tokens.length > 0) {
+    assetAmounts.push(...res.tokens)
+  }
+
+  return assetAmounts
+}

@@ -16,9 +16,14 @@ const useSignerAddress = (group: AddressGroup) => {
     signerAddressHash ? selectAddressByHash(s, signerAddressHash)?.publicKey : undefined
   )
 
+  const signerAddressKeyType = useAppSelector((s) =>
+    signerAddressHash ? selectAddressByHash(s, signerAddressHash)?.keyType : undefined
+  )
+
   return {
     signerAddressHash,
     signerAddressPublicKey,
+    signerAddressKeyType,
     setSignerAddressHash,
     addressesInGroup
   }

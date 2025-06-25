@@ -1,6 +1,5 @@
-import { transactionSent } from '@alephium/shared'
+import { SignDeployContractTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { BuildTxResult, SignDeployContractTxParams, SignDeployContractTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,17 +14,10 @@ import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCo
 import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppDispatch } from '~/hooks/redux'
 import { signer } from '~/signer'
-
-interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
-  txParams: SignDeployContractTxParams
-  unsignedData: BuildTxResult<SignDeployContractTxResult>
-  onSuccess: (signResult: SignDeployContractTxResult) => void
-}
 
 const SignDeployContractTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignDeployContractTxModalProps) => {

@@ -1,4 +1,4 @@
-import { node as n, SignUnsignedTxParams, SignUnsignedTxResult } from '@alephium/web3'
+import { SignUnsignedTxModalProps } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -10,17 +10,9 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { signer } from '~/signer'
-
-interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
-  txParams: SignUnsignedTxParams
-  unsignedData: n.UnsignedTx
-  submitAfterSign: boolean
-  onSuccess: (signResult: SignUnsignedTxResult) => void
-}
 
 const SignUnsignedTxModal = memo(
   ({ txParams, unsignedData, origin, onError, onSuccess, submitAfterSign }: SignUnsignedTxModalProps) => {
@@ -50,6 +42,7 @@ const SignUnsignedTxModal = memo(
               <AppText>{unsignedData.txId}</AppText>
             </Row>
 
+            {/* TODO: Should show decoded unsigned data, see https://github.com/alephium/alephium-web3/blob/3cb9b2f5079b8cb41d284f81078bc2894880d143/packages/web3/src/signer/signer.ts#L186 */}
             <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
           </Surface>
         </ScreenSection>
