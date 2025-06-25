@@ -20,4 +20,4 @@ export const addressMetadataIncludesHash = (
 ): metadata is AddressStoredMetadataWithHash => (metadata as AddressStoredMetadataWithHash).hash !== undefined
 
 export const isGrouplessKeyType = (keyType: KeyType = 'default') =>
-  keyType === 'default' || keyType === 'bip340-schnorr'
+  keyType !== 'default' && keyType !== 'bip340-schnorr'
