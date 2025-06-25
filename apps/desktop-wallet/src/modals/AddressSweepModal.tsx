@@ -2,6 +2,7 @@ import {
   Address,
   AddressHash,
   getHumanReadableError,
+  isGrouplessKeyType,
   selectAddressByHash,
   selectDefaultAddress,
   transactionSent
@@ -18,7 +19,7 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
+import { buildSweepTransactions } from '@/api/transactions'
 import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
@@ -29,6 +30,7 @@ import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 import { getName } from '@/utils/addresses'
 
@@ -66,11 +68,7 @@ const AddressSweepModal = memo(
         if (!sweepAddresses.from || !sweepAddresses.to) return
         setIsLoading(true)
         try {
-          const { unsignedTxs, fees } = await buildSweepTransactions(
-            sweepAddresses.from.publicKey,
-            sweepAddresses.from.keyType,
-            sweepAddresses.to.hash
-          )
+          const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from, sweepAddresses.to.hash)
 
           setBuiltUnsignedTxs(unsignedTxs)
           setFee(fees)
@@ -111,16 +109,29 @@ const AddressSweepModal = memo(
       if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
       setIsLoading(true)
       try {
-        for (const { txId, unsignedTx } of builtUnsignedTxs) {
-          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger, onLedgerError)
+        const txParams = {
+          signerAddress: sweepAddresses.from.hash,
+          signerKeyType: sweepAddresses.from.keyType,
+          toAddress: sweepAddresses.to.hash
+        }
+        let results: Array<{ txId: string }>
 
-          if (!data) {
-            return
-          }
+        if (isLedger) {
+          if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
 
+          results = await signer.signAndSubmitSweepTxsLedger(txParams, {
+            signerIndex: sweepAddresses.from.index,
+            signerKeyType: txParams.signerKeyType ?? 'default',
+            onLedgerError
+          })
+        } else {
+          results = await signer.signAndSubmitSweepTxs(txParams)
+        }
+
+        for (const { txId } of results) {
           dispatch(
             transactionSent({
-              hash: data.txId,
+              hash: txId,
               fromAddress: sweepAddresses.from.hash,
               toAddress: sweepAddresses.to.hash,
               timestamp: new Date().getTime(),
@@ -133,7 +144,7 @@ const AddressSweepModal = memo(
         onClose()
         onSuccessfulSweep && onSuccessfulSweep()
 
-        sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
+        sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
       } catch (error) {
         dispatch(
           transactionSendFailed(

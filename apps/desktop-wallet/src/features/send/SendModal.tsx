@@ -99,7 +99,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             )
           }
 
-          sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
+          sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
         } else {
           const txParams = getTransferTxParams(transactionData)
           let result: SignTransferTxResult
@@ -159,7 +159,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         const { fromAddress, toAddress } = data
 
         if (data.shouldSweep) {
-          const { fees } = await buildSweepTransactions(fromAddress.hash, fromAddress.keyType, toAddress)
+          const { fees } = await buildSweepTransactions(fromAddress, toAddress)
 
           setFees(fees)
         } else {
@@ -184,7 +184,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
           // TODO: See if you can simplify the data to only include AddressHash and not Address
           const { fromAddress } = data
-          const { fees } = await buildSweepTransactions(fromAddress.hash, fromAddress.keyType, fromAddress.hash)
+          const { fees } = await buildSweepTransactions(fromAddress, fromAddress.hash)
 
           setIsLoading(false)
 
