@@ -1,6 +1,5 @@
 import {
   getHumanReadableError,
-  selectAddressByHash,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
   SignTransferTxModalProps
@@ -8,6 +7,7 @@ import {
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -15,6 +15,7 @@ import CheckModalContent from '@/features/send/CheckModalContent'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import { transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
 interface SignTxBaseModalProps extends ModalBaseProp {
   children: ReactNode
@@ -37,29 +38,41 @@ const SignTxBaseModal = ({
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
-  const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
   const { isLedger } = useLedger()
+  const { sendAnalytics } = useAnalytics()
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const handleError = useCallback(
+    (e: unknown) => {
+      // https://github.com/alephium/alephium-frontend/issues/610
+      const error = (e as unknown as string).toString()
+      const message = 'Error while sending the transaction'
+      const errorMessage = getHumanReadableError(e, t(message))
+
+      if (error.includes('NotEnoughApprovedBalance')) {
+        dispatch(transactionSendFailed('Your address does not have enough balance for this transaction'))
+      } else {
+        dispatch(transactionSendFailed(errorMessage))
+        sendAnalytics({ type: 'error', message })
+      }
+      onError(errorMessage)
+    },
+    [dispatch, onError, sendAnalytics, t]
+  )
+
   const signAndSubmit = useCallback(async () => {
     try {
-      if (!signerAddress) {
-        throw Error('Signer address not found')
-      }
-
       setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
       await onSignAndSubmit()
-    } catch (error) {
-      onError(getHumanReadableError(error, t('Error while sending the transaction')))
-      // TODO: show toast
-      // TODO: analytics
+    } catch (e) {
+      handleError(e)
     } finally {
       dispatch(closeModal({ id }))
       setIsLoading(false)
     }
-  }, [signerAddress, isLedger, t, onSignAndSubmit, onError, dispatch, id])
+  }, [isLedger, t, onSignAndSubmit, handleError, dispatch, id])
 
   const checkPassword = useCallback(() => {
     if (passwordRequirement) {

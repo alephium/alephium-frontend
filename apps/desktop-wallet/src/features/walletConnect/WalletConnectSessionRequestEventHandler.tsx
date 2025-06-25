@@ -11,9 +11,11 @@ import {
 } from '@alephium/web3'
 import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { memo, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
@@ -38,6 +40,7 @@ const WalletConnectSessionRequestEventHandler = memo(
     const addresses = useUnsortedAddresses()
     const dispatch = useAppDispatch()
     const { sendAnalytics } = useAnalytics()
+    const { t } = useTranslation()
 
     const cleanStorage = useCallback(
       async (event: SessionRequestEvent) => {
@@ -231,16 +234,26 @@ const WalletConnectSessionRequestEventHandler = memo(
               respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'))
               throw new Error(`Method not supported: ${request.method}`)
           }
-        } catch (error) {
+        } catch (e) {
           const message = 'Could not parse WalletConnect session request'
 
-          sendAnalytics({ type: 'error', error, message })
+          sendAnalytics({ type: 'error', error: e, message })
           respondToWalletConnectWithError(event, {
-            message: getHumanReadableError(error, message),
+            message: getHumanReadableError(e, message),
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
           })
 
-          // TODO: Do consolidation check here
+          // https://github.com/alephium/alephium-frontend/issues/610
+          const error = (e as unknown as string).toString()
+
+          if (error.includes('consolidating') || error.includes('consolidate')) {
+            showToast({
+              text: t(
+                'It appears that your wallet has too many UTXOs to be able to send this transaction. Please, consolidate (merge) your UTXOs first. This will cost a small fee.'
+              ),
+              duration: 'long'
+            })
+          }
         }
       },
       [
@@ -251,6 +264,7 @@ const WalletConnectSessionRequestEventHandler = memo(
         respondToWalletConnect,
         respondToWalletConnectWithError,
         sendAnalytics,
+        t,
         walletConnectClient
       ]
     )
