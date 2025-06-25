@@ -35,7 +35,7 @@ const SignTransferTxModal = memo(
       [txParams.destinations]
     )
 
-    const onSignAndSubmit = useCallback(async () => {
+    const handleSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
 
       // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
@@ -82,11 +82,9 @@ const SignTransferTxModal = memo(
     return (
       <SignTxBaseModal
         title={t('Send')}
-        onSignAndSubmit={onSignAndSubmit}
-        txParams={txParams}
-        unsignedData={unsignedData}
-        onSuccess={onSuccess}
+        sign={handleSignAndSubmit}
         lockTime={maxLockTime}
+        unsignedData={unsignedData}
         {...props}
       >
         {txParams.destinations.map(({ address, attoAlphAmount, tokens, lockTime }) => {

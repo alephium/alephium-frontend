@@ -57,7 +57,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
     async (consolidationRequired: boolean) => {
       if (!transactionData) return
 
-      setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
+      setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
 
       const { fromAddress, toAddress, lockTime, assetAmounts } = transactionData
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)

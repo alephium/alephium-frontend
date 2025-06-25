@@ -12,7 +12,7 @@ import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import SignDeployContractTxModal from '@/features/walletConnect/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '@/features/walletConnect/SignExecuteScriptTxModal'
-import SignMessageModal from '@/features/walletConnect/SignMessageModal'
+import SignMessageTxModal from '@/features/walletConnect/SignMessageTxModal'
 import SignTransferTxModal from '@/features/walletConnect/SignTransferTxModal'
 import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
 import WalletConnectModal from '@/features/walletConnect/WalletConnectModal'
@@ -94,8 +94,8 @@ const AppModals = () => {
                 return <WalletConnectSessionProposalModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignUnsignedTxModal':
                 return <SignUnsignedTxModal key={modal.id} {...props} {...modal.params.props} />
-              case 'SignMessageModal':
-                return <SignMessageModal key={modal.id} {...props} {...modal.params.props} />
+              case 'SignMessageTxModal':
+                return <SignMessageTxModal key={modal.id} {...props} {...modal.params.props} />
               case 'ConsolidateUTXOsModal':
                 return <ConsolidateUTXOsModal key={modal.id} {...props} {...modal.params.props} />
               case 'ConfirmLockTimeModal':

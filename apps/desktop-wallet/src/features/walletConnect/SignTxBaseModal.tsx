@@ -2,7 +2,9 @@ import {
   getHumanReadableError,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
-  SignTransferTxModalProps
+  SignMessageTxModalProps,
+  SignTransferTxModalProps,
+  SignUnsignedTxModalProps
 } from '@alephium/shared'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,20 +22,29 @@ import { transactionSendFailed } from '@/storage/transactions/transactionsAction
 interface SignTxBaseModalProps extends ModalBaseProp {
   children: ReactNode
   title: string
-  onSignAndSubmit: () => Promise<void>
+  sign: () => Promise<void>
   lockTime?: number
+  isApproveButtonDisabled?: boolean
 }
 
 const SignTxBaseModal = ({
   children,
   title,
   lockTime,
-  onSignAndSubmit,
-  txParams,
+  sign,
+  unsignedData,
   id,
   onError,
-  onUserDismiss
-}: (SignDeployContractTxModalProps | SignExecuteScriptTxModalProps | SignTransferTxModalProps) &
+  onUserDismiss,
+  isApproveButtonDisabled = false
+}: Pick<
+  | SignTransferTxModalProps
+  | SignDeployContractTxModalProps
+  | SignExecuteScriptTxModalProps
+  | SignMessageTxModalProps
+  | SignUnsignedTxModalProps,
+  'unsignedData' | 'onError'
+> &
   SignTxBaseModalProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -47,7 +58,8 @@ const SignTxBaseModal = ({
     (e: unknown) => {
       // https://github.com/alephium/alephium-frontend/issues/610
       const error = (e as unknown as string).toString()
-      const message = 'Error while sending the transaction'
+      const message =
+        typeof unsignedData === 'string' ? 'Could not sign message' : 'Error while sending the transaction'
       const errorMessage = getHumanReadableError(e, t(message))
 
       if (error.includes('NotEnoughApprovedBalance')) {
@@ -58,21 +70,21 @@ const SignTxBaseModal = ({
       }
       onError(errorMessage)
     },
-    [dispatch, onError, sendAnalytics, t]
+    [dispatch, onError, sendAnalytics, t, unsignedData]
   )
 
   const signAndSubmit = useCallback(async () => {
     try {
-      setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
+      setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
 
-      await onSignAndSubmit()
+      await sign()
     } catch (e) {
       handleError(e)
     } finally {
       dispatch(closeModal({ id }))
       setIsLoading(false)
     }
-  }, [isLedger, t, onSignAndSubmit, handleError, dispatch, id])
+  }, [isLedger, t, sign, handleError, dispatch, id])
 
   const checkPassword = useCallback(() => {
     if (passwordRequirement) {
@@ -120,7 +132,7 @@ const SignTxBaseModal = ({
         <ModalFooterButton onClick={handleRejectPress} role="secondary">
           {t('Reject')}
         </ModalFooterButton>
-        <ModalFooterButton onClick={handleApprovePress} variant="valid">
+        <ModalFooterButton onClick={handleApprovePress} variant="valid" disabled={isApproveButtonDisabled}>
           {t('Approve')}
         </ModalFooterButton>
       </ModalFooterButtons>

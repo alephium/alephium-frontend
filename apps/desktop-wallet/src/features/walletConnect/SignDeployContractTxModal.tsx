@@ -29,7 +29,7 @@ const SignDeployContractTxModal = memo(
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
     const { sendAnalytics } = useAnalytics()
 
-    const onSignAndSubmit = useCallback(async () => {
+    const handleSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
 
       let result: SignDeployContractTxResult
@@ -69,14 +69,7 @@ const SignDeployContractTxModal = memo(
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 
     return (
-      <SignTxBaseModal
-        title={t('Deploy contract')}
-        onSignAndSubmit={onSignAndSubmit}
-        txParams={txParams}
-        unsignedData={unsignedData}
-        onSuccess={onSuccess}
-        {...props}
-      >
+      <SignTxBaseModal title={t('Deploy contract')} sign={handleSignAndSubmit} unsignedData={unsignedData} {...props}>
         {initialAlphAmount && <CheckAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding />}
         {issueTokenAmount && <InfoRow label={t('Issue token amount')}>{issueTokenAmount}</InfoRow>}
         <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />

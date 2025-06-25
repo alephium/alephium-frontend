@@ -17,7 +17,6 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
-import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch } from '@/hooks/redux'
 import { toggleAppLoading } from '@/storage/global/globalActions'
@@ -175,34 +174,75 @@ const WalletConnectSessionRequestEventHandler = memo(
               break
             }
             case 'alph_signMessage': {
-              const { message, messageHasher, signerAddress } = request.params as SignMessageParams
-              const txData: SignMessageData = {
-                fromAddress: getSignerAddressByHash(signerAddress),
-                message,
-                messageHasher
-              }
+              const signParams = event.params.request.params as SignMessageParams
+
               dispatch(
-                openModal({ name: 'SignMessageModal', props: { txData, dAppUrl: event.verifyContext.verified.origin } })
+                openModal({
+                  name: 'SignMessageTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: event.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(event.topic),
+                    txParams: signParams,
+                    unsignedData: signParams.message,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(event, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                      })
+                    },
+                    onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
+                  }
+                })
               )
+
               break
             }
             case 'alph_signUnsignedTx':
             case 'alph_signAndSubmitUnsignedTx': {
-              const { unsignedTx, signerAddress } = request.params as SignUnsignedTxParams
-              const txData: SignUnsignedTxData = {
-                fromAddress: getSignerAddressByHash(signerAddress),
-                unsignedTx
-              }
+              const txParams = event.params.request.params as SignUnsignedTxParams
+              const submitAfterSign = event.params.request.method === 'alph_signAndSubmitUnsignedTx'
+
+              dispatch(toggleAppLoading(true))
+              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
+                unsignedTx: txParams.unsignedTx
+              })
+              dispatch(toggleAppLoading(false))
+
               dispatch(
                 openModal({
                   name: 'SignUnsignedTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
                   props: {
-                    txData,
-                    submit: request.method === 'alph_signAndSubmitUnsignedTx',
-                    dAppUrl: event.verifyContext.verified.origin
+                    dAppUrl: event.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(event.topic),
+                    txParams,
+                    unsignedData: decodedResult.unsignedTx,
+                    submitAfterSign,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(event, {
+                        message,
+                        code: submitAfterSign
+                          ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+                          : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                      })
+                    },
+                    onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                   }
                 })
               )
+
+              break
+            }
+            case 'alph_signAndSubmitChainedTx': {
+              // TODO: Implement chained transactions flow
+              showToast({
+                text: 'Chained transactions are not supported yet.',
+                type: 'error',
+                duration: 'long'
+              })
               break
             }
             case 'alph_requestNodeApi': {

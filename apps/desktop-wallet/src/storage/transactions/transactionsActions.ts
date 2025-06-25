@@ -15,16 +15,6 @@ export const transactionBuildFailed = createAction<Message>('tx/transactionBuild
 
 export const transactionSendFailed = createAction<Message>('tx/transactionSendFailed')
 
-export const unsignedTransactionSignSucceeded = createAction('tx/unsignedTransactionSignSucceeded')
-
-export const unsignedTransactionSignFailed = createAction<Message>('tx/unsignedTransactionSignFailed')
-
-export const unsignedTransactionDecodingFailed = createAction<Message>('tx/unsignedTransactionDecodingFailed')
-
-export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
-
-export const messageSignFailed = createAction<Message>('tx/messageSignFailed')
-
 export const csvFileGenerationStarted = createAction('tx/csvFileGenerationStarted')
 
 export const csvFileGenerationFinished = createAction('tx/csvFileGenerationFinished')

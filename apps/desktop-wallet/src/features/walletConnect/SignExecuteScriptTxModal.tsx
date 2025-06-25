@@ -38,7 +38,7 @@ const SignExecuteScriptTxModal = ({
   const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
   const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 
-  const onSignAndSubmit = useCallback(async () => {
+  const handleSignAndSubmit = useCallback(async () => {
     if (!signerAddress) throw Error('Signer address not found')
 
     let result: SignExecuteScriptTxResult
@@ -76,14 +76,7 @@ const SignExecuteScriptTxModal = ({
   }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
   return (
-    <SignTxBaseModal
-      title={t('Call contract')}
-      onSignAndSubmit={onSignAndSubmit}
-      txParams={txParams}
-      unsignedData={unsignedData}
-      onSuccess={onSuccess}
-      {...props}
-    >
+    <SignTxBaseModal title={t('Call contract')} sign={handleSignAndSubmit} unsignedData={unsignedData} {...props}>
       {assetAmounts && <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />}
       <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
       {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}

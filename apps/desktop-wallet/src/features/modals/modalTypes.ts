@@ -2,7 +2,9 @@ import {
   AddressHash,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
+  SignMessageTxModalProps,
   SignTransferTxModalProps,
+  SignUnsignedTxModalProps,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
 
@@ -12,8 +14,6 @@ import { SendModalProps } from '@/features/send/SendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
-import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
-import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
@@ -46,7 +46,7 @@ const ModalNames = {
   SendModal: 'SendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
-  SignMessageModal: 'SignMessageModal',
+  SignMessageTxModal: 'SignMessageTxModal',
   ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
   ConfirmLockTimeModal: 'ConfirmLockTimeModal',
   ConfirmModal: 'ConfirmModal',
@@ -140,8 +140,8 @@ export type OpenModalParams = {
       props: SignUnsignedTxModalProps
     }
   | {
-      name: typeof ModalNames.SignMessageModal
-      props: SignMessageModalProps
+      name: typeof ModalNames.SignMessageTxModal
+      props: SignMessageTxModalProps
     }
   | {
       name: typeof ModalNames.ConsolidateUTXOsModal
