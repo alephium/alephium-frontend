@@ -34,13 +34,7 @@ export const buildUnsignedTransactions = async (
       {
         signerAddress: fromAddress.hash,
         signerKeyType: fromAddress.keyType,
-        destinations: [
-          {
-            address: toAddressHash,
-            attoAlphAmount,
-            tokens
-          }
-        ]
+        destinations: [{ address: toAddressHash, attoAlphAmount, tokens }]
       },
       await getAddressAsymetricKey(fromAddress.hash, 'public')
     )

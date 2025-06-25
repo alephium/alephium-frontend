@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { AlephiumWalletSigner } from '@alephium/shared'
+import { AlephiumWalletSigner, SweepTxParams, throttledClient } from '@alephium/shared'
 import {
   GroupedKeyType,
   SignDeployContractTxParams,
@@ -57,6 +57,27 @@ class InMemorySigner extends AlephiumWalletSigner {
       ...buildResult,
       signature: await this.signAndSubmitLedgerTx(signerIndex, buildResult.unsignedTx, onLedgerError)
     }
+  }
+
+  public signAndSubmitSweepTxsLedger = async (
+    params: SweepTxParams,
+    { signerIndex, onLedgerError }: LedgerTxParams
+  ) => {
+    const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
+      params,
+      await this.getPublicKey(params.signerAddress)
+    )
+
+    const results = []
+
+    for (const { txId, unsignedTx } of unsignedTxs) {
+      results.push({
+        txId,
+        signature: await this.signAndSubmitLedgerTx(signerIndex, unsignedTx, onLedgerError)
+      })
+    }
+
+    return results
   }
 
   private signAndSubmitLedgerTx = async (

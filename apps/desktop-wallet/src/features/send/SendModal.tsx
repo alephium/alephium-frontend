@@ -1,11 +1,11 @@
 import {
   fromHumanReadableAmount,
   getHumanReadableError,
-  isGrouplessTxResult,
+  isGrouplessKeyType,
   throttledClient,
   transactionSent
 } from '@alephium/shared'
-import { node } from '@alephium/web3'
+import { SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
+import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
@@ -23,17 +23,13 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer/AddressesTxModalContent'
 import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
 import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
-import {
-  TransferAddressesTxModalOnSubmitData,
-  TransferTxData,
-  TransferTxModalData,
-  UnsignedTx
-} from '@/features/send/sendTypes'
+import { TransferAddressesTxModalOnSubmitData, TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
+import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
 export type SendModalProps = TransferTxModalData
@@ -51,11 +47,8 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const [step, setStep] = useState<Step>('addresses')
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
-  const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<node.SweepAddressTransaction[]>([])
   const [fees, setFees] = useState<bigint>()
-  const [unsignedTxId, setUnsignedTxId] = useState('')
 
-  const [unsignedTransaction, setUnsignedTransaction] = useState<UnsignedTx>()
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
@@ -66,65 +59,78 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
+      const { fromAddress, toAddress, lockTime, assetAmounts } = transactionData
+      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
       try {
-        const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
+        if (isSweeping) {
+          const txParams = {
+            signerAddress: fromAddress.hash,
+            signerKeyType: fromAddress.keyType,
+            toAddress: consolidationRequired ? fromAddress.hash : toAddress
+          }
+          let results: Array<{ txId: string }>
 
-        if (toAddress) {
-          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-          const lockTime = lockDateTime?.getTime()
+          if (isLedger) {
+            if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
 
-          if (isSweeping && sweepUnsignedTxs) {
-            const sendToAddress = consolidationRequired ? fromAddress.hash : toAddress
-            const type = consolidationRequired ? 'consolidation' : 'sweep'
-
-            for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-              const data = await signAndSendTransaction(fromAddress, txId, unsignedTx, isLedger, onLedgerError)
-
-              if (!data) throw Error()
-
-              dispatch(
-                transactionSent({
-                  hash: data.txId,
-                  fromAddress: fromAddress.hash,
-                  toAddress: sendToAddress,
-                  amount: attoAlphAmount,
-                  tokens,
-                  timestamp: new Date().getTime(),
-                  lockTime,
-                  type,
-                  status: 'sent'
-                })
-              )
-            }
-
-            sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
-          } else if (unsignedTransaction) {
-            const data = await signAndSendTransaction(
-              fromAddress,
-              unsignedTxId,
-              unsignedTransaction.unsignedTx,
-              isLedger,
+            results = await signer.signAndSubmitSweepTxsLedger(txParams, {
+              signerIndex: fromAddress.index,
+              signerKeyType: txParams.signerKeyType ?? 'default',
               onLedgerError
-            )
+            })
+          } else {
+            results = await signer.signAndSubmitSweepTxs(txParams)
+          }
 
-            if (!data) throw Error()
-
+          for (const { txId } of results) {
             dispatch(
               transactionSent({
-                hash: data.txId,
-                fromAddress: fromAddress.hash,
-                toAddress,
+                hash: txId,
+                fromAddress: txParams.signerAddress,
+                toAddress: txParams.toAddress,
                 amount: attoAlphAmount,
                 tokens,
                 timestamp: new Date().getTime(),
-                lockTime,
-                type: 'transfer',
+                lockTime: lockTime?.getTime(),
+                type: consolidationRequired ? 'consolidation' : 'sweep',
                 status: 'sent'
               })
             )
-
-            sendAnalytics({ event: 'Sent transaction', props: { number_of_tokens: tokens.length, locked: !!lockTime } })
           }
+
+          sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
+        } else {
+          const txParams = getTransferTxParams(transactionData)
+          let result: SignTransferTxResult
+
+          if (isLedger) {
+            if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
+
+            result = await signer.signAndSubmitTransferTxLedger(txParams, {
+              signerIndex: fromAddress.index,
+              signerKeyType: txParams.signerKeyType ?? 'default',
+              onLedgerError
+            })
+          } else {
+            result = await signer.signAndSubmitTransferTx(txParams)
+          }
+
+          dispatch(
+            transactionSent({
+              hash: result.txId,
+              fromAddress: txParams.signerAddress,
+              toAddress,
+              amount: attoAlphAmount,
+              tokens,
+              timestamp: new Date().getTime(),
+              lockTime: lockTime?.getTime(),
+              type: 'transfer',
+              status: 'sent'
+            })
+          )
+
+          sendAnalytics({ event: 'Sent transaction', props: { number_of_tokens: tokens.length, locked: !!lockTime } })
         }
 
         setStep('tx-sent')
@@ -135,18 +141,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         setIsLoading(false)
       }
     },
-    [
-      dispatch,
-      isLedger,
-      isSweeping,
-      onLedgerError,
-      sendAnalytics,
-      sweepUnsignedTxs,
-      t,
-      transactionData,
-      unsignedTransaction,
-      unsignedTxId
-    ]
+    [dispatch, isLedger, isSweeping, onLedgerError, sendAnalytics, t, transactionData]
   )
 
   const goToAddresses = useCallback(() => setStep('addresses'), [])
@@ -158,44 +153,23 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
     async (data: TransferTxData) => {
       setTransactionData(data)
       setIsLoading(true)
+      setIsSweeping(data.shouldSweep)
 
       try {
-        const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime, shouldSweep } = data
+        const { fromAddress, toAddress } = data
 
-        setIsSweeping(shouldSweep)
+        if (data.shouldSweep) {
+          const { fees } = await buildSweepTransactions(fromAddress.hash, fromAddress.keyType, toAddress)
 
-        if (shouldSweep) {
-          const { unsignedTxs, fees } = await buildSweepTransactions(
-            fromAddress.publicKey,
-            fromAddress.keyType,
-            toAddress
-          )
-          setSweepUnsignedTxs(unsignedTxs)
           setFees(fees)
         } else {
-          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+          const txParams = getTransferTxParams(data)
+          const result = await throttledClient.txBuilder.buildTransferTx(
+            txParams,
+            await signer.getPublicKey(fromAddress.hash)
+          )
 
-          const data = await throttledClient.node.transactions.postTransactionsBuild({
-            fromPublicKey: fromAddress.publicKey,
-            fromPublicKeyType: fromAddress.keyType,
-            destinations: [
-              {
-                address: toAddress,
-                attoAlphAmount,
-                tokens,
-                lockTime: lockTime ? lockTime.getTime() : undefined
-              }
-            ],
-            gasAmount: gasAmount ? gasAmount : undefined,
-            gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
-          })
-
-          // TODO: handle groupless addresses
-          if (isGrouplessTxResult(data)) return
-
-          setUnsignedTransaction(data)
-          setUnsignedTxId(data.txId)
-          setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
+          setFees(BigInt(result.gasAmount) * BigInt(result.gasPrice))
         }
 
         setStep('info-check')
@@ -210,13 +184,8 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
           // TODO: See if you can simplify the data to only include AddressHash and not Address
           const { fromAddress } = data
-          const { unsignedTxs, fees } = await buildSweepTransactions(
-            fromAddress.publicKey,
-            fromAddress.keyType,
-            fromAddress.hash
-          )
+          const { fees } = await buildSweepTransactions(fromAddress.hash, fromAddress.keyType, fromAddress.hash)
 
-          setSweepUnsignedTxs(unsignedTxs)
           setIsLoading(false)
 
           dispatch(
@@ -339,3 +308,16 @@ const ConfirmationAnimation = styled(motion.div)`
 const CheckIcon = styled(Check)`
   color: ${({ theme }) => theme.global.valid};
 `
+
+const getTransferTxParams = (data: TransferTxData): SignTransferTxParams => {
+  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = data
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+  return {
+    signerAddress: fromAddress.hash,
+    signerKeyType: fromAddress.keyType,
+    destinations: [{ address: toAddress, attoAlphAmount, tokens, lockTime: lockTime ? lockTime.getTime() : undefined }],
+    gasAmount: gasAmount ? gasAmount : undefined,
+    gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
+  }
+}

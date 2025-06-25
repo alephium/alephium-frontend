@@ -2,18 +2,18 @@ import { keyring } from '@alephium/keyring'
 import { Address, AddressHash, throttledClient } from '@alephium/shared'
 
 import { LedgerAlephium } from '@/features/ledger/utils'
+import { signer } from '@/signer'
 import { CsvExportQueryParams } from '@/types/transactions'
 
 export const buildSweepTransactions = async (
-  fromPublicKey: Address['publicKey'],
-  keyType: Address['keyType'],
-  toAddressHash: AddressHash
+  signerAddress: string,
+  signerKeyType: Address['keyType'],
+  toAddress: AddressHash
 ) => {
-  const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey,
-    fromPublicKeyType: keyType,
-    toAddress: toAddressHash
-  })
+  const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
+    { signerAddress, signerKeyType, toAddress },
+    await signer.getPublicKey(signerAddress)
+  )
 
   return {
     unsignedTxs,

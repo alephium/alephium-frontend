@@ -17,12 +17,10 @@ export abstract class AlephiumWalletSigner extends SignerProviderSimple {
 
   // Delete when https://github.com/alephium/alephium-web3/pull/515 is merged and a new version is published
   public signAndSubmitSweepTxs = async (params: SweepTxParams) => {
-    const publicKey = await this.getPublicKey(params.signerAddress)
-    const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
-      fromPublicKey: publicKey,
-      fromPublicKeyType: params.signerKeyType,
-      toAddress: params.destinationAddress
-    })
+    const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
+      params,
+      await this.getPublicKey(params.signerAddress)
+    )
 
     const results = []
 
@@ -37,8 +35,8 @@ export abstract class AlephiumWalletSigner extends SignerProviderSimple {
   }
 }
 
-type SweepTxParams = {
+export type SweepTxParams = {
   signerAddress: string
   signerKeyType?: KeyType
-  destinationAddress: string
+  toAddress: string
 }
