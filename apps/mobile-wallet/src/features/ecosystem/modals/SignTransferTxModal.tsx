@@ -1,4 +1,4 @@
-import { SignTransferTxModalProps, transactionSent } from '@alephium/shared'
+import { calculateTransferTxAssetAmounts, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,9 +24,13 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
     onError,
     unsignedData,
     sign: async () => {
-      const data = await signer.signAndSubmitTransferTx(txParams)
+      // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+      // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+      // That would make sense only if we have a single destination otherwise what should the sweep destination
+      // address be?
 
-      const { attoAlphAmount, tokens } = calculateAssetAmounts(txParams)
+      const data = await signer.signAndSubmitTransferTx(txParams)
+      const assetAmounts = calculateTransferTxAssetAmounts(txParams)
 
       dispatch(
         transactionSent({
@@ -34,8 +38,10 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
           fromAddress: txParams.signerAddress,
           toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
           // lockTime: TODO: Improve display of locked time per destination
-          amount: attoAlphAmount.toString(),
-          tokens: tokens.map((token) => ({ id: token.id, amount: token.amount.toString() })),
+          amount: assetAmounts.find(({ id }) => id === ALPH.id)?.amount?.toString(),
+          tokens: assetAmounts
+            .filter(({ id }) => id !== ALPH.id)
+            .map(({ id, amount }) => ({ id, amount: amount.toString() })),
           timestamp: new Date().getTime(),
           status: 'sent',
           type: 'transfer'
@@ -90,23 +96,3 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
 })
 
 export default SignTransferTxModal
-
-const calculateAssetAmounts = (txParams: SignTransferTxModalProps['txParams']) =>
-  txParams.destinations.reduce(
-    (acc, destination) => {
-      acc.attoAlphAmount += BigInt(destination.attoAlphAmount)
-
-      destination.tokens?.forEach((token) => {
-        const t = acc.tokens.find(({ id }) => id === token.id)
-
-        if (t) {
-          t.amount += BigInt(token.amount)
-        } else {
-          acc.tokens.push({ id: token.id, amount: BigInt(token.amount) })
-        }
-      })
-
-      return acc
-    },
-    { attoAlphAmount: BigInt(0), tokens: [] as { id: string; amount: bigint }[] }
-  )

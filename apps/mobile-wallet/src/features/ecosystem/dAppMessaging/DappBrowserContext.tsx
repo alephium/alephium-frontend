@@ -200,6 +200,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
           switch (type) {
             case 'TRANSFER': {
+              // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+              // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+              // That would make sense only if we have a single destination otherwise what should the sweep destination
+              // address be?
+
               dispatch(activateAppLoading('Loading'))
               const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
                 params,

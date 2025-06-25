@@ -54,8 +54,6 @@ const WalletConnectSessionRequestEventHandler = memo(
       async (event: SessionRequestEvent) => {
         if (!walletConnectClient) return
 
-        console.log('event', event)
-
         const getSignerAddressByHash = (hash: string) => {
           const address = addresses.find((a) => a.hash === hash)
           if (!address) throw new Error(`Unknown signer address: ${hash}`)
@@ -71,6 +69,11 @@ const WalletConnectSessionRequestEventHandler = memo(
           switch (request.method as RelayMethod) {
             case 'alph_signAndSubmitTransferTx': {
               const txParams = request.params as SignTransferTxParams
+
+              // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+              // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+              // That would make sense only if we have a single destination otherwise what should the sweep destination
+              // address be?
 
               dispatch(toggleAppLoading(true))
               const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(

@@ -38,7 +38,10 @@ const SignTransferTxModal = memo(
     const onSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
 
-      // TODO: Check if sweep needs to be handled here, like in handleTransferSend
+      // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+      // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+      // That would make sense only if we have a single destination otherwise what should the sweep destination
+      // address be?
 
       let result: SignTransferTxResult
 

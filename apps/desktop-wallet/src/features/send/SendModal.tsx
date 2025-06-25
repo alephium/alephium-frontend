@@ -62,7 +62,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
-  const handleSendExtended = useCallback(
+  const handleSend = useCallback(
     async (consolidationRequired: boolean) => {
       if (!transactionData) return
 
@@ -233,9 +233,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
               name: 'ConsolidateUTXOsModal',
               props: {
                 fee: fees,
-                onConsolidateClick: passwordRequirement
-                  ? () => setStep('password-check')
-                  : () => handleSendExtended(true)
+                onConsolidateClick: passwordRequirement ? () => setStep('password-check') : () => handleSend(true)
               }
             })
           )
@@ -256,7 +254,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       setIsLoading(false)
     },
-    [dispatch, handleSendExtended, passwordRequirement, sendAnalytics, t]
+    [dispatch, handleSend, passwordRequirement, sendAnalytics, t]
   )
 
   useEffect(() => {
@@ -293,7 +291,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         <TransferCheckTxModalContent
           data={transactionData as TransferTxData}
           fees={fees}
-          onSubmit={passwordRequirement ? goToPasswordCheck : () => handleSendExtended(consolidationRequired)}
+          onSubmit={passwordRequirement ? goToPasswordCheck : () => handleSend(consolidationRequired)}
           onBack={goToBuildTx}
         />
       )}
@@ -302,7 +300,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
           text={t('Enter your password to send the transaction.')}
           buttonText={t('Send')}
           highlightButton
-          onCorrectPasswordEntered={() => handleSendExtended(consolidationRequired)}
+          onCorrectPasswordEntered={() => handleSend(consolidationRequired)}
           onBack={goToInfoCheck}
         >
           <PasswordConfirmationNote>
