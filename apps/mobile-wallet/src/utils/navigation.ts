@@ -1,5 +1,4 @@
-import { createNavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native'
-import { useCallback, useSyncExternalStore } from 'react'
+import { createNavigationContainerRef, NavigationProp, useIsFocused } from '@react-navigation/native'
 
 import { selectIsAnyModalOpened } from '~/features/modals/modalSelectors'
 import useIsTopModal from '~/features/modals/useIsTopModal'
@@ -27,25 +26,12 @@ export const resetNavigation = (
   navigation.reset(getInitialNavigationState(initialRouteName))
 }
 
-export const useAppScreenIsFocused = () => {
-  const navigation = useNavigation()
+export const useScreenIsFocused = useIsFocused
+
+export const useScreenOrModaIsFocused = () => {
   const isAnyModalOpened = useAppSelector(selectIsAnyModalOpened)
   const isTopModal = useIsTopModal()
+  const isScreenFocused = useIsFocused()
 
-  const subscribe = useCallback(
-    (callback: () => void) => {
-      const unsubscribeFocus = navigation.addListener('focus', callback)
-      const unsubscribeBlur = navigation.addListener('blur', callback)
-
-      return () => {
-        unsubscribeFocus()
-        unsubscribeBlur()
-      }
-    },
-    [navigation]
-  )
-
-  const screenFocused = !!useSyncExternalStore(subscribe, navigation.isFocused, navigation.isFocused)
-
-  return isTopModal || (!isAnyModalOpened && screenFocused)
+  return isTopModal || (!isAnyModalOpened && isScreenFocused)
 }
