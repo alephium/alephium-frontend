@@ -1,4 +1,10 @@
-import { Address, AddressHash, AddressSettings, AddressStoredMetadataWithHash } from '@alephium/shared'
+import {
+  Address,
+  AddressHash,
+  AddressSettings,
+  AddressStoredMetadataWithHash,
+  AddressWithGroup
+} from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as Clipboard from 'expo-clipboard'
 
@@ -59,7 +65,7 @@ export const persistAddressesSettings = async (
   }
 }
 
-export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
+export const initializeAddressDiscoveryGroupsData = (addresses: AddressWithGroup[]): AddressDiscoveryGroupData[] => {
   const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
     highestIndex: undefined,
     gap: 0

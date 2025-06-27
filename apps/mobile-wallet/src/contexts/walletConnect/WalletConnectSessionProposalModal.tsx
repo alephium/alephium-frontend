@@ -2,7 +2,7 @@ import {
   AddressHash,
   isNetworkValid,
   networkSettingsPresets,
-  selectAddressesInGroup,
+  selectAddressesStrsInGroup,
   selectDefaultAddressHash,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
@@ -46,7 +46,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
     const group = chainInfo.addressGroup
-    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
+    const addressesInGroup = useAppSelector((s) => selectAddressesStrsInGroup(s, group))
     const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()

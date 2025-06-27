@@ -1,5 +1,4 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
-import { isGrouplessAddress } from '@alephium/web3'
+import { AddressHash, selectAddressGroup } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import Badge, { BadgeProps } from '~/components/Badge'
@@ -12,14 +11,14 @@ interface AddressGroupBadgeProps extends Omit<BadgeProps, 'children'> {
 
 const AddressGroupBadge = ({ addressHash, ...props }: AddressGroupBadgeProps) => {
   const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const addressGroup = useAppSelector((s) => selectAddressGroup(s, addressHash))
 
-  if (!address || isGrouplessAddress(addressHash)) return null
+  if (addressGroup === undefined) return null
 
   return (
     <Row title={t('Group')} isLast short>
       <Badge light border {...props}>
-        {address.group}
+        {addressGroup}
       </Badge>
     </Row>
   )

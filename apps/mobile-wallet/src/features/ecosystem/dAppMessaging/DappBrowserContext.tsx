@@ -1,7 +1,7 @@
 import {
   getNetworkIdFromNetworkName,
-  isGrouplessKeyType,
   NetworkName,
+  selectAddressesInGroup,
   SignTxModalCommonProps,
   throttledClient
 } from '@alephium/shared'
@@ -132,10 +132,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         return
       }
 
-      const addressesInGroup =
-        data.group !== undefined
-          ? addresses.filter((a) => a.group === data.group || isGrouplessKeyType(a.keyType))
-          : addresses
+      const addressesInGroup = selectAddressesInGroup(addresses, data.group)
 
       // Select address automatically if there is only one address in the group
       if (addressesInGroup.length === 1) {

@@ -1,6 +1,11 @@
 import { KeyType } from '@alephium/web3'
 
-import { AddressStoredMetadataWithHash, AddressStoredMetadataWithoutHash } from '@/types/addresses'
+import {
+  Address,
+  AddressStoredMetadataWithHash,
+  AddressStoredMetadataWithoutHash,
+  GrouplessAddress
+} from '@/types/addresses'
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
   let nextAvailableAddressIndex = startIndex
@@ -22,3 +27,5 @@ export const addressMetadataIncludesHash = (
 // TODO: Replace by isGrouplessKeyType from web3 when available
 export const isGrouplessKeyType = (keyType: KeyType = 'default') =>
   keyType !== 'default' && keyType !== 'bip340-schnorr'
+
+export const isGrouplessAddress = (address: Address): address is GrouplessAddress => isGrouplessKeyType(address.keyType)
