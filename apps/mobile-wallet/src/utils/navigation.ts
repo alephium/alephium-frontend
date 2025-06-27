@@ -26,9 +26,9 @@ export const resetNavigation = (
   navigation.reset(getInitialNavigationState(initialRouteName))
 }
 
-export const useScreenIsFocused = useIsFocused
+export const useIsScreenFocused = useIsFocused
 
-export const useScreenOrModaIsFocused = () => {
+export const useIsScreenOrModaFocused = () => {
   const isAnyModalOpened = useAppSelector(selectIsAnyModalOpened)
   const isTopModal = useIsTopModal()
   const isScreenFocused = useIsFocused()
