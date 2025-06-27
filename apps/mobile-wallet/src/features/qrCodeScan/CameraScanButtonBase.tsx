@@ -10,7 +10,7 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
-import { useScreenIsFocused } from '~/utils/navigation'
+import { useIsScreenFocused } from '~/utils/navigation'
 
 interface CameraScanButtonBaseProps extends ButtonProps {
   onValidAddressScanned: (addressHash: AddressHash) => void
@@ -28,7 +28,7 @@ const CameraScanButtonBase = ({
   generateInvalidDataText,
   ...props
 }: CameraScanButtonBaseProps) => {
-  const isFocused = useScreenIsFocused()
+  const isFocused = useIsScreenFocused()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
