@@ -52,7 +52,6 @@ import { useAppSelector } from '~/hooks/redux'
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
-import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
@@ -126,8 +125,6 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <WalletConnectPasteUrlModal />
     case 'WalletConnectSessionProposalModal':
       return <WalletConnectSessionProposalModal {...params.props} />
-    case 'GroupSelectModal':
-      return <GroupSelectModal {...params.props} />
     case 'TokenAmountModal':
       return <TokenAmountModal {...params.props} />
     case 'AddressDetailsModal':

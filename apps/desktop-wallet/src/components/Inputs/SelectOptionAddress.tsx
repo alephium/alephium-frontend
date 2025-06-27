@@ -1,5 +1,4 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
-import { isGrouplessAddress } from '@alephium/web3'
+import { AddressHash, selectAddressGroup } from '@alephium/shared'
 import { useInView } from 'framer-motion'
 import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -51,14 +50,14 @@ const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionA
 export default SelectOptionAddress
 
 const AddressGroup = ({ addressHash }: Pick<SelectOptionAddressProps, 'addressHash'>) => {
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const addressGroup = useAppSelector((s) => selectAddressGroup(s, addressHash))
   const { t } = useTranslation()
 
-  if (!address || isGrouplessAddress(address.hash)) return null
+  if (addressGroup === undefined) return null
 
   return (
     <Group>
-      {t('Group')} {address.group}
+      {t('Group')} {addressGroup}
     </Group>
   )
 }

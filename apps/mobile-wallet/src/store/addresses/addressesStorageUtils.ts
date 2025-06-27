@@ -14,10 +14,10 @@ export const importAddresses = async (
   try {
     await initializeKeyringWithStoredWallet()
 
-    for (const { index, ...addressMetadata } of addressesMetadata) {
+    for (const { index, keyType, ...addressMetadata } of addressesMetadata) {
       const newAddressNonSensitiveData = keyring.generateAndCacheAddress({
         addressIndex: index,
-        keyType: 'default' // TODO: handle groupless
+        keyType: keyType ?? 'default'
       })
       const newAddress = { ...newAddressNonSensitiveData, ...addressMetadata }
 

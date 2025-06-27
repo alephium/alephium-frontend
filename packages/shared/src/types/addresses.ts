@@ -1,4 +1,4 @@
-import { KeyType, Optional } from '@alephium/web3'
+import { GroupedKeyType, GrouplessKeyType, KeyType, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { StringAlias } from '@/types/utils'
@@ -21,10 +21,6 @@ export type AddressSettings = {
 
 export type AddressIndex = number
 
-// index: number
-// isDefault: boolean
-// color: string
-// label?: string
 export type AddressStoredMetadataWithoutHash = AddressSettings & {
   index: AddressIndex
   keyType?: KeyType
@@ -34,24 +30,20 @@ export type AddressStoredMetadataWithHash = AddressStoredMetadataWithoutHash & {
   hash: string
 }
 
-// hash: AddressHash
-// index: number
-// isDefault: boolean
-// color: string
-// label?: string
 export type AddressBase = AddressStoredMetadataWithoutHash & {
   hash: AddressHash
   publicKey: string // TODO: Replace by NonSensitiveAddressData by moving it to shared?
 }
 
-// hash: AddressHash
-// index: number
-// group: number
-// isDefault: boolean
-// color: string
-// label?: string
-export type Address = AddressBase & {
+export type AddressWithGroup = AddressBase & {
   group: number
+  keyType?: GroupedKeyType
 }
+
+export type GrouplessAddress = AddressBase & {
+  keyType: GrouplessKeyType
+}
+
+export type Address = AddressWithGroup | GrouplessAddress
 
 export type AddressesState = EntityState<Address>

@@ -9,6 +9,7 @@ import {
   addressMetadataIncludesHash,
   AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
+  GROUPLESS_ADDRESS_KEY_TYPE,
   resetArray,
   WalletMetadataMobile
 } from '@alephium/shared'
@@ -144,7 +145,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
-                keyType: 'default', // TODO: handle groupless
+                keyType: GROUPLESS_ADDRESS_KEY_TYPE,
                 isDefault: true,
                 color: getRandomLabelColor()
               }

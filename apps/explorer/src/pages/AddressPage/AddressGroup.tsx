@@ -1,4 +1,4 @@
-import { getBaseAddressStr, selectAddressByHash } from '@alephium/shared'
+import { getBaseAddressStr, selectAddressGroup } from '@alephium/shared'
 import { isGrouplessAddress, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -15,7 +15,7 @@ interface AddressGroupProps {
 const AddressGroup = ({ addressStr }: AddressGroupProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const addressGroup = useAppSelector((s) => selectAddressByHash(s, addressStr)?.group)
+  const addressGroup = useAppSelector((s) => selectAddressGroup(s, addressStr))
 
   if (addressGroup === undefined) return null
 
