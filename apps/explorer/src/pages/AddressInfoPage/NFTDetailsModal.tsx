@@ -3,7 +3,6 @@ import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Card from '@/components/Cards/Card'
 import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -146,12 +145,6 @@ const NFTDetailsContainer = styled.div`
 const LinkContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-`
-
-const CardStyled = styled(Card)`
-  justify-content: center;
-  align-items: center;
-  margin: 25px;
 `
 
 const Paragraph = styled.div`
