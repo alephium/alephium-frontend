@@ -7,7 +7,10 @@ import {
   GrouplessAddress
 } from '@/types/addresses'
 
-export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+export const findNextAvailableAddressIndex = (startIndex?: number, skipIndexes: number[] = []): number => {
+  if (startIndex === undefined) return 0
+  if (startIndex < 0) throw new Error('Start index must be greater than or equal to 0')
+
   let nextAvailableAddressIndex = startIndex
 
   do {

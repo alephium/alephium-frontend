@@ -1,16 +1,8 @@
-import {
-  Address,
-  AddressHash,
-  AddressSettings,
-  AddressStoredMetadataWithHash,
-  AddressWithGroup
-} from '@alephium/shared'
-import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { Address, AddressHash, AddressSettings, AddressStoredMetadataWithHash } from '@alephium/shared'
 import * as Clipboard from 'expo-clipboard'
 
 import i18n from '~/features/localization/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
-import { AddressDiscoveryGroupData } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -24,24 +16,17 @@ export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   }
 }
 
-export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
-  let nextAvailableAddressIndex = startIndex
-
-  do {
-    nextAvailableAddressIndex++
-  } while (skipIndexes.includes(nextAvailableAddressIndex))
-
-  return nextAvailableAddressIndex
-}
-
 export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
+  if (indexes.length === 0) return undefined
+  if (indexes.length === 1) return indexes[0]
+
   let maxIndexBeforeFirstGap = indexes[0]
 
-  for (let index = indexes[1]; index < indexes.length; index++) {
-    if (index - maxIndexBeforeFirstGap > 1) {
+  for (let i = 1; i < indexes.length; i++) {
+    if (indexes[i] - maxIndexBeforeFirstGap > 1) {
       break
     } else {
-      maxIndexBeforeFirstGap = index
+      maxIndexBeforeFirstGap = indexes[i]
     }
   }
 
@@ -63,23 +48,6 @@ export const persistAddressesSettings = async (
     }
     await persistAddressesMetadata(metadataId, [updatedOldDefaultAddress])
   }
-}
-
-export const initializeAddressDiscoveryGroupsData = (addresses: AddressWithGroup[]): AddressDiscoveryGroupData[] => {
-  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
-    highestIndex: undefined,
-    gap: 0
-  }))
-
-  for (const address of addresses) {
-    const groupData = groupsData[address.group]
-
-    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
-      groupData.highestIndex = address.index
-    }
-  }
-
-  return groupsData
 }
 
 export const getInitialAddressSettings = (): AddressSettings => ({
