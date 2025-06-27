@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { newWalletInitialAddressGenerated } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE, newWalletInitialAddressGenerated } from '@alephium/shared'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
@@ -13,7 +13,7 @@ interface SaveNewWalletProps {
   encrypted: string
 }
 
-const INITIAL_ADDRESS_KEY_TYPE = 'gl-secp256k1'
+const INITIAL_ADDRESS_KEY_TYPE = GROUPLESS_ADDRESS_KEY_TYPE
 const INITIAL_ADDRESS_INDEX = 0
 
 export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
