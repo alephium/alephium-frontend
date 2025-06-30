@@ -19,7 +19,7 @@ const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSu
 
   const { handleApprovePress, handleRejectPress } = useSignModal({
     onError,
-    unsignedData,
+    type: 'MESSAGE',
     sign: async () => {
       const messageHash = hashMessage(txParams.message, txParams.messageHasher)
       const signature = sign(messageHash, await getAddressAsymetricKey(txParams.signerAddress, 'private'))

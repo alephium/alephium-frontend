@@ -23,6 +23,7 @@ import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import SignChainedTxModal from '~/features/ecosystem/modals/SignChainedTxModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
@@ -98,7 +99,8 @@ export const ModalComponents = {
   SignMessageTxModal,
   EditDappUrlModal,
   DataFetchErrorModal,
-  ConnectTipModal
+  ConnectTipModal,
+  SignChainedTxModal
 }
 
 export type ModalName = keyof typeof ModalComponents

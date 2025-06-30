@@ -481,5 +481,6 @@
   "Preauthorized connections": "Preauthorized connections",
   "Revoked connection to {{ host }}": "Revoked connection to {{ host }}",
   "Useful tip": "Useful tip",
-  "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect."
+  "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect.",
+  "Transaction {{ number }}": "Transaction {{ number }}"
 }

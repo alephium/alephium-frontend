@@ -1,4 +1,4 @@
-import { calculateTransferTxAssetAmounts, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
+import { signAndSubmitTxResultToSentTx, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,11 +18,10 @@ import { signer } from '~/signer'
 
 const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
   const dispatch = useAppDispatch()
-  const { t } = useTranslation()
 
-  const { handleApprovePress, handleRejectPress, fees } = useSignModal({
+  const { handleApprovePress, handleRejectPress } = useSignModal({
     onError,
-    unsignedData,
+    type: 'TRANSFER',
     sign: async () => {
       // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
       // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
@@ -30,64 +29,22 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
       // address be?
 
       const data = await signer.signAndSubmitTransferTx(txParams)
-      const assetAmounts = calculateTransferTxAssetAmounts(txParams)
 
-      dispatch(
-        transactionSent({
-          hash: data.txId,
-          fromAddress: txParams.signerAddress,
-          toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
-          // lockTime: TODO: Improve display of locked time per destination
-          amount: assetAmounts.find(({ id }) => id === ALPH.id)?.amount?.toString(),
-          tokens: assetAmounts
-            .filter(({ id }) => id !== ALPH.id)
-            .map(({ id, amount }) => ({ id, amount: amount.toString() })),
-          timestamp: new Date().getTime(),
-          status: 'sent',
-          type: 'transfer'
-        })
-      )
+      const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'TRANSFER' })
+      dispatch(transactionSent(sentTx))
 
       sendAnalytics({ event: 'Approved transfer', props: { origin } })
 
-      onSuccess({
-        fromGroup: data.fromGroup,
-        toGroup: data.toGroup,
-        unsignedTx: data.unsignedTx,
-        txId: data.txId,
-        signature: data.signature,
-        gasAmount: data.gasAmount,
-        gasPrice: BigInt(data.gasPrice)
-      })
+      onSuccess({ ...data, gasPrice: BigInt(data.gasPrice) })
     }
   })
+
+  const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
   return (
     <BottomModal2 contentVerticalGap>
       <ScreenSection>
-        {txParams.destinations.map(({ address, attoAlphAmount, tokens }) => {
-          const assetAmounts = [
-            { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-            ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-          ]
-          return (
-            <Surface>
-              <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
-
-              <Row title={t('From')} titleColor="secondary">
-                <AddressBadge addressHash={txParams.signerAddress} />
-              </Row>
-
-              <Row title={t('To')} titleColor="secondary">
-                <AddressBadge addressHash={address} />
-              </Row>
-            </Surface>
-          )
-        })}
-
-        <Surface>
-          <SignModalFeesRow fees={fees} />
-        </Surface>
+        <SignTransferTxModalContent txParams={txParams} fees={fees} />
       </ScreenSection>
 
       <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
@@ -96,3 +53,37 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
 })
 
 export default SignTransferTxModal
+
+export const SignTransferTxModalContent = ({
+  txParams,
+  fees
+}: Pick<SignTransferTxModalProps, 'txParams'> & { fees: bigint }) => {
+  const { t } = useTranslation()
+
+  return (
+    <>
+      {txParams.destinations.map(({ address, attoAlphAmount, tokens }) => {
+        const assetAmounts = [
+          { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+          ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+        ]
+        return (
+          <Surface key={address}>
+            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+
+            <Row title={t('From')} titleColor="secondary">
+              <AddressBadge addressHash={txParams.signerAddress} />
+            </Row>
+
+            <Row title={t('To')} titleColor="secondary">
+              <AddressBadge addressHash={address} />
+            </Row>
+          </Surface>
+        )
+      })}
+      <Surface>
+        <SignModalFeesRow fees={fees} />
+      </Surface>
+    </>
+  )
+}

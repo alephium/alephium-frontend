@@ -20,7 +20,7 @@ const SignUnsignedTxModal = memo(
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
-      unsignedData,
+      type: 'UNSIGNED_TX',
       sign: async () => {
         onSuccess(
           submitAfterSign ? await signer.signAndSubmitUnsignedTx(txParams) : await signer.signUnsignedTx(txParams)

@@ -5,7 +5,15 @@ import {
   SignTxModalCommonProps,
   throttledClient
 } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
+import {
+  buildDeployContractTxQuery,
+  buildExecuteScriptTxQuery,
+  buildTransferTxQuery,
+  decodeUnsignedTxQuery,
+  queryClient,
+  useCurrentlyOnlineNetworkId,
+  useUnsortedAddresses
+} from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
   ExecuteTransactionMessageData,
@@ -30,12 +38,19 @@ import {
 import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueActions'
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
-import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
+import {
+  getChainedTxProps,
+  getChainedTxSignersPublicKeys,
+  getConnectedAddressPayload,
+  txParamsToChainedTxParams,
+  useNetwork,
+  validateChainedTxsNetwork
+} from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { showToast } from '~/utils/layout'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
 
@@ -202,10 +217,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               // address be?
 
               dispatch(activateAppLoading('Loading'))
-              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
+              const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+              const unsignedData = await queryClient.fetchQuery(buildTransferTxQuery({ params, publicKey }))
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -218,7 +231,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: unsignedBuiltTx,
+                    unsignedData,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -234,10 +247,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
             case 'EXECUTE_SCRIPT': {
               dispatch(activateAppLoading('Loading'))
-              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
+              const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+              const unsignedData = await queryClient.fetchQuery(buildExecuteScriptTxQuery({ params, publicKey }))
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -250,7 +261,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: unsignedBuiltTx,
+                    unsignedData,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -265,10 +276,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'DEPLOY_CONTRACT': {
               dispatch(activateAppLoading('Loading'))
-              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
+              const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+              const unsignedData = await queryClient.fetchQuery(buildDeployContractTxQuery({ params, publicKey }))
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -297,9 +306,9 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               dispatch(activateAppLoading('Loading'))
               // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
               // problems with unpolyfilled crypto Node JS module.
-              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-                unsignedTx: params.unsignedTx
-              })
+              const decodedResult = await queryClient.fetchQuery(
+                decodeUnsignedTxQuery({ unsignedTx: params.unsignedTx })
+              )
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -326,33 +335,47 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
           }
         } else {
-          // Check that all transactions have the same networkId
-          const networkId = txParams[0].params.networkId
-          const allSameNetwork = txParams.slice(1).every((tx) => tx.params.networkId === networkId)
+          validateChainedTxsNetwork(txParams)
 
-          if (!allSameNetwork) throw Error('All transactions must have the same networkId')
+          dispatch(activateAppLoading('Loading'))
+          const publicKeys = await getChainedTxSignersPublicKeys(txParams)
+          const chainedTxParams = txParamsToChainedTxParams(txParams)
+          const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
+          dispatch(deactivateAppLoading())
 
-          throw Error('Chained txs not supported yet')
-
-          // For each transaction, use the same logic as above
-          // Collect the results and signatures for each transaction
-          // The extension wallet does sth like this:
-          // results = transactions.map((transaction, index) => (
-          //   {
-          //     type: transaction.type,
-          //     result: {
-          //       ...transaction.result,
-          //       signature: signatures[index],
-          //     }
-          //   }
-          // )) as TransactionResult[]
+          dispatch(
+            openModal({
+              name: 'SignChainedTxModal',
+              onUserDismiss: () =>
+                replyToDapp(
+                  { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                  messageId
+                ),
+              props: {
+                props: getChainedTxProps(txParams, unsignedData),
+                txParams: chainedTxParams,
+                onSuccess: (result) =>
+                  replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
+                dAppUrl,
+                dAppIcon,
+                origin: 'in-app-browser',
+                onError: (error) =>
+                  replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
+              }
+            })
+          )
         }
       } catch (errorMessage) {
         dispatch(deactivateAppLoading())
         const error = `${errorMessage}`
 
         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
-        showToast({ text1: error, type: 'error' })
+        showToast({
+          text1: 'Could not build transaction',
+          text2: error,
+          type: 'error',
+          visibilityTime: ToastDuration.LONG
+        })
       }
     },
     [dAppUrl, dispatch, replyToDapp]

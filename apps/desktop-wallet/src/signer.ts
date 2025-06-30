@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { AlephiumWalletSigner, SweepTxParams, throttledClient } from '@alephium/shared'
+import { AlephiumWalletSigner, getBaseAddressStr, SweepTxParams, throttledClient } from '@alephium/shared'
 import {
   GroupedKeyType,
   SignDeployContractTxParams,
@@ -21,9 +21,11 @@ interface LedgerTxParams {
 }
 
 class InMemorySigner extends AlephiumWalletSigner {
-  public getPublicKey = async (addressStr: string): Promise<string> => keyring.exportPublicKeyOfAddress(addressStr)
+  public getPublicKey = async (addressStr: string): Promise<string> =>
+    keyring.exportPublicKeyOfAddress(getBaseAddressStr(addressStr))
 
-  public signRaw = async (address: string, tx: string): Promise<string> => keyring.signTransaction(tx, address)
+  public signRaw = async (address: string, tx: string): Promise<string> =>
+    keyring.signTransaction(tx, getBaseAddressStr(address))
 
   public signAndSubmitTransferTxLedger = async (
     params: SignTransferTxParams,

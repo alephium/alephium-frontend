@@ -1,4 +1,18 @@
-import { Address, isGrouplessAddress } from '@alephium/shared'
+import { Address, getBaseAddressStr, isGrouplessAddress, SignChainedTxModalResult } from '@alephium/shared'
+import { TransactionParams } from '@alephium/wallet-dapp-provider'
+import {
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractChainedTxParams,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptChainedTxParams,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignTransferChainedTxParams,
+  SignTransferTxParams,
+  SignTransferTxResult
+} from '@alephium/web3'
 import { capitalize } from 'lodash'
 
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
@@ -41,4 +55,86 @@ const getSigner = async (address: Address): Promise<ConnectedAddressPayload['sig
     derivationIndex: address.index,
     group: isGrouplessAddress(address) ? undefined : address.group
   }
+}
+
+export const txParamsToChainedTxParams = (txParams: TransactionParams[]) =>
+  txParams.map(({ type, params }) => {
+    switch (type) {
+      case 'TRANSFER': {
+        return { type: 'Transfer', ...params } as SignTransferChainedTxParams
+      }
+      case 'DEPLOY_CONTRACT': {
+        return { type: 'DeployContract', ...params } as SignDeployContractChainedTxParams
+      }
+      case 'EXECUTE_SCRIPT': {
+        return { type: 'ExecuteScript', ...params } as SignExecuteScriptChainedTxParams
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const getChainedTxProps = (
+  txParams: Array<TransactionParams>,
+  unsignedData: Array<Omit<SignChainedTxResult, 'signature'>>
+) =>
+  txParams.map(({ type, params }, index) => {
+    switch (type) {
+      case 'TRANSFER': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      case 'DEPLOY_CONTRACT': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      case 'EXECUTE_SCRIPT': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const signChainedTxResultsToTxSubmittedResults = (
+  results: Array<SignChainedTxResult>,
+  txParams: Array<SignChainedTxParams>
+): SignChainedTxModalResult =>
+  results.map(({ type, ...rest }, index) => {
+    switch (type) {
+      case 'Transfer': {
+        return {
+          type: 'TRANSFER',
+          result: rest as SignTransferTxResult,
+          txParams: txParams[index] as SignTransferTxParams
+        }
+      }
+      case 'DeployContract': {
+        return {
+          type: 'DEPLOY_CONTRACT',
+          result: rest as SignDeployContractTxResult,
+          txParams: txParams[index] as SignDeployContractTxParams
+        }
+      }
+      case 'ExecuteScript': {
+        return {
+          type: 'EXECUTE_SCRIPT',
+          result: rest as SignExecuteScriptTxResult,
+          txParams: txParams[index] as SignExecuteScriptTxParams
+        }
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const getChainedTxSignersPublicKeys = async (txParams: TransactionParams[]) =>
+  Promise.all(txParams.map(({ params }) => getAddressAsymetricKey(getBaseAddressStr(params.signerAddress), 'public')))
+
+export const validateChainedTxsNetwork = (txParams: TransactionParams[]) => {
+  const networkId = txParams[0].params.networkId
+  const allSameNetwork = txParams.slice(1).every((tx) => tx.params.networkId === networkId)
+
+  if (!allSameNetwork) throw Error('All transactions must have the same networkId')
 }
