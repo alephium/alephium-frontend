@@ -32,3 +32,8 @@ export const isGrouplessKeyType = (keyType: KeyType = 'default') =>
   keyType !== 'default' && keyType !== 'bip340-schnorr'
 
 export const isGrouplessAddress = (address: Address): address is GrouplessAddress => isGrouplessKeyType(address.keyType)
+
+export const getAddressesInGroup = (addresses: Address[], group?: number) =>
+  group !== undefined
+    ? addresses.filter((address) => isGrouplessAddress(address) || address.group === group)
+    : addresses

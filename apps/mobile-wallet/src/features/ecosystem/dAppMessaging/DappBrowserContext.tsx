@@ -1,7 +1,7 @@
 import {
+  getAddressesInGroup,
   getNetworkIdFromNetworkName,
   NetworkName,
-  selectAddressesInGroup,
   SignTxModalCommonProps,
   throttledClient
 } from '@alephium/shared'
@@ -20,6 +20,7 @@ import WebView from 'react-native-webview'
 import { isConnectTipShownOnce, setConnectTipShownOnce } from '~/features/connectTip/connectTipStorage'
 import {
   connectionAuthorized,
+  connectionRemoved,
   hostConnectionRemoved
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsActions'
 import {
@@ -122,17 +123,15 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       if (authorizedConnection) {
         const address = addresses.find((a) => a.hash === authorizedConnection.address)
         if (!address) {
-          handleRejectDappConnection(data.host, messageId)
+          dispatch(connectionRemoved(authorizedConnection))
+        } else {
+          const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
+          handleApproveDappConnection(connectedAddressPayload, messageId)
           return
         }
-
-        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
-        handleApproveDappConnection(connectedAddressPayload, messageId)
-
-        return
       }
 
-      const addressesInGroup = selectAddressesInGroup(addresses, data.group)
+      const addressesInGroup = getAddressesInGroup(addresses, data.group)
 
       // Select address automatically if there is only one address in the group
       if (addressesInGroup.length === 1) {
