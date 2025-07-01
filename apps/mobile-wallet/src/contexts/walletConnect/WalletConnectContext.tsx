@@ -1,6 +1,7 @@
 import '@walletconnect/react-native-compat'
 
 import {
+  getChainedTxPropsFromSignChainedTxParams,
   getHumanReadableError,
   parseSessionProposalEvent,
   SessionProposalEvent,
@@ -51,10 +52,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import {
-  getChainedTxPropsFromSignChainedTxParams,
-  getChainedTxSignersPublicKeys
-} from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
+import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'

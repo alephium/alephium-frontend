@@ -536,5 +536,6 @@
   "No transactions before {{ date }}": "No transactions before {{ date }}",
   "Sort by": "Sort by",
   "ALPH balance": "ALPH balance",
-  "Approve": "Approve"
+  "Approve": "Approve",
+  "Chained transactions": "Chained transactions"
 }

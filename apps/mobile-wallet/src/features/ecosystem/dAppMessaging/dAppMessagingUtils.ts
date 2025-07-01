@@ -1,10 +1,4 @@
-import {
-  Address,
-  getBaseAddressStr,
-  isGrouplessAddress,
-  SignChainedTxModalProps,
-  SignChainedTxModalResult
-} from '@alephium/shared'
+import { Address, getBaseAddressStr, isGrouplessAddress, SignChainedTxModalResult } from '@alephium/shared'
 import { TransactionParams } from '@alephium/wallet-dapp-provider'
 import {
   SignChainedTxParams,
@@ -95,39 +89,6 @@ export const getChainedTxPropsFromTransactionParams = (
       }
       case 'EXECUTE_SCRIPT': {
         return { type, txParams: params, unsignedData: unsignedData[index] }
-      }
-      default: {
-        throw new Error(`Unsupported transaction type: ${type}`)
-      }
-    }
-  })
-
-export const getChainedTxPropsFromSignChainedTxParams = (
-  txParams: Array<SignChainedTxParams>,
-  unsignedData: Array<Omit<SignChainedTxResult, 'signature'>>
-): SignChainedTxModalProps['props'] =>
-  txParams.map(({ type, ...rest }, index) => {
-    switch (type) {
-      case 'Transfer': {
-        return {
-          type: 'TRANSFER',
-          txParams: rest as SignTransferTxParams,
-          unsignedData: unsignedData[index]
-        }
-      }
-      case 'DeployContract': {
-        return {
-          type: 'DEPLOY_CONTRACT',
-          txParams: rest as SignDeployContractTxParams,
-          unsignedData: unsignedData[index]
-        }
-      }
-      case 'ExecuteScript': {
-        return {
-          type: 'EXECUTE_SCRIPT',
-          txParams: rest as SignExecuteScriptTxParams,
-          unsignedData: unsignedData[index]
-        }
       }
       default: {
         throw new Error(`Unsupported transaction type: ${type}`)
