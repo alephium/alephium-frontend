@@ -39,7 +39,7 @@ import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/d
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import {
-  getChainedTxProps,
+  getChainedTxPropsFromTransactionParams,
   getChainedTxSignersPublicKeys,
   getConnectedAddressPayload,
   txParamsToChainedTxParams,
@@ -338,8 +338,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           validateChainedTxsNetwork(txParams)
 
           dispatch(activateAppLoading('Loading'))
-          const publicKeys = await getChainedTxSignersPublicKeys(txParams)
           const chainedTxParams = txParamsToChainedTxParams(txParams)
+          const publicKeys = await getChainedTxSignersPublicKeys(chainedTxParams)
           const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
           dispatch(deactivateAppLoading())
 
@@ -352,7 +352,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                   messageId
                 ),
               props: {
-                props: getChainedTxProps(txParams, unsignedData),
+                props: getChainedTxPropsFromTransactionParams(txParams, unsignedData),
                 txParams: chainedTxParams,
                 onSuccess: (result) =>
                   replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),

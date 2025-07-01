@@ -1,16 +1,4 @@
-import {
-  explorer as e,
-  node as n,
-  Optional,
-  SignDeployContractTxParams,
-  SignDeployContractTxResult,
-  SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult,
-  SignTransferTxParams,
-  SignTransferTxResult,
-  SignUnsignedTxParams,
-  SignUnsignedTxResult
-} from '@alephium/web3'
+import { explorer as e, node as n, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { Asset, AssetAmount } from '@/types/assets'
