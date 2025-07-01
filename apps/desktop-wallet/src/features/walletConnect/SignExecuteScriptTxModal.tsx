@@ -2,6 +2,7 @@ import {
   AssetAmount,
   isGrouplessKeyType,
   selectAddressByHash,
+  signAndSubmitTxResultToSentTx,
   SignExecuteScriptTxModalProps,
   transactionSent
 } from '@alephium/shared'
@@ -57,20 +58,8 @@ const SignExecuteScriptTxModal = ({
 
     onSuccess(result)
 
-    dispatch(
-      transactionSent({
-        hash: result.txId,
-        fromAddress: txParams.signerAddress,
-        toAddress: '',
-        amount: txParams.attoAlphAmount?.toString(),
-        tokens: txParams.tokens
-          ? txParams.tokens.map((token) => ({ id: token.id, amount: token.amount.toString() }))
-          : undefined,
-        timestamp: new Date().getTime(),
-        type: 'contract',
-        status: 'sent'
-      })
-    )
+    const sentTx = signAndSubmitTxResultToSentTx({ type: 'EXECUTE_SCRIPT', txParams, result })
+    dispatch(transactionSent(sentTx))
 
     sendAnalytics({ event: 'Called smart contract' })
   }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])

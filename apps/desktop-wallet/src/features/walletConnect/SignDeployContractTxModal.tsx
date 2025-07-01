@@ -1,6 +1,7 @@
 import {
   isGrouplessKeyType,
   selectAddressByHash,
+  signAndSubmitTxResultToSentTx,
   SignDeployContractTxModalProps,
   transactionSent
 } from '@alephium/shared'
@@ -48,16 +49,8 @@ const SignDeployContractTxModal = memo(
 
       onSuccess(result)
 
-      dispatch(
-        transactionSent({
-          hash: result.txId,
-          fromAddress: txParams.signerAddress,
-          toAddress: '',
-          timestamp: new Date().getTime(),
-          type: 'contract',
-          status: 'sent'
-        })
-      )
+      const sentTx = signAndSubmitTxResultToSentTx({ type: 'DEPLOY_CONTRACT', txParams, result })
+      dispatch(transactionSent(sentTx))
 
       sendAnalytics({ event: 'Deployed smart contract' })
     }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])

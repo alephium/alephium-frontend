@@ -1,4 +1,10 @@
-import { isGrouplessKeyType, selectAddressByHash, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
+import {
+  isGrouplessKeyType,
+  selectAddressByHash,
+  signAndSubmitTxResultToSentTx,
+  SignTransferTxModalProps,
+  transactionSent
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignTransferTxResult } from '@alephium/web3'
 import { Fragment, memo, useCallback, useMemo } from 'react'
@@ -59,22 +65,8 @@ const SignTransferTxModal = memo(
 
       onSuccess(result)
 
-      dispatch(
-        transactionSent({
-          hash: result.txId,
-          fromAddress: txParams.signerAddress,
-          toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
-          amount: txParams.destinations[0].attoAlphAmount.toString(),
-          tokens: txParams.destinations[0].tokens?.map((token) => ({
-            id: token.id,
-            amount: token.amount.toString()
-          })),
-          timestamp: new Date().getTime(),
-          lockTime: txParams.destinations[0].lockTime, // TODO: Improve display of locked time per destination
-          type: 'transfer',
-          status: 'sent'
-        })
-      )
+      const sentTx = signAndSubmitTxResultToSentTx({ type: 'TRANSFER', txParams, result })
+      dispatch(transactionSent(sentTx))
 
       sendAnalytics({ event: 'Sent transaction' })
     }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
