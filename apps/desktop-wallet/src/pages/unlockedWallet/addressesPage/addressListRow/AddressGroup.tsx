@@ -1,5 +1,4 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
-import { isGrouplessAddress } from '@alephium/web3'
+import { AddressHash, selectAddressGroup } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -11,13 +10,13 @@ interface AddressListRowGroupProps {
 
 const AddressGroup = ({ addressHash }: AddressListRowGroupProps) => {
   const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const addressGroup = useAppSelector((s) => selectAddressGroup(s, addressHash))
 
-  if (!address || isGrouplessAddress(address.hash)) return null
+  if (addressGroup === undefined) return null
 
   return (
     <AddressListRowGroupStyled>
-      {t('Group')} {address.group}
+      {t('Group')} {addressGroup}
     </AddressListRowGroupStyled>
   )
 }

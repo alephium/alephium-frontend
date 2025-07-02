@@ -1,21 +1,26 @@
-import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import {
+  AddressHash,
+  SignDeployContractTxModalProps,
+  SignExecuteScriptTxModalProps,
+  SignMessageTxModalProps,
+  SignTransferTxModalProps,
+  SignUnsignedTxModalProps,
+  WalletConnectSessionProposalModalProps
+} from '@alephium/shared'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
-import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
-import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
+import { SendModalProps } from '@/features/send/SendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
-import { TransferSendModalProps } from '@/features/send/sendModals/transfer/TransferSendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
-import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
-import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
+import { PasswordConfirmationModalProps } from '@/modals/PasswordConfirmationModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
@@ -38,12 +43,10 @@ const ModalNames = {
   NewAddressModal: 'NewAddressModal',
   ContactFormModal: 'ContactFormModal',
   WalletUnlockModal: 'WalletUnlockModal',
-  TransferSendModal: 'TransferSendModal',
-  CallContractSendModal: 'CallContractSendModal',
-  DeployContractSendModal: 'DeployContractSendModal',
+  SendModal: 'SendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
-  SignMessageModal: 'SignMessageModal',
+  SignMessageTxModal: 'SignMessageTxModal',
   ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
   ConfirmLockTimeModal: 'ConfirmLockTimeModal',
   ConfirmModal: 'ConfirmModal',
@@ -54,12 +57,18 @@ const ModalNames = {
   DeleteAddressesModal: 'DeleteAddressesModal',
   BuyModal: 'BuyModal',
   WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
-  TokenDetailsModal: 'TokenDetailsModal'
+  TokenDetailsModal: 'TokenDetailsModal',
+  PasswordConfirmationModal: 'PasswordConfirmationModal',
+  SignTransferTxModal: 'SignTransferTxModal',
+  SignDeployContractTxModal: 'SignDeployContractTxModal',
+  SignExecuteScriptTxModal: 'SignExecuteScriptTxModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
 
-export type OpenModalParams =
+export type OpenModalParams = {
+  onUserDismiss?: () => void
+} & (
   | {
       name: typeof ModalNames.AddressDetailsModal
       props: AddressModalBaseProp
@@ -119,16 +128,8 @@ export type OpenModalParams =
       props: WalletUnlockModalProps
     }
   | {
-      name: typeof ModalNames.TransferSendModal
-      props: TransferSendModalProps
-    }
-  | {
-      name: typeof ModalNames.CallContractSendModal
-      props: CallContractSendModalProps
-    }
-  | {
-      name: typeof ModalNames.DeployContractSendModal
-      props: DeployContractSendModalProps
+      name: typeof ModalNames.SendModal
+      props: SendModalProps
     }
   | {
       name: typeof ModalNames.WalletConnectSessionProposalModal
@@ -139,8 +140,8 @@ export type OpenModalParams =
       props: SignUnsignedTxModalProps
     }
   | {
-      name: typeof ModalNames.SignMessageModal
-      props: SignMessageModalProps
+      name: typeof ModalNames.SignMessageTxModal
+      props: SignMessageTxModalProps
     }
   | {
       name: typeof ModalNames.ConsolidateUTXOsModal
@@ -185,6 +186,23 @@ export type OpenModalParams =
       name: typeof ModalNames.TokenDetailsModal
       props: TokenDetailsModalProps
     }
+  | {
+      name: typeof ModalNames.PasswordConfirmationModal
+      props: PasswordConfirmationModalProps
+    }
+  | {
+      name: typeof ModalNames.SignTransferTxModal
+      props: SignTransferTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignDeployContractTxModal
+      props: SignDeployContractTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignExecuteScriptTxModal
+      props: SignExecuteScriptTxModalProps
+    }
+)
 
 export type ModalInstance = {
   id: number
@@ -193,6 +211,7 @@ export type ModalInstance = {
 
 export interface ModalBaseProp {
   id: ModalInstance['id']
+  onUserDismiss?: () => void
 }
 
 export interface AddressModalBaseProp {

@@ -1,4 +1,4 @@
-import { Address, selectAddressesInGroup } from '@alephium/shared'
+import { Address, selectAddressesStrsInGroup } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { memo, useCallback, useMemo } from 'react'
@@ -24,7 +24,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
   const network = useNetwork()
 
   const { data: allAddressesStr } = useFetchAddressesHashesSortedByLastUse()
-  const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
+  const addressesInGroup = useAppSelector((s) => selectAddressesStrsInGroup(s, group))
   const allAddressesStrInGroup = useMemo(
     () => allAddressesStr.filter((addressStr) => addressesInGroup.includes(addressStr)),
     [addressesInGroup, allAddressesStr]

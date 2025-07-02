@@ -1,5 +1,5 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { throttledClient } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE, throttledClient } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { deriveAddresses, getGapFromLastActiveAddress, splitResultsArrayIntoOneArrayPerGroup } from '@/utils/addresses'
@@ -67,7 +67,7 @@ export const discoverAndCacheActiveAddresses = async (
 
   const newGrouplessAddresses = deriveAddresses({
     amount: minGap,
-    keyType: 'gl-secp256k1',
+    keyType: GROUPLESS_ADDRESS_KEY_TYPE,
     skipIndexes: _skipIndexesForGrouplessAddresses
   })
 
@@ -86,7 +86,7 @@ export const discoverAndCacheActiveAddresses = async (
     const remainingGap = minGap - grouplessGap
     const newAddresses = deriveAddresses({
       amount: remainingGap,
-      keyType: 'gl-secp256k1',
+      keyType: GROUPLESS_ADDRESS_KEY_TYPE,
       skipIndexes: _skipIndexesForGrouplessAddresses
     })
     _skipIndexesForGrouplessAddresses.push(...newAddresses.map((address) => address.index))

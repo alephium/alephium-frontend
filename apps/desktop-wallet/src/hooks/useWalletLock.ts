@@ -1,5 +1,6 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
+  GROUPLESS_ADDRESS_KEY_TYPE,
   hiddenTokensLoadedFromStorage,
   newAddressesSaved,
   passphraseInitialAddressGenerated,
@@ -114,7 +115,7 @@ const useWalletLock = () => {
       })
     } else {
       try {
-        initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'gl-secp256k1' })
+        initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: GROUPLESS_ADDRESS_KEY_TYPE })
       } catch (e) {
         console.error(e)
         return

@@ -1,5 +1,10 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBase, AddressStoredMetadataWithoutHash, selectAllAddressIndexes } from '@alephium/shared'
+import {
+  AddressBase,
+  AddressStoredMetadataWithoutHash,
+  GROUPLESS_ADDRESS_KEY_TYPE,
+  selectAllAddressIndexes
+} from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback } from 'react'
@@ -61,7 +66,7 @@ const useAddressGeneration = () => {
             )
         : keyring.generateAndCacheAddress({
             skipAddressIndexes: indexesOfGrouplessAddresses,
-            keyType: 'gl-secp256k1'
+            keyType: GROUPLESS_ADDRESS_KEY_TYPE
           }),
     [indexesOfAddressesWithGroup, indexesOfGrouplessAddresses, isLedger, onLedgerError]
   )
@@ -123,8 +128,12 @@ const useAddressGeneration = () => {
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      addressMetadataStorage.storeOne(walletId, { index: 0, keyType: 'gl-secp256k1', settings: initialAddressSettings })
-      addressesMetadata.push({ index: 0, keyType: 'gl-secp256k1', ...initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, {
+        index: 0,
+        keyType: GROUPLESS_ADDRESS_KEY_TYPE,
+        settings: initialAddressSettings
+      })
+      addressesMetadata.push({ index: 0, keyType: GROUPLESS_ADDRESS_KEY_TYPE, ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())

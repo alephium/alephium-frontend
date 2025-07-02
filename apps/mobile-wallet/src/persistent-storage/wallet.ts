@@ -9,9 +9,11 @@ import {
   addressMetadataIncludesHash,
   AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
+  GROUPLESS_ADDRESS_KEY_TYPE,
   resetArray,
   WalletMetadataMobile
 } from '@alephium/shared'
+import { KeyType } from '@alephium/web3'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 import { Alert } from 'react-native'
@@ -144,7 +146,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
-                keyType: 'default', // TODO: handle groupless
+                keyType: GROUPLESS_ADDRESS_KEY_TYPE,
                 isDefault: true,
                 color: getRandomLabelColor()
               }
@@ -215,7 +217,7 @@ export const generateAndStoreWallet = async (
 }
 
 const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
-  const initialAddress = await generateAndStoreAddressKeypairForIndex(0)
+  const initialAddress = await generateAndStoreAddressKeypairForIndex(0, GROUPLESS_ADDRESS_KEY_TYPE)
   const walletMetadata = generateWalletMetadata(name, initialAddress.hash, isMnemonicBackedUp)
   storeWalletMetadata(walletMetadata)
 
@@ -423,7 +425,7 @@ export const migrateAddressMetadata = async () => {
     for (const address of addresses) {
       const { hash, publicKey } = keyring.generateAndCacheAddress({
         addressIndex: address.index,
-        keyType: 'default' // TODO: handle groupless
+        keyType: address.keyType ?? 'default'
       })
       let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
@@ -486,7 +488,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
         )}: ${i18n.t('Address metadata not found')}`
       )
 
-    await generateAndStoreAddressKeypairForIndex(address.index)
+    await generateAndStoreAddressKeypairForIndex(address.index, address.keyType ?? 'default')
     key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
     if (!key)
@@ -507,7 +509,7 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   addresses: [
     {
       index: 0,
-      keyType: 'default', // TODO: handle groupless
+      keyType: GROUPLESS_ADDRESS_KEY_TYPE,
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
@@ -554,14 +556,14 @@ const deleteAddressPrivateKey = async (addressHash: AddressHash) =>
     'Could not delete address private key'
   )
 
-const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<NonSensitiveAddressData> => {
+const generateAndStoreAddressKeypairForIndex = async (
+  addressIndex: number,
+  keyType: KeyType
+): Promise<NonSensitiveAddressData> => {
   try {
     if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
 
-    const nonSensitiveAddressData = keyring.generateAndCacheAddress({
-      addressIndex,
-      keyType: 'default' // TODO: handle groupless
-    })
+    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex, keyType })
     let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
     await storeAddressPublicKey(nonSensitiveAddressData.hash, nonSensitiveAddressData.publicKey)
