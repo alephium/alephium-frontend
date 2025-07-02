@@ -1,4 +1,4 @@
-import { Address, selectAddressesStrsInGroup } from '@alephium/shared'
+import { Address, selectDappConnectEligibleAddresses } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { memo, useCallback, useMemo } from 'react'
@@ -18,16 +18,15 @@ interface ConnectDappModalProps extends ConnectDappMessageData {
 }
 
 const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType, group, host, onApprove }) => {
-  // TODO: use keyType after integrating groupless addresses
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
   const network = useNetwork()
 
   const { data: allAddressesStr } = useFetchAddressesHashesSortedByLastUse()
-  const addressesInGroup = useAppSelector((s) => selectAddressesStrsInGroup(s, group))
+  const eligibleAddresses = useAppSelector((s) => selectDappConnectEligibleAddresses(s, group, keyType))
   const allAddressesStrInGroup = useMemo(
-    () => allAddressesStr.filter((addressStr) => addressesInGroup.includes(addressStr)),
-    [addressesInGroup, allAddressesStr]
+    () => allAddressesStr.filter((addressStr) => eligibleAddresses.includes(addressStr)),
+    [eligibleAddresses, allAddressesStr]
   )
 
   const handleAddressSelect = useCallback(

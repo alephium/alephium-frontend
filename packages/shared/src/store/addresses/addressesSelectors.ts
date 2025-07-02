@@ -1,4 +1,5 @@
 import { AddressGroup } from '@alephium/walletconnect-provider'
+import { KeyType } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 import { partition } from 'lodash'
 
@@ -54,4 +55,21 @@ export const selectAddressesStrsInGroup = createSelector(selectAddressesInGroup,
 
 export const selectAddressGroup = createSelector(selectAddressByHash, (address) =>
   address === undefined || isGrouplessAddress(address) ? undefined : address.group
+)
+
+export const selectDappConnectEligibleAddresses = createSelector(
+  [
+    selectAllAddresses,
+    (_: SharedRootState, group?: AddressGroup, keyType?: KeyType) => group,
+    (_: SharedRootState, group?: AddressGroup, keyType?: KeyType) => keyType
+  ],
+  (addresses, group, keyType) => {
+    let result = getAddressesInGroup(addresses, group)
+
+    if (keyType !== undefined && keyType !== 'default') {
+      result = result.filter((address) => address.keyType === keyType)
+    }
+
+    return result.map(({ hash }) => hash)
+  }
 )
