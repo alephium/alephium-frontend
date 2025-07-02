@@ -1,4 +1,4 @@
-import { Address } from '@alephium/shared'
+import { Address, isGrouplessAddress } from '@alephium/shared'
 import { capitalize } from 'lodash'
 
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
@@ -22,27 +22,23 @@ export const getConnectedAddressPayload = async (
   address: Address,
   host: string,
   icon?: string
-): Promise<ConnectedAddressPayload> => {
-  const signer = await getSigner(address)
-
-  return {
-    address: address.hash,
-    network,
-    type: 'alephium',
-    signer,
-    host,
-    icon
-  }
-}
+): Promise<ConnectedAddressPayload> => ({
+  address: address.hash,
+  network,
+  type: 'alephium',
+  signer: await getSigner(address),
+  host,
+  icon
+})
 
 const getSigner = async (address: Address): Promise<ConnectedAddressPayload['signer']> => {
   const publicKey = await getAddressAsymetricKey(address.hash, 'public')
 
   return {
     type: 'local_secret',
-    keyType: 'default', // TODO: replace with address.keyType after groupless addresses integration
+    keyType: address.keyType ?? 'default',
     publicKey,
     derivationIndex: address.index,
-    group: address.group
+    group: isGrouplessAddress(address) ? undefined : address.group
   }
 }

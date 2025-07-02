@@ -1,5 +1,11 @@
-import { getHumanReadableError } from '@alephium/shared'
-import { node as n } from '@alephium/web3'
+import {
+  getHumanReadableError,
+  SignDeployContractTxModalProps,
+  SignExecuteScriptTxModalProps,
+  SignMessageTxModalProps,
+  SignTransferTxModalProps,
+  SignUnsignedTxModalProps
+} from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -11,13 +17,16 @@ import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { showExceptionToast } from '~/utils/layout'
 
 type UnsignedTxData =
-  | n.BuildExecuteScriptTxResult
-  | n.BuildDeployContractTxResult
-  | n.BuildTransferTxResult
-  | n.DecodeUnsignedTxResult
-  | string
+  | SignExecuteScriptTxModalProps['unsignedData']
+  | SignDeployContractTxModalProps['unsignedData']
+  | SignTransferTxModalProps['unsignedData']
+  | SignUnsignedTxModalProps['unsignedData']
+  | SignMessageTxModalProps['unsignedData']
 
-type TxResultsWithGas = n.BuildExecuteScriptTxResult | n.BuildDeployContractTxResult | n.BuildTransferTxResult
+type TxResultsWithGas =
+  | SignExecuteScriptTxModalProps['unsignedData']
+  | SignDeployContractTxModalProps['unsignedData']
+  | SignTransferTxModalProps['unsignedData']
 
 type BaseSignModalReturn = {
   handleApprovePress: () => void

@@ -27,7 +27,7 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: 
       <CheckModalContent>
         <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />
         <CheckAddressesBox
-          fromAddress={data.fromAddress}
+          fromAddressStr={data.fromAddress.hash}
           toAddressHash={data.toAddress}
           dAppUrl={dAppUrl}
           hasBg

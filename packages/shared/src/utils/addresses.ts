@@ -1,6 +1,16 @@
-import { AddressMetadata, AddressMetadataWithHash } from '@/types/addresses'
+import { KeyType } from '@alephium/web3'
 
-export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+import {
+  Address,
+  AddressStoredMetadataWithHash,
+  AddressStoredMetadataWithoutHash,
+  GrouplessAddress
+} from '@/types/addresses'
+
+export const findNextAvailableAddressIndex = (startIndex?: number, skipIndexes: number[] = []): number => {
+  if (startIndex === undefined) return 0
+  if (startIndex < 0) throw new Error('Start index must be greater than or equal to 0')
+
   let nextAvailableAddressIndex = startIndex
 
   do {
@@ -14,5 +24,16 @@ export const isAddressIndexValid = (addressIndex: number) =>
   addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')
 
 export const addressMetadataIncludesHash = (
-  metadata: AddressMetadata | AddressMetadataWithHash
-): metadata is AddressMetadataWithHash => (metadata as AddressMetadataWithHash).hash !== undefined
+  metadata: AddressStoredMetadataWithoutHash | AddressStoredMetadataWithHash
+): metadata is AddressStoredMetadataWithHash => (metadata as AddressStoredMetadataWithHash).hash !== undefined
+
+// TODO: Replace by isGrouplessKeyType from web3 when available
+export const isGrouplessKeyType = (keyType: KeyType = 'default') =>
+  keyType !== 'default' && keyType !== 'bip340-schnorr'
+
+export const isGrouplessAddress = (address: Address): address is GrouplessAddress => isGrouplessKeyType(address.keyType)
+
+export const getAddressesInGroup = (addresses: Address[], group?: number) =>
+  group !== undefined
+    ? addresses.filter((address) => isGrouplessAddress(address) || address.group === group)
+    : addresses

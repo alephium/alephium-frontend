@@ -22,7 +22,6 @@ import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
-import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
@@ -49,7 +48,6 @@ import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPa
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
-import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -75,7 +73,6 @@ export const ModalComponents = {
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
   WalletConnectSessionProposalModal,
-  GroupSelectModal,
   TokenAmountModal,
   AddressDetailsModal,
   ReceiveQRCodeModal,
@@ -94,7 +91,6 @@ export const ModalComponents = {
   AddressNftsGridModal,
   ConnectDappModal,
   NetworkSwitchModal,
-  ConnectDappNewAddressModal,
   SignExecuteScriptTxModal,
   SignDeployContractTxModal,
   SignTransferTxModal,

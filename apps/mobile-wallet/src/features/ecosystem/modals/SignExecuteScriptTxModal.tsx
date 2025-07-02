@@ -1,10 +1,9 @@
-import { transactionSent } from '@alephium/shared'
-import { node as n, SignExecuteScriptTxResult } from '@alephium/web3'
+import { AssetAmount, SignExecuteScriptTxModalProps, transactionSent } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { signAndSendTransaction } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
@@ -14,37 +13,32 @@ import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCo
 import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppDispatch } from '~/hooks/redux'
-import { SignExecuteScriptTxParamsWithAmounts } from '~/types/transactions'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
-
-interface SignExecuteScriptTxModalProps extends SignTxModalCommonProps {
-  txParams: SignExecuteScriptTxParamsWithAmounts
-  unsignedData: n.BuildExecuteScriptTxResult
-  onSuccess: (signResult: SignExecuteScriptTxResult) => void
-}
+import { signer } from '~/signer'
 
 const SignExecuteScriptTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignExecuteScriptTxModalProps) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
 
+    const assetAmounts = calculateAssetAmounts(txParams)
+
     const { handleApprovePress, handleRejectPress, fees } = useSignModal({
       onError,
       unsignedData,
       sign: async () => {
-        const data = await signAndSendTransaction(txParams.signerAddress, unsignedData.txId, unsignedData.unsignedTx)
-        const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txParams.assetAmounts)
+        const data = await signer.signAndSubmitExecuteScriptTx(txParams)
 
         dispatch(
           transactionSent({
             hash: data.txId,
             fromAddress: txParams.signerAddress,
-            amount: attoAlphAmount,
-            tokens,
+            amount: txParams.attoAlphAmount ? txParams.attoAlphAmount.toString() : undefined,
+            tokens: txParams.tokens
+              ? txParams.tokens.map((token) => ({ id: token.id, amount: token.amount.toString() }))
+              : undefined,
             timestamp: new Date().getTime(),
             status: 'sent',
             type: 'contract',
@@ -54,15 +48,7 @@ const SignExecuteScriptTxModal = memo(
 
         sendAnalytics({ event: 'Approved contract call', props: { origin } })
 
-        onSuccess({
-          groupIndex: unsignedData.fromGroup,
-          unsignedTx: unsignedData.unsignedTx,
-          txId: unsignedData.txId,
-          signature: data.signature,
-          gasAmount: unsignedData.gasAmount,
-          gasPrice: BigInt(unsignedData.gasPrice),
-          simulatedOutputs: []
-        })
+        onSuccess(data)
       }
     })
 
@@ -70,7 +56,7 @@ const SignExecuteScriptTxModal = memo(
       <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
-            <SignModalAssetsAmountsRows assetAmounts={txParams.assetAmounts} />
+            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
 
             <Row title={t('From')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
@@ -90,3 +76,18 @@ const SignExecuteScriptTxModal = memo(
 )
 
 export default SignExecuteScriptTxModal
+
+const calculateAssetAmounts = (txParams: SignExecuteScriptTxModalProps['txParams']) => {
+  const assetAmounts = [] as AssetAmount[]
+
+  if (txParams.attoAlphAmount) {
+    assetAmounts.push({ id: ALPH.id, amount: BigInt(txParams.attoAlphAmount) })
+  }
+
+  if (txParams.tokens) {
+    const tokens = txParams.tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
+    assetAmounts.push(...tokens)
+  }
+
+  return assetAmounts
+}

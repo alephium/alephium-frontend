@@ -1,9 +1,23 @@
+import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
+import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
 import { AmountDeltas, SentTransaction, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
+
+// Address without group number
+export const getBaseAddressStr = (address: string): string => {
+  const parts = address.split(':')
+  return parts[0]
+}
+
+export const getInputOutputBaseAddress = (io: e.Input | e.Output): string | undefined =>
+  io.address ? getBaseAddressStr(io.address) : undefined
+
+export const isSameBaseAddress = (address1: string, address2: string): boolean =>
+  getBaseAddressStr(address1) === getBaseAddressStr(address2)
 
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
@@ -36,7 +50,7 @@ export const calcTxAmountsDeltaForAddress = (
 const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Output)[]) =>
   io.reduce(
     (acc, io) => {
-      if (io.address !== address) return acc
+      if (!io.address || !isSameBaseAddress(io.address, address)) return acc
 
       acc.alphAmount += BigInt(io.attoAlphAmount ?? 0)
 
@@ -67,8 +81,13 @@ export const getDirection = (
 export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
-
-  return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
+  return (
+    inputAddresses.length === 1 &&
+    outputAddresses.length === 1 &&
+    inputAddresses[0] !== undefined &&
+    outputAddresses[0] !== undefined &&
+    isSameBaseAddress(inputAddresses[0], outputAddresses[0])
+  )
 }
 
 export const isConfirmedTx = (
@@ -83,7 +102,9 @@ export const isSentTx = (
 ): tx is SentTransaction => 'status' in tx
 
 export const isInternalTx = (tx: e.Transaction | e.PendingTransaction, internalAddresses: AddressHash[]): boolean =>
-  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
+  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
+    (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
+  )
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: e.AssetOutput[] | e.Output[]) => {
   const lastOutput = outputs[outputs.length - 1]
@@ -115,8 +136,41 @@ export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: e.
   addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
 
 export const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.Transaction | e.PendingTransaction) =>
-  tx.inputs?.some((input) => input.address === addressHash) ||
-  tx.outputs?.some((output) => output.address === addressHash)
+  tx.inputs?.some((input) => input.address && isSameBaseAddress(input.address, addressHash)) ||
+  tx.outputs?.some((output) => output.address && isSameBaseAddress(output.address, addressHash))
 
 export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: e.Transaction) =>
   addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))
+
+export const calculateTransferTxAssetAmounts = (txParams: SignTransferTxModalProps['txParams']) => {
+  const assetAmounts = [] as Required<AssetAmount>[]
+
+  const res = txParams.destinations.reduce(
+    (acc, destination) => {
+      acc.attoAlphAmount += BigInt(destination.attoAlphAmount)
+
+      destination.tokens?.forEach((token) => {
+        const t = acc.tokens.find(({ id }) => id === token.id)
+
+        if (t) {
+          t.amount += BigInt(token.amount)
+        } else {
+          acc.tokens.push({ id: token.id, amount: BigInt(token.amount) })
+        }
+      })
+
+      return acc
+    },
+    { attoAlphAmount: BigInt(0), tokens: [] as { id: string; amount: bigint }[] }
+  )
+
+  if (res.attoAlphAmount > 0) {
+    assetAmounts.push({ id: ALPH.id, amount: res.attoAlphAmount })
+  }
+
+  if (res.tokens.length > 0) {
+    assetAmounts.push(...res.tokens)
+  }
+
+  return assetAmounts
+}

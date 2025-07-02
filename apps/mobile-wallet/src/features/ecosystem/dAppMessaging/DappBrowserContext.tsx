@@ -1,4 +1,10 @@
-import { getNetworkIdFromNetworkName, NetworkName, throttledClient } from '@alephium/shared'
+import {
+  getAddressesInGroup,
+  getNetworkIdFromNetworkName,
+  NetworkName,
+  SignTxModalCommonProps,
+  throttledClient
+} from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
@@ -11,10 +17,10 @@ import {
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
-import { buildDeployContractTransaction } from '~/api/transactions'
 import { isConnectTipShownOnce, setConnectTipShownOnce } from '~/features/connectTip/connectTipStorage'
 import {
   connectionAuthorized,
+  connectionRemoved,
   hostConnectionRemoved
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsActions'
 import {
@@ -25,14 +31,10 @@ import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/d
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
-import {
-  processSignExecuteScriptTxParamsAndBuildTx,
-  processSignTransferTxParamsAndBuildTx
-} from '~/features/ecosystem/utils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { showToast } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
@@ -102,19 +104,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     async (data: ConnectDappMessageData, messageId: string) => {
       const authorizedConnection = getAuthorizedConnection(data)
 
-      if (authorizedConnection) {
-        const address = addresses.find((a) => a.hash === authorizedConnection.address)
-        if (!address) {
-          handleRejectDappConnection(data.host, messageId)
-          return
-        }
-
-        const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
-        handleApproveDappConnection(connectedAddressPayload, messageId)
-
-        return
-      }
-
       const isWrongNetwork =
         data.networkId !== undefined &&
         currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
@@ -131,21 +120,18 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         return
       }
 
-      // TODO: handle keyType and groupless addresses
-      const addressesInGroup = data.group !== undefined ? addresses.filter((a) => a.group === data.group) : addresses
-
-      // Show new address modal (won't be needed after integrating groupless addresses since 1 groupless address will be enough)
-      if (addressesInGroup.length === 0) {
-        dispatch(
-          openModal({
-            name: 'ConnectDappNewAddressModal',
-            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
-            props: { ...data, dAppName }
-          })
-        )
-
-        return
+      if (authorizedConnection) {
+        const address = addresses.find((a) => a.hash === authorizedConnection.address)
+        if (!address) {
+          dispatch(connectionRemoved(authorizedConnection))
+        } else {
+          const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
+          handleApproveDappConnection(connectedAddressPayload, messageId)
+          return
+        }
       }
+
+      const addressesInGroup = getAddressesInGroup(addresses, data.group)
 
       // Select address automatically if there is only one address in the group
       if (addressesInGroup.length === 1) {
@@ -210,9 +196,17 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
           switch (type) {
             case 'TRANSFER': {
-              // TODO: Handle multiple destinations
-              const { txParamsSingleDestination, buildTransactionTxResult } =
-                await processSignTransferTxParamsAndBuildTx(params)
+              // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+              // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+              // That would make sense only if we have a single destination otherwise what should the sweep destination
+              // address be?
+
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
+              dispatch(deactivateAppLoading())
 
               dispatch(
                 openModal({
@@ -223,8 +217,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       messageId
                     ),
                   props: {
-                    txParams: txParamsSingleDestination,
-                    unsignedData: buildTransactionTxResult,
+                    txParams: params,
+                    unsignedData: unsignedBuiltTx,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -239,8 +233,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
 
             case 'EXECUTE_SCRIPT': {
-              const { txParamsWithAmounts, buildCallContractTxResult } =
-                await processSignExecuteScriptTxParamsAndBuildTx(params)
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
+              dispatch(deactivateAppLoading())
 
               dispatch(
                 openModal({
@@ -251,8 +249,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       messageId
                     ),
                   props: {
-                    txParams: txParamsWithAmounts,
-                    unsignedData: buildCallContractTxResult,
+                    txParams: params,
+                    unsignedData: unsignedBuiltTx,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -267,7 +265,10 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'DEPLOY_CONTRACT': {
               dispatch(activateAppLoading('Loading'))
-              const buildDeployContractTxResult = await buildDeployContractTransaction(params)
+              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
+                params,
+                await getAddressAsymetricKey(params.signerAddress, 'public')
+              )
               dispatch(deactivateAppLoading())
 
               dispatch(
@@ -280,7 +281,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: buildDeployContractTxResult,
+                    unsignedData,
                     onSuccess: (result) =>
                       replyToDapp(
                         { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
@@ -294,6 +295,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             }
             case 'UNSIGNED_TX': {
               dispatch(activateAppLoading('Loading'))
+              // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
+              // problems with unpolyfilled crypto Node JS module.
               const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
                 unsignedTx: params.unsignedTx
               })
@@ -309,7 +312,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                     ),
                   props: {
                     txParams: params,
-                    unsignedData: decodedResult,
+                    unsignedData: decodedResult.unsignedTx,
                     submitAfterSign: true,
                     onSuccess: (result) =>
                       replyToDapp(
@@ -378,7 +381,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             dAppUrl: host ?? dAppUrl,
             dAppIcon: icon,
             txParams: data,
-            unsignedData: decodedResult,
+            unsignedData: decodedResult.unsignedTx,
             submitAfterSign: false,
             origin: 'in-app-browser',
             onError: (error) =>

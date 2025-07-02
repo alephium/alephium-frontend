@@ -44,8 +44,8 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
 
     dispatch(
       openModal({
-        name: 'TransferSendModal',
-        props: { initialTxData: { fromAddress, toAddress: toAddressHash, tokenId: sendToken } }
+        name: 'SendModal',
+        props: { fromAddress, toAddress: toAddressHash, tokenId: sendToken }
       })
     )
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })

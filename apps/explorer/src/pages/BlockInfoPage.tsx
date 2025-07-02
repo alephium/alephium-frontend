@@ -83,7 +83,7 @@ const BlockInfoPage = () => {
         badge={isUncleBlock ? t('Uncle') : isOrphanBlock ? t('Orphan') : undefined}
         isLoading={isBlockInfoPending || isTxListPending}
       />
-      <Table bodyOnly isLoading={isBlockInfoPending}>
+      <Table bodyOnly noBorder isLoading={isBlockInfoPending}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
@@ -128,7 +128,7 @@ const BlockInfoPage = () => {
         !isTxListPending && !txList ? (
           <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
-          <Table main hasDetails scrollable isLoading={isTxListPending}>
+          <Table noBorder main hasDetails scrollable isLoading={isTxListPending}>
             {txList && (
               <>
                 <TableHeader
@@ -187,7 +187,6 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <td />
-        <td />
         <AnimatedCell>
           {t.inputs &&
             t.inputs.map(
@@ -236,9 +235,7 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   },
   {
     tdPos: 3,
-    style: css`
-      color: ${({ theme }) => theme.global.highlight};
-    `
+    style: css``
   },
   {
     tdPos: 4,
@@ -249,9 +246,7 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   },
   {
     tdPos: 5,
-    style: css`
-      color: ${({ theme }) => theme.global.highlight};
-    `
+    style: css``
   }
 ]
 
@@ -271,7 +266,7 @@ const IODetailList = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 10px;
 `
 

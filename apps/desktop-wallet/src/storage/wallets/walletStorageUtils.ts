@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { newWalletInitialAddressGenerated } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE, newWalletInitialAddressGenerated } from '@alephium/shared'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
@@ -13,6 +13,9 @@ interface SaveNewWalletProps {
   encrypted: string
 }
 
+const INITIAL_ADDRESS_KEY_TYPE = GROUPLESS_ADDRESS_KEY_TYPE
+const INITIAL_ADDRESS_INDEX = 0
+
 export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
   let storedWallet
 
@@ -25,7 +28,10 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
   const initialAddressSettings = getInitialAddressSettings()
 
   try {
-    const address = keyring.generateAndCacheAddress({ addressIndex: 0 })
+    const address = keyring.generateAndCacheAddress({
+      addressIndex: INITIAL_ADDRESS_INDEX,
+      keyType: INITIAL_ADDRESS_KEY_TYPE
+    })
     const initialAddress = { ...address, ...initialAddressSettings }
 
     store.dispatch(newWalletInitialAddressGenerated(initialAddress))
@@ -34,7 +40,11 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
     throw new Error('Could not generate initial address while saving new wallet')
   }
 
-  addressMetadataStorage.storeOne(storedWallet.id, { index: 0, settings: initialAddressSettings })
+  addressMetadataStorage.storeOne(storedWallet.id, {
+    index: INITIAL_ADDRESS_INDEX,
+    keyType: INITIAL_ADDRESS_KEY_TYPE,
+    settings: initialAddressSettings
+  })
 
   return storedWallet.id
 }
