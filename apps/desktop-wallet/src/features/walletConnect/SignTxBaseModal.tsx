@@ -4,6 +4,7 @@ import {
   SignExecuteScriptTxModalProps,
   SignMessageTxModalProps,
   SignTransferTxModalProps,
+  SignTxModalType,
   SignUnsignedTxModalProps
 } from '@alephium/shared'
 import { ReactNode, useCallback, useState } from 'react'
@@ -23,6 +24,7 @@ interface SignTxBaseModalProps extends ModalBaseProp {
   children: ReactNode
   title: string
   sign: () => Promise<void>
+  type: SignTxModalType
   lockTime?: number
   isApproveButtonDisabled?: boolean
 }
@@ -32,7 +34,7 @@ const SignTxBaseModal = ({
   title,
   lockTime,
   sign,
-  unsignedData,
+  type,
   id,
   onError,
   onUserDismiss,
@@ -43,7 +45,7 @@ const SignTxBaseModal = ({
   | SignExecuteScriptTxModalProps
   | SignMessageTxModalProps
   | SignUnsignedTxModalProps,
-  'unsignedData' | 'onError'
+  'onError'
 > &
   SignTxBaseModalProps) => {
   const dispatch = useAppDispatch()
@@ -59,7 +61,11 @@ const SignTxBaseModal = ({
       // https://github.com/alephium/alephium-frontend/issues/610
       const error = (e as unknown as string).toString()
       const message =
-        typeof unsignedData === 'string' ? 'Could not sign message' : 'Error while sending the transaction'
+        type === 'UNSIGNED_TX'
+          ? 'Could not sign unsigned tx'
+          : type === 'MESSAGE'
+            ? 'Could not sign message'
+            : 'Error while sending the transaction'
       const errorMessage = getHumanReadableError(e, t(message))
 
       if (error.includes('NotEnoughApprovedBalance')) {
@@ -70,7 +76,7 @@ const SignTxBaseModal = ({
       }
       onError(errorMessage)
     },
-    [dispatch, onError, sendAnalytics, t, unsignedData]
+    [dispatch, onError, sendAnalytics, t, type]
   )
 
   const signAndSubmit = useCallback(async () => {

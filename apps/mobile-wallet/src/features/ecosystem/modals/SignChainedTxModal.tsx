@@ -1,4 +1,9 @@
-import { signAndSubmitTxResultToSentTx, SignChainedTxModalProps, transactionSent } from '@alephium/shared'
+import {
+  signAndSubmitTxResultToSentTx,
+  SignChainedTxModalProps,
+  signChainedTxResultsToTxSubmittedResults,
+  transactionSent
+} from '@alephium/shared'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Fragment, memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,7 +12,6 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
-import { signChainedTxResultsToTxSubmittedResults } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { SignDeployContractTxModalContent } from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import { SignExecuteScriptTxModalContent } from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import { SignTransferTxModalContent } from '~/features/ecosystem/modals/SignTransferTxModal'

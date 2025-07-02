@@ -55,24 +55,39 @@ const SignDeployContractTxModal = memo(
       sendAnalytics({ event: 'Deployed smart contract' })
     }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])
 
-    const initialAlphAmount = txParams.initialAttoAlphAmount
-      ? [{ id: ALPH.id, amount: BigInt(txParams.initialAttoAlphAmount) }]
-      : undefined
-    const issueTokenAmount = txParams.issueTokenAmount?.toString()
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 
     return (
-      <SignTxBaseModal title={t('Deploy contract')} sign={handleSignAndSubmit} unsignedData={unsignedData} {...props}>
-        {initialAlphAmount && <CheckAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding />}
-        {issueTokenAmount && <InfoRow label={t('Issue token amount')}>{issueTokenAmount}</InfoRow>}
-        <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
-        {initialAlphAmount && (
-          <CheckWorthBox assetAmounts={initialAlphAmount} fee={fees} hasBg hasBorder hasHorizontalPadding />
-        )}
-        <BytecodeExpandableSection bytecode={txParams.bytecode} />
+      <SignTxBaseModal title={t('Deploy contract')} sign={handleSignAndSubmit} type="DEPLOY_CONTRACT" {...props}>
+        <SignDeployContractTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
       </SignTxBaseModal>
     )
   }
 )
 
 export default SignDeployContractTxModal
+
+export const SignDeployContractTxModalContent = ({
+  txParams,
+  fees,
+  dAppUrl
+}: Pick<SignDeployContractTxModalProps, 'txParams' | 'dAppUrl'> & { fees: bigint }) => {
+  const { t } = useTranslation()
+
+  const initialAlphAmount = txParams.initialAttoAlphAmount
+    ? [{ id: ALPH.id, amount: BigInt(txParams.initialAttoAlphAmount) }]
+    : undefined
+  const issueTokenAmount = txParams.issueTokenAmount?.toString()
+
+  return (
+    <>
+      {initialAlphAmount && <CheckAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding />}
+      {issueTokenAmount && <InfoRow label={t('Issue token amount')}>{issueTokenAmount}</InfoRow>}
+      <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
+      {initialAlphAmount && (
+        <CheckWorthBox assetAmounts={initialAlphAmount} fee={fees} hasBg hasBorder hasHorizontalPadding />
+      )}
+      <BytecodeExpandableSection bytecode={txParams.bytecode} />
+    </>
+  )
+}

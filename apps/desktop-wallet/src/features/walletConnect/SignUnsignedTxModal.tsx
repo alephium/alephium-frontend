@@ -66,6 +66,7 @@ const SignUnsignedTxModal = memo(
         title={t(submitAfterSign ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
         sign={handleSign}
         isApproveButtonDisabled={isLedger}
+        type="UNSIGNED_TX"
         {...props}
       >
         <InputFieldsColumn>
