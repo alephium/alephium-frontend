@@ -12,7 +12,7 @@ export interface UseModalDismissProps {
 
 const useModalDismiss = ({ id, onUserDismiss }: UseModalDismissProps) => {
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismiss, dismissAll } = useBottomSheetModal()
 
   const wasDismissedProgrammatically = useRef(false)
 
@@ -33,7 +33,7 @@ const useModalDismiss = ({ id, onUserDismiss }: UseModalDismissProps) => {
     dispatch(removeModal({ id }))
   }
 
-  return { dismissModal, onDismiss }
+  return { dismissModal, onDismiss, dismissAll }
 }
 
 export default useModalDismiss
