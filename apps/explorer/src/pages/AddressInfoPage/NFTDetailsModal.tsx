@@ -3,7 +3,6 @@ import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Card from '@/components/Cards/Card'
 import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -35,55 +34,51 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
           </NFTImageContainer>
 
           <MetadataTablesContainer>
-            {nft.image ? (
-              <>
+            <>
+              <NFTDetailsContainer>
+                <Table bodyOnly>
+                  <TableBody>
+                    {nft.name && (
+                      <TableRow>
+                        <span>{t('Name')}</span>
+                        <span>{nft.name}</span>
+                      </TableRow>
+                    )}
+                    {nft.description && (
+                      <TableRow>
+                        <span>{t('Description')}</span>
+                        <Paragraph>{nft.description}</Paragraph>
+                      </TableRow>
+                    )}
+                    {nft.image && (
+                      <TableRow>
+                        <span>{t('Image URL')}</span>
+                        <LinkContainer>
+                          <SimpleLink to={nft.image} newTab>
+                            {nft.image}
+                          </SimpleLink>
+                        </LinkContainer>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </NFTDetailsContainer>
+              {nft.attributes && (
                 <NFTDetailsContainer>
+                  <h3>{t('Attributes')}</h3>
                   <Table bodyOnly>
                     <TableBody>
-                      {nft.name && (
-                        <TableRow>
-                          <span>{t('Name')}</span>
-                          <span>{nft.name}</span>
+                      {nft.attributes.map((a, i) => (
+                        <TableRow key={i}>
+                          <span>{a.trait_type}</span>
+                          <span>{a.value.toString()}</span>
                         </TableRow>
-                      )}
-                      {nft.description && (
-                        <TableRow>
-                          <span>{t('Description')}</span>
-                          <Paragraph>{nft.description}</Paragraph>
-                        </TableRow>
-                      )}
-                      {nft.image && (
-                        <TableRow>
-                          <span>{t('Image URL')}</span>
-                          <LinkContainer>
-                            <SimpleLink to={nft.image} newTab>
-                              {nft.image}
-                            </SimpleLink>
-                          </LinkContainer>
-                        </TableRow>
-                      )}
+                      ))}
                     </TableBody>
                   </Table>
                 </NFTDetailsContainer>
-                {nft.attributes && (
-                  <NFTDetailsContainer>
-                    <h3>{t('Attributes')}</h3>
-                    <Table bodyOnly>
-                      <TableBody>
-                        {nft.attributes.map((a, i) => (
-                          <TableRow key={i}>
-                            <span>{a.trait_type}</span>
-                            <span>{a.value.toString()}</span>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </NFTDetailsContainer>
-                )}
-              </>
-            ) : (
-              <CardStyled>{t('Wrong/old format')}</CardStyled>
-            )}
+              )}
+            </>
             {collection && (
               <NFTDetailsContainer>
                 <h3>{t('Collection')}</h3>
@@ -150,12 +145,6 @@ const NFTDetailsContainer = styled.div`
 const LinkContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-`
-
-const CardStyled = styled(Card)`
-  justify-content: center;
-  align-items: center;
-  margin: 25px;
 `
 
 const Paragraph = styled.div`
