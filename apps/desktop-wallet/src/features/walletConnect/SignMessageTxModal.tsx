@@ -24,7 +24,13 @@ const SignMessageTxModal = memo(({ txParams, onSuccess, ...props }: ModalBasePro
   }
 
   return (
-    <SignTxBaseModal title={t('Sign Message')} sign={handleSign} isApproveButtonDisabled={isLedger} {...props}>
+    <SignTxBaseModal
+      title={t('Sign Message')}
+      sign={handleSign}
+      isApproveButtonDisabled={isLedger}
+      type="MESSAGE"
+      {...props}
+    >
       <InputFieldsColumn>
         <InfoBox label={t('Message')} text={txParams.message} />
       </InputFieldsColumn>

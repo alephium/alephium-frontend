@@ -2,6 +2,7 @@ import {
   AssetAmount,
   isGrouplessKeyType,
   selectAddressByHash,
+  signAndSubmitTxResultToSentTx,
   SignExecuteScriptTxModalProps,
   transactionSent
 } from '@alephium/shared'
@@ -35,9 +36,6 @@ const SignExecuteScriptTxModal = ({
   const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
   const { sendAnalytics } = useAnalytics()
 
-  const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
-  const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
-
   const handleSignAndSubmit = useCallback(async () => {
     if (!signerAddress) throw Error('Signer address not found')
 
@@ -57,35 +55,39 @@ const SignExecuteScriptTxModal = ({
 
     onSuccess(result)
 
-    dispatch(
-      transactionSent({
-        hash: result.txId,
-        fromAddress: txParams.signerAddress,
-        toAddress: '',
-        amount: txParams.attoAlphAmount?.toString(),
-        tokens: txParams.tokens
-          ? txParams.tokens.map((token) => ({ id: token.id, amount: token.amount.toString() }))
-          : undefined,
-        timestamp: new Date().getTime(),
-        type: 'contract',
-        status: 'sent'
-      })
-    )
+    const sentTx = signAndSubmitTxResultToSentTx({ type: 'EXECUTE_SCRIPT', txParams, result })
+    dispatch(transactionSent(sentTx))
 
     sendAnalytics({ event: 'Called smart contract' })
   }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
+  const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
+
   return (
-    <SignTxBaseModal title={t('Call contract')} sign={handleSignAndSubmit} unsignedData={unsignedData} {...props}>
-      {assetAmounts && <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />}
-      <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
-      {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
-      <BytecodeExpandableSection bytecode={txParams.bytecode} />
+    <SignTxBaseModal title={t('Call contract')} sign={handleSignAndSubmit} type="EXECUTE_SCRIPT" {...props}>
+      <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
     </SignTxBaseModal>
   )
 }
 
 export default SignExecuteScriptTxModal
+
+export const SignExecuteScriptTxModalContent = ({
+  txParams,
+  fees,
+  dAppUrl
+}: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl'> & { fees: bigint }) => {
+  const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
+
+  return (
+    <>
+      {assetAmounts && <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />}
+      <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
+      {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
+      <BytecodeExpandableSection bytecode={txParams.bytecode} />
+    </>
+  )
+}
 
 const calculateAssetAmounts = ({ tokens, attoAlphAmount }: SignExecuteScriptTxModalProps['txParams']) => {
   let assetAmounts: AssetAmount[] = []

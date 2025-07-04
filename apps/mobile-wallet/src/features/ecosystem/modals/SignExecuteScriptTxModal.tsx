@@ -1,4 +1,9 @@
-import { AssetAmount, SignExecuteScriptTxModalProps, transactionSent } from '@alephium/shared'
+import {
+  AssetAmount,
+  signAndSubmitTxResultToSentTx,
+  SignExecuteScriptTxModalProps,
+  transactionSent
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,30 +26,15 @@ import { signer } from '~/signer'
 const SignExecuteScriptTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignExecuteScriptTxModalProps) => {
     const dispatch = useAppDispatch()
-    const { t } = useTranslation()
 
-    const assetAmounts = calculateAssetAmounts(txParams)
-
-    const { handleApprovePress, handleRejectPress, fees } = useSignModal({
+    const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
-      unsignedData,
+      type: 'EXECUTE_SCRIPT',
       sign: async () => {
         const data = await signer.signAndSubmitExecuteScriptTx(txParams)
 
-        dispatch(
-          transactionSent({
-            hash: data.txId,
-            fromAddress: txParams.signerAddress,
-            amount: txParams.attoAlphAmount ? txParams.attoAlphAmount.toString() : undefined,
-            tokens: txParams.tokens
-              ? txParams.tokens.map((token) => ({ id: token.id, amount: token.amount.toString() }))
-              : undefined,
-            timestamp: new Date().getTime(),
-            status: 'sent',
-            type: 'contract',
-            toAddress: ''
-          })
-        )
+        const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'EXECUTE_SCRIPT' })
+        dispatch(transactionSent(sentTx))
 
         sendAnalytics({ event: 'Approved contract call', props: { origin } })
 
@@ -52,22 +42,12 @@ const SignExecuteScriptTxModal = memo(
       }
     })
 
+    const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+
     return (
       <BottomModal2 contentVerticalGap>
         <ScreenSection>
-          <Surface>
-            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
-
-            <Row title={t('From')} titleColor="secondary">
-              <AddressBadge addressHash={txParams.signerAddress} />
-            </Row>
-
-            {dAppUrl && <SignModalDestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
-
-            <SignModalCopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
-
-            <SignModalFeesRow fees={fees} />
-          </Surface>
+          <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} dAppIcon={dAppIcon} />
         </ScreenSection>
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
       </BottomModal2>
@@ -76,6 +56,33 @@ const SignExecuteScriptTxModal = memo(
 )
 
 export default SignExecuteScriptTxModal
+
+export const SignExecuteScriptTxModalContent = ({
+  txParams,
+  fees,
+  dAppUrl,
+  dAppIcon
+}: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl' | 'dAppIcon'> & { fees: bigint }) => {
+  const { t } = useTranslation()
+
+  const assetAmounts = calculateAssetAmounts(txParams)
+
+  return (
+    <Surface>
+      <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+
+      <Row title={t('From')} titleColor="secondary">
+        <AddressBadge addressHash={txParams.signerAddress} />
+      </Row>
+
+      {dAppUrl && <SignModalDestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
+
+      <SignModalCopyEncodedTextRow text={txParams.bytecode} title={t('Bytecode')} />
+
+      <SignModalFeesRow fees={fees} />
+    </Surface>
+  )
+}
 
 const calculateAssetAmounts = (txParams: SignExecuteScriptTxModalProps['txParams']) => {
   const assetAmounts = [] as AssetAmount[]

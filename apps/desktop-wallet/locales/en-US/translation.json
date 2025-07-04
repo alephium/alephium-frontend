@@ -536,5 +536,9 @@
   "No transactions before {{ date }}": "No transactions before {{ date }}",
   "Sort by": "Sort by",
   "ALPH balance": "ALPH balance",
-  "Approve": "Approve"
+  "Approve": "Approve",
+  "Chained transactions": "Chained transactions",
+  "Transaction {{ number }}": "Transaction {{ number }}",
+  "Ledger does not yet support chained transactions. We are working on it!": "Ledger does not yet support chained transactions. We are working on it!",
+  "Not supported": "Not supported"
 }

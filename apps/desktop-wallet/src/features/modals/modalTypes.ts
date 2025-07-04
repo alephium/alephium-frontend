@@ -1,5 +1,6 @@
 import {
   AddressHash,
+  SignChainedTxModalProps,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
   SignMessageTxModalProps,
@@ -61,7 +62,8 @@ const ModalNames = {
   PasswordConfirmationModal: 'PasswordConfirmationModal',
   SignTransferTxModal: 'SignTransferTxModal',
   SignDeployContractTxModal: 'SignDeployContractTxModal',
-  SignExecuteScriptTxModal: 'SignExecuteScriptTxModal'
+  SignExecuteScriptTxModal: 'SignExecuteScriptTxModal',
+  SignChainedTxModal: 'SignChainedTxModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -201,6 +203,10 @@ export type OpenModalParams = {
   | {
       name: typeof ModalNames.SignExecuteScriptTxModal
       props: SignExecuteScriptTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignChainedTxModal
+      props: SignChainedTxModalProps
     }
 )
 

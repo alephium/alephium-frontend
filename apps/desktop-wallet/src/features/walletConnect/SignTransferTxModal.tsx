@@ -1,4 +1,10 @@
-import { isGrouplessKeyType, selectAddressByHash, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
+import {
+  isGrouplessKeyType,
+  selectAddressByHash,
+  signAndSubmitTxResultToSentTx,
+  SignTransferTxModalProps,
+  transactionSent
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignTransferTxResult } from '@alephium/web3'
 import { Fragment, memo, useCallback, useMemo } from 'react'
@@ -22,18 +28,7 @@ const SignTransferTxModal = memo(
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
     const { sendAnalytics } = useAnalytics()
-
-    const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
-    const maxLockTime = useMemo(
-      () =>
-        txParams.destinations.reduce((max, { lockTime }) => {
-          if (lockTime && lockTime > max) {
-            return lockTime
-          }
-          return max
-        }, 0),
-      [txParams.destinations]
-    )
+    const maxLockTime = useMaxLockTime(txParams.destinations)
 
     const handleSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
@@ -59,57 +54,58 @@ const SignTransferTxModal = memo(
 
       onSuccess(result)
 
-      dispatch(
-        transactionSent({
-          hash: result.txId,
-          fromAddress: txParams.signerAddress,
-          toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
-          amount: txParams.destinations[0].attoAlphAmount.toString(),
-          tokens: txParams.destinations[0].tokens?.map((token) => ({
-            id: token.id,
-            amount: token.amount.toString()
-          })),
-          timestamp: new Date().getTime(),
-          lockTime: txParams.destinations[0].lockTime, // TODO: Improve display of locked time per destination
-          type: 'transfer',
-          status: 'sent'
-        })
-      )
+      const sentTx = signAndSubmitTxResultToSentTx({ type: 'TRANSFER', txParams, result })
+      dispatch(transactionSent(sentTx))
 
       sendAnalytics({ event: 'Sent transaction' })
     }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
+    const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
+
     return (
-      <SignTxBaseModal
-        title={t('Send')}
-        sign={handleSignAndSubmit}
-        lockTime={maxLockTime}
-        unsignedData={unsignedData}
-        {...props}
-      >
-        {txParams.destinations.map(({ address, attoAlphAmount, tokens, lockTime }) => {
-          const assetAmounts = [
-            { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-            ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-          ]
-          return (
-            <Fragment key={address}>
-              <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />
-              <CheckAddressesBox
-                fromAddressStr={txParams.signerAddress}
-                toAddressHash={address}
-                dAppUrl={dAppUrl}
-                hasBg
-                hasHorizontalPadding
-              />
-              {lockTime && <CheckLockTimeBox lockTime={new Date(lockTime)} />}
-              <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
-            </Fragment>
-          )
-        })}
+      <SignTxBaseModal title={t('Send')} sign={handleSignAndSubmit} lockTime={maxLockTime} type="TRANSFER" {...props}>
+        <SignTransferTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
       </SignTxBaseModal>
     )
   }
 )
 
 export default SignTransferTxModal
+
+export const SignTransferTxModalContent = ({
+  txParams,
+  fees,
+  dAppUrl
+}: Pick<SignTransferTxModalProps, 'txParams' | 'dAppUrl'> & { fees: bigint }) =>
+  txParams.destinations.map(({ address, attoAlphAmount, tokens, lockTime }) => {
+    const assetAmounts = [
+      { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+      ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+    ]
+    return (
+      <Fragment key={address}>
+        <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />
+        <CheckAddressesBox
+          fromAddressStr={txParams.signerAddress}
+          toAddressHash={address}
+          dAppUrl={dAppUrl}
+          hasBg
+          hasHorizontalPadding
+        />
+        {lockTime && <CheckLockTimeBox lockTime={new Date(lockTime)} />}
+        <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
+      </Fragment>
+    )
+  })
+
+const useMaxLockTime = (destinations: SignTransferTxModalProps['txParams']['destinations']) =>
+  useMemo(
+    () =>
+      destinations.reduce((max, { lockTime }) => {
+        if (lockTime && lockTime > max) {
+          return lockTime
+        }
+        return max
+      }, 0),
+    [destinations]
+  )

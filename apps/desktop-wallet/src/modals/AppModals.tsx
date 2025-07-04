@@ -10,6 +10,7 @@ import SendModal from '@/features/send/SendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
+import SignChainedTxModal from '@/features/walletConnect/SignChainedTxModal'
 import SignDeployContractTxModal from '@/features/walletConnect/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '@/features/walletConnect/SignExecuteScriptTxModal'
 import SignMessageTxModal from '@/features/walletConnect/SignMessageTxModal'
@@ -122,6 +123,8 @@ const AppModals = () => {
                 return <SignDeployContractTxModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignExecuteScriptTxModal':
                 return <SignExecuteScriptTxModal key={modal.id} {...props} {...modal.params.props} />
+              case 'SignChainedTxModal':
+                return <SignChainedTxModal key={modal.id} {...props} {...modal.params.props} />
             }
           })
         : openedModals.map((modal) => {

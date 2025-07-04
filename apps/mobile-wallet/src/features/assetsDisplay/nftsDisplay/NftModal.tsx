@@ -21,7 +21,7 @@ const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
 const NftModal = memo<NftModalProps>(({ nftId }) => {
   const { t } = useTranslation()
-  const { dismissModal } = useModalContext()
+  const { dismissAll } = useModalContext()
 
   const { data: nft } = useFetchNft({ id: nftId })
   const { data: addressesWithToken } = useFetchAddressesHashesWithBalance(nftId)
@@ -40,7 +40,7 @@ const NftModal = memo<NftModalProps>(({ nftId }) => {
       <ActionButtons>
         <SendButton
           origin="addressDetails"
-          onPress={dismissModal}
+          onPress={dismissAll}
           tokenId={nftId}
           isNft
           originAddressHash={addressesWithToken.at(0)}

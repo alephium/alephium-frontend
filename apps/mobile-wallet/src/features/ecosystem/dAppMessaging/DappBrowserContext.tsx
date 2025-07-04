@@ -5,7 +5,15 @@ import {
   SignTxModalCommonProps,
   throttledClient
 } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId, useUnsortedAddresses } from '@alephium/shared-react'
+import {
+  buildDeployContractTxQuery,
+  buildExecuteScriptTxQuery,
+  buildTransferTxQuery,
+  decodeUnsignedTxQuery,
+  queryClient,
+  useCurrentlyOnlineNetworkId,
+  useUnsortedAddresses
+} from '@alephium/shared-react'
 import {
   ConnectDappMessageData,
   ExecuteTransactionMessageData,
@@ -30,12 +38,19 @@ import {
 import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueActions'
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
-import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
+import {
+  getChainedTxPropsFromTransactionParams,
+  getChainedTxSignersPublicKeys,
+  getConnectedAddressPayload,
+  txParamsToChainedTxParams,
+  useNetwork,
+  validateChainedTxsNetwork
+} from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { showToast } from '~/utils/layout'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
 
@@ -174,16 +189,16 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       const actionHash = messageId
       replyToDapp({ type: 'ALPH_EXECUTE_TRANSACTION_RES', data: { actionHash } }, messageId)
 
+      if (txParams.length === 0) {
+        replyToDapp(
+          { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'No transactions to execute' } },
+          messageId
+        )
+
+        return
+      }
+
       try {
-        if (txParams.length === 0) {
-          replyToDapp(
-            { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'No transactions to execute' } },
-            messageId
-          )
-
-          return
-        }
-
         if (txParams.length === 1) {
           const { type, params } = txParams[0]
 
@@ -194,165 +209,189 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             onError: (error) => replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
           }
 
-          switch (type) {
-            case 'TRANSFER': {
-              // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
-              // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
-              // That would make sense only if we have a single destination otherwise what should the sweep destination
-              // address be?
+          // eslint-disable-next-line no-useless-catch
+          try {
+            switch (type) {
+              case 'TRANSFER': {
+                // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+                // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+                // That would make sense only if we have a single destination otherwise what should the sweep destination
+                // address be?
 
-              dispatch(activateAppLoading('Loading'))
-              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
-              dispatch(deactivateAppLoading())
+                dispatch(activateAppLoading('Loading'))
+                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const unsignedData = await queryClient.fetchQuery(buildTransferTxQuery({ params, publicKey }))
+                dispatch(deactivateAppLoading())
 
-              dispatch(
-                openModal({
-                  name: 'SignTransferTxModal',
-                  onUserDismiss: () =>
-                    replyToDapp(
-                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
-                      messageId
-                    ),
-                  props: {
-                    txParams: params,
-                    unsignedData: unsignedBuiltTx,
-                    onSuccess: (result) =>
+                dispatch(
+                  openModal({
+                    name: 'SignTransferTxModal',
+                    onUserDismiss: () =>
                       replyToDapp(
-                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
                         messageId
                       ),
-                    ...commonModalProps
-                  }
-                })
-              )
+                    props: {
+                      txParams: params,
+                      unsignedData,
+                      onSuccess: (result) =>
+                        replyToDapp(
+                          { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                          messageId
+                        ),
+                      ...commonModalProps
+                    }
+                  })
+                )
 
-              break
-            }
+                break
+              }
 
-            case 'EXECUTE_SCRIPT': {
-              dispatch(activateAppLoading('Loading'))
-              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
-              dispatch(deactivateAppLoading())
+              case 'EXECUTE_SCRIPT': {
+                dispatch(activateAppLoading('Loading'))
+                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const unsignedData = await queryClient.fetchQuery(buildExecuteScriptTxQuery({ params, publicKey }))
+                dispatch(deactivateAppLoading())
 
-              dispatch(
-                openModal({
-                  name: 'SignExecuteScriptTxModal',
-                  onUserDismiss: () =>
-                    replyToDapp(
-                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
-                      messageId
-                    ),
-                  props: {
-                    txParams: params,
-                    unsignedData: unsignedBuiltTx,
-                    onSuccess: (result) =>
+                dispatch(
+                  openModal({
+                    name: 'SignExecuteScriptTxModal',
+                    onUserDismiss: () =>
                       replyToDapp(
-                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
                         messageId
                       ),
-                    ...commonModalProps
-                  }
-                })
-              )
+                    props: {
+                      txParams: params,
+                      unsignedData,
+                      onSuccess: (result) =>
+                        replyToDapp(
+                          { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                          messageId
+                        ),
+                      ...commonModalProps
+                    }
+                  })
+                )
 
-              break
-            }
-            case 'DEPLOY_CONTRACT': {
-              dispatch(activateAppLoading('Loading'))
-              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
-                params,
-                await getAddressAsymetricKey(params.signerAddress, 'public')
-              )
-              dispatch(deactivateAppLoading())
+                break
+              }
+              case 'DEPLOY_CONTRACT': {
+                dispatch(activateAppLoading('Loading'))
+                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const unsignedData = await queryClient.fetchQuery(buildDeployContractTxQuery({ params, publicKey }))
+                dispatch(deactivateAppLoading())
 
-              dispatch(
-                openModal({
-                  name: 'SignDeployContractTxModal',
-                  onUserDismiss: () =>
-                    replyToDapp(
-                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
-                      messageId
-                    ),
-                  props: {
-                    txParams: params,
-                    unsignedData,
-                    onSuccess: (result) =>
+                dispatch(
+                  openModal({
+                    name: 'SignDeployContractTxModal',
+                    onUserDismiss: () =>
                       replyToDapp(
-                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
                         messageId
                       ),
-                    ...commonModalProps
-                  }
-                })
-              )
-              break
-            }
-            case 'UNSIGNED_TX': {
-              dispatch(activateAppLoading('Loading'))
-              // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
-              // problems with unpolyfilled crypto Node JS module.
-              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-                unsignedTx: params.unsignedTx
-              })
-              dispatch(deactivateAppLoading())
+                    props: {
+                      txParams: params,
+                      unsignedData,
+                      onSuccess: (result) =>
+                        replyToDapp(
+                          { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                          messageId
+                        ),
+                      ...commonModalProps
+                    }
+                  })
+                )
+                break
+              }
+              case 'UNSIGNED_TX': {
+                dispatch(activateAppLoading('Loading'))
+                // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
+                // problems with unpolyfilled crypto Node JS module.
+                const decodedResult = await queryClient.fetchQuery(
+                  decodeUnsignedTxQuery({ unsignedTx: params.unsignedTx })
+                )
+                dispatch(deactivateAppLoading())
 
-              dispatch(
-                openModal({
-                  name: 'SignUnsignedTxModal',
-                  onUserDismiss: () =>
-                    replyToDapp(
-                      { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
-                      messageId
-                    ),
-                  props: {
-                    txParams: params,
-                    unsignedData: decodedResult.unsignedTx,
-                    submitAfterSign: true,
-                    onSuccess: (result) =>
+                dispatch(
+                  openModal({
+                    name: 'SignUnsignedTxModal',
+                    onUserDismiss: () =>
                       replyToDapp(
-                        { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
                         messageId
                       ),
-                    ...commonModalProps
-                  }
-                })
-              )
+                    props: {
+                      txParams: params,
+                      unsignedData: decodedResult.unsignedTx,
+                      submitAfterSign: true,
+                      onSuccess: (result) =>
+                        replyToDapp(
+                          { type: 'ALPH_TRANSACTION_SUBMITTED', data: { result: [{ type, result }], actionHash } },
+                          messageId
+                        ),
+                      ...commonModalProps
+                    }
+                  })
+                )
+                break
+              }
             }
+          } catch (error) {
+            // TODO: Try and build a chained tx to fund address?
+            // See: https://github.com/alephium/alephium-frontend/issues/1407
+            // 1. Make a list of all tokens needed for the tx
+            // 2. Make a list of all addresses that have enough balances
+            // 3. Display a modal with the list of addresses and the tokens needed
+            // 4. Let the user choose which addresses to use
+            // 5. Build the chained tx
+            // 6. Display a modal with the chained tx
+            // 7. Let the user sign and submit the chained tx
+            // 8. Respond to the dApp
+            throw error
           }
         } else {
-          // Check that all transactions have the same networkId
-          const networkId = txParams[0].params.networkId
-          const allSameNetwork = txParams.slice(1).every((tx) => tx.params.networkId === networkId)
+          validateChainedTxsNetwork(txParams)
 
-          if (!allSameNetwork) throw Error('All transactions must have the same networkId')
+          dispatch(activateAppLoading('Loading'))
+          const chainedTxParams = txParamsToChainedTxParams(txParams)
+          const publicKeys = await getChainedTxSignersPublicKeys(chainedTxParams)
+          const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
+          dispatch(deactivateAppLoading())
 
-          throw Error('Chained txs not supported yet')
-
-          // For each transaction, use the same logic as above
-          // Collect the results and signatures for each transaction
-          // The extension wallet does sth like this:
-          // results = transactions.map((transaction, index) => (
-          //   {
-          //     type: transaction.type,
-          //     result: {
-          //       ...transaction.result,
-          //       signature: signatures[index],
-          //     }
-          //   }
-          // )) as TransactionResult[]
+          dispatch(
+            openModal({
+              name: 'SignChainedTxModal',
+              onUserDismiss: () =>
+                replyToDapp(
+                  { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                  messageId
+                ),
+              props: {
+                props: getChainedTxPropsFromTransactionParams(txParams, unsignedData),
+                txParams: chainedTxParams,
+                onSuccess: (result) =>
+                  replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
+                dAppUrl,
+                dAppIcon,
+                origin: 'in-app-browser',
+                onError: (error) =>
+                  replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
+              }
+            })
+          )
         }
       } catch (errorMessage) {
         dispatch(deactivateAppLoading())
         const error = `${errorMessage}`
 
         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
-        showToast({ text1: error, type: 'error' })
+        showToast({
+          text1: 'Could not build transaction',
+          text2: error,
+          type: 'error',
+          visibilityTime: ToastDuration.LONG
+        })
       }
     },
     [dAppUrl, dispatch, replyToDapp]

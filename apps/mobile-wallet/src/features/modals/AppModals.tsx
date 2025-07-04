@@ -23,6 +23,7 @@ import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import SignChainedTxModal from '~/features/ecosystem/modals/SignChainedTxModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
@@ -175,6 +176,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <DataFetchErrorModal {...params.props} />
     case 'ConnectTipModal':
       return <ConnectTipModal />
+    case 'SignChainedTxModal':
+      return <SignChainedTxModal {...params.props} />
     default:
       return null
   }

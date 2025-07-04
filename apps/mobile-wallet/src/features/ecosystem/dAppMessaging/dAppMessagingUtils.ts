@@ -1,4 +1,12 @@
-import { Address, isGrouplessAddress } from '@alephium/shared'
+import { Address, getBaseAddressStr, isGrouplessAddress } from '@alephium/shared'
+import { TransactionParams } from '@alephium/wallet-dapp-provider'
+import {
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractChainedTxParams,
+  SignExecuteScriptChainedTxParams,
+  SignTransferChainedTxParams
+} from '@alephium/web3'
 import { capitalize } from 'lodash'
 
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
@@ -41,4 +49,53 @@ const getSigner = async (address: Address): Promise<ConnectedAddressPayload['sig
     derivationIndex: address.index,
     group: isGrouplessAddress(address) ? undefined : address.group
   }
+}
+
+export const txParamsToChainedTxParams = (txParams: TransactionParams[]) =>
+  txParams.map(({ type, params }) => {
+    switch (type) {
+      case 'TRANSFER': {
+        return { type: 'Transfer', ...params } as SignTransferChainedTxParams
+      }
+      case 'DEPLOY_CONTRACT': {
+        return { type: 'DeployContract', ...params } as SignDeployContractChainedTxParams
+      }
+      case 'EXECUTE_SCRIPT': {
+        return { type: 'ExecuteScript', ...params } as SignExecuteScriptChainedTxParams
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const getChainedTxPropsFromTransactionParams = (
+  txParams: Array<TransactionParams>,
+  unsignedData: Array<Omit<SignChainedTxResult, 'signature'>>
+) =>
+  txParams.map(({ type, params }, index) => {
+    switch (type) {
+      case 'TRANSFER': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      case 'DEPLOY_CONTRACT': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      case 'EXECUTE_SCRIPT': {
+        return { type, txParams: params, unsignedData: unsignedData[index] }
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const getChainedTxSignersPublicKeys = async (txParams: Array<SignChainedTxParams>) =>
+  Promise.all(txParams.map(({ signerAddress }) => getAddressAsymetricKey(getBaseAddressStr(signerAddress), 'public')))
+
+export const validateChainedTxsNetwork = (txParams: Array<TransactionParams>) => {
+  const networkId = txParams[0].params.networkId
+  const allSameNetwork = txParams.slice(1).every((tx) => tx.params.networkId === networkId)
+
+  if (!allSameNetwork) throw Error('All transactions must have the same networkId')
 }

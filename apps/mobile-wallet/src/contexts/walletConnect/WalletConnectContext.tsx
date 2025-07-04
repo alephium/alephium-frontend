@@ -1,6 +1,7 @@
 import '@walletconnect/react-native-compat'
 
 import {
+  getChainedTxPropsFromSignChainedTxParams,
   getHumanReadableError,
   parseSessionProposalEvent,
   SessionProposalEvent,
@@ -16,6 +17,7 @@ import { useInterval } from '@alephium/shared-react'
 import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
+  SignChainedTxParams,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
   SignMessageParams,
@@ -50,6 +52,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
+import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -646,12 +649,35 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitChainedTx': {
-            // TODO: Implement chained transactions flow
-            showToast({
-              text1: t('Could not build transaction'),
-              text2: 'Chained transactions are not supported yet.',
-              type: 'error'
-            })
+            const txParams = requestEvent.params.request.params as SignChainedTxParams[]
+
+            dispatch(activateAppLoading('Loading'))
+            const publicKeys = await getChainedTxSignersPublicKeys(txParams)
+            const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, publicKeys)
+            dispatch(deactivateAppLoading())
+
+            dispatch(
+              openModal({
+                name: 'SignChainedTxModal',
+                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                props: {
+                  props: getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData),
+                  txParams,
+                  onSuccess: (result) =>
+                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result }),
+                  dAppUrl: requestEvent.verifyContext.verified.origin,
+                  dAppIcon: getDappIcon(requestEvent.topic),
+                  origin: 'walletconnect',
+                  onError: (message) => {
+                    respondToWalletConnectWithError(requestEvent, {
+                      message,
+                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                    })
+                  }
+                }
+              })
+            )
+
             break
           }
           case 'alph_requestNodeApi': {

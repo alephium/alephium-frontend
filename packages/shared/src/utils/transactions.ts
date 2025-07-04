@@ -1,4 +1,14 @@
-import { explorer as e } from '@alephium/web3'
+import {
+  explorer as e,
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignTransferTxParams,
+  SignTransferTxResult
+} from '@alephium/web3'
 
 import {
   calcTxAmountsDeltaForAddress,
@@ -9,6 +19,7 @@ import {
 } from '@/transactions'
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances } from '@/types/assets'
+import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
 import { SentTransaction, TransactionInfoType } from '@/types/transactions'
 
 export const getTransactionInfoType = (
@@ -52,4 +63,70 @@ export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokens
     const assetAmount = assetAmounts.find((asset) => asset.id === id)
 
     return totalBalance === (assetAmount?.amount ?? 0).toString()
+  })
+
+export const getChainedTxPropsFromSignChainedTxParams = (
+  txParams: Array<SignChainedTxParams>,
+  unsignedData: Array<Omit<SignChainedTxResult, 'signature'>>
+): SignChainedTxModalProps['props'] =>
+  txParams.map(({ type, ...rest }, index) => {
+    switch (type) {
+      case 'Transfer': {
+        return {
+          type: 'TRANSFER',
+          txParams: rest as SignTransferTxParams,
+          unsignedData: unsignedData[index]
+        }
+      }
+      case 'DeployContract': {
+        return {
+          type: 'DEPLOY_CONTRACT',
+          txParams: rest as SignDeployContractTxParams,
+          unsignedData: unsignedData[index]
+        }
+      }
+      case 'ExecuteScript': {
+        return {
+          type: 'EXECUTE_SCRIPT',
+          txParams: rest as SignExecuteScriptTxParams,
+          unsignedData: unsignedData[index]
+        }
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
+  })
+
+export const signChainedTxResultsToTxSubmittedResults = (
+  results: Array<SignChainedTxResult>,
+  txParams: Array<SignChainedTxParams>
+): SignChainedTxModalResult =>
+  results.map(({ type, ...rest }, index) => {
+    switch (type) {
+      case 'Transfer': {
+        return {
+          type: 'TRANSFER',
+          result: rest as SignTransferTxResult,
+          txParams: txParams[index] as SignTransferTxParams
+        }
+      }
+      case 'DeployContract': {
+        return {
+          type: 'DEPLOY_CONTRACT',
+          result: rest as SignDeployContractTxResult,
+          txParams: txParams[index] as SignDeployContractTxParams
+        }
+      }
+      case 'ExecuteScript': {
+        return {
+          type: 'EXECUTE_SCRIPT',
+          result: rest as SignExecuteScriptTxResult,
+          txParams: txParams[index] as SignExecuteScriptTxParams
+        }
+      }
+      default: {
+        throw new Error(`Unsupported transaction type: ${type}`)
+      }
+    }
   })
