@@ -2,6 +2,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -47,7 +48,14 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <ScreenSection>
         {chainedTxProps ? (
-          <SignChainedTxModalContent props={chainedTxProps} />
+          <>
+            <Surface type="accent" style={{ padding: 20 }}>
+              <AppText color="accent">
+                {t('Your address is missing some ALPH for gas fees but thankfully another address can cover it!')}
+              </AppText>
+            </Surface>
+            <SignChainedTxModalContent props={chainedTxProps} />
+          </>
         ) : (
           <Surface>
             <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
