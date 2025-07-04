@@ -2,6 +2,8 @@ import {
   fromHumanReadableAmount,
   getHumanReadableError,
   isGrouplessKeyType,
+  signAndSubmitTxResultToSentTx,
+  SweepTxParams,
   throttledClient,
   transactionSent
 } from '@alephium/shared'
@@ -64,10 +66,11 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       try {
         if (isSweeping) {
-          const txParams = {
+          const txParams: SweepTxParams = {
             signerAddress: fromAddress.hash,
             signerKeyType: fromAddress.keyType,
-            toAddress: consolidationRequired ? fromAddress.hash : toAddress
+            toAddress: consolidationRequired ? fromAddress.hash : toAddress,
+            lockTime: lockTime?.getTime()
           }
           let results: Array<{ txId: string }>
 
@@ -83,20 +86,9 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             results = await signer.signAndSubmitSweepTxs(txParams)
           }
 
-          for (const { txId } of results) {
-            dispatch(
-              transactionSent({
-                hash: txId,
-                fromAddress: txParams.signerAddress,
-                toAddress: txParams.toAddress,
-                amount: attoAlphAmount,
-                tokens,
-                timestamp: new Date().getTime(),
-                lockTime: lockTime?.getTime(),
-                type: consolidationRequired ? 'consolidation' : 'sweep',
-                status: 'sent'
-              })
-            )
+          for (const result of results) {
+            const sentTx = signAndSubmitTxResultToSentTx({ txParams, result, type: 'SWEEP' })
+            dispatch(transactionSent(sentTx))
           }
 
           sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })

@@ -23,10 +23,7 @@ const useModalDismiss = ({ id, onUserDismiss }: UseModalDismissProps) => {
 
   const onDismiss = () => {
     if (!wasDismissedProgrammatically.current) {
-      console.log('MODAL: run custom code here since user closed the modal manually by dragging')
       onUserDismiss?.()
-    } else {
-      console.log('MODAL: dismissed programmatically')
     }
 
     dispatch(closeModal({ id }))

@@ -1,10 +1,27 @@
-import { AddressHash, AssetAmount, selectAddressByHash, transactionSent } from '@alephium/shared'
-import { node as n, Token } from '@alephium/web3'
+import {
+  Address,
+  AddressHash,
+  AssetAmount,
+  getChainedTxPropsFromSignChainedTxParams,
+  MAXIMAL_GAS_FEE,
+  selectAddressByHash,
+  SignChainedTxModalProps,
+  SweepTxParams,
+  throttledClient
+} from '@alephium/shared'
+import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-react'
+import { SignChainedTxParams, SignTransferTxParams, Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { buildSweepTransactions, buildUnsignedTransactions } from '~/api/transactions'
+import {
+  fetchSweepTransactionsFees,
+  fetchTransferTransactionsFees,
+  sendChainedTransactions,
+  sendSweepTransactions,
+  sendTransferTransactions
+} from '~/api/transactions'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -12,14 +29,6 @@ import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { signer } from '~/signer'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
-
-type UnsignedTxData = {
-  unsignedTxs: {
-    txId: n.BuildSimpleTransferTxResult['txId'] | n.SweepAddressTransaction['txId']
-    unsignedTx: n.BuildSimpleTransferTxResult['unsignedTx'] | n.SweepAddressTransaction['unsignedTx']
-  }[]
-  fees: bigint
-}
 
 export type BuildTransactionCallbacks = {
   onBuildSuccess: () => void
@@ -36,6 +45,7 @@ interface SendContextValue {
   fees: bigint
   buildTransaction: (callbacks: BuildTransactionCallbacks, shouldSweep: boolean) => Promise<void>
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
+  chainedTxProps?: SignChainedTxModalProps['props']
 }
 
 const initialValues: SendContextValue = {
@@ -47,7 +57,8 @@ const initialValues: SendContextValue = {
   setAssetAmount: () => null,
   fees: BigInt(0),
   buildTransaction: () => Promise.resolve(undefined),
-  sendTransaction: () => Promise.resolve(undefined)
+  sendTransaction: () => Promise.resolve(undefined),
+  chainedTxProps: []
 }
 
 const SendContext = createContext(initialValues)
@@ -71,18 +82,21 @@ export const SendContextProvider = ({
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(destinationAddressHash)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(originAddressHash)
   const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(
     tokenId && isNft ? [{ id: tokenId, amount: BigInt(1) }] : []
   )
-  const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
-
-  const [consolidationRequired, setConsolidationRequired] = useState(false)
-  const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
+  const [fees, setFees] = useState<bigint>(initialValues.fees)
+  const [chainedTxProps, setChainedTxProps] = useState<SignChainedTxModalProps['props']>()
+  const [shouldSweep, setShouldSweep] = useState(false)
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
+  const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
+    (hash) => hash !== address?.hash
+  )
 
   const setAssetAmount = useCallback(
     (assetId: string, amount?: bigint) => {
@@ -102,44 +116,24 @@ export const SendContextProvider = ({
     [assetAmounts]
   )
 
-  const buildConsolidationTransactions = useCallback(async () => {
-    if (!address) return
-
-    try {
-      const data = await buildSweepTransactions(address, address.hash)
-      setUnsignedTxData(data)
-    } catch (e) {
-      showExceptionToast(e, t('Could not build transaction'))
-    }
-  }, [address, t])
-
   const sendTransaction = useCallback(
     async (onSendSuccess: () => void) => {
       if (!address || !toAddress) return
 
-      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
       try {
-        for (const { unsignedTx } of unsignedTxData.unsignedTxs) {
-          const data = await signer.signAndSubmitUnsignedTx({ signerAddress: address.hash, unsignedTx })
-
-          dispatch(
-            transactionSent({
-              hash: data.txId,
-              fromAddress: address.hash,
-              toAddress: consolidationRequired ? address.hash : toAddress,
-              amount: attoAlphAmount,
-              tokens,
-              timestamp: new Date().getTime(),
-              status: 'sent',
-              type: 'transfer'
-            })
-          )
+        if (shouldSweep) {
+          const txParams = getSweepTxParams(address, toAddress)
+          await sendSweepTransactions(txParams)
+        } else if (chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas) {
+          const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
+          await sendChainedTransactions(txParams)
+        } else {
+          const txParams = getTransferTxParams(address, toAddress, assetAmounts)
+          await sendTransferTransactions(txParams)
         }
 
         onSendSuccess()
-
-        sendAnalytics({ event: 'Send: Sent transaction', props: { tokens: tokens.length } })
+        sendAnalytics({ event: 'Send: Sent transaction' })
       } catch (error) {
         const message = t('Could not send transaction')
 
@@ -147,7 +141,7 @@ export const SendContextProvider = ({
         sendAnalytics({ type: 'error', message })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, t, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, chainedTxProps, groupedAddressWithEnoughAlphForGas, shouldSweep, t, toAddress]
   )
 
   const authenticateAndSend = useCallback(
@@ -167,44 +161,58 @@ export const SendContextProvider = ({
     async (callbacks: BuildTransactionCallbacks, shouldSweep: boolean) => {
       if (!address || !toAddress) return
 
+      setShouldSweep(shouldSweep)
+
       try {
-        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts, shouldSweep)
-        if (data) setUnsignedTxData(data)
+        if (shouldSweep) {
+          const txParams = getSweepTxParams(address, toAddress)
+          const fees = await fetchSweepTransactionsFees(txParams)
+          setFees(fees)
+        } else {
+          const txParams = getTransferTxParams(address, toAddress, assetAmounts)
+          const fees = await fetchTransferTransactionsFees(txParams)
+          setFees(fees)
+        }
+
         callbacks.onBuildSuccess()
       } catch (e) {
-        const error = (e as unknown as string).toString()
+        const error = (e as unknown as string).toString().toLowerCase()
 
         if (error.includes('consolidating') || error.includes('consolidate')) {
-          setConsolidationRequired(true)
-          dispatch(
-            openModal({
-              name: 'ConsolidationModal',
-              props: {
-                onConsolidate: () => {
-                  authenticateAndSend(onSendSuccessCallback)
-                },
-                fees: unsignedTxData.fees
-              }
-            })
-          )
-          setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
-          await buildConsolidationTransactions()
+          try {
+            const txParams = getSweepTxParams(address, address.hash)
+            const fees = await fetchSweepTransactionsFees(txParams)
+
+            dispatch(
+              openModal({
+                name: 'ConsolidationModal',
+                props: { txParams, onSuccess: callbacks.onConsolidationSuccess, fees }
+              })
+            )
+          } catch (error) {
+            showExceptionToast(error, t('Could not build transaction'))
+          }
+        } else if (error.includes('not enough')) {
+          if (groupedAddressWithEnoughAlphForGas) {
+            const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
+            const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
+              await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),
+              await signer.getPublicKey(address.hash)
+            ])
+
+            const props = getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData)
+            setChainedTxProps(props)
+
+            callbacks.onBuildSuccess()
+          } else {
+            showExceptionToast(e, t('Could not build transaction'))
+          }
         } else {
           showExceptionToast(e, t('Could not build transaction'))
         }
       }
     },
-    [
-      address,
-      assetAmounts,
-      authenticateAndSend,
-      buildConsolidationTransactions,
-      dispatch,
-      onSendSuccessCallback,
-      t,
-      toAddress,
-      unsignedTxData.fees
-    ]
+    [address, toAddress, assetAmounts, dispatch, t, groupedAddressWithEnoughAlphForGas]
   )
 
   return (
@@ -216,7 +224,8 @@ export const SendContextProvider = ({
         setFromAddress,
         assetAmounts,
         setAssetAmount,
-        fees: unsignedTxData.fees,
+        chainedTxProps,
+        fees,
         buildTransaction,
         sendTransaction: authenticateAndSend
       }}
@@ -227,3 +236,41 @@ export const SendContextProvider = ({
 }
 
 export const useSendContext = () => useContext(SendContext)
+
+const getSweepTxParams = (address: Address, toAddress: AddressHash): SweepTxParams => ({
+  signerAddress: address.hash,
+  signerKeyType: address.keyType,
+  toAddress
+})
+
+const getTransferTxParams = (
+  address: Address,
+  toAddress: AddressHash,
+  assetAmounts: AssetAmount[]
+): SignTransferTxParams => {
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+  return {
+    signerAddress: address.hash,
+    signerKeyType: address.keyType,
+    destinations: [{ address: toAddress, attoAlphAmount, tokens }]
+  }
+}
+
+const getChainedTxParams = (
+  groupedAddressWithEnoughAlphForGas: string,
+  address: Address,
+  toAddress: AddressHash,
+  assetAmounts: AssetAmount[]
+): Array<SignChainedTxParams> => [
+  {
+    type: 'Transfer',
+    signerAddress: groupedAddressWithEnoughAlphForGas,
+    signerKeyType: 'default',
+    destinations: [{ address: address.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
+  },
+  {
+    type: 'Transfer',
+    ...getTransferTxParams(address, toAddress, assetAmounts)
+  }
+]

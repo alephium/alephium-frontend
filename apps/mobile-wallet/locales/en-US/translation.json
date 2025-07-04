@@ -482,5 +482,6 @@
   "Revoked connection to {{ host }}": "Revoked connection to {{ host }}",
   "Useful tip": "Useful tip",
   "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect.",
-  "Transaction {{ number }}": "Transaction {{ number }}"
+  "Transaction {{ number }}": "Transaction {{ number }}",
+  "Your address is missing some ALPH for gas fees but thankfully another address can cover it!": "Your address is missing some ALPH for gas fees but thankfully another address can cover it!"
 }

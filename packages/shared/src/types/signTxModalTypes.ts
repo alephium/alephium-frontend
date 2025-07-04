@@ -55,7 +55,14 @@ export interface SignMessageTxModalProps extends SignTxModalCommonProps {
   onSuccess: (signResult: SignMessageResult) => void
 }
 
-export type SignTxModalType = 'TRANSFER' | 'DEPLOY_CONTRACT' | 'EXECUTE_SCRIPT' | 'UNSIGNED_TX' | 'MESSAGE' | 'CHAINED'
+export type SignTxModalType =
+  | 'TRANSFER'
+  | 'DEPLOY_CONTRACT'
+  | 'EXECUTE_SCRIPT'
+  | 'UNSIGNED_TX'
+  | 'MESSAGE'
+  | 'CHAINED'
+  | 'CONSOLIDATE'
 
 export type SignChainedTxModalResult = Array<
   | {

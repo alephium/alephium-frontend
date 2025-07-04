@@ -1,5 +1,6 @@
-import { AddressHash, selectDefaultAddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, MAXIMAL_GAS_FEE, selectDefaultAddressHash, TokenId } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
+import { isGrouplessAddress } from '@alephium/web3'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -110,5 +111,29 @@ export const useFetchAddressesHashesSplitByUseFrequency = () => {
   return {
     data: splitAddressHashes,
     isLoading
+  }
+}
+
+export const useFetchGroupedAddressesWithEnoughAlphForGas = () => {
+  const { data: addressesBalances, isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
+
+  const addressesWithEnoughAlphForGas = useMemo(
+    () =>
+      Object.keys(addressesBalances)
+        .filter((addressHash) => !isGrouplessAddress(addressHash)) // Groupless addresses cannot be used as input for chained txs
+        .reduce((addressesWithEnoughBalance, addressHash) => {
+          const alphBalance = addressesBalances[addressHash]?.find(({ id }) => id === ALPH.id)
+          if (alphBalance && BigInt(alphBalance.availableBalance) >= MAXIMAL_GAS_FEE) {
+            addressesWithEnoughBalance.push(addressHash as AddressHash)
+          }
+
+          return addressesWithEnoughBalance
+        }, [] as AddressHash[]),
+    [addressesBalances]
+  )
+
+  return {
+    data: addressesWithEnoughAlphForGas,
+    isLoading: isLoadingAddressesBalances
   }
 }
