@@ -1,4 +1,4 @@
-import { Account, KeyType, SignerProviderSimple } from '@alephium/web3'
+import { Account, KeyType, node as n, SignerProviderSimple } from '@alephium/web3'
 
 import { throttledClient } from '@/api/throttledClient'
 
@@ -35,8 +35,7 @@ export abstract class AlephiumWalletSigner extends SignerProviderSimple {
   }
 }
 
-export type SweepTxParams = {
+export interface SweepTxParams extends Omit<n.BuildSweepAddressTransactions, 'fromPublicKey' | 'fromPublicKeyType'> {
   signerAddress: string
   signerKeyType?: KeyType
-  toAddress: string
 }

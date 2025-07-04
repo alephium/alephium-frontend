@@ -5,6 +5,7 @@ import {
   isGrouplessKeyType,
   selectAddressByHash,
   selectDefaultAddress,
+  signAndSubmitTxResultToSentTx,
   transactionSent
 } from '@alephium/shared'
 import {
@@ -128,17 +129,9 @@ const AddressSweepModal = memo(
           results = await signer.signAndSubmitSweepTxs(txParams)
         }
 
-        for (const { txId } of results) {
-          dispatch(
-            transactionSent({
-              hash: txId,
-              fromAddress: sweepAddresses.from.hash,
-              toAddress: sweepAddresses.to.hash,
-              timestamp: new Date().getTime(),
-              type: 'sweep',
-              status: 'sent'
-            })
-          )
+        for (const result of results) {
+          const sentTx = signAndSubmitTxResultToSentTx({ txParams, result, type: 'SWEEP' })
+          dispatch(transactionSent(sentTx))
         }
 
         onClose()

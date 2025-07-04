@@ -1,47 +1,64 @@
-import { Address, AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
+import {
+  signAndSubmitTxResultToSentTx,
+  SignChainedTxModalResult,
+  signChainedTxResultsToTxSubmittedResults,
+  SweepTxParams,
+  throttledClient,
+  transactionSent
+} from '@alephium/shared'
+import { SignChainedTxParams, SignTransferTxParams, SignTransferTxResult, SubmissionResult } from '@alephium/web3'
 
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
+import { signer } from '~/signer'
+import { store } from '~/store/store'
 
-export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
+export const fetchSweepTransactionsFees = async (txParams: SweepTxParams): Promise<bigint> => {
   const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
-    {
-      signerAddress: fromAddress.hash,
-      signerKeyType: fromAddress.keyType,
-      toAddress: toAddressHash
-    },
-    await getAddressAsymetricKey(fromAddress.hash, 'public')
+    txParams,
+    await signer.getPublicKey(txParams.signerAddress)
   )
 
-  return {
-    unsignedTxs,
-    fees: unsignedTxs.reduce((acc, tx) => acc + BigInt(tx.gasPrice) * BigInt(tx.gasAmount), BigInt(0))
-  }
+  return unsignedTxs.reduce((acc, tx) => acc + BigInt(tx.gasPrice) * BigInt(tx.gasAmount), BigInt(0))
 }
 
-export const buildUnsignedTransactions = async (
-  fromAddress: Address,
-  toAddressHash: string,
-  assetAmounts: AssetAmount[],
-  shouldSweep: boolean
-) => {
-  if (shouldSweep) {
-    return await buildSweepTransactions(fromAddress, toAddressHash)
-  } else {
-    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+export const fetchTransferTransactionsFees = async (txParams: SignTransferTxParams): Promise<bigint> => {
+  const { gasAmount, gasPrice } = await throttledClient.txBuilder.buildTransferTx(
+    txParams,
+    await signer.getPublicKey(txParams.signerAddress)
+  )
 
-    const data = await throttledClient.txBuilder.buildTransferTx(
-      {
-        signerAddress: fromAddress.hash,
-        signerKeyType: fromAddress.keyType,
-        destinations: [{ address: toAddressHash, attoAlphAmount, tokens }]
-      },
-      await getAddressAsymetricKey(fromAddress.hash, 'public')
-    )
+  return BigInt(gasAmount) * BigInt(gasPrice)
+}
 
-    return {
-      unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],
-      fees: BigInt(data.gasAmount) * BigInt(data.gasPrice)
-    }
+export const sendChainedTransactions = async (
+  txParams: Array<SignChainedTxParams>
+): Promise<SignChainedTxModalResult> => {
+  const data = await signer.signAndSubmitChainedTx(txParams)
+  const results = signChainedTxResultsToTxSubmittedResults(data, txParams)
+
+  results.forEach((result) => {
+    const sentTx = signAndSubmitTxResultToSentTx(result)
+    store.dispatch(transactionSent(sentTx))
+  })
+
+  return results
+}
+
+export const sendSweepTransactions = async (txParams: SweepTxParams): Promise<Array<SubmissionResult>> => {
+  const results = await signer.signAndSubmitSweepTxs(txParams)
+
+  for (const result of results) {
+    const sentTx = signAndSubmitTxResultToSentTx({ txParams, result, type: 'SWEEP' })
+    store.dispatch(transactionSent(sentTx))
   }
+
+  return results
+}
+
+export const sendTransferTransactions = async (txParams: SignTransferTxParams): Promise<SignTransferTxResult> => {
+  const result = await signer.signAndSubmitTransferTx(txParams)
+
+  const sentTx = signAndSubmitTxResultToSentTx({ txParams, result, type: 'TRANSFER' })
+  store.dispatch(transactionSent(sentTx))
+
+  return result
 }

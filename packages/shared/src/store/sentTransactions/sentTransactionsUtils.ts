@@ -5,13 +5,15 @@ import type {
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
   SignTransferTxParams,
-  SignTransferTxResult
+  SignTransferTxResult,
+  SubmissionResult
 } from '@alephium/web3'
 
+import { SweepTxParams } from '@/signer'
 import { calculateTransferTxAssetAmounts } from '@/transactions'
 import { SentTransaction } from '@/types/transactions'
 
-type Props =
+type SignAndSubmitTxResultToSentTxProps =
   | {
       type: 'TRANSFER'
       txParams: SignTransferTxParams
@@ -27,8 +29,17 @@ type Props =
       txParams: SignDeployContractTxParams
       result: SignDeployContractTxResult
     }
+  | {
+      type: 'SWEEP'
+      txParams: SweepTxParams
+      result: Pick<SubmissionResult, 'txId'>
+    }
 
-export const signAndSubmitTxResultToSentTx = ({ txParams, type, result }: Props): SentTransaction => {
+export const signAndSubmitTxResultToSentTx = ({
+  txParams,
+  type,
+  result
+}: SignAndSubmitTxResultToSentTxProps): SentTransaction => {
   switch (type) {
     case 'TRANSFER': {
       const assetAmounts = calculateTransferTxAssetAmounts(txParams)
@@ -67,6 +78,16 @@ export const signAndSubmitTxResultToSentTx = ({ txParams, type, result }: Props)
         status: 'sent',
         type: 'contract',
         toAddress: ''
+      }
+    case 'SWEEP':
+      return {
+        hash: result.txId,
+        fromAddress: txParams.signerAddress,
+        toAddress: txParams.toAddress,
+        lockTime: txParams.lockTime ? new Date(txParams.lockTime).getTime() : undefined,
+        timestamp: new Date().getTime(),
+        status: 'sent',
+        type: 'sweep'
       }
     default: {
       throw new Error(`Unsupported transaction type: ${type}`)
