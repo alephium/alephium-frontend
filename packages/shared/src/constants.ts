@@ -4,7 +4,7 @@ export const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
 export const MINIMAL_GAS_AMOUNT = 20000
 export const MAXIMAL_GAS_AMOUNT = 5000000
-export const MINIMAL_GAS_PRICE = BigInt(100000000000) // 100 nanoALPH for the first year to prevent DoS attacksconst MAX_GAS_AMOUNT_PER_TX = BigInt(5000000)
+export const MINIMAL_GAS_PRICE = BigInt(100000000000) // 100 nanoALPH for the first year to prevent DoS attacks
 export const MAXIMAL_GAS_FEE = DEFAULT_GAS_PRICE * BigInt(MAXIMAL_GAS_AMOUNT)
 
 export const GENESIS_TIMESTAMP = 1231006505000
