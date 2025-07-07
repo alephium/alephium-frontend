@@ -2,6 +2,9 @@ import {
   AddressHash,
   AssetAmount,
   getChainedTxPropsFromSignChainedTxParams,
+  getGasRefillChainedTxParams,
+  getSweepTxParams,
+  getTransferTxParams,
   selectAddressByHash,
   SignChainedTxModalProps,
   throttledClient
@@ -25,7 +28,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { signer } from '~/signer'
 import { showExceptionToast } from '~/utils/layout'
-import { getGasRefillChainedTxParams, getSweepTxParams, getTransferTxParams } from '~/utils/transactions'
 
 export type BuildTransactionCallbacks = {
   onBuildSuccess: () => void
@@ -119,19 +121,16 @@ export const SendContextProvider = ({
       if (!address || !toAddress) return
 
       try {
+        const sendFlowData = { fromAddress: address, toAddress, assetAmounts }
+
         if (shouldSweep) {
-          const txParams = getSweepTxParams(address, toAddress)
+          const txParams = getSweepTxParams(sendFlowData)
           await sendSweepTransactions(txParams)
         } else if (shouldChainTxsForGasRefill) {
-          const txParams = getGasRefillChainedTxParams(
-            groupedAddressWithEnoughAlphForGas,
-            address,
-            toAddress,
-            assetAmounts
-          )
+          const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, sendFlowData)
           await sendChainedTransactions(txParams)
         } else {
-          const txParams = getTransferTxParams(address, toAddress, assetAmounts)
+          const txParams = getTransferTxParams(sendFlowData)
           await sendTransferTransactions(txParams)
         }
 
@@ -167,13 +166,15 @@ export const SendContextProvider = ({
       setShouldSweep(shouldSweep)
       setChainedTxProps(undefined)
 
+      const sendFlowData = { fromAddress: address, toAddress, assetAmounts }
+
       try {
         if (shouldSweep) {
-          const txParams = getSweepTxParams(address, toAddress)
+          const txParams = getSweepTxParams(sendFlowData)
           const fees = await fetchSweepTransactionsFees(txParams)
           setFees(fees)
         } else {
-          const txParams = getTransferTxParams(address, toAddress, assetAmounts)
+          const txParams = getTransferTxParams(sendFlowData)
           const fees = await fetchTransferTransactionsFees(txParams)
           setFees(fees)
         }
@@ -184,7 +185,7 @@ export const SendContextProvider = ({
 
         try {
           if (error.includes('consolidating') || error.includes('consolidate')) {
-            const txParams = getSweepTxParams(address, address.hash)
+            const txParams = getSweepTxParams({ ...sendFlowData, toAddress: address.hash })
             const fees = await fetchSweepTransactionsFees(txParams)
 
             dispatch(
@@ -196,12 +197,7 @@ export const SendContextProvider = ({
 
             setChainedTxProps(undefined)
           } else if (error.includes('not enough') && groupedAddressWithEnoughAlphForGas) {
-            const txParams = getGasRefillChainedTxParams(
-              groupedAddressWithEnoughAlphForGas,
-              address,
-              toAddress,
-              assetAmounts
-            )
+            const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, sendFlowData)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
               await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),

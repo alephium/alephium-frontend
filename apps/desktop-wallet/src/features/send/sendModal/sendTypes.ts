@@ -1,15 +1,4 @@
-import { Address, AssetAmount, SignChainedTxModalProps, TokenId } from '@alephium/shared'
-
-export interface SendFlowData {
-  fromAddress: Address
-  toAddress: string
-  assetAmounts: AssetAmount[]
-  shouldSweep: boolean
-  gasAmount?: number
-  gasPrice?: string
-  lockTime?: Date
-  tokenId?: TokenId
-}
+import { SendFlowData, SignChainedTxModalProps } from '@alephium/shared'
 
 export type TransferTxModalData = PartialTxData<SendFlowData, 'fromAddress'>
 

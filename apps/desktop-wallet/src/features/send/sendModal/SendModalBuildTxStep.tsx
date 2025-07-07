@@ -1,4 +1,4 @@
-import { shouldBuildSweepTransactions } from '@alephium/shared'
+import { SendFlowData, shouldBuildSweepTransactions } from '@alephium/shared'
 import { useFetchAddressBalances } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -9,7 +9,7 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
 import GasSettings from '@/features/send/sendModal/GasSettings'
-import { SendFlowData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
+import { TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import TokensAmountInputs from '@/features/send/sendModal/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
@@ -18,7 +18,7 @@ import { AssetAmountInputType } from '@/types/assets'
 
 export interface SendModalBuildTxStepProps {
   data: TransferTxModalData
-  onSubmit: (data: SendFlowData) => void
+  onSubmit: (data: SendFlowData, shouldSweep: boolean) => void
   onBack: () => void
 }
 
@@ -118,15 +118,17 @@ const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepPr
         </ModalFooterButton>
         <ModalFooterButton
           onClick={() =>
-            onSubmit({
-              fromAddress,
-              toAddress,
-              assetAmounts,
-              gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
-              gasPrice,
-              lockTime,
+            onSubmit(
+              {
+                fromAddress,
+                toAddress,
+                assetAmounts,
+                gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
+                gasPrice,
+                lockTime
+              },
               shouldSweep
-            })
+            )
           }
           disabled={!isSubmitButtonActive}
         >

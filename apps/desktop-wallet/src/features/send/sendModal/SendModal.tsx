@@ -1,6 +1,10 @@
 import {
   getChainedTxPropsFromSignChainedTxParams,
+  getGasRefillChainedTxParams,
   getHumanReadableError,
+  getSweepTxParams,
+  getTransferTxParams,
+  SendFlowData,
   SignChainedTxModalProps,
   throttledClient
 } from '@alephium/shared'
@@ -28,12 +32,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModalAddressesStep from '@/features/send/sendModal/SendModalAddressesStep'
 import SendModalBuildTxStep from '@/features/send/sendModal/SendModalBuildTxStep'
 import SendModalInfoCheckStep from '@/features/send/sendModal/SendModalInfoCheckStep'
-import {
-  SendFlowData,
-  TransferAddressesTxModalOnSubmitData,
-  TransferTxModalData
-} from '@/features/send/sendModal/sendTypes'
-import { getGasRefillChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendModal/sendUtils'
+import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
@@ -52,7 +51,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const { isLedger, onLedgerError } = useLedger()
 
   const [addressesData, setAddressesData] = useState<TransferTxModalData>(initialTxData)
-  const [transactionData, setTransactionData] = useState<SendFlowData>()
+  const [sendFlowData, setSendFlowData] = useState<SendFlowData>()
   const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
   const [isSweeping, setIsSweeping] = useState(false)
@@ -70,23 +69,23 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
   const handleSend = useCallback(async () => {
-    if (!transactionData) return
+    if (!sendFlowData) return
 
     setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
 
     try {
-      const ledgerTxParams = { signerIndex: transactionData.fromAddress.index, onLedgerError }
+      const ledgerTxParams = { signerIndex: sendFlowData.fromAddress.index, onLedgerError }
 
       if (isSweeping) {
-        const txParams = getSweepTxParams(transactionData, { toAddress: transactionData.toAddress })
+        const txParams = getSweepTxParams(sendFlowData)
         await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
         sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
       } else if (shouldChainTxsForGasRefill) {
-        const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, transactionData)
+        const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, sendFlowData)
         await sendChainedTransactions(txParams, isLedger)
       } else {
-        const txParams = getTransferTxParams(transactionData)
+        const txParams = getTransferTxParams(sendFlowData)
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
         sendAnalytics({ event: 'Sent transaction', props: { origin: 'send-modal' } })
@@ -108,7 +107,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
     sendAnalytics,
     shouldChainTxsForGasRefill,
     t,
-    transactionData
+    sendFlowData
   ])
 
   const goToAddresses = useCallback(() => setStep('addresses'), [])
@@ -133,14 +132,14 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   )
 
   const buildTransactionExtended = useCallback(
-    async (data: SendFlowData) => {
-      setTransactionData(data)
+    async (data: SendFlowData, shouldSweep: boolean) => {
+      setSendFlowData(data)
       setIsLoading(true)
-      setIsSweeping(data.shouldSweep)
+      setIsSweeping(shouldSweep)
 
       try {
-        if (data.shouldSweep) {
-          const txParams = getSweepTxParams(data, { toAddress: data.toAddress })
+        if (shouldSweep) {
+          const txParams = getSweepTxParams(data)
           const fees = await fetchSweepTransactionsFees(txParams)
           setFees(fees)
         } else {
@@ -158,7 +157,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
         try {
           if (error.includes('consolidating') || error.includes('consolidate')) {
-            const txParams = getSweepTxParams(data, { toAddress: data.fromAddress.hash })
+            const txParams = getSweepTxParams({ ...data, toAddress: data.fromAddress.hash })
             const fees = await fetchSweepTransactionsFees(txParams)
 
             dispatch(
@@ -195,11 +194,11 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   )
 
   useEffect(() => {
-    if (!isTransactionBuildTriggered && transactionData) {
+    if (!isTransactionBuildTriggered && sendFlowData) {
       setIsTransactionBuildTriggered(true)
-      buildTransactionExtended(transactionData)
+      buildTransactionExtended(sendFlowData, isSweeping)
     }
-  }, [buildTransactionExtended, isTransactionBuildTriggered, transactionData])
+  }, [buildTransactionExtended, isSweeping, isTransactionBuildTriggered, sendFlowData])
 
   const moveToSecondStep = useCallback((data: TransferAddressesTxModalOnSubmitData) => {
     setAddressesData(data)
@@ -219,14 +218,14 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       )}
       {step === 'build-tx' && (
         <SendModalBuildTxStep
-          data={{ ...(transactionData ?? {}), ...addressesData }}
+          data={{ ...(sendFlowData ?? {}), ...addressesData }}
           onSubmit={buildTransactionExtended}
           onBack={goToAddresses}
         />
       )}
-      {step === 'info-check' && !!transactionData && !!fees && (
+      {step === 'info-check' && !!sendFlowData && !!fees && (
         <SendModalInfoCheckStep
-          data={transactionData}
+          data={sendFlowData}
           chainedTxProps={chainedTxProps}
           fees={fees}
           onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
