@@ -1,15 +1,9 @@
-import {
-  isGrouplessKeyType,
-  selectAddressByHash,
-  signAndSubmitTxResultToSentTx,
-  SignTransferTxModalProps,
-  transactionSent
-} from '@alephium/shared'
+import { selectAddressByHash, SignTransferTxModalProps } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { SignTransferTxResult } from '@alephium/web3'
 import { Fragment, memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendTransferTransaction } from '@/api/transactions'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -18,12 +12,10 @@ import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { signer } from '@/signer'
+import { useAppSelector } from '@/hooks/redux'
 
 const SignTransferTxModal = memo(
   ({ dAppUrl, txParams, unsignedData, onSuccess, ...props }: ModalBaseProp & SignTransferTxModalProps) => {
-    const dispatch = useAppDispatch()
     const { t } = useTranslation()
     const { isLedger, onLedgerError } = useLedger()
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
@@ -37,28 +29,14 @@ const SignTransferTxModal = memo(
       // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
       // That would make sense only if we have a single destination otherwise what should the sweep destination
       // address be?
-
-      let result: SignTransferTxResult
-
-      if (isLedger) {
-        if (isGrouplessKeyType(signerAddress.keyType)) throw Error('Groupless address not supported on Ledger')
-
-        result = await signer.signAndSubmitTransferTxLedger(txParams, {
-          signerIndex: signerAddress.index,
-          signerKeyType: signerAddress.keyType ?? 'default',
-          onLedgerError
-        })
-      } else {
-        result = await signer.signAndSubmitTransferTx(txParams)
-      }
+      const result = await sendTransferTransaction(txParams, isLedger, {
+        signerIndex: signerAddress.index,
+        onLedgerError
+      })
 
       onSuccess(result)
-
-      const sentTx = signAndSubmitTxResultToSentTx({ type: 'TRANSFER', txParams, result })
-      dispatch(transactionSent(sentTx))
-
-      sendAnalytics({ event: 'Sent transaction' })
-    }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
+      sendAnalytics({ event: 'Sent transaction', props: { origin: 'wc' } })
+    }, [isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 

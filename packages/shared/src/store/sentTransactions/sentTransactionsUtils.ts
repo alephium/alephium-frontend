@@ -47,7 +47,7 @@ export const signAndSubmitTxResultToSentTx = ({
         hash: result.txId,
         fromAddress: txParams.signerAddress,
         toAddress: txParams.destinations[0].address, // TODO: Improve display for multiple destinations
-        // lockTime: TODO: Improve display of locked time per destination
+        lockTime: txParams.destinations[0].lockTime,
         amount: assetAmounts.find(({ id }) => id === ALPH.id)?.amount?.toString(),
         tokens: assetAmounts
           .filter(({ id }) => id !== ALPH.id)

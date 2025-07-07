@@ -1,13 +1,4 @@
-import {
-  fromHumanReadableAmount,
-  getHumanReadableError,
-  isGrouplessKeyType,
-  signAndSubmitTxResultToSentTx,
-  SweepTxParams,
-  throttledClient,
-  transactionSent
-} from '@alephium/shared'
-import { SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
+import { getHumanReadableError, throttledClient } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
@@ -16,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { buildSweepTransactions } from '@/api/transactions'
+import { buildSweepTransactions, sendSweepTransactions, sendTransferTransaction } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
@@ -26,7 +17,7 @@ import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer
 import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
 import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
 import { TransferAddressesTxModalOnSubmitData, TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
-import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
+import { getSweepTxParams, getTransferTxParams } from '@/features/send/sendUtils'
 import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -61,68 +52,20 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
 
-      const { fromAddress, toAddress, lockTime, assetAmounts } = transactionData
-      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+      const { fromAddress } = transactionData
 
       try {
+        const ledgerTxParams = { signerIndex: fromAddress.index, onLedgerError }
         if (isSweeping) {
-          const txParams: SweepTxParams = {
-            signerAddress: fromAddress.hash,
-            signerKeyType: fromAddress.keyType,
-            toAddress: consolidationRequired ? fromAddress.hash : toAddress,
-            lockTime: lockTime?.getTime()
-          }
-          let results: Array<{ txId: string }>
-
-          if (isLedger) {
-            if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
-
-            results = await signer.signAndSubmitSweepTxsLedger(txParams, {
-              signerIndex: fromAddress.index,
-              signerKeyType: txParams.signerKeyType ?? 'default',
-              onLedgerError
-            })
-          } else {
-            results = await signer.signAndSubmitSweepTxs(txParams)
-          }
-
-          for (const result of results) {
-            const sentTx = signAndSubmitTxResultToSentTx({ txParams, result, type: 'SWEEP' })
-            dispatch(transactionSent(sentTx))
-          }
+          const txParams = getSweepTxParams(transactionData, consolidationRequired)
+          await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
           sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
         } else {
           const txParams = getTransferTxParams(transactionData)
-          let result: SignTransferTxResult
+          await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
-          if (isLedger) {
-            if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
-
-            result = await signer.signAndSubmitTransferTxLedger(txParams, {
-              signerIndex: fromAddress.index,
-              signerKeyType: txParams.signerKeyType ?? 'default',
-              onLedgerError
-            })
-          } else {
-            result = await signer.signAndSubmitTransferTx(txParams)
-          }
-
-          dispatch(
-            transactionSent({
-              hash: result.txId,
-              fromAddress: txParams.signerAddress,
-              toAddress,
-              amount: attoAlphAmount,
-              tokens,
-              timestamp: new Date().getTime(),
-              lockTime: lockTime?.getTime(),
-              type: 'transfer',
-              status: 'sent'
-            })
-          )
-
-          sendAnalytics({ event: 'Sent transaction', props: { number_of_tokens: tokens.length, locked: !!lockTime } })
+          sendAnalytics({ event: 'Sent transaction', props: { origin: 'send-modal' } })
         }
 
         setStep('tx-sent')
@@ -300,16 +243,3 @@ const ConfirmationAnimation = styled(motion.div)`
 const CheckIcon = styled(Check)`
   color: ${({ theme }) => theme.global.valid};
 `
-
-const getTransferTxParams = (data: TransferTxData): SignTransferTxParams => {
-  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = data
-  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
-  return {
-    signerAddress: fromAddress.hash,
-    signerKeyType: fromAddress.keyType,
-    destinations: [{ address: toAddress, attoAlphAmount, tokens, lockTime: lockTime ? lockTime.getTime() : undefined }],
-    gasAmount: gasAmount ? gasAmount : undefined,
-    gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
-  }
-}
