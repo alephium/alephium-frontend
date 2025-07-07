@@ -1,5 +1,6 @@
 import {
   AddressHash,
+  ConsolidationTxModalProps,
   SignChainedTxModalProps,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
@@ -17,7 +18,6 @@ import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockMod
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
-import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
@@ -48,7 +48,7 @@ const ModalNames = {
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageTxModal: 'SignMessageTxModal',
-  ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
+  SignConsolidateTxModal: 'SignConsolidateTxModal',
   ConfirmLockTimeModal: 'ConfirmLockTimeModal',
   ConfirmModal: 'ConfirmModal',
   CopyPrivateKeyConfirmationModal: 'CopyPrivateKeyConfirmationModal',
@@ -146,8 +146,8 @@ export type OpenModalParams = {
       props: SignMessageTxModalProps
     }
   | {
-      name: typeof ModalNames.ConsolidateUTXOsModal
-      props: ConsolidateUTXOsModalProps
+      name: typeof ModalNames.SignConsolidateTxModal
+      props: ConsolidationTxModalProps
     }
   | {
       name: typeof ModalNames.ConfirmLockTimeModal

@@ -1,4 +1,4 @@
-import { SweepTxParams } from '@alephium/shared'
+import { ConsolidationTxModalProps } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -14,13 +14,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 
-interface ConsolidationModalProps {
-  txParams: SweepTxParams
-  onSuccess: () => void
-  fees: bigint
-}
-
-const ConsolidationModal = memo<ConsolidationModalProps>(({ txParams, fees, onSuccess }) => {
+const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees, onSuccess }) => {
   const { t } = useTranslation()
 
   const { handleApprovePress, handleRejectPress } = useSignModal({
@@ -62,7 +56,7 @@ const ConsolidationModal = memo<ConsolidationModalProps>(({ txParams, fees, onSu
   )
 })
 
-export default ConsolidationModal
+export default SignConsolidateTxModal
 
 const Fee = styled.View`
   flex-direction: row;

@@ -9,9 +9,8 @@ import type {
   SubmissionResult
 } from '@alephium/web3'
 
-import { SweepTxParams } from '@/signer'
 import { calculateTransferTxAssetAmounts } from '@/transactions'
-import { SentTransaction } from '@/types/transactions'
+import { SentTransaction, SweepTxParams } from '@/types/transactions'
 
 type SignAndSubmitTxResultToSentTxProps =
   | {

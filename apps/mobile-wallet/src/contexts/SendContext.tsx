@@ -1,16 +1,13 @@
 import {
-  Address,
   AddressHash,
   AssetAmount,
   getChainedTxPropsFromSignChainedTxParams,
-  MAXIMAL_GAS_FEE,
   selectAddressByHash,
   SignChainedTxModalProps,
-  SweepTxParams,
   throttledClient
 } from '@alephium/shared'
 import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-react'
-import { SignChainedTxParams, SignTransferTxParams, Token } from '@alephium/web3'
+import { Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -28,7 +25,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { signer } from '~/signer'
 import { showExceptionToast } from '~/utils/layout'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
+import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '~/utils/transactions'
 
 export type BuildTransactionCallbacks = {
   onBuildSuccess: () => void
@@ -185,7 +182,7 @@ export const SendContextProvider = ({
 
             dispatch(
               openModal({
-                name: 'ConsolidationModal',
+                name: 'SignConsolidateTxModal',
                 props: { txParams, onSuccess: callbacks.onConsolidationSuccess, fees }
               })
             )
@@ -236,41 +233,3 @@ export const SendContextProvider = ({
 }
 
 export const useSendContext = () => useContext(SendContext)
-
-const getSweepTxParams = (address: Address, toAddress: AddressHash): SweepTxParams => ({
-  signerAddress: address.hash,
-  signerKeyType: address.keyType,
-  toAddress
-})
-
-const getTransferTxParams = (
-  address: Address,
-  toAddress: AddressHash,
-  assetAmounts: AssetAmount[]
-): SignTransferTxParams => {
-  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
-  return {
-    signerAddress: address.hash,
-    signerKeyType: address.keyType,
-    destinations: [{ address: toAddress, attoAlphAmount, tokens }]
-  }
-}
-
-const getChainedTxParams = (
-  groupedAddressWithEnoughAlphForGas: string,
-  address: Address,
-  toAddress: AddressHash,
-  assetAmounts: AssetAmount[]
-): Array<SignChainedTxParams> => [
-  {
-    type: 'Transfer',
-    signerAddress: groupedAddressWithEnoughAlphForGas,
-    signerKeyType: 'default',
-    destinations: [{ address: address.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
-  },
-  {
-    type: 'Transfer',
-    ...getTransferTxParams(address, toAddress, assetAmounts)
-  }
-]

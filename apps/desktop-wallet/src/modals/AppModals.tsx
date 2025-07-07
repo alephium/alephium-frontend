@@ -8,6 +8,7 @@ import { selectAllModals } from '@/features/modals/modalSelectors'
 import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import SendModal from '@/features/send/SendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
+import SignConsolidateTxModal from '@/features/send/SignConsolidateTxModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import SignChainedTxModal from '@/features/walletConnect/SignChainedTxModal'
@@ -25,7 +26,6 @@ import AddressDetailsModal from '@/modals/AddressDetailsModal/AddressDetailsModa
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import AddressSweepModal from '@/modals/AddressSweepModal'
 import ConfirmModal from '@/modals/ConfirmModal'
-import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
 import ContactFormModal from '@/modals/ContactFormModal'
 import CSVExportModal from '@/modals/CSVExportModal'
 import CurrentWalletModal from '@/modals/CurrentWalletModal'
@@ -97,8 +97,8 @@ const AppModals = () => {
                 return <SignUnsignedTxModal key={modal.id} {...props} {...modal.params.props} />
               case 'SignMessageTxModal':
                 return <SignMessageTxModal key={modal.id} {...props} {...modal.params.props} />
-              case 'ConsolidateUTXOsModal':
-                return <ConsolidateUTXOsModal key={modal.id} {...props} {...modal.params.props} />
+              case 'SignConsolidateTxModal':
+                return <SignConsolidateTxModal key={modal.id} {...props} {...modal.params.props} />
               case 'ConfirmLockTimeModal':
                 return <ConfirmLockTimeModal key={modal.id} {...props} {...modal.params.props} />
               case 'ConfirmModal':

@@ -1,29 +1,47 @@
-import { AssetAmount } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT } from '@alephium/web3'
+import {
+  Address,
+  AddressHash,
+  AssetAmount,
+  getTransactionAssetAmounts,
+  MAXIMAL_GAS_FEE,
+  SweepTxParams
+} from '@alephium/shared'
+import { SignChainedTxParams, SignTransferTxParams } from '@alephium/web3'
 
-import { AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+export const getSweepTxParams = (address: Address, toAddress: AddressHash): SweepTxParams => ({
+  signerAddress: address.hash,
+  signerKeyType: address.keyType,
+  toAddress
+})
 
-export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
-  (tx as AddressPendingTransaction).status === 'pending'
-
-// Same as in desktop wallet
-export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
-  const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
-  const tokens = assetAmounts
-    .filter((asset): asset is Required<AssetAmount> => asset.id !== ALPH.id && asset.amount !== undefined)
-    .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
-
-  const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
-  const minDiff = minAlphAmountRequirement - alphAmount
-  const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
+export const getTransferTxParams = (
+  fromAddress: Address,
+  toAddress: AddressHash,
+  assetAmounts: AssetAmount[]
+): SignTransferTxParams => {
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
   return {
-    attoAlphAmount: totalAlphAmount.toString(),
-    tokens
+    signerAddress: fromAddress.hash,
+    signerKeyType: fromAddress.keyType,
+    destinations: [{ address: toAddress, attoAlphAmount, tokens }]
   }
 }
 
-// Same as in desktop wallet
-export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
-  assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }
+export const getChainedTxParams = (
+  groupedAddressWithEnoughAlphForGas: string,
+  address: Address,
+  toAddress: AddressHash,
+  assetAmounts: AssetAmount[]
+): Array<SignChainedTxParams> => [
+  {
+    type: 'Transfer',
+    signerAddress: groupedAddressWithEnoughAlphForGas,
+    signerKeyType: 'default',
+    destinations: [{ address: address.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
+  },
+  {
+    type: 'Transfer',
+    ...getTransferTxParams(address, toAddress, assetAmounts)
+  }
+]

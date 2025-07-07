@@ -1,4 +1,4 @@
-import { getHumanReadableError, throttledClient } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { buildSweepTransactions, sendSweepTransactions, sendTransferTransaction } from '@/api/transactions'
+import {
+  fetchSweepTransactionsFees,
+  fetchTransferTransactionsFees,
+  sendSweepTransactions,
+  sendTransferTransaction
+} from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
@@ -22,7 +27,6 @@ import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
-import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
 export type SendModalProps = TransferTxModalData
@@ -38,7 +42,6 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const [transactionData, setTransactionData] = useState<TransferTxData>()
   const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
-  const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [fees, setFees] = useState<bigint>()
 
@@ -46,38 +49,34 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
-  const handleSend = useCallback(
-    async (consolidationRequired: boolean) => {
-      if (!transactionData) return
+  const handleSend = useCallback(async () => {
+    if (!transactionData) return
 
-      setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
+    setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
 
-      const { fromAddress } = transactionData
+    try {
+      const ledgerTxParams = { signerIndex: transactionData.fromAddress.index, onLedgerError }
 
-      try {
-        const ledgerTxParams = { signerIndex: fromAddress.index, onLedgerError }
-        if (isSweeping) {
-          const txParams = getSweepTxParams(transactionData, consolidationRequired)
-          await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
+      if (isSweeping) {
+        const txParams = getSweepTxParams(transactionData, { toAddress: transactionData.toAddress })
+        await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
-          sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
-        } else {
-          const txParams = getTransferTxParams(transactionData)
-          await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
+        sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
+      } else {
+        const txParams = getTransferTxParams(transactionData)
+        await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
-          sendAnalytics({ event: 'Sent transaction', props: { origin: 'send-modal' } })
-        }
-
-        setStep('tx-sent')
-      } catch (error) {
-        dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-        sendAnalytics({ type: 'error', message: 'Could not send tx' })
-      } finally {
-        setIsLoading(false)
+        sendAnalytics({ event: 'Sent transaction', props: { origin: 'send-modal' } })
       }
-    },
-    [dispatch, isLedger, isSweeping, onLedgerError, sendAnalytics, t, transactionData]
-  )
+
+      setStep('tx-sent')
+    } catch (error) {
+      dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
+      sendAnalytics({ type: 'error', message: 'Could not send tx' })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [dispatch, isLedger, isSweeping, onLedgerError, sendAnalytics, t, transactionData])
 
   const goToAddresses = useCallback(() => setStep('addresses'), [])
   const goToBuildTx = useCallback(() => setStep('build-tx'), [])
@@ -91,48 +90,32 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       setIsSweeping(data.shouldSweep)
 
       try {
-        const { fromAddress, toAddress } = data
-
         if (data.shouldSweep) {
-          const { fees } = await buildSweepTransactions(fromAddress, toAddress)
-
+          const txParams = getSweepTxParams(data, { toAddress: data.toAddress })
+          const fees = await fetchSweepTransactionsFees(txParams)
           setFees(fees)
         } else {
           const txParams = getTransferTxParams(data)
-          const result = await throttledClient.txBuilder.buildTransferTx(
-            txParams,
-            await signer.getPublicKey(fromAddress.hash)
-          )
-
-          setFees(BigInt(result.gasAmount) * BigInt(result.gasPrice))
+          const fees = await fetchTransferTransactionsFees(txParams)
+          setFees(fees)
         }
 
         setStep('info-check')
       } catch (e) {
         // When API error codes are available, replace this substring check with a proper error code check
         // https://github.com/alephium/alephium-frontend/issues/610
-        const error = (e as unknown as string).toString()
+        const error = (e as unknown as string).toString().toLowerCase()
 
         if (error.includes('consolidating') || error.includes('consolidate')) {
-          setIsSweeping(true)
-          setIsLoading(true)
-
-          // TODO: See if you can simplify the data to only include AddressHash and not Address
-          const { fromAddress } = data
-          const { fees } = await buildSweepTransactions(fromAddress, fromAddress.hash)
-
-          setIsLoading(false)
+          const txParams = getSweepTxParams(data, { toAddress: data.fromAddress.hash })
+          const fees = await fetchSweepTransactionsFees(txParams)
 
           dispatch(
             openModal({
-              name: 'ConsolidateUTXOsModal',
-              props: {
-                fee: fees,
-                onConsolidateClick: passwordRequirement ? () => setStep('password-check') : () => handleSend(true)
-              }
+              name: 'SignConsolidateTxModal',
+              props: { fees, txParams, onSuccess: () => setStep('tx-sent') }
             })
           )
-          setConsolidationRequired(true)
           sendAnalytics({ event: 'Could not build tx, consolidation required' })
         } else {
           const message = 'Error while building transaction'
@@ -149,7 +132,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       setIsLoading(false)
     },
-    [dispatch, handleSend, passwordRequirement, sendAnalytics, t]
+    [dispatch, sendAnalytics, t]
   )
 
   useEffect(() => {
@@ -186,7 +169,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         <TransferCheckTxModalContent
           data={transactionData as TransferTxData}
           fees={fees}
-          onSubmit={passwordRequirement ? goToPasswordCheck : () => handleSend(consolidationRequired)}
+          onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
           onBack={goToBuildTx}
         />
       )}
@@ -195,7 +178,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
           text={t('Enter your password to send the transaction.')}
           buttonText={t('Send')}
           highlightButton
-          onCorrectPasswordEntered={() => handleSend(consolidationRequired)}
+          onCorrectPasswordEntered={handleSend}
           onBack={goToInfoCheck}
         >
           <PasswordConfirmationNote>

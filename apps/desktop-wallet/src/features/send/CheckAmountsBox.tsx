@@ -1,4 +1,11 @@
-import { AssetAmount, calculateTokenAmountWorth, isFT, isNFT, toHumanReadableAmount } from '@alephium/shared'
+import {
+  AssetAmount,
+  calculateTokenAmountWorth,
+  getTransactionAssetAmounts,
+  isFT,
+  isNFT,
+  toHumanReadableAmount
+} from '@alephium/shared'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
@@ -13,7 +20,6 @@ import AssetLogo from '@/components/AssetLogo'
 import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
-import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'

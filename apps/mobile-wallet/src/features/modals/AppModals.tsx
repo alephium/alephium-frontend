@@ -2,7 +2,6 @@ import { ReactNode } from 'react'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
-import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
@@ -38,6 +37,7 @@ import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeSc
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
+import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
@@ -116,8 +116,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <SelectAddressModal {...params.props} />
     case 'SelectContactModal':
       return <SelectContactModal {...params.props} />
-    case 'ConsolidationModal':
-      return <ConsolidationModal {...params.props} />
+    case 'SignConsolidateTxModal':
+      return <SignConsolidateTxModal {...params.props} />
     case 'WalletConnectErrorModal':
       return <WalletConnectErrorModal />
     case 'WalletConnectPairingsModal':

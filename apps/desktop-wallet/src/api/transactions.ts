@@ -13,6 +13,24 @@ import { LedgerTxParams, signer } from '@/signer'
 import { store } from '@/storage/store'
 import { CsvExportQueryParams } from '@/types/transactions'
 
+export const fetchSweepTransactionsFees = async (txParams: SweepTxParams): Promise<bigint> => {
+  const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
+    txParams,
+    await signer.getPublicKey(txParams.signerAddress)
+  )
+
+  return unsignedTxs.reduce((acc, tx) => acc + BigInt(tx.gasPrice) * BigInt(tx.gasAmount), BigInt(0))
+}
+
+export const fetchTransferTransactionsFees = async (txParams: SignTransferTxParams): Promise<bigint> => {
+  const { gasAmount, gasPrice } = await throttledClient.txBuilder.buildTransferTx(
+    txParams,
+    await signer.getPublicKey(txParams.signerAddress)
+  )
+
+  return BigInt(gasAmount) * BigInt(gasPrice)
+}
+
 export const buildSweepTransactions = async (signerAddress: Address, toAddress: AddressHash) => {
   const { unsignedTxs } = await throttledClient.txBuilder.buildSweepTxs(
     { signerAddress: signerAddress.hash, signerKeyType: signerAddress.keyType, toAddress },

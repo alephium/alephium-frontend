@@ -103,7 +103,7 @@ const AddressSweepModal = memo(
     const onClose = () => dispatch(closeModal({ id }))
 
     const handleSweepClick = async () => {
-      if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
+      if (!sweepAddresses.from || !sweepAddresses.to) return
       setIsLoading(true)
       try {
         const txParams = {

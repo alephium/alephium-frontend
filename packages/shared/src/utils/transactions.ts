@@ -1,4 +1,6 @@
+import { ALPH } from '@alephium/token-list'
 import {
+  DUST_AMOUNT,
   explorer as e,
   SignChainedTxParams,
   SignChainedTxResult,
@@ -130,3 +132,23 @@ export const signChainedTxResultsToTxSubmittedResults = (
       }
     }
   })
+
+export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
+  const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
+  const tokens = assetAmounts
+    .filter((asset): asset is Required<AssetAmount> => asset.id !== ALPH.id && asset.amount !== undefined)
+    .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
+
+  const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
+  const minDiff = minAlphAmountRequirement - alphAmount
+  const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
+
+  return {
+    attoAlphAmount: totalAlphAmount.toString(),
+    extraAlphForDust: minAlphAmountRequirement,
+    tokens
+  }
+}
+
+export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
+  assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }

@@ -1,4 +1,4 @@
-import { explorer as e, node as n, Optional } from '@alephium/web3'
+import { explorer as e, KeyType, node as n, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { Asset, AssetAmount } from '@/types/assets'
@@ -51,3 +51,8 @@ export const isGrouplessTxResult = (
   | n.BuildGrouplessTransferTxResult
   | n.BuildGrouplessExecuteScriptTxResult
   | n.BuildGrouplessDeployContractTxResult => 'transferTxs' in txResult
+
+export interface SweepTxParams extends Omit<n.BuildSweepAddressTransactions, 'fromPublicKey' | 'fromPublicKeyType'> {
+  signerAddress: string
+  signerKeyType?: KeyType
+}

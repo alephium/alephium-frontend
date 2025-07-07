@@ -2,7 +2,6 @@ import { HasOptionalProps, HasRequiredProps } from '@alephium/shared'
 import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
-import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
@@ -35,6 +34,7 @@ import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeSc
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
+import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
@@ -68,7 +68,7 @@ export const ModalComponents = {
   FundPasswordModal,
   SafePlaceWarningModal,
   SelectAddressModal,
-  ConsolidationModal,
+  SignConsolidateTxModal,
   SelectContactModal,
   WalletConnectErrorModal,
   WalletConnectPasteUrlModal,

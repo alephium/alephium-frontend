@@ -15,6 +15,8 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 
+import { SweepTxParams } from '@/types/transactions'
+
 export type ModalOrigin = 'walletconnect' | 'in-app-browser'
 
 export type SignTxModalCommonProps = {
@@ -53,6 +55,12 @@ export interface SignMessageTxModalProps extends SignTxModalCommonProps {
   txParams: SignMessageParams
   unsignedData: string
   onSuccess: (signResult: SignMessageResult) => void
+}
+
+export interface ConsolidationTxModalProps {
+  txParams: SweepTxParams
+  onSuccess: () => void
+  fees: bigint
 }
 
 export type SignTxModalType =
