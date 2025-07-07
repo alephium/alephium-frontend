@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
+import InfoBox from '@/components/InfoBox'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -8,10 +9,18 @@ import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
+import { SignChainedTxModalContent } from '@/features/walletConnect/SignChainedTxModal'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: CheckTxProps<TransferTxData>) => {
+const TransferCheckTxModalContent = ({
+  data,
+  fees,
+  onSubmit,
+  onBack,
+  dAppUrl,
+  chainedTxProps
+}: CheckTxProps<TransferTxData>) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const dispatch = useAppDispatch()
@@ -25,16 +34,28 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: 
   return (
     <>
       <CheckModalContent>
-        <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />
-        <CheckAddressesBox
-          fromAddressStr={data.fromAddress.hash}
-          toAddressHash={data.toAddress}
-          dAppUrl={dAppUrl}
-          hasBg
-          hasHorizontalPadding
-        />
-        {data.lockTime && <CheckLockTimeBox lockTime={data.lockTime} />}
-        <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
+        {chainedTxProps ? (
+          <>
+            <InfoBox
+              importance="accent"
+              text={t('Your address is missing some ALPH for gas fees but thankfully another address can cover it!')}
+            />
+            <SignChainedTxModalContent props={chainedTxProps} dAppUrl={dAppUrl} />
+          </>
+        ) : (
+          <>
+            <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />
+            <CheckAddressesBox
+              fromAddressStr={data.fromAddress.hash}
+              toAddressHash={data.toAddress}
+              dAppUrl={dAppUrl}
+              hasBg
+              hasHorizontalPadding
+            />
+            {data.lockTime && <CheckLockTimeBox lockTime={data.lockTime} />}
+            <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
+          </>
+        )}
       </CheckModalContent>
 
       <ModalFooterButtons>

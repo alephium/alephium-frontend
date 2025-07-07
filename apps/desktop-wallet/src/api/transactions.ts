@@ -3,11 +3,13 @@ import {
   AddressHash,
   isGrouplessKeyType,
   signAndSubmitTxResultToSentTx,
+  SignChainedTxModalResult,
+  signChainedTxResultsToTxSubmittedResults,
   SweepTxParams,
   throttledClient,
   transactionSent
 } from '@alephium/shared'
-import { SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
+import { SignChainedTxParams, SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
 
 import { LedgerTxParams, signer } from '@/signer'
 import { store } from '@/storage/store'
@@ -96,4 +98,21 @@ export const sendTransferTransaction = async (
   store.dispatch(transactionSent(sentTx))
 
   return result
+}
+
+export const sendChainedTransactions = async (
+  txParams: Array<SignChainedTxParams>,
+  isLedger: boolean
+): Promise<SignChainedTxModalResult> => {
+  if (isLedger) throw Error('Ledger does not support chained transactions yet')
+
+  const data = await signer.signAndSubmitChainedTx(txParams)
+  const results = signChainedTxResultsToTxSubmittedResults(data, txParams)
+
+  results.forEach((result) => {
+    const sentTx = signAndSubmitTxResultToSentTx(result)
+    store.dispatch(transactionSent(sentTx))
+  })
+
+  return results
 }

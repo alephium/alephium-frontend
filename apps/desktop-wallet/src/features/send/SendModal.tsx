@@ -1,4 +1,10 @@
-import { getHumanReadableError } from '@alephium/shared'
+import {
+  getChainedTxPropsFromSignChainedTxParams,
+  getHumanReadableError,
+  SignChainedTxModalProps,
+  throttledClient
+} from '@alephium/shared'
+import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
@@ -10,6 +16,7 @@ import { fadeIn } from '@/animations'
 import {
   fetchSweepTransactionsFees,
   fetchTransferTransactionsFees,
+  sendChainedTransactions,
   sendSweepTransactions,
   sendTransferTransaction
 } from '@/api/transactions'
@@ -22,11 +29,12 @@ import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer
 import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
 import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
 import { TransferAddressesTxModalOnSubmitData, TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
-import { getSweepTxParams, getTransferTxParams } from '@/features/send/sendUtils'
+import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendUtils'
 import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
+import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
 export type SendModalProps = TransferTxModalData
@@ -46,6 +54,12 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const [fees, setFees] = useState<bigint>()
 
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
+  const [chainedTxProps, setChainedTxProps] = useState<SignChainedTxModalProps['props']>()
+
+  const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
+  const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
+    (hash) => hash !== addressesData.fromAddress.hash
+  )
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
@@ -62,6 +76,9 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
         sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
+      } else if (chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas) {
+        const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, transactionData)
+        await sendChainedTransactions(txParams, isLedger)
       } else {
         const txParams = getTransferTxParams(transactionData)
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
@@ -76,12 +93,38 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [dispatch, isLedger, isSweeping, onLedgerError, sendAnalytics, t, transactionData])
+  }, [
+    chainedTxProps,
+    dispatch,
+    groupedAddressWithEnoughAlphForGas,
+    isLedger,
+    isSweeping,
+    onLedgerError,
+    sendAnalytics,
+    t,
+    transactionData
+  ])
 
   const goToAddresses = useCallback(() => setStep('addresses'), [])
   const goToBuildTx = useCallback(() => setStep('build-tx'), [])
   const goToInfoCheck = useCallback(() => setStep('info-check'), [])
   const goToPasswordCheck = useCallback(() => setStep('password-check'), [])
+
+  const handleTransactionBuildError = useCallback(
+    (e: unknown) => {
+      const error = (e as unknown as string).toString().toLowerCase()
+      const message = 'Error while building transaction'
+      const errorMessage = getHumanReadableError(e, t(message))
+
+      if (error.includes('NotEnoughApprovedBalance')) {
+        dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
+      } else {
+        dispatch(transactionBuildFailed(errorMessage))
+        sendAnalytics({ type: 'error', message })
+      }
+    },
+    [dispatch, sendAnalytics, t]
+  )
 
   const buildTransactionExtended = useCallback(
     async (data: TransferTxData) => {
@@ -101,38 +144,48 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         }
 
         setStep('info-check')
+        setChainedTxProps(undefined)
       } catch (e) {
         // When API error codes are available, replace this substring check with a proper error code check
         // https://github.com/alephium/alephium-frontend/issues/610
         const error = (e as unknown as string).toString().toLowerCase()
 
-        if (error.includes('consolidating') || error.includes('consolidate')) {
-          const txParams = getSweepTxParams(data, { toAddress: data.fromAddress.hash })
-          const fees = await fetchSweepTransactionsFees(txParams)
+        try {
+          if (error.includes('consolidating') || error.includes('consolidate')) {
+            const txParams = getSweepTxParams(data, { toAddress: data.fromAddress.hash })
+            const fees = await fetchSweepTransactionsFees(txParams)
 
-          dispatch(
-            openModal({
-              name: 'SignConsolidateTxModal',
-              props: { fees, txParams, onSuccess: () => setStep('tx-sent') }
-            })
-          )
-          sendAnalytics({ event: 'Could not build tx, consolidation required' })
-        } else {
-          const message = 'Error while building transaction'
-          const errorMessage = getHumanReadableError(e, t(message))
+            dispatch(
+              openModal({
+                name: 'SignConsolidateTxModal',
+                props: { fees, txParams, onSuccess: () => setStep('tx-sent') }
+              })
+            )
+            sendAnalytics({ event: 'Could not build tx, consolidation required' })
+            setChainedTxProps(undefined)
+          } else if (error.includes('not enough') && !isLedger && groupedAddressWithEnoughAlphForGas) {
+            const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, data)
 
-          if (error.includes('NotEnoughApprovedBalance')) {
-            dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
-          } else {
-            dispatch(transactionBuildFailed(errorMessage))
-            sendAnalytics({ type: 'error', message })
-          }
+            const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
+              await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),
+              await signer.getPublicKey(data.fromAddress.hash)
+            ])
+
+            const props = getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData)
+            setChainedTxProps(props)
+            setIsSweeping(false)
+
+            setStep('info-check')
+          } else throw e
+        } catch (e) {
+          handleTransactionBuildError(e)
+          setChainedTxProps(undefined)
         }
       }
 
       setIsLoading(false)
     },
-    [dispatch, sendAnalytics, t]
+    [dispatch, groupedAddressWithEnoughAlphForGas, handleTransactionBuildError, isLedger, sendAnalytics]
   )
 
   useEffect(() => {
@@ -167,7 +220,8 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       )}
       {step === 'info-check' && !!transactionData && !!fees && (
         <TransferCheckTxModalContent
-          data={transactionData as TransferTxData}
+          data={transactionData}
+          chainedTxProps={chainedTxProps}
           fees={fees}
           onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
           onBack={goToBuildTx}

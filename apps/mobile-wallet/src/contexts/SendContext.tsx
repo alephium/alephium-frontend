@@ -79,7 +79,6 @@ export const SendContextProvider = ({
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(destinationAddressHash)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(originAddressHash)
@@ -91,6 +90,7 @@ export const SendContextProvider = ({
   const [shouldSweep, setShouldSweep] = useState(false)
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
+  const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
   const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
     (hash) => hash !== address?.hash
   )
@@ -159,6 +159,7 @@ export const SendContextProvider = ({
       if (!address || !toAddress) return
 
       setShouldSweep(shouldSweep)
+      setChainedTxProps(undefined)
 
       try {
         if (shouldSweep) {
@@ -175,8 +176,8 @@ export const SendContextProvider = ({
       } catch (e) {
         const error = (e as unknown as string).toString().toLowerCase()
 
-        if (error.includes('consolidating') || error.includes('consolidate')) {
-          try {
+        try {
+          if (error.includes('consolidating') || error.includes('consolidate')) {
             const txParams = getSweepTxParams(address, address.hash)
             const fees = await fetchSweepTransactionsFees(txParams)
 
@@ -186,12 +187,11 @@ export const SendContextProvider = ({
                 props: { txParams, onSuccess: callbacks.onConsolidationSuccess, fees }
               })
             )
-          } catch (error) {
-            showExceptionToast(error, t('Could not build transaction'))
-          }
-        } else if (error.includes('not enough')) {
-          if (groupedAddressWithEnoughAlphForGas) {
+
+            setChainedTxProps(undefined)
+          } else if (error.includes('not enough') && groupedAddressWithEnoughAlphForGas) {
             const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
+
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
               await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),
               await signer.getPublicKey(address.hash)
@@ -199,13 +199,13 @@ export const SendContextProvider = ({
 
             const props = getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData)
             setChainedTxProps(props)
+            setShouldSweep(false)
 
             callbacks.onBuildSuccess()
-          } else {
-            showExceptionToast(e, t('Could not build transaction'))
-          }
-        } else {
+          } else throw e
+        } catch (e) {
           showExceptionToast(e, t('Could not build transaction'))
+          setChainedTxProps(undefined)
         }
       }
     },

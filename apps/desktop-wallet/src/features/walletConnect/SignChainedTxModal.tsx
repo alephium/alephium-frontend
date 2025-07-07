@@ -64,47 +64,53 @@ const SignChainedTxModal = ({
           text={t('Ledger does not yet support chained transactions. We are working on it!')}
         />
       ) : (
-        props.map(({ txParams, unsignedData, type }, index) => {
-          let content = null
-          switch (type) {
-            case 'TRANSFER': {
-              const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
-              content = <SignTransferTxModalContent txParams={txParams} fees={fees} />
-              break
-            }
-            case 'DEPLOY_CONTRACT': {
-              const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
-              content = <SignDeployContractTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
-              break
-            }
-            case 'EXECUTE_SCRIPT': {
-              const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
-              content = <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
-              break
-            }
-          }
-
-          return (
-            <Fragment key={index}>
-              <Title>{t('Transaction {{ number }}', { number: index + 1 })}</Title>
-              {content}
-              {index !== props.length - 1 && (
-                <Separator>
-                  <SeparatorLine />
-                  <SeparatorIcon>
-                    <ChainIcon name="link-outline" size={18} />
-                  </SeparatorIcon>
-                </Separator>
-              )}
-            </Fragment>
-          )
-        })
+        <SignChainedTxModalContent props={props} dAppUrl={dAppUrl} />
       )}
     </SignTxBaseModal>
   )
 }
 
 export default SignChainedTxModal
+
+export const SignChainedTxModalContent = ({ props, dAppUrl }: Pick<SignChainedTxModalProps, 'props' | 'dAppUrl'>) => {
+  const { t } = useTranslation()
+
+  return props.map(({ txParams, unsignedData, type }, index) => {
+    let content = null
+    switch (type) {
+      case 'TRANSFER': {
+        const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+        content = <SignTransferTxModalContent txParams={txParams} fees={fees} />
+        break
+      }
+      case 'DEPLOY_CONTRACT': {
+        const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+        content = <SignDeployContractTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
+        break
+      }
+      case 'EXECUTE_SCRIPT': {
+        const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+        content = <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
+        break
+      }
+    }
+
+    return (
+      <Fragment key={index}>
+        <Title>{t('Transaction {{ number }}', { number: index + 1 })}</Title>
+        {content}
+        {index !== props.length - 1 && (
+          <Separator>
+            <SeparatorLine />
+            <SeparatorIcon>
+              <ChainIcon name="link-outline" size={18} />
+            </SeparatorIcon>
+          </Separator>
+        )}
+      </Fragment>
+    )
+  })
+}
 
 const Separator = styled.div`
   position: relative;

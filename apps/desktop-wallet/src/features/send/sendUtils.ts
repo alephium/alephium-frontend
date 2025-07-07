@@ -1,5 +1,5 @@
-import { fromHumanReadableAmount, getTransactionAssetAmounts, SweepTxParams } from '@alephium/shared'
-import { MIN_UTXO_SET_AMOUNT, SignTransferTxParams } from '@alephium/web3'
+import { fromHumanReadableAmount, getTransactionAssetAmounts, MAXIMAL_GAS_FEE, SweepTxParams } from '@alephium/shared'
+import { MIN_UTXO_SET_AMOUNT, SignChainedTxParams, SignTransferTxParams } from '@alephium/web3'
 
 import { TransferTxData } from '@/features/send/sendTypes'
 
@@ -25,3 +25,19 @@ export const getSweepTxParams = (data: TransferTxData, { toAddress }: { toAddres
   toAddress,
   lockTime: data.lockTime?.getTime()
 })
+
+export const getChainedTxParams = (
+  groupedAddressWithEnoughAlphForGas: string,
+  data: TransferTxData
+): Array<SignChainedTxParams> => [
+  {
+    type: 'Transfer',
+    signerAddress: groupedAddressWithEnoughAlphForGas,
+    signerKeyType: 'default',
+    destinations: [{ address: data.fromAddress.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
+  },
+  {
+    type: 'Transfer',
+    ...getTransferTxParams(data)
+  }
+]

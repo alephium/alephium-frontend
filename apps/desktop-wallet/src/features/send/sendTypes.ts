@@ -1,4 +1,4 @@
-import { Address, AssetAmount, TokenId } from '@alephium/shared'
+import { Address, AssetAmount, SignChainedTxModalProps, TokenId } from '@alephium/shared'
 
 export interface TransferTxData {
   fromAddress: Address
@@ -28,6 +28,7 @@ export type CheckTxProps<T> = {
   onSubmit: () => void
   onBack: () => void
   dAppUrl?: string
+  chainedTxProps?: SignChainedTxModalProps['props']
 }
 
 export type UnsignedTx = {
