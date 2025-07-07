@@ -33,7 +33,7 @@ import {
   TransferAddressesTxModalOnSubmitData,
   TransferTxModalData
 } from '@/features/send/sendModal/sendTypes'
-import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendModal/sendUtils'
+import { getGasRefillChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendModal/sendUtils'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
@@ -83,7 +83,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
         sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
       } else if (shouldChainTxsForGasRefill) {
-        const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, transactionData)
+        const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, transactionData)
         await sendChainedTransactions(txParams, isLedger)
       } else {
         const txParams = getTransferTxParams(transactionData)
@@ -170,7 +170,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             sendAnalytics({ event: 'Could not build tx, consolidation required' })
             setChainedTxProps(undefined)
           } else if (error.includes('not enough') && !isLedger && groupedAddressWithEnoughAlphForGas) {
-            const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, data)
+            const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, data)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
               await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),

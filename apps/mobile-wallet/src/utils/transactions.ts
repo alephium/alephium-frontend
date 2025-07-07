@@ -28,7 +28,7 @@ export const getTransferTxParams = (
   }
 }
 
-export const getChainedTxParams = (
+export const getGasRefillChainedTxParams = (
   groupedAddressWithEnoughAlphForGas: string,
   address: Address,
   toAddress: AddressHash,

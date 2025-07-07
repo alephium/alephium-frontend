@@ -26,7 +26,7 @@ export const getSweepTxParams = (data: SendFlowData, { toAddress }: { toAddress:
   lockTime: data.lockTime?.getTime()
 })
 
-export const getChainedTxParams = (
+export const getGasRefillChainedTxParams = (
   groupedAddressWithEnoughAlphForGas: string,
   data: SendFlowData
 ): Array<SignChainedTxParams> => [

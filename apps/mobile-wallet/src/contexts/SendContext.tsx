@@ -25,7 +25,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { signer } from '~/signer'
 import { showExceptionToast } from '~/utils/layout'
-import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '~/utils/transactions'
+import { getGasRefillChainedTxParams, getSweepTxParams, getTransferTxParams } from '~/utils/transactions'
 
 export type BuildTransactionCallbacks = {
   onBuildSuccess: () => void
@@ -123,7 +123,12 @@ export const SendContextProvider = ({
           const txParams = getSweepTxParams(address, toAddress)
           await sendSweepTransactions(txParams)
         } else if (shouldChainTxsForGasRefill) {
-          const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
+          const txParams = getGasRefillChainedTxParams(
+            groupedAddressWithEnoughAlphForGas,
+            address,
+            toAddress,
+            assetAmounts
+          )
           await sendChainedTransactions(txParams)
         } else {
           const txParams = getTransferTxParams(address, toAddress, assetAmounts)
@@ -191,7 +196,12 @@ export const SendContextProvider = ({
 
             setChainedTxProps(undefined)
           } else if (error.includes('not enough') && groupedAddressWithEnoughAlphForGas) {
-            const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
+            const txParams = getGasRefillChainedTxParams(
+              groupedAddressWithEnoughAlphForGas,
+              address,
+              toAddress,
+              assetAmounts
+            )
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
               await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),
