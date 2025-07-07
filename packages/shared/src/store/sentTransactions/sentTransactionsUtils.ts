@@ -83,7 +83,7 @@ export const signAndSubmitTxResultToSentTx = ({
         hash: result.txId,
         fromAddress: txParams.signerAddress,
         toAddress: txParams.toAddress,
-        lockTime: txParams.lockTime ? new Date(txParams.lockTime).getTime() : undefined,
+        lockTime: txParams.lockTime,
         timestamp: new Date().getTime(),
         status: 'sent',
         type: 'sweep'
