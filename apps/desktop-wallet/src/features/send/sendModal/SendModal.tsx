@@ -61,10 +61,10 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const [chainedTxProps, setChainedTxProps] = useState<SignChainedTxModalProps['props']>()
 
   const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
-  const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
+  const gasRefillGroupedAddress = groupedAddressesWithEnoughAlphForGas?.find(
     (hash) => hash !== addressesData.fromAddress.hash
   )
-  const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas
+  const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && gasRefillGroupedAddress
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
@@ -82,7 +82,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
         sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
       } else if (shouldChainTxsForGasRefill) {
-        const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, sendFlowData)
+        const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, sendFlowData)
         await sendChainedTransactions(txParams, isLedger)
       } else {
         const txParams = getTransferTxParams(sendFlowData)
@@ -100,7 +100,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
     }
   }, [
     dispatch,
-    groupedAddressWithEnoughAlphForGas,
+    gasRefillGroupedAddress,
     isLedger,
     isSweeping,
     onLedgerError,
@@ -168,11 +168,11 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             )
             sendAnalytics({ event: 'Could not build tx, consolidation required' })
             setChainedTxProps(undefined)
-          } else if (error.includes('not enough') && !isLedger && groupedAddressWithEnoughAlphForGas) {
-            const txParams = getGasRefillChainedTxParams(groupedAddressWithEnoughAlphForGas, data)
+          } else if (error.includes('not enough') && !isLedger && gasRefillGroupedAddress) {
+            const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, data)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
-              await signer.getPublicKey(groupedAddressWithEnoughAlphForGas),
+              await signer.getPublicKey(gasRefillGroupedAddress),
               await signer.getPublicKey(data.fromAddress.hash)
             ])
 
@@ -190,7 +190,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
 
       setIsLoading(false)
     },
-    [dispatch, groupedAddressWithEnoughAlphForGas, handleTransactionBuildError, isLedger, sendAnalytics]
+    [dispatch, gasRefillGroupedAddress, handleTransactionBuildError, isLedger, sendAnalytics]
   )
 
   useEffect(() => {
