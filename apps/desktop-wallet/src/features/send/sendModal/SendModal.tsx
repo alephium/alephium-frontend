@@ -65,6 +65,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
     (hash) => hash !== addressesData.fromAddress.hash
   )
+  const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas
 
   const onClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
 
@@ -81,7 +82,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
         sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
-      } else if (chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas) {
+      } else if (shouldChainTxsForGasRefill) {
         const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, transactionData)
         await sendChainedTransactions(txParams, isLedger)
       } else {
@@ -99,13 +100,13 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       setIsLoading(false)
     }
   }, [
-    chainedTxProps,
     dispatch,
     groupedAddressWithEnoughAlphForGas,
     isLedger,
     isSweeping,
     onLedgerError,
     sendAnalytics,
+    shouldChainTxsForGasRefill,
     t,
     transactionData
   ])

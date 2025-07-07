@@ -94,6 +94,7 @@ export const SendContextProvider = ({
   const groupedAddressWithEnoughAlphForGas = groupedAddressesWithEnoughAlphForGas?.find(
     (hash) => hash !== address?.hash
   )
+  const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas
 
   const setAssetAmount = useCallback(
     (assetId: string, amount?: bigint) => {
@@ -121,7 +122,7 @@ export const SendContextProvider = ({
         if (shouldSweep) {
           const txParams = getSweepTxParams(address, toAddress)
           await sendSweepTransactions(txParams)
-        } else if (chainedTxProps && chainedTxProps.length > 0 && groupedAddressWithEnoughAlphForGas) {
+        } else if (shouldChainTxsForGasRefill) {
           const txParams = getChainedTxParams(groupedAddressWithEnoughAlphForGas, address, toAddress, assetAmounts)
           await sendChainedTransactions(txParams)
         } else {
@@ -138,7 +139,7 @@ export const SendContextProvider = ({
         sendAnalytics({ type: 'error', message })
       }
     },
-    [address, assetAmounts, chainedTxProps, groupedAddressWithEnoughAlphForGas, shouldSweep, t, toAddress]
+    [address, assetAmounts, groupedAddressWithEnoughAlphForGas, shouldChainTxsForGasRefill, shouldSweep, t, toAddress]
   )
 
   const authenticateAndSend = useCallback(
