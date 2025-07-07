@@ -123,6 +123,7 @@ export const useFetchGroupedAddressesWithEnoughAlphForGas = () => {
         .filter((addressHash) => !isGrouplessAddress(addressHash)) // Groupless addresses cannot be used as input for chained txs
         .reduce((addressesWithEnoughBalance, addressHash) => {
           const alphBalance = addressesBalances[addressHash]?.find(({ id }) => id === ALPH.id)
+          // TODO: Use dynamic gas fee instead of MAXIMAL_GAS_FEE
           if (alphBalance && BigInt(alphBalance.availableBalance) >= MAXIMAL_GAS_FEE) {
             addressesWithEnoughBalance.push(addressHash as AddressHash)
           }
