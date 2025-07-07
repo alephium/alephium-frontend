@@ -541,5 +541,5 @@
   "Transaction {{ number }}": "Transaction {{ number }}",
   "Ledger does not yet support chained transactions. We are working on it!": "Ledger does not yet support chained transactions. We are working on it!",
   "Not supported": "Not supported",
-  "Your address is missing some ALPH for gas fees but thankfully another address can cover it!": "Your address is missing some ALPH for gas fees but thankfully another address can cover it!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!"
 }

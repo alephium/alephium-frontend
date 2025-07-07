@@ -1,3 +1,5 @@
+import { formatAmountForDisplay, MAXIMAL_GAS_FEE } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -51,7 +53,16 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <>
             <Surface type="accent" style={{ padding: 20 }}>
               <AppText color="accent">
-                {t('Your address is missing some ALPH for gas fees but thankfully another address can cover it!')}
+                {t(
+                  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
+                  {
+                    amount: formatAmountForDisplay({
+                      amount: MAXIMAL_GAS_FEE,
+                      amountDecimals: ALPH.decimals,
+                      displayDecimals: 2
+                    })
+                  }
+                )}
               </AppText>
             </Surface>
             <SignChainedTxModalContent props={chainedTxProps} />

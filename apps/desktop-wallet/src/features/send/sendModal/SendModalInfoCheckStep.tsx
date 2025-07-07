@@ -1,3 +1,5 @@
+import { formatAmountForDisplay, MAXIMAL_GAS_FEE } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
@@ -31,7 +33,16 @@ const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chained
           <>
             <InfoBox
               importance="accent"
-              text={t('Your address is missing some ALPH for gas fees but thankfully another address can cover it!')}
+              text={t(
+                "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
+                {
+                  amount: formatAmountForDisplay({
+                    amount: MAXIMAL_GAS_FEE,
+                    amountDecimals: ALPH.decimals,
+                    displayDecimals: 2
+                  })
+                }
+              )}
             />
             <SignChainedTxModalContent props={chainedTxProps} dAppUrl={dAppUrl} />
           </>
