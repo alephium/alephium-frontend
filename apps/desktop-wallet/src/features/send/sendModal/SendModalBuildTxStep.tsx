@@ -8,21 +8,21 @@ import styled from 'styled-components'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
-import GasSettings from '@/features/send/GasSettings'
-import { TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
-import TokensAmountInputs from '@/features/send/TokensAmountInputs'
+import GasSettings from '@/features/send/sendModal/GasSettings'
+import { SendFlowData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
+import TokensAmountInputs from '@/features/send/sendModal/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AssetAmountInputType } from '@/types/assets'
 
-export interface TransferBuildTxModalContentProps {
+export interface SendModalBuildTxStepProps {
   data: TransferTxModalData
-  onSubmit: (data: TransferTxData) => void
+  onSubmit: (data: SendFlowData) => void
   onBack: () => void
 }
 
-const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTxModalContentProps) => {
+const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepProps) => {
   const { t } = useTranslation()
   const {
     gasAmount,
@@ -137,7 +137,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTx
   )
 }
 
-export default TransferBuildTxModalContent
+export default SendModalBuildTxStep
 
 const HorizontalDividerStyled = styled.div`
   flex: 1;

@@ -7,13 +7,12 @@ import styled from 'styled-components'
 import InfoBox from '@/components/InfoBox'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
+import { CheckTxProps, SendFlowData } from '@/features/send/sendModal/sendTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { formatDateForDisplay } from '@/utils/misc'
 
-export type ConfirmLockTimeModalProps = Required<Pick<TransferTxData, 'lockTime'>> &
-  Pick<CheckTxProps<TransferTxData>, 'onSubmit'>
+export type ConfirmLockTimeModalProps = Required<Pick<SendFlowData, 'lockTime'>> & Pick<CheckTxProps, 'onSubmit'>
 
 const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & ConfirmLockTimeModalProps) => {
   const { t } = useTranslation()

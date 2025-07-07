@@ -4,23 +4,16 @@ import InfoBox from '@/components/InfoBox'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
-import CheckLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
+import CheckLockTimeBox from '@/features/send/CheckLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
-import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
+import { CheckTxProps } from '@/features/send/sendModal/sendTypes'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { SignChainedTxModalContent } from '@/features/walletConnect/SignChainedTxModal'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const TransferCheckTxModalContent = ({
-  data,
-  fees,
-  onSubmit,
-  onBack,
-  dAppUrl,
-  chainedTxProps
-}: CheckTxProps<TransferTxData>) => {
+const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chainedTxProps }: CheckTxProps) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const dispatch = useAppDispatch()
@@ -68,4 +61,4 @@ const TransferCheckTxModalContent = ({
   )
 }
 
-export default TransferCheckTxModalContent
+export default SendModalInfoCheckStep

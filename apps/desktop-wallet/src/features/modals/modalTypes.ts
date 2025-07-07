@@ -12,8 +12,8 @@ import {
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
-import { SendModalProps } from '@/features/send/SendModal'
-import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
+import { ConfirmLockTimeModalProps } from '@/features/send/sendModal/ConfirmLockTimeModal'
+import { SendModalProps } from '@/features/send/sendModal/SendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'

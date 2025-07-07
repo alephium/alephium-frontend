@@ -1,6 +1,6 @@
 import { Address, AssetAmount, SignChainedTxModalProps, TokenId } from '@alephium/shared'
 
-export interface TransferTxData {
+export interface SendFlowData {
   fromAddress: Address
   toAddress: string
   assetAmounts: AssetAmount[]
@@ -11,19 +11,16 @@ export interface TransferTxData {
   tokenId?: TokenId
 }
 
-export type TransferTxModalData = PartialTxData<TransferTxData, 'fromAddress'>
+export type TransferTxModalData = PartialTxData<SendFlowData, 'fromAddress'>
 
-export type TransferAddressesTxModalOnSubmitData = PartialTxData<
-  TransferTxData,
-  'fromAddress' | 'toAddress' | 'tokenId'
->
+export type TransferAddressesTxModalOnSubmitData = PartialTxData<SendFlowData, 'fromAddress' | 'toAddress' | 'tokenId'>
 
 export type PartialTxData<T, K extends keyof T> = {
   [P in keyof Omit<T, K>]?: T[P]
 } & Pick<T, K>
 
-export type CheckTxProps<T> = {
-  data: T
+export type CheckTxProps = {
+  data: SendFlowData
   fees: bigint
   onSubmit: () => void
   onBack: () => void

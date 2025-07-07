@@ -25,12 +25,15 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer/AddressesTxModalContent'
-import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
-import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
-import { TransferAddressesTxModalOnSubmitData, TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
-import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendUtils'
-import { Step } from '@/features/send/StepsProgress'
+import SendModalAddressesStep from '@/features/send/sendModal/SendModalAddressesStep'
+import SendModalBuildTxStep from '@/features/send/sendModal/SendModalBuildTxStep'
+import SendModalInfoCheckStep from '@/features/send/sendModal/SendModalInfoCheckStep'
+import {
+  SendFlowData,
+  TransferAddressesTxModalOnSubmitData,
+  TransferTxModalData
+} from '@/features/send/sendModal/sendTypes'
+import { getChainedTxParams, getSweepTxParams, getTransferTxParams } from '@/features/send/sendModal/sendUtils'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
@@ -38,6 +41,8 @@ import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
 export type SendModalProps = TransferTxModalData
+
+type Step = 'addresses' | 'build-tx' | 'info-check' | 'password-check' | 'tx-sent'
 
 function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const { t } = useTranslation()
@@ -47,7 +52,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   const { isLedger, onLedgerError } = useLedger()
 
   const [addressesData, setAddressesData] = useState<TransferTxModalData>(initialTxData)
-  const [transactionData, setTransactionData] = useState<TransferTxData>()
+  const [transactionData, setTransactionData] = useState<SendFlowData>()
   const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
   const [isSweeping, setIsSweeping] = useState(false)
@@ -127,7 +132,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   )
 
   const buildTransactionExtended = useCallback(
-    async (data: TransferTxData) => {
+    async (data: SendFlowData) => {
       setTransactionData(data)
       setIsLoading(true)
       setIsSweeping(data.shouldSweep)
@@ -209,17 +214,17 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
   return (
     <CenteredModal id={id} title={t('Send')} onClose={onClose} isLoading={isLoading} focusMode hasFooterButtons>
       {step === 'addresses' && (
-        <TransferAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
+        <SendModalAddressesStep data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
       )}
       {step === 'build-tx' && (
-        <TransferBuildTxModalContent
+        <SendModalBuildTxStep
           data={{ ...(transactionData ?? {}), ...addressesData }}
           onSubmit={buildTransactionExtended}
           onBack={goToAddresses}
         />
       )}
       {step === 'info-check' && !!transactionData && !!fees && (
-        <TransferCheckTxModalContent
+        <SendModalInfoCheckStep
           data={transactionData}
           chainedTxProps={chainedTxProps}
           fees={fees}
