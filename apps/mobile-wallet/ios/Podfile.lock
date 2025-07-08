@@ -2798,8 +2798,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 1dca942403ed9342f98334bf4c3621f011aa7946
-  DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
+  boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
+  DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXApplication: 4c72f6017a14a65e338c5e74fca418f35141e819
   EXConstants: fcfc75800824ac2d5c592b5bc74130bad17b146b
   EXJSONUtils: 01fc7492b66c234e395dcffdd5f53439c5c29c93
@@ -2833,8 +2833,8 @@ SPEC CHECKSUMS:
   EXUpdatesInterface: 7c977640bdd8b85833c19e3959ba46145c5719db
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
-  fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
-  glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
+  fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
+  glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 9e868dc7be781364296d6ee2f56d0c1a9ef0bb11
   ImageColors: 869f48b27ca2afb347fd0bada3257a5f698ee55e
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
