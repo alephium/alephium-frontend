@@ -148,8 +148,8 @@ const useAddressGeneration = () => {
         })
       } else {
         addresses = addressesMetadata.map((metadata) => ({
-          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: metadata.keyType ?? 'default' }),
-          ...metadata
+          ...metadata,
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index, keyType: metadata.keyType ?? 'default' })
         }))
       }
 
