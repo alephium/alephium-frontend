@@ -14,7 +14,7 @@ import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-r
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -45,7 +45,7 @@ export type SendModalProps = TransferTxModalData
 
 type Step = 'addresses' | 'build-tx' | 'info-check' | 'password-check' | 'tx-sent'
 
-function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
+const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
@@ -254,7 +254,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       )}
     </CenteredModal>
   )
-}
+})
 
 export default SendModal
 
