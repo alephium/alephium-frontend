@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.15
+
+### Patch Changes
+
+- 8eeac67: Fix display of NFT info in NFT modal
+
 ## 1.10.14
 
 ### Patch Changes
