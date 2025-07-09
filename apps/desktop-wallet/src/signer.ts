@@ -13,6 +13,7 @@ import {
 } from '@alephium/web3'
 
 import { LedgerAlephium } from '@/features/ledger/utils'
+import { store } from '@/storage/store'
 
 export interface LedgerTxParams {
   signerIndex: number
@@ -22,6 +23,7 @@ export interface LedgerTxParams {
 
 class InMemorySigner extends AlephiumWalletSigner {
   public getPublicKey = async (addressStr: string): Promise<string> =>
+    store.getState().addresses.entities[addressStr]?.publicKey ??
     keyring.exportPublicKeyOfAddress(getBaseAddressStr(addressStr))
 
   public signRaw = async (address: string, tx: string): Promise<string> =>
