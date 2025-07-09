@@ -78,9 +78,6 @@ export const SendContextProvider = ({
   )
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
 
-  const [consolidationRequired, setConsolidationRequired] = useState(false)
-  const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
-
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
 
   const setAssetAmount = useCallback(
@@ -108,29 +105,33 @@ export const SendContextProvider = ({
       const data = await buildSweepTransactions(address.hash, address.hash)
       setUnsignedTxData(data)
 
-      return data.fees
+      return data
     } catch (e) {
       showExceptionToast(e, t('Could not build transaction'))
     }
   }, [address, t])
 
   const sendTransaction = useCallback(
-    async (onSendSuccess: () => void) => {
+    async (onSendSuccess: () => void, consolidationUnsignedTxs?: node.SweepAddressTransaction[]) => {
       if (!address || !toAddress) return
 
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
+      const unsignedTxs_ = consolidationUnsignedTxs ?? unsignedTxData.unsignedTxs
+
+      console.log('unsignedTxs_', unsignedTxs_)
+
       try {
-        for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
+        for (const { txId, unsignedTx } of unsignedTxs_) {
           const data = await signAndSendTransaction(address.hash, txId, unsignedTx)
 
           dispatch(
             transactionSent({
               hash: data.txId,
               fromAddress: address.hash,
-              toAddress: consolidationRequired ? address.hash : toAddress,
-              amount: attoAlphAmount,
-              tokens,
+              toAddress: consolidationUnsignedTxs ? address.hash : toAddress,
+              amount: !consolidationUnsignedTxs ? attoAlphAmount : undefined,
+              tokens: !consolidationUnsignedTxs ? tokens : undefined,
               timestamp: new Date().getTime(),
               status: 'sent',
               type: 'transfer'
@@ -148,16 +149,16 @@ export const SendContextProvider = ({
         sendAnalytics({ type: 'error', message })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, t, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, dispatch, t, toAddress, unsignedTxData.unsignedTxs]
   )
 
   const authenticateAndSend = useCallback(
-    async (onSendSuccess: () => void) => {
+    async (onSendSuccess: () => void, consolidationUnsignedTxs?: node.SweepAddressTransaction[]) => {
       await triggerBiometricsAuthGuard({
         settingsToCheck: 'transactions',
         successCallback: () =>
           triggerFundPasswordAuthGuard({
-            successCallback: () => sendTransaction(onSendSuccess)
+            successCallback: () => sendTransaction(onSendSuccess, consolidationUnsignedTxs)
           })
       })
     },
@@ -176,36 +177,29 @@ export const SendContextProvider = ({
         const error = (e as unknown as string).toString()
 
         if (error.includes('consolidating') || error.includes('consolidate')) {
-          setConsolidationRequired(true)
-          const fees = await buildConsolidationTransactions()
-          dispatch(
-            openModal({
-              name: 'ConsolidationModal',
-              props: {
-                onConsolidate: () => {
-                  authenticateAndSend(onSendSuccessCallback)
-                },
-                fees: fees ?? unsignedTxData.fees
-              }
-            })
-          )
-          setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
+          const data = await buildConsolidationTransactions()
+
+          if (data) {
+            dispatch(
+              openModal({
+                name: 'ConsolidationModal',
+                props: {
+                  onConsolidate: () => {
+                    authenticateAndSend(callbacks.onConsolidationSuccess, data.unsignedTxs)
+                  },
+                  fees: data.fees
+                }
+              })
+            )
+          } else {
+            showExceptionToast(e, t('Could not build transaction'))
+          }
         } else {
           showExceptionToast(e, t('Could not build transaction'))
         }
       }
     },
-    [
-      address,
-      assetAmounts,
-      authenticateAndSend,
-      buildConsolidationTransactions,
-      dispatch,
-      onSendSuccessCallback,
-      t,
-      toAddress,
-      unsignedTxData.fees
-    ]
+    [address, assetAmounts, authenticateAndSend, buildConsolidationTransactions, dispatch, t, toAddress]
   )
 
   return (
