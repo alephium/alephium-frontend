@@ -1,4 +1,4 @@
-import { Address, getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { Address, getHumanReadableError, transactionSent, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { buildSweepTransactions } from '@/api/transactions'
+import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
@@ -131,10 +131,8 @@ function SendModal<PT extends { fromAddress: Address }>({
   )
 
   const handleSendExtended = useCallback(
-    async (consolidationRequired: boolean, txData?: TxData) => {
-      if (!transactionData && !txData) return
-
-      const transactionData_ = txData ?? transactionData
+    async (consolidationRequired: boolean) => {
+      if (!transactionData) return
 
       setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
@@ -142,7 +140,7 @@ function SendModal<PT extends { fromAddress: Address }>({
         const signature =
           type === 'transfer'
             ? await handleTransferSend(
-                transactionData_ as TransferTxData,
+                transactionData as TransferTxData,
                 txContext,
                 posthog,
                 isLedger,
@@ -151,14 +149,14 @@ function SendModal<PT extends { fromAddress: Address }>({
               )
             : type === 'call-contract'
               ? await handleCallContractSend(
-                  transactionData_ as CallContractTxData,
+                  transactionData as CallContractTxData,
                   txContext,
                   posthog,
                   isLedger,
                   onLedgerError
                 )
               : await handleDeployContractSend(
-                  transactionData_ as DeployContractTxData,
+                  transactionData as DeployContractTxData,
                   txContext,
                   posthog,
                   isLedger,
@@ -256,7 +254,41 @@ function SendModal<PT extends { fromAddress: Address }>({
                 fee: fees,
                 onConsolidateClick: passwordRequirement
                   ? () => setStep('password-check')
-                  : () => handleSendExtended(true, data)
+                  : async () => {
+                      setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
+
+                      try {
+                        for (const { txId, unsignedTx } of unsignedTxs) {
+                          const data = await signAndSendTransaction(
+                            fromAddress,
+                            txId,
+                            unsignedTx,
+                            isLedger,
+                            onLedgerError
+                          )
+
+                          dispatch(
+                            transactionSent({
+                              hash: data.txId,
+                              fromAddress: fromAddress.hash,
+                              toAddress: fromAddress.hash,
+                              timestamp: new Date().getTime(),
+                              type: 'consolidation',
+                              status: 'sent'
+                            })
+                          )
+                        }
+
+                        setStep('tx-sent')
+                      } catch (e) {
+                        dispatch(
+                          transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction')))
+                        )
+                        sendAnalytics({ type: 'error', message: 'Could not send tx' })
+                      } finally {
+                        setIsLoading(false)
+                      }
+                    }
               }
             })
           )
@@ -287,9 +319,10 @@ function SendModal<PT extends { fromAddress: Address }>({
     },
     [
       dispatch,
-      handleSendExtended,
       id,
+      isLedger,
       isRequestToApproveContractCall,
+      onLedgerError,
       passwordRequirement,
       sendAnalytics,
       sendFailureResponse,
