@@ -1,9 +1,10 @@
-import { signAndSubmitTxResultToSentTx, SignTransferTxModalProps, transactionSent } from '@alephium/shared'
+import { SignTransferTxModalProps } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
+import { sendTransferTransactions } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
@@ -13,12 +14,8 @@ import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { useAppDispatch } from '~/hooks/redux'
-import { signer } from '~/signer'
 
 const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
-  const dispatch = useAppDispatch()
-
   const { handleApprovePress, handleRejectPress } = useSignModal({
     onError,
     type: 'TRANSFER',
@@ -28,14 +25,10 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
       // That would make sense only if we have a single destination otherwise what should the sweep destination
       // address be?
 
-      const data = await signer.signAndSubmitTransferTx(txParams)
+      const result = await sendTransferTransactions(txParams)
 
-      const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'TRANSFER' })
-      dispatch(transactionSent(sentTx))
-
+      onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
       sendAnalytics({ event: 'Approved transfer', props: { origin } })
-
-      onSuccess({ ...data, gasPrice: BigInt(data.gasPrice) })
     }
   })
 
@@ -57,33 +50,44 @@ export default SignTransferTxModal
 export const SignTransferTxModalContent = ({
   txParams,
   fees
-}: Pick<SignTransferTxModalProps, 'txParams'> & { fees: bigint }) => {
+}: Pick<SignTransferTxModalProps, 'txParams'> & { fees: bigint }) => (
+  <>
+    {txParams.destinations.map(({ address, attoAlphAmount, tokens }) => {
+      const assetAmounts = [
+        { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+        ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+      ]
+      return (
+        <Surface key={address}>
+          <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+          <SignTransferTxModalAddressesRows fromAddress={txParams.signerAddress} toAddress={address} />
+        </Surface>
+      )
+    })}
+    <Surface>
+      <SignModalFeesRow fees={fees} />
+    </Surface>
+  </>
+)
+
+export const SignTransferTxModalAddressesRows = ({
+  fromAddress,
+  toAddress
+}: {
+  fromAddress: string
+  toAddress: string
+}) => {
   const { t } = useTranslation()
 
   return (
     <>
-      {txParams.destinations.map(({ address, attoAlphAmount, tokens }) => {
-        const assetAmounts = [
-          { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-          ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-        ]
-        return (
-          <Surface key={address}>
-            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+      <Row title={t('From')} titleColor="secondary">
+        <AddressBadge addressHash={fromAddress} />
+      </Row>
 
-            <Row title={t('From')} titleColor="secondary">
-              <AddressBadge addressHash={txParams.signerAddress} />
-            </Row>
-
-            <Row title={t('To')} titleColor="secondary">
-              <AddressBadge addressHash={address} />
-            </Row>
-          </Surface>
-        )
-      })}
-      <Surface>
-        <SignModalFeesRow fees={fees} />
-      </Surface>
+      <Row title={t('To')} titleColor="secondary">
+        <AddressBadge addressHash={toAddress} />
+      </Row>
     </>
   )
 }

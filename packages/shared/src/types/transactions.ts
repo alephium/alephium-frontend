@@ -1,7 +1,8 @@
-import { explorer as e, node as n, Optional } from '@alephium/web3'
+import { explorer as e, KeyType, node as n, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-import { Asset, AssetAmount } from '@/types/assets'
+import { Address } from '@/types/addresses'
+import { Asset, AssetAmount, TokenId } from '@/types/assets'
 
 export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
   Required<AssetAmount>
@@ -51,3 +52,18 @@ export const isGrouplessTxResult = (
   | n.BuildGrouplessTransferTxResult
   | n.BuildGrouplessExecuteScriptTxResult
   | n.BuildGrouplessDeployContractTxResult => 'transferTxs' in txResult
+
+export interface SweepTxParams extends Omit<n.BuildSweepAddressTransactions, 'fromPublicKey' | 'fromPublicKeyType'> {
+  signerAddress: string
+  signerKeyType?: KeyType
+}
+
+export interface SendFlowData {
+  fromAddress: Address
+  toAddress: string
+  assetAmounts: AssetAmount[]
+  gasAmount?: number
+  gasPrice?: string
+  lockTime?: Date
+  tokenId?: TokenId
+}

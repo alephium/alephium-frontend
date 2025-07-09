@@ -14,7 +14,7 @@ import {
 
 import { LedgerAlephium } from '@/features/ledger/utils'
 
-interface LedgerTxParams {
+export interface LedgerTxParams {
   signerIndex: number
   signerKeyType: GroupedKeyType
   onLedgerError: (error: Error) => void

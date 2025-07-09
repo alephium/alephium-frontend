@@ -4,19 +4,19 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import AddressInputs from '@/features/send/AddressInputs'
-import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
+import AddressInputs from '@/features/send/sendModal/AddressInputs'
+import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
-interface TransferAddressesTxModalContentProps {
+interface SendModalAddressesStepProps {
   data: TransferTxModalData
   onSubmit: (data: TransferAddressesTxModalOnSubmitData) => void
   onCancel: () => void
 }
 
-const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
+const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddressesStepProps) => {
   const { t } = useTranslation()
   const { data: fromAddresses } = useFetchAddressesHashesWithBalance(data.tokenId)
 
@@ -78,7 +78,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
   )
 }
 
-export default TransferAddressesTxModalContent
+export default SendModalAddressesStep
 
 function useStateWithError<T>(initialValue: T) {
   const [value, setValue] = useState({ value: initialValue, error: '' })

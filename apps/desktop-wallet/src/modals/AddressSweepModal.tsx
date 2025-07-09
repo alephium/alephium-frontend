@@ -2,10 +2,8 @@ import {
   Address,
   AddressHash,
   getHumanReadableError,
-  isGrouplessKeyType,
   selectAddressByHash,
-  selectDefaultAddress,
-  transactionSent
+  selectDefaultAddress
 } from '@alephium/shared'
 import {
   useFetchAddressesHashesSortedByLastUse,
@@ -19,7 +17,7 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { buildSweepTransactions } from '@/api/transactions'
+import { buildSweepTransactions, sendSweepTransactions } from '@/api/transactions'
 import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
@@ -30,7 +28,6 @@ import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 import { getName } from '@/utils/addresses'
 
@@ -106,7 +103,7 @@ const AddressSweepModal = memo(
     const onClose = () => dispatch(closeModal({ id }))
 
     const handleSweepClick = async () => {
-      if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
+      if (!sweepAddresses.from || !sweepAddresses.to) return
       setIsLoading(true)
       try {
         const txParams = {
@@ -114,32 +111,7 @@ const AddressSweepModal = memo(
           signerKeyType: sweepAddresses.from.keyType,
           toAddress: sweepAddresses.to.hash
         }
-        let results: Array<{ txId: string }>
-
-        if (isLedger) {
-          if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
-
-          results = await signer.signAndSubmitSweepTxsLedger(txParams, {
-            signerIndex: sweepAddresses.from.index,
-            signerKeyType: txParams.signerKeyType ?? 'default',
-            onLedgerError
-          })
-        } else {
-          results = await signer.signAndSubmitSweepTxs(txParams)
-        }
-
-        for (const { txId } of results) {
-          dispatch(
-            transactionSent({
-              hash: txId,
-              fromAddress: sweepAddresses.from.hash,
-              toAddress: sweepAddresses.to.hash,
-              timestamp: new Date().getTime(),
-              type: 'sweep',
-              status: 'sent'
-            })
-          )
-        }
+        await sendSweepTransactions(txParams, isLedger, { signerIndex: sweepAddresses.from.index, onLedgerError })
 
         onClose()
         onSuccessfulSweep && onSuccessfulSweep()

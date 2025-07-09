@@ -1,4 +1,6 @@
-import { KeyType, node as n, NodeProvider, TransactionBuilder } from '@alephium/web3'
+import { node as n, NodeProvider, TransactionBuilder } from '@alephium/web3'
+
+import { SweepTxParams } from '@/types/transactions'
 
 // Delete when https://github.com/alephium/alephium-web3/pull/515 is merged and a new version is published
 export abstract class AlephiumWalletTxBuilder extends TransactionBuilder {
@@ -28,10 +30,4 @@ export abstract class AlephiumWalletTxBuilder extends TransactionBuilder {
       ...params
     }
   }
-}
-
-type SweepTxParams = {
-  signerAddress: string
-  signerKeyType?: KeyType
-  toAddress: string
 }

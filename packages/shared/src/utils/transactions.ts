@@ -1,4 +1,6 @@
+import { ALPH } from '@alephium/token-list'
 import {
+  DUST_AMOUNT,
   explorer as e,
   SignChainedTxParams,
   SignChainedTxResult,
@@ -10,6 +12,7 @@ import {
   SignTransferTxResult
 } from '@alephium/web3'
 
+import { MAXIMAL_GAS_FEE } from '@/constants'
 import {
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
@@ -20,7 +23,7 @@ import {
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances } from '@/types/assets'
 import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
-import { SentTransaction, TransactionInfoType } from '@/types/transactions'
+import { SendFlowData, SentTransaction, SweepTxParams, TransactionInfoType } from '@/types/transactions'
 
 export const getTransactionInfoType = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction,
@@ -130,3 +133,59 @@ export const signChainedTxResultsToTxSubmittedResults = (
       }
     }
   })
+
+export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
+  const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
+  const tokens = assetAmounts
+    .filter((asset): asset is Required<AssetAmount> => asset.id !== ALPH.id && asset.amount !== undefined)
+    .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
+
+  const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
+  const minDiff = minAlphAmountRequirement - alphAmount
+  const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
+
+  return {
+    attoAlphAmount: totalAlphAmount.toString(),
+    extraAlphForDust: minAlphAmountRequirement,
+    tokens
+  }
+}
+
+export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
+  assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }
+
+export const getTransferTxParams = (data: SendFlowData): SignTransferTxParams => {
+  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = data
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+  return {
+    signerAddress: fromAddress.hash,
+    signerKeyType: fromAddress.keyType,
+    destinations: [{ address: toAddress, attoAlphAmount, tokens, lockTime: lockTime ? lockTime.getTime() : undefined }],
+    gasAmount: gasAmount ? gasAmount : undefined,
+    gasPrice: gasPrice ? BigInt(gasPrice) : undefined
+  }
+}
+
+export const getGasRefillChainedTxParams = (
+  gasRefillGroupedAddress: string,
+  data: SendFlowData
+): Array<SignChainedTxParams> => [
+  {
+    type: 'Transfer',
+    signerAddress: gasRefillGroupedAddress,
+    signerKeyType: 'default',
+    destinations: [{ address: data.fromAddress.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
+  },
+  {
+    type: 'Transfer',
+    ...getTransferTxParams(data)
+  }
+]
+
+export const getSweepTxParams = (data: SendFlowData): SweepTxParams => ({
+  signerAddress: data.fromAddress.hash,
+  signerKeyType: data.fromAddress.keyType,
+  toAddress: data.toAddress,
+  lockTime: data.lockTime?.getTime()
+})

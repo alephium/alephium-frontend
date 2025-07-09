@@ -1,36 +1,35 @@
+import { ConsolidationTxModalProps } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
+import { sendSweepTransactions } from '~/api/transactions'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { useModalContext } from '~/features/modals/ModalContext'
 
-interface ConsolidationModalProps {
-  onConsolidate: () => void
-  fees: bigint
-}
-
-const ConsolidationModal = memo<ConsolidationModalProps>(({ onConsolidate, fees }) => {
+const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees, onSuccess }) => {
   const { t } = useTranslation()
-  const { dismissModal } = useModalContext()
 
-  const handleConsolidate = () => {
-    onConsolidate()
-    dismissModal()
-  }
+  const { handleApprovePress, handleRejectPress } = useSignModal({
+    onError: () => {},
+    type: 'CONSOLIDATE',
+    sign: async () => {
+      await sendSweepTransactions(txParams)
 
-  const handleCancel = () => {
-    dismissModal()
-  }
+      sendAnalytics({ event: 'Consolidated UTXOs' })
+      onSuccess()
+    }
+  })
 
   return (
-    <BottomModal2 notScrollable>
+    <BottomModal2 contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
@@ -49,15 +48,15 @@ const ConsolidationModal = memo<ConsolidationModalProps>(({ onConsolidate, fees 
       </ScreenSection>
       <ScreenSection centered>
         <ButtonsRow>
-          <Button title={t('Cancel')} onPress={handleCancel} flex variant="accent" short />
-          <Button title={t('Consolidate')} onPress={handleConsolidate} variant="highlight" flex short />
+          <Button title={t('Cancel')} onPress={handleRejectPress} flex variant="accent" short />
+          <Button title={t('Consolidate')} onPress={handleApprovePress} variant="highlight" flex short />
         </ButtonsRow>
       </ScreenSection>
     </BottomModal2>
   )
 })
 
-export default ConsolidationModal
+export default SignConsolidateTxModal
 
 const Fee = styled.View`
   flex-direction: row;
