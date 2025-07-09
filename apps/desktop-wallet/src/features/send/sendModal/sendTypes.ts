@@ -8,14 +8,25 @@ export type PartialTxData<T, K extends keyof T> = {
   [P in keyof Omit<T, K>]?: T[P]
 } & Pick<T, K>
 
-export type CheckTxProps = {
+export type CheckTransferTxProps = {
   data: SendFlowData
   fees: bigint
   onSubmit: () => void
   onBack: () => void
   dAppUrl?: string
-  chainedTxProps?: SignChainedTxModalProps['props']
 }
+
+export type CheckChainedTxProps = {
+  data: SendFlowData
+  onSubmit: () => void
+  onBack: () => void
+  dAppUrl?: string
+  chainedTxProps: SignChainedTxModalProps['props']
+}
+
+export type CheckTxProps = CheckTransferTxProps | CheckChainedTxProps
+
+export const isChainedTxProps = (props: CheckTxProps): props is CheckChainedTxProps => 'chainedTxProps' in props
 
 export type UnsignedTx = {
   fromGroup: number

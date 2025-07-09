@@ -221,15 +221,25 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
           onBack={goToAddresses}
         />
       )}
-      {step === 'info-check' && !!sendFlowData && !!fees && (
-        <SendModalInfoCheckStep
-          data={sendFlowData}
-          chainedTxProps={chainedTxProps}
-          fees={fees}
-          onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
-          onBack={goToBuildTx}
-        />
-      )}
+      {step === 'info-check' &&
+        !!sendFlowData &&
+        (chainedTxProps ? (
+          <SendModalInfoCheckStep
+            data={sendFlowData}
+            chainedTxProps={chainedTxProps}
+            onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
+            onBack={goToBuildTx}
+          />
+        ) : (
+          !!fees && (
+            <SendModalInfoCheckStep
+              data={sendFlowData}
+              fees={fees}
+              onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
+              onBack={goToBuildTx}
+            />
+          )
+        ))}
       {step === 'password-check' && passwordRequirement && (
         <PasswordConfirmation
           text={t('Enter your password to send the transaction.')}

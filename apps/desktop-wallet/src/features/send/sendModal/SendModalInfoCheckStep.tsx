@@ -9,13 +9,14 @@ import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckLockTimeBox from '@/features/send/CheckLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
-import { CheckTxProps } from '@/features/send/sendModal/sendTypes'
+import { CheckTxProps, isChainedTxProps } from '@/features/send/sendModal/sendTypes'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { SignChainedTxModalContent } from '@/features/walletConnect/SignChainedTxModal'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chainedTxProps }: CheckTxProps) => {
+const SendModalInfoCheckStep = (props: CheckTxProps) => {
+  const { data, onSubmit, onBack, dAppUrl } = props
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const dispatch = useAppDispatch()
@@ -29,7 +30,7 @@ const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chained
   return (
     <>
       <CheckModalContent>
-        {chainedTxProps ? (
+        {isChainedTxProps(props) ? (
           <>
             <InfoBox
               importance="accent"
@@ -44,7 +45,7 @@ const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chained
                 }
               )}
             />
-            <SignChainedTxModalContent props={chainedTxProps} dAppUrl={dAppUrl} />
+            <SignChainedTxModalContent props={props.chainedTxProps} dAppUrl={dAppUrl} />
           </>
         ) : (
           <>
@@ -57,7 +58,7 @@ const SendModalInfoCheckStep = ({ data, fees, onSubmit, onBack, dAppUrl, chained
               hasHorizontalPadding
             />
             {data.lockTime && <CheckLockTimeBox lockTime={data.lockTime} />}
-            <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
+            <CheckWorthBox assetAmounts={data.assetAmounts} fee={props.fees} hasBg hasBorder hasHorizontalPadding />
           </>
         )}
       </CheckModalContent>
