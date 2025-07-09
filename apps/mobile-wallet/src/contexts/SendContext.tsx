@@ -105,8 +105,10 @@ export const SendContextProvider = ({
     if (!address) return
 
     try {
-      const data = await buildSweepTransactions(address.publicKey, address.hash)
+      const data = await buildSweepTransactions(address.hash, address.hash)
       setUnsignedTxData(data)
+
+      return data.fees
     } catch (e) {
       showExceptionToast(e, t('Could not build transaction'))
     }
@@ -175,6 +177,7 @@ export const SendContextProvider = ({
 
         if (error.includes('consolidating') || error.includes('consolidate')) {
           setConsolidationRequired(true)
+          const fees = await buildConsolidationTransactions()
           dispatch(
             openModal({
               name: 'ConsolidationModal',
@@ -182,12 +185,11 @@ export const SendContextProvider = ({
                 onConsolidate: () => {
                   authenticateAndSend(onSendSuccessCallback)
                 },
-                fees: unsignedTxData.fees
+                fees: fees ?? unsignedTxData.fees
               }
             })
           )
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
-          await buildConsolidationTransactions()
         } else {
           showExceptionToast(e, t('Could not build transaction'))
         }

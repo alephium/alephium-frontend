@@ -30,7 +30,7 @@ const ConsolidationModal = memo<ConsolidationModalProps>(({ onConsolidate, fees 
   }
 
   return (
-    <BottomModal2 notScrollable>
+    <BottomModal2 notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
