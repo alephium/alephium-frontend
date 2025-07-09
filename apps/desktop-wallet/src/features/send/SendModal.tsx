@@ -131,8 +131,10 @@ function SendModal<PT extends { fromAddress: Address }>({
   )
 
   const handleSendExtended = useCallback(
-    async (consolidationRequired: boolean) => {
-      if (!transactionData) return
+    async (consolidationRequired: boolean, txData?: TxData) => {
+      if (!transactionData && !txData) return
+
+      const transactionData_ = txData ?? transactionData
 
       setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
@@ -140,7 +142,7 @@ function SendModal<PT extends { fromAddress: Address }>({
         const signature =
           type === 'transfer'
             ? await handleTransferSend(
-                transactionData as TransferTxData,
+                transactionData_ as TransferTxData,
                 txContext,
                 posthog,
                 isLedger,
@@ -149,14 +151,14 @@ function SendModal<PT extends { fromAddress: Address }>({
               )
             : type === 'call-contract'
               ? await handleCallContractSend(
-                  transactionData as CallContractTxData,
+                  transactionData_ as CallContractTxData,
                   txContext,
                   posthog,
                   isLedger,
                   onLedgerError
                 )
               : await handleDeployContractSend(
-                  transactionData as DeployContractTxData,
+                  transactionData_ as DeployContractTxData,
                   txContext,
                   posthog,
                   isLedger,
@@ -254,7 +256,7 @@ function SendModal<PT extends { fromAddress: Address }>({
                 fee: fees,
                 onConsolidateClick: passwordRequirement
                   ? () => setStep('password-check')
-                  : () => handleSendExtended(true)
+                  : () => handleSendExtended(true, data)
               }
             })
           )
