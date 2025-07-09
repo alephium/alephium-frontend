@@ -104,7 +104,7 @@ const AddressSweepModal = memo(
 
     const handleSweepClick = async () => {
       if (!sweepAddresses.from || !sweepAddresses.to) return
-      setIsLoading(true)
+      setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
       try {
         const txParams = {
           signerAddress: sweepAddresses.from.hash,
