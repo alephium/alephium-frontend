@@ -335,7 +335,7 @@ const WalletConnectSessionRequestEventHandler = memo(
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result }),
                       dAppUrl: event.verifyContext.verified.origin,
                       dAppIcon: getDappIcon(event.topic),
-                      origin: 'walletconnect',
+                      origin: 'walletconnect:insufficient-funds',
                       onError: (message) => {
                         respondToWalletConnectWithError(event, {
                           message,

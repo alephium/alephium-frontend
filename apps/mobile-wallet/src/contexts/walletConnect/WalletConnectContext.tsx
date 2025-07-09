@@ -739,7 +739,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result }),
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
-                    origin: 'walletconnect',
+                    origin: 'walletconnect:insufficient-funds',
                     onError: (message) => {
                       respondToWalletConnectWithError(requestEvent, {
                         message,

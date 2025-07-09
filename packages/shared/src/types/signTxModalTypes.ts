@@ -17,7 +17,11 @@ import {
 
 import { SweepTxParams } from '@/types/transactions'
 
-export type ModalOrigin = 'walletconnect' | 'in-app-browser'
+export type ModalOrigin =
+  | 'walletconnect'
+  | 'in-app-browser'
+  | 'walletconnect:insufficient-funds'
+  | 'in-app-browser:insufficient-funds'
 
 export type SignTxModalCommonProps = {
   onError: (message: string) => void

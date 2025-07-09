@@ -362,7 +362,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                         replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
                       dAppUrl,
                       dAppIcon,
-                      origin: 'in-app-browser',
+                      origin: 'in-app-browser:insufficient-funds',
                       onError: (error) =>
                         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
                     }
