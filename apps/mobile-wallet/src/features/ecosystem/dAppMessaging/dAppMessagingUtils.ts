@@ -1,4 +1,4 @@
-import { Address, getBaseAddressStr, isGrouplessAddress } from '@alephium/shared'
+import { Address, isGrouplessAddress } from '@alephium/shared'
 import { TransactionParams } from '@alephium/wallet-dapp-provider'
 import {
   SignChainedTxParams,
@@ -12,6 +12,7 @@ import { capitalize } from 'lodash'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { signer } from '~/signer'
 
 export const useNetwork = (): ConnectedAddressPayload['network'] => {
   const network = useAppSelector((s) => s.network)
@@ -91,7 +92,7 @@ export const getChainedTxPropsFromTransactionParams = (
   })
 
 export const getChainedTxSignersPublicKeys = async (txParams: Array<SignChainedTxParams>) =>
-  Promise.all(txParams.map(({ signerAddress }) => getAddressAsymetricKey(getBaseAddressStr(signerAddress), 'public')))
+  Promise.all(txParams.map(({ signerAddress }) => signer.getPublicKey(signerAddress)))
 
 export const validateChainedTxsNetwork = (txParams: Array<TransactionParams>) => {
   const networkId = txParams[0].params.networkId

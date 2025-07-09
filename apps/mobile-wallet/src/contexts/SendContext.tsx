@@ -5,6 +5,8 @@ import {
   getGasRefillChainedTxParams,
   getSweepTxParams,
   getTransferTxParams,
+  isConsolidationError,
+  isInsufficientFundsError,
   selectAddressByHash,
   SignChainedTxModalProps,
   throttledClient
@@ -179,10 +181,8 @@ export const SendContextProvider = ({
 
         callbacks.onBuildSuccess()
       } catch (e) {
-        const error = (e as unknown as string).toString().toLowerCase()
-
         try {
-          if (error.includes('consolidating') || error.includes('consolidate')) {
+          if (isConsolidationError(e)) {
             const txParams = getSweepTxParams({ ...sendFlowData, toAddress: address.hash })
             const fees = await fetchSweepTransactionsFees(txParams)
 
@@ -194,7 +194,7 @@ export const SendContextProvider = ({
             )
 
             setChainedTxProps(undefined)
-          } else if (error.includes('not enough') && gasRefillGroupedAddress) {
+          } else if (isInsufficientFundsError(e) && gasRefillGroupedAddress) {
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, sendFlowData)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [

@@ -1,18 +1,23 @@
 import { ALPH } from '@alephium/token-list'
 import {
+  DEFAULT_GAS_PRICE,
   DUST_AMOUNT,
   explorer as e,
+  MINIMAL_CONTRACT_DEPOSIT,
   SignChainedTxParams,
   SignChainedTxResult,
+  SignDeployContractChainedTxParams,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
+  SignExecuteScriptChainedTxParams,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
+  SignTransferChainedTxParams,
   SignTransferTxParams,
   SignTransferTxResult
 } from '@alephium/web3'
 
-import { MAXIMAL_GAS_FEE } from '@/constants'
+import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '@/constants'
 import {
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
@@ -20,10 +25,16 @@ import {
   isConsolidationTx,
   isInternalTx
 } from '@/transactions'
-import { AddressHash } from '@/types/addresses'
+import { AddressHash, AddressWithGroup } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances } from '@/types/assets'
 import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
-import { SendFlowData, SentTransaction, SweepTxParams, TransactionInfoType } from '@/types/transactions'
+import {
+  SendFlowData,
+  SentTransaction,
+  SweepTxParams,
+  TransactionInfoType,
+  TransactionParams
+} from '@/types/transactions'
 
 export const getTransactionInfoType = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction,
@@ -134,6 +145,28 @@ export const signChainedTxResultsToTxSubmittedResults = (
     }
   })
 
+export const transactionParamsToSignChainedTxParams = (transactionParams: TransactionParams): SignChainedTxParams => {
+  switch (transactionParams.type) {
+    case 'TRANSFER':
+      return {
+        type: 'Transfer',
+        ...transactionParams.params
+      } as SignTransferChainedTxParams
+    case 'DEPLOY_CONTRACT':
+      return {
+        type: 'DeployContract',
+        ...transactionParams.params
+      } as SignDeployContractChainedTxParams
+    case 'EXECUTE_SCRIPT':
+      return {
+        type: 'ExecuteScript',
+        ...transactionParams.params
+      } as SignExecuteScriptChainedTxParams
+    default:
+      throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
+  }
+}
+
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
   const tokens = assetAmounts
@@ -183,9 +216,73 @@ export const getGasRefillChainedTxParams = (
   }
 ]
 
+export const getMissingBalancesChainedTxParams = (
+  signerMissingBalances: Map<string, bigint>,
+  addressWithEnoughBalances: AddressWithGroup,
+  signerAddress: AddressHash,
+  txParams: TransactionParams
+): Array<SignChainedTxParams> => {
+  const tokens = Array.from(signerMissingBalances.entries())
+    .filter(([tokenId]) => tokenId !== ALPH.id)
+    .map(([tokenId, amount]) => ({ id: tokenId, amount: amount.toString() }))
+  const attoAlphAmount = signerMissingBalances.get(ALPH.id)?.toString() || DUST_AMOUNT * BigInt(tokens.length)
+
+  return [
+    {
+      type: 'Transfer',
+      signerAddress: addressWithEnoughBalances.hash,
+      signerKeyType: addressWithEnoughBalances.keyType,
+      destinations: [{ address: signerAddress, attoAlphAmount, tokens }]
+    },
+    transactionParamsToSignChainedTxParams(txParams)
+  ]
+}
+
 export const getSweepTxParams = (data: SendFlowData): SweepTxParams => ({
   signerAddress: data.fromAddress.hash,
   signerKeyType: data.fromAddress.keyType,
   toAddress: data.toAddress,
   lockTime: data.lockTime?.getTime()
 })
+
+export const getTransactionExpectedBalances = ({ type, params }: TransactionParams) => {
+  const expectedBalances: Map<string, bigint> = new Map()
+
+  const addTokenToExpectedBalances = (tokenId: string, amount: bigint) => {
+    const prevValue = expectedBalances.get(tokenId) ?? BigInt(0)
+    expectedBalances.set(tokenId, prevValue + amount)
+  }
+
+  const addGasFeeToExpectedBalances = (
+    params: SignTransferTxParams | SignDeployContractTxParams | SignExecuteScriptTxParams
+  ) => {
+    const gasAmount = BigInt(params.gasAmount ?? MAXIMAL_GAS_AMOUNT)
+    const gasPrice = BigInt(params.gasPrice ?? DEFAULT_GAS_PRICE)
+    addTokenToExpectedBalances(ALPH.id, gasAmount * gasPrice)
+  }
+
+  switch (type) {
+    case 'TRANSFER': {
+      addGasFeeToExpectedBalances(params)
+      params.destinations.forEach((destination) => {
+        addTokenToExpectedBalances(ALPH.id, BigInt(destination.attoAlphAmount))
+        destination.tokens?.forEach((token) => addTokenToExpectedBalances(token.id, BigInt(token.amount)))
+      })
+      break
+    }
+    case 'EXECUTE_SCRIPT': {
+      addGasFeeToExpectedBalances(params)
+      params.attoAlphAmount && addTokenToExpectedBalances(ALPH.id, BigInt(params.attoAlphAmount))
+      params.tokens?.forEach((token) => addTokenToExpectedBalances(token.id, BigInt(token.amount)))
+      break
+    }
+    case 'DEPLOY_CONTRACT': {
+      addGasFeeToExpectedBalances(params)
+      addTokenToExpectedBalances(ALPH.id, BigInt(params.initialAttoAlphAmount ?? MINIMAL_CONTRACT_DEPOSIT))
+      params.initialTokenAmounts?.forEach((token) => addTokenToExpectedBalances(token.id, BigInt(token.amount)))
+      break
+    }
+  }
+
+  return expectedBalances
+}

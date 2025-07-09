@@ -4,6 +4,8 @@ import {
   getHumanReadableError,
   getSweepTxParams,
   getTransferTxParams,
+  isConsolidationError,
+  isInsufficientFundsError,
   SendFlowData,
   SignChainedTxModalProps,
   throttledClient
@@ -151,12 +153,8 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         setStep('info-check')
         setChainedTxProps(undefined)
       } catch (e) {
-        // When API error codes are available, replace this substring check with a proper error code check
-        // https://github.com/alephium/alephium-frontend/issues/610
-        const error = (e as unknown as string).toString().toLowerCase()
-
         try {
-          if (error.includes('consolidating') || error.includes('consolidate')) {
+          if (isConsolidationError(e)) {
             const txParams = getSweepTxParams({ ...data, toAddress: data.fromAddress.hash })
             const fees = await fetchSweepTransactionsFees(txParams)
 
@@ -168,7 +166,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             )
             sendAnalytics({ event: 'Could not build tx, consolidation required' })
             setChainedTxProps(undefined)
-          } else if (error.includes('not enough') && !isLedger && gasRefillGroupedAddress) {
+          } else if (isInsufficientFundsError(e) && !isLedger && gasRefillGroupedAddress) {
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, data)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
