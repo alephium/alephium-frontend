@@ -119,8 +119,6 @@ export const SendContextProvider = ({
 
       const unsignedTxs_ = consolidationUnsignedTxs ?? unsignedTxData.unsignedTxs
 
-      console.log('unsignedTxs_', unsignedTxs_)
-
       try {
         for (const { txId, unsignedTx } of unsignedTxs_) {
           const data = await signAndSendTransaction(address.hash, txId, unsignedTx)
