@@ -1,4 +1,5 @@
-import { isConfirmedTx } from '@alephium/shared'
+import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared'
+import { isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -34,8 +35,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   const theme = useTheme()
 
   const { assets, infoType, direction } = useTransactionInfo(tx, addressHash)
+  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
 
-  const isMoved = infoType === 'move'
+  const isMoved = infoType === 'move' || (infoType === 'moveGroup' && isGrouplessAddress)
 
   const isPending = !isConfirmedTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
@@ -54,7 +56,13 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
     if (tx.outputs.every((o) => o.address === addressHash)) {
       return <AddressLink key={addressHash} address={addressHash} maxWidth="250px" />
     } else {
-      const outputs = _(tx.outputs.filter((o) => o.address !== addressHash))
+      const outputs = _(
+        tx.outputs.filter((o) =>
+          isGrouplessAddressWithoutGroupIndex(addressHash)
+            ? !isSameBaseAddress(addressHash, o.address)
+            : o.address !== addressHash
+        )
+      )
         .map((v) => v.address)
         .uniq()
         .value()
@@ -120,29 +128,36 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
 
         <Badge type="neutral" compact content={directionText} floatRight minWidth={40} />
 
-        {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
+        {!isPending &&
+          (infoType === 'move' || infoType === 'moveGroup' || infoType === 'out' ? (
+            isGrouplessAddress && !direction ? (
+              <AddressLink address={addressHash} maxWidth="250px" />
+            ) : (
+              renderOutputAccounts()
+            )
+          ) : (
+            renderInputAccounts()
+          ))}
         {!isPending && (
           <AmountCell>
             <Amount
               key={assets.alph.id}
               assetId={assets.alph.id}
               value={assets.alph.amount}
-              highlight={!isMoved}
-              displaySign={!isMoved}
-              color={isMoved ? theme.font.secondary : undefined}
               suffix={assets.alph.symbol}
               decimals={assets.alph.decimals}
+              highlight
+              displaySign
             />
             {assets.fungible.map((asset) => (
               <Amount
                 key={asset.id}
                 assetId={asset.id}
                 value={asset.amount}
-                highlight={!isMoved}
-                displaySign={!isMoved}
-                color={isMoved ? theme.font.secondary : undefined}
                 suffix={asset.symbol}
                 decimals={asset.decimals}
+                highlight
+                displaySign
               />
             ))}
             {assets['non-fungible'].map((asset) => (
@@ -150,9 +165,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
                 key={asset.id}
                 assetId={asset.id}
                 value={asset.amount}
-                highlight={!isMoved}
-                displaySign={!isMoved}
                 color={isMoved ? theme.font.secondary : undefined}
+                highlight
+                displaySign
               />
             ))}
           </AmountCell>
