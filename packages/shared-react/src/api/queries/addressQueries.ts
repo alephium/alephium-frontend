@@ -34,7 +34,7 @@ export type AddressAlphBalancesQueryFnData = {
 // TODO: Should we add explorerBackendUrl instead?
 export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
+    queryKey: ['address', addressHash, 'level:0', 'balance', 'ALPH', { networkId }],
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
@@ -63,7 +63,7 @@ export type AddressTokensBalancesQueryFnData = {
 
 export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
+    queryKey: ['address', addressHash, 'level:0', 'balance', 'tokens', { networkId }],
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
@@ -105,7 +105,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
 
 export const addressBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'balance', { networkId }],
+    queryKey: ['address', addressHash, 'level:1', 'balances-all', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn:
       !skip && networkId !== undefined
@@ -130,7 +130,7 @@ export const addressBalancesQuery = ({ addressHash, networkId, skip }: AddressLa
 
 export const addressBalancesByListingQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'balance', 'by-listing', { networkId }],
+    queryKey: ['address', addressHash, 'level:2', 'balances-by-listing', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn:
       !skip && networkId !== undefined
@@ -152,7 +152,7 @@ export type AddressSearchStringQueryFnData = {
 // filtering tokens.
 export const addressTokensSearchStringsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'tokensSearchStrings', { networkId }],
+    queryKey: ['address', addressHash, 'level:1', 'tokens-search-strings', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async (): Promise<Record<TokenId, string>> => {
       const tokensSearchStrings = {} as Record<TokenId, string>
@@ -189,7 +189,7 @@ export const addressTokensSearchStringsQuery = ({ addressHash, networkId }: Addr
 // Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses.
 export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'searchString', { networkId }],
+    queryKey: ['address', addressHash, 'level:2', 'searchString', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async (): Promise<AddressSearchStringQueryFnData> => {
       const tokensSearchStrings = await queryClient.fetchQuery(
@@ -205,7 +205,7 @@ export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLate
 
 export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'tokensByType', { networkId }],
+    queryKey: ['address', addressHash, 'level:3', 'tokensByType', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
       const { listedFts, unlistedTokens } = await queryClient.fetchQuery(
@@ -225,7 +225,7 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
 
 export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'fts', { networkId }],
+    queryKey: ['address', addressHash, 'level:4', 'tokens', 'fts', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
       const { listedFts, unlistedFtIds } = await queryClient.fetchQuery(
@@ -247,7 +247,7 @@ export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransac
 
 export const addressNftsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'nfts', { networkId }],
+    queryKey: ['address', addressHash, 'level:4', 'tokens', 'nfts', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
       const { nftIds } = await queryClient.fetchQuery(addressTokensByTypeQuery({ addressHash, networkId }))
