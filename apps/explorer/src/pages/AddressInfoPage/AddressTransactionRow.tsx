@@ -33,9 +33,10 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
 
-  const { assets, infoType } = useTransactionInfo(tx, addressHash)
+  const { assets, infoType, direction } = useTransactionInfo(tx, addressHash)
 
   const isMoved = infoType === 'move'
+
   const isPending = !isConfirmedTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
 
@@ -43,7 +44,8 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
     infoType,
     isFailedScriptTx: isFailedScriptExecution,
     isInContract,
-    theme
+    theme,
+    direction
   })
 
   const renderOutputAccounts = () => {

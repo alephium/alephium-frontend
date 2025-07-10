@@ -140,5 +140,6 @@
   "Group": "Group",
   "Group(s)": "Group(s)",
   "All": "All",
-  "Group {{ number }}": "Group {{ number }}"
+  "Group {{ number }}": "Group {{ number }}",
+  "Group transfer": "Group transfer"
 }
