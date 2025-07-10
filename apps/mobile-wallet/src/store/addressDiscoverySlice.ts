@@ -1,6 +1,7 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
   activeWalletDeleted,
+  addressDeleted,
   addressesImported,
   AddressIndex,
   appReset,
@@ -221,6 +222,7 @@ const addressDiscoverySlice = createSlice({
         appReset,
         activeWalletDeleted,
         networkPresetSwitched,
+        addressDeleted,
         customNetworkSettingsSaved
       ),
       () => initialState
