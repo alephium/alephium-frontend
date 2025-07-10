@@ -1,5 +1,5 @@
 import { ALPH } from '@alephium/token-list'
-import { explorer as e } from '@alephium/web3'
+import { explorer as e, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
@@ -50,7 +50,13 @@ export const calcTxAmountsDeltaForAddress = (
 const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Output)[]) =>
   io.reduce(
     (acc, io) => {
-      if (!io.address || !isSameBaseAddress(io.address, address)) return acc
+      if (
+        !io.address ||
+        (isGrouplessAddressWithoutGroupIndex(address)
+          ? !isSameBaseAddress(io.address, address)
+          : io.address !== address)
+      )
+        return acc
 
       acc.alphAmount += BigInt(io.attoAlphAmount ?? 0)
 
