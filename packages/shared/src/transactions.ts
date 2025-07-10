@@ -1,5 +1,10 @@
 import { ALPH } from '@alephium/token-list'
-import { explorer as e, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
+import {
+  explorer as e,
+  isGrouplessAddress,
+  isGrouplessAddressWithGroupIndex,
+  isGrouplessAddressWithoutGroupIndex
+} from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
@@ -111,6 +116,22 @@ export const isInternalTx = (tx: e.Transaction | e.PendingTransaction, internalA
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
     (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
   )
+
+export const isGrouplessAddressIntraTransfer = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction
+): boolean => {
+  const allInputsOutputs = [...(tx.outputs ?? []), ...(tx.inputs ?? [])]
+  const firstAddress = allInputsOutputs.at(0)?.address
+
+  if (!firstAddress || !isGrouplessAddress(firstAddress)) return false
+
+  const firstBaseAddress = getBaseAddressStr(firstAddress)
+
+  return allInputsOutputs.every(
+    (io) =>
+      io?.address && isGrouplessAddressWithGroupIndex(io.address) && getBaseAddressStr(io.address) === firstBaseAddress
+  )
+}
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: e.AssetOutput[] | e.Output[]) => {
   const lastOutput = outputs[outputs.length - 1]

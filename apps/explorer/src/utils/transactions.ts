@@ -4,6 +4,7 @@ import {
   hasPositiveAndNegativeAmounts,
   isConfirmedTx,
   isConsolidationTx,
+  isGrouplessAddressIntraTransfer,
   TransactionDirection,
   TransactionInfoType
 } from '@alephium/shared'
@@ -29,6 +30,9 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   if (isConsolidationTx(tx)) {
     direction = 'out'
     infoType = 'move'
+  } else if (isGrouplessAddressIntraTransfer(tx)) {
+    direction = getDirection(tx, addressHash)
+    infoType = 'moveGroup'
   } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
     infoType = 'swap'
