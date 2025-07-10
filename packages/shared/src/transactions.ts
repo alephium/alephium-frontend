@@ -26,24 +26,35 @@ export const isSameBaseAddress = (address1: string, address2: string): boolean =
 
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
-  address: string,
-  skipConsolidationCheck = false
+  address: string
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
   const outputAmounts = summarizeAddressInputOutputAmounts(address, tx.outputs)
   const inputAmounts = summarizeAddressInputOutputAmounts(address, tx.inputs)
 
-  if (!skipConsolidationCheck && isConsolidationTx(tx))
-    return removeConsolidationChangeAmount(outputAmounts, tx.outputs)
+  if (isInternalTx(tx, [address])) {
+    const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
+    const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
+    const fee = totalOutputAlph - totalInputAlph
+    return {
+      alphAmount: fee,
+      tokenAmounts: []
+    }
+  }
 
-  const tokensDelta = outputAmounts.tokenAmounts
+  const tokensDelta = [...outputAmounts.tokenAmounts]
+
   inputAmounts.tokenAmounts.forEach((inputToken) => {
-    const tokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
-
-    tokenDelta
-      ? (tokenDelta.amount -= inputToken.amount)
-      : tokensDelta.push({ ...inputToken, amount: inputToken.amount * BigInt(-1) })
+    const existingTokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
+    if (existingTokenDelta) {
+      existingTokenDelta.amount -= inputToken.amount
+    } else {
+      tokensDelta.push({
+        id: inputToken.id,
+        amount: -inputToken.amount
+      })
+    }
   })
 
   return {
@@ -87,7 +98,7 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Ou
 export const getDirection = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
   address: string
-): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address, true).alphAmount < 0 ? 'out' : 'in')
+): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address).alphAmount < 0 ? 'out' : 'in')
 
 export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
@@ -112,7 +123,10 @@ export const isSentTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
 ): tx is SentTransaction => 'status' in tx
 
-export const isInternalTx = (tx: e.Transaction | e.PendingTransaction, internalAddresses: AddressHash[]): boolean =>
+export const isInternalTx = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
+  internalAddresses: AddressHash[]
+): boolean =>
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
     (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
   )

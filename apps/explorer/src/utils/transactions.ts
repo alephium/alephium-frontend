@@ -9,7 +9,7 @@ import {
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
+import { explorer, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
@@ -17,7 +17,7 @@ import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
 export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string) => {
   let amount: bigint | undefined = BigInt(0)
-  let direction: TransactionDirection
+  let direction: TransactionDirection | undefined
   let infoType: TransactionInfoType
   let lockTime: Date | undefined
 
@@ -31,7 +31,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     direction = 'out'
     infoType = 'move'
   } else if (isGrouplessAddressIntraTransfer(tx)) {
-    direction = getDirection(tx, addressHash)
+    direction = isGrouplessAddressWithoutGroupIndex(addressHash) ? undefined : getDirection(tx, addressHash) // If at the groupless "level", don't show direction
     infoType = 'moveGroup'
   } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
