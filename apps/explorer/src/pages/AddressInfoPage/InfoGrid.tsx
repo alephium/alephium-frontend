@@ -58,6 +58,11 @@ const CellContainer = styled.div`
   background-color: ${({ theme }) => theme.bg.primary};
   padding: 0px 20px;
   border-radius: 8px;
+
+  @media ${deviceBreakPoints.tablet} {
+    padding: 10px;
+    justify-content: flex-start;
+  }
 `
 
 const Label = styled.label`

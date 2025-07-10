@@ -186,13 +186,12 @@ const NFTName = styled.div`
 const NoNFTsMessage = styled.div`
   display: flex;
   flex-direction: column;
-
   text-align: center;
   justify-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.tertiary};
-  margin: 20px auto;
   padding: 20px;
+  margin: 20px;
   border-radius: 8px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
   font-size: 1.1em;

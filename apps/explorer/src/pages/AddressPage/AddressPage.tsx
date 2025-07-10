@@ -82,11 +82,8 @@ const SectionHeader = styled.div`
 const InfoGridAndQR = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -102,7 +99,14 @@ const QRCodeCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
+  margin-left: 5px;
+  border-radius: 8px;
+
+  @media ${deviceBreakPoints.tablet} {
+    margin-left: 0;
+    margin-top: 10px;
+    padding: 20px;
+  }
 `
