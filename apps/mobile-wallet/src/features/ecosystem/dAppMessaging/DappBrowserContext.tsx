@@ -1,7 +1,10 @@
 import {
   getAddressesInGroup,
+  getChainedTxPropsFromSignChainedTxParams,
   getNetworkIdFromNetworkName,
+  isInsufficientFundsError,
   NetworkName,
+  selectAllAddressByType,
   SignTxModalCommonProps,
   throttledClient
 } from '@alephium/shared'
@@ -10,6 +13,7 @@ import {
   buildExecuteScriptTxQuery,
   buildTransferTxQuery,
   decodeUnsignedTxQuery,
+  getRefillMissingBalancesChainedTxParams,
   queryClient,
   useCurrentlyOnlineNetworkId,
   useUnsortedAddresses
@@ -49,7 +53,7 @@ import {
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { signer } from '~/signer'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 type DappBrowserContextValue = RefObject<WebView>
@@ -67,6 +71,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const dAppMessage = useAppSelector(selectCurrentlyProcessingDappMessage)
   const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
   const addresses = useUnsortedAddresses()
+  const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
   const network = useNetwork()
   const dispatch = useAppDispatch()
 
@@ -198,6 +203,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         return
       }
 
+      dispatch(activateAppLoading('Loading'))
+
       try {
         if (txParams.length === 1) {
           const { type, params } = txParams[0]
@@ -209,7 +216,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             onError: (error) => replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
           }
 
-          // eslint-disable-next-line no-useless-catch
           try {
             switch (type) {
               case 'TRANSFER': {
@@ -218,10 +224,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 // That would make sense only if we have a single destination otherwise what should the sweep destination
                 // address be?
 
-                dispatch(activateAppLoading('Loading'))
-                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const publicKey = await signer.getPublicKey(params.signerAddress)
                 const unsignedData = await queryClient.fetchQuery(buildTransferTxQuery({ params, publicKey }))
-                dispatch(deactivateAppLoading())
 
                 dispatch(
                   openModal({
@@ -248,10 +252,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               }
 
               case 'EXECUTE_SCRIPT': {
-                dispatch(activateAppLoading('Loading'))
-                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const publicKey = await signer.getPublicKey(params.signerAddress)
                 const unsignedData = await queryClient.fetchQuery(buildExecuteScriptTxQuery({ params, publicKey }))
-                dispatch(deactivateAppLoading())
 
                 dispatch(
                   openModal({
@@ -277,10 +279,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 break
               }
               case 'DEPLOY_CONTRACT': {
-                dispatch(activateAppLoading('Loading'))
-                const publicKey = await getAddressAsymetricKey(params.signerAddress, 'public')
+                const publicKey = await signer.getPublicKey(params.signerAddress)
                 const unsignedData = await queryClient.fetchQuery(buildDeployContractTxQuery({ params, publicKey }))
-                dispatch(deactivateAppLoading())
 
                 dispatch(
                   openModal({
@@ -305,13 +305,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 break
               }
               case 'UNSIGNED_TX': {
-                dispatch(activateAppLoading('Loading'))
                 // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
                 // problems with unpolyfilled crypto Node JS module.
                 const decodedResult = await queryClient.fetchQuery(
                   decodeUnsignedTxQuery({ unsignedTx: params.unsignedTx })
                 )
-                dispatch(deactivateAppLoading())
 
                 dispatch(
                   openModal({
@@ -337,27 +335,48 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 break
               }
             }
-          } catch (error) {
-            // TODO: Try and build a chained tx to fund address?
-            // See: https://github.com/alephium/alephium-frontend/issues/1407
-            // 1. Make a list of all tokens needed for the tx
-            // 2. Make a list of all addresses that have enough balances
-            // 3. Display a modal with the list of addresses and the tokens needed
-            // 4. Let the user choose which addresses to use
-            // 5. Build the chained tx
-            // 6. Display a modal with the chained tx
-            // 7. Let the user sign and submit the chained tx
-            // 8. Respond to the dApp
-            throw error
+          } catch (e) {
+            if (isInsufficientFundsError(e)) {
+              const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
+                transactionParams: txParams[0],
+                addressesWithGroup,
+                networkId: currentlyOnlineNetworkId
+              })
+
+              if (chainedTxParams) {
+                const publicKeys = await getChainedTxSignersPublicKeys(chainedTxParams)
+                const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
+
+                dispatch(
+                  openModal({
+                    name: 'SignChainedTxModal',
+                    onUserDismiss: () =>
+                      replyToDapp(
+                        { type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error: 'User rejected' } },
+                        messageId
+                      ),
+                    props: {
+                      props: getChainedTxPropsFromSignChainedTxParams(chainedTxParams, unsignedData),
+                      txParams: chainedTxParams,
+                      onSuccess: (result) =>
+                        replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
+                      dAppUrl,
+                      dAppIcon,
+                      origin: 'in-app-browser:insufficient-funds',
+                      onError: (error) =>
+                        replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
+                    }
+                  })
+                )
+              } else throw e
+            } else throw e
           }
         } else {
           validateChainedTxsNetwork(txParams)
 
-          dispatch(activateAppLoading('Loading'))
           const chainedTxParams = txParamsToChainedTxParams(txParams)
           const publicKeys = await getChainedTxSignersPublicKeys(chainedTxParams)
           const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
-          dispatch(deactivateAppLoading())
 
           dispatch(
             openModal({
@@ -382,7 +401,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           )
         }
       } catch (errorMessage) {
-        dispatch(deactivateAppLoading())
         const error = `${errorMessage}`
 
         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
@@ -392,9 +410,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           type: 'error',
           visibilityTime: ToastDuration.LONG
         })
+      } finally {
+        dispatch(deactivateAppLoading())
       }
     },
-    [dAppUrl, dispatch, replyToDapp]
+    [addressesWithGroup, currentlyOnlineNetworkId, dAppUrl, dispatch, replyToDapp]
   )
 
   const handleSignUnsignedTx = useCallback(

@@ -4,6 +4,8 @@ import {
   getHumanReadableError,
   getSweepTxParams,
   getTransferTxParams,
+  isConsolidationError,
+  isInsufficientFundsError,
   SendFlowData,
   SignChainedTxModalProps,
   throttledClient
@@ -12,7 +14,7 @@ import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-r
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -43,7 +45,7 @@ export type SendModalProps = TransferTxModalData
 
 type Step = 'addresses' | 'build-tx' | 'info-check' | 'password-check' | 'tx-sent'
 
-function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
+const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
@@ -151,12 +153,8 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
         setStep('info-check')
         setChainedTxProps(undefined)
       } catch (e) {
-        // When API error codes are available, replace this substring check with a proper error code check
-        // https://github.com/alephium/alephium-frontend/issues/610
-        const error = (e as unknown as string).toString().toLowerCase()
-
         try {
-          if (error.includes('consolidating') || error.includes('consolidate')) {
+          if (isConsolidationError(e)) {
             const txParams = getSweepTxParams({ ...data, toAddress: data.fromAddress.hash })
             const fees = await fetchSweepTransactionsFees(txParams)
 
@@ -168,7 +166,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
             )
             sendAnalytics({ event: 'Could not build tx, consolidation required' })
             setChainedTxProps(undefined)
-          } else if (error.includes('not enough') && !isLedger && gasRefillGroupedAddress) {
+          } else if (isInsufficientFundsError(e) && !isLedger && gasRefillGroupedAddress) {
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, data)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
@@ -223,15 +221,25 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
           onBack={goToAddresses}
         />
       )}
-      {step === 'info-check' && !!sendFlowData && !!fees && (
-        <SendModalInfoCheckStep
-          data={sendFlowData}
-          chainedTxProps={chainedTxProps}
-          fees={fees}
-          onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
-          onBack={goToBuildTx}
-        />
-      )}
+      {step === 'info-check' &&
+        !!sendFlowData &&
+        (chainedTxProps ? (
+          <SendModalInfoCheckStep
+            data={sendFlowData}
+            chainedTxProps={chainedTxProps}
+            onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
+            onBack={goToBuildTx}
+          />
+        ) : (
+          !!fees && (
+            <SendModalInfoCheckStep
+              data={sendFlowData}
+              fees={fees}
+              onSubmit={passwordRequirement ? goToPasswordCheck : handleSend}
+              onBack={goToBuildTx}
+            />
+          )
+        ))}
       {step === 'password-check' && passwordRequirement && (
         <PasswordConfirmation
           text={t('Enter your password to send the transaction.')}
@@ -256,7 +264,7 @@ function SendModal({ id, ...initialTxData }: ModalBaseProp & SendModalProps) {
       )}
     </CenteredModal>
   )
-}
+})
 
 export default SendModal
 

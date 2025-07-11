@@ -116,7 +116,7 @@ const Separator = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  justify-content: center;
+  align-items: center;
   padding: var(--spacing-2) 0;
 `
 
@@ -129,6 +129,8 @@ const SeparatorLine = styled.div`
 const SeparatorIcon = styled.div`
   position: absolute;
   width: 100%;
+  display: flex;
+  justify-content: center;
 `
 
 const ChainIcon = styled(Link2Icon)`

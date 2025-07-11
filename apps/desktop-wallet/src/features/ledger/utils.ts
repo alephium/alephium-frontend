@@ -173,8 +173,8 @@ export const generateLedgerAddressesFromMetadata = async ({
   if (app) {
     for (const metadata of addressesMetadata) {
       addresses.push({
-        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true, keyType: 'default' })),
-        ...metadata
+        ...metadata,
+        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true, keyType: 'default' }))
       })
     }
 

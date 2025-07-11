@@ -1,4 +1,13 @@
-import { explorer as e, KeyType, node as n, Optional } from '@alephium/web3'
+import {
+  explorer as e,
+  KeyType,
+  node as n,
+  Optional,
+  SignDeployContractTxParams,
+  SignExecuteScriptTxParams,
+  SignTransferTxParams,
+  SignUnsignedTxParams
+} from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { Address } from '@/types/addresses'
@@ -67,3 +76,21 @@ export interface SendFlowData {
   lockTime?: Date
   tokenId?: TokenId
 }
+
+export type TransactionParams =
+  | {
+      type: 'TRANSFER'
+      params: SignTransferTxParams
+    }
+  | {
+      type: 'DEPLOY_CONTRACT'
+      params: SignDeployContractTxParams
+    }
+  | {
+      type: 'EXECUTE_SCRIPT'
+      params: SignExecuteScriptTxParams
+    }
+  | {
+      type: 'UNSIGNED_TX'
+      params: SignUnsignedTxParams
+    }

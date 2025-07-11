@@ -7,7 +7,7 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import { sendChainedTransactions } from '~/api/transactions'
 import AppText from '~/components/AppText'
-import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import { SignDeployContractTxModalContent } from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import { SignExecuteScriptTxModalContent } from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import { SignTransferTxModalContent } from '~/features/ecosystem/modals/SignTransferTxModal'
@@ -48,7 +48,7 @@ export const SignChainedTxModalContent = ({
   const { t } = useTranslation()
 
   return (
-    <ScreenSection>
+    <>
       {props.map(({ txParams, unsignedData, type }, index) => {
         let content = null
         switch (type) {
@@ -75,22 +75,21 @@ export const SignChainedTxModalContent = ({
 
         return (
           <Fragment key={index}>
-            <AppText size={16} bold style={{ textAlign: 'center', marginTop: VERTICAL_GAP }}>
-              {t('Transaction {{ number }}', { number: index + 1 })}
-            </AppText>
-            {content}
+            <Surface type="primary" withPadding>
+              <AppText size={16} bold style={{ textAlign: 'center' }}>
+                {t('Transaction {{ number }}', { number: index + 1 })}
+              </AppText>
+              {content}
+            </Surface>
             {index !== props.length - 1 && (
               <Separator>
-                <SeparatorLine />
-                <SeparatorIcon>
-                  <ChainIcon name="link-outline" size={18} />
-                </SeparatorIcon>
+                <ChainIcon name="chevron-down" size={18} />
               </Separator>
             )}
           </Fragment>
         )
       })}
-    </ScreenSection>
+    </>
   )
 }
 
@@ -99,23 +98,11 @@ const Separator = styled.View`
   display: flex;
   width: 100%;
   justify-content: center;
-  padding: ${VERTICAL_GAP}px 0;
-`
-
-const SeparatorLine = styled.View`
-  height: 2px;
-  background-color: ${({ theme }) => theme.border.primary};
-  width: 100%;
-`
-
-const SeparatorIcon = styled.View`
-  position: absolute;
-  width: 100%;
+  padding: ${VERTICAL_GAP / 2}px 0;
 `
 
 const ChainIcon = styled(Ionicons)`
   margin-left: auto;
   margin-right: auto;
-  background-color: ${({ theme }) => theme.bg.back1};
-  transform: rotate(90deg);
+  color: ${({ theme }) => theme.font.tertiary};
 `
