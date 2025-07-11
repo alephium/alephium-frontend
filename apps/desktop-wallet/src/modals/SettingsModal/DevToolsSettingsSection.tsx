@@ -1,6 +1,6 @@
 import { Address, AddressHash, getHumanReadableError, selectDefaultAddress } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
-import { getSecp259K1Path } from '@alephium/web3-wallet'
+import { getHDWalletPath } from '@alephium/web3-wallet'
 import { AlertOctagon, Download } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -130,7 +130,11 @@ const KeyPairsSection = () => {
       <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
       <Table>
         {addresses.map((address) => (
-          <AddressRow addressHash={address.hash} key={address.hash} subtitle={getSecp259K1Path(address.index)}>
+          <AddressRow
+            addressHash={address.hash}
+            key={address.hash}
+            subtitle={getHDWalletPath(address.keyType ?? 'default', address.index)}
+          >
             <Buttons>
               <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                 {t('Public key')}
