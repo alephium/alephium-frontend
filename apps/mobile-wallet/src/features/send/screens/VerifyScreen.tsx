@@ -51,7 +51,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       <ScreenSection>
         {chainedTxProps ? (
           <>
-            <Surface type="accent" style={{ padding: 20 }}>
+            <Surface type="accent" withPadding style={{ marginBottom: VERTICAL_GAP }}>
               <AppText color="accent" style={{ textAlign: 'center' }}>
                 {t(
                   "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
