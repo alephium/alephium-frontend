@@ -2,7 +2,7 @@ import { AddressHash, isConfirmedTx, SentTransaction } from '@alephium/shared'
 import { useTransactionInfoType } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { colord } from 'colord'
-import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react-native'
+import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, RefreshCcw, Repeat, Repeat2 } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -26,6 +26,7 @@ const useTransactionIconLabel = (
           in: t('Received'),
           out: t('Sent'),
           move: t('Moved'),
+          moveGroup: t('Moved'),
           pending: t('Pending'),
           swap: t('dApp')
         }[infoType],
@@ -33,6 +34,7 @@ const useTransactionIconLabel = (
           in: ArrowDown,
           out: ArrowUp,
           move: ArrowLeftRight,
+          moveGroup: RefreshCcw,
           pending: CircleEllipsis,
           swap: Repeat
         }[infoType],
@@ -40,6 +42,7 @@ const useTransactionIconLabel = (
           in: theme.global.receive,
           out: theme.global.send,
           move: theme.font.secondary,
+          moveGroup: theme.font.secondary,
           pending: theme.font.secondary,
           swap: theme.global.complementary
         }[infoType],
@@ -47,6 +50,7 @@ const useTransactionIconLabel = (
           in: colord(theme.global.receive).alpha(0.11).toRgbString(),
           out: colord(theme.global.send).alpha(0.11).toRgbString(),
           move: colord(theme.font.secondary).alpha(0.11).toRgbString(),
+          moveGroup: colord(theme.font.secondary).alpha(0.11).toRgbString(),
           pending: colord(theme.font.secondary).alpha(0.11).toRgbString(),
           swap: colord(theme.global.complementary).alpha(0.11).toRgbString()
         }[infoType]

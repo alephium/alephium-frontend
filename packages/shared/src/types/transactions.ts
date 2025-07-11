@@ -25,7 +25,7 @@ export type TransactionInfo = {
 
 export type TransactionDirection = 'out' | 'in' | 'swap'
 
-export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
+export type TransactionInfoType = TransactionDirection | 'move' | 'moveGroup' | 'pending'
 
 export type AmountDeltas = {
   alphAmount: bigint
