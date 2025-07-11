@@ -189,7 +189,7 @@ export const addressTokensSearchStringsQuery = ({ addressHash, networkId }: Addr
 // Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses.
 export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:2', 'searchString', { networkId }],
+    queryKey: ['address', addressHash, 'level:2', 'search-string', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async (): Promise<AddressSearchStringQueryFnData> => {
       const tokensSearchStrings = await queryClient.fetchQuery(
@@ -205,7 +205,7 @@ export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLate
 
 export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:3', 'tokensByType', { networkId }],
+    queryKey: ['address', addressHash, 'level:3', 'tokens-by-type', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async () => {
       const { listedFts, unlistedTokens } = await queryClient.fetchQuery(
