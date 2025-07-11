@@ -1,5 +1,5 @@
 import {
-  isGrouplessKeyType,
+  isGrouplessAddress,
   selectAddressByHash,
   signAndSubmitTxResultToSentTx,
   SignDeployContractTxModalProps,
@@ -36,11 +36,11 @@ const SignDeployContractTxModal = memo(
       let result: SignDeployContractTxResult
 
       if (isLedger) {
-        if (isGrouplessKeyType(signerAddress.keyType)) throw Error('Groupless address not supported on Ledger')
+        if (isGrouplessAddress(signerAddress)) throw Error('Groupless address not supported on Ledger')
 
         result = await signer.signAndSubmitDeployContractTxLedger(txParams, {
           signerIndex: signerAddress.index,
-          signerKeyType: signerAddress.keyType ?? 'default',
+          signerKeyType: signerAddress.keyType,
           onLedgerError
         })
       } else {

@@ -37,7 +37,7 @@ export type AddressBase = AddressStoredMetadataWithoutHash & {
 
 export type AddressWithGroup = AddressBase & {
   group: number
-  keyType?: GroupedKeyType
+  keyType: GroupedKeyType
 }
 
 export type GrouplessAddress = AddressBase & {

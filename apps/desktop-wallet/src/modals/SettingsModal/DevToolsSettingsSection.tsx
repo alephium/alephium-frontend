@@ -133,7 +133,7 @@ const KeyPairsSection = () => {
           <AddressRow
             addressHash={address.hash}
             key={address.hash}
-            subtitle={getHDWalletPath(address.keyType ?? 'default', address.index)}
+            subtitle={getHDWalletPath(address.keyType, address.index)}
           >
             <Buttons>
               <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>

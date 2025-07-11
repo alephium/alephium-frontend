@@ -1,6 +1,6 @@
 import {
   AssetAmount,
-  isGrouplessKeyType,
+  isGrouplessAddress,
   selectAddressByHash,
   signAndSubmitTxResultToSentTx,
   SignExecuteScriptTxModalProps,
@@ -42,11 +42,11 @@ const SignExecuteScriptTxModal = ({
     let result: SignExecuteScriptTxResult
 
     if (isLedger) {
-      if (isGrouplessKeyType(signerAddress.keyType)) throw Error('Groupless address not supported on Ledger')
+      if (isGrouplessAddress(signerAddress)) throw Error('Groupless address not supported on Ledger')
 
       result = await signer.signAndSubmitExecuteScriptTxLedger(txParams, {
         signerIndex: signerAddress.index,
-        signerKeyType: signerAddress.keyType ?? 'default',
+        signerKeyType: signerAddress.keyType,
         onLedgerError
       })
     } else {
