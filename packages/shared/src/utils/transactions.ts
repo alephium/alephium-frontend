@@ -26,7 +26,7 @@ import {
   isInternalTx
 } from '@/transactions'
 import { AddressHash, AddressWithGroup } from '@/types/addresses'
-import { AssetAmount, TokenApiBalances } from '@/types/assets'
+import { AssetAmount, TokenApiBalances, TokenId } from '@/types/assets'
 import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
 import {
   SendFlowData,
@@ -217,7 +217,7 @@ export const getGasRefillChainedTxParams = (
 ]
 
 export const getMissingBalancesChainedTxParams = (
-  signerMissingBalances: Map<string, bigint>,
+  signerMissingBalances: Map<TokenId, bigint>,
   addressWithEnoughBalances: AddressWithGroup,
   signerAddress: AddressHash,
   txParams: TransactionParams

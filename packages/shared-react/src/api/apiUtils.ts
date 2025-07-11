@@ -2,6 +2,7 @@ import {
   AddressWithGroup,
   getMissingBalancesChainedTxParams,
   getTransactionExpectedBalances,
+  TokenId,
   TransactionParams,
   UnlistedFT
 } from '@alephium/shared'
@@ -50,11 +51,11 @@ export const getFulfilledValues = <T>(results: PromiseSettledResult<T>[]) =>
     .map(({ value }) => value)
 
 export const getSignerMissingBalances = async (
-  expectedBalances: Map<string, bigint>,
+  expectedBalances: Map<TokenId, bigint>,
   signerAddress: string,
   networkId: number | undefined
 ) => {
-  const missingBalances: Map<string, bigint> = new Map()
+  const missingBalances: Map<TokenId, bigint> = new Map()
 
   const { balances: signerBalances } = await queryClient.fetchQuery(
     addressBalancesQuery({ addressHash: signerAddress, networkId })
@@ -74,7 +75,7 @@ export const getSignerMissingBalances = async (
 }
 
 export const getAddressWithEnoughBalances = async (
-  missingBalances: Map<string, bigint>,
+  missingBalances: Map<TokenId, bigint>,
   addresses: AddressWithGroup[],
   networkId: number | undefined
 ): Promise<AddressWithGroup | undefined> => {
