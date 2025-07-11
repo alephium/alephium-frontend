@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { KeyType } from '@alephium/web3'
+import { GroupedKeyType, GrouplessKeyType, KeyType } from '@alephium/web3'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -19,14 +19,14 @@ export type NullableSensitiveAddressData = NonSensitiveAddressData & {
 }
 
 export type GenerateAddressWithGroupProps = {
-  keyType: 'default' | 'bip340-schnorr'
+  keyType: GroupedKeyType
   group?: number
   addressIndex?: number
   skipAddressIndexes?: number[]
 }
 
 export type GenerateGrouplessAddressProps = {
-  keyType: Exclude<KeyType, 'default' | 'bip340-schnorr'>
+  keyType: GrouplessKeyType
   addressIndex?: number
   skipAddressIndexes?: number[]
 }

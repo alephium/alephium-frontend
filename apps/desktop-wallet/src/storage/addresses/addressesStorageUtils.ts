@@ -33,7 +33,7 @@ export const changeDefaultAddress = (address: Address) => {
   if (!isPassphraseUsed)
     addressMetadataStorage.storeOne(walletId, {
       index: address.index,
-      keyType: address.keyType ?? 'default',
+      keyType: address.keyType,
       settings: {
         isDefault: true,
         label: address.label,

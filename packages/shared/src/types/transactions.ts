@@ -64,7 +64,7 @@ export const isGrouplessTxResult = (
 
 export interface SweepTxParams extends Omit<n.BuildSweepAddressTransactions, 'fromPublicKey' | 'fromPublicKeyType'> {
   signerAddress: string
-  signerKeyType?: KeyType
+  signerKeyType: KeyType
 }
 
 export interface SendFlowData {

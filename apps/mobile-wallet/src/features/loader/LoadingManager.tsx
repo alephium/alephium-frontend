@@ -4,7 +4,7 @@ import { useAppSelector } from '~/hooks/redux'
 const LoadingManager = () => {
   const loadingConfig = useAppSelector((state) => state.loader)
 
-  return <SpinnerModal isActive={!!loadingConfig.text} {...loadingConfig} />
+  return <SpinnerModal {...loadingConfig} />
 }
 
 export default LoadingManager

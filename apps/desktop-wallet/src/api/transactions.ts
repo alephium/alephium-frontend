@@ -1,7 +1,6 @@
 import {
   Address,
   AddressHash,
-  isGrouplessKeyType,
   signAndSubmitTxResultToSentTx,
   SignChainedTxModalResult,
   signChainedTxResultsToTxSubmittedResults,
@@ -9,7 +8,7 @@ import {
   throttledClient,
   transactionSent
 } from '@alephium/shared'
-import { SignChainedTxParams, SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
+import { isGrouplessKeyType, SignChainedTxParams, SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
 
 import { LedgerTxParams, signer } from '@/signer'
 import { store } from '@/storage/store'
@@ -62,7 +61,7 @@ export const sendSweepTransactions = async (
 
     results = await signer.signAndSubmitSweepTxsLedger(txParams, {
       ...ledgerTxParams,
-      signerKeyType: txParams.signerKeyType ?? 'default'
+      signerKeyType: txParams.signerKeyType
     })
   } else {
     results = await signer.signAndSubmitSweepTxs(txParams)
@@ -84,7 +83,8 @@ export const sendTransferTransaction = async (
   let result: SignTransferTxResult
 
   if (isLedger) {
-    if (isGrouplessKeyType(txParams.signerKeyType)) throw Error('Groupless address not supported on Ledger')
+    if (txParams.signerKeyType && isGrouplessKeyType(txParams.signerKeyType))
+      throw Error('Groupless address not supported on Ledger')
 
     result = await signer.signAndSubmitTransferTxLedger(txParams, {
       ...ledgerTxParams,
