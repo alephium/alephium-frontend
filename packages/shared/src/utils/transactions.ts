@@ -246,9 +246,9 @@ export const getSweepTxParams = (data: SendFlowData): SweepTxParams => ({
 })
 
 export const getTransactionExpectedBalances = ({ type, params }: TransactionParams) => {
-  const expectedBalances: Map<string, bigint> = new Map()
+  const expectedBalances: Map<TokenId, bigint> = new Map()
 
-  const addTokenToExpectedBalances = (tokenId: string, amount: bigint) => {
+  const addTokenToExpectedBalances = (tokenId: TokenId, amount: bigint) => {
     const prevValue = expectedBalances.get(tokenId) ?? BigInt(0)
     expectedBalances.set(tokenId, prevValue + amount)
   }
