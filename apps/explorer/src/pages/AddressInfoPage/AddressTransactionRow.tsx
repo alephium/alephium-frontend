@@ -52,28 +52,28 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
 
   const renderOutputAccounts = () => {
     if (!tx.outputs) return
-    // Check for auto-sent tx
-    if (tx.outputs.every((o) => o.address === addressHash)) {
-      return <AddressLink key={addressHash} address={addressHash} maxWidth="250px" />
-    } else {
-      const outputs = _(
-        tx.outputs.filter((o) =>
-          isGrouplessAddressWithoutGroupIndex(addressHash)
-            ? !isSameBaseAddress(addressHash, o.address)
-            : o.address !== addressHash
-        )
-      )
-        .map((v) => v.address)
-        .uniq()
-        .value()
 
-      return (
-        <div>
-          <AddressLink address={outputs[0]} maxWidth="250px" />
-          {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
-        </div>
-      )
+    // Check if all output addresses are the same for self-transfer, group transfer, or sweep
+    const firstAddress = tx.outputs[0]?.address
+    if (firstAddress && tx.outputs.every((o) => o.address === firstAddress)) {
+      return <AddressLink key={firstAddress} address={firstAddress} maxWidth="250px" />
     }
+
+    const outputs = _(
+      tx.outputs.filter((o) =>
+        isGrouplessAddress ? !isSameBaseAddress(addressHash, o.address) : o.address !== addressHash
+      )
+    )
+      .map((v) => v.address)
+      .uniq()
+      .value()
+
+    return (
+      <div>
+        <AddressLink address={outputs.at(0) ?? ''} maxWidth="250px" />
+        {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
+      </div>
+    )
   }
 
   const renderInputAccounts = () => {
