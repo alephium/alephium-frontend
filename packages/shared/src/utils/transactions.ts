@@ -174,7 +174,7 @@ export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
     .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
 
   const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
-  const minDiff = minAlphAmountRequirement - alphAmount
+  const minDiff = alphAmount - minAlphAmountRequirement
   const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
 
   return {
