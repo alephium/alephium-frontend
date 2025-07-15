@@ -1,7 +1,7 @@
-import { createNavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native'
-import { useCallback, useSyncExternalStore } from 'react'
+import { createNavigationContainerRef, NavigationProp, useIsFocused } from '@react-navigation/native'
 
-import { selectAllModals } from '~/features/modals/modalSelectors'
+import { selectIsAnyModalOpened } from '~/features/modals/modalSelectors'
+import useIsTopModal from '~/features/modals/useIsTopModal'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -26,26 +26,12 @@ export const resetNavigation = (
   navigation.reset(getInitialNavigationState(initialRouteName))
 }
 
-export const useAppScreenIsFocused = () => {
-  const navigation = useNavigation()
+export const useIsScreenFocused = useIsFocused
 
-  const openedModals = useAppSelector(selectAllModals)
-  const isBottomModalOpen = openedModals.length > 0
+export const useIsScreenOrModaFocused = () => {
+  const isAnyModalOpened = useAppSelector(selectIsAnyModalOpened)
+  const isTopModal = useIsTopModal()
+  const isScreenFocused = useIsFocused()
 
-  const subscribe = useCallback(
-    (callback: () => void) => {
-      const unsubscribeFocus = navigation.addListener('focus', callback)
-      const unsubscribeBlur = navigation.addListener('blur', callback)
-
-      return () => {
-        unsubscribeFocus()
-        unsubscribeBlur()
-      }
-    },
-    [navigation]
-  )
-
-  const value = !!useSyncExternalStore(subscribe, navigation.isFocused, navigation.isFocused)
-
-  return value && !isBottomModalOpen
+  return isTopModal || (!isAnyModalOpened && isScreenFocused)
 }

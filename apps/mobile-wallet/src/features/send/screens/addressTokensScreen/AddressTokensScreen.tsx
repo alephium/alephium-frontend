@@ -28,6 +28,7 @@ interface ScreenProps
 
 const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setAssetAmount } = useSendContext()
+  const { parentNavigation } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -62,7 +63,10 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
 
   const onBuildSuccess = useCallback(() => navigation.navigate('VerifyScreen'), [navigation])
 
-  const onConsolidationSuccess = useCallback(() => navigation.navigate('ActivityScreen'), [navigation])
+  const onConsolidationSuccess = useCallback(
+    () => parentNavigation?.navigate('InWalletTabsNavigation', { screen: 'ActivityScreen' }),
+    [parentNavigation]
+  )
 
   if (!address) return null
 

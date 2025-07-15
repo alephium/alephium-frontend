@@ -2,7 +2,6 @@ import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPres
 import { capitalize } from 'lodash'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
 
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
@@ -46,20 +45,18 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 notScrollable title={t('Current network')} contentVerticalGap>
-      <View>
-        <Surface>
-          {networkNames.map((networkName, index) => (
-            <RadioButtonRow
-              key={networkName}
-              title={capitalize(networkName)}
-              onPress={() => handleNetworkItemPress(networkName)}
-              isActive={networkName === selectedNetworkName}
-              isLast={index === networkNames.length - 1}
-            />
-          ))}
-        </Surface>
-      </View>
+    <BottomModal2 notScrollable title={t('Current network')}>
+      <Surface>
+        {networkNames.map((networkName, index) => (
+          <RadioButtonRow
+            key={networkName}
+            title={capitalize(networkName)}
+            onPress={() => handleNetworkItemPress(networkName)}
+            isActive={networkName === selectedNetworkName}
+            isLast={index === networkNames.length - 1}
+          />
+        ))}
+      </Surface>
     </BottomModal2>
   )
 })

@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 2.2.1
+
+### Patch Changes
+
+- 0b8ea10: Layout improvements
+- 6e9ad76: Fix UTXO consolidation
+
 ## 2.2.0
 
 ### Minor Changes
