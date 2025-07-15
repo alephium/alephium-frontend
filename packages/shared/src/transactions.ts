@@ -147,24 +147,6 @@ export const isGrouplessAddressIntraTransfer = (
   )
 }
 
-export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: e.AssetOutput[] | e.Output[]) => {
-  const lastOutput = outputs[outputs.length - 1]
-
-  return outputs.length > 1
-    ? // If there are multiple outputs, the last one must be the change amount (this is a heuristic and not guaranteed)
-      {
-        alphAmount: totalOutputs.alphAmount - BigInt(lastOutput.attoAlphAmount),
-        tokenAmounts: totalOutputs.tokenAmounts
-          .map((token) => ({
-            ...token,
-            amount: token.amount - BigInt(lastOutput.tokens?.find((t) => t.id === token.id)?.amount ?? 0)
-          }))
-          .filter(({ amount }) => amount !== BigInt(0))
-      }
-    : // otherwise, it's a sweep transaction that consolidates all funds
-      totalOutputs
-}
-
 export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {
   const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
   const allAmountsArePositive = allAmounts.every((amount) => amount >= 0)
