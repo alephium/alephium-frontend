@@ -129,7 +129,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
         <Badge type="neutral" compact content={directionText} floatRight minWidth={40} />
 
         {!isPending &&
-          (infoType === 'move' || infoType === 'moveGroup' || infoType === 'out' ? (
+          (infoType === 'moveGroup' && direction === 'in' ? (
+            renderInputAccounts()
+          ) : infoType === 'move' || infoType === 'moveGroup' || infoType === 'out' ? (
             isGrouplessAddress && !direction ? (
               <AddressLink address={addressHash} maxWidth="250px" />
             ) : (
