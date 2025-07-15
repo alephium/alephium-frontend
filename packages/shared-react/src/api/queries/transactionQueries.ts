@@ -13,6 +13,7 @@ import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-q
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '@/api/apiUtils'
 import { queryClient } from '@/api/queryClient'
+import { invalidateAddressQueries, invalidateWalletQueries } from '@/api/queryInvalidation'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
@@ -69,10 +70,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
                 latestTx.hash = fullDataLatestTx.hash
                 latestTx.timestamp = fullDataLatestTx.timestamp
 
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
-                queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+                await invalidateAddressQueries(addressHash)
+                await invalidateWalletQueries()
               } else {
                 latestTx = cachedData?.latestTx
               }

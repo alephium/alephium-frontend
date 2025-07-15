@@ -1,4 +1,4 @@
-import { isGrouplessKeyType, selectAddressByHash, SignUnsignedTxModalProps, transactionSent } from '@alephium/shared'
+import { isGrouplessAddress, selectAddressByHash, SignUnsignedTxModalProps, transactionSent } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,13 +26,9 @@ const SignUnsignedTxModal = memo(
       let result: SignUnsignedTxResult
 
       if (isLedger) {
-        if (isGrouplessKeyType(signerAddress.keyType)) throw Error('Groupless address not supported on Ledger')
+        if (isGrouplessAddress(signerAddress)) throw Error('Groupless address not supported on Ledger')
 
-        const ledgerParams = {
-          signerIndex: signerAddress.index,
-          signerKeyType: signerAddress.keyType ?? 'default',
-          onLedgerError
-        }
+        const ledgerParams = { signerIndex: signerAddress.index, signerKeyType: signerAddress.keyType, onLedgerError }
 
         result = submitAfterSign
           ? await signer.signAndSubmitUnsignedTxLedger(txParams, ledgerParams)

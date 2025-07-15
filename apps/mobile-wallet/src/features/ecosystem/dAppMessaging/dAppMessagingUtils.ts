@@ -45,7 +45,7 @@ const getSigner = async (address: Address): Promise<ConnectedAddressPayload['sig
 
   return {
     type: 'local_secret',
-    keyType: address.keyType ?? 'default',
+    keyType: address.keyType,
     publicKey,
     derivationIndex: address.index,
     group: isGrouplessAddress(address) ? undefined : address.group

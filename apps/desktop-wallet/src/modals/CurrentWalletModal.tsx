@@ -7,9 +7,10 @@ import styled from 'styled-components'
 import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
+import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import WalletSelect from '@/features/switch-wallet/WalletSelect'
-import { useAppSelector } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalContainer from '@/modals/ModalContainer'
 
@@ -18,11 +19,14 @@ const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
   const { lockWallet } = useWalletLock()
   const numberOfWallets = useAppSelector((s) => s.global.wallets.length)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const dispatch = useAppDispatch()
+
+  const handleWalletSelect = () => dispatch(closeModal({ id }))
 
   return (
     <ModalContainer id={id}>
       <NotificationsBox role="dialog" {...fadeInOutBottomFast}>
-        {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect />}
+        {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect onSelect={handleWalletSelect} />}
 
         <Button onClick={() => lockWallet('notifications')} wide Icon={Lock} justifyContent="center" squared>
           {t('Lock wallet')}
