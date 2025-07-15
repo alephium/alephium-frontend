@@ -12,10 +12,9 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import Spinner from '@/components/Spinner'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
-import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
 import { HeaderContent, HeaderLogo } from '@/modals/CenteredModal'
 
 const SignConsolidateTxModal = memo(
@@ -25,7 +24,6 @@ const SignConsolidateTxModal = memo(
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, txParams.signerAddress))
     const { isLedger, onLedgerError } = useLedger()
     const { sendAnalytics } = useAnalytics()
-    const dispatch = useAppDispatch()
 
     const handleSignAndSubmit = useCallback(async () => {
       if (!signerAddress) throw Error('Signer address not found')
@@ -37,8 +35,7 @@ const SignConsolidateTxModal = memo(
 
       onSuccess()
       sendAnalytics({ event: 'Consolidated UTXOs' })
-      dispatch(closeModal({ id: props.id }))
-    }, [dispatch, isLedger, onLedgerError, onSuccess, props.id, sendAnalytics, signerAddress, txParams])
+    }, [isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     return (
       <SignTxBaseModal
