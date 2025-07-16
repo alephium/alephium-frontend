@@ -1,5 +1,11 @@
 # alephium-desktop-wallet
 
+## 3.0.3
+
+### Patch Changes
+
+- 6e9ad76: Fix UTXO consolidation
+
 ## 3.0.2
 
 ### Patch Changes

@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAppScreenIsFocused } from '~/utils/navigation'
+import { useIsScreenOrModalFocused } from '~/utils/navigation'
 
 interface AnimatedBackgroundProps {
   offsetTop?: number
@@ -30,7 +30,7 @@ const springConfig = {
 
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
-  const isFocused = useAppScreenIsFocused()
+  const isFocused = useIsScreenOrModalFocused()
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
   const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
     interval: isFocused ? FPS_60 : 1000000

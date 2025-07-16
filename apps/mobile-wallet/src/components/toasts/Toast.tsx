@@ -1,12 +1,10 @@
 import { colord } from 'colord'
-import { LinearGradient } from 'expo-linear-gradient'
 import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
-import { useState } from 'react'
-import { LayoutChangeEvent } from 'react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const Toast = ({
   type,
@@ -15,7 +13,6 @@ const Toast = ({
   onPress
 }: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
-  const [subtitleHeight, setSubtitleHeight] = useState(0)
 
   const Icons: Record<ToastType, { color: string; Icon: LucideIcon }> = {
     success: {
@@ -35,25 +32,21 @@ const Toast = ({
   const Icon = Icons[type].Icon
   const color = Icons[type].color
 
-  const handleSubtitleLayout = (e: LayoutChangeEvent) => setSubtitleHeight(e.nativeEvent.layout.height)
-
   return (
     <ToastContainer onPress={onPress}>
-      <Gradient
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        locations={[0.7, 1]}
-        colors={[color, colord(color).alpha(0).toHex()]}
-        style={{ height: 160 + (text2 ? subtitleHeight : 0) }}
-        pointerEvents="none"
-      />
-      <ToastContent>
+      <ToastContent
+        style={{
+          backgroundColor: colord(color).alpha(0.95).toHex(),
+          borderColor: color,
+          borderWidth: 1
+        }}
+      >
         <IconContainer>
           <Icon color={color} />
         </IconContainer>
         <TextContainer>
           <Title>{text1}</Title>
-          {text2 && <Subtitle onLayout={handleSubtitleLayout}>{text2}</Subtitle>}
+          {text2 && <Subtitle>{text2}</Subtitle>}
         </TextContainer>
       </ToastContent>
     </ToastContainer>
@@ -64,21 +57,24 @@ export default Toast
 
 const ToastContainer = styled.Pressable`
   position: absolute;
-  top: 0;
+  top: 0px;
+  padding: 0 ${DEFAULT_MARGIN}px;
   width: 100%;
   z-index: 10;
 `
 
 const ToastContent = styled.View`
   flex-direction: row;
-  padding: 20px;
+  padding: ${DEFAULT_MARGIN}px;
   gap: 16px;
+  border-radius: ${BORDER_RADIUS}px;
+  align-items: center;
 `
 
 const IconContainer = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 40px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,11 +95,4 @@ const Title = styled(AppText)`
 
 const Subtitle = styled(AppText)`
   color: rgba(255, 255, 255, 0.8);
-`
-
-const Gradient = styled(LinearGradient)`
-  position: absolute;
-  top: -50px;
-  left: 0;
-  right: 0;
 `

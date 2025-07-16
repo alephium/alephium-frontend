@@ -1,5 +1,17 @@
 # @alephium/explorer
 
+## 1.11.0
+
+### Minor Changes
+
+- a66dbb8: Support display of groupless addresses
+
+## 1.10.15
+
+### Patch Changes
+
+- 8eeac67: Fix display of NFT info in NFT modal
+
 ## 1.10.14
 
 ### Patch Changes

@@ -37,3 +37,9 @@ export const useModalContext = () => {
 
   return context
 }
+
+export const usePotentialModalId = () => {
+  const context = useContext(ModalContext)
+
+  return context?.id
+}

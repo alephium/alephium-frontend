@@ -59,7 +59,6 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
   const [isSweeping, setIsSweeping] = useState(false)
   const [fees, setFees] = useState<bigint>()
 
-  const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
   const [chainedTxProps, setChainedTxProps] = useState<SignChainedTxModalProps['props']>()
 
   const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
@@ -190,13 +189,6 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
     },
     [dispatch, gasRefillGroupedAddress, handleTransactionBuildError, isLedger, sendAnalytics]
   )
-
-  useEffect(() => {
-    if (!isTransactionBuildTriggered && sendFlowData) {
-      setIsTransactionBuildTriggered(true)
-      buildTransactionExtended(sendFlowData, isSweeping)
-    }
-  }, [buildTransactionExtended, isSweeping, isTransactionBuildTriggered, sendFlowData])
 
   const moveToSecondStep = useCallback((data: TransferAddressesTxModalOnSubmitData) => {
     setAddressesData(data)

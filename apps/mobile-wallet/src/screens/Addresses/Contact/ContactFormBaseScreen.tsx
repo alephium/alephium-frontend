@@ -11,7 +11,7 @@ import NewContactCameraScanButton from '~/features/qrCodeScan/NewContactCameraSc
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
 
-interface ContactFormProps extends ScrollScreenProps {
+interface ContactFormBaseScreenProps extends ScrollScreenProps {
   initialValues: ContactFormData
   onSubmit: (data: ContactFormData) => void
   buttonText?: string
@@ -19,7 +19,13 @@ interface ContactFormProps extends ScrollScreenProps {
 
 const requiredErrorMessage = i18n.t('This field is required')
 
-const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...props }: ContactFormProps) => {
+const ContactFormBaseScreen = ({
+  initialValues,
+  onSubmit,
+  buttonText,
+  headerOptions,
+  ...props
+}: ContactFormBaseScreenProps) => {
   const {
     control,
     handleSubmit,
@@ -88,4 +94,4 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
   )
 }
 
-export default ContactForm
+export default ContactFormBaseScreen
