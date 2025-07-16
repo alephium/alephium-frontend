@@ -30,9 +30,6 @@ export const calcTxAmountsDeltaForAddress = (
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
-  const outputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.outputs)
-  const inputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.inputs)
-
   if (isInternalTx(tx, [refAddress])) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
@@ -42,6 +39,9 @@ export const calcTxAmountsDeltaForAddress = (
       tokenAmounts: []
     }
   }
+
+  const outputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.outputs)
+  const inputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.inputs)
 
   const tokensDelta = [...outputAmounts.tokenAmounts]
 
