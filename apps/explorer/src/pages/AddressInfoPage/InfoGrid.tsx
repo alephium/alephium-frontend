@@ -15,7 +15,7 @@ const InfoGrid = ({ children, className }: InfoGridProps) => <div className={cla
 // Subcomponent declaration
 
 interface GridCellProps {
-  label: string
+  label: string | ReactNode
   value?: ReactNode
   sublabel?: ReactNode
   className?: string
@@ -41,10 +41,10 @@ InfoGrid.Cell = GridCell
 
 export default styled(InfoGrid)`
   display: grid;
-  background-color: ${({ theme }) => theme.border.secondary};
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1px;
+  grid-gap: 6px;
   flex: 1;
+  border-radius: 8px;
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(2, 1fr);
@@ -56,7 +56,13 @@ const CellContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.primary};
-  padding: 10px 20px;
+  padding: 0px 20px;
+  border-radius: 8px;
+
+  @media ${deviceBreakPoints.tablet} {
+    padding: 10px;
+    justify-content: flex-start;
+  }
 `
 
 const Label = styled.label`
@@ -70,8 +76,8 @@ const Label = styled.label`
 `
 
 const Value = styled(motion.div)`
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
 
   @media ${deviceBreakPoints.tiny} {
     font-size: 18px;

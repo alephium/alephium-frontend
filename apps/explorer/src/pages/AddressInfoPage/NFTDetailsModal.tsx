@@ -65,8 +65,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
               </NFTDetailsContainer>
               {nft.attributes && (
                 <NFTDetailsContainer>
-                  <h3>{t('Attributes')}</h3>
-                  <Table bodyOnly>
+                  <Table bodyOnly noBorder>
                     <TableBody>
                       {nft.attributes.map((a, i) => (
                         <TableRow key={i}>

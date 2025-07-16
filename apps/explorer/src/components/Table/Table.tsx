@@ -11,6 +11,7 @@ interface TableProps {
   main?: boolean
   hasDetails?: boolean
   noBorder?: boolean
+  transparent?: boolean
   bodyOnly?: boolean
   scrollable?: boolean
   isLoading?: boolean
@@ -53,10 +54,11 @@ const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => 
 }
 
 const TableWrapper = styled.div<TableProps>`
-  background-color: ${({ theme }) => theme.bg.primary};
-  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
+  background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.primary}`)};
+  border: ${({ noBorder, transparent, theme }) =>
+    !noBorder && `1px solid ${transparent ? theme.border.secondary : theme.border.primary}`};
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 8px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
 `
@@ -149,7 +151,7 @@ const StyledTable = styled.table<TableProps>`
       &:not(:last-child) {
         border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
       }
-      background-color: ${({ theme }) => theme.bg.hover};
+      background-color: ${({ theme }) => theme.bg.primary};
 
       td {
         padding-top: 0;

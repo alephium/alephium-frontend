@@ -1,6 +1,6 @@
-import { TransactionInfoType } from '@alephium/shared'
+import { TransactionDirection, TransactionInfoType } from '@alephium/shared'
 import { colord } from 'colord'
-import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRepeat2Line } from 'react-icons/ri'
+import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRefreshLine, RiRepeat2Line } from 'react-icons/ri'
 import { DefaultTheme } from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -10,13 +10,15 @@ interface TransactionUIProps {
   infoType: TransactionInfoType
   isFailedScriptTx: boolean
   isInContract: boolean
+  direction?: TransactionDirection
 }
 
 export const getTransactionUI = ({
   infoType,
   isFailedScriptTx,
   isInContract,
-  theme
+  theme,
+  direction
 }: TransactionUIProps & { theme: DefaultTheme }) => {
   if (!isFailedScriptTx && !isInContract) {
     return {
@@ -24,6 +26,7 @@ export const getTransactionUI = ({
         in: i18next.t('Incoming transfer'),
         out: i18next.t('Outgoing transfer'),
         move: i18next.t('Self transfer'),
+        moveGroup: i18next.t('Group transfer'),
         pending: i18next.t('Pending'),
         swap: i18next.t('dApp operation')
       }[infoType],
@@ -31,6 +34,7 @@ export const getTransactionUI = ({
         in: RiArrowDownLine,
         out: RiArrowUpLine,
         move: RiArrowLeftRightLine,
+        moveGroup: RiRefreshLine,
         pending: LoadingSpinner,
         swap: RiRepeat2Line
       }[infoType],
@@ -38,6 +42,7 @@ export const getTransactionUI = ({
         in: theme.global.valid,
         out: theme.font.highlight,
         move: theme.font.secondary,
+        moveGroup: theme.font.secondary,
         pending: theme.font.secondary,
         swap: theme.global.complementary
       }[infoType],
@@ -45,11 +50,13 @@ export const getTransactionUI = ({
         in: colord(theme.global.valid).alpha(0.12).toRgbString(),
         out: colord(theme.font.highlight).alpha(0.12).toRgbString(),
         move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
+        moveGroup: colord(theme.font.secondary).alpha(0.12).toRgbString(),
         pending: colord(theme.font.secondary).alpha(0.12).toRgbString(),
         swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
       }[infoType],
       directionText: {
         move: i18next.t('inside'),
+        moveGroup: direction === 'out' ? i18next.t('to') : direction === 'in' ? i18next.t('from') : i18next.t('inside'),
         out: i18next.t('to'),
         swap: i18next.t('with'),
         pending: '...',

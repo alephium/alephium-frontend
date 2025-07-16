@@ -2,7 +2,7 @@ import {
   AddressHash,
   isNetworkValid,
   networkSettingsPresets,
-  selectAddressesInGroup,
+  selectAddressesStrsInGroup,
   selectDefaultAddressHash,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
@@ -22,7 +22,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToasts'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
-import ConnectDappNewAddressModalContent from '~/features/ecosystem/modals/ConnectDappNewAddressModalContent'
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal2 from '~/features/modals/BottomModal2'
@@ -47,7 +46,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
     const group = chainInfo.addressGroup
-    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
+    const addressesInGroup = useAppSelector((s) => selectAddressesStrsInGroup(s, group))
     const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
@@ -172,9 +171,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
             onSwitchNetworkPress={handleSwitchNetworkPress}
             onDeclinePress={handleRejectProposal}
           />
-        ) : !signerAddress ? (
-          <ConnectDappNewAddressModalContent group={group} onDeclinePress={handleRejectProposal} />
-        ) : (
+        ) : signerAddress ? (
           <>
             {showAlternativeSignerAddresses ? (
               <ScreenSection>
@@ -229,7 +226,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
               />
             </BottomButtons>
           </>
-        )}
+        ) : null}
       </BottomModal2>
     )
   }

@@ -17,33 +17,29 @@ interface SpinnerProps extends Omit<LoaderConfig, 'blur'> {
   animated?: boolean
 }
 
-interface SpinnerModalProps extends SpinnerProps, LoaderConfig {
-  isActive: boolean
-}
+type SpinnerModalProps = SpinnerProps & LoaderConfig
 
-const SpinnerModal = ({ isActive, text, blur = true, bg = 'faded', progress, minDurationMs }: SpinnerModalProps) => {
+const SpinnerModal = ({ text, blur = true, bg = 'faded', progress, minDurationMs }: SpinnerModalProps) => {
   const theme = useTheme()
 
-  const [config, setConfig] = useState({ isActive, text, bg, blur, progress, minDurationMs })
+  const [config, setConfig] = useState({ text, bg, blur, progress, minDurationMs })
   const minDurationMsRef = useRef(minDurationMs)
 
   useEffect(() => {
-    if (isActive) {
-      setConfig({ isActive, text, bg, blur, progress, minDurationMs })
+    if (text) {
+      setConfig({ text, bg, blur, progress, minDurationMs })
       minDurationMsRef.current = minDurationMs
     } else {
       const timeout = setTimeout(() => {
-        setConfig({ isActive, text, bg, blur, progress, minDurationMs })
+        setConfig({ text, bg, blur, progress, minDurationMs })
       }, minDurationMsRef.current || 300)
 
       return () => clearTimeout(timeout)
     }
-  }, [bg, blur, isActive, minDurationMs, progress, text])
-
-  if (!config.isActive) return null
+  }, [bg, blur, minDurationMs, progress, text])
 
   return (
-    <ModalWithBackdrop animationType="fade" visible={config.isActive}>
+    <ModalWithBackdrop animationType="fade" visible={!!config.text}>
       {blur ? (
         <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
           <Spinner bg={config.bg} text={config.text} color="primary" progress={config.progress} />

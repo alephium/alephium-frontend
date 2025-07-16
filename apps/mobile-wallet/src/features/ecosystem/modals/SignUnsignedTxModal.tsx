@@ -1,5 +1,4 @@
-import { throttledClient } from '@alephium/shared'
-import { node as n, SignUnsignedTxParams, SignUnsignedTxResult, transactionSign } from '@alephium/web3'
+import { SignUnsignedTxModalProps } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -11,17 +10,9 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
-import { SignTxModalCommonProps } from '~/features/ecosystem/modals/SignTxModalTypes'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-
-interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
-  txParams: SignUnsignedTxParams
-  unsignedData: n.DecodeUnsignedTxResult
-  submitAfterSign: boolean
-  onSuccess: (signResult: SignUnsignedTxResult) => void
-}
+import { signer } from '~/signer'
 
 const SignUnsignedTxModal = memo(
   ({ txParams, unsignedData, origin, onError, onSuccess, submitAfterSign }: SignUnsignedTxModalProps) => {
@@ -29,29 +20,13 @@ const SignUnsignedTxModal = memo(
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
-      unsignedData,
+      type: 'UNSIGNED_TX',
       sign: async () => {
-        const signature = transactionSign(
-          unsignedData.unsignedTx.txId,
-          await getAddressAsymetricKey(txParams.signerAddress, 'private')
+        onSuccess(
+          submitAfterSign ? await signer.signAndSubmitUnsignedTx(txParams) : await signer.signUnsignedTx(txParams)
         )
 
-        if (submitAfterSign)
-          await throttledClient.node.transactions.postTransactionsSubmit({
-            unsignedTx: txParams.unsignedTx,
-            signature
-          })
-
         sendAnalytics({ event: 'Approved unsigned tx', props: { origin } })
-
-        onSuccess({
-          ...unsignedData,
-          signature,
-          txId: unsignedData.unsignedTx.txId,
-          gasAmount: unsignedData.unsignedTx.gasAmount,
-          gasPrice: BigInt(unsignedData.unsignedTx.gasPrice),
-          unsignedTx: txParams.unsignedTx
-        })
       }
     })
 
@@ -64,9 +39,10 @@ const SignUnsignedTxModal = memo(
             </Row>
 
             <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
-              <AppText>{unsignedData.unsignedTx.txId}</AppText>
+              <AppText>{unsignedData.txId}</AppText>
             </Row>
 
+            {/* TODO: Should show decoded unsigned data, see https://github.com/alephium/alephium-web3/blob/3cb9b2f5079b8cb41d284f81078bc2894880d143/packages/web3/src/signer/signer.ts#L186 */}
             <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
           </Surface>
         </ScreenSection>

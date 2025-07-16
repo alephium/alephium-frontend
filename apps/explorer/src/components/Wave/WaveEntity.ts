@@ -40,10 +40,6 @@ class WaveEntity {
 
     ctx.fillStyle = gradient
 
-    ctx.strokeStyle = this.gradientColors[0]
-    ctx.lineWidth = 2
-    ctx.stroke()
-
     ctx.fill()
     ctx.closePath()
   }

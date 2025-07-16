@@ -1,5 +1,6 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { Address, AddressSettings } from '@alephium/shared'
+import { KeyType } from '@alephium/web3'
 
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -10,16 +11,34 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   color: getRandomLabelColor()
 })
 
-export const deriveAddressesInGroup = (
-  group: number,
-  amount: number,
+type DeriveGrouplessAddressesProps = {
+  amount: number
+  keyType: Exclude<KeyType, 'default' | 'bip340-schnorr'>
   skipIndexes: number[]
-): NonSensitiveAddressData[] => {
+}
+
+type DeriveAddressesWithGroupProps = {
+  amount: number
+  keyType: 'default' | 'bip340-schnorr'
+  skipIndexes: number[]
+  group: number
+}
+
+type GenerateAddressProps = DeriveGrouplessAddressesProps | DeriveAddressesWithGroupProps
+
+const hasTargetGroup = (props: GenerateAddressProps): props is DeriveAddressesWithGroupProps =>
+  props.keyType === 'default' || props.keyType === 'bip340-schnorr'
+
+export const deriveAddresses = (props: GenerateAddressProps) => {
+  const { amount, keyType, skipIndexes } = props
+
   const addresses = []
   const skipAddressIndexes = Array.from(skipIndexes)
 
   for (let j = 0; j < amount; j++) {
-    const newAddress = keyring.generateAndCacheAddress({ group, skipAddressIndexes })
+    const newAddress = hasTargetGroup(props)
+      ? keyring.generateAndCacheAddress({ group: props.group, skipAddressIndexes, keyType })
+      : keyring.generateAndCacheAddress({ skipAddressIndexes, keyType })
     addresses.push(newAddress)
     skipAddressIndexes.push(newAddress.index)
   }
