@@ -26,14 +26,14 @@ export const isSameBaseAddress = (address1: string, address2: string): boolean =
 
 export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
-  address: string
+  refAddress: string
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
-  const outputAmounts = summarizeAddressInputOutputAmounts(address, tx.outputs)
-  const inputAmounts = summarizeAddressInputOutputAmounts(address, tx.inputs)
+  const outputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.outputs)
+  const inputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.inputs)
 
-  if (isInternalTx(tx, [address])) {
+  if (isInternalTx(tx, [refAddress])) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
     const fee = totalOutputAlph - totalInputAlph
@@ -63,16 +63,18 @@ export const calcTxAmountsDeltaForAddress = (
   }
 }
 
-const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Output)[]) =>
-  io.reduce(
+const summarizeAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Output)[]) => {
+  const isGrouplessRefAddress = isGrouplessAddressWithoutGroupIndex(refAddress)
+
+  return io.reduce(
     (acc, io) => {
-      if (
-        !io.address ||
-        (isGrouplessAddressWithoutGroupIndex(address)
-          ? !isSameBaseAddress(io.address, address)
-          : io.address !== address)
-      )
-        return acc
+      if (!io.address) return acc
+
+      const isNotSameAddress = isGrouplessRefAddress
+        ? !isSameBaseAddress(io.address, refAddress)
+        : io.address !== refAddress
+
+      if (isNotSameAddress) return acc
 
       acc.alphAmount += BigInt(io.attoAlphAmount ?? 0)
 
@@ -92,6 +94,7 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (e.Input | e.Ou
     },
     { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
   )
+}
 
 // TODO: Clean up use of Transaction | PendingTransaction | MempoolTransaction
 
@@ -103,6 +106,7 @@ export const getDirection = (
 export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
+
   return (
     inputAddresses.length === 1 &&
     outputAddresses.length === 1 &&
