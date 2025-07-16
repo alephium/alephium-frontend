@@ -21,9 +21,13 @@ import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '@/constants'
 import {
   calcTxAmountsDeltaForAddress,
   hasPositiveAndNegativeAmounts,
+  isAlphAmountReduced,
   isConfirmedTx,
   isConsolidationTx,
-  isInternalTx
+  isContractTx,
+  isGrouplessAddressIntraTransfer,
+  isInternalTx,
+  isSelfTransfer
 } from '@/transactions'
 import { AddressHash, AddressWithGroup } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances, TokenId } from '@/types/assets'
@@ -35,6 +39,41 @@ import {
   TransactionInfoType,
   TransactionParams
 } from '@/types/transactions'
+
+type TransactionType =
+  | 'pending'
+  | 'wallet-self-transfer' // all input/outputs are addresses of the same wallet
+  | 'address-self-transfer' // all input/outputs are the same address
+  | 'address-group-transfer' // all input/outputs are multiple subaddresses of the same groupless address
+  | 'dApp' // at least one input/output is a contract address
+  | 'outgoing'
+  | 'incoming'
+
+export const getTransactionType = ({
+  tx,
+  referenceAddress,
+  internalAddresses
+}: {
+  tx: e.Transaction | e.PendingTransaction | SentTransaction
+  referenceAddress: string
+  internalAddresses: string[]
+}): TransactionType => {
+  if (!isConfirmedTx(tx)) {
+    return 'pending'
+  } else if (isSelfTransfer(tx)) {
+    return 'address-self-transfer'
+  } else if (isGrouplessAddressIntraTransfer(tx)) {
+    return 'address-group-transfer'
+  } else if (isInternalTx(tx, internalAddresses)) {
+    return 'wallet-self-transfer'
+  } else if (isContractTx(tx)) {
+    return 'dApp'
+  } else if (isAlphAmountReduced(tx, referenceAddress)) {
+    return 'outgoing'
+  } else {
+    return 'incoming'
+  }
+}
 
 export const getTransactionInfoType = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction,

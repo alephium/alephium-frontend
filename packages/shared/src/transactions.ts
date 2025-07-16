@@ -1,6 +1,7 @@
 import { ALPH } from '@alephium/token-list'
 import {
   explorer as e,
+  isContractAddress,
   isGrouplessAddress,
   isGrouplessAddressWithGroupIndex,
   isGrouplessAddressWithoutGroupIndex
@@ -34,6 +35,7 @@ export const calcTxAmountsDeltaForAddress = (
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
     const fee = totalOutputAlph - totalInputAlph
+
     return {
       alphAmount: fee,
       tokenAmounts: []
@@ -116,6 +118,28 @@ export const isConsolidationTx = (tx: e.Transaction | e.PendingTransaction | e.M
   )
 }
 
+export const isSelfTransfer = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
+  const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
+  const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
+
+  return (
+    inputAddresses.length === 1 &&
+    outputAddresses.length === 1 &&
+    inputAddresses[0] !== undefined &&
+    outputAddresses[0] !== undefined &&
+    inputAddresses[0] === outputAddresses[0]
+  )
+}
+
+export const isAlphAmountReduced = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
+  refAddress: string
+): boolean => {
+  const { alphAmount } = calcTxAmountsDeltaForAddress(tx, refAddress)
+
+  return alphAmount < 0
+}
+
 export const isConfirmedTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
 ): tx is e.Transaction =>
@@ -134,6 +158,11 @@ export const isInternalTx = (
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
     (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
   )
+
+export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean =>
+  !!tx.outputs?.some(inputOutputIsContractAddress) || !!tx.inputs?.some(inputOutputIsContractAddress)
+
+const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
 export const isGrouplessAddressIntraTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction
