@@ -7,10 +7,10 @@ import { scrollScreenTo } from '~/utils/layout'
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 
 type UseAutoScrollOnDragEnd = {
-  (scrollViewRef?: RefObject<ScrollView>): UseAutoScrollReturnedHandler
-  (flatListRef?: RefObject<FlatList>): UseAutoScrollReturnedHandler
+  (scrollViewRef?: RefObject<ScrollView | null>): UseAutoScrollReturnedHandler
+  (flatListRef?: RefObject<FlatList<unknown> | null>): UseAutoScrollReturnedHandler
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (flashListRef?: RefObject<FlashList<any>>): UseAutoScrollReturnedHandler
+  (flashListRef?: RefObject<FlashList<any> | null>): UseAutoScrollReturnedHandler
 }
 
 const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {

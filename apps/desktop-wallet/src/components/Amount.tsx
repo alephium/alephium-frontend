@@ -1,6 +1,7 @@
 import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
+import { MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -80,16 +81,29 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
+  const toggleDiscreetMode = (e: MouseEvent<HTMLDivElement>) => {
+    if (discreetMode) {
+      e.stopPropagation()
+      dispatch(discreetModeToggled())
+    }
+  }
+
+  if (discreetMode) {
+    return (
+      <AmountStyled
+        data-tooltip-id="default"
+        data-tooltip-content={t('Click to deactivate discreet mode')}
+        data-tooltip-delay-show={200}
+        onClick={toggleDiscreetMode}
+        {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+      >
+        •••
+      </AmountStyled>
+    )
+  }
 
   return (
-    <AmountStyled
-      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1, discreetMode }}
-      data-tooltip-id="default"
-      data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
-      data-tooltip-delay-show={500}
-      onClick={toggleDiscreetMode}
-    >
+    <AmountStyled {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}>
       <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
 
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
@@ -219,23 +233,13 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
-const AmountStyled = styled.div<
-  Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'> & { discreetMode: boolean }
->`
+const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'>>`
   color: ${({ color }) => color};
   display: inline-flex;
   position: relative;
   font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'bold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
-  ${({ discreetMode }) =>
-    discreetMode &&
-    css`
-      filter: blur(10px);
-      max-width: 100px;
-      overflow: hidden;
-      cursor: pointer;
-    `}
 `
 
 const Decimals = styled.span`

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { IconBaseProps } from 'react-icons'
 import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
 import styled from 'styled-components'
@@ -10,7 +11,7 @@ interface TimestampExpandButtonProps {
   className?: string
 }
 
-const config: Record<OnOff, { Icon: (props: IconBaseProps) => JSX.Element; tooltipContent: string }> = {
+const config: Record<OnOff, { Icon: (props: IconBaseProps) => ReactNode; tooltipContent: string }> = {
   on: {
     Icon: RiContractLeftRightLine,
     tooltipContent: i18n.t('Switch to simple time')

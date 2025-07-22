@@ -21,7 +21,7 @@ export interface InputProps extends Omit<TextInputProps, 'style' | 'value'> {
   error?: string
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
-  inputRef?: RefObject<TextInput>
+  inputRef?: RefObject<TextInput | null>
   isInModal?: boolean
 }
 
