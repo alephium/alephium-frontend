@@ -1,6 +1,7 @@
 import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
+import { MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -80,7 +81,12 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
+  const toggleDiscreetMode = (e: MouseEvent<HTMLDivElement>) => {
+    if (discreetMode) {
+      e.stopPropagation()
+      dispatch(discreetModeToggled())
+    }
+  }
 
   return (
     <AmountStyled
