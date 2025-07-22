@@ -10,7 +10,7 @@ import WaveEntity from './WaveEntity'
 
 const Waves = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const canvasContextRef = useRef<CanvasRenderingContext2D>()
+  const canvasContextRef = useRef<CanvasRenderingContext2D | null>(null)
   const t = useRef(0)
   const f = useRef(0)
 
