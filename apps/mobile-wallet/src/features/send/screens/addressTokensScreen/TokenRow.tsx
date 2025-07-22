@@ -2,7 +2,7 @@ import { AddressHash, isFT, isNFT, toHumanReadableAmount, TokenId } from '@aleph
 import { useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'

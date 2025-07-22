@@ -1,6 +1,5 @@
 import MaskedView from '@react-native-masked-view/masked-view'
 import { StackHeaderProps } from '@react-navigation/stack'
-import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -26,7 +25,7 @@ export interface BaseHeaderProps extends ViewProps {
   scrollY?: SharedValue<number>
   scrollEffectOffset?: number
   CustomContent?: ReactNode
-  progress?: SceneProgress
+  progress?: NonNullable<StackHeaderProps['progress']>
   isCentered?: boolean
 }
 

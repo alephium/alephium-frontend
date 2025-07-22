@@ -1,16 +1,14 @@
-import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
+import { StackHeaderProps } from '@react-navigation/stack'
 import { useEffect } from 'react'
-import { Animated } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
+
+type SceneProgress = NonNullable<StackHeaderProps['progress']>
 
 const useSceneProgressSharedValues = (progress?: SceneProgress) => {
   const currentProgress = useSharedValue(0)
   const nextProgress = useSharedValue(0)
 
-  const updateSharedValue = (
-    sharedValue: SharedValue<number>,
-    animatedValue?: Animated.AnimatedInterpolation<number>
-  ) => {
+  const updateSharedValue = (sharedValue: SharedValue<number>, animatedValue?: SceneProgress['current']) => {
     animatedValue?.addListener(({ value }) => {
       sharedValue.set(value)
     })

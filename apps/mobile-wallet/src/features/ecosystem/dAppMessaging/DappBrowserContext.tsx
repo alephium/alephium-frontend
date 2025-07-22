@@ -35,7 +35,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-type DappBrowserContextValue = RefObject<WebView>
+type DappBrowserContextValue = RefObject<WebView | null>
 
 const DappBrowserContext = createContext<DappBrowserContextValue | null>(null)
 

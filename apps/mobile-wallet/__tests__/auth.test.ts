@@ -22,7 +22,7 @@ describe(tryLocalAuthenticate, () => {
   it('checks enrollement', async () => {
     mockedHasHardwareAsync.mockResolvedValue(true)
     mockedIsEnrolledAsync.mockResolvedValue(false)
-    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: '' })
+    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: 'not_enrolled' })
 
     const status = await tryLocalAuthenticate()
 
@@ -32,7 +32,7 @@ describe(tryLocalAuthenticate, () => {
   it('fails to authenticate when user rejects', async () => {
     mockedHasHardwareAsync.mockResolvedValue(true)
     mockedIsEnrolledAsync.mockResolvedValue(true)
-    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: '' })
+    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: 'user_cancel' })
 
     const status = await tryLocalAuthenticate()
 
