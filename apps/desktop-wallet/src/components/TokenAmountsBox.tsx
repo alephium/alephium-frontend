@@ -24,45 +24,62 @@ import { useAppDispatch } from '@/hooks/redux'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAmountsBoxProps extends AmountBaseProps, BoxProps {
+interface TokenAmountsBoxProps extends AmountBaseProps, BoxProps {
   assetAmounts: AssetAmount[]
+  shouldAddAlphForDust?: boolean
   className?: string
 }
 
-const CheckAmountsBox = ({
+const TokenAmountsBox = ({
   assetAmounts,
   className,
   hasBg,
   hasHorizontalPadding,
   hasVerticalPadding,
   hasBorder,
+  shouldAddAlphForDust,
   ...props
-}: CheckAmountsBoxProps) => {
-  const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
-  const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
+}: TokenAmountsBoxProps) => {
+  let amounts = assetAmounts.map((asset) => ({
+    ...asset,
+    amount: asset.amount?.toString() ?? '0'
+  }))
 
-  const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
-  const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
+  let alphForDust = BigInt(0)
+
+  if (shouldAddAlphForDust) {
+    const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
+    const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
+    const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
+
+    alphForDust = extraAlphForDust
+    amounts = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
+  }
 
   return (
-    <CheckAmountsBoxStyled
+    <TokenAmountsBoxStyled
       className={className}
       hasBg={hasBg}
       hasHorizontalPadding={hasHorizontalPadding}
       hasVerticalPadding={hasVerticalPadding}
       hasBorder={hasBorder}
     >
-      {assets.map((asset, index) => (
+      {amounts.map((asset, index) => (
         <Fragment key={asset.id}>
-          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} {...props} />
-          {index < assets.length - 1 && <HorizontalDivider secondary />}
+          <AssetAmountRow
+            tokenId={asset.id}
+            amount={asset.amount}
+            extraAlphForDust={alphForDust ?? undefined}
+            {...props}
+          />
+          {index < amounts.length - 1 && <HorizontalDivider secondary />}
         </Fragment>
       ))}
-    </CheckAmountsBoxStyled>
+    </TokenAmountsBoxStyled>
   )
 }
 
-export default CheckAmountsBox
+export default TokenAmountsBox
 
 interface AssetAmountRowProps extends AmountBaseProps {
   tokenId: string
@@ -129,7 +146,7 @@ const FiatAmountStyled = styled(Amount)`
   font-weight: var(--font-weight-medium);
 `
 
-const CheckAmountsBoxStyled = styled(Box)`
+const TokenAmountsBoxStyled = styled(Box)`
   display: flex;
   flex-direction: column;
 `

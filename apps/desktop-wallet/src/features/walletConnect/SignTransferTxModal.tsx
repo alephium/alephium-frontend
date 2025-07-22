@@ -4,11 +4,11 @@ import { Fragment, memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendTransferTransaction } from '@/api/transactions'
+import TokenAmountsBox from '@/components/TokenAmountsBox'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
-import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckLockTimeBox from '@/features/send/CheckLockTimeBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
@@ -62,7 +62,7 @@ export const SignTransferTxModalContent = ({
     ]
     return (
       <Fragment key={address}>
-        <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />
+        <TokenAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />
         <CheckAddressesBox
           fromAddressStr={txParams.signerAddress}
           toAddressHash={address}

@@ -3,9 +3,9 @@ import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
+import TokenAmountsBox from '@/components/TokenAmountsBox'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
-import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckLockTimeBox from '@/features/send/CheckLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
@@ -49,7 +49,7 @@ const SendModalInfoCheckStep = (props: CheckTxProps) => {
           </>
         ) : (
           <>
-            <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />
+            <TokenAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />
             <CheckAddressesBox
               fromAddressStr={data.fromAddress.hash}
               toAddressHash={data.toAddress}

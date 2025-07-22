@@ -1,6 +1,6 @@
 import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
 
-import CheckAmountsBox from '@/features/send/CheckAmountsBox'
+import TokenAmountsBox from '@/components/TokenAmountsBox'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 
 const FTAmounts = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
@@ -11,7 +11,9 @@ const FTAmounts = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
 
   const isMoved = infoType === 'move'
 
-  return <CheckAmountsBox assetAmounts={fungibleTokens} highlight={!isMoved} showPlusMinus={!isMoved} />
+  const assetAmounts = fungibleTokens.map(({ id, amount }) => ({ id, amount }))
+
+  return <TokenAmountsBox assetAmounts={assetAmounts} highlight={!isMoved} showPlusMinus={!isMoved} />
 }
 
 export default FTAmounts

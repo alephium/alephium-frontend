@@ -12,11 +12,11 @@ import { partition } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import TokenAmountsBox from '@/components/TokenAmountsBox'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
-import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import BytecodeExpandableSection from '@/features/walletConnect/BytecodeExpandableSection'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
@@ -81,7 +81,7 @@ export const SignExecuteScriptTxModalContent = ({
 
   return (
     <>
-      {assetAmounts && <CheckAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding />}
+      {assetAmounts && <TokenAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />}
       <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
       {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
       <BytecodeExpandableSection bytecode={txParams.bytecode} />
