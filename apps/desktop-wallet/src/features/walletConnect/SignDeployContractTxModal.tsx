@@ -10,11 +10,11 @@ import { SignDeployContractTxResult } from '@alephium/web3'
 import { memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import TokenAmountsBox from '@/components/TokenAmountsBox'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
-import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import InfoRow from '@/features/send/InfoRow'
 import BytecodeExpandableSection from '@/features/walletConnect/BytecodeExpandableSection'
@@ -81,7 +81,9 @@ export const SignDeployContractTxModalContent = ({
 
   return (
     <>
-      {initialAlphAmount && <CheckAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding />}
+      {initialAlphAmount && (
+        <TokenAmountsBox assetAmounts={initialAlphAmount} hasBg hasHorizontalPadding shouldAddAlphForDust />
+      )}
       {issueTokenAmount && <InfoRow label={t('Issue token amount')}>{issueTokenAmount}</InfoRow>}
       <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
       {initialAlphAmount && (
