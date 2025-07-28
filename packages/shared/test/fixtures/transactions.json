@@ -235,5 +235,417 @@
     "gasPrice": "100000000000",
     "version": 1,
     "networkId": 0
+  },
+  "transferFromGroupedToGroupless": {
+    "type": "Accepted",
+    "hash": "13b9b04bfffed88dddb00001cfc6daaea997ab6fc69f3bf071198b7a44f9127e",
+    "blockHash": "00000000aef1fc807a8e5cfbb666f9cfa8d14fa5ae8772e2bbb76d9aff2b4c73",
+    "timestamp": 1752224270482,
+    "inputs": [
+      {
+        "outputRef": {
+          "hint": 199362123,
+          "key": "9b22098b3866872cb7361dd7188a707f873545385bad33ec69a56209556e5ea2"
+        },
+        "unlockScript": "00024b4f5fadae080692a4bd172513ca50389e2735cf4a35e3fdb76d2a0fa90cb313",
+        "txHashRef": "c49fadea13670186b2a313ae4d6b41c51563ab5ffbc3605cda0c4ecf3086c692",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "attoAlphAmount": "1000000000000000",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "2000000000000000000000"
+          }
+        ],
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": 199362123,
+          "key": "d467b1cfb02ee0da20fd2af5295c966a0566991eb318dd788a6ddbbbed78eb96"
+        },
+        "unlockScript": "00024b4f5fadae080692a4bd172513ca50389e2735cf4a35e3fdb76d2a0fa90cb313",
+        "txHashRef": "c30211686c593022fa1483dd8dbfc7d0dce72d6dae92d4ae83b7ac35bb9ad188",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "attoAlphAmount": "706880294701744196",
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": 199362123,
+          "key": "f09290cd38d02c89475150af6187fdd54696f5efec14fb6159ff7afb1106fa3e"
+        },
+        "unlockScript": "00024b4f5fadae080692a4bd172513ca50389e2735cf4a35e3fdb76d2a0fa90cb313",
+        "txHashRef": "7825f6347cc0b1b95c338f51ef804a4ec589ca81627e2386d4ddd492a89766ca",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "attoAlphAmount": "998000000000000000",
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": 199362123,
+          "key": "90bcd7612cf7556155806964f7b3b09e674b5904fd32cd4f8e67334fb9977786"
+        },
+        "unlockScript": "00024b4f5fadae080692a4bd172513ca50389e2735cf4a35e3fdb76d2a0fa90cb313",
+        "txHashRef": "6b7cb8475fa75d02adbd2f0d4f5e15c23aa0bc54b81367aacb12397dccfae76c",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "attoAlphAmount": "998000000000000000",
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": 199362123,
+          "key": "38f53735dbfa46f650c37212ab29900e5e9afa549cc9684c151e3aa967a19da1"
+        },
+        "unlockScript": "00024b4f5fadae080692a4bd172513ca50389e2735cf4a35e3fdb76d2a0fa90cb313",
+        "txHashRef": "852fce6d8a44bd2793c22469404b78870cf4c8ba0d36e0fd112831dbea34aab3",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "attoAlphAmount": "7994000000000000000",
+        "contractInput": false
+      }
+    ],
+    "outputs": [
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "ae69ccf647c0baac9a1ad6398eff5f9d45ba3af7045af0a7f5d638d4844256a0",
+        "attoAlphAmount": "1000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "100000000000000000000"
+          }
+        ],
+        "message": "",
+        "spent": "0c7b62713ab0423fca296f1da75f99f78472ad121d9c5f7d45137f0d9a9b97ab",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "d10501b43e90ca9a8e3c299152fc31dfbc68da7b7e4b379032a42fdfdbdedd57",
+        "attoAlphAmount": "4999000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "message": "",
+        "spent": "0c7b62713ab0423fca296f1da75f99f78472ad121d9c5f7d45137f0d9a9b97ab",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": 199362123,
+        "key": "a698f6daaf44f5517dcc31170c54af416a6496058b807dae1d6c323be2b4c39d",
+        "attoAlphAmount": "1000000000000000",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "1900000000000000000000"
+          }
+        ],
+        "message": "",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": 199362123,
+        "key": "04a13d147c659f1f9251ca8d3c7888029a87e12c4916daf744976c7622f27af3",
+        "attoAlphAmount": "5693774294701744196",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "message": "",
+        "spent": "e48e82c427f67407075d774b7f3df0744bda6a832750fada4e08c3ebfbd0a40e",
+        "fixedOutput": true
+      }
+    ],
+    "version": 0,
+    "networkId": 1,
+    "gasAmount": 31060,
+    "gasPrice": "100000000000",
+    "scriptExecutionOk": true,
+    "inputSignatures": [
+      "04a6b5240d118b760267ebae30b0a87e751c14b90ae0eea2026b4d63b6182b353f35b12de51a9d0aaa7073fd3c73778443f13e3ffba0b892b3e5c61727d000f1"
+    ],
+    "scriptSignatures": [],
+    "coinbase": false
+  },
+  "grouplessInternalGroupTransfer": {
+    "type": "Accepted",
+    "hash": "8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409",
+    "blockHash": "000000849f6e64e83d29dab557f17e71114eaf96d156fe773198f8911bfed27d",
+    "timestamp": 1752224555222,
+    "inputs": [
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "8e9853408c3212ce83dd41880bafa9d5b3ed57c874432a40178e06102b8b4014"
+        },
+        "unlockScript": "05",
+        "txHashRef": "0c7b62713ab0423fca296f1da75f99f78472ad121d9c5f7d45137f0d9a9b97ab",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "1000000000000000",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "50000000000000000000"
+          }
+        ],
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "826abd15cbc74e73e35aeb69ea602688b30bfe28f95e9f1f9c6afd4c4f920ed4"
+        },
+        "unlockScript": "05",
+        "txHashRef": "0c7b62713ab0423fca296f1da75f99f78472ad121d9c5f7d45137f0d9a9b97ab",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "2496494000000000000",
+        "contractInput": false
+      }
+    ],
+    "outputs": [
+      {
+        "type": "AssetOutput",
+        "hint": -1165116531,
+        "key": "a07a84debffb2ecc7d59f4a898756c08f6163f64052ea7df86cc82ed24ba37a1",
+        "attoAlphAmount": "1000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "25000000000000000000"
+          }
+        ],
+        "message": "",
+        "spent": "b549242ee0a613ef6525c667bbbeb9a074ba5c0a58eaaf8aae9fe36ae482b374",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1165116531,
+        "key": "029fe8b9b93517d0c75376af93af0e5f9340453581f2e23fd1f31307b860480b",
+        "attoAlphAmount": "999000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
+        "message": "",
+        "spent": "b549242ee0a613ef6525c667bbbeb9a074ba5c0a58eaaf8aae9fe36ae482b374",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "35d4d81a1795127432ad06a1efc6033d9d1b89407113061297f757a8645fd4bc",
+        "attoAlphAmount": "1000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "25000000000000000000"
+          }
+        ],
+        "message": "",
+        "spent": "c3fdb69b0c21fbad14d438eee2d68a0234c23b7038a79f2657cdbf2379d3f5c1",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "6b02f65c73778296dd1f5f133a436a7691b15aa9ae7063bd057c62b7d6c742b6",
+        "attoAlphAmount": "1493988000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "message": "",
+        "spent": "c3fdb69b0c21fbad14d438eee2d68a0234c23b7038a79f2657cdbf2379d3f5c1",
+        "fixedOutput": true
+      }
+    ],
+    "version": 0,
+    "networkId": 1,
+    "gasAmount": 25060,
+    "gasPrice": "100000000000",
+    "scriptExecutionOk": true,
+    "inputSignatures": [
+      "4b4f9662b19150805fc41353973f65486d4741c9a8e18df5427562955ee0df4f6fb1c81db0890d482a6c15afdf03ef1fce4971309c8938ab11ed676921a570a0"
+    ],
+    "scriptSignatures": [],
+    "coinbase": false
+  },
+  "transfeFromGrouplessToGrouped": {
+    "type": "Accepted",
+    "hash": "0c7b62713ab0423fca296f1da75f99f78472ad121d9c5f7d45137f0d9a9b97ab",
+    "blockHash": "000000091526d6bd8b3654944dc85c71c72255d38da6a3995e83403a5b669d6c",
+    "timestamp": 1752224442782,
+    "inputs": [
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "ae69ccf647c0baac9a1ad6398eff5f9d45ba3af7045af0a7f5d638d4844256a0"
+        },
+        "unlockScript": "05",
+        "txHashRef": "13b9b04bfffed88dddb00001cfc6daaea997ab6fc69f3bf071198b7a44f9127e",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "1000000000000000",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "100000000000000000000"
+          }
+        ],
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "d10501b43e90ca9a8e3c299152fc31dfbc68da7b7e4b379032a42fdfdbdedd57"
+        },
+        "unlockScript": "05",
+        "txHashRef": "13b9b04bfffed88dddb00001cfc6daaea997ab6fc69f3bf071198b7a44f9127e",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "4999000000000000000",
+        "contractInput": false
+      }
+    ],
+    "outputs": [
+      {
+        "type": "AssetOutput",
+        "hint": 199362123,
+        "key": "62c3cabbb7e83f9d6c5e7ac7eff424c764b375c3ef65b3fa9330f5235f4c3c69",
+        "attoAlphAmount": "1000000000000000",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "50000000000000000000"
+          }
+        ],
+        "message": "",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": 199362123,
+        "key": "8531882b7540ecb13343eb42ff16ee764e6d1a2202ca8c3daa3f02eed560da90",
+        "attoAlphAmount": "2499000000000000000",
+        "address": "1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW",
+        "message": "",
+        "spent": "82936e3a49424e32bd6de681b7c9a9d4bdd0f521b66492a546aaac5af1b6898d",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "8e9853408c3212ce83dd41880bafa9d5b3ed57c874432a40178e06102b8b4014",
+        "attoAlphAmount": "1000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "50000000000000000000"
+          }
+        ],
+        "message": "",
+        "spent": "8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "826abd15cbc74e73e35aeb69ea602688b30bfe28f95e9f1f9c6afd4c4f920ed4",
+        "attoAlphAmount": "2496494000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "message": "",
+        "spent": "8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409",
+        "fixedOutput": true
+      }
+    ],
+    "version": 0,
+    "networkId": 1,
+    "gasAmount": 25060,
+    "gasPrice": "100000000000",
+    "scriptExecutionOk": true,
+    "inputSignatures": [
+      "5ae7527c831c9f3d76894148f9ba6fbaf053732ad77bf15755356fe694b349c3151b7a8ee3af0ea1c8d2cd4fe8878e0736a1306f0cc603c313bb65d6b574036e"
+    ],
+    "scriptSignatures": [],
+    "coinbase": false
+  },
+  "transferFromGrouplessToGroupless": {
+    "type": "Accepted",
+    "hash": "c3fdb69b0c21fbad14d438eee2d68a0234c23b7038a79f2657cdbf2379d3f5c1",
+    "blockHash": "000000b8945221562540618564296000a1d68c7a12e440d988cc583b5ba8d24e",
+    "timestamp": 1752224649943,
+    "inputs": [
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "35d4d81a1795127432ad06a1efc6033d9d1b89407113061297f757a8645fd4bc"
+        },
+        "unlockScript": "05",
+        "txHashRef": "8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "1000000000000000",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "25000000000000000000"
+          }
+        ],
+        "contractInput": false
+      },
+      {
+        "outputRef": {
+          "hint": -1198670963,
+          "key": "6b02f65c73778296dd1f5f133a436a7691b15aa9ae7063bd057c62b7d6c742b6"
+        },
+        "unlockScript": "05",
+        "txHashRef": "8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "attoAlphAmount": "1493988000000000000",
+        "contractInput": false
+      }
+    ],
+    "outputs": [
+      {
+        "type": "AssetOutput",
+        "hint": 374206135,
+        "key": "e5dbebd23602232425bc910b803ae90e5e13d24a82784114743bdd519accd6cb",
+        "attoAlphAmount": "1000000000000000",
+        "address": "3cUt1QzEpcqsbTxrBfxTas6iXzNdWqnoAKeeXpsuai4cHoG5N4ZND:2",
+        "tokens": [
+          {
+            "id": "f393e2366ee780141240e840aa32f26eade79559864d103b453f0d595425af00",
+            "amount": "25000000000000000000"
+          }
+        ],
+        "message": "",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": 374206135,
+        "key": "dc1304deb11cb83f847b00a1302c99bc2334a1627d23275217b94eef6bec1aef",
+        "attoAlphAmount": "999000000000000000",
+        "address": "3cUt1QzEpcqsbTxrBfxTas6iXzNdWqnoAKeeXpsuai4cHoG5N4ZND:2",
+        "message": "",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1198670963,
+        "key": "060aa3ed6ccd5dd47aa5ce9b229701cf36a2099ff86ff9c2ef1f56d0b3f3809d",
+        "attoAlphAmount": "492482000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3",
+        "message": "",
+        "fixedOutput": true
+      }
+    ],
+    "version": 0,
+    "networkId": 1,
+    "gasAmount": 25060,
+    "gasPrice": "100000000000",
+    "scriptExecutionOk": true,
+    "inputSignatures": [
+      "15da46fd2f5f30596dd5f49aac65528dac9cb39e3d16178f8decb7ef0abb524742ab6786aa1335b8ac1c2745a196b4740d68f4f026666def28b9f016a761aebc"
+    ],
+    "scriptSignatures": [],
+    "coinbase": false
   }
 }
