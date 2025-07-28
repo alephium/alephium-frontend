@@ -10,7 +10,7 @@ import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -40,21 +40,25 @@ const TokenAmountsBox = ({
   shouldAddAlphForDust,
   ...props
 }: TokenAmountsBoxProps) => {
-  let amounts = assetAmounts.map((asset) => ({
-    ...asset,
-    amount: asset.amount?.toString() ?? '0'
-  }))
+  const { amounts, alphForDust } = useMemo(() => {
+    let amounts = assetAmounts.map((asset) => ({
+      ...asset,
+      amount: asset.amount?.toString() ?? '0'
+    }))
 
-  let alphForDust = BigInt(0)
+    let alphForDust = BigInt(0)
 
-  if (shouldAddAlphForDust) {
-    const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
-    const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
-    const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
+    if (shouldAddAlphForDust) {
+      const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
+      const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
+      const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
 
-    alphForDust = extraAlphForDust
-    amounts = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
-  }
+      alphForDust = extraAlphForDust
+      amounts = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
+    }
+
+    return { amounts, alphForDust }
+  }, [assetAmounts, shouldAddAlphForDust])
 
   return (
     <TokenAmountsBoxStyled

@@ -11,9 +11,7 @@ const FTAmounts = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
 
   const isMoved = infoType === 'move'
 
-  const assetAmounts = fungibleTokens.map(({ id, amount }) => ({ id, amount }))
-
-  return <TokenAmountsBox assetAmounts={assetAmounts} highlight={!isMoved} showPlusMinus={!isMoved} />
+  return <TokenAmountsBox assetAmounts={fungibleTokens} highlight={!isMoved} showPlusMinus={!isMoved} />
 }
 
 export default FTAmounts
