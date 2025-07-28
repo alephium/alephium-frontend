@@ -125,8 +125,15 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
           )}
         </InfoBox>
       )}
-      {singleAddress && isLedger && (
+      {singleAddress && (
         <ToggleSection title={t('Advanced options')} subtitle={t('Select address group')}>
+          {!isPassphraseUsed && !isLedger && (
+            <InfoBox importance="warning">
+              {t(
+                'Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.'
+              )}
+            </InfoBox>
+          )}
           <Select
             label={t('Group')}
             controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}
