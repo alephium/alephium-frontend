@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
+import usePrefetchQueries from '@/api/usePrefetchQueries'
 import { useAppSelector } from '@/hooks/redux'
 import ActivityPage from '@/pages/unlockedWallet/activityPage/ActivityPage'
 import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'
@@ -17,6 +18,7 @@ const WalletRoutes = () => {
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
 
   useAddressesDataPolling()
+  usePrefetchQueries()
 
   const headerTitles: { [key: string]: string } = {
     '/wallet/overview': t('Overview'),
