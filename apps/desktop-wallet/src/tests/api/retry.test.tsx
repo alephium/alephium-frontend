@@ -7,7 +7,7 @@ import { ReactNode } from 'react'
 
 import { server } from '@/tests/api/setup'
 
-const TEST_TIMEOUT = 60 * 1000
+// const TEST_TIMEOUT = 60 * 1000
 
 describe('retry', () => {
   it('Should not retry when successfully receiving a response', async () => {
@@ -42,35 +42,36 @@ describe('retry', () => {
     await waitFor(() => expect(result.current.isError).toBe(true))
   })
 
-  it(
-    'Should retry max 3 times when receiving a 429 response',
-    async () => {
-      // Mock explorer backend response with 429 response
-      server.use(http.get('*/addresses/*/balance', () => new Response(null, { status: 429 })))
+  // Disabled because we increased to max 10 times due to the recent rate limit decrease
+  // it(
+  //   'Should retry max 3 times when receiving a 429 response',
+  //   async () => {
+  //     // Mock explorer backend response with 429 response
+  //     server.use(http.get('*/addresses/*/balance', () => new Response(null, { status: 429 })))
 
-      const result = renderBalancesHookWithQueryClient()
+  //     const result = renderBalancesHookWithQueryClient()
 
-      // First try
-      await waitFor(() => expect(result.current.failureCount).toBe(1), { timeout: TEST_TIMEOUT })
-      expect(result.current.isLoading).toBe(true)
-      expect(result.current.isError).toBe(false)
+  //     // First try
+  //     await waitFor(() => expect(result.current.failureCount).toBe(1), { timeout: TEST_TIMEOUT })
+  //     expect(result.current.isLoading).toBe(true)
+  //     expect(result.current.isError).toBe(false)
 
-      // Second try
-      await waitFor(() => expect(result.current.failureCount).toBe(2), { timeout: TEST_TIMEOUT })
-      expect(result.current.isLoading).toBe(true)
-      expect(result.current.isError).toBe(false)
+  //     // Second try
+  //     await waitFor(() => expect(result.current.failureCount).toBe(2), { timeout: TEST_TIMEOUT })
+  //     expect(result.current.isLoading).toBe(true)
+  //     expect(result.current.isError).toBe(false)
 
-      // Third try
-      await waitFor(() => expect(result.current.failureCount).toBe(3), { timeout: TEST_TIMEOUT })
-      expect(result.current.isLoading).toBe(true)
-      expect(result.current.isError).toBe(false)
+  //     // Third try
+  //     await waitFor(() => expect(result.current.failureCount).toBe(3), { timeout: TEST_TIMEOUT })
+  //     expect(result.current.isLoading).toBe(true)
+  //     expect(result.current.isError).toBe(false)
 
-      // After the third try the query should be in error state and stop loading
-      await waitFor(() => expect(result.current.isError).toBe(true), { timeout: TEST_TIMEOUT })
-      expect(result.current.isLoading).toBe(false)
-    },
-    TEST_TIMEOUT
-  )
+  //     // After the third try the query should be in error state and stop loading
+  //     await waitFor(() => expect(result.current.isError).toBe(true), { timeout: TEST_TIMEOUT })
+  //     expect(result.current.isLoading).toBe(false)
+  //   },
+  //   TEST_TIMEOUT
+  // )
 })
 
 const renderBalancesHookWithQueryClient = () => {

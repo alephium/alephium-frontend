@@ -541,5 +541,6 @@
   "Transaction {{ number }}": "Transaction {{ number }}",
   "Ledger does not yet support chained transactions. We are working on it!": "Ledger does not yet support chained transactions. We are working on it!",
   "Not supported": "Not supported",
-  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
+  "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below."
 }
