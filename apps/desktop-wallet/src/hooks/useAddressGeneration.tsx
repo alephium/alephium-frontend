@@ -65,6 +65,7 @@ const useAddressGeneration = () => {
                 : null
             )
         : keyring.generateAndCacheAddress({
+            group,
             skipAddressIndexes: group === undefined ? indexesOfGrouplessAddresses : indexesOfAddressesWithGroup,
             keyType: group === undefined ? GROUPLESS_ADDRESS_KEY_TYPE : 'default'
           }),
