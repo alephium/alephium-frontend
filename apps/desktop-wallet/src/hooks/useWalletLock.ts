@@ -114,6 +114,14 @@ const useWalletLock = () => {
         }
       })
     } else {
+      const initialOldAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
+      let isOldAddressActive = false
+
+      if (currentlyOnlineNetworkId !== undefined) {
+        const response = await throttledClient.explorer.addresses.postAddressesUsed([initialOldAddress.hash])
+        isOldAddressActive = response[0]
+      }
+
       try {
         initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: GROUPLESS_ADDRESS_KEY_TYPE })
       } catch (e) {
@@ -124,15 +132,7 @@ const useWalletLock = () => {
       const address = { ...initialAddress, ...getInitialAddressSettings() }
       dispatch(passphraseInitialAddressGenerated(address))
 
-      const initialOldAddress = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'default' })
-      let isActive = false
-
-      if (currentlyOnlineNetworkId !== undefined) {
-        const response = await throttledClient.explorer.addresses.postAddressesUsed([initialOldAddress.hash])
-        isActive = response[0]
-      }
-
-      if (currentlyOnlineNetworkId === undefined || isActive) {
+      if (currentlyOnlineNetworkId === undefined || isOldAddressActive) {
         dispatch(
           newAddressesSaved([
             {
