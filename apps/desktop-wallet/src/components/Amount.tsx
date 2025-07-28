@@ -1,13 +1,12 @@
 import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
-import { MouseEvent } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { discreetModeToggled } from '@/features/settings/settingsActions'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
 
 export interface AmountBaseProps {
   fadeDecimals?: boolean
@@ -59,10 +58,14 @@ const Amount = ({
   loaderHeight = 15,
   ...props
 }: AmountPropsWithOptionalAmount & AmountLoaderProps) => {
-  const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const [isAmountHidden, setIsAmountHidden] = useState(discreetMode)
   const { t } = useTranslation()
   const theme = useTheme()
+
+  useEffect(() => {
+    setIsAmountHidden(discreetMode)
+  }, [discreetMode])
 
   if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
@@ -81,20 +84,18 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  const toggleDiscreetMode = (e: MouseEvent<HTMLDivElement>) => {
-    if (discreetMode) {
-      e.stopPropagation()
-      dispatch(discreetModeToggled())
-    }
+  const toggleAmountVisibility = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    setIsAmountHidden(!isAmountHidden)
   }
 
-  if (discreetMode) {
+  if (isAmountHidden) {
     return (
       <AmountStyled
         data-tooltip-id="default"
-        data-tooltip-content={t('Click to deactivate discreet mode')}
+        data-tooltip-content={t('Click to display the amount')}
         data-tooltip-delay-show={200}
-        onClick={toggleDiscreetMode}
+        onClick={toggleAmountVisibility}
         {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
       >
         •••
@@ -103,10 +104,15 @@ const Amount = ({
   }
 
   return (
-    <AmountStyled {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}>
+    <AmountStyled
+      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+      onClick={discreetMode ? toggleAmountVisibility : undefined}
+    >
       <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
 
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
+
+      {discreetMode && <ClickSurfaceHighlight />}
 
       {isFiat(amountProps) ? (
         <FiatAmount {...amountProps} color={color} />
@@ -281,4 +287,13 @@ const DataFetchIndicatorDot = styled.div<{ status: 'isFetching' | 'error' }>`
       opacity: 0.2;
     }
   }
+`
+
+const ClickSurfaceHighlight = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.bg.hover};
 `
