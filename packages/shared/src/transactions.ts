@@ -31,7 +31,7 @@ export const calcTxAmountsDeltaForAddress = (
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
-  if (isInternalTx(tx, [refAddress])) {
+  if (getTxAddresses(tx).every((address) => address === refAddress)) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
     const fee = totalOutputAlph - totalInputAlph
@@ -151,32 +151,31 @@ export const isSentTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
 ): tx is SentTransaction => 'status' in tx
 
-export const isInternalTx = (
+export const isWalletSelfTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
-  internalAddresses: AddressHash[]
-): boolean =>
-  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every(
-    (io) => io?.address && internalAddresses.includes(getBaseAddressStr(io.address))
-  )
+  walletAddresses: AddressHash[]
+): boolean => getTxAddresses(tx).every((address) => address && walletAddresses.includes(getBaseAddressStr(address)))
 
 export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean =>
   !!tx.outputs?.some(inputOutputIsContractAddress) || !!tx.inputs?.some(inputOutputIsContractAddress)
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
+const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): (AddressHash | undefined)[] =>
+  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].map((io) => io.address)
+
 export const isGrouplessAddressIntraTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction
 ): boolean => {
-  const allInputsOutputs = [...(tx.outputs ?? []), ...(tx.inputs ?? [])]
-  const firstAddress = allInputsOutputs.at(0)?.address
+  const txAddresses = getTxAddresses(tx)
+  const firstAddress = txAddresses.at(0)
 
   if (!firstAddress || !isGrouplessAddress(firstAddress)) return false
 
   const firstBaseAddress = getBaseAddressStr(firstAddress)
 
-  return allInputsOutputs.every(
-    (io) =>
-      io?.address && isGrouplessAddressWithGroupIndex(io.address) && getBaseAddressStr(io.address) === firstBaseAddress
+  return txAddresses.every(
+    (address) => address && isGrouplessAddressWithGroupIndex(address) && getBaseAddressStr(address) === firstBaseAddress
   )
 }
 
