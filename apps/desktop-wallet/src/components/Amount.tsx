@@ -60,12 +60,7 @@ const Amount = ({
 }: AmountPropsWithOptionalAmount & AmountLoaderProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const [isAmountHidden, setIsAmountHidden] = useState(discreetMode)
-  const [highlightPosition, setHighlightPosition] = useState<{
-    top: number
-    left: number
-    width: number
-    height: number
-  } | null>(null)
+  const [highlightDimensions, setHighlightDimensions] = useState<DOMRect | null>(null)
   const amountRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLSpanElement>(null)
   const { t } = useTranslation()
@@ -75,9 +70,8 @@ const Amount = ({
     setIsAmountHidden(discreetMode)
   }, [discreetMode])
 
-  // Reset hover state when amount visibility changes
   useEffect(() => {
-    setHighlightPosition(null)
+    setHighlightDimensions(null)
   }, [isAmountHidden])
 
   if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
@@ -105,17 +99,14 @@ const Amount = ({
   const handleTextMouseEnter = () => {
     if (textRef.current) {
       const rect = textRef.current.getBoundingClientRect()
-      setHighlightPosition({
-        top: rect.top - 4,
-        left: rect.left - 4,
-        width: rect.width + 8,
-        height: rect.height + 8
-      })
+      // Use handy object to define a rectangle with padding
+      const paddedRect = new DOMRect(rect.left - 4, rect.top - 4, rect.width + 8, rect.height + 8)
+      setHighlightDimensions(paddedRect)
     }
   }
 
   const handleTextMouseLeave = () => {
-    setHighlightPosition(null)
+    setHighlightDimensions(null)
   }
 
   if (isAmountHidden) {
@@ -133,7 +124,7 @@ const Amount = ({
             •••
           </AmountContainer>
         </AmountStyled>
-        <ClickSurfaceHighlight position={highlightPosition} />
+        {highlightDimensions && <ClickSurfaceHighlight dimensions={highlightDimensions} />}
       </>
     )
   }
@@ -159,7 +150,7 @@ const Amount = ({
           )}
         </AmountContainer>
       </AmountStyled>
-      {discreetMode && <ClickSurfaceHighlight position={highlightPosition} />}
+      {discreetMode && highlightDimensions && <ClickSurfaceHighlight dimensions={highlightDimensions} />}
     </>
   )
 }
@@ -279,19 +270,15 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
 const ClickSurfaceHighlight = styled.div<{
-  position: { top: number; left: number; width: number; height: number } | null
+  dimensions: DOMRect | null
 }>`
-  opacity: ${({ position }) => (position ? 1 : 0)};
-  transition: opacity 0.2s ease;
-
   position: fixed;
   border-radius: 4px;
-  top: ${({ position }) => position?.top ?? 0}px;
-  left: ${({ position }) => position?.left ?? 0}px;
-  width: ${({ position }) => position?.width ?? 0}px;
-  height: ${({ position }) => position?.height ?? 0}px;
+  top: ${({ dimensions }) => dimensions?.top ?? 0}px;
+  left: ${({ dimensions }) => dimensions?.left ?? 0}px;
+  width: ${({ dimensions }) => dimensions?.width ?? 0}px;
+  height: ${({ dimensions }) => dimensions?.height ?? 0}px;
   background-color: ${({ theme }) => theme.bg.primary};
-  z-index: 1000;
   pointer-events: none;
 `
 
@@ -304,10 +291,7 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
   font-feature-settings: 'tnum' on;
 `
 
-const AmountContainer = styled.span`
-  position: relative;
-  z-index: 2;
-`
+const AmountContainer = styled.span``
 
 const Decimals = styled.span`
   opacity: 0.7;
