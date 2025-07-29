@@ -20,6 +20,7 @@ import { sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
+import usePersistQueryCacheOnBackground from '~/features/persistQueryCache/usePersistQueryCacheOnBackground'
 import { useSystemRegion } from '~/features/settings/regionSettings/useSystemRegion'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch } from '~/hooks/redux'
@@ -146,6 +147,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLocalization()
   useSystemRegion()
   useAddressesDataPolling()
+  usePersistQueryCacheOnBackground()
 
   useEffect(() => {
     if (walletMetadata) {
