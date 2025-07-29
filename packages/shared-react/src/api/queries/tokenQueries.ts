@@ -222,5 +222,12 @@ export const nftQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     enabled: !skip
   })
 
-const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap =>
-  tokenList.reduce((acc, token) => ({ ...acc, [token.id]: token }), {} as FtListMap)
+const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap => {
+  const result: FtListMap = {}
+
+  for (const token of tokenList) {
+    result[token.id] = token
+  }
+
+  return result
+}
