@@ -1,16 +1,6 @@
 import { sleep } from '@alephium/web3'
-import {
-  PersistQueryClientOptions,
-  persistQueryClientRestore,
-  persistQueryClientSubscribe
-} from '@tanstack/query-persist-client-core'
-import {
-  defaultShouldDehydrateQuery,
-  IsRestoringProvider,
-  OmitKeyof,
-  QueryClientProvider,
-  QueryClientProviderProps
-} from '@tanstack/react-query'
+import { PersistQueryClientOptions, persistQueryClientRestore } from '@tanstack/query-persist-client-core'
+import { IsRestoringProvider, OmitKeyof, QueryClientProvider, QueryClientProviderProps } from '@tanstack/react-query'
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
@@ -44,14 +34,11 @@ export const PersistQueryClientContextProvider = ({
   children,
   createPersister
 }: PersistQueryClientContextProviderProps) => {
-  const [isRestoring, setIsRestoring] = useState(true)
-  const [unsubscribeFromQueryClientFn, setUnsubscribeFromQueryClientFn] = useState(() => () => {})
+  const [isRestoring, setIsRestoring] = useState(false)
 
   const clearQueryCache = useCallback(() => {
-    unsubscribeFromQueryClientFn()
-
     queryClient.clear()
-  }, [unsubscribeFromQueryClientFn])
+  }, [])
 
   const restoreQueryCache = useCallback(
     async (walletId: string, isPassphraseUsed?: boolean) => {
@@ -61,18 +48,11 @@ export const PersistQueryClientContextProvider = ({
         const options: PersistQueryClientOptions = {
           queryClient,
           maxAge: Infinity,
-          persister: createPersister('tanstack-cache-for-wallet-' + walletId),
-          dehydrateOptions: {
-            shouldDehydrateQuery: (query) =>
-              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
-          }
+          persister: createPersister(getPersisterKey(walletId)),
+          dehydrateOptions: undefined
         }
 
         await persistQueryClientRestore(options)
-
-        const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
-
-        setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
       } else {
         // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
         // then to `false` to make sure the useQuery instances are reset.
@@ -86,7 +66,7 @@ export const PersistQueryClientContextProvider = ({
 
   const deletePersistedCache = useCallback(
     (walletId: string) => {
-      createPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
+      createPersister(getPersisterKey(walletId)).removeClient()
     },
     [createPersister]
   )
@@ -101,3 +81,5 @@ export const PersistQueryClientContextProvider = ({
 }
 
 export const usePersistQueryClientContext = () => useContext(PersistQueryClientContext)
+
+export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-' + walletId

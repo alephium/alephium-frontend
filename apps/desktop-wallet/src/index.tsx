@@ -15,7 +15,7 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
-import { createTanstackIndexedDBPersister } from '@/storage/tanstackIndexedDBPersister'
+import { createTanstackIndexedDBPersister } from '@/storage/tanstackQueryCache/tanstackIndexedDBPersister'
 
 const root = createRoot(document.getElementById('root')!)
 
