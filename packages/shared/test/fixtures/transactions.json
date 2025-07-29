@@ -712,6 +712,55 @@
     "scriptSignatures": [],
     "coinbase": false
   },
+  "transferFromGrouplessToSameGrouplessSameSubaddress": {
+    "type": "Accepted",
+    "hash": "1bf302d5686ef6a7f94a9d0e9a94bc05928853f56d0cb907503dce9b452a7ad6",
+    "blockHash": "0000007244dd1dfbb26ed57d70da40e5783c7fd85a0e56b908fa7d42b1dfa145",
+    "timestamp": 1753718436692,
+    "inputs": [
+      {
+        "outputRef": {
+          "hint": -1165116531,
+          "key": "ac321054e0a26b87943d7fe820153400cab05f21e7c1707777a89a12dc6a6007"
+        },
+        "unlockScript": "05",
+        "txHashRef": "88984cd0bf390a4945115762a8c15086b5bead77207ddf75a66d902278c7b4e8",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
+        "attoAlphAmount": "898000000000000000",
+        "contractInput": false
+      }
+    ],
+    "outputs": [
+      {
+        "type": "AssetOutput",
+        "hint": -1165116531,
+        "key": "381e1ef89c68a96aafbcdf6f1916d59f44bc58700e7ecd63af2fd3659f09e4ed",
+        "attoAlphAmount": "100000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
+        "message": "",
+        "fixedOutput": true
+      },
+      {
+        "type": "AssetOutput",
+        "hint": -1165116531,
+        "key": "33b5bc8be513dc9ce92e104785f7cda25fdf0a0135b7cc48e73ff463b58125b9",
+        "attoAlphAmount": "796000000000000000",
+        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
+        "message": "",
+        "fixedOutput": true
+      }
+    ],
+    "version": 0,
+    "networkId": 1,
+    "gasAmount": 20000,
+    "gasPrice": "100000000000",
+    "scriptExecutionOk": true,
+    "inputSignatures": [
+      "077c153fbf20a6c0f745d53a844e99447c73c517e431a3752910589e848046d22161a9621e54b19018d146285d4e68f8bd2abc871895634220d9ee8f3b9f599e"
+    ],
+    "scriptSignatures": [],
+    "coinbase": false
+  },
   "transferFromGrouplessToDifferentGroupless": {
     "type": "Accepted",
     "hash": "c3fdb69b0c21fbad14d438eee2d68a0234c23b7038a79f2657cdbf2379d3f5c1",
@@ -789,55 +838,6 @@
     "scriptExecutionOk": true,
     "inputSignatures": [
       "15da46fd2f5f30596dd5f49aac65528dac9cb39e3d16178f8decb7ef0abb524742ab6786aa1335b8ac1c2745a196b4740d68f4f026666def28b9f016a761aebc"
-    ],
-    "scriptSignatures": [],
-    "coinbase": false
-  },
-  "transferFromGrouplessToSameGrouplessSameSubaddress": {
-    "type": "Accepted",
-    "hash": "1bf302d5686ef6a7f94a9d0e9a94bc05928853f56d0cb907503dce9b452a7ad6",
-    "blockHash": "0000007244dd1dfbb26ed57d70da40e5783c7fd85a0e56b908fa7d42b1dfa145",
-    "timestamp": 1753718436692,
-    "inputs": [
-      {
-        "outputRef": {
-          "hint": -1165116531,
-          "key": "ac321054e0a26b87943d7fe820153400cab05f21e7c1707777a89a12dc6a6007"
-        },
-        "unlockScript": "05",
-        "txHashRef": "88984cd0bf390a4945115762a8c15086b5bead77207ddf75a66d902278c7b4e8",
-        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
-        "attoAlphAmount": "898000000000000000",
-        "contractInput": false
-      }
-    ],
-    "outputs": [
-      {
-        "type": "AssetOutput",
-        "hint": -1165116531,
-        "key": "381e1ef89c68a96aafbcdf6f1916d59f44bc58700e7ecd63af2fd3659f09e4ed",
-        "attoAlphAmount": "100000000000000000",
-        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
-        "message": "",
-        "fixedOutput": true
-      },
-      {
-        "type": "AssetOutput",
-        "hint": -1165116531,
-        "key": "33b5bc8be513dc9ce92e104785f7cda25fdf0a0135b7cc48e73ff463b58125b9",
-        "attoAlphAmount": "796000000000000000",
-        "address": "3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1",
-        "message": "",
-        "fixedOutput": true
-      }
-    ],
-    "version": 0,
-    "networkId": 1,
-    "gasAmount": 20000,
-    "gasPrice": "100000000000",
-    "scriptExecutionOk": true,
-    "inputSignatures": [
-      "077c153fbf20a6c0f745d53a844e99447c73c517e431a3752910589e848046d22161a9621e54b19018d146285d4e68f8bd2abc871895634220d9ee8f3b9f599e"
     ],
     "scriptSignatures": [],
     "coinbase": false
