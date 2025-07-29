@@ -26,7 +26,6 @@ export const persisterExists = async (idbValidKey: IDBValidKey) => {
 
 export const persistWalletQueryCache = async (walletId: string) => {
   console.log('⤵️ saving query client for wallet', walletId)
-  await new Promise((resolve) => setTimeout(resolve, 1000))
 
   await persistQueryClientSave({
     queryClient,
@@ -34,5 +33,6 @@ export const persistWalletQueryCache = async (walletId: string) => {
   })
 
   console.log('✅ query client saved')
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  await new Promise((resolve) => setTimeout(resolve, 1000)) // fake delay for debugging
 }
