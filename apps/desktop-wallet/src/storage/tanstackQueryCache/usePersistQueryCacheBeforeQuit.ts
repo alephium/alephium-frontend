@@ -1,13 +1,14 @@
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useEffect } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
-import { persistWalletQueryCache } from '@/storage/tanstackQueryCache/tanstackIndexedDBPersister'
 
 let preventMainWindowClose = true
 
 const usePersistQueryCacheBeforeQuit = () => {
   const walletId = useAppSelector((s) => s.activeWallet.id)
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
+  const { persistQueryCache } = usePersistQueryClientContext()
 
   useEffect(() => {
     if (walletId && !isPassphraseUsed) {
@@ -15,7 +16,7 @@ const usePersistQueryCacheBeforeQuit = () => {
         if (preventMainWindowClose) {
           e.preventDefault()
 
-          await persistWalletQueryCache(walletId)
+          await persistQueryCache(walletId)
 
           preventMainWindowClose = false
         }
@@ -27,7 +28,7 @@ const usePersistQueryCacheBeforeQuit = () => {
 
     const removeBeforeQuitListener = window.electron?.app.onBeforeQuit(async () => {
       if (walletId && !isPassphraseUsed) {
-        await persistWalletQueryCache(walletId)
+        await persistQueryCache(walletId)
 
         window.onbeforeunload = null
       }
@@ -38,7 +39,7 @@ const usePersistQueryCacheBeforeQuit = () => {
     return () => {
       removeBeforeQuitListener && removeBeforeQuitListener()
     }
-  }, [walletId, isPassphraseUsed])
+  }, [walletId, isPassphraseUsed, persistQueryCache])
 }
 
 export default usePersistQueryCacheBeforeQuit

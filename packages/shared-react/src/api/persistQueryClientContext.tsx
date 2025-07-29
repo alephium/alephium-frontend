@@ -1,5 +1,9 @@
 import { sleep } from '@alephium/web3'
-import { PersistQueryClientOptions, persistQueryClientRestore } from '@tanstack/query-persist-client-core'
+import {
+  PersistQueryClientOptions,
+  persistQueryClientRestore,
+  persistQueryClientSave
+} from '@tanstack/query-persist-client-core'
 import { IsRestoringProvider, OmitKeyof, QueryClientProvider, QueryClientProviderProps } from '@tanstack/react-query'
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
@@ -11,12 +15,14 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 }
 
 export interface PersistQueryClientContextType {
+  persistQueryCache: (walletId: string) => Promise<void>
   restoreQueryCache: (walletId: string, isPassphraseUsed?: boolean) => Promise<void>
   deletePersistedCache: (walletId: string, isPassphraseUsed?: boolean) => void
   clearQueryCache: () => void
 }
 
 export const initialPersistQueryClientContext: PersistQueryClientContextType = {
+  persistQueryCache: () => Promise.resolve(),
   restoreQueryCache: () => Promise.resolve(),
   deletePersistedCache: () => null,
   clearQueryCache: () => null
@@ -39,6 +45,24 @@ export const PersistQueryClientContextProvider = ({
   const clearQueryCache = useCallback(() => {
     queryClient.clear()
   }, [])
+
+  const persistQueryCache = useCallback(
+    async (walletId: string) => {
+      console.log('⤵️ saving query client for wallet', walletId)
+
+      try {
+        await persistQueryClientSave({
+          queryClient,
+          persister: createPersister(getPersisterKey(walletId))
+        })
+
+        console.log('✅ query client saved')
+      } catch (error) {
+        console.error('Error saving query client for wallet', walletId, error)
+      }
+    },
+    [createPersister]
+  )
 
   const restoreQueryCache = useCallback(
     async (walletId: string, isPassphraseUsed?: boolean) => {
@@ -72,7 +96,9 @@ export const PersistQueryClientContextProvider = ({
   )
 
   return (
-    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache, deletePersistedCache }}>
+    <PersistQueryClientContext.Provider
+      value={{ persistQueryCache, restoreQueryCache, clearQueryCache, deletePersistedCache }}
+    >
       <QueryClientProvider client={queryClient}>
         <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
       </QueryClientProvider>

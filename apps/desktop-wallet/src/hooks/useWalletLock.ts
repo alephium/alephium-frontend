@@ -21,7 +21,7 @@ import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersi
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { toggleAppLoading, userDataMigrationFailed } from '@/storage/global/globalActions'
-import { persisterExists, persistWalletQueryCache } from '@/storage/tanstackQueryCache/tanstackIndexedDBPersister'
+import { persisterExists } from '@/storage/tanstackQueryCache/tanstackIndexedDBPersister'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -40,7 +40,7 @@ const useWalletLock = () => {
   const { restoreAddressesFromMetadata } = useAddressGeneration()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
-  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
+  const { restoreQueryCache, clearQueryCache, persistQueryCache } = usePersistQueryClientContext()
   const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const isActiveWalletPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
@@ -50,7 +50,7 @@ const useWalletLock = () => {
       keyring.clear()
 
       if (activeWalletId && !isActiveWalletPassphraseUsed) {
-        await persistWalletQueryCache(activeWalletId)
+        await persistQueryCache(activeWalletId)
       }
 
       clearQueryCache()
@@ -59,7 +59,7 @@ const useWalletLock = () => {
 
       if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })
     },
-    [dispatch, sendAnalytics, clearQueryCache, activeWalletId, isActiveWalletPassphraseUsed]
+    [activeWalletId, isActiveWalletPassphraseUsed, clearQueryCache, dispatch, sendAnalytics, persistQueryCache]
   )
 
   const unlockWallet = async (props: UnlockWalletProps | null) => {
@@ -105,7 +105,7 @@ const useWalletLock = () => {
     }
 
     if (activeWalletId && !isActiveWalletPassphraseUsed) {
-      await persistWalletQueryCache(activeWalletId)
+      await persistQueryCache(activeWalletId)
     }
 
     clearQueryCache()

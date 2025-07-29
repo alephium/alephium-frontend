@@ -1,5 +1,4 @@
-import { queryClient } from '@alephium/shared-react'
-import { PersistedClient, Persister, persistQueryClientSave } from '@tanstack/react-query-persist-client'
+import { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
 import { del, get, keys, set } from 'idb-keyval'
 
 /**
@@ -22,18 +21,4 @@ export const persisterExists = async (idbValidKey: IDBValidKey) => {
   const idbKeys = await keys()
 
   return idbKeys.includes(idbValidKey)
-}
-
-export const persistWalletQueryCache = async (walletId: string) => {
-  console.log('⤵️ saving query client for wallet', walletId)
-
-  try {
-    await persistQueryClientSave({
-      queryClient,
-      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId)
-    })
-    console.log('✅ query client saved')
-  } catch (error) {
-    console.error('Error saving query client for wallet', walletId, error)
-  }
 }
