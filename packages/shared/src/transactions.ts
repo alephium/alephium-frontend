@@ -31,7 +31,7 @@ export const calcTxAmountsDeltaForAddress = (
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
-  if (getTxAddresses(tx).every((address) => address === refAddress)) {
+  if (getTxAddresses(tx).every((address) => address && getBaseAddressStr(address) === refAddress)) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
     const fee = totalOutputAlph - totalInputAlph
