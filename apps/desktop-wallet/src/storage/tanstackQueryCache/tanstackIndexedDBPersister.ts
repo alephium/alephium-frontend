@@ -27,10 +27,14 @@ export const persisterExists = async (idbValidKey: IDBValidKey) => {
 export const persistWalletQueryCache = async (walletId: string) => {
   console.log('⤵️ saving query client for wallet', walletId)
 
-  await persistQueryClientSave({
-    queryClient,
-    persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId)
-  })
+  try {
+    await persistQueryClientSave({
+      queryClient,
+      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId)
+    })
+  } catch (error) {
+    console.error('Error saving query client for wallet', walletId, error)
+  }
 
   console.log('✅ query client saved')
 
