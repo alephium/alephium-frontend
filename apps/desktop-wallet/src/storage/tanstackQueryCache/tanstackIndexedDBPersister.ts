@@ -32,11 +32,8 @@ export const persistWalletQueryCache = async (walletId: string) => {
       queryClient,
       persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId)
     })
+    console.log('✅ query client saved')
   } catch (error) {
     console.error('Error saving query client for wallet', walletId, error)
   }
-
-  console.log('✅ query client saved')
-
-  await new Promise((resolve) => setTimeout(resolve, 1000)) // fake delay for debugging
 }
