@@ -1,7 +1,7 @@
 import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
-import { MouseEvent, useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -60,12 +60,25 @@ const Amount = ({
 }: AmountPropsWithOptionalAmount & AmountLoaderProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const [isAmountHidden, setIsAmountHidden] = useState(discreetMode)
+  const [highlightPosition, setHighlightPosition] = useState<{
+    top: number
+    left: number
+    width: number
+    height: number
+  } | null>(null)
+  const amountRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLSpanElement>(null)
   const { t } = useTranslation()
   const theme = useTheme()
 
   useEffect(() => {
     setIsAmountHidden(discreetMode)
   }, [discreetMode])
+
+  // Reset hover state when amount visibility changes
+  useEffect(() => {
+    setHighlightPosition(null)
+  }, [isAmountHidden])
 
   if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
@@ -89,39 +102,65 @@ const Amount = ({
     setIsAmountHidden(!isAmountHidden)
   }
 
+  const handleTextMouseEnter = () => {
+    if (textRef.current) {
+      const rect = textRef.current.getBoundingClientRect()
+      setHighlightPosition({
+        top: rect.top - 4,
+        left: rect.left - 4,
+        width: rect.width + 8,
+        height: rect.height + 8
+      })
+    }
+  }
+
+  const handleTextMouseLeave = () => {
+    setHighlightPosition(null)
+  }
+
   if (isAmountHidden) {
     return (
-      <AmountStyled
-        data-tooltip-id="default"
-        data-tooltip-content={t('Click to display the amount')}
-        data-tooltip-delay-show={200}
-        onClick={toggleAmountVisibility}
-        {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
-      >
-        •••
-      </AmountStyled>
+      <>
+        <AmountStyled
+          ref={amountRef}
+          data-tooltip-id="default"
+          data-tooltip-content={t('Click to display the amount')}
+          data-tooltip-delay-show={200}
+          onClick={toggleAmountVisibility}
+          {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+        >
+          <AmountContainer ref={textRef} onMouseEnter={handleTextMouseEnter} onMouseLeave={handleTextMouseLeave}>
+            •••
+          </AmountContainer>
+        </AmountStyled>
+        <ClickSurfaceHighlight position={highlightPosition} />
+      </>
     )
   }
 
   return (
-    <AmountStyled
-      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
-      onClick={discreetMode ? toggleAmountVisibility : undefined}
-    >
-      <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
+    <>
+      <AmountStyled
+        ref={amountRef}
+        {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+        onClick={discreetMode ? toggleAmountVisibility : undefined}
+      >
+        <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
 
-      {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
+        {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {discreetMode && <ClickSurfaceHighlight />}
-
-      {isFiat(amountProps) ? (
-        <FiatAmount {...amountProps} color={color} />
-      ) : isCustom(amountProps) ? (
-        <CustomAmount {...amountProps} color={color} />
-      ) : (
-        <TokenAmount {...amountProps} color={color} />
-      )}
-    </AmountStyled>
+        <AmountContainer ref={textRef} onMouseEnter={handleTextMouseEnter} onMouseLeave={handleTextMouseLeave}>
+          {isFiat(amountProps) ? (
+            <FiatAmount {...amountProps} color={color} />
+          ) : isCustom(amountProps) ? (
+            <CustomAmount {...amountProps} color={color} />
+          ) : (
+            <TokenAmount {...amountProps} color={color} />
+          )}
+        </AmountContainer>
+      </AmountStyled>
+      {discreetMode && <ClickSurfaceHighlight position={highlightPosition} />}
+    </>
   )
 }
 
@@ -239,6 +278,23 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
+const ClickSurfaceHighlight = styled.div<{
+  position: { top: number; left: number; width: number; height: number } | null
+}>`
+  opacity: ${({ position }) => (position ? 1 : 0)};
+  transition: opacity 0.2s ease;
+
+  position: fixed;
+  border-radius: 4px;
+  top: ${({ position }) => position?.top ?? 0}px;
+  left: ${({ position }) => position?.left ?? 0}px;
+  width: ${({ position }) => position?.width ?? 0}px;
+  height: ${({ position }) => position?.height ?? 0}px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  z-index: 1000;
+  pointer-events: none;
+`
+
 const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'>>`
   color: ${({ color }) => color};
   display: inline-flex;
@@ -246,6 +302,11 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
   font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'bold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
+`
+
+const AmountContainer = styled.span`
+  position: relative;
+  z-index: 2;
 `
 
 const Decimals = styled.span`
@@ -287,13 +348,4 @@ const DataFetchIndicatorDot = styled.div<{ status: 'isFetching' | 'error' }>`
       opacity: 0.2;
     }
   }
-`
-
-const ClickSurfaceHighlight = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: ${({ theme }) => theme.bg.hover};
 `
