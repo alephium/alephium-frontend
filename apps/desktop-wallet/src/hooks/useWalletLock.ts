@@ -53,13 +53,11 @@ const useWalletLock = () => {
         await persistQueryCache(activeWalletId)
       }
 
-      clearQueryCache()
-
       dispatch(walletLocked())
 
       if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })
     },
-    [activeWalletId, isActiveWalletPassphraseUsed, clearQueryCache, dispatch, sendAnalytics, persistQueryCache]
+    [activeWalletId, isActiveWalletPassphraseUsed, dispatch, sendAnalytics, persistQueryCache]
   )
 
   const unlockWallet = async (props: UnlockWalletProps | null) => {

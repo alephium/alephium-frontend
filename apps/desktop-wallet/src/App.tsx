@@ -31,6 +31,7 @@ import {
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
+import useClearQueryCacheOnWalletLock from '@/storage/tanstackQueryCache/useClearQueryCacheOnWalletLock'
 import usePersistQueryCacheBeforeQuit from '@/storage/tanstackQueryCache/usePersistQueryCacheBeforeQuit'
 import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
@@ -44,6 +45,8 @@ const App = memo(() => {
 
   useMigrateStoredSettings()
   useTrackUserSettings()
+
+  useClearQueryCacheOnWalletLock()
   useClearPersistedQueryCacheOnVersionUpdate()
   usePersistQueryCacheBeforeQuit()
 

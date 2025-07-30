@@ -79,7 +79,6 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     try {
       saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
       resetCachedMnemonic()
-      clearQueryCache()
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({

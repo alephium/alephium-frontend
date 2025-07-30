@@ -12,13 +12,11 @@ import { persisterExists } from '@/storage/tanstackQueryCache/tanstackIndexedDBP
 
 const useInitializeAppWithLedgerData = () => {
   const dispatch = useAppDispatch()
-  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
+  const { restoreQueryCache } = usePersistQueryClientContext()
   const navigate = useNavigate()
   const { restoreAddressesFromMetadata } = useAddressGeneration()
 
   const initializeAppWithLedgerData = async (deviceModel: string, initialAddress: NonSensitiveAddressData) => {
-    clearQueryCache()
-
     const walletId = await generateUuidFromInitialAddress(initialAddress.hash)
 
     if (addressMetadataStorage.load(walletId).length === 0) {
