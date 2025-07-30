@@ -31,7 +31,7 @@ export const calcTxAmountsDeltaForAddress = (
 ): AmountDeltas => {
   if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
 
-  if (getTxAddresses(tx).every((address) => address && getBaseAddressStr(address) === refAddress)) {
+  if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
     const fee = totalOutputAlph - totalInputAlph
@@ -154,15 +154,34 @@ export const isSentTx = (
 export const isWalletSelfTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
   walletAddresses: AddressHash[]
-): boolean => getTxAddresses(tx).every((address) => address && walletAddresses.includes(getBaseAddressStr(address)))
+): boolean => getTxAddresses(tx).every((address) => walletAddresses.includes(getBaseAddressStr(address)))
 
 export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean =>
   !!tx.outputs?.some(inputOutputIsContractAddress) || !!tx.inputs?.some(inputOutputIsContractAddress)
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
-const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): (AddressHash | undefined)[] =>
-  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].map((io) => io.address)
+const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
+  const addresses = new Set<AddressHash>()
+
+  if (tx.outputs) {
+    for (const output of tx.outputs) {
+      if (output.address && !addresses.has(output.address)) {
+        addresses.add(output.address)
+      }
+    }
+  }
+
+  if (tx.inputs) {
+    for (const input of tx.inputs) {
+      if (input.address && !addresses.has(input.address)) {
+        addresses.add(input.address)
+      }
+    }
+  }
+
+  return Array.from(addresses)
+}
 
 export const isGrouplessAddressIntraTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction
@@ -175,7 +194,7 @@ export const isGrouplessAddressIntraTransfer = (
   const firstBaseAddress = getBaseAddressStr(firstAddress)
 
   return txAddresses.every(
-    (address) => address && isGrouplessAddressWithGroupIndex(address) && getBaseAddressStr(address) === firstBaseAddress
+    (address) => isGrouplessAddressWithGroupIndex(address) && getBaseAddressStr(address) === firstBaseAddress
   )
 }
 
