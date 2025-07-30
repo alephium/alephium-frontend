@@ -1,6 +1,6 @@
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useEffect, useRef } from 'react'
-import { AppState } from 'react-native'
+import { AppState, Platform } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
 
@@ -10,7 +10,7 @@ const usePersistQueryCacheOnBackground = () => {
   const { persistQueryCache } = usePersistQueryClientContext()
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
+    const changeListenerSubscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState.match(/inactive|background/) && appState.current === 'active') {
         persistQueryCache(walletId)
       }
@@ -18,8 +18,19 @@ const usePersistQueryCacheOnBackground = () => {
       appState.current = nextAppState
     })
 
-    return () => {
-      subscription.remove()
+    if (Platform.OS === 'android') {
+      const blurListenerSubscription = AppState.addEventListener('blur', () => {
+        persistQueryCache(walletId)
+      })
+
+      return () => {
+        changeListenerSubscription.remove()
+        blurListenerSubscription.remove()
+      }
+    } else {
+      return () => {
+        changeListenerSubscription.remove()
+      }
     }
   }, [persistQueryCache, walletId])
 
