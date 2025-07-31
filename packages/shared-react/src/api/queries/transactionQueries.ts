@@ -58,12 +58,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
 
               // This is required because the backend returns incomplete confirmed tx data.
               // See https://github.com/alephium/alephium-frontend/issues/1367
-              const [fullDataLatestTx] = await throttledClient.explorer.addresses.getAddressesAddressTransactions(
-                addressHash,
-                {
-                  page: 1,
-                  limit: 1
-                }
+              const fullDataLatestTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(
+                latestTx.hash
               )
 
               if (isConfirmedTx(fullDataLatestTx)) {
