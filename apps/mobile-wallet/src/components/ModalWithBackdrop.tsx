@@ -1,4 +1,4 @@
-import { Modal, ModalProps } from 'react-native'
+import { Modal, ModalProps, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -15,15 +15,17 @@ const ModalWithBackdrop = ({ children, closeModal, color, showCloseButton, ...pr
   const insets = useSafeAreaInsets()
 
   return (
-    <Modal transparent={true} animationType="none" onRequestClose={closeModal} {...props}>
-      <ModalBackdrop onPress={closeModal} color={color} />
-      <ModalContent>{children}</ModalContent>
-      {showCloseButton && (
-        <ScreenSectionHeader style={{ paddingTop: insets.top }}>
-          <CloseButton onPress={closeModal} style={{ marginLeft: 'auto' }} variant="contrast" />
-        </ScreenSectionHeader>
-      )}
-    </Modal>
+    <View style={{ width: '100%', height: '100%', position: 'absolute', backgroundColor: 'transparent' }}>
+      <Modal transparent={true} animationType="none" onRequestClose={closeModal} {...props}>
+        <ModalBackdrop onPress={closeModal} color={color} />
+        <ModalContent>{children}</ModalContent>
+        {showCloseButton && (
+          <ScreenSectionHeader style={{ paddingTop: insets.top }}>
+            <CloseButton onPress={closeModal} style={{ marginLeft: 'auto' }} variant="contrast" />
+          </ScreenSectionHeader>
+        )}
+      </Modal>
+    </View>
   )
 }
 
