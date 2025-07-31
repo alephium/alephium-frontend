@@ -4,7 +4,13 @@ import {
   persistQueryClientRestore,
   persistQueryClientSave
 } from '@tanstack/query-persist-client-core'
-import { IsRestoringProvider, OmitKeyof, QueryClientProvider, QueryClientProviderProps } from '@tanstack/react-query'
+import {
+  defaultShouldDehydrateQuery,
+  IsRestoringProvider,
+  OmitKeyof,
+  QueryClientProvider,
+  QueryClientProviderProps
+} from '@tanstack/react-query'
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
@@ -53,7 +59,11 @@ export const PersistQueryClientContextProvider = ({
       try {
         await persistQueryClientSave({
           queryClient,
-          persister: createPersister(getPersisterKey(walletId))
+          persister: createPersister(getPersisterKey(walletId)),
+          dehydrateOptions: {
+            shouldDehydrateQuery: (query) =>
+              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+          }
         })
 
         console.log('✅ query client saved')
