@@ -164,20 +164,8 @@ const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.a
 const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
   const addresses = new Set<AddressHash>()
 
-  if (tx.outputs) {
-    for (const output of tx.outputs) {
-      if (output.address && !addresses.has(output.address)) {
-        addresses.add(output.address)
-      }
-    }
-  }
-
-  if (tx.inputs) {
-    for (const input of tx.inputs) {
-      if (input.address && !addresses.has(input.address)) {
-        addresses.add(input.address)
-      }
-    }
+  for (const { address } of [...(tx.outputs ?? []), ...(tx.inputs ?? [])]) {
+    if (address) addresses.add(address)
   }
 
   return Array.from(addresses)
