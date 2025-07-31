@@ -1,7 +1,8 @@
 import { TokenId } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
+import { AnimatePresence, useInView } from 'framer-motion'
 import { map } from 'lodash'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -18,6 +19,8 @@ interface ActivityPageProps {
 const ActivityPage = ({ className }: ActivityPageProps) => {
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
 
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
@@ -45,12 +48,16 @@ const ActivityPage = ({ className }: ActivityPageProps) => {
         </FilterPanelContainer>
       }
     >
-      <StyledUnlockedWalletPanel top bottom>
-        <WalletTransactionsList
-          addressHashes={map(selectedAddresses, 'hash')}
-          directions={map(selectedDirections, 'value')}
-          assetIds={selectedTokensIds}
-        />
+      <StyledUnlockedWalletPanel top bottom ref={ref}>
+        <AnimatePresence>
+          {isInView && (
+            <WalletTransactionsList
+              addressHashes={map(selectedAddresses, 'hash')}
+              directions={map(selectedDirections, 'value')}
+              assetIds={selectedTokensIds}
+            />
+          )}
+        </AnimatePresence>
       </StyledUnlockedWalletPanel>
     </UnlockedWalletPage>
   )

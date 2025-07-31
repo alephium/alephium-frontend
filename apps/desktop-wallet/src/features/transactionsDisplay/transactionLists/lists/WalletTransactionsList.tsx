@@ -23,6 +23,7 @@ import TransactionRow from '@/features/transactionsDisplay/transactionRow/Transa
 import { useAppDispatch } from '@/hooks/redux'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
+import { directionOptions } from '@/utils/transactions'
 
 interface WalletTransactionListProps {
   addressHashes?: AddressHash[]
@@ -113,9 +114,10 @@ const applyFilters = ({
   txs: e.Transaction[]
   allAddressHashes: AddressHash[]
 }) => {
-  const isDirectionsFilterEnabled = directions && directions.length > 0
+  const isDirectionsFilterEnabled = directions && directions.length > 0 && directions.length !== directionOptions.length
   const isAssetsFilterEnabled = assetIds && assetIds.length > 0
-  const isAddressFilterEnabled = addressHashes && addressHashes.length > 0
+  const isAddressFilterEnabled =
+    addressHashes && addressHashes.length > 0 && addressHashes.length !== allAddressHashes.length
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled || isAddressFilterEnabled
     ? txs.filter((tx) => {
