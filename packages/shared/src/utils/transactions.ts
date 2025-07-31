@@ -26,8 +26,8 @@ import {
   isConsolidationTx,
   isContractTx,
   isGrouplessAddressIntraTransfer,
-  isInternalTx,
-  isSelfTransfer
+  isSelfTransfer,
+  isWalletSelfTransfer
 } from '@/transactions'
 import { AddressHash, AddressWithGroup } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances, TokenId } from '@/types/assets'
@@ -64,7 +64,7 @@ export const getTransactionType = ({
     return 'address-self-transfer'
   } else if (isGrouplessAddressIntraTransfer(tx)) {
     return 'address-group-transfer'
-  } else if (isInternalTx(tx, internalAddresses)) {
+  } else if (isWalletSelfTransfer(tx, internalAddresses)) {
     return 'wallet-self-transfer'
   } else if (isContractTx(tx)) {
     return 'dApp'
@@ -92,7 +92,7 @@ export const getTransactionInfoType = (
       return 'swap'
     } else {
       const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
-      const isInternalTransfer = isInternalTx(tx, internalAddresses)
+      const isInternalTransfer = isWalletSelfTransfer(tx, internalAddresses)
 
       if (
         (isInternalTransfer && isInAddressDetailsModal && alphAmountReduced) ||

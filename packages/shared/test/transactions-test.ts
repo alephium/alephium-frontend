@@ -87,7 +87,7 @@ it('should get the correct transaction type for grouped to groupless address tra
 // groupless subaddress A:X to groupless subaddress A:Y
 // https://testnet.alephium.org/transactions/8addfdaf65b6c4625790e00719e1fcc5fe97a437ea92969b8b97795d207eb409
 it('should get the correct transaction type for groupless internal group transfer', () => {
-  const tx = transactions.grouplessInternalGroupTransfer as e.Transaction
+  const tx = transactions.transferFromGrouplessToSameGrouplessDifferentSubaddress as e.Transaction
   const grouplessAddress = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU'
   const fromGrouplessSubaddress1 = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3'
   const toGrouplessSubaddress2 = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1'
@@ -129,8 +129,8 @@ it('should get the correct transaction type for groupless to grouped address tra
 
 // groupless subaddress A:X to groupless subaddress B:Y
 // https://testnet.alephium.org/transactions/c3fdb69b0c21fbad14d438eee2d68a0234c23b7038a79f2657cdbf2379d3f5c1
-it('should get the correct transaction type for groupless to groupless address transfer', () => {
-  const tx = transactions.transferFromGrouplessToGroupless as e.Transaction
+it('should get the correct transaction type for groupless to different groupless address transfer', () => {
+  const tx = transactions.transferFromGrouplessToDifferentGroupless as e.Transaction
   const fromGrouplessAddress = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU'
   const toGrouplessAddress = '3cUt1QzEpcqsbTxrBfxTas6iXzNdWqnoAKeeXpsuai4cHoG5N4ZND'
   const fromGrouplessSubaddress = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:3'
@@ -153,4 +153,63 @@ it('should get the correct transaction type for groupless to groupless address t
   expectExplorerGrouplessAddressPage(tx, toGrouplessAddress).toEqual('incoming')
   expectExplorerGrouplessSubaddressPage(tx, fromGrouplessSubaddress).toEqual('outgoing')
   expectExplorerGrouplessSubaddressPage(tx, toGrouplessSubaddress).toEqual('incoming')
+})
+
+it('should get the correct transaction type for grouped to the different grouped address transfer', () => {
+  const tx = transactions.transferFromGroupedToDifferentGrouped as e.Transaction
+  const fromGroupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+  const toGroupedAddress = '1ChU9K7vgDak4rLVY1DsNqE5E3tpABYPHaWSo9CFuJayb'
+
+  const expectWalletActivityScreenWithAllAddressesAsInternal = makeExpectWalletActivityScreenWithAllAddressesAsInternal(
+    fromGroupedAddress,
+    toGroupedAddress
+  )
+
+  expectWalletAddressModal(tx, fromGroupedAddress).toEqual('outgoing')
+  expectWalletAddressModal(tx, toGroupedAddress).toEqual('incoming')
+
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, fromGroupedAddress).toEqual('outgoing')
+  expectWalletActivityScreenWithAllAddressesAsInternal(tx, fromGroupedAddress).toEqual('wallet-self-transfer')
+  expectWalletActivityScreenWithAllAddressesAsInternal(tx, toGroupedAddress).toEqual('wallet-self-transfer')
+
+  expectExplorerGroupedAddressPage(tx, fromGroupedAddress).toEqual('outgoing')
+  expectExplorerGroupedAddressPage(tx, toGroupedAddress).toEqual('incoming')
+})
+
+it('should get the correct transaction type for grouped to the same grouped address transfer', () => {
+  const tx = transactions.transferFromGroupedToSameGrouped as e.Transaction
+  const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+
+  expectWalletAddressModal(tx, groupedAddress).toEqual('address-self-transfer')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('address-self-transfer')
+  expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('address-self-transfer')
+})
+
+it('should get the correct transaction type for groupless to the same groupless same subaddress transfer', () => {
+  const tx = transactions.transferFromGrouplessToSameGrouplessSameSubaddress as e.Transaction
+  const grouplessAddress = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU'
+  const grouplessSubaddress = '3cUqXKSg1iw7hgv4dRgR1VNFhqXSwNSNMnBC6om2A2UkZM4TYTNUU:1'
+
+  expectWalletAddressModal(tx, grouplessAddress).toEqual('address-self-transfer')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, grouplessAddress).toEqual('address-self-transfer')
+  expectExplorerGrouplessAddressPage(tx, grouplessAddress).toEqual('address-self-transfer')
+  expectExplorerGrouplessSubaddressPage(tx, grouplessSubaddress).toEqual('address-self-transfer')
+})
+
+it('should get the correct transaction type for grouped to contract transfer', () => {
+  const tx = transactions.transferFromGroupedToContract as e.Transaction
+  const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+
+  expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+  expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
+})
+
+it('should get the correct transaction type for contract to grouped address transfer', () => {
+  const tx = transactions.transferFromGroupedToContractToGrouped as e.Transaction
+  const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+
+  expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+  expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
 })

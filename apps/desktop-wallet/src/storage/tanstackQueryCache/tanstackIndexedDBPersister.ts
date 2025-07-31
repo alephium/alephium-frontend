@@ -1,5 +1,5 @@
 import { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
-import { del, get, set } from 'idb-keyval'
+import { del, get, keys, set } from 'idb-keyval'
 
 /**
  * Creates an Indexed DB persister
@@ -16,3 +16,9 @@ export const createTanstackIndexedDBPersister = (idbValidKey: IDBValidKey = 'tan
       await del(idbValidKey)
     }
   }) as Persister
+
+export const persisterExists = async (idbValidKey: IDBValidKey) => {
+  const idbKeys = await keys()
+
+  return idbKeys.includes(idbValidKey)
+}
