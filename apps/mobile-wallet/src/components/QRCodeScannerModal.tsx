@@ -86,7 +86,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   )
 
   return (
-    <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary} showCloseButton>
+    <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary} showCloseButton animationType="fade">
       <ScreenStyled>
         {!scanned && hasPermission && (
           <CameraStyled
