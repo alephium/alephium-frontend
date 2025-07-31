@@ -1,6 +1,5 @@
 import { encryptMnemonic } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
-import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -36,7 +35,6 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const { sendAnalytics } = useAnalytics()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
   const { mnemonic, resetCachedMnemonic } = useWalletContext()
-  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
 
   const [walletName, setWalletNameState] = useState('')
   const [walletNameError, setWalletNameError] = useState('')
@@ -77,10 +75,8 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     sendAnalytics({ event: 'Creating wallet: Creating password: Clicked next' })
 
     try {
-      const newWalletId = saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
+      saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
       resetCachedMnemonic()
-      clearQueryCache()
-      await restoreQueryCache(newWalletId)
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({

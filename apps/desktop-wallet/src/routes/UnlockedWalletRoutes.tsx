@@ -1,10 +1,11 @@
-import { useAddressesDataPolling } from '@alephium/shared-react'
+import { ApiContextProvider, useAddressesDataPolling } from '@alephium/shared-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import usePrefetchQueries from '@/api/usePrefetchQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { AppModalsUnlockedWallet } from '@/modals/AppModals'
 import ActivityPage from '@/pages/unlockedWallet/activityPage/ActivityPage'
 import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'
 import OverviewPage from '@/pages/unlockedWallet/overviewPage/OverviewPage'
@@ -35,13 +36,16 @@ const WalletRoutes = () => {
   }, [activeWalletId, navigate])
 
   return (
-    <UnlockedWalletLayout title={headerTitles[location.pathname]}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="overview" key="overview" element={<OverviewPage />} />
-        <Route path="activity" key="activity" element={<ActivityPage />} />
-        <Route path="addresses" key="addresses" element={<AddressesPage />} />
-      </Routes>
-    </UnlockedWalletLayout>
+    <ApiContextProvider>
+      <UnlockedWalletLayout title={headerTitles[location.pathname]}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="overview" key="overview" element={<OverviewPage />} />
+          <Route path="activity" key="activity" element={<ActivityPage />} />
+          <Route path="addresses" key="addresses" element={<AddressesPage />} />
+        </Routes>
+      </UnlockedWalletLayout>
+      <AppModalsUnlockedWallet />
+    </ApiContextProvider>
   )
 }
 
