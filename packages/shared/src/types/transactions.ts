@@ -94,3 +94,12 @@ export type TransactionParams =
       type: 'UNSIGNED_TX'
       params: SignUnsignedTxParams
     }
+
+export type TransactionInfoType2 =
+  | 'pending'
+  | 'wallet-self-transfer' // all input/outputs are addresses of the same wallet
+  | 'address-self-transfer' // all input/outputs are the same address
+  | 'address-group-transfer' // all input/outputs are multiple subaddresses of the same groupless address
+  | 'dApp' // at least one input/output is a contract address
+  | 'outgoing'
+  | 'incoming'

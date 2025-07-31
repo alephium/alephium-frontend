@@ -37,19 +37,11 @@ import {
   SentTransaction,
   SweepTxParams,
   TransactionInfoType,
+  TransactionInfoType2,
   TransactionParams
 } from '@/types/transactions'
 
-type TransactionType =
-  | 'pending'
-  | 'wallet-self-transfer' // all input/outputs are addresses of the same wallet
-  | 'address-self-transfer' // all input/outputs are the same address
-  | 'address-group-transfer' // all input/outputs are multiple subaddresses of the same groupless address
-  | 'dApp' // at least one input/output is a contract address
-  | 'outgoing'
-  | 'incoming'
-
-export const getTransactionType = ({
+export const getTransactionInfoType2 = ({
   tx,
   referenceAddress,
   internalAddresses
@@ -57,7 +49,7 @@ export const getTransactionType = ({
   tx: e.Transaction | e.PendingTransaction | SentTransaction
   referenceAddress: string
   internalAddresses: string[]
-}): TransactionType => {
+}): TransactionInfoType2 => {
   if (!isConfirmedTx(tx)) {
     return 'pending'
   } else if (isSelfTransfer(tx)) {
