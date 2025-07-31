@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import useAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
+import useFetchAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
 
 interface AddressSelectModalProps {
   title: string
@@ -70,7 +70,7 @@ export default AddressSelectModal
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
   const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
-  const { data: addressesSearchStrings } = useAddressesSearchStrings(addressOptions)
+  const { data: addressesSearchStrings } = useFetchAddressesSearchStrings(addressOptions)
 
   return useMemo(
     () =>

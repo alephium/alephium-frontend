@@ -54,6 +54,7 @@ export interface WalletConnectContextProps {
   pendingDappConnectionUrl?: string
   reinitializeWalletConnectClient: () => void
   walletConnectClientStatus: WalletConnectClientStatus
+  getDappIcon: (topic: string) => string | undefined
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -70,7 +71,8 @@ const initialContext: WalletConnectContextProps = {
   respondToWalletConnectWithError: () => Promise.resolve(),
   respondToWalletConnect: () => Promise.resolve(),
   reinitializeWalletConnectClient: () => null,
-  walletConnectClientStatus: 'uninitialized'
+  walletConnectClientStatus: 'uninitialized',
+  getDappIcon: () => undefined
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
@@ -496,6 +498,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     }
   }, [walletConnectClient, setActiveSessions])
 
+  const getDappIcon = useCallback(
+    (topic: string) => activeSessions.find((s) => s.topic === topic)?.peer.metadata?.icons?.[0],
+    [activeSessions]
+  )
+
   return (
     <WalletConnectContext.Provider
       value={{
@@ -514,7 +521,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         respondToWalletConnectWithError,
         respondToWalletConnect,
         reinitializeWalletConnectClient,
-        walletConnectClientStatus
+        walletConnectClientStatus,
+        getDappIcon
       }}
     >
       {sessionRequestEvent && isWalletUnlocked && (

@@ -35,11 +35,8 @@ import {
   csvFileGenerationFinished,
   csvFileGenerationStarted,
   fetchTransactionsCsv,
-  messageSignFailed,
   transactionBuildFailed,
-  transactionSendFailed,
-  unsignedTransactionDecodingFailed,
-  unsignedTransactionSignFailed
+  transactionSendFailed
 } from '@/storage/transactions/transactionsActions'
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 
@@ -82,9 +79,6 @@ const toastMessagesSlice = createSlice({
         queueMessage(state, { text: i18n.t('Custom network settings saved.') })
       )
       .addCase(transactionBuildFailed, displayError)
-      .addCase(unsignedTransactionSignFailed, displayError)
-      .addCase(unsignedTransactionDecodingFailed, displayError)
-      .addCase(messageSignFailed, displayError)
       .addCase(transactionSendFailed, displayError)
       .addCase(contactStorageFailed, displayError)
       .addCase(contactDeletionFailed, displayError)

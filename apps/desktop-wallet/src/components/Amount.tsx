@@ -1,12 +1,12 @@
 import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { discreetModeToggled } from '@/features/settings/settingsActions'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
 
 export interface AmountBaseProps {
   fadeDecimals?: boolean
@@ -58,10 +58,21 @@ const Amount = ({
   loaderHeight = 15,
   ...props
 }: AmountPropsWithOptionalAmount & AmountLoaderProps) => {
-  const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const [isAmountHidden, setIsAmountHidden] = useState(discreetMode)
+  const [highlightDimensions, setHighlightDimensions] = useState<DOMRect | null>(null)
+  const amountRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLSpanElement>(null)
   const { t } = useTranslation()
   const theme = useTheme()
+
+  useEffect(() => {
+    setIsAmountHidden(discreetMode)
+  }, [discreetMode])
+
+  useEffect(() => {
+    setHighlightDimensions(null)
+  }, [isAmountHidden])
 
   if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
@@ -80,28 +91,67 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
+  const toggleAmountVisibility = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    setIsAmountHidden(!isAmountHidden)
+  }
+
+  const handleTextMouseEnter = () => {
+    if (textRef.current) {
+      const rect = textRef.current.getBoundingClientRect()
+      // Use handy object to define a rectangle with padding
+      const paddedRect = new DOMRect(rect.left - 4, rect.top - 4, rect.width + 8, rect.height + 8)
+      setHighlightDimensions(paddedRect)
+    }
+  }
+
+  const handleTextMouseLeave = () => {
+    setHighlightDimensions(null)
+  }
+
+  if (isAmountHidden) {
+    return (
+      <>
+        <AmountStyled
+          ref={amountRef}
+          data-tooltip-id="default"
+          data-tooltip-content={t('Click to display the amount')}
+          data-tooltip-delay-show={200}
+          onClick={toggleAmountVisibility}
+          {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+        >
+          <AmountContainer ref={textRef} onMouseEnter={handleTextMouseEnter} onMouseLeave={handleTextMouseLeave}>
+            •••
+          </AmountContainer>
+        </AmountStyled>
+        {highlightDimensions && <ClickSurfaceHighlight dimensions={highlightDimensions} />}
+      </>
+    )
+  }
 
   return (
-    <AmountStyled
-      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1, discreetMode }}
-      data-tooltip-id="default"
-      data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
-      data-tooltip-delay-show={500}
-      onClick={toggleDiscreetMode}
-    >
-      <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
+    <>
+      <AmountStyled
+        ref={amountRef}
+        {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
+        onClick={discreetMode ? toggleAmountVisibility : undefined}
+      >
+        <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
 
-      {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
+        {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {isFiat(amountProps) ? (
-        <FiatAmount {...amountProps} color={color} />
-      ) : isCustom(amountProps) ? (
-        <CustomAmount {...amountProps} color={color} />
-      ) : (
-        <TokenAmount {...amountProps} color={color} />
-      )}
-    </AmountStyled>
+        <AmountContainer ref={textRef} onMouseEnter={handleTextMouseEnter} onMouseLeave={handleTextMouseLeave}>
+          {isFiat(amountProps) ? (
+            <FiatAmount {...amountProps} color={color} />
+          ) : isCustom(amountProps) ? (
+            <CustomAmount {...amountProps} color={color} />
+          ) : (
+            <TokenAmount {...amountProps} color={color} />
+          )}
+        </AmountContainer>
+      </AmountStyled>
+      {discreetMode && highlightDimensions && <ClickSurfaceHighlight dimensions={highlightDimensions} />}
+    </>
   )
 }
 
@@ -219,24 +269,29 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
-const AmountStyled = styled.div<
-  Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'> & { discreetMode: boolean }
->`
+const ClickSurfaceHighlight = styled.div<{
+  dimensions: DOMRect | null
+}>`
+  position: fixed;
+  border-radius: 4px;
+  top: ${({ dimensions }) => dimensions?.top ?? 0}px;
+  left: ${({ dimensions }) => dimensions?.left ?? 0}px;
+  width: ${({ dimensions }) => dimensions?.width ?? 0}px;
+  height: ${({ dimensions }) => dimensions?.height ?? 0}px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  pointer-events: none;
+`
+
+const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'>>`
   color: ${({ color }) => color};
   display: inline-flex;
   position: relative;
   font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'bold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
-  ${({ discreetMode }) =>
-    discreetMode &&
-    css`
-      filter: blur(10px);
-      max-width: 100px;
-      overflow: hidden;
-      cursor: pointer;
-    `}
 `
+
+const AmountContainer = styled.span``
 
 const Decimals = styled.span`
   opacity: 0.7;

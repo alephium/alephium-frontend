@@ -55,7 +55,7 @@ const WalletConnectSessionProposalModal = memo(
 
     const group = chainInfo.addressGroup
 
-    const { signerAddressHash, signerAddressPublicKey, setSignerAddressHash, addressesInGroup } =
+    const { signerAddressHash, signerAddressPublicKey, signerAddressKeyType, setSignerAddressHash, addressesInGroup } =
       useSignerAddress(group)
 
     const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
@@ -120,7 +120,7 @@ const WalletConnectSessionProposalModal = memo(
         alephium: {
           methods: requiredNamespaceMethods,
           events: requiredNamespaceEvents,
-          accounts: [`${chain}:${signerAddressPublicKey}/default`]
+          accounts: [`${chain}:${signerAddressPublicKey}/${signerAddressKeyType ?? 'default'}`]
         }
       }
 

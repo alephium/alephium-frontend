@@ -10,6 +10,7 @@ import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
@@ -32,6 +33,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
+  const { isLedger } = useLedger()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
@@ -125,6 +127,13 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       )}
       {singleAddress && (
         <ToggleSection title={t('Advanced options')} subtitle={t('Select address group')}>
+          {!isPassphraseUsed && !isLedger && (
+            <InfoBox importance="warning">
+              {t(
+                'Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.'
+              )}
+            </InfoBox>
+          )}
           <Select
             label={t('Group')}
             controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}

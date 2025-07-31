@@ -33,6 +33,19 @@ interface NFTQueryProps extends TokenQueryProps {
   tokenUri?: NFTMetaData['tokenUri']
 }
 
+const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap => {
+  const result: FtListMap = {}
+
+  for (const token of tokenList) {
+    result[token.id] = token
+  }
+
+  return result
+}
+
+const mainnetTokens = convertTokenListToRecord(mainnet.tokens)
+const testnetTokens = convertTokenListToRecord(testnet.tokens)
+
 export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
   const network = getNetworkNameFromNetworkId(networkId) ?? 'mainnet'
 
@@ -50,9 +63,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
               : axios
                   .get(getTokensURL(network))
                   .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || [])),
-    placeholderData: convertTokenListToRecord(
-      network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
-    )
+    placeholderData: network === 'mainnet' ? mainnetTokens : network === 'testnet' ? testnetTokens : undefined
   })
 }
 
@@ -221,6 +232,3 @@ export const nftQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     },
     enabled: !skip
   })
-
-const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap =>
-  tokenList.reduce((acc, token) => ({ ...acc, [token.id]: token }), {} as FtListMap)

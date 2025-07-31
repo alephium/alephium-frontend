@@ -1,11 +1,11 @@
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useMemo } from 'react'
 
-import useAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
+import useFetchAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const { data: addressesSearchStrings } = useAddressesSearchStrings(allAddressHashes)
+  const { data: addressesSearchStrings } = useFetchAddressesSearchStrings(allAddressHashes)
 
   return useMemo(
     () =>

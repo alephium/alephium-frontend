@@ -60,6 +60,12 @@ contextBridge.exposeInMainWorld('electron', {
   app: {
     hide: () => ipcRenderer.invoke('app:hide'),
     show: () => ipcRenderer.invoke('app:show'),
+    quit: () => ipcRenderer.invoke('app:quit'),
+    onBeforeQuit: (callback: () => void) => {
+      const sanitizedCallback = (_event: IpcRendererEvent) => callback()
+      ipcRenderer.on('app:before-quit', sanitizedCallback)
+      return () => ipcRenderer.removeListener('app:before-quit', sanitizedCallback)
+    },
     getSystemLanguage: () => ipcRenderer.invoke('app:getSystemLanguage'),
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
     openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) =>

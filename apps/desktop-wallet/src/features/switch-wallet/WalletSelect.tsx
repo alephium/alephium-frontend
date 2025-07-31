@@ -7,7 +7,11 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
-const WalletSelect = () => {
+interface WalletSelectProps {
+  onSelect: () => void
+}
+
+const WalletSelect = ({ onSelect }: WalletSelectProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const wallets = useAppSelector((s) => s.global.wallets)
@@ -33,6 +37,7 @@ const WalletSelect = () => {
   const handleWalletSelect = (walletId: StoredEncryptedWallet['id']) => {
     setSelectedWalletOption(walletSelectOptions.find((wallet) => wallet.value === walletId))
     dispatch(openModal({ name: 'WalletUnlockModal', props: { walletId } }))
+    onSelect()
   }
 
   return (

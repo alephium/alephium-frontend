@@ -60,9 +60,7 @@ const generateMenuTemplate = (mainWindow: BrowserWindow): MenuItemConstructorOpt
       { role: 'zoomOut' },
       { type: 'separator' },
       { role: 'togglefullscreen' },
-      { type: 'separator' },
-      { role: 'reload' },
-      { role: 'forceReload' }
+      { type: 'separator' }
     ]
   },
   {

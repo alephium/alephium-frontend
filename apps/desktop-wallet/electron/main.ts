@@ -35,6 +35,7 @@ contextMenu()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null
+let preventQuitting = true
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -154,6 +155,14 @@ app.on('ready', async function () {
     }
   })
 
+  ipcMain.handle('app:quit', ({ senderFrame }) => {
+    if (!isIpcSenderValid(senderFrame)) return null
+
+    preventQuitting = false
+
+    app.quit()
+  })
+
   ipcMain.handle('app:show', ({ senderFrame }) => {
     if (!isIpcSenderValid(senderFrame)) return null
 
@@ -250,4 +259,17 @@ ipcMain.on('shell:open', () => {
   // TODO: Review use of openExternal.
   // See https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-shellopenexternal-with-untrusted-content
   shell.openExternal(pagePath)
+})
+
+app.on('before-quit', (event) => {
+  if (preventQuitting) {
+    event.preventDefault()
+
+    if (mainWindow) {
+      mainWindow.webContents.send('app:before-quit')
+    } else {
+      preventQuitting = false
+      app.quit()
+    }
+  }
 })

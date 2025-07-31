@@ -13,6 +13,7 @@ import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-q
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '@/api/apiUtils'
 import { queryClient } from '@/api/queryClient'
+import { invalidateAddressQueries, invalidateWalletQueries } from '@/api/queryInvalidation'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
@@ -51,28 +52,22 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             // The following block invalidates queries that need to refetch data if a new transaction hash has been
             // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
             if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-              // The backend needs some time to update the results of the following queries
-              // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
-              await sleep(2000)
-
               // This is required because the backend returns incomplete confirmed tx data.
               // See https://github.com/alephium/alephium-frontend/issues/1367
-              const [fullDataLatestTx] = await throttledClient.explorer.addresses.getAddressesAddressTransactions(
-                addressHash,
-                {
-                  page: 1,
-                  limit: 1
-                }
+              const fullDataLatestTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(
+                latestTx.hash
               )
 
               if (isConfirmedTx(fullDataLatestTx)) {
                 latestTx.hash = fullDataLatestTx.hash
                 latestTx.timestamp = fullDataLatestTx.timestamp
 
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
-                queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+                // The backend needs some time to update the results of the following queries
+                // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
+                await sleep(2000)
+
+                await invalidateAddressQueries(addressHash)
+                await invalidateWalletQueries()
               } else {
                 latestTx = cachedData?.latestTx
               }

@@ -4,6 +4,7 @@ import { HTMLProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { fadeInSlowly } from '@/animations'
 import Button from '@/components/Button'
 
 export interface TableProps {
@@ -18,7 +19,7 @@ export interface TableCellProps {
 }
 
 const Table: FC<TableProps> = ({ className, children, minWidth }) => (
-  <TableWrapper className={className} minWidth={minWidth}>
+  <TableWrapper className={className} minWidth={minWidth} {...fadeInSlowly}>
     <div role="table" tabIndex={0}>
       {children}
     </div>
@@ -37,7 +38,7 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
     `}
 `
 
-export const TableCell = styled.div<TableCellProps>`
+export const TableCell = styled(motion.div)<TableCellProps>`
   display: flex;
   flex: ${({ fixedWidth }) => (fixedWidth ? '0' : '1')};
   align-items: center;

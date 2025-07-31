@@ -9,10 +9,8 @@ import { useFetchWalletBalancesTokens } from '@/api/apiDataHooks/utils/useFetchW
 import { ApiContextProps } from '@/api/apiTypes'
 import { AddressAlphBalancesQueryFnData, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 
-type Data = Record<AddressHash, Array<TokenApiBalances> | undefined>
-
-const DataContext = createContext<ApiContextProps<Data>>({
-  data: {} as Data,
+const DataContext = createContext<ApiContextProps<Record<AddressHash, Array<TokenApiBalances> | undefined>>>({
+  data: {} as Record<AddressHash, Array<TokenApiBalances> | undefined>,
   isLoading: false,
   isFetching: false,
   error: false

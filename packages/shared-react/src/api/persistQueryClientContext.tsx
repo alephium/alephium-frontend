@@ -2,7 +2,7 @@ import { sleep } from '@alephium/web3'
 import {
   PersistQueryClientOptions,
   persistQueryClientRestore,
-  persistQueryClientSubscribe
+  persistQueryClientSave
 } from '@tanstack/query-persist-client-core'
 import {
   defaultShouldDehydrateQuery,
@@ -21,12 +21,14 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 }
 
 export interface PersistQueryClientContextType {
+  persistQueryCache: (walletId: string) => Promise<void>
   restoreQueryCache: (walletId: string, isPassphraseUsed?: boolean) => Promise<void>
   deletePersistedCache: (walletId: string, isPassphraseUsed?: boolean) => void
   clearQueryCache: () => void
 }
 
 export const initialPersistQueryClientContext: PersistQueryClientContextType = {
+  persistQueryCache: () => Promise.resolve(),
   restoreQueryCache: () => Promise.resolve(),
   deletePersistedCache: () => null,
   clearQueryCache: () => null
@@ -44,14 +46,33 @@ export const PersistQueryClientContextProvider = ({
   children,
   createPersister
 }: PersistQueryClientContextProviderProps) => {
-  const [isRestoring, setIsRestoring] = useState(true)
-  const [unsubscribeFromQueryClientFn, setUnsubscribeFromQueryClientFn] = useState(() => () => {})
+  const [isRestoring, setIsRestoring] = useState(false)
 
   const clearQueryCache = useCallback(() => {
-    unsubscribeFromQueryClientFn()
-
     queryClient.clear()
-  }, [unsubscribeFromQueryClientFn])
+  }, [])
+
+  const persistQueryCache = useCallback(
+    async (walletId: string) => {
+      console.log('⤵️ saving query client for wallet', walletId)
+
+      try {
+        await persistQueryClientSave({
+          queryClient,
+          persister: createPersister(getPersisterKey(walletId)),
+          dehydrateOptions: {
+            shouldDehydrateQuery: (query) =>
+              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+          }
+        })
+
+        console.log('✅ query client saved')
+      } catch (error) {
+        console.error('Error saving query client for wallet', walletId, error)
+      }
+    },
+    [createPersister]
+  )
 
   const restoreQueryCache = useCallback(
     async (walletId: string, isPassphraseUsed?: boolean) => {
@@ -61,18 +82,11 @@ export const PersistQueryClientContextProvider = ({
         const options: PersistQueryClientOptions = {
           queryClient,
           maxAge: Infinity,
-          persister: createPersister('tanstack-cache-for-wallet-' + walletId),
-          dehydrateOptions: {
-            shouldDehydrateQuery: (query) =>
-              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
-          }
+          persister: createPersister(getPersisterKey(walletId)),
+          dehydrateOptions: undefined
         }
 
         await persistQueryClientRestore(options)
-
-        const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
-
-        setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
       } else {
         // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
         // then to `false` to make sure the useQuery instances are reset.
@@ -86,13 +100,15 @@ export const PersistQueryClientContextProvider = ({
 
   const deletePersistedCache = useCallback(
     (walletId: string) => {
-      createPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
+      createPersister(getPersisterKey(walletId)).removeClient()
     },
     [createPersister]
   )
 
   return (
-    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache, deletePersistedCache }}>
+    <PersistQueryClientContext.Provider
+      value={{ persistQueryCache, restoreQueryCache, clearQueryCache, deletePersistedCache }}
+    >
       <QueryClientProvider client={queryClient}>
         <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
       </QueryClientProvider>
@@ -101,3 +117,5 @@ export const PersistQueryClientContextProvider = ({
 }
 
 export const usePersistQueryClientContext = () => useContext(PersistQueryClientContext)
+
+export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-' + walletId

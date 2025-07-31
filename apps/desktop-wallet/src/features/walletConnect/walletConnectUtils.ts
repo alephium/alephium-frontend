@@ -1,3 +1,5 @@
+import { getBaseAddressStr } from '@alephium/shared'
+import { SignChainedTxParams } from '@alephium/web3'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
@@ -11,6 +13,8 @@ import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import SignClient, { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
 import { JsonRpcRecord, MessageRecord, PendingRequestTypes, SessionTypes } from '@walletconnect/types'
 import { mapToObj, objToMap } from '@walletconnect/utils'
+
+import { signer } from '@/signer'
 
 const MaxRequestNumToKeep = 10
 
@@ -128,3 +132,6 @@ export async function clearWCStorage() {
     console.error(`Failed to clear walletconnect storage, error: ${error}`)
   }
 }
+
+export const getChainedTxSignersPublicKeys = async (txParams: Array<SignChainedTxParams>) =>
+  Promise.all(txParams.map(({ signerAddress }) => signer.getPublicKey(getBaseAddressStr(signerAddress))))

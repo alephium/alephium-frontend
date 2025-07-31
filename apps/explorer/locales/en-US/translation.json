@@ -121,7 +121,6 @@
   "Name": "Name",
   "Description": "Description",
   "Collection": "Collection",
-  "Group by collection": "Group by collection",
   "Unknown collection": "Unknown collection",
   "Raw amount": "Raw amount",
   "Page not found": "Page not found",
@@ -137,5 +136,10 @@
   "Unsupported media type": "Unsupported media type",
   "Video thumbnail": "Video thumbnail",
   "No media": "No media",
-  "Address worth": "Address worth"
+  "Address worth": "Address worth",
+  "Group": "Group",
+  "Group(s)": "Group(s)",
+  "All": "All",
+  "Group {{ number }}": "Group {{ number }}",
+  "Group transfer": "Group transfer"
 }

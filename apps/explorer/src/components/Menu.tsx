@@ -84,6 +84,8 @@ const MenuContainer = styled.div`
   display: flex;
   outline: none;
   border-radius: 6px;
+  padding-left: 10px;
+  padding-right: 4px;
 
   &:hover {
     background-color: ${({ theme }) => theme.bg.hover};
@@ -94,7 +96,6 @@ const MenuCurrentContent = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 10px;
   cursor: pointer;
   gap: 8px;
 `
@@ -113,6 +114,7 @@ const MenuItemsContainer = styled(motion.div)`
   position: absolute;
   width: 100%;
   z-index: 10000;
+  margin-left: -10px;
 `
 
 const MenuItemsList = styled.div`

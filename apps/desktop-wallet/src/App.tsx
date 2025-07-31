@@ -24,13 +24,15 @@ import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
-import AppModals from '@/modals/AppModals'
+import { AppModalsLockedWallet } from '@/modals/AppModals'
 import Router from '@/routes'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
+import useClearQueryCacheOnWalletLock from '@/storage/tanstackQueryCache/useClearQueryCacheOnWalletLock'
+import usePersistQueryCacheBeforeQuit from '@/storage/tanstackQueryCache/usePersistQueryCacheBeforeQuit'
 import { selectIsWalletUnlocked } from '@/storage/wallets/walletSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { currentVersion } from '@/utils/app-data'
@@ -43,7 +45,10 @@ const App = memo(() => {
 
   useMigrateStoredSettings()
   useTrackUserSettings()
+
+  useClearQueryCacheOnWalletLock()
   useClearPersistedQueryCacheOnVersionUpdate()
+  usePersistQueryCacheBeforeQuit()
 
   useInitializeThrottledClient()
   useInitializeNetworkProxy()
@@ -63,7 +68,7 @@ const App = memo(() => {
             <Router />
           </CenteredSection>
         </AppContainer>
-        <AppModals />
+        <AppModalsLockedWallet />
       </WalletConnectContextProvider>
       <ToastMessagesModal />
       <AppSpinner />
