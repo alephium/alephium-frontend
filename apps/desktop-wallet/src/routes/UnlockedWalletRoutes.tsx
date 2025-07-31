@@ -5,6 +5,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import usePrefetchQueries from '@/api/usePrefetchQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { AppModalsUnlockedWallet } from '@/modals/AppModals'
 import ActivityPage from '@/pages/unlockedWallet/activityPage/ActivityPage'
 import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'
 import OverviewPage from '@/pages/unlockedWallet/overviewPage/OverviewPage'
@@ -43,6 +44,7 @@ const WalletRoutes = () => {
           <Route path="addresses" key="addresses" element={<AddressesPage />} />
         </Routes>
       </UnlockedWalletLayout>
+      <AppModalsUnlockedWallet />
     </ApiContextProvider>
   )
 }

@@ -24,7 +24,7 @@ import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
-import AppModals from '@/modals/AppModals'
+import { AppModalsLockedWallet } from '@/modals/AppModals'
 import Router from '@/routes'
 import {
   devModeShortcutDetected,
@@ -68,7 +68,7 @@ const App = memo(() => {
             <Router />
           </CenteredSection>
         </AppContainer>
-        <AppModals />
+        <AppModalsLockedWallet />
       </WalletConnectContextProvider>
       <ToastMessagesModal />
       <AppSpinner />
