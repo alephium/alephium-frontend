@@ -195,3 +195,21 @@ it('should get the correct transaction type for groupless to the same groupless 
   expectExplorerGrouplessAddressPage(tx, grouplessAddress).toEqual('address-self-transfer')
   expectExplorerGrouplessSubaddressPage(tx, grouplessSubaddress).toEqual('address-self-transfer')
 })
+
+it('should get the correct transaction type for grouped to contract transfer', () => {
+  const tx = transactions.transferFromGroupedToContract as e.Transaction
+  const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+
+  expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+  expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
+})
+
+it('should get the correct transaction type for contract to grouped address transfer', () => {
+  const tx = transactions.transferFromGroupedToContractToGrouped as e.Transaction
+  const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+
+  expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+  expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+  expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
+})
