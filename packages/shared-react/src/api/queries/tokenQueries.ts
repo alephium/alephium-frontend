@@ -2,6 +2,7 @@ import {
   batchers,
   FtListMap,
   getNetworkNameFromNetworkId,
+  is5XXError,
   NFT,
   NFTDataType,
   NFTDataTypes,
@@ -186,27 +187,35 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     queryFn: async (): Promise<Token> => {
       const nst = { id } as NonStandardToken
 
-      // 1. First check if the token is in the token list
-      const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const listedFT = fTList[id]
+      try {
+        // 1. First check if the token is in the token list
+        const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+        const listedFT = fTList[id]
 
-      if (listedFT) return listedFT
+        if (listedFT) return listedFT
 
-      // 2. If not, find the type of the token
-      const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
+        // 2. If not, find the type of the token
+        const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
 
-      // 3. If it is a fungible token, fetch the fungible token metadata
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
-        const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
+        // 3. If it is a fungible token, fetch the fungible token metadata
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+          const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
 
-        return ftMetadata ?? nst
-      }
+          return ftMetadata ?? nst
+        }
 
-      // 4. If it is an NFT, fetch the NFT metadata and data
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
-        const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
+        // 4. If it is an NFT, fetch the NFT metadata and data
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+          const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
 
-        return nft ?? nst
+          return nft ?? nst
+        }
+      } catch (e) {
+        if (is5XXError(e)) {
+          return nst
+        } else {
+          throw e
+        }
       }
 
       // 5. If the type of the token cannot be determined, return the non-standard token
