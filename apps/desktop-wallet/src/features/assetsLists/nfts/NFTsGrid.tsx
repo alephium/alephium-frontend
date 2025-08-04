@@ -12,6 +12,8 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
+import OfflineMessage from '@/features/offline/OfflineMessage'
+import { useAppSelector } from '@/hooks/redux'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
@@ -57,6 +59,7 @@ interface NFTsGridProps {
 
 const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => {
   const { data, fetchNextPage, hasNextPage } = usePaginatedNFTs({ nftIds })
+  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
 
   const gridBottomRef = useRef(null)
   const isGridBottomInView = useInView(gridBottomRef)
@@ -67,6 +70,7 @@ const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps
 
   return (
     <motion.div {...fadeIn}>
+      {explorerStatus === 'offline' && <OfflineMessage />}
       {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
 
       {(isLoading || nftIds.length > 0) && (
