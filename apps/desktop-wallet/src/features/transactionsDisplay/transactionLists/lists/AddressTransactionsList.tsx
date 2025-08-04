@@ -6,11 +6,12 @@ import { useTranslation } from 'react-i18next'
 import Table, { TableHeader } from '@/components/Table'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { openModal } from '@/features/modals/modalActions'
+import OfflineMessage from '@/features/offline/OfflineMessage'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressTransactionListProps {
@@ -20,6 +21,7 @@ interface AddressTransactionListProps {
 const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
 
   const {
     data: confirmedTxs,
@@ -41,6 +43,8 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
       <TableHeader>
         <AddressTransactionsCSVExportButton addressHash={addressHash} />
       </TableHeader>
+
+      {explorerStatus === 'offline' && <OfflineMessage />}
 
       {isLoading && <TableRowsLoader />}
 

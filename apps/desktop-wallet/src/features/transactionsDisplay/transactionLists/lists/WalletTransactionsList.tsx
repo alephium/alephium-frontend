@@ -17,10 +17,11 @@ import styled from 'styled-components'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
+import OfflineMessage from '@/features/offline/OfflineMessage'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 import { directionOptions } from '@/utils/transactions'
@@ -35,6 +36,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const allAddressHashes = useUnsortedAddressesHashes()
+  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
 
   const {
     data: fetchedConfirmedTxs,
@@ -45,9 +47,6 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     isFetchingNextPage,
     pagesLoaded
   } = useFetchWalletTransactionsInfinite()
-
-  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   const filteredConfirmedTxs = useMemo(() => {
     const txs = uniqBy(
@@ -68,8 +67,12 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
   }, [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, hasNextPage, pagesLoaded])
 
+  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
+
   return (
     <Table minWidth="500px">
+      {explorerStatus === 'offline' && <OfflineMessage />}
       {isLoading && <TableRowsLoader />}
       {isFetching && !isLoading && (
         <TableRow role="row">
