@@ -1,4 +1,4 @@
-import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
+import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia'
 import { colord } from 'colord'
 import { Group } from 'lucide-react-native'
 import { memo, useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { useIsScreenOrModalFocused } from '~/utils/navigation'
 
 interface AnimatedBackgroundProps {
@@ -44,20 +45,20 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
     opacity.value = withSpring(isFocused ? 1 : 0, springConfig)
   }, [isFocused, opacity])
 
-  const linearGradientPositions = [0.1, 0.2, 0.6, 0.7, 0.75, 1]
-  const radialGradientPositions = [0.4, 0.5, 0.6, 0.7, 0.75, 1]
+  const linearGradientPositions = [0, 0, 0.8, 1]
+  const radialGradientPositions = [0.6, 0.7, 0.8, 1]
 
   const getGradientColors = (opacity: number) => [
-    colord(shade || theme.global.palette2)
-      .alpha(opacity)
-      .toHex(),
-    colord(shade || theme.global.palette5)
-      .alpha(opacity)
-      .toHex(),
-    colord(theme.global.palette4).alpha(opacity).toHex(),
-    colord(theme.global.palette1).alpha(opacity).toHex(),
-    colord(theme.global.palette3).alpha(opacity).toHex(),
-    theme.bg.back2
+    colord('rgb(255, 255, 255)').alpha(opacity).toHex(),
+    shade
+      ? colord(shade).rotate(30).saturate(1.2).alpha(opacity).toHex()
+      : colord(theme.global.palette1).alpha(opacity).toHex(),
+    shade
+      ? colord(shade).rotate(-30).saturate(1.2).alpha(opacity).toHex()
+      : colord(theme.global.palette3).alpha(opacity).toHex(),
+    colord(shade || theme.global.accent)
+      .alpha(0)
+      .toHex()
   ]
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -96,15 +97,18 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
       return vec(containerDimensions.width / 2, containerDimensions.height + 70)
     }
     const x = containerDimensions.width / 2 + sinRoll.value * GYRO_MULTIPLIER
-    const y = containerDimensions.height + 70
+    const y = containerDimensions.height + 80
     return vec(x, y)
   })
 
   const radialGradientRadius = useDerivedValue(() => {
-    const baseRadius = containerDimensions.width * 0.5
-    if (!isFocused) return baseRadius
+    const maxRadius = 250
+    const relativeRadius = containerDimensions.width * 0.4
+    const radius = relativeRadius > maxRadius ? maxRadius : relativeRadius
 
-    return withSpring(baseRadius * (1 - sinZ.value * 0.2))
+    if (!isFocused) return radius
+
+    return withSpring(radius * (1 - sinZ.value * 0.2))
   })
 
   const linearGradientEnd = useDerivedValue(() => {
@@ -129,17 +133,35 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
       <AnimatedPlaceholderBackground style={[{ backgroundColor: theme.bg.primary }, animatedPlaceholderStyle]} />
       <AnimatedGradientBackground style={animatedGradientStyle}>
         <Canvas style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+          <Fill color={theme.bg.primary} />
+          <Rect
+            x={0}
+            y={0}
+            width={containerDimensions.width}
+            height={containerDimensions.height}
+            opacity={theme.name === 'light' ? 1 : 0.7}
+          >
+            <LinearGradient
+              colors={getGradientColors(1)}
+              positions={linearGradientPositions}
+              start={vec(0, 0)}
+              end={linearGradientEnd}
+            />
+          </Rect>
           <Group>
-            <Fill color={theme.bg.primary} />
-            <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height}>
-              <LinearGradient
-                colors={getGradientColors(1)}
-                positions={linearGradientPositions}
-                start={vec(0, 0)}
-                end={linearGradientEnd}
-              />
-            </Rect>
-            <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height} opacity={0.9}>
+            <RoundedRect
+              color={theme.bg.back2}
+              x={0}
+              y={0}
+              r={BORDER_RADIUS_BIG}
+              width={containerDimensions.width}
+              height={containerDimensions.height}
+              opacity={theme.name === 'light' ? 0.85 : 1}
+            />
+            <Blur blur={10} />
+          </Group>
+          <Group>
+            <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height} opacity={0.8}>
               <RadialGradient
                 c={radialGradientCenter}
                 r={radialGradientRadius}
@@ -147,7 +169,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
                 positions={radialGradientPositions}
               />
             </Rect>
-            <Blur blur={20} />
+            <Blur blur={containerDimensions.width * 0.03} />
           </Group>
         </Canvas>
       </AnimatedGradientBackground>
