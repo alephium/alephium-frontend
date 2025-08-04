@@ -94,7 +94,7 @@ const SelectCustomComponent = () => {
     offline: theme.global.alert,
     connecting: theme.global.accent,
     uninitialized: theme.font.tertiary
-  }[network.status]
+  }[network.nodeStatus]
 
   return (
     <Button

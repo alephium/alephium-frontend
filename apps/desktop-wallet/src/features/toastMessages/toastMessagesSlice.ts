@@ -1,8 +1,8 @@
 import {
-  apiClientInitFailed,
   contactDeletedFromPersistentStorage,
   contactStoredInPersistentStorage,
-  customNetworkSettingsSaved
+  customNetworkSettingsSaved,
+  nodeApiClientInitFailed
 } from '@alephium/shared'
 import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
@@ -57,7 +57,7 @@ const toastMessagesSlice = createSlice({
       .addCase(toastDisplayTimeExpired, (state, action) => {
         toastMessagesAdapter.removeOne(state, action.payload)
       })
-      .addCase(apiClientInitFailed, (state, action) => {
+      .addCase(nodeApiClientInitFailed, (state, action) => {
         if (!state.offlineMessageWasVisibleOnce)
           queueMessage(state, {
             text: i18n.t('Could not connect to the {{ currentNetwork }} network.', {

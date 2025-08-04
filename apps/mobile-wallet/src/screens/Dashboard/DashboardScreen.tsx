@@ -154,7 +154,8 @@ const HeaderLeft = () => {
 }
 
 const HeaderRight = () => {
-  const networkStatus = useAppSelector((s) => s.network.status)
+  const nodeStatus = useAppSelector((s) => s.network.nodeStatus)
+  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
@@ -169,7 +170,7 @@ const HeaderRight = () => {
   return (
     <HeaderButtonsContainer>
       <WalletConnectButton />
-      {networkStatus === 'offline' && (
+      {(nodeStatus === 'offline' || explorerStatus === 'offline') && (
         <Button
           onPress={showOfflineMessage}
           iconProps={{ name: 'cloud-offline-outline' }}

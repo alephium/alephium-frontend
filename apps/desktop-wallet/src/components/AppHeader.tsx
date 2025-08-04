@@ -1,9 +1,9 @@
 import { selectDefaultAddress } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { Eye, EyeOff, WifiOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import DefaultAddressSwitch from '@/components/DefaultAddressSwitch'
@@ -12,6 +12,7 @@ import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import TitleBar from '@/components/TitleBar.tsx'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
+import AppHeaderOfflineButton from '@/features/offline/AppHeaderOfflineButton'
 import RefreshButton from '@/features/refreshData/RefreshButton'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
@@ -32,16 +33,12 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const { scrollY: scrollYContext } = useScrollContext()
   const initialScroll = useMotionValue(0)
   const scrollY = scrollYContext || initialScroll
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const isWalletUnlocked = useAppSelector(selectIsWalletUnlocked)
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const networkStatus = useAppSelector((s) => s.network.status)
   const { activeSessions } = useWalletConnectContext()
-
-  const offlineText = t('The wallet is offline.')
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
@@ -63,19 +60,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
         {!platform.isMac && <TitleBar />}
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
-          {networkStatus === 'offline' && (
-            <>
-              <OfflineIcon
-                tabIndex={0}
-                aria-label={offlineText}
-                data-tooltip-content={offlineText}
-                data-tooltip-id="default"
-              >
-                <WifiOff size={16} color={theme.global.alert} />
-              </OfflineIcon>
-              <VerticalDivider />
-            </>
-          )}
+          <AppHeaderOfflineButton />
           {children && (
             <>
               {children}
@@ -155,17 +140,6 @@ const GradientBackground = styled(motion.div)`
   height: 140px;
   background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 35%, transparent)`};
   pointer-events: none;
-`
-
-const OfflineIcon = styled.div`
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.2).toHex()};
 `
 
 const InvisibleAppHeader = styled(motion.header)`

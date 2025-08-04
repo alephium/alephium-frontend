@@ -5,7 +5,7 @@ import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
 
 const ActiveNetworkBadge = () => {
-  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkStatus = useAppSelector((s) => s.network.nodeStatus)
   const networkName = useAppSelector((s) => s.network.name)
 
   return (

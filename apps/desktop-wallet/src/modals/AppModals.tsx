@@ -5,6 +5,7 @@ import { Children, isValidElement, ReactNode, useEffect } from 'react'
 import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModal'
 import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
+import OfflineModal from '@/features/offline/OfflineModal'
 import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import ConfirmLockTimeModal from '@/features/send/sendModal/ConfirmLockTimeModal'
 import SendModal from '@/features/send/sendModal/SendModal'
@@ -56,6 +57,8 @@ export const AppModalsLockedWallet = () => {
             return <WalletRemovalModal key={modal.id} {...props} {...modal.params.props} />
           case 'WalletPassphraseDisclaimerModal':
             return <WalletPassphraseDisclaimerModal key={modal.id} {...props} {...modal.params.props} />
+          case 'OfflineModal':
+            return <OfflineModal key={modal.id} {...props} />
         }
       })}
     </AnimatePresenceModalWrapper>
@@ -143,6 +146,8 @@ export const AppModalsUnlockedWallet = () => {
             return <SignExecuteScriptTxModal key={modal.id} {...props} {...modal.params.props} />
           case 'SignChainedTxModal':
             return <SignChainedTxModal key={modal.id} {...props} {...modal.params.props} />
+          case 'OfflineModal':
+            return <OfflineModal key={modal.id} {...props} />
         }
       })}
     </AnimatePresenceModalWrapper>
