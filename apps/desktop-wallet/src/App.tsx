@@ -61,6 +61,7 @@ const App = memo(() => {
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
       <SplashScreen />
+      <AppModalsLockedWallet />
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
@@ -68,7 +69,6 @@ const App = memo(() => {
             <Router />
           </CenteredSection>
         </AppContainer>
-        <AppModalsLockedWallet />
       </WalletConnectContextProvider>
       <ToastMessagesModal />
       <AppSpinner />
