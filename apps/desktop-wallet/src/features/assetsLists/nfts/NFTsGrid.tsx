@@ -1,5 +1,5 @@
 import { TokenId } from '@alephium/shared'
-import { useFetchAddressTokensByType, useFetchWalletTokensByType } from '@alephium/shared-react'
+import { useFetchAddressTokensByType, useFetchWalletTokensByType, useIsExplorerOffline } from '@alephium/shared-react'
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +13,6 @@ import Spinner from '@/components/Spinner'
 import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import OfflineMessage from '@/features/offline/OfflineMessage'
-import { useAppSelector } from '@/hooks/redux'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
@@ -59,7 +58,7 @@ interface NFTsGridProps {
 
 const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => {
   const { data, fetchNextPage, hasNextPage } = usePaginatedNFTs({ nftIds })
-  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
+  const isExplorerOffline = useIsExplorerOffline()
 
   const gridBottomRef = useRef(null)
   const isGridBottomInView = useInView(gridBottomRef)
@@ -70,7 +69,7 @@ const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps
 
   return (
     <motion.div {...fadeIn}>
-      {explorerStatus === 'offline' && <OfflineMessage />}
+      {isExplorerOffline && <OfflineMessage />}
       {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
 
       {(isLoading || nftIds.length > 0) && (

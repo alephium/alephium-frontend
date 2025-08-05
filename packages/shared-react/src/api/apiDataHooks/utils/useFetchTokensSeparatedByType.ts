@@ -4,8 +4,7 @@ import { useMemo } from 'react'
 
 import { useFetchTokensSeparatedByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
-import { useSharedSelector } from '@/redux'
+import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '@/network'
 
 interface TokensByType<T> {
   data: {
@@ -20,7 +19,7 @@ interface TokensByType<T> {
 
 export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
   const networkId = useCurrentlyOnlineNetworkId()
-  const explorerStatus = useSharedSelector((s) => s.network.explorerStatus)
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: { listedFts, unlistedTokens },
@@ -37,10 +36,11 @@ export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T
 
   const nsts = useMemo(
     () =>
-      explorerStatus === 'offline' && nftIds.length === 0 && nstIds.length === 0 && unlistedFtIds.length === 0
+      // If EB is offline and we have no caches, all unlistedTokens should be considered NSTs
+      isExplorerOffline && nftIds.length === 0 && nstIds.length === 0 && unlistedFtIds.length === 0
         ? unlistedTokens.map(({ id }) => id)
         : nstIds,
-    [explorerStatus, nftIds.length, nstIds, unlistedFtIds.length, unlistedTokens]
+    [isExplorerOffline, nftIds.length, nstIds, unlistedFtIds.length, unlistedTokens]
   )
 
   return {

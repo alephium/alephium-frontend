@@ -1,26 +1,24 @@
+import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
 import { WifiOff } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
 
 import ActionLink from '@/components/ActionLink'
 import InfoBox from '@/components/InfoBox'
-import { useAppSelector } from '@/hooks/redux'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 const OfflineMessage = () => {
   const { t } = useTranslation()
-  const nodeStatus = useAppSelector((s) => s.network.nodeStatus)
-  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
+  const isNodeOffline = useIsNodeOffline()
+  const isExplorerOffline = useIsExplorerOffline()
+
+  const bothOffline = isNodeOffline && isExplorerOffline
 
   return (
-    <InfoBox
-      Icon={WifiOff}
-      importance={explorerStatus === 'offline' && nodeStatus === 'offline' ? 'alert' : 'warning'}
-      align="left"
-    >
-      {explorerStatus === 'offline' && nodeStatus === 'offline'
+    <InfoBox Icon={WifiOff} importance={bothOffline ? 'alert' : 'warning'} align="left">
+      {bothOffline
         ? t('There is an issue connecting to the node and explorer backend servers.')
-        : explorerStatus === 'offline'
+        : isExplorerOffline
           ? t(
               'The explorer backend is offline. You can still see your balances and send transactions but some data might be missing.'
             )

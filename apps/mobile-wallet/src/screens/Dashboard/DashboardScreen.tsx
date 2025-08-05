@@ -1,5 +1,10 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
-import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
+import {
+  useFetchWalletBalancesAlph,
+  useFetchWalletWorth,
+  useIsExplorerOffline,
+  useIsNodeOffline
+} from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -154,8 +159,8 @@ const HeaderLeft = () => {
 }
 
 const HeaderRight = () => {
-  const nodeStatus = useAppSelector((s) => s.network.nodeStatus)
-  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
+  const isNodeOffline = useIsNodeOffline()
+  const isExplorerOffline = useIsExplorerOffline()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
@@ -170,7 +175,7 @@ const HeaderRight = () => {
   return (
     <HeaderButtonsContainer>
       <WalletConnectButton />
-      {(nodeStatus === 'offline' || explorerStatus === 'offline') && (
+      {(isNodeOffline || isExplorerOffline) && (
         <Button
           onPress={showOfflineMessage}
           iconProps={{ name: 'cloud-offline-outline' }}

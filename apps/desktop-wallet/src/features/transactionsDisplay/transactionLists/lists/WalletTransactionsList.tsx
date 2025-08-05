@@ -6,7 +6,11 @@ import {
   getTransactionInfoType,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { useFetchWalletTransactionsInfinite, useUnsortedAddressesHashes } from '@alephium/shared-react'
+import {
+  useFetchWalletTransactionsInfinite,
+  useIsExplorerOffline,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { orderBy, uniqBy } from 'lodash'
@@ -21,7 +25,7 @@ import OfflineMessage from '@/features/offline/OfflineMessage'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 import { directionOptions } from '@/utils/transactions'
@@ -36,7 +40,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const allAddressHashes = useUnsortedAddressesHashes()
-  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: fetchedConfirmedTxs,
@@ -72,7 +76,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
 
   return (
     <Table minWidth="500px">
-      {explorerStatus === 'offline' && <OfflineMessage />}
+      {isExplorerOffline && <OfflineMessage />}
       {isLoading && <TableRowsLoader />}
       {isFetching && !isLoading && (
         <TableRow role="row">

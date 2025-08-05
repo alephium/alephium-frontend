@@ -4,7 +4,8 @@ import {
   isContractAddress,
   isGrouplessAddress,
   isGrouplessAddressWithGroupIndex,
-  isGrouplessAddressWithoutGroupIndex
+  isGrouplessAddressWithoutGroupIndex,
+  node as n
 } from '@alephium/web3'
 
 import { AddressHash } from '@/types/addresses'
@@ -143,9 +144,12 @@ export const isAlphAmountReduced = (
 export const isConfirmedTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
 ): tx is e.Transaction =>
-  'blockHash' in tx &&
   // See https://github.com/alephium/alephium-frontend/issues/1367
-  !tx.inputs?.some((input) => input.txHashRef === undefined)
+  'blockHash' in tx && !tx.inputs?.some((input) => input.txHashRef === undefined)
+
+export const isRichTransaction = (
+  tx: e.PendingTransaction | n.RichTransaction | e.AcceptedTransaction | e.Transaction
+): tx is n.RichTransaction => 'unsigned' in tx
 
 export const isSentTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
@@ -197,11 +201,20 @@ export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: R
 export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: e.Transaction | e.PendingTransaction) =>
   addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
 
-export const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: e.Transaction | e.PendingTransaction) =>
-  tx.inputs?.some((input) => input.address && isSameBaseAddress(input.address, addressHash)) ||
-  tx.outputs?.some((output) => output.address && isSameBaseAddress(output.address, addressHash))
+export const isAddressPresentInInputsOutputs = (
+  addressHash: AddressHash,
+  tx: e.Transaction | e.PendingTransaction | n.RichTransaction
+) => {
+  const inputs = isRichTransaction(tx) ? tx.unsigned.inputs : tx.inputs
+  const outputs = isRichTransaction(tx) ? tx.unsigned.fixedOutputs : tx.outputs
 
-export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: e.Transaction) =>
+  return (
+    inputs?.some((input) => input.address && isSameBaseAddress(input.address, addressHash)) ||
+    outputs?.some((output) => output.address && isSameBaseAddress(output.address, addressHash))
+  )
+}
+
+export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: e.Transaction | n.RichTransaction) =>
   addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))
 
 export const calculateTransferTxAssetAmounts = (txParams: SignTransferTxModalProps['txParams']) => {

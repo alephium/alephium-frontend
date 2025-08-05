@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { useFetchAddressInfiniteTransactions } from '@alephium/shared-react'
+import { useFetchAddressInfiniteTransactions, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
@@ -11,7 +11,7 @@ import NewTransactionsButtonRow from '@/features/transactionsDisplay/transaction
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressTransactionListProps {
@@ -21,7 +21,7 @@ interface AddressTransactionListProps {
 const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const explorerStatus = useAppSelector((s) => s.network.explorerStatus)
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: confirmedTxs,
@@ -44,7 +44,7 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
         <AddressTransactionsCSVExportButton addressHash={addressHash} />
       </TableHeader>
 
-      {explorerStatus === 'offline' && <OfflineMessage />}
+      {isExplorerOffline && <OfflineMessage />}
 
       {isLoading && <TableRowsLoader />}
 
