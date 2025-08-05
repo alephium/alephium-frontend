@@ -44,6 +44,9 @@ import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/Ad
 
 export const AppModalsLockedWallet = () => {
   const openedModals = useAppSelector(selectAllModals)
+  const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
+
+  if (isWalletUnlocked) return null
 
   return (
     <AnimatePresenceModalWrapper>
