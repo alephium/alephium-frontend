@@ -48,6 +48,8 @@ const initialState: AddressDiscoveryState = addressDiscoveryAdapter.getInitialSt
   status: 'idle'
 })
 
+const ascOrder = (a: number, b: number) => a - b
+
 export const discoverAddresses = createAsyncThunk(
   `${sliceName}/discoverAddresses`,
   async (_, { getState, dispatch }) => {
@@ -71,7 +73,7 @@ export const discoverAddresses = createAsyncThunk(
         const maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(indexesOfGrouplessAddresses)
         const index = findNextAvailableAddressIndex(maxIndexBeforeFirstGap, checkedGrouplessIndexes)
         checkedGrouplessIndexes.push(index)
-        checkedGrouplessIndexes.sort((a, b) => a - b)
+        checkedGrouplessIndexes.sort(ascOrder)
         await sleep(1) // Allow execution to continue to not block rendering
         const newGrouplessAddressData = keyring.generateAndCacheAddress({
           addressIndex: index,
@@ -89,7 +91,7 @@ export const discoverAddresses = createAsyncThunk(
           dispatch(addressDiscovered({ ...newGrouplessAddressData, balance }))
 
           indexesOfGrouplessAddresses.push(newGrouplessAddressData.index)
-          indexesOfGrouplessAddresses.sort((a, b) => a - b)
+          indexesOfGrouplessAddresses.sort(ascOrder)
         } else {
           gap += 1
         }
@@ -113,7 +115,7 @@ export const discoverAddresses = createAsyncThunk(
         while (newAddressGroup !== group) {
           index = findNextAvailableAddressIndex(index, checkedIndexes)
           checkedIndexes.push(index)
-          checkedIndexes.sort((a, b) => a - b)
+          checkedIndexes.sort(ascOrder)
 
           const cachedData = derivedDataCache.get(index)
 
@@ -149,7 +151,7 @@ export const discoverAddresses = createAsyncThunk(
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
           indexesOfAddressesWithGroup.push(newAddressData.index)
-          indexesOfAddressesWithGroup.sort((a, b) => a - b)
+          indexesOfAddressesWithGroup.sort(ascOrder)
         } else {
           gap += 1
         }
