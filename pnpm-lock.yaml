@@ -566,8 +566,8 @@ importers:
         specifier: 2.0.0-rc.3
         version: 2.0.0-rc.3
       '@dev-plugins/react-query':
-        specifier: ^0.2.0
-        version: 0.2.0(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))
+        specifier: ^0.3.1
+        version: 0.3.1(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))
       '@expo/vector-icons':
         specifier: ^14.0.4
         version: 14.0.4
@@ -2267,11 +2267,11 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@dev-plugins/react-query@0.2.0':
-    resolution: {integrity: sha512-tbGfXiR4/Pd9V6oJGDqx/YFtNpHJ0jrfLhDnY6k9yZu2e5niuIStDVKDimZ3m+HYXQDw62Ydk5NFa6fcRq4soA==}
+  '@dev-plugins/react-query@0.3.1':
+    resolution: {integrity: sha512-xmNfMIwHLhigE/usbGma+W/2G8bHRAfrP83nqTtjPMc7Rt2zSv1Ju3EK3KhkAh3WuHrUMpBIbNJdLgSc+K4tMg==}
     peerDependencies:
       '@tanstack/react-query': '*'
-      expo: ^52.0.41
+      expo: ^53.0.5
 
   '@develar/schema-utils@2.6.5':
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -10275,6 +10275,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -13767,7 +13768,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@dev-plugins/react-query@0.2.0(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))':
+  '@dev-plugins/react-query@0.3.1(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@tanstack/react-query': 5.45.0(react@18.3.1)
       expo: 52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1)
