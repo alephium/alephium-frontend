@@ -1,10 +1,5 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
-import {
-  useFetchWalletBalancesAlph,
-  useFetchWalletWorth,
-  useIsExplorerOffline,
-  useIsNodeOffline
-} from '@alephium/shared-react'
+import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +19,7 @@ import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
+import OfflineButton from '~/features/offline/OfflineButton'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -34,7 +30,6 @@ import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
-import { showToast, ToastDuration } from '~/utils/layout'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -158,43 +153,13 @@ const HeaderLeft = () => {
   )
 }
 
-const HeaderRight = () => {
-  const isNodeOffline = useIsNodeOffline()
-  const isExplorerOffline = useIsExplorerOffline()
-  const { t } = useTranslation()
-
-  const showOfflineMessage = () => {
-    showToast({
-      text1: `${t('Reconnecting')}...`,
-      text2:
-        isNodeOffline && isExplorerOffline
-          ? t('There is an issue connecting to the node and explorer backend servers.')
-          : isNodeOffline
-            ? t('The node is offline. You can see your balances but you cannot send transactions.')
-            : t(
-                'The explorer backend is offline. You can still see your balances and send transactions but some data might be missing.'
-              ),
-      type: 'info',
-      visibilityTime: ToastDuration.LONG
-    })
-  }
-
-  return (
-    <HeaderButtonsContainer>
-      <WalletConnectButton />
-      {(isNodeOffline || isExplorerOffline) && (
-        <Button
-          onPress={showOfflineMessage}
-          iconProps={{ name: 'cloud-offline-outline' }}
-          variant="alert"
-          squared
-          compact
-        />
-      )}
-      <WalletSettingsButton />
-    </HeaderButtonsContainer>
-  )
-}
+const HeaderRight = () => (
+  <HeaderButtonsContainer>
+    <WalletConnectButton />
+    <OfflineButton />
+    <WalletSettingsButton />
+  </HeaderButtonsContainer>
+)
 
 const HeaderButtonsContainer = styled.View`
   flex-direction: row;
