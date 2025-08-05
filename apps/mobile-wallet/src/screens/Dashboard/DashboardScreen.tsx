@@ -34,7 +34,7 @@ import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
-import { showToast } from '~/utils/layout'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -161,16 +161,23 @@ const HeaderLeft = () => {
 const HeaderRight = () => {
   const isNodeOffline = useIsNodeOffline()
   const isExplorerOffline = useIsExplorerOffline()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
-  const showOfflineMessage = () =>
+  const showOfflineMessage = () => {
     showToast({
       text1: `${t('Reconnecting')}...`,
-      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
+      text2:
+        isNodeOffline && isExplorerOffline
+          ? t('There is an issue connecting to the node and explorer backend servers.')
+          : isNodeOffline
+            ? t('The node is offline. You can see your balances but you cannot send transactions.')
+            : t(
+                'The explorer backend is offline. You can still see your balances and send transactions but some data might be missing.'
+              ),
       type: 'info',
-      onPress: () => navigation.navigate('SettingsScreen')
+      visibilityTime: ToastDuration.LONG
     })
+  }
 
   return (
     <HeaderButtonsContainer>

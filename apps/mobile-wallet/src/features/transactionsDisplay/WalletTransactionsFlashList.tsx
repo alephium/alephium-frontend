@@ -5,7 +5,7 @@ import {
   selectAllSentTransactions,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { useFetchWalletTransactionsInfinite } from '@alephium/shared-react'
+import { useFetchWalletTransactionsInfinite, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { orderBy, uniqBy } from 'lodash'
@@ -18,6 +18,7 @@ import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
+import OfflineMessage from '~/features/offline/OfflineMessage'
 import ConfirmedTransactionListItem from '~/features/transactionsDisplay/ConfirmedTransactionListItem'
 import SentTransactionListItem from '~/features/transactionsDisplay/SentTransactionListItem'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -36,6 +37,7 @@ const WalletTransactionsFlashList = forwardRef(
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
     const sentTransactions = useAppSelector(selectAllSentTransactions)
+    const isExplorerOffline = useIsExplorerOffline()
 
     const {
       data: fetchedConfirmedTxs,
@@ -100,6 +102,7 @@ const WalletTransactionsFlashList = forwardRef(
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
+            {isExplorerOffline && <OfflineMessage />}
             {!forContactAddress &&
               displayedSentTransactions.map((tx) => (
                 <SentTransactionListItem key={tx.hash} txHash={tx.hash} onPress={() => openTransactionModal(tx.hash)} />
