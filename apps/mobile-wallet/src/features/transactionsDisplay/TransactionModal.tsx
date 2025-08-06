@@ -76,17 +76,17 @@ const TransactionModalContent = ({ txHash }: TransactionModalProps) => {
 
   if (!referenceAddress) return null
 
-  return <TransactionDetailRows tx={tx} refAddressHash={referenceAddress} />
+  return <TransactionDetailRows tx={tx} referenceAddress={referenceAddress} />
 }
 
 interface TransactionModalSubcomponentProps {
   tx: e.AcceptedTransaction | e.PendingTransaction
-  refAddressHash: AddressHash
+  referenceAddress: AddressHash
 }
 
-const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
+const TransactionDetailRows = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const direction = useTransactionDirection(tx, referenceAddress)
 
   const isOut = direction === 'out'
 
@@ -94,10 +94,10 @@ const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcompon
     <>
       <Row title={t('From')} transparent>
         {isOut ? (
-          <AddressBadge addressHash={refAddressHash} />
+          <AddressBadge addressHash={referenceAddress} />
         ) : (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={isOut}
             outputs={tx.outputs}
             inputs={tx.inputs}
@@ -107,10 +107,10 @@ const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcompon
       </Row>
       <Row title={t('To')} transparent>
         {!isOut ? (
-          <AddressBadge addressHash={refAddressHash} />
+          <AddressBadge addressHash={referenceAddress} />
         ) : (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={isOut}
             outputs={tx.outputs}
             inputs={tx.inputs}
@@ -133,7 +133,7 @@ const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcompon
         <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
       </Row>
 
-      <TransactionAmounts tx={tx} refAddressHash={refAddressHash} />
+      <TransactionAmounts tx={tx} referenceAddress={referenceAddress} />
     </>
   )
 }
@@ -170,14 +170,14 @@ const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>
   )
 }
 
-const TransactionAmounts = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
+const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const {
     data: { fungibleTokens, nfts, nsts }
-  } = useFetchTransactionTokens(tx, refAddressHash)
-  const infoType = useTransactionInfoType(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
+  const infoType = useTransactionInfoType(tx, referenceAddress)
 
   const isMoved = infoType === 'move'
   const isPending = infoType === 'pending'

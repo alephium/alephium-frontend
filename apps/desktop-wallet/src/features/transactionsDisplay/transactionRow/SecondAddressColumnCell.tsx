@@ -1,4 +1,4 @@
-import { useTransactionDirection } from '@alephium/shared-react'
+import { useTransactionDirection, useTransactionInfoType2 } from '@alephium/shared-react'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -6,15 +6,18 @@ import IOList from '@/components/IOList'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 
-const SecondAddressColumnCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
-  const direction = useTransactionDirection(tx, refAddressHash)
+const SecondAddressColumnCell = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
+  const direction = useTransactionDirection(tx, referenceAddress)
+  const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
+
+  if ((infoType === 'address-group-transfer' || infoType === 'address-self-transfer') && view === 'address') return null
 
   return (
     <AddressCell>
       <DirectionalAddress>
-        {direction !== 'in' || (direction === 'in' && isInAddressDetailsModal) ? (
+        {direction !== 'in' || (direction === 'in' && view === 'address') ? (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={direction === 'out'}
             outputs={tx.outputs}
             inputs={tx.inputs}
@@ -23,7 +26,7 @@ const SecondAddressColumnCell = ({ tx, refAddressHash, isInAddressDetailsModal }
             disableA11y
           />
         ) : (
-          <AddressBadge addressHash={refAddressHash} truncate disableA11y withBorders />
+          <AddressBadge addressHash={referenceAddress} truncate disableA11y withBorders />
         )}
       </DirectionalAddress>
     </AddressCell>

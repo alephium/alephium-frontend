@@ -27,20 +27,22 @@ import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps {
   txHash: e.Transaction['hash']
-  refAddressHash?: AddressHash
+  referenceAddress?: AddressHash
 }
 
-const TransactionDetailsModal = memo(({ id, txHash, refAddressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
-  const { t } = useTranslation()
+const TransactionDetailsModal = memo(
+  ({ id, txHash, referenceAddress }: ModalBaseProp & TransactionDetailsModalProps) => {
+    const { t } = useTranslation()
 
-  return (
-    <SideModal id={id} title={t('Transaction details')} header={<TransactionDetailsModalHeader txHash={txHash} />}>
-      <Summary txHash={txHash} refAddressHash={refAddressHash} />
-      <Details txHash={txHash} refAddressHash={refAddressHash} />
-      <Tooltip />
-    </SideModal>
-  )
-})
+    return (
+      <SideModal id={id} title={t('Transaction details')} header={<TransactionDetailsModalHeader txHash={txHash} />}>
+        <Summary txHash={txHash} referenceAddress={referenceAddress} />
+        <Details txHash={txHash} referenceAddress={referenceAddress} />
+        <Tooltip />
+      </SideModal>
+    )
+  }
+)
 
 export default TransactionDetailsModal
 
@@ -72,27 +74,27 @@ const ExplorerButton = styled(Button)`
   width: auto;
 `
 
-const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
+const Summary = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
   const { data: tx } = useFetchTransaction({ txHash })
   const allAddressHashes = useUnsortedAddressesHashes()
 
   if (!tx) return null
 
-  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddress = refAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddress) return null
 
   return (
     <SummaryStyled>
       <SummaryContent>
-        <TransactionType tx={tx} refAddressHash={referenceAddress} />
-        <FTAmounts tx={tx} refAddressHash={referenceAddress} />
+        <TransactionType tx={tx} referenceAddress={referenceAddress} />
+        <FTAmounts tx={tx} referenceAddress={referenceAddress} />
       </SummaryContent>
     </SummaryStyled>
   )
 }
 
-const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
+const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const allAddressHashes = useUnsortedAddressesHashes()
@@ -108,7 +110,7 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
 
   if (!tx) return null
 
-  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddress = refAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddress) return null
 
@@ -117,7 +119,7 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
       {tx && (
         <>
           <DataList>
-            <AddressesDataRows tx={tx} refAddressHash={referenceAddress} />
+            <AddressesDataRows tx={tx} referenceAddress={referenceAddress} />
 
             <DataList.Row label={t('Status')}>
               {!isConfirmedTx(tx) ? (
@@ -149,8 +151,8 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
               <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
             </DataList.Row>
 
-            <NFTsDataListRow tx={tx} refAddressHash={referenceAddress} />
-            <NSTsDataListRow tx={tx} refAddressHash={referenceAddress} />
+            <NFTsDataListRow tx={tx} referenceAddress={referenceAddress} />
+            <NSTsDataListRow tx={tx} referenceAddress={referenceAddress} />
           </DataList>
 
           <GasUTXOsExpandableSection tx={tx} />

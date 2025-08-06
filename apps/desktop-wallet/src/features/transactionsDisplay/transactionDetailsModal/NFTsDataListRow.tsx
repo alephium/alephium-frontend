@@ -9,10 +9,10 @@ import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import { useAppDispatch } from '@/hooks/redux'
 
-const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+const NFTsDataListRow = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const {
     data: { nfts }
-  } = useFetchTransactionTokens(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 

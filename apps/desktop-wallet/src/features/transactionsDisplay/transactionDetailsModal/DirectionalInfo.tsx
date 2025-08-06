@@ -9,8 +9,8 @@ import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionD
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import { useAppSelector } from '@/hooks/redux'
 
-const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
-  const direction = useTransactionDirection(tx, refAddressHash)
+const DirectionalInfo = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
+  const direction = useTransactionDirection(tx, referenceAddress)
   const { t } = useTranslation()
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
@@ -19,11 +19,11 @@ const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
       <AddressesInvolved>
         {direction === 'swap' ? (
           <>
-            <AddressBadge addressHash={refAddressHash} truncate withBorders isShort />
+            <AddressBadge addressHash={referenceAddress} truncate withBorders isShort />
             <FromIn>{t('and')}</FromIn>
             <SwapPartnerAddress>
               <IOList
-                currentAddress={refAddressHash}
+                currentAddress={referenceAddress}
                 isOut={false}
                 outputs={tx.outputs}
                 inputs={tx.inputs}
@@ -33,10 +33,10 @@ const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
             </SwapPartnerAddress>
           </>
         ) : pendingSentTx ? (
-          <PendingSentAddressBadge tx={tx} refAddressHash={refAddressHash} />
+          <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} />
         ) : (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={direction === 'out'}
             outputs={tx.outputs}
             inputs={tx.inputs}

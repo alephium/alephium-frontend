@@ -91,6 +91,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
           tx={tx}
           onClick={() => openTransactionDetailsModal(tx.hash)}
           onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+          view="wallet"
         />
       ))}
 

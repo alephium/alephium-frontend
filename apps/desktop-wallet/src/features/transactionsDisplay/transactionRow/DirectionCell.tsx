@@ -1,4 +1,4 @@
-import { useTransactionDirection } from '@alephium/shared-react'
+import { useTransactionDirection, useTransactionInfoType2 } from '@alephium/shared-react'
 import { ArrowLeftRight, ArrowRight as ArrowRightIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -6,15 +6,18 @@ import styled from 'styled-components'
 import HiddenLabel from '@/components/HiddenLabel'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 
-const DirectionCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
+const DirectionCell = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const direction = useTransactionDirection(tx, referenceAddress)
+  const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
+
+  if ((infoType === 'address-group-transfer' || infoType === 'address-self-transfer') && view === 'address') return null
 
   return (
     <CellDirection>
       <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
 
-      {isInAddressDetailsModal ? (
+      {view === 'address' ? (
         <DirectionText>
           {
             {

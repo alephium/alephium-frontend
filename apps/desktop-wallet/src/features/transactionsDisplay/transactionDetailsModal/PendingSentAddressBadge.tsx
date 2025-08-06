@@ -9,14 +9,14 @@ import { useAppSelector } from '@/hooks/redux'
 
 interface PendingSentAddressBadgeProps {
   tx: e.Transaction | e.PendingTransaction
-  refAddressHash: AddressHash
+  referenceAddress: AddressHash
   isDestinationAddress?: boolean
 }
 
-const PendingSentAddressBadge = ({ tx, refAddressHash, isDestinationAddress }: PendingSentAddressBadgeProps) => {
+const PendingSentAddressBadge = ({ tx, referenceAddress, isDestinationAddress }: PendingSentAddressBadgeProps) => {
   const { t } = useTranslation()
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const direction = useTransactionDirection(tx, referenceAddress)
 
   if (!pendingSentTx) return null
 

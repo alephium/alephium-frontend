@@ -1,16 +1,16 @@
-import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
+import { useFetchTransactionTokens, useTransactionInfoType2 } from '@alephium/shared-react'
 
 import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 
-const FTAmounts = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
+const FTAmounts = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
   const {
     data: { fungibleTokens }
-  } = useFetchTransactionTokens(tx, refAddressHash)
-  const infoType = useTransactionInfoType(tx, refAddressHash, isInAddressDetailsModal)
+  } = useFetchTransactionTokens(tx, referenceAddress)
+  const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
 
   return fungibleTokens.map(({ id, amount }) => (
-    <TokenBadge key={id} tokenId={id} amount={amount} showAmount displaySign={infoType !== 'move'} />
+    <TokenBadge key={id} tokenId={id} amount={amount} showAmount displaySign={infoType !== 'wallet-self-transfer'} />
   ))
 }
 

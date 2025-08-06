@@ -1,5 +1,5 @@
 import { SentTransaction } from '@alephium/shared'
-import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
+import { useFetchTransactionTokens, useTransactionInfoType2 } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -9,16 +9,16 @@ import Badge from '~/components/Badge'
 import { ConfirmedTransactionListItemSubcomponentProps } from '~/features/transactionsDisplay/transactionListItemTypes'
 
 interface TransactionListItemAmountsProps
-  extends Pick<ConfirmedTransactionListItemSubcomponentProps, 'refAddressHash'> {
+  extends Pick<ConfirmedTransactionListItemSubcomponentProps, 'referenceAddress'> {
   tx: ConfirmedTransactionListItemSubcomponentProps['tx'] | SentTransaction
 }
 
-const TransactionListItemAmounts = ({ tx, refAddressHash }: TransactionListItemAmountsProps) => {
+const TransactionListItemAmounts = ({ tx, referenceAddress }: TransactionListItemAmountsProps) => {
   const { t } = useTranslation()
   const {
     data: { fungibleTokens, nfts, nsts }
-  } = useFetchTransactionTokens(tx, refAddressHash)
-  const infoType = useTransactionInfoType(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
+  const infoType = useTransactionInfoType2({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionListItemAmountsStyled>
@@ -27,7 +27,7 @@ const TransactionListItemAmounts = ({ tx, refAddressHash }: TransactionListItemA
           key={id}
           assetId={id}
           amount={amount}
-          showPlusMinus={infoType !== 'move'}
+          showPlusMinus={infoType !== 'wallet-self-transfer'}
           logoPosition="right"
         />
       ))}

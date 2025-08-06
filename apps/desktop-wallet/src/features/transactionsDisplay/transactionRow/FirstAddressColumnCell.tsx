@@ -7,9 +7,9 @@ import IOList from '@/components/IOList'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 
-const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionProps) => {
+const FirstAddressColumnCell = ({ tx, referenceAddress }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const direction = useTransactionDirection(tx, referenceAddress)
 
   return (
     <AddressCell alignRight>
@@ -17,7 +17,7 @@ const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionPro
 
       {direction === 'in' ? (
         <IOList
-          currentAddress={refAddressHash}
+          currentAddress={referenceAddress}
           isOut={false}
           outputs={tx.outputs}
           inputs={tx.inputs}
@@ -26,7 +26,7 @@ const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionPro
           disableA11y
         />
       ) : (
-        <AddressBadge addressHash={refAddressHash} truncate disableA11y withBorders />
+        <AddressBadge addressHash={referenceAddress} truncate disableA11y withBorders />
       )}
     </AddressCell>
   )

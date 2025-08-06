@@ -15,9 +15,9 @@ import useOnAddressClick from '@/features/transactionsDisplay/transactionDetails
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import { useAppSelector } from '@/hooks/redux'
 
-const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const direction = useTransactionDirection(tx, referenceAddress)
   const onAddressClick = useOnAddressClick()
   const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
@@ -25,11 +25,11 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
   if (direction === 'swap')
     return (
       <DataList.Row label={t('Addresses')}>
-        <DirectionalInfo tx={tx} refAddressHash={refAddressHash} />
+        <DirectionalInfo tx={tx} referenceAddress={referenceAddress} />
       </DataList.Row>
     )
 
-  const handleAddressClick = () => onAddressClick(refAddressHash)
+  const handleAddressClick = () => onAddressClick(referenceAddress)
 
   return (
     <>
@@ -41,11 +41,11 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
       <DataList.Row label={t('From')}>
         {direction === 'out' ? (
           <ActionLinkStyled onClick={handleAddressClick}>
-            <AddressBadge addressHash={refAddressHash} truncate withBorders />
+            <AddressBadge addressHash={referenceAddress} truncate withBorders />
           </ActionLinkStyled>
         ) : (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={false}
             outputs={tx.outputs}
             inputs={tx.inputs}
@@ -56,14 +56,14 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
       </DataList.Row>
       <DataList.Row label={t('To')}>
         {pendingSentTx ? (
-          <PendingSentAddressBadge tx={tx} refAddressHash={refAddressHash} isDestinationAddress />
+          <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
         ) : direction !== 'out' ? (
-          <ActionLinkStyled onClick={handleAddressClick} key={refAddressHash}>
-            <AddressBadge addressHash={refAddressHash} truncate withBorders />
+          <ActionLinkStyled onClick={handleAddressClick} key={referenceAddress}>
+            <AddressBadge addressHash={referenceAddress} truncate withBorders />
           </ActionLinkStyled>
         ) : (
           <IOList
-            currentAddress={refAddressHash}
+            currentAddress={referenceAddress}
             isOut={direction === 'out'}
             outputs={tx.outputs}
             inputs={tx.inputs}
