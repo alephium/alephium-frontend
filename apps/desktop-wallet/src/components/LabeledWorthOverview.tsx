@@ -1,21 +1,19 @@
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import NetworkSwitch from '@/components/NetworkSwitch'
-
 interface LabeledWorthOverviewProps {
-  label: string
+  label?: string
   children: ReactNode
   className?: string
 }
 
 const LabeledWorthOverview = ({ label, children, className }: LabeledWorthOverviewProps) => (
   <LabeledWorthOverviewStyled className={className}>
-    <Surtitle>
-      <Label>{label}</Label>
-      <NetworkSwitch />
-    </Surtitle>
-
+    {label && (
+      <Surtitle>
+        <Label>{label}</Label>
+      </Surtitle>
+    )}
     {children}
   </LabeledWorthOverviewStyled>
 )

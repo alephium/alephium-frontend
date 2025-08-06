@@ -1,11 +1,11 @@
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { ArrowRight, Dot } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import Button from '@/components/Button'
+import Badge from '@/components/Badge'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
@@ -97,17 +97,15 @@ const SelectCustomComponent = () => {
   }[network.nodeStatus]
 
   return (
-    <Button
-      role="secondary"
-      transparent
-      circle
+    <Badge
+      compact
+      color={networkStatusColor}
+      clickable
       data-tooltip-id="default"
-      data-tooltip-content={isOffline ? `${network.name} (${t('offline')})` : network.name}
-      tiny
-      Icon={Dot}
-      iconSize={42}
-      iconColor={networkStatusColor}
-    />
+      data-tooltip-content={isOffline ? `${t('offline')}` : `${t('Current network')}`}
+    >
+      {network.name.charAt(0).toUpperCase() + network.name.slice(1)}
+    </Badge>
   )
 }
 

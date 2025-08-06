@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import Button from '@/components/Button'
 import DefaultAddressSwitch from '@/components/DefaultAddressSwitch'
 import CompactToggle from '@/components/Inputs/CompactToggle'
+import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import TitleBar from '@/components/TitleBar.tsx'
 import { useScrollContext } from '@/contexts/scroll'
@@ -60,6 +61,8 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
         {!platform.isMac && <TitleBar />}
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
+          <NetworkSwitch />
+          <VerticalDivider />
           <AppHeaderOfflineButton />
           {children && (
             <>
