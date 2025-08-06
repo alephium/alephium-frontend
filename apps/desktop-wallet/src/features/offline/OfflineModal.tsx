@@ -9,7 +9,7 @@ const OfflineModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
 
   return (
-    <CenteredModal title={t('Degraded experience')} id={id}>
+    <CenteredModal title={t('Degraded experience')} id={id} noPadding>
       <OfflineMessage />
     </CenteredModal>
   )
