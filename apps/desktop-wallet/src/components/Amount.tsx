@@ -136,8 +136,6 @@ const Amount = ({
         {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1 }}
         onClick={discreetMode ? toggleAmountVisibility : undefined}
       >
-        <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
-
         {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
         <AmountContainer ref={textRef} onMouseEnter={handleTextMouseEnter} onMouseLeave={handleTextMouseLeave}>
@@ -148,6 +146,7 @@ const Amount = ({
           ) : (
             <TokenAmount {...amountProps} color={color} />
           )}
+          <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
         </AmountContainer>
       </AmountStyled>
       {discreetMode && highlightDimensions && <ClickSurfaceHighlight dimensions={highlightDimensions} />}
@@ -256,12 +255,14 @@ const DataFetchIndicator = ({ isLoading, isFetching, error }: AmountLoaderProps)
   if (!isLoading && !isFetching && !error) return null
 
   return (
-    <DataFetchIndicatorStyled
-      data-tooltip-id="default"
-      data-tooltip-content={t(error ? 'Could not get latest data' : 'Updating...')}
-    >
-      <DataFetchIndicatorDot status={error ? 'error' : 'isFetching'} />
-    </DataFetchIndicatorStyled>
+    <DataFetchIndicatorContainer>
+      <DataFetchIndicatorStyled
+        data-tooltip-id="default"
+        data-tooltip-content={t(error ? 'Could not get latest data' : 'Updating...')}
+      >
+        <DataFetchIndicatorDot status={error ? 'error' : 'isFetching'} />
+      </DataFetchIndicatorStyled>
+    </DataFetchIndicatorContainer>
   )
 }
 
@@ -302,18 +303,23 @@ const Suffix = styled.span<{ color?: string }>`
   font-weight: var(--fontWeight-semiBold);
 `
 
-const DataFetchIndicatorStyled = styled.div`
-  position: absolute;
-  top: -5px;
-  left: -15px;
-  padding: 5px;
+const DataFetchIndicatorStyled = styled.span`
+  margin-left: var(--spacing-1);
+`
+
+const DataFetchIndicatorContainer = styled.div`
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--spacing-1);
 `
 
 const DataFetchIndicatorDot = styled.div<{ status: 'isFetching' | 'error' }>`
-  width: 6px;
-  height: 6px;
+  width: 0.3em;
+  height: 0.3em;
   background-color: ${({ theme, status }) => (status === 'isFetching' ? theme.font.secondary : theme.global.alert)};
   border-radius: 50%;
+  position: relative;
+  top: -0.15em;
 
   ${({ status }) =>
     status === 'isFetching' &&

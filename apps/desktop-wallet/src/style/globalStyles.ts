@@ -30,10 +30,10 @@ export const GlobalStyle = createGlobalStyle`
     --spacing-8: 40px;
 
     --radius-tiny: 4px;
-    --radius-small: 7px;
+    --radius-small: 6px;
     --radius-medium: 8px;
-    --radius-big: 9px;
-    --radius-huge: 14px;
+    --radius-big: 10px;
+    --radius-huge: 16px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
