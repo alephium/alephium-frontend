@@ -1,6 +1,7 @@
 import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
 import { WifiOff } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import InfoBox from '@/components/InfoBox'
@@ -15,7 +16,7 @@ const OfflineMessage = () => {
   const bothOffline = isNodeOffline && isExplorerOffline
 
   return (
-    <InfoBox Icon={WifiOff} importance={bothOffline ? 'alert' : 'warning'} align="left">
+    <InfoBoxStyled Icon={WifiOff} importance={bothOffline ? 'alert' : 'warning'} align="left">
       {bothOffline
         ? t('There is an issue connecting to the node and explorer backend servers.')
         : isExplorerOffline
@@ -32,8 +33,15 @@ const OfflineMessage = () => {
         <ActionLink onClick={() => openInWebBrowser(links.statusPage)}>Status page</ActionLink> for updates on this
         issue.
       </Trans>
-    </InfoBox>
+    </InfoBoxStyled>
   )
 }
 
 export default OfflineMessage
+
+const InfoBoxStyled = styled(InfoBox)`
+  margin-bottom: 0;
+  border-radius: 0;
+  height: 100% !important;
+  flex: 1;
+`

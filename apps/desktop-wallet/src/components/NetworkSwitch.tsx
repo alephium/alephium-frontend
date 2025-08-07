@@ -1,11 +1,11 @@
-import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { ArrowRight, Dot } from 'lucide-react'
+import { capitalize, NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
+import { ArrowRight } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import Button from '@/components/Button'
+import Badge from '@/components/Badge'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
@@ -85,29 +85,27 @@ export default NetworkSwitch
 
 const SelectCustomComponent = () => {
   const theme = useTheme()
-  const { t } = useTranslation()
   const network = useAppSelector((state) => state.network)
-  const isOffline = useCurrentlyOnlineNetworkId() === undefined
+  const isExplorerOffline = useIsExplorerOffline()
+  const isNodeOffline = useIsNodeOffline()
+
+  const status =
+    (isExplorerOffline && !isNodeOffline) || (!isExplorerOffline && isNodeOffline) ? 'degraded' : network.nodeStatus
 
   const networkStatusColor = {
     online: theme.global.valid,
     offline: theme.global.alert,
     connecting: theme.global.accent,
-    uninitialized: theme.font.tertiary
-  }[network.nodeStatus]
+    uninitialized: theme.font.tertiary,
+    degraded: theme.global.highlight
+  }[status]
 
   return (
-    <Button
-      role="secondary"
-      transparent
-      circle
-      data-tooltip-id="default"
-      data-tooltip-content={isOffline ? `${network.name} (${t('offline')})` : network.name}
-      tiny
-      Icon={Dot}
-      iconSize={42}
-      iconColor={networkStatusColor}
-    />
+    <div data-tooltip-id="default" data-tooltip-content={capitalize(status)}>
+      <Badge compact color={networkStatusColor} clickable>
+        {network.name.charAt(0).toUpperCase() + network.name.slice(1)}
+      </Badge>
+    </div>
   )
 }
 

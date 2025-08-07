@@ -26,11 +26,11 @@ const AppHeaderOfflineButton = () => {
         circle
         short
         role="secondary"
+        transparent
         variant={bothOffline ? 'alert' : 'default'}
-        transparent={bothOffline ? undefined : true}
         onClick={openOfflineModal}
         squared
-        iconColor={bothOffline ? undefined : theme.global.highlight}
+        iconColor={bothOffline ? theme.global.alert : theme.global.highlight}
       />
       <VerticalDivider />
     </>

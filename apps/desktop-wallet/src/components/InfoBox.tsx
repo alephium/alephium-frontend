@@ -71,8 +71,7 @@ export default styled(InfoBox)`
 
 const IconContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-self: flex-start;
 `
 
 const TextContainer = styled.div<Pick<InfoBoxProps, 'wordBreak' | 'ellipsis' | 'align'>>`
