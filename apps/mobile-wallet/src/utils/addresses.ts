@@ -18,7 +18,8 @@ export const copyAddressToClipboard = async (addressHash: AddressHash) => {
 
 export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
   if (indexes.length === 0) return undefined
-  if (indexes.length === 1) return indexes[0]
+  if (indexes[0] !== 0) return undefined
+  if (indexes.length === 1) return 0
 
   let maxIndexBeforeFirstGap = indexes[0]
 
