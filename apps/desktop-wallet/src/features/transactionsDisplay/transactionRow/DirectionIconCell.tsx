@@ -6,16 +6,16 @@ import { TableCell } from '@/components/Table'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
+const IconLabelTimeCell = (props: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const { Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
+  const { Icon, iconColor, iconBgColor } = useTransactionIconLabel(props)
 
   return (
     <DirectionIconCellStyled fixedWidth={50} noBorder>
       <TransactionIcon color={iconBgColor}>
         <Icon size={15} strokeWidth={2} color={iconColor} />
 
-        {isConfirmedTx(tx) && !tx.scriptExecutionOk && (
+        {isConfirmedTx(props.tx) && !props.tx.scriptExecutionOk && (
           <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
             !
           </FailedTXBubble>

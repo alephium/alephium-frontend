@@ -5,8 +5,8 @@ import TimeSince from '@/components/TimeSince'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TimestampCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
-  const { label } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
+const TimestampCell = (props: TransactionRowSectionProps) => {
+  const { label } = useTransactionIconLabel(props)
 
   return (
     <TimestampCellStyled>
@@ -14,7 +14,7 @@ const TimestampCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Transact
         <DirectionLabel>{label}</DirectionLabel>
 
         <AssetTime>
-          <TimeSince timestamp={tx.timestamp} faded />
+          <TimeSince timestamp={props.tx.timestamp} faded />
         </AssetTime>
       </LabelTime>
     </TimestampCellStyled>

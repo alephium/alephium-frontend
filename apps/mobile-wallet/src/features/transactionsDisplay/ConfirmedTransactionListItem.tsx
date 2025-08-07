@@ -19,13 +19,13 @@ dayjs.extend(localizedFormat)
 
 type ConfirmedTransactionListItemProps = Partial<ListItemProps> & ConfirmedTransactionListItemBaseProps
 
-const ConfirmedTransactionListItem = memo(({ tx, refAddressHash, ...props }: ConfirmedTransactionListItemProps) => {
+const ConfirmedTransactionListItem = memo(({ tx, referenceAddress, ...props }: ConfirmedTransactionListItemProps) => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const referenceAddressHash = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddressHash = referenceAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddressHash) return null
 
-  const commonProps = { tx, refAddressHash: referenceAddressHash }
+  const commonProps = { tx, referenceAddress: referenceAddressHash }
 
   return (
     <ListItem
@@ -41,8 +41,8 @@ const ConfirmedTransactionListItem = memo(({ tx, refAddressHash, ...props }: Con
 
 export default ConfirmedTransactionListItem
 
-const TransactionLabel = ({ tx, refAddressHash }: ConfirmedTransactionListItemSubcomponentProps) => {
-  const { label } = useTransactionIconLabel(tx, refAddressHash)
+const TransactionLabel = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
+  const { label } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return label
 }
@@ -53,8 +53,8 @@ const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentPr
   </AppText>
 )
 
-const TransactionIcon = ({ tx, refAddressHash }: ConfirmedTransactionListItemSubcomponentProps) => {
-  const { iconBgColor, iconColor, Icon } = useTransactionIconLabel(tx, refAddressHash)
+const TransactionIcon = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
+  const { iconBgColor, iconColor, Icon } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionIconStyled color={iconBgColor}>

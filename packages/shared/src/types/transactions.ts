@@ -10,7 +10,7 @@ import {
 } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-import { Address } from '@/types/addresses'
+import { Address, AddressHash } from '@/types/addresses'
 import { Asset, AssetAmount, TokenId } from '@/types/assets'
 
 export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
@@ -94,3 +94,11 @@ export type TransactionParams =
       type: 'UNSIGNED_TX'
       params: SignUnsignedTxParams
     }
+
+export type TransactionView = 'address' | 'wallet'
+
+export type UseTransactionProps = {
+  tx: e.Transaction | e.PendingTransaction | SentTransaction
+  referenceAddress: AddressHash
+  view: TransactionView
+}

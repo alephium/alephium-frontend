@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TransactionType = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
-  const { label, Icon, iconColor } = useTransactionIconLabel(tx, refAddressHash)
+const TransactionType = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
+  const { label, Icon, iconColor } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionTypeStyled color={iconColor}>

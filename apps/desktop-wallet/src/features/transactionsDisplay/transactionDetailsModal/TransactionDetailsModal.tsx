@@ -6,10 +6,12 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import DataList from '@/components/DataList'
+import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
@@ -21,26 +23,29 @@ import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetai
 import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
+import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal, { SideModalTitle } from '@/modals/SideModal'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps {
   txHash: e.Transaction['hash']
-  refAddressHash?: AddressHash
+  referenceAddress?: AddressHash
 }
 
-const TransactionDetailsModal = memo(({ id, txHash, refAddressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
-  const { t } = useTranslation()
+const TransactionDetailsModal = memo(
+  ({ id, txHash, referenceAddress }: ModalBaseProp & TransactionDetailsModalProps) => {
+    const { t } = useTranslation()
 
-  return (
-    <SideModal id={id} title={t('Transaction details')} header={<TransactionDetailsModalHeader txHash={txHash} />}>
-      <Summary txHash={txHash} refAddressHash={refAddressHash} />
-      <Details txHash={txHash} refAddressHash={refAddressHash} />
-      <Tooltip />
-    </SideModal>
-  )
-})
+    return (
+      <SideModal id={id} title={t('Transaction details')} header={<TransactionDetailsModalHeader txHash={txHash} />}>
+        <Summary txHash={txHash} referenceAddress={referenceAddress} />
+        <Details txHash={txHash} referenceAddress={referenceAddress} />
+        <Tooltip />
+      </SideModal>
+    )
+  }
+)
 
 export default TransactionDetailsModal
 
@@ -72,30 +77,31 @@ const ExplorerButton = styled(Button)`
   width: auto;
 `
 
-const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
+const Summary = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
   const { data: tx } = useFetchTransaction({ txHash })
   const allAddressHashes = useUnsortedAddressesHashes()
 
   if (!tx) return null
 
-  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddress = refAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddress) return null
 
   return (
     <SummaryStyled>
       <SummaryContent>
-        <TransactionType tx={tx} refAddressHash={referenceAddress} />
-        <FTAmounts tx={tx} refAddressHash={referenceAddress} />
+        <TransactionType tx={tx} referenceAddress={referenceAddress} />
+        <FTAmounts tx={tx} referenceAddress={referenceAddress} />
       </SummaryContent>
     </SummaryStyled>
   )
 }
 
-const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
+const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const allAddressHashes = useUnsortedAddressesHashes()
+  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
 
   const { data: tx, isLoading } = useFetchTransaction({ txHash })
 
@@ -108,7 +114,7 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
 
   if (!tx) return null
 
-  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+  const referenceAddress = refAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
   if (!referenceAddress) return null
 
@@ -117,7 +123,13 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
       {tx && (
         <>
           <DataList>
-            <AddressesDataRows tx={tx} refAddressHash={referenceAddress} />
+            <DataList.Row label={t('Transaction hash')}>
+              <TransactionHash onClick={handleShowTxInExplorer}>
+                <HashEllipsed hash={tx.hash} tooltipText={t('Copy hash')} />
+              </TransactionHash>
+            </DataList.Row>
+
+            <AddressesDataRows tx={tx} referenceAddress={referenceAddress} />
 
             <DataList.Row label={t('Status')}>
               {!isConfirmedTx(tx) ? (
@@ -149,8 +161,8 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
               <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
             </DataList.Row>
 
-            <NFTsDataListRow tx={tx} refAddressHash={referenceAddress} />
-            <NSTsDataListRow tx={tx} refAddressHash={referenceAddress} />
+            <NFTsDataListRow tx={tx} referenceAddress={referenceAddress} />
+            <NSTsDataListRow tx={tx} referenceAddress={referenceAddress} />
           </DataList>
 
           <GasUTXOsExpandableSection tx={tx} />
@@ -176,4 +188,8 @@ const SummaryContent = styled.div`
 
 const DetailsStyled = styled.div`
   padding: var(--spacing-2) var(--spacing-3);
+`
+
+const TransactionHash = styled(ActionLink)`
+  max-width: 125px;
 `

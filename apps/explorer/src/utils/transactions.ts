@@ -30,6 +30,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   const getDirectionForGrouplessGroupTransfer = () =>
     isGrouplessAddressWithoutGroupIndex(addressHash) ? undefined : getDirection(tx, addressHash) // If at the groupless "level", don't show direction
 
+  // TODO: Replace isConsolidationTx and then delete it
   if (isConsolidationTx(tx)) {
     if (isGrouplessAddressIntraTransfer(tx)) {
       direction = getDirectionForGrouplessGroupTransfer()

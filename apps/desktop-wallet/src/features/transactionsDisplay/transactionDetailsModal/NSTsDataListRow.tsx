@@ -7,10 +7,10 @@ import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 
-const NSTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+const NSTsDataListRow = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const {
     data: { nsts }
-  } = useFetchTransactionTokens(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
   const { t } = useTranslation()
 
   if (nsts.length === 0) return null

@@ -2,7 +2,6 @@ import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@al
 import {
   useFetchTransaction,
   useFetchTransactionTokens,
-  useTransactionDirection,
   useTransactionInfoType,
   useUnsortedAddressesHashes
 } from '@alephium/shared-react'
@@ -14,7 +13,6 @@ import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
-import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
@@ -22,11 +20,14 @@ import Badge from '~/components/Badge'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import IOList from '~/components/IOList'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
+import {
+  TransactionDestinationAddressesList,
+  TransactionOriginAddressesList
+} from '~/features/transactionsDisplay/InputsOutputsLists'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 interface TransactionModalProps {
@@ -76,64 +77,76 @@ const TransactionModalContent = ({ txHash }: TransactionModalProps) => {
 
   if (!referenceAddress) return null
 
-  return <TransactionDetailRows tx={tx} refAddressHash={referenceAddress} />
+  return <TransactionDetailRows tx={tx} referenceAddress={referenceAddress} />
 }
 
 interface TransactionModalSubcomponentProps {
   tx: e.AcceptedTransaction | e.PendingTransaction
-  refAddressHash: AddressHash
+  referenceAddress: AddressHash
 }
 
-const TransactionDetailRows = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
-  const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, refAddressHash)
+const TransactionDetailRows = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => (
+  <>
+    <TransactionAddresses tx={tx} referenceAddress={referenceAddress} />
 
-  const isOut = direction === 'out'
+    <TransactionTimeStamp tx={tx} />
+
+    <TransactionStatus tx={tx} />
+
+    <TransactionFee tx={tx} />
+
+    <TransactionAmounts tx={tx} referenceAddress={referenceAddress} />
+  </>
+)
+
+const TransactionTimeStamp = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>) => {
+  const { t } = useTranslation()
+
+  if (!isConfirmedTx(tx)) return null
+
+  return (
+    <Row title={t('Timestamp')} transparent>
+      <AppText semiBold>
+        {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+      </AppText>
+    </Row>
+  )
+}
+
+const TransactionFee = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>) => {
+  const { t } = useTranslation()
+
+  return (
+    <Row title={t('Fee')} transparent>
+      <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
+    </Row>
+  )
+}
+
+const TransactionAddresses = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => {
+  const { t } = useTranslation()
+  const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
+
+  if (infoType === 'bidirectional-transfer' || infoType === 'dApp' || infoType === 'dApp-failed') {
+    return (
+      <Row title={t('Addresses')} transparent>
+        <AddressesList>
+          <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+          <AppText color="secondary">{t('and')}</AppText>
+          <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        </AddressesList>
+      </Row>
+    )
+  }
 
   return (
     <>
       <Row title={t('From')} transparent>
-        {isOut ? (
-          <AddressBadge addressHash={refAddressHash} />
-        ) : (
-          <IOList
-            currentAddress={refAddressHash}
-            isOut={isOut}
-            outputs={tx.outputs}
-            inputs={tx.inputs}
-            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
-          />
-        )}
+        <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </Row>
       <Row title={t('To')} transparent>
-        {!isOut ? (
-          <AddressBadge addressHash={refAddressHash} />
-        ) : (
-          <IOList
-            currentAddress={refAddressHash}
-            isOut={isOut}
-            outputs={tx.outputs}
-            inputs={tx.inputs}
-            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
-          />
-        )}
+        <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </Row>
-
-      {isConfirmedTx(tx) && (
-        <Row title={t('Timestamp')} transparent>
-          <AppText semiBold>
-            {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-          </AppText>
-        </Row>
-      )}
-
-      <TransactionStatus tx={tx} />
-
-      <Row title={t('Fee')} transparent>
-        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
-      </Row>
-
-      <TransactionAmounts tx={tx} refAddressHash={refAddressHash} />
     </>
   )
 }
@@ -170,16 +183,17 @@ const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>
   )
 }
 
-const TransactionAmounts = ({ tx, refAddressHash }: TransactionModalSubcomponentProps) => {
+const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const {
     data: { fungibleTokens, nfts, nsts }
-  } = useFetchTransactionTokens(tx, refAddressHash)
-  const infoType = useTransactionInfoType(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
+  const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
-  const isMoved = infoType === 'move'
+  const isMoved =
+    infoType === 'address-group-transfer' || infoType === 'address-self-transfer' || infoType === 'wallet-self-transfer'
   const isPending = infoType === 'pending'
   const groupedFtAmounts = useMemo(
     () => groupBy(fungibleTokens, (t) => (t.amount > 0 ? 'in' : 'out')),
@@ -268,4 +282,11 @@ const UnknownTokenAmount = styled.View`
 const AmountsContainer = styled.View`
   gap: 5px;
   align-items: flex-end;
+`
+
+const AddressesList = styled.View`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
 `

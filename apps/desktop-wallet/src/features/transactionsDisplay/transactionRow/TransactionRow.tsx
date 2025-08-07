@@ -14,38 +14,36 @@ import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionR
 import TimestampCell from '@/features/transactionsDisplay/transactionRow/TimestampCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
 
-const TransactionRow = memo(
-  ({ tx, refAddressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {
-    const allAddressHashes = useUnsortedAddressesHashes()
-    const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+const TransactionRow = memo(({ tx, referenceAddress: refAddress, view, compact, ...props }: TransactionRowProps) => {
+  const allAddressHashes = useUnsortedAddressesHashes()
+  const referenceAddress = refAddress ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
-    if (!referenceAddress) return null
+  if (!referenceAddress) return null
 
-    const commonProps = { tx, refAddressHash: referenceAddress, isInAddressDetailsModal }
+  const commonProps = { tx, referenceAddress: referenceAddress, view }
 
-    return (
-      <GridRowStyled {...props}>
-        <DirectionIconCell {...commonProps} />
+  return (
+    <GridRowStyled {...props}>
+      <DirectionIconCell {...commonProps} />
 
-        <TimestampCell {...commonProps} />
+      <TimestampCell {...commonProps} />
 
-        <DirectionalAddresses stackVertically={isInAddressDetailsModal} fixedWidth="30%">
-          {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} refAddressHash={referenceAddress} />}
-          <DirectionCell {...commonProps} />
-          <SecondAddressColumnCell {...commonProps} />
-        </DirectionalAddresses>
+      <DirectionalAddresses stackVertically={view === 'address'} fixedWidth="30%">
+        {view === 'wallet' && <FirstAddressColumnCell {...commonProps} />}
+        <DirectionCell {...commonProps} />
+        <SecondAddressColumnCell {...commonProps} />
+      </DirectionalAddresses>
 
-        <TableCell aria-hidden="true" align="right">
-          <AmountsList>
-            <FTAmounts {...commonProps} />
-            <OtherAmounts type="nfts" {...commonProps} />
-            <OtherAmounts type="nsts" {...commonProps} />
-          </AmountsList>
-        </TableCell>
-      </GridRowStyled>
-    )
-  }
-)
+      <TableCell aria-hidden="true" align="right">
+        <AmountsList>
+          <FTAmounts {...commonProps} />
+          <OtherAmounts type="nfts" {...commonProps} />
+          <OtherAmounts type="nsts" {...commonProps} />
+        </AmountsList>
+      </TableCell>
+    </GridRowStyled>
+  )
+})
 
 export default TransactionRow
 
@@ -57,6 +55,7 @@ const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
     css`
       flex-direction: column;
       align-items: flex-start;
+      justify-content: center;
       gap: 5px;
     `}
 `

@@ -28,7 +28,7 @@ import TransactionRow from '@/features/transactionsDisplay/transactionRow/Transa
 import { useAppDispatch } from '@/hooks/redux'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
-import { directionOptions } from '@/utils/transactions'
+import { directionOptions, infoTypeToDirection } from '@/utils/transactions'
 
 interface WalletTransactionListProps {
   addressHashes?: AddressHash[]
@@ -91,6 +91,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
           tx={tx}
           onClick={() => openTransactionDetailsModal(tx.hash)}
           onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+          view="wallet"
         />
       ))}
 
@@ -136,12 +137,15 @@ const applyFilters = ({
         if (!txRefAddress) return false
 
         const { tokenAmounts } = calcTxAmountsDeltaForAddress(tx, txRefAddress)
-        const infoType = getTransactionInfoType(tx, txRefAddress, allAddressHashes)
+        const infoType = getTransactionInfoType({
+          tx,
+          referenceAddress: txRefAddress,
+          internalAddresses: allAddressHashes
+        })
 
-        const dir = infoType === 'pending' ? 'out' : infoType
         const tokenIds = [ALPH.id, ...tokenAmounts.map(({ id }) => id)]
 
-        const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)
+        const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(infoTypeToDirection(infoType))
         const passedAssetsFilter = !isAssetsFilterEnabled || tokenIds.some((id) => assetIds.includes(id))
 
         return passedDirectionsFilter && passedAssetsFilter
