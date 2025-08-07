@@ -117,7 +117,7 @@ export const darkTheme: DefaultTheme = {
     gray: 'rgb(121, 121, 121)',
     palette1: '#89cbff',
     palette2: '#ffeeb7',
-    palette3: '#7d8dff',
+    palette3: '#485aeb',
     palette4: '#ef9cee',
     palette5: '#ff9db6',
     palette6: '#ffce97'
