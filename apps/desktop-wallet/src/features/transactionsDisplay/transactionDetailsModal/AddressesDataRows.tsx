@@ -3,11 +3,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import DataList from '@/components/DataList'
-import ClickableAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/ClickableAddressBadge'
 import {
-  BidirectionalTransferAddressesList,
-  UnidirectionalTransactionDestinationAddressesList,
-  UnidirectionalTransactionOriginAddressesList
+  TransactionDestinationAddressesList,
+  TransactionOriginAddressesList
 } from '@/features/transactionsDisplay/transactionDetailsModal/InputsOutputsLists'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 
@@ -19,9 +17,9 @@ const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxPr
     return (
       <DataList.Row label={t('Addresses')}>
         <AddressesInvolved>
-          <ClickableAddressBadge address={referenceAddress} />
+          <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
           <FromIn>{t('and')}</FromIn>
-          <BidirectionalTransferAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+          <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
         </AddressesInvolved>
       </DataList.Row>
     )
@@ -30,10 +28,10 @@ const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxPr
   return (
     <>
       <DataList.Row label={t('From')}>
-        <UnidirectionalTransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </DataList.Row>
       <DataList.Row label={t('To')}>
-        <UnidirectionalTransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </DataList.Row>
     </>
   )

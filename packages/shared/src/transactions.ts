@@ -160,7 +160,10 @@ export const isWalletSelfTransfer = (
   walletAddresses: AddressHash[]
 ): boolean => getTxAddresses(tx).every((address) => walletAddresses.includes(getBaseAddressStr(address)))
 
-export const isBidirectionalTransfer = (tx: e.Transaction, referenceAddress: string): boolean => {
+export const isBidirectionalTransfer = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
+  referenceAddress: string
+): boolean => {
   const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, referenceAddress)
 
   return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)

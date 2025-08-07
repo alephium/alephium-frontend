@@ -326,7 +326,7 @@ export const getTransactionExpectedBalances = ({ type, params }: TransactionPara
 }
 
 // TODO: Write tests
-export const getUnidirectionalTransactionOriginAddresses = ({
+export const getTransactionOriginAddresses = ({
   tx,
   referenceAddress
 }: {
@@ -337,7 +337,12 @@ export const getUnidirectionalTransactionOriginAddresses = ({
     return []
   }
 
-  if (isSelfTransfer(tx) || isGrouplessAddressIntraTransfer(tx)) {
+  if (
+    isSelfTransfer(tx) ||
+    isGrouplessAddressIntraTransfer(tx) ||
+    isBidirectionalTransfer(tx, referenceAddress) ||
+    isContractTx(tx)
+  ) {
     return [referenceAddress]
   }
 
@@ -345,7 +350,7 @@ export const getUnidirectionalTransactionOriginAddresses = ({
 }
 
 // TODO: Write tests
-export const getUnidirectionalTransactionDestinationAddresses = ({
+export const getTransactionDestinationAddresses = ({
   tx,
   referenceAddress
 }: {
@@ -360,21 +365,12 @@ export const getUnidirectionalTransactionDestinationAddresses = ({
     return [referenceAddress]
   }
 
+  if (isBidirectionalTransfer(tx, referenceAddress) || isContractTx(tx)) {
+    return uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
+  }
+
   return getInputOutputBaseAddresses(tx.outputs).filter((address) => addressHasOnlyPositiveAmountDeltas(tx, address))
 }
-
-export const getBidirectionalTransactionAddresses = ({
-  tx,
-  referenceAddress
-}: {
-  tx: e.Transaction | e.PendingTransaction
-  referenceAddress: string
-}): AddressHash[] =>
-  uniq(
-    getTxAddresses(tx)
-      .map(getBaseAddressStr)
-      .filter((address) => address !== referenceAddress)
-  )
 
 const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
   uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))

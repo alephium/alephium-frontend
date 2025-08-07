@@ -1,8 +1,7 @@
 import {
   GENESIS_TIMESTAMP,
-  getBidirectionalTransactionAddresses,
-  getUnidirectionalTransactionDestinationAddresses,
-  getUnidirectionalTransactionOriginAddresses,
+  getTransactionDestinationAddresses,
+  getTransactionOriginAddresses,
   isConfirmedTx,
   selectPendingSentTransactionByHash,
   UseTransactionProps
@@ -21,13 +20,10 @@ interface InputsListProps extends UseTransactionProps {
   tx: e.Transaction | e.PendingTransaction
 }
 
-export const UnidirectionalTransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
   const { t } = useTranslation()
 
-  const addresses = useMemo(
-    () => getUnidirectionalTransactionOriginAddresses({ tx, referenceAddress }),
-    [tx, referenceAddress]
-  )
+  const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   const timestamp = isConfirmedTx(tx) ? tx.timestamp : undefined
 
@@ -48,32 +44,14 @@ export const UnidirectionalTransactionOriginAddressesList = ({ tx, referenceAddr
   )
 }
 
-export const UnidirectionalTransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
-  const addresses = useMemo(
-    () => getUnidirectionalTransactionDestinationAddresses({ tx, referenceAddress }),
-    [tx, referenceAddress]
-  )
+  const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
     return <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
   }
-
-  return (
-    <AddressesList>
-      {addresses.map((address) => (
-        <ClickableAddressBadge address={address} key={address} />
-      ))}
-    </AddressesList>
-  )
-}
-
-export const BidirectionalTransferAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
-  const addresses = useMemo(
-    () => getBidirectionalTransactionAddresses({ tx, referenceAddress }),
-    [tx, referenceAddress]
-  )
 
   return (
     <AddressesList>
