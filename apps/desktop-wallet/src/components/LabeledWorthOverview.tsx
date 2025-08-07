@@ -2,8 +2,8 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 interface LabeledWorthOverviewProps {
-  label?: string
   children: ReactNode
+  label?: string
   className?: string
 }
 

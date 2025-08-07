@@ -1,5 +1,5 @@
 import { capitalize, NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { useIsExplorerOffline } from '@alephium/shared-react'
+import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
 import { ArrowRight } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -87,11 +87,10 @@ const SelectCustomComponent = () => {
   const theme = useTheme()
   const network = useAppSelector((state) => state.network)
   const isExplorerOffline = useIsExplorerOffline()
+  const isNodeOffline = useIsNodeOffline()
 
   const status =
-    (isExplorerOffline && network.nodeStatus === 'online') || (!isExplorerOffline && network.nodeStatus === 'offline')
-      ? 'degraded'
-      : network.nodeStatus
+    (isExplorerOffline && !isNodeOffline) || (!isExplorerOffline && isNodeOffline) ? 'degraded' : network.nodeStatus
 
   const networkStatusColor = {
     online: theme.global.valid,
