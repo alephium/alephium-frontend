@@ -1,5 +1,5 @@
 import { UseTransactionProps } from '@alephium/shared'
-import { useTransactionInfoType2 } from '@alephium/shared-react'
+import { useTransactionInfoType } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, RefreshCcw, Repeat, Repeat2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +8,7 @@ import { useTheme } from 'styled-components'
 const useTransactionIconLabel = (props: UseTransactionProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
-  const infoType = useTransactionInfoType2(props)
+  const infoType = useTransactionInfoType(props)
 
   return {
     label: {

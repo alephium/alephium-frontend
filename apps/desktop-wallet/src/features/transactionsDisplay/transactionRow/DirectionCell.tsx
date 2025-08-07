@@ -1,4 +1,4 @@
-import { useTransactionInfoType2 } from '@alephium/shared-react'
+import { useTransactionInfoType } from '@alephium/shared-react'
 import { ArrowLeftRight, ArrowRight as ArrowRightIcon } from 'lucide-react'
 import styled from 'styled-components'
 
@@ -6,7 +6,7 @@ import { TransactionRowSectionProps } from '@/features/transactionsDisplay/trans
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
 const DirectionCell = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
-  const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
+  const infoType = useTransactionInfoType({ tx, referenceAddress: referenceAddress, view })
   const { connectingWord } = useTransactionIconLabel({ tx, referenceAddress, view })
 
   if (view === 'address') {

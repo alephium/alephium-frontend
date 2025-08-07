@@ -3,8 +3,6 @@ import { explorer as e } from '@alephium/web3'
 import {
   addressHasOnlyNegativeAmountDeltas,
   addressHasOnlyPositiveAmountDeltas,
-  calcTxAmountsDeltaForAddress,
-  hasPositiveAndNegativeAmounts,
   isAlphAmountReduced,
   isBidirectionalTransfer
 } from '@/transactions/transactionAmounts'
@@ -13,13 +11,12 @@ import {
   getInputOutputBaseAddress,
   getTxAddresses,
   isConfirmedTx,
-  isConsolidationTx,
   isContractTx,
   isGrouplessAddressIntraTransfer,
   isWalletSelfTransfer
 } from '@/transactions/transactionUtils'
 import { AddressHash } from '@/types/addresses'
-import { SentTransaction, TransactionInfoType } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 export type TransactionInfoType2 =
@@ -33,7 +30,7 @@ export type TransactionInfoType2 =
   | 'outgoing'
   | 'incoming'
 
-export const getTransactionInfoType2 = ({
+export const getTransactionInfoType = ({
   tx,
   referenceAddress,
   internalAddresses
@@ -72,7 +69,7 @@ interface GetTxAddressesProps {
 export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
   if (!tx.inputs || tx.inputs.length === 0) return []
 
-  const infoType = getTransactionInfoType2({ tx, referenceAddress, internalAddresses: [] })
+  const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
   return {
     incoming: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
@@ -91,7 +88,7 @@ export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAdd
 export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
   if (!tx.outputs || tx.outputs.length === 0) return []
 
-  const infoType = getTransactionInfoType2({ tx, referenceAddress, internalAddresses: [] })
+  const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
   return {
     incoming: [referenceAddress],
@@ -129,40 +126,4 @@ const isSelfTransfer = (tx: e.Transaction | e.PendingTransaction | e.MempoolTran
     outputAddresses[0] !== undefined &&
     inputAddresses[0] === outputAddresses[0]
   )
-}
-
-// TODO: Delete
-export const getTransactionInfoType = (
-  tx: e.Transaction | e.PendingTransaction | SentTransaction,
-  addressHash: AddressHash,
-  internalAddresses: AddressHash[],
-  isInAddressDetailsModal?: boolean
-): TransactionInfoType => {
-  if (!isConfirmedTx(tx)) {
-    return 'pending'
-  } else if (isConsolidationTx(tx)) {
-    return 'move'
-  } else {
-    const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
-
-    if (hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)) {
-      return 'swap'
-    } else {
-      const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
-      const isInternalTransfer = isWalletSelfTransfer(tx, internalAddresses)
-
-      if (
-        (isInternalTransfer && isInAddressDetailsModal && alphAmountReduced) ||
-        (isInternalTransfer && !isInAddressDetailsModal)
-      ) {
-        return 'move'
-      } else {
-        if (alphAmountReduced) {
-          return 'out'
-        } else {
-          return 'in'
-        }
-      }
-    }
-  }
 }

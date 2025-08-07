@@ -1,4 +1,4 @@
-import { useTransactionInfoType2 } from '@alephium/shared-react'
+import { useTransactionInfoType } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -11,14 +11,14 @@ import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/t
 
 const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
-  const infoType = useTransactionInfoType2({ tx, referenceAddress, view: 'wallet' })
+  const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
-  if (infoType === 'bidirectional-transfer' || infoType === 'dApp') {
+  if (infoType === 'bidirectional-transfer' || infoType === 'dApp' || infoType === 'dApp-failed') {
     return (
       <DataList.Row label={t('Addresses')}>
         <AddressesInvolved>
           <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
-          <FromIn>{t('and')}</FromIn>
+          <And>{t('and')}</And>
           <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
         </AddressesInvolved>
       </DataList.Row>
@@ -46,6 +46,6 @@ const AddressesInvolved = styled.div`
   max-width: 100%;
 `
 
-const FromIn = styled.span`
+const And = styled.span`
   color: ${({ theme }) => theme.font.secondary};
 `

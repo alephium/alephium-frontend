@@ -1,6 +1,6 @@
 import { explorer as e } from '@alephium/web3'
 
-import { getTransactionInfoType2 } from '@/utils/transactions'
+import { getTransactionInfoType } from '@/utils/transactions'
 
 import { calcTxAmountsDeltaForAddress } from '../src/transactions'
 import transactions from './fixtures/transactions.json'
@@ -28,7 +28,7 @@ it('should calucate the amount delta between the inputs and outputs of an addres
 
 const expectExplorerGrouplessAddressPage = (tx: e.Transaction, referenceAddress: string) =>
   expect(
-    getTransactionInfoType2({
+    getTransactionInfoType({
       tx,
       referenceAddress,
       internalAddresses: []
@@ -37,7 +37,7 @@ const expectExplorerGrouplessAddressPage = (tx: e.Transaction, referenceAddress:
 
 const expectExplorerGroupedAddressPage = (tx: e.Transaction, referenceAddress: string) =>
   expect(
-    getTransactionInfoType2({
+    getTransactionInfoType({
       tx,
       referenceAddress,
       internalAddresses: []
@@ -48,7 +48,7 @@ const expectWalletAddressModal = expectExplorerGroupedAddressPage
 const expectExplorerGrouplessSubaddressPage = expectExplorerGroupedAddressPage
 const expectWalletActivityScreenWithSingleAddressAsInternal = (tx: e.Transaction, referenceAddress: string) =>
   expect(
-    getTransactionInfoType2({
+    getTransactionInfoType({
       tx,
       referenceAddress,
       internalAddresses: [referenceAddress]
@@ -58,7 +58,7 @@ const expectWalletActivityScreenWithSingleAddressAsInternal = (tx: e.Transaction
 const makeExpectWalletActivityScreenWithAllAddressesAsInternal =
   (address1: string, address2: string) => (tx: e.Transaction, referenceAddress: string) =>
     expect(
-      getTransactionInfoType2({
+      getTransactionInfoType({
         tx,
         referenceAddress,
         internalAddresses: [address1, address2]

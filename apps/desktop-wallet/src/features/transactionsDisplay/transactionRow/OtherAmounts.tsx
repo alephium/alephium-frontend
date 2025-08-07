@@ -1,4 +1,4 @@
-import { useFetchTransactionTokens, useTransactionInfoType2 } from '@alephium/shared-react'
+import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -15,7 +15,7 @@ const OtherAmounts = ({ tx, referenceAddress, view, type }: TransactionOtherToke
   const {
     data: { [type]: tokens }
   } = useFetchTransactionTokens(tx, referenceAddress)
-  const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
+  const infoType = useTransactionInfoType({ tx, referenceAddress: referenceAddress, view })
   const { t } = useTranslation()
   const theme = useTheme()
 

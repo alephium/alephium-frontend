@@ -3,7 +3,7 @@ import {
   Asset,
   calcTxAmountsDeltaForAddress,
   findTransactionReferenceAddress,
-  getTransactionInfoType2,
+  getTransactionInfoType,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
 import {
@@ -137,7 +137,7 @@ const applyFilters = ({
         if (!txRefAddress) return false
 
         const { tokenAmounts } = calcTxAmountsDeltaForAddress(tx, txRefAddress)
-        const infoType = getTransactionInfoType2({
+        const infoType = getTransactionInfoType({
           tx,
           referenceAddress: txRefAddress,
           internalAddresses: allAddressHashes

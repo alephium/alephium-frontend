@@ -42,7 +42,7 @@ const ConfirmedTransactionListItem = memo(({ tx, referenceAddress, ...props }: C
 export default ConfirmedTransactionListItem
 
 const TransactionLabel = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
-  const { label } = useTransactionIconLabel(tx, referenceAddress)
+  const { label } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return label
 }
@@ -54,7 +54,7 @@ const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentPr
 )
 
 const TransactionIcon = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
-  const { iconBgColor, iconColor, Icon } = useTransactionIconLabel(tx, referenceAddress)
+  const { iconBgColor, iconColor, Icon } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionIconStyled color={iconBgColor}>

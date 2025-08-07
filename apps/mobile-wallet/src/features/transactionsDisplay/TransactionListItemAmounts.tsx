@@ -1,5 +1,5 @@
 import { SentTransaction } from '@alephium/shared'
-import { useFetchTransactionTokens, useTransactionInfoType2 } from '@alephium/shared-react'
+import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -18,7 +18,7 @@ const TransactionListItemAmounts = ({ tx, referenceAddress }: TransactionListIte
   const {
     data: { fungibleTokens, nfts, nsts }
   } = useFetchTransactionTokens(tx, referenceAddress)
-  const infoType = useTransactionInfoType2({ tx, referenceAddress, view: 'wallet' })
+  const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionListItemAmountsStyled>
