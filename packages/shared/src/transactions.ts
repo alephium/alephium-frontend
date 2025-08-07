@@ -43,8 +43,8 @@ export const calcTxAmountsDeltaForAddress = (
     }
   }
 
-  const outputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.outputs)
-  const inputAmounts = summarizeAddressInputOutputAmounts(refAddress, tx.inputs)
+  const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
+  const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
 
   const tokensDelta = [...outputAmounts.tokenAmounts]
 
@@ -66,7 +66,7 @@ export const calcTxAmountsDeltaForAddress = (
   }
 }
 
-const summarizeAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Output)[]) => {
+const sumUpAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Output)[]) => {
   const isGrouplessRefAddress = isGrouplessAddressWithoutGroupIndex(refAddress)
 
   return io.reduce(
@@ -160,12 +160,18 @@ export const isWalletSelfTransfer = (
   walletAddresses: AddressHash[]
 ): boolean => getTxAddresses(tx).every((address) => walletAddresses.includes(getBaseAddressStr(address)))
 
+export const isBidirectionalTransfer = (tx: e.Transaction, referenceAddress: string): boolean => {
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, referenceAddress)
+
+  return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)
+}
+
 export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean =>
   !!tx.outputs?.some(inputOutputIsContractAddress) || !!tx.inputs?.some(inputOutputIsContractAddress)
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
-const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
+export const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
   const addresses = new Set<AddressHash>()
 
   for (const { address } of [...(tx.outputs ?? []), ...(tx.inputs ?? [])]) {

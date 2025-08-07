@@ -1,76 +1,39 @@
-import { isConfirmedTx, selectPendingSentTransactionByHash } from '@alephium/shared'
-import { useTransactionDirection } from '@alephium/shared-react'
+import { useTransactionInfoType2 } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import ActionLink from '@/components/ActionLink'
-import AddressBadge from '@/components/AddressBadge'
 import DataList from '@/components/DataList'
-import HashEllipsed from '@/components/HashEllipsed'
-import IOList from '@/components/IOList'
-import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
-import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
+import ClickableAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/ClickableAddressBadge'
+import {
+  BidirectionalTransferAddressesList,
+  UnidirectionalTransactionDestinationAddressesList,
+  UnidirectionalTransactionOriginAddressesList
+} from '@/features/transactionsDisplay/transactionDetailsModal/InputsOutputsLists'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
-import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import { useAppSelector } from '@/hooks/redux'
 
 const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, referenceAddress)
-  const onAddressClick = useOnAddressClick()
-  const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const infoType = useTransactionInfoType2({ tx, referenceAddress, view: 'wallet' })
 
-  if (direction === 'swap')
+  if (infoType === 'bidirectional-transfer' || infoType === 'dApp') {
     return (
       <DataList.Row label={t('Addresses')}>
-        <DirectionalInfo tx={tx} referenceAddress={referenceAddress} />
+        <AddressesInvolved>
+          <ClickableAddressBadge address={referenceAddress} />
+          <FromIn>{t('and')}</FromIn>
+          <BidirectionalTransferAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        </AddressesInvolved>
       </DataList.Row>
     )
-
-  const handleAddressClick = () => onAddressClick(referenceAddress)
+  }
 
   return (
     <>
-      <DataList.Row label={t('Transaction hash')}>
-        <TransactionHash onClick={handleShowTxInExplorer}>
-          <HashEllipsed hash={tx.hash} tooltipText={t('Copy hash')} />
-        </TransactionHash>
-      </DataList.Row>
       <DataList.Row label={t('From')}>
-        {direction === 'out' ? (
-          <ActionLinkStyled onClick={handleAddressClick}>
-            <AddressBadge addressHash={referenceAddress} truncate withBorders />
-          </ActionLinkStyled>
-        ) : (
-          <IOList
-            currentAddress={referenceAddress}
-            isOut={false}
-            outputs={tx.outputs}
-            inputs={tx.inputs}
-            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
-            linkToExplorer
-          />
-        )}
+        <UnidirectionalTransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </DataList.Row>
       <DataList.Row label={t('To')}>
-        {pendingSentTx ? (
-          <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
-        ) : direction !== 'out' ? (
-          <ActionLinkStyled onClick={handleAddressClick} key={referenceAddress}>
-            <AddressBadge addressHash={referenceAddress} truncate withBorders />
-          </ActionLinkStyled>
-        ) : (
-          <IOList
-            currentAddress={referenceAddress}
-            isOut={direction === 'out'}
-            outputs={tx.outputs}
-            inputs={tx.inputs}
-            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
-            linkToExplorer
-          />
-        )}
+        <UnidirectionalTransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </DataList.Row>
     </>
   )
@@ -78,11 +41,13 @@ const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxPr
 
 export default AddressesDataRows
 
-const TransactionHash = styled(ActionLink)`
-  max-width: 125px;
+const AddressesInvolved = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  max-width: 100%;
 `
 
-const ActionLinkStyled = styled(ActionLink)`
-  width: 100%;
-  justify-content: flex-end;
+const FromIn = styled.span`
+  color: ${({ theme }) => theme.font.secondary};
 `

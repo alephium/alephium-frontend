@@ -101,6 +101,7 @@ export type TransactionInfoType2 =
   | 'address-self-transfer' // all input/outputs are the same address
   | 'address-group-transfer' // all input/outputs are multiple subaddresses of the same groupless address
   | 'dApp' // at least one input/output is a contract address
+  | 'bidirectional-transfer' // the reference address has both positive and negative amount deltas
   | 'outgoing'
   | 'incoming'
 

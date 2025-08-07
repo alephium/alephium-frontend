@@ -1,0 +1,93 @@
+import {
+  GENESIS_TIMESTAMP,
+  getBidirectionalTransactionAddresses,
+  getUnidirectionalTransactionDestinationAddresses,
+  getUnidirectionalTransactionOriginAddresses,
+  isConfirmedTx,
+  selectPendingSentTransactionByHash,
+  UseTransactionProps
+} from '@alephium/shared'
+import { explorer as e } from '@alephium/web3'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import Badge from '@/components/Badge'
+import ClickableAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/ClickableAddressBadge'
+import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
+import { useAppSelector } from '@/hooks/redux'
+
+interface InputsListProps extends UseTransactionProps {
+  tx: e.Transaction | e.PendingTransaction
+}
+
+export const UnidirectionalTransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+  const { t } = useTranslation()
+
+  const addresses = useMemo(
+    () => getUnidirectionalTransactionOriginAddresses({ tx, referenceAddress }),
+    [tx, referenceAddress]
+  )
+
+  const timestamp = isConfirmedTx(tx) ? tx.timestamp : undefined
+
+  if (timestamp === GENESIS_TIMESTAMP) {
+    return <Badge>{t('Genesis TX')}</Badge>
+  }
+
+  if (!tx.inputs || tx.inputs.length === 0) {
+    return <Badge>{t('Mining Rewards')}</Badge>
+  }
+
+  return (
+    <AddressesList>
+      {addresses.map((address) => (
+        <ClickableAddressBadge address={address} key={address} />
+      ))}
+    </AddressesList>
+  )
+}
+
+export const UnidirectionalTransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+
+  const addresses = useMemo(
+    () => getUnidirectionalTransactionDestinationAddresses({ tx, referenceAddress }),
+    [tx, referenceAddress]
+  )
+
+  if (pendingSentTx) {
+    return <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
+  }
+
+  return (
+    <AddressesList>
+      {addresses.map((address) => (
+        <ClickableAddressBadge address={address} key={address} />
+      ))}
+    </AddressesList>
+  )
+}
+
+export const BidirectionalTransferAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+  const addresses = useMemo(
+    () => getBidirectionalTransactionAddresses({ tx, referenceAddress }),
+    [tx, referenceAddress]
+  )
+
+  return (
+    <AddressesList>
+      {addresses.map((address) => (
+        <ClickableAddressBadge address={address} key={address} />
+      ))}
+    </AddressesList>
+  )
+}
+
+const AddressesList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  overflow: hidden;
+  gap: 5px;
+`

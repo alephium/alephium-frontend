@@ -6,10 +6,12 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import DataList from '@/components/DataList'
+import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
@@ -21,6 +23,7 @@ import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetai
 import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
+import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal, { SideModalTitle } from '@/modals/SideModal'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
@@ -98,6 +101,7 @@ const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
   const { t } = useTranslation()
   const theme = useTheme()
   const allAddressHashes = useUnsortedAddressesHashes()
+  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
 
   const { data: tx, isLoading } = useFetchTransaction({ txHash })
 
@@ -119,6 +123,12 @@ const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
       {tx && (
         <>
           <DataList>
+            <DataList.Row label={t('Transaction hash')}>
+              <TransactionHash onClick={handleShowTxInExplorer}>
+                <HashEllipsed hash={tx.hash} tooltipText={t('Copy hash')} />
+              </TransactionHash>
+            </DataList.Row>
+
             <AddressesDataRows tx={tx} referenceAddress={referenceAddress} />
 
             <DataList.Row label={t('Status')}>
@@ -178,4 +188,8 @@ const SummaryContent = styled.div`
 
 const DetailsStyled = styled.div`
   padding: var(--spacing-2) var(--spacing-3);
+`
+
+const TransactionHash = styled(ActionLink)`
+  max-width: 125px;
 `

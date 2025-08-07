@@ -25,7 +25,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
           'address-self-transfer': t('Self transfer'),
           'address-group-transfer': t('Group transfer'),
           pending: t('Pending'),
-          dApp: t('dApp operation')
+          dApp: t('dApp operation'),
+          'bidirectional-transfer': t('Swapped')
         }[infoType],
         Icon: {
           incoming: ArrowDown,
@@ -34,7 +35,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
           'address-self-transfer': RefreshCcw,
           'address-group-transfer': RefreshCcw,
           pending: CircleEllipsis,
-          dApp: Repeat
+          dApp: Repeat,
+          'bidirectional-transfer': Repeat
         }[infoType],
         iconColor: {
           incoming: theme.global.valid,
@@ -43,7 +45,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
           'address-self-transfer': theme.font.secondary,
           'address-group-transfer': theme.font.secondary,
           pending: theme.font.secondary,
-          dApp: theme.global.complementary
+          dApp: theme.global.complementary,
+          'bidirectional-transfer': theme.global.complementary
         }[infoType],
         iconBgColor: {
           incoming: colord(theme.global.valid).alpha(0.08).toRgbString(),
@@ -52,7 +55,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
           'address-self-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),
           'address-group-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),
           pending: colord(theme.font.secondary).alpha(0.08).toRgbString(),
-          dApp: colord(theme.global.complementary).alpha(0.08).toRgbString()
+          dApp: colord(theme.global.complementary).alpha(0.08).toRgbString(),
+          'bidirectional-transfer': colord(theme.global.complementary).alpha(0.08).toRgbString()
         }[infoType]
       }
 }

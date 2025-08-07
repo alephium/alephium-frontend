@@ -20,8 +20,12 @@ import {
 import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '@/constants'
 import {
   calcTxAmountsDeltaForAddress,
+  getBaseAddressStr,
+  getInputOutputBaseAddress,
+  getTxAddresses,
   hasPositiveAndNegativeAmounts,
   isAlphAmountReduced,
+  isBidirectionalTransfer,
   isConfirmedTx,
   isConsolidationTx,
   isContractTx,
@@ -40,6 +44,7 @@ import {
   TransactionInfoType2,
   TransactionParams
 } from '@/types/transactions'
+import { uniq } from '@/utils/utils'
 
 export const getTransactionInfoType2 = ({
   tx,
@@ -58,6 +63,8 @@ export const getTransactionInfoType2 = ({
     return 'address-group-transfer'
   } else if (isWalletSelfTransfer(tx, internalAddresses)) {
     return 'wallet-self-transfer'
+  } else if (isBidirectionalTransfer(tx, referenceAddress)) {
+    return 'bidirectional-transfer'
   } else if (isContractTx(tx)) {
     return 'dApp'
   } else if (isAlphAmountReduced(tx, referenceAddress)) {
@@ -316,4 +323,94 @@ export const getTransactionExpectedBalances = ({ type, params }: TransactionPara
   }
 
   return expectedBalances
+}
+
+// TODO: Write tests
+export const getUnidirectionalTransactionOriginAddresses = ({
+  tx,
+  referenceAddress
+}: {
+  tx: e.Transaction | e.PendingTransaction
+  referenceAddress: string
+}): AddressHash[] => {
+  if (!tx.inputs || tx.inputs.length === 0) {
+    return []
+  }
+
+  if (isSelfTransfer(tx) || isGrouplessAddressIntraTransfer(tx)) {
+    return [referenceAddress]
+  }
+
+  return getInputOutputBaseAddresses(tx.inputs).filter((address) => addressHasOnlyNegativeAmountDeltas(tx, address))
+}
+
+// TODO: Write tests
+export const getUnidirectionalTransactionDestinationAddresses = ({
+  tx,
+  referenceAddress
+}: {
+  tx: e.Transaction | e.PendingTransaction
+  referenceAddress: string
+}): AddressHash[] => {
+  if (!tx.outputs || tx.outputs.length === 0) {
+    return []
+  }
+
+  if (isSelfTransfer(tx) || isGrouplessAddressIntraTransfer(tx)) {
+    return [referenceAddress]
+  }
+
+  return getInputOutputBaseAddresses(tx.outputs).filter((address) => addressHasOnlyPositiveAmountDeltas(tx, address))
+}
+
+export const getBidirectionalTransactionAddresses = ({
+  tx,
+  referenceAddress
+}: {
+  tx: e.Transaction | e.PendingTransaction
+  referenceAddress: string
+}): AddressHash[] =>
+  uniq(
+    getTxAddresses(tx)
+      .map(getBaseAddressStr)
+      .filter((address) => address !== referenceAddress)
+  )
+
+const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
+  uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
+
+const addressHasOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
+
+  const hasNoAlphDelta = !alphAmount
+  const hasNoTokensDeltas = tokenAmounts.length === 0
+
+  if (hasNoAlphDelta && hasNoTokensDeltas) return false
+
+  const hasNegativeAlphDelta = alphAmount < 0
+  const hasNegativeTokensDeltas = tokenAmounts.every(({ amount }) => amount < 0)
+
+  return (
+    (hasNoAlphDelta && hasNegativeTokensDeltas) ||
+    (hasNoTokensDeltas && hasNegativeAlphDelta) ||
+    (hasNegativeAlphDelta && hasNegativeTokensDeltas)
+  )
+}
+
+const addressHasOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
+
+  const hasNoAlphDelta = !alphAmount
+  const hasNoTokensDeltas = tokenAmounts.length === 0
+
+  if (hasNoAlphDelta && hasNoTokensDeltas) return false
+
+  const hasPositiveAlphDelta = alphAmount > 0
+  const hasPositiveTokensDeltas = tokenAmounts.every(({ amount }) => amount > 0)
+
+  return (
+    (hasNoAlphDelta && hasPositiveTokensDeltas) ||
+    (hasNoTokensDeltas && hasPositiveAlphDelta) ||
+    (hasPositiveAlphDelta && hasPositiveTokensDeltas)
+  )
 }
