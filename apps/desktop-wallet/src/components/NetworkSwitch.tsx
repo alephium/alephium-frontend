@@ -1,5 +1,5 @@
-import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { capitalize, NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { useIsExplorerOffline } from '@alephium/shared-react'
 import { ArrowRight } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -85,27 +85,28 @@ export default NetworkSwitch
 
 const SelectCustomComponent = () => {
   const theme = useTheme()
-  const { t } = useTranslation()
   const network = useAppSelector((state) => state.network)
-  const isOffline = useCurrentlyOnlineNetworkId() === undefined
+  const isExplorerOffline = useIsExplorerOffline()
+
+  const status =
+    (isExplorerOffline && network.nodeStatus === 'online') || (!isExplorerOffline && network.nodeStatus === 'offline')
+      ? 'degraded'
+      : network.nodeStatus
 
   const networkStatusColor = {
     online: theme.global.valid,
     offline: theme.global.alert,
     connecting: theme.global.accent,
-    uninitialized: theme.font.tertiary
-  }[network.nodeStatus]
+    uninitialized: theme.font.tertiary,
+    degraded: theme.global.highlight
+  }[status]
 
   return (
-    <Badge
-      compact
-      color={networkStatusColor}
-      clickable
-      data-tooltip-id="default"
-      data-tooltip-content={isOffline ? `${t('offline')}` : `${t('Current network')}`}
-    >
-      {network.name.charAt(0).toUpperCase() + network.name.slice(1)}
-    </Badge>
+    <div data-tooltip-id="default" data-tooltip-content={capitalize(status)}>
+      <Badge compact color={networkStatusColor} clickable>
+        {network.name.charAt(0).toUpperCase() + network.name.slice(1)}
+      </Badge>
+    </div>
   )
 }
 
