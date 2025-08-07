@@ -1,37 +1,33 @@
-import { useTransactionDirection, useTransactionInfoType2 } from '@alephium/shared-react'
+import { useTransactionInfoType2 } from '@alephium/shared-react'
 import { ArrowLeftRight, ArrowRight as ArrowRightIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HiddenLabel from '@/components/HiddenLabel'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
 const DirectionCell = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
-  const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, referenceAddress)
   const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
+  const { connectingWord } = useTransactionIconLabel({ tx, referenceAddress, view })
 
-  if ((infoType === 'address-group-transfer' || infoType === 'address-self-transfer') && view === 'address') return null
+  if (view === 'address') {
+    return infoType === 'address-group-transfer' || infoType === 'address-self-transfer' ? null : (
+      <CellDirection>
+        <DirectionText>{connectingWord}</DirectionText>
+      </CellDirection>
+    )
+  }
+
+  if (infoType === 'bidirectional-transfer') {
+    return (
+      <CellDirection>
+        <ArrowLeftRight size={15} strokeWidth={2} />
+      </CellDirection>
+    )
+  }
 
   return (
     <CellDirection>
-      <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
-
-      {view === 'address' ? (
-        <DirectionText>
-          {
-            {
-              in: t('from'),
-              out: t('to'),
-              swap: t('with')
-            }[direction]
-          }
-        </DirectionText>
-      ) : direction === 'swap' ? (
-        <ArrowLeftRight size={15} strokeWidth={2} />
-      ) : (
-        <ArrowRightIcon size={15} strokeWidth={2} />
-      )}
+      <ArrowRightIcon size={15} strokeWidth={2} />
     </CellDirection>
   )
 }

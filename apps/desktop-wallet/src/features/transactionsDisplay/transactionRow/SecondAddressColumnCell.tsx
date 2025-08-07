@@ -7,10 +7,12 @@ import { TransactionRowSectionProps } from '@/features/transactionsDisplay/trans
 const SecondAddressColumnCell = ({ tx, referenceAddress, view }: TransactionRowSectionProps) => {
   const infoType = useTransactionInfoType2({ tx, referenceAddress: referenceAddress, view })
 
-  if ((infoType === 'address-group-transfer' || infoType === 'address-self-transfer') && view === 'address') return null
+  if (view === 'address' && (infoType === 'address-group-transfer' || infoType === 'address-self-transfer')) {
+    return null
+  }
 
   return (
-    <AddressCell>
+    <AddressCell shrink={view === 'address'}>
       <TransactionDestinationAddressesList
         tx={tx}
         referenceAddress={referenceAddress}

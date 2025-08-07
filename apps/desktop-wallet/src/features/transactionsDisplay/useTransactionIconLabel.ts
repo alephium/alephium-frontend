@@ -22,6 +22,17 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'address-self-transfer': t('Self transfer'),
       'address-group-transfer': t('Group transfer')
     }[infoType],
+    connectingWord: {
+      incoming: t('from'),
+      outgoing: t('to'),
+      pending: '',
+      dApp: t('with'),
+      'dApp-failed': t('with'),
+      'bidirectional-transfer': t('with'),
+      'wallet-self-transfer': '',
+      'address-self-transfer': '',
+      'address-group-transfer': ''
+    }[infoType],
     Icon: {
       incoming: ArrowDown,
       outgoing: ArrowUp,
