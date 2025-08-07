@@ -1,18 +1,20 @@
 import {
   AddressHash,
   FIVE_MINUTES_MS,
+  is5XXError,
   isConfirmedTx,
   ONE_MINUTE_MS,
   throttledClient,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { explorer as e, sleep } from '@alephium/web3'
+import { explorer as e, node as n, sleep } from '@alephium/web3'
 import { AcceptedTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '@/api/apiUtils'
 import { queryClient } from '@/api/queryClient'
+import { invalidateAddressQueries, invalidateWalletQueries } from '@/api/queryInvalidation'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
@@ -51,30 +53,24 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             // The following block invalidates queries that need to refetch data if a new transaction hash has been
             // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
             if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-              // The backend needs some time to update the results of the following queries
-              // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
-              await sleep(2000)
-
               // This is required because the backend returns incomplete confirmed tx data.
               // See https://github.com/alephium/alephium-frontend/issues/1367
-              const [fullDataLatestTx] = await throttledClient.explorer.addresses.getAddressesAddressTransactions(
-                addressHash,
-                {
-                  page: 1,
-                  limit: 1
-                }
+              const fullDataLatestTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(
+                latestTx.hash
               )
 
               if (isConfirmedTx(fullDataLatestTx)) {
                 latestTx.hash = fullDataLatestTx.hash
                 latestTx.timestamp = fullDataLatestTx.timestamp
 
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
-                queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'computedData'] })
-                queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+                // The backend needs some time to update the results of the following queries
+                // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
+                await sleep(2000)
+
+                await invalidateAddressQueries(addressHash)
+                await invalidateWalletQueries()
               } else {
-                latestTx = cachedData?.latestTx
+                latestTx = cachedLatestTx
               }
             }
 
@@ -216,7 +212,19 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTran
           // Delay initial query to give the tx some time to enter the mempool instead of getting 404's
           if (!queryClient.getQueryData(['transaction', 'pending', txHash])) await sleep(3000)
 
-          return throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
+          let pendingTx: AcceptedTransaction | e.PendingTransaction | n.RichTransaction
+
+          try {
+            pendingTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
+          } catch (e) {
+            if (is5XXError(e)) {
+              pendingTx = await throttledClient.node.transactions.getTransactionsRichDetailsTxid(txHash)
+            } else {
+              throw e
+            }
+          }
+
+          return pendingTx
         }
       : skipToken
   })
@@ -226,4 +234,18 @@ export const addressTransactionsCountQuery = ({ addressHash, networkId }: Addres
     queryKey: ['address', addressHash, 'transactions', 'count', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: () => throttledClient.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+  })
+
+export const nodeTransactionStatusQuery = ({ txHash, networkId, skip }: PendingTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', 'node', 'status', txHash],
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    refetchInterval: 3000,
+    queryFn: !skip
+      ? async () => {
+          const status = await throttledClient.node.transactions.getTransactionsStatus({ txId: txHash })
+
+          return status.type
+        }
+      : skipToken
   })

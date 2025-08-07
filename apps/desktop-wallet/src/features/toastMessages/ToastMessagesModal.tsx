@@ -22,14 +22,13 @@ export default ToastMessagesModal
 
 const ToastMessagesModalContainer = styled.div`
   position: fixed;
-  top: ${appHeaderHeightPx / 2}px;
-  left: 0;
-  right: 0;
+  top: ${appHeaderHeightPx + 15}px;
+  right: var(--spacing-6);
   z-index: 3;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-end;
   gap: var(--spacing-1);
   pointer-events: none;
 

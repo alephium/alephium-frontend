@@ -11,13 +11,10 @@ import styled from 'styled-components'
 import { queries } from '@/api'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import Toggle from '@/components/Toggle'
 import { useQueriesData } from '@/hooks/useQueriesData'
-import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/pages/AddressInfoPage/NFTDetailsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { OnOff } from '@/types/generics'
 
 interface NFTListProps {
   addressStr: string
@@ -26,12 +23,8 @@ interface NFTListProps {
 const NFTList = ({ addressStr }: NFTListProps) => {
   const { t } = useTranslation()
   const [consultedNftId, setConsultedNftId] = useState<string>()
-  const [isCollectionGroupingActive, setIsCollectionGroupingActive] = useStateWithLocalStorage<OnOff>(
-    'NFTCollectionGrouping',
-    'off'
-  )
-
   const { data: _nfts, isLoading: isLoading } = useFetchAddressNfts(addressStr)
+
   const nfts = _nfts || []
 
   const consultedNft = nfts?.find((nft) => nft.id === consultedNftId)
@@ -51,21 +44,9 @@ const NFTList = ({ addressStr }: NFTListProps) => {
     collectionsMatadata.map((meta) => queries.assets.NFTsData.collection(meta.collectionUri, meta.id, meta.address))
   )
 
-  const handleCollectionToggle = () => {
-    setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
-  }
-
   return (
     <>
       <NFTListContainer>
-        <Toolbar>
-          <ToggleLabel>{t('Group by collection')}</ToggleLabel>
-          <Toggle
-            label={t('Group by collection')}
-            toggled={isCollectionGroupingActive === 'on'}
-            onToggle={handleCollectionToggle}
-          />
-        </Toolbar>
         {isLoading ? (
           <NFTListStyled>
             <SkeletonLoader height="200px" />
@@ -73,20 +54,14 @@ const NFTList = ({ addressStr }: NFTListProps) => {
             <SkeletonLoader height="200px" />
           </NFTListStyled>
         ) : nfts.length > 0 ? (
-          isCollectionGroupingActive === 'on' ? (
-            Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
-              <CollectionContainer key={collectionId}>
-                <CollectionHeader>
-                  {collectionId === 'undefined'
-                    ? t('Unknown collection')
-                    : collectionFiles.find((c) => c.collectionId === collectionId)?.name}
-                </CollectionHeader>
-                <NFTListComponent nfts={nfts} onClick={setConsultedNftId} />
-              </CollectionContainer>
-            ))
-          ) : (
-            <NFTListComponent nfts={nfts} onClick={setConsultedNftId} />
-          )
+          Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
+            <CollectionContainer key={collectionId}>
+              <CollectionHeader>
+                {collectionFiles.find((c) => c.collectionId === collectionId)?.name || t('Unknown collection')}
+              </CollectionHeader>
+              <NFTListComponent nfts={nfts} onClick={setConsultedNftId} />
+            </CollectionContainer>
+          ))
         ) : (
           <NoNFTsMessage>
             <EmptyIconContainer>
@@ -150,18 +125,6 @@ const NFTListContainer = styled.div`
   background-color: ${({ theme }) => theme.bg.secondary};
 `
 
-const Toolbar = styled.div`
-  flex-shrink: 0;
-  padding: 0 15px;
-  margin: 15px 15px 5px;
-  border-radius: 4px;
-  height: 50px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
-`
-
 const NFTListStyled = styled.div`
   flex: 1;
   display: grid;
@@ -223,13 +186,12 @@ const NFTName = styled.div`
 const NoNFTsMessage = styled.div`
   display: flex;
   flex-direction: column;
-
   text-align: center;
   justify-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.tertiary};
-  margin: 20px auto;
   padding: 20px;
+  margin: 20px;
   border-radius: 8px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
   font-size: 1.1em;
@@ -255,16 +217,11 @@ const CollectionHeader = styled.div`
   height: 50px;
   margin: 10px 15px;
   border-radius: 4px;
-  background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.9).toHex()};
+  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.9).toHex()};
   display: flex;
   align-items: center;
   padding: 0 15px;
   font-size: 14px;
   font-weight: 600;
-
   backdrop-filter: blur(10px);
-`
-
-const ToggleLabel = styled.div`
-  margin-right: 5px;
 `

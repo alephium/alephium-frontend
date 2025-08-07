@@ -27,5 +27,6 @@ export type NetworkPreset = Exclude<NetworkName, 'custom'>
 export interface NetworkState {
   name: NetworkName
   settings: NetworkSettings
-  status: NetworkStatus
+  nodeStatus: NetworkStatus
+  explorerStatus: NetworkStatus
 }

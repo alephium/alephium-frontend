@@ -1,4 +1,9 @@
-import { apiClientInitSucceeded, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import {
+  customNetworkSettingsSaved,
+  explorerApiClientInitSucceeded,
+  networkPresetSwitched,
+  nodeApiClientInitSucceeded
+} from '@alephium/shared'
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
@@ -8,7 +13,12 @@ export const networkListenerMiddleware = createListenerMiddleware()
 
 // When the network changes, store settings in persistent storage
 networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
+  matcher: isAnyOf(
+    networkPresetSwitched,
+    customNetworkSettingsSaved,
+    nodeApiClientInitSucceeded,
+    explorerApiClientInitSucceeded
+  ),
   effect: (_, { getState }) => {
     const state = getState() as RootState
 

@@ -1,21 +1,30 @@
 import '@walletconnect/react-native-compat'
 
 import {
+  getChainedTxPropsFromSignChainedTxParams,
   getHumanReadableError,
+  isInsufficientFundsError,
   parseSessionProposalEvent,
+  selectAllAddressByType,
   SessionProposalEvent,
   SessionRequestEvent,
   throttledClient,
+  TransactionParams,
   WALLETCONNECT_ERRORS,
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
   walletConnectClientInitializing,
   walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
-import { useInterval } from '@alephium/shared-react'
+import {
+  getRefillMissingBalancesChainedTxParams,
+  useCurrentlyOnlineNetworkId,
+  useInterval
+} from '@alephium/shared-react'
 import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
+  SignChainedTxParams,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
   SignMessageParams,
@@ -50,14 +59,11 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { buildDeployContractTransaction } from '~/api/transactions'
-import {
-  processSignExecuteScriptTxParamsAndBuildTx,
-  processSignTransferTxParamsAndBuildTx
-} from '~/features/ecosystem/utils'
+import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -110,6 +116,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { t } = useTranslation()
+  const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
+  const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -475,214 +483,300 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
       console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
 
+      let transactionParams: TransactionParams | undefined = undefined
+
       try {
-        switch (requestEvent.params.request.method as RelayMethod) {
-          case 'alph_signAndSubmitTransferTx': {
-            const txParams = requestEvent.params.request.params as SignTransferTxParams
+        try {
+          switch (requestEvent.params.request.method as RelayMethod) {
+            case 'alph_signAndSubmitTransferTx': {
+              const txParams = requestEvent.params.request.params as SignTransferTxParams
+              transactionParams = { type: 'TRANSFER', params: txParams }
 
-            const { txParamsSingleDestination, buildTransactionTxResult } =
-              await processSignTransferTxParamsAndBuildTx(txParams)
+              // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+              // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+              // That would make sense only if we have a single destination otherwise what should the sweep destination
+              // address be?
 
-            dispatch(
-              openModal({
-                name: 'SignTransferTxModal',
-                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
-                props: {
-                  dAppUrl: requestEvent.verifyContext.verified.origin,
-                  dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams: txParamsSingleDestination,
-                  unsignedData: buildTransactionTxResult,
-                  origin: 'walletconnect',
-                  onError: (message) => {
-                    respondToWalletConnectWithError(requestEvent, {
-                      message,
-                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                    })
-                  },
-                  onSuccess: (result) =>
-                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-                }
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
+                txParams,
+                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+              )
+              dispatch(deactivateAppLoading())
+
+              dispatch(
+                openModal({
+                  name: 'SignTransferTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    txParams,
+                    unsignedData: unsignedBuiltTx,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_signAndSubmitDeployContractTx': {
+              const txParams = requestEvent.params.request.params as SignDeployContractTxParams
+              transactionParams = { type: 'DEPLOY_CONTRACT', params: txParams }
+
+              dispatch(activateAppLoading(t('Processing WalletConnect request')))
+              const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
+                txParams,
+                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+              )
+
+              dispatch(
+                openModal({
+                  name: 'SignDeployContractTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    txParams,
+                    unsignedData,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_signAndSubmitExecuteScriptTx': {
+              const txParams = requestEvent.params.request.params as SignExecuteScriptTxParams
+              transactionParams = { type: 'EXECUTE_SCRIPT', params: txParams }
+
+              dispatch(activateAppLoading('Loading'))
+              const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
+                txParams,
+                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+              )
+
+              dispatch(
+                openModal({
+                  name: 'SignExecuteScriptTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    txParams,
+                    unsignedData: unsignedBuiltTx,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    },
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_signMessage': {
+              const signParams = requestEvent.params.request.params as SignMessageParams
+
+              dispatch(
+                openModal({
+                  name: 'SignMessageTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    txParams: signParams,
+                    unsignedData: signParams.message,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                      })
+                    },
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_signUnsignedTx':
+            case 'alph_signAndSubmitUnsignedTx': {
+              const txParams = requestEvent.params.request.params as SignUnsignedTxParams
+              const submitAfterSign = requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
+
+              dispatch(activateAppLoading(t('Processing WalletConnect request')))
+              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
+                unsignedTx: txParams.unsignedTx
               })
-            )
 
-            break
+              dispatch(
+                openModal({
+                  name: 'SignUnsignedTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    txParams,
+                    unsignedData: decodedResult.unsignedTx,
+                    submitAfterSign,
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: submitAfterSign
+                          ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+                          : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                      })
+                    },
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_signAndSubmitChainedTx': {
+              const txParams = requestEvent.params.request.params as SignChainedTxParams[]
+
+              dispatch(activateAppLoading('Loading'))
+              const publicKeys = await getChainedTxSignersPublicKeys(txParams)
+              const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, publicKeys)
+
+              dispatch(
+                openModal({
+                  name: 'SignChainedTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    props: getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData),
+                    txParams,
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result }),
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    origin: 'walletconnect',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    }
+                  }
+                })
+              )
+
+              break
+            }
+            case 'alph_requestNodeApi': {
+              walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+              const p = requestEvent.params.request.params as ApiRequestArguments
+              const result = await throttledClient.node.request(p)
+
+              console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
+
+              await handleApiResponse(requestEvent, result)
+
+              break
+            }
+            case 'alph_requestExplorerApi': {
+              walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+              const p = requestEvent.params.request.params as ApiRequestArguments
+              const result = await throttledClient.explorer.request(p)
+
+              console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
+
+              await handleApiResponse(requestEvent, result)
+
+              break
+            }
+            default:
+              respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
           }
-          case 'alph_signAndSubmitDeployContractTx': {
-            const txParams = requestEvent.params.request.params as SignDeployContractTxParams
-
-            dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            const buildDeployContractTxResult = await buildDeployContractTransaction(txParams)
-            dispatch(deactivateAppLoading())
-
-            dispatch(
-              openModal({
-                name: 'SignDeployContractTxModal',
-                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
-                props: {
-                  dAppUrl: requestEvent.verifyContext.verified.origin,
-                  dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams,
-                  unsignedData: buildDeployContractTxResult,
-                  origin: 'walletconnect',
-                  onError: (message) => {
-                    respondToWalletConnectWithError(requestEvent, {
-                      message,
-                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                    })
-                  },
-                  onSuccess: (result) =>
-                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-                }
-              })
-            )
-
-            break
-          }
-          case 'alph_signAndSubmitExecuteScriptTx': {
-            const txParams = requestEvent.params.request.params as SignExecuteScriptTxParams
-
-            const { txParamsWithAmounts, buildCallContractTxResult } =
-              await processSignExecuteScriptTxParamsAndBuildTx(txParams)
-
-            dispatch(
-              openModal({
-                name: 'SignExecuteScriptTxModal',
-                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
-                props: {
-                  dAppUrl: requestEvent.verifyContext.verified.origin,
-                  dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams: txParamsWithAmounts,
-                  unsignedData: buildCallContractTxResult,
-                  origin: 'walletconnect',
-                  onError: (message) => {
-                    respondToWalletConnectWithError(requestEvent, {
-                      message,
-                      code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                    })
-                  },
-                  onSuccess: (result) =>
-                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-                }
-              })
-            )
-
-            break
-          }
-          case 'alph_signMessage': {
-            const signParams = requestEvent.params.request.params as SignMessageParams
-
-            dispatch(
-              openModal({
-                name: 'SignMessageTxModal',
-                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
-                props: {
-                  dAppUrl: requestEvent.verifyContext.verified.origin,
-                  dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams: signParams,
-                  unsignedData: signParams.message,
-                  origin: 'walletconnect',
-                  onError: (message) => {
-                    respondToWalletConnectWithError(requestEvent, {
-                      message,
-                      code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
-                    })
-                  },
-                  onSuccess: (result) =>
-                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-                }
-              })
-            )
-
-            break
-          }
-          case 'alph_signUnsignedTx':
-          case 'alph_signAndSubmitUnsignedTx': {
-            const txParams = requestEvent.params.request.params as SignUnsignedTxParams
-            const submitAfterSign = requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
-
-            dispatch(activateAppLoading(t('Processing WalletConnect request')))
-            const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-              unsignedTx: txParams.unsignedTx
+        } catch (e: unknown) {
+          if (isInsufficientFundsError(e) && transactionParams) {
+            const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
+              transactionParams,
+              addressesWithGroup,
+              networkId: currentlyOnlineNetworkId
             })
-            dispatch(deactivateAppLoading())
 
-            dispatch(
-              openModal({
-                name: 'SignUnsignedTxModal',
-                onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
-                props: {
-                  dAppUrl: requestEvent.verifyContext.verified.origin,
-                  dAppIcon: getDappIcon(requestEvent.topic),
-                  txParams,
-                  unsignedData: decodedResult,
-                  submitAfterSign,
-                  origin: 'walletconnect',
-                  onError: (message) => {
-                    respondToWalletConnectWithError(requestEvent, {
-                      message,
-                      code: submitAfterSign
-                        ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
-                        : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
-                    })
-                  },
-                  onSuccess: (result) =>
-                    respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-                }
-              })
-            )
+            if (chainedTxParams) {
+              const publicKeys = await getChainedTxSignersPublicKeys(chainedTxParams)
+              const unsignedData = await throttledClient.txBuilder.buildChainedTx(chainedTxParams, publicKeys)
 
-            break
-          }
-          case 'alph_requestNodeApi': {
-            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
-            const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await throttledClient.node.request(p)
-
-            console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
-
-            await handleApiResponse(requestEvent, result)
-
-            break
-          }
-          case 'alph_requestExplorerApi': {
-            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
-            const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await throttledClient.explorer.request(p)
-
-            console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
-
-            await handleApiResponse(requestEvent, result)
-
-            break
-          }
-          default:
-            respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
+              dispatch(
+                openModal({
+                  name: 'SignChainedTxModal',
+                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  props: {
+                    props: getChainedTxPropsFromSignChainedTxParams(chainedTxParams, unsignedData),
+                    txParams: chainedTxParams,
+                    onSuccess: (result) =>
+                      respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result }),
+                    dAppUrl: requestEvent.verifyContext.verified.origin,
+                    dAppIcon: getDappIcon(requestEvent.topic),
+                    origin: 'walletconnect:insufficient-funds',
+                    onError: (message) => {
+                      respondToWalletConnectWithError(requestEvent, {
+                        message,
+                        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                      })
+                    }
+                  }
+                })
+              )
+            } else throw e
+          } else throw e
+        } finally {
+          dispatch(deactivateAppLoading())
         }
-      } catch (e: unknown) {
-        const error = e as { message?: string }
-
-        dispatch(deactivateAppLoading())
-
-        if (error.message?.includes('NotEnoughApprovedBalance')) {
+      } catch (e) {
+        if (isInsufficientFundsError(e) && transactionParams) {
           showToast({
             text1: t('Could not build transaction'),
             text2: t('Your address does not have enough balance for this transaction.'),
             type: 'error',
             autoHide: false
           })
-        } else {
-          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
-            showExceptionToast(e, t('Could not build transaction'))
-            console.error(e)
-          }
-          respondToWalletConnectWithError(requestEvent, {
-            message: getHumanReadableError(e, t('Error while parsing WalletConnect session request')),
-            code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
-          })
+        } else if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
+          showExceptionToast(e, t('Could not build transaction'))
+          console.error(e)
         }
+        respondToWalletConnectWithError(requestEvent, {
+          message: getHumanReadableError(e, t('Error while parsing WalletConnect session request')),
+          code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
+        })
+      } finally {
+        dispatch(deactivateAppLoading())
       }
     },
     [
+      addressesWithGroup,
+      currentlyOnlineNetworkId,
       dispatch,
       getDappIcon,
       handleApiResponse,

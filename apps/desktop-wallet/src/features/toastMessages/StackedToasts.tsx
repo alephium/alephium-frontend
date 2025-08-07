@@ -34,7 +34,7 @@ export const StackedToastsContainer = ({ children }: { children: ReactNode }) =>
 
 const StackedToastsContainerStyled = styled.div`
   position: relative;
-  width: 400px;
+  width: 300px;
   display: flex;
   justify-content: center;
 `

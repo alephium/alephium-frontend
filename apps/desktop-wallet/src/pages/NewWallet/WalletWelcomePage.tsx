@@ -1,5 +1,3 @@
-import { selectDefaultAddress } from '@alephium/shared'
-import { Info } from 'lucide-react'
 import { useState } from 'react'
 import Confetti from 'react-confetti'
 import { Trans, useTranslation } from 'react-i18next'
@@ -9,15 +7,8 @@ import styled from 'styled-components'
 import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
 import ExpandableSection from '@/components/ExpandableSection'
-import InfoBox from '@/components/InfoBox'
-import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
-import Toggle from '@/components/Inputs/Toggle'
 import { FooterActionsContainer, Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppSelector } from '@/hooks/redux'
-import useAddressGeneration from '@/hooks/useAddressGeneration'
-import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
 import { useTimeout, useWindowSize } from '@/utils/hooks'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
@@ -27,41 +18,13 @@ import { openInWebBrowser } from '@/utils/misc'
 const WalletWelcomePage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
   const { width, height } = useWindowSize()
-  const { generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const { sendAnalytics } = useAnalytics()
 
-  const [shouldGenerateOneAddressPerGroup, setShouldGenerateOneAddressPerGroup] = useState(false)
   const [confettiRunning, setConfettiRunning] = useState(true)
 
-  useTimeout(() => {
-    setConfettiRunning(false)
-  }, 3000)
+  useTimeout(() => setConfettiRunning(false), 3000)
 
-  const onButtonClick = async () => {
-    if (shouldGenerateOneAddressPerGroup && defaultAddress) {
-      await generateAndSaveOneAddressPerGroup({
-        labelPrefix: 'Address',
-        labelColor: defaultAddress.color,
-        skipGroups: [defaultAddress.group]
-      })
-
-      try {
-        saveAddressSettings(defaultAddress, {
-          isDefault: true,
-          color: defaultAddress.color,
-          label: `Address ${defaultAddress.group}`
-        })
-
-        sendAnalytics({ event: 'Generated one address per group on wallet creation' })
-      } catch {
-        sendAnalytics({ type: 'error', message: 'Failed to generate one address per group' })
-      }
-    }
-
-    navigate('/wallet/overview')
-  }
+  const onButtonClick = async () => navigate('/wallet/overview')
 
   return (
     <Container>
@@ -90,25 +53,6 @@ const WalletWelcomePage = () => {
                   newly created wallet.
                 </Trans>
               </AdvancedUserMessage>
-              <AdvancedUserMessage>
-                <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
-                  Advanced user: do you want to start with <b>one address per group for mining or DeFi?</b>
-                </Trans>
-
-                <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
-              </AdvancedUserMessage>
-              <InfoBox contrast>
-                <KeyValueInputStyled
-                  label={t('Generate one address per group')}
-                  description={t('For mining or DeFi use.')}
-                  InputComponent={
-                    <Toggle
-                      toggled={shouldGenerateOneAddressPerGroup}
-                      onToggle={() => setShouldGenerateOneAddressPerGroup(!shouldGenerateOneAddressPerGroup)}
-                    />
-                  }
-                />
-              </InfoBox>
             </AdvancedExpandableSectionContent>
           </ExpandableSectionStyled>
         </div>
@@ -168,15 +112,6 @@ const AdvancedUserMessage = styled.div`
 const ExpandableSectionStyled = styled(ExpandableSection)`
   margin-top: var(--spacing-5);
   width: 100%;
-`
-
-const KeyValueInputStyled = styled(KeyValueInput)`
-  min-width: auto;
-`
-
-const InfoIcon = styled(Info)`
-  cursor: pointer;
-  color: ${({ theme }) => theme.font.primary};
 `
 
 const AdvancedExpandableSectionContent = styled.div`

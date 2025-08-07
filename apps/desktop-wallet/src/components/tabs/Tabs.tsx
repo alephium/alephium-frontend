@@ -12,7 +12,7 @@ const Tabs = <T extends string>({ tabs }: TabsProps<T>) => {
   const onMouseLeaveTab = () => setMouseOverTab(null)
 
   return (
-    <>
+    <div>
       <TableTabBar
         items={tabs}
         onTabChange={setCurrentTab}
@@ -29,7 +29,7 @@ const Tabs = <T extends string>({ tabs }: TabsProps<T>) => {
           isMouseOverTab={mouseOverTab === value}
         />
       ))}
-    </>
+    </div>
   )
 }
 

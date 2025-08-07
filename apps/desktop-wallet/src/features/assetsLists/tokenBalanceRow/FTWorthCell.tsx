@@ -6,6 +6,7 @@ import {
   useFetchWalletSingleTokenBalances
 } from '@alephium/shared-react'
 
+import { fadeInSlowly } from '@/animations'
 import FTWorthAmount from '@/components/amounts/FTWorthAmount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
@@ -28,7 +29,7 @@ export const FTAddressWorthCell = ({ tokenId, addressHash, noBorder }: FTAddress
   const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return (
-    <TableCell align="right" noBorder={noBorder}>
+    <TableCell align="right" noBorder={noBorder} {...fadeInSlowly}>
       {isLoadingBalance || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (

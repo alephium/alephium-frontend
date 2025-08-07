@@ -6,7 +6,11 @@ import {
   getTransactionInfoType,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { useFetchWalletTransactionsInfinite, useUnsortedAddressesHashes } from '@alephium/shared-react'
+import {
+  useFetchWalletTransactionsInfinite,
+  useIsExplorerOffline,
+  useUnsortedAddressesHashes
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { orderBy, uniqBy } from 'lodash'
@@ -17,12 +21,14 @@ import styled from 'styled-components'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
+import OfflineMessage from '@/features/offline/OfflineMessage'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch } from '@/hooks/redux'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
+import { directionOptions } from '@/utils/transactions'
 
 interface WalletTransactionListProps {
   addressHashes?: AddressHash[]
@@ -34,6 +40,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const allAddressHashes = useUnsortedAddressesHashes()
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: fetchedConfirmedTxs,
@@ -44,9 +51,6 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     isFetchingNextPage,
     pagesLoaded
   } = useFetchWalletTransactionsInfinite()
-
-  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   const filteredConfirmedTxs = useMemo(() => {
     const txs = uniqBy(
@@ -67,8 +71,12 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
   }, [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, hasNextPage, pagesLoaded])
 
+  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
+
   return (
     <Table minWidth="500px">
+      {isExplorerOffline && <OfflineMessage />}
       {isLoading && <TableRowsLoader />}
       {isFetching && !isLoading && (
         <TableRow role="row">
@@ -113,9 +121,10 @@ const applyFilters = ({
   txs: e.Transaction[]
   allAddressHashes: AddressHash[]
 }) => {
-  const isDirectionsFilterEnabled = directions && directions.length > 0
+  const isDirectionsFilterEnabled = directions && directions.length > 0 && directions.length !== directionOptions.length
   const isAssetsFilterEnabled = assetIds && assetIds.length > 0
-  const isAddressFilterEnabled = addressHashes && addressHashes.length > 0
+  const isAddressFilterEnabled =
+    addressHashes && addressHashes.length > 0 && addressHashes.length !== allAddressHashes.length
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled || isAddressFilterEnabled
     ? txs.filter((tx) => {

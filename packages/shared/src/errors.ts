@@ -20,3 +20,16 @@ export const cleanExceptionMessage = (error: unknown) =>
 
 export const errorHasMessageProp = (error: unknown): error is { message: string } =>
   'message' in (error as { message?: string })
+
+const extractErrorStatusCode = (error: unknown): number | null => {
+  const err = getHumanReadableError(error, '')
+  const statusCodeMatch = err?.match(/Status code: (\d+)/)
+
+  return statusCodeMatch ? parseInt(statusCodeMatch[1]) : null
+}
+
+export const is5XXError = (error: unknown): boolean => {
+  const statusCode = extractErrorStatusCode(error)
+
+  return statusCode !== null && statusCode >= 500 && statusCode <= 599
+}

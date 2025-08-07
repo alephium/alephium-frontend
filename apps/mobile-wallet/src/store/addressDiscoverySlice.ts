@@ -1,12 +1,15 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import {
   activeWalletDeleted,
-  Address,
+  addressDeleted,
   addressesImported,
   AddressIndex,
   appReset,
   customNetworkSettingsSaved,
+  findNextAvailableAddressIndex,
+  GROUPLESS_ADDRESS_KEY_TYPE,
   networkPresetSwitched,
+  selectAllAddressIndexes,
   throttledClient
 } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
@@ -22,11 +25,7 @@ import {
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
-import {
-  findMaxIndexBeforeFirstGap,
-  findNextAvailableAddressIndex,
-  initializeAddressDiscoveryGroupsData
-} from '~/utils/addresses'
+import { findMaxIndexBeforeFirstGap } from '~/utils/addresses'
 import { sleep } from '~/utils/misc'
 
 const sliceName = 'addressDiscovery'
@@ -49,6 +48,8 @@ const initialState: AddressDiscoveryState = addressDiscoveryAdapter.getInitialSt
   status: 'idle'
 })
 
+const ascOrder = (a: number, b: number) => a - b
+
 export const discoverAddresses = createAsyncThunk(
   `${sliceName}/discoverAddresses`,
   async (_, { getState, dispatch }) => {
@@ -57,29 +58,64 @@ export const discoverAddresses = createAsyncThunk(
     const minGap = 5
     const state = getState() as RootState
     await sleep(1) // Allow execution to continue to not block rendering
-    const addresses = Object.values(state.addresses.entities) as Address[]
-    const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
-    const groupsData = initializeAddressDiscoveryGroupsData(addresses)
-    const derivedDataCache = new Map<AddressIndex, NonSensitiveAddressData & { group: number }>()
-
-    let group = 0
-    let checkedIndexes = Array.from(activeAddressIndexes)
-    let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
+    const { indexesOfAddressesWithGroup, indexesOfGrouplessAddresses } = selectAllAddressIndexes(state)
 
     dispatch(algoDataInitialized())
 
     try {
       await initializeKeyringWithStoredWallet()
 
+      // Groupless addresses
+      let gap = 0
+      const checkedGrouplessIndexes = Array.from(indexesOfGrouplessAddresses)
+
+      while (gap < minGap) {
+        const maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(indexesOfGrouplessAddresses)
+        const index = findNextAvailableAddressIndex(maxIndexBeforeFirstGap, checkedGrouplessIndexes)
+        checkedGrouplessIndexes.push(index)
+        checkedGrouplessIndexes.sort(ascOrder)
+        await sleep(1) // Allow execution to continue to not block rendering
+        const newGrouplessAddressData = keyring.generateAndCacheAddress({
+          addressIndex: index,
+          keyType: GROUPLESS_ADDRESS_KEY_TYPE
+        })
+
+        const data = await throttledClient.explorer.addresses.postAddressesUsed([newGrouplessAddressData.hash])
+        const addressIsActive = data.length > 0 && data[0]
+
+        if (addressIsActive) {
+          gap = 0
+          const { balance } = await throttledClient.explorer.addresses.getAddressesAddressBalance(
+            newGrouplessAddressData.hash
+          )
+          dispatch(addressDiscovered({ ...newGrouplessAddressData, balance }))
+
+          indexesOfGrouplessAddresses.push(newGrouplessAddressData.index)
+          indexesOfGrouplessAddresses.sort(ascOrder)
+        } else {
+          gap += 1
+        }
+
+        if (gap === minGap) {
+          dispatch(finishedWithGroupless())
+        }
+      }
+
+      // "Old" addresses (addresses with group)
+      const derivedDataCache = new Map<AddressIndex, NonSensitiveAddressData & { group: number }>()
+      let group = 0
+      gap = 0
+      let checkedIndexes = Array.from(indexesOfAddressesWithGroup)
+
       while (group < 4) {
-        const groupData = groupsData[group]
         let newAddressGroup: number | undefined = undefined
-        let index = groupData.highestIndex ?? maxIndexBeforeFirstGap
+        let index = findMaxIndexBeforeFirstGap(checkedIndexes)
         let newAddressData: NonSensitiveAddressData | undefined = undefined
 
         while (newAddressGroup !== group) {
           index = findNextAvailableAddressIndex(index, checkedIndexes)
           checkedIndexes.push(index)
+          checkedIndexes.sort(ascOrder)
 
           const cachedData = derivedDataCache.get(index)
 
@@ -92,7 +128,10 @@ export const discoverAddresses = createAsyncThunk(
             newAddressGroup = cachedData.group
           } else {
             await sleep(1) // Allow execution to continue to not block rendering
-            newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
+            newAddressData = keyring.generateAndCacheAddress({
+              addressIndex: index,
+              keyType: 'default'
+            })
             newAddressGroup = groupOfAddress(newAddressData.hash)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
           }
@@ -102,28 +141,27 @@ export const discoverAddresses = createAsyncThunk(
           continue
         }
 
-        groupData.highestIndex = newAddressData.index
-
         const data = await throttledClient.explorer.addresses.postAddressesUsed([newAddressData.hash])
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
+          gap = 0
+
           const { balance } = await throttledClient.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
-          groupData.gap = 0
-          activeAddressIndexes.push(newAddressData.index)
-          maxIndexBeforeFirstGap =
-            newAddressData.index === maxIndexBeforeFirstGap + 1 ? maxIndexBeforeFirstGap + 1 : maxIndexBeforeFirstGap
+          indexesOfAddressesWithGroup.push(newAddressData.index)
+          indexesOfAddressesWithGroup.sort(ascOrder)
         } else {
-          groupData.gap += 1
+          gap += 1
         }
 
-        if (groupData.gap === minGap) {
+        if (gap === minGap) {
           dispatch(finishedWithGroup(group))
 
           group += 1
-          checkedIndexes = Array.from(activeAddressIndexes)
+          gap = 0
+          checkedIndexes = Array.from(indexesOfAddressesWithGroup)
         }
 
         const state = getState() as RootState
@@ -162,10 +200,13 @@ const addressDiscoverySlice = createSlice({
     algoDataInitialized: (state) => {
       state.progress = 0.1
     },
+    finishedWithGroupless: (state) => {
+      state.progress = 1 / (TOTAL_NUMBER_OF_GROUPS + 1)
+    },
     finishedWithGroup: (state, action: PayloadAction<number>) => {
       const group = action.payload
 
-      state.progress = (group + 1) / TOTAL_NUMBER_OF_GROUPS
+      state.progress = (group + 2) / (TOTAL_NUMBER_OF_GROUPS + 1)
     },
     addressDiscovered: (state, action: PayloadAction<DiscoveredAddress>) => {
       addressDiscoveryAdapter.upsertOne(state, action.payload)
@@ -187,6 +228,7 @@ const addressDiscoverySlice = createSlice({
         appReset,
         activeWalletDeleted,
         networkPresetSwitched,
+        addressDeleted,
         customNetworkSettingsSaved
       ),
       () => initialState
@@ -206,7 +248,8 @@ export const {
   addressDiscoveryFinished,
   addressDiscovered,
   algoDataInitialized,
-  finishedWithGroup
+  finishedWithGroup,
+  finishedWithGroupless
 } = addressDiscoverySlice.actions
 
 export default addressDiscoverySlice

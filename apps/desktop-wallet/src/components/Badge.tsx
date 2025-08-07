@@ -12,6 +12,7 @@ interface BadgeProps {
   rounded?: boolean
   short?: boolean
   compact?: boolean
+  clickable?: boolean
   className?: string
 }
 
@@ -22,7 +23,7 @@ const Badge: FC<HasTooltip<BadgeProps>> = ({ className, children, truncate, tool
 )
 
 export default styled(Badge)`
-  ${({ color, theme, rounded, border, short, compact, truncate, transparent }) => {
+  ${({ color, theme, rounded, border, short, compact, truncate, transparent, clickable }) => {
     const usedColor = color || theme.font.primary
 
     return css`
@@ -35,7 +36,13 @@ export default styled(Badge)`
       background-color: ${!transparent && colord(usedColor).alpha(0.05).toRgbString()};
       white-space: nowrap;
       font-size: ${compact ? '11px' : 'inherit'};
-
+      ${clickable &&
+      css`
+        cursor: pointer;
+        &:hover {
+          background-color: ${colord(usedColor).alpha(0.1).toRgbString()};
+        }
+      `}
       ${border &&
       css`
         border: 1px solid ${theme.border.primary};

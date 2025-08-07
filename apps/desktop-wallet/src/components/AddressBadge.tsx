@@ -1,4 +1,4 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { AddressHash, getBaseAddressStr, selectAddressByHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -41,11 +41,12 @@ const AddressBadge = ({
   fullWidthUnknownHash = false
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const addressStr = getBaseAddressStr(addressHash)
+  const address = useAppSelector((s) => selectAddressByHash(s, addressStr))
   const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
-  const contact = useAppSelector((s) => selectContactByAddress(s, addressHash))
+  const contact = useAppSelector((s) => selectContactByAddress(s, addressStr))
 
-  const displayedHash = contact ? contact.address : address ? address.hash : addressHash
+  const displayedHash = contact ? contact.address : address ? address.hash : addressStr
   const displayedLabel = contact ? contact.name : address ? address.label : undefined
 
   return (
@@ -58,7 +59,7 @@ const AddressBadge = ({
     >
       {!address && !contact ? (
         <NotKnownAddress
-          hash={addressHash}
+          hash={addressStr}
           disableCopy={disableCopy}
           width={fullWidthUnknownHash ? '100%' : undefined}
         />

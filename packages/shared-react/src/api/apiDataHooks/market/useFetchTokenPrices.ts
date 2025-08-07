@@ -16,7 +16,8 @@ export const useFetchTokenPrices = () => {
     tokensPriceQuery({
       symbols,
       currency: fiatCurrency.toLowerCase(),
-      networkId
+      networkId,
+      skip: isLoadingFtSymbols
     })
   )
 

@@ -1,5 +1,3 @@
-import styled from 'styled-components'
-
 import { TableCell } from '@/components/Table'
 import { FTAddressAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
 import FTPriceCell from '@/features/assetsLists/tokenBalanceRow/FTPriceCell'
@@ -11,13 +9,11 @@ import { AddressTokenBalancesRowProps } from '@/features/assetsLists/tokenBalanc
 
 export const AddressFTBalancesRow = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => (
   <TokenBalancesRow tokenId={tokenId}>
-    <TokenRow>
-      <TokenLogo tokenId={tokenId} />
-      <FTNameCell tokenId={tokenId} />
-      <FTPriceCell tokenId={tokenId} />
-      <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
-      <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} />
-    </TokenRow>
+    <TokenLogo tokenId={tokenId} />
+    <FTNameCell tokenId={tokenId} />
+    <FTPriceCell tokenId={tokenId} />
+    <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
+    <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} />
   </TokenBalancesRow>
 )
 
@@ -34,9 +30,3 @@ export const AddressNSTBalancesRow = ({ tokenId, addressHash }: AddressTokenBala
     <TableCell align="right">-</TableCell>
   </TokenBalancesRow>
 )
-
-const TokenRow = styled.div`
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-`

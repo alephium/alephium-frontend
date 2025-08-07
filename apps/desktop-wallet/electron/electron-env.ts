@@ -29,6 +29,8 @@ declare global {
       app: {
         hide: () => void
         show: () => void
+        quit: () => void
+        onBeforeQuit: (callback: () => void) => () => void
         getSystemLanguage: () => Promise<string | undefined>
         getSystemRegion: () => Promise<string>
         setProxySettings: (proxySettings: ProxySettings) => Promise<void>

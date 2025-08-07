@@ -9,7 +9,7 @@ export interface WalletAccountSigner {
   keyType: KeyType
   publicKey: string
   derivationIndex: number
-  group: number
+  group?: number
 }
 
 export interface WithSigner {

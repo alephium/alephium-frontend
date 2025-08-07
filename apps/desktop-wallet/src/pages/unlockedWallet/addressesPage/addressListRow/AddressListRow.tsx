@@ -1,7 +1,9 @@
 import { AddressHash, TokenId } from '@alephium/shared'
-import { memo } from 'react'
+import { AnimatePresence, motion, useInView } from 'framer-motion'
+import { memo, useRef } from 'react'
 import styled, { css } from 'styled-components'
 
+import { fadeInSlowly } from '@/animations'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import GridRow from '@/components/GridRow'
@@ -24,6 +26,8 @@ interface AddressListRowProps {
 
 const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: AddressListRowProps) => {
   const dispatch = useAppDispatch()
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
 
   const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
 
@@ -35,6 +39,7 @@ const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: Addres
       className={className}
       role="row"
       tabIndex={0}
+      ref={ref}
     >
       <Cell noBorder={isLast}>
         <AddressColorIndicator addressHash={addressHash} size={10} />
@@ -51,21 +56,27 @@ const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: Addres
         <AddressGroup addressHash={addressHash} />
       </Cell>
 
-      {tokenId ? (
-        <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
-      ) : (
-        <Cell noBorder={isLast}>
-          <AddressTokensBadgesListStyled addressHash={addressHash} />
-        </Cell>
-      )}
+      <AnimatePresence>
+        {isInView && (
+          <>
+            {tokenId ? (
+              <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
+            ) : (
+              <Cell noBorder={isLast} {...fadeInSlowly}>
+                <AddressTokensBadgesListStyled addressHash={addressHash} />
+              </Cell>
+            )}
 
-      {tokenId ? (
-        <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} noBorder={isLast} />
-      ) : (
-        <FiatAmountCell noBorder={isLast}>
-          <AddressWorth addressHash={addressHash} />
-        </FiatAmountCell>
-      )}
+            {tokenId ? (
+              <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} noBorder={isLast} />
+            ) : (
+              <FiatAmountCell noBorder={isLast} {...fadeInSlowly}>
+                <AddressWorth addressHash={addressHash} />
+              </FiatAmountCell>
+            )}
+          </>
+        )}
+      </AnimatePresence>
     </GridRowStyled>
   )
 })
@@ -87,7 +98,7 @@ const Label = styled.div`
   padding-right: var(--spacing-4);
 `
 
-const Cell = styled.div<{ noBorder?: boolean }>`
+const Cell = styled(motion.div)<{ noBorder?: boolean }>`
   padding: 14px 0;
   display: flex;
   align-items: center;

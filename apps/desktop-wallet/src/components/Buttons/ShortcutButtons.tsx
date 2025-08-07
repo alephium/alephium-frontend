@@ -170,7 +170,7 @@ const ShortcutButton = styled.button<{ color?: string }>`
   min-width: 110px;
   flex-direction: column;
   justify-content: center;
-  border-radius: var(--radius-huge);
+  border-radius: var(--radius-big);
   background-color: ${({ theme, color }) => (color ? colord(color).alpha(0.1).toHex() : theme.bg.primary)};
   color: ${({ theme, color }) =>
     color ? (theme.name === 'light' ? colord(color).darken(0.1).saturate(0.2).toHex() : color) : theme.font.primary};

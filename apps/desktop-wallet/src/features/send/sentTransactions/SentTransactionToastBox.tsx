@@ -1,5 +1,5 @@
 import { removeSentTransaction, selectSentTransactionByHash, SentTransaction } from '@alephium/shared'
-import { useInterval, usePendingTxPolling } from '@alephium/shared-react'
+import { useInterval, useIsExplorerOffline, usePendingTxPolling } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { t } from 'i18next'
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -23,6 +23,7 @@ const SentTransactionToastBox = memo(({ txHash, className }: SentTransactionSnac
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const [hide, setHide] = useState(false)
   const dispatch = useAppDispatch()
+  const isExplorerOffline = useIsExplorerOffline()
   // The snackbar component is a transaction-specific component that is always mounted when a tx is being sent, so it's
   // the most appropriate place for polling.
   usePendingTxPolling(txHash)
@@ -56,7 +57,7 @@ const SentTransactionToastBox = memo(({ txHash, className }: SentTransactionSnac
     >
       <HashAndDetails>
         <HashEllipsed hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} truncate />
-        {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}
+        {sentTx.status !== 'sent' && !isExplorerOffline && <DetailsLink hash={txHash} />}
       </HashAndDetails>
     </ToastBox>
   )

@@ -34,8 +34,12 @@ class DerivedAccountsPerGroup {
 // Copied from extension wallet
 export abstract class AccountDiscovery {
   public async deriveActiveAccounts(
-    deriveAccount: (startIndex: number) => Promise<NonSensitiveAddressDataWithGroup>,
-    skipIndexes: number[] = []
+    deriveAccount: (
+      startIndex: number,
+      keyType: 'default' | 'bip340-schnorr'
+    ) => Promise<NonSensitiveAddressDataWithGroup>,
+    skipIndexes: number[] = [],
+    keyType: 'default' | 'bip340-schnorr'
   ): Promise<NonSensitiveAddressDataWithGroup[]> {
     const allAddresses = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(() => new DerivedAccountsPerGroup())
 
@@ -48,7 +52,7 @@ export abstract class AccountDiscovery {
     while (allAddresses.some((a) => !a.isComplete())) {
       const newWalletAccounts = []
       for (let i = 0; i < derivationBatchSize; i++) {
-        const newWalletAccount = await deriveAccount(nextAddressIndex)
+        const newWalletAccount = await deriveAccount(nextAddressIndex, keyType)
         newWalletAccounts.push(newWalletAccount)
         nextAddressIndex = findNextAvailableAddressIndex(nextAddressIndex, skipIndexes)
       }

@@ -34,7 +34,13 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
         password,
         JSON.stringify({
           mnemonic: dangerouslyConvertUint8ArrayMnemonicToString(decryptedMnemonic),
-          addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
+          addresses: addresses.map(({ index, keyType, label, color, isDefault }) => ({
+            index,
+            keyType,
+            label,
+            color,
+            isDefault
+          })),
           contacts: contacts.map(({ name, address }) => ({ name, address }))
         }),
         'sha512'

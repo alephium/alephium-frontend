@@ -1,10 +1,10 @@
 import {
   activeWalletDeleted,
-  apiClientInitFailed,
-  apiClientInitSucceeded,
   customNetworkSettingsSaved,
   localStorageNetworkSettingsMigrated,
   networkPresetSwitched,
+  nodeApiClientInitFailed,
+  nodeApiClientInitSucceeded,
   walletLocked
 } from '@alephium/shared'
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
@@ -102,7 +102,7 @@ const globalSlice = createSlice({
       .addMatcher(isAnyOf(networkPresetSwitched, customNetworkSettingsSaved), (state) => {
         toggleLoading(state, true)
       })
-      .addMatcher(isAnyOf(apiClientInitSucceeded, apiClientInitFailed), (state) => {
+      .addMatcher(isAnyOf(nodeApiClientInitSucceeded, nodeApiClientInitFailed), (state) => {
         toggleLoading(state, false)
       })
   }

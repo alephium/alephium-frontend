@@ -1,9 +1,10 @@
 import { ListedFT, TokenId, UnlistedToken } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { useFetchTokensSeparatedByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '@/network'
 
 interface TokensByType<T> {
   data: {
@@ -18,6 +19,7 @@ interface TokensByType<T> {
 
 export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
   const networkId = useCurrentlyOnlineNetworkId()
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: { listedFts, unlistedTokens },
@@ -32,8 +34,17 @@ export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T
     combine: combineTokenTypeQueryResults
   })
 
+  const nsts = useMemo(
+    () =>
+      // If EB is offline and we have no caches, all unlistedTokens should be considered NSTs
+      isExplorerOffline && nftIds.length === 0 && nstIds.length === 0 && unlistedFtIds.length === 0
+        ? unlistedTokens.map(({ id }) => id)
+        : nstIds,
+    [isExplorerOffline, nftIds.length, nstIds, unlistedFtIds.length, unlistedTokens]
+  )
+
   return {
-    data: { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
+    data: { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds: nsts }, // TODO: Consider adding balances instead of IDs?
     isLoading: isLoadingTokensByListing || isLoadingTokensByType
   }
 }
