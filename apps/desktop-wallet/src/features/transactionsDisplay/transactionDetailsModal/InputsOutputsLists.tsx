@@ -52,16 +52,14 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress, trun
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
+    return <PendingSentAddressBadge txHash={tx.hash} />
   }
 
-  if (truncate && addresses.length > 1) {
-    const extraAddressesText = `(+${addresses.length - 1})`
-
+  if (addresses.length > 1 && truncate) {
     return (
       <TruncateWrap>
         <ClickableAddressBadge address={addresses[0]} hideLink={hideLink} />
-        {extraAddressesText && <ExtraAddressesText>{extraAddressesText}</ExtraAddressesText>}
+        <ExtraAddressesText>(+{addresses.length - 1})</ExtraAddressesText>
       </TruncateWrap>
     )
   }

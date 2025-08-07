@@ -95,16 +95,6 @@ export type TransactionParams =
       params: SignUnsignedTxParams
     }
 
-export type TransactionInfoType2 =
-  | 'pending'
-  | 'wallet-self-transfer' // all input/outputs are addresses of the same wallet
-  | 'address-self-transfer' // all input/outputs are the same address
-  | 'address-group-transfer' // all input/outputs are multiple subaddresses of the same groupless address
-  | 'dApp' // at least one input/output is a contract address
-  | 'bidirectional-transfer' // the reference address has both positive and negative amount deltas
-  | 'outgoing'
-  | 'incoming'
-
 export type TransactionView = 'address' | 'wallet'
 
 export type UseTransactionProps = {

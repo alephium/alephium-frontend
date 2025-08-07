@@ -2,7 +2,6 @@ import { ALPH } from '@alephium/token-list'
 import {
   DEFAULT_GAS_PRICE,
   DUST_AMOUNT,
-  explorer as e,
   MINIMAL_CONTRACT_DEPOSIT,
   SignChainedTxParams,
   SignChainedTxResult,
@@ -18,104 +17,11 @@ import {
 } from '@alephium/web3'
 
 import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '@/constants'
-import {
-  calcTxAmountsDeltaForAddress,
-  getBaseAddressStr,
-  getInputOutputBaseAddress,
-  getTxAddresses,
-  hasPositiveAndNegativeAmounts,
-  isAlphAmountReduced,
-  isBidirectionalTransfer,
-  isConfirmedTx,
-  isConsolidationTx,
-  isContractTx,
-  isGrouplessAddressIntraTransfer,
-  isSelfTransfer,
-  isWalletSelfTransfer
-} from '@/transactions'
+import { getTransactionAssetAmounts } from '@/transactions/transactionAmounts'
 import { AddressHash, AddressWithGroup } from '@/types/addresses'
-import { AssetAmount, TokenApiBalances, TokenId } from '@/types/assets'
+import { TokenId } from '@/types/assets'
 import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
-import {
-  SendFlowData,
-  SentTransaction,
-  SweepTxParams,
-  TransactionInfoType,
-  TransactionInfoType2,
-  TransactionParams
-} from '@/types/transactions'
-import { uniq } from '@/utils/utils'
-
-export const getTransactionInfoType2 = ({
-  tx,
-  referenceAddress,
-  internalAddresses
-}: {
-  tx: e.Transaction | e.PendingTransaction | SentTransaction
-  referenceAddress: string
-  internalAddresses: string[]
-}): TransactionInfoType2 => {
-  if (!isConfirmedTx(tx)) {
-    return 'pending'
-  } else if (isSelfTransfer(tx)) {
-    return 'address-self-transfer'
-  } else if (isGrouplessAddressIntraTransfer(tx)) {
-    return 'address-group-transfer'
-  } else if (isWalletSelfTransfer(tx, internalAddresses)) {
-    return 'wallet-self-transfer'
-  } else if (isBidirectionalTransfer(tx, referenceAddress)) {
-    return 'bidirectional-transfer'
-  } else if (isContractTx(tx)) {
-    return 'dApp'
-  } else if (isAlphAmountReduced(tx, referenceAddress)) {
-    return 'outgoing'
-  } else {
-    return 'incoming'
-  }
-}
-
-export const getTransactionInfoType = (
-  tx: e.Transaction | e.PendingTransaction | SentTransaction,
-  addressHash: AddressHash,
-  internalAddresses: AddressHash[],
-  isInAddressDetailsModal?: boolean
-): TransactionInfoType => {
-  if (!isConfirmedTx(tx)) {
-    return 'pending'
-  } else if (isConsolidationTx(tx)) {
-    return 'move'
-  } else {
-    const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
-
-    if (hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)) {
-      return 'swap'
-    } else {
-      const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
-      const isInternalTransfer = isWalletSelfTransfer(tx, internalAddresses)
-
-      if (
-        (isInternalTransfer && isInAddressDetailsModal && alphAmountReduced) ||
-        (isInternalTransfer && !isInAddressDetailsModal)
-      ) {
-        return 'move'
-      } else {
-        if (alphAmountReduced) {
-          return 'out'
-        } else {
-          return 'in'
-        }
-      }
-    }
-  }
-}
-
-export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokensBalances: TokenApiBalances[]) =>
-  assetAmounts.length === tokensBalances.length &&
-  tokensBalances.every(({ id, totalBalance }) => {
-    const assetAmount = assetAmounts.find((asset) => asset.id === id)
-
-    return totalBalance === (assetAmount?.amount ?? 0).toString()
-  })
+import { SendFlowData, SweepTxParams, TransactionParams } from '@/types/transactions'
 
 export const getChainedTxPropsFromSignChainedTxParams = (
   txParams: Array<SignChainedTxParams>,
@@ -204,26 +110,6 @@ export const transactionParamsToSignChainedTxParams = (transactionParams: Transa
       throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
   }
 }
-
-export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
-  const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
-  const tokens = assetAmounts
-    .filter((asset): asset is Required<AssetAmount> => asset.id !== ALPH.id && asset.amount !== undefined)
-    .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
-
-  const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
-  const minDiff = minAlphAmountRequirement - alphAmount
-  const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
-
-  return {
-    attoAlphAmount: totalAlphAmount.toString(),
-    extraAlphForDust: minAlphAmountRequirement,
-    tokens
-  }
-}
-
-export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
-  assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }
 
 export const getTransferTxParams = (data: SendFlowData): SignTransferTxParams => {
   const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = data
@@ -323,92 +209,4 @@ export const getTransactionExpectedBalances = ({ type, params }: TransactionPara
   }
 
   return expectedBalances
-}
-
-// TODO: Write tests
-export const getTransactionOriginAddresses = ({
-  tx,
-  referenceAddress
-}: {
-  tx: e.Transaction | e.PendingTransaction
-  referenceAddress: string
-}): AddressHash[] => {
-  if (!tx.inputs || tx.inputs.length === 0) {
-    return []
-  }
-
-  if (
-    isSelfTransfer(tx) ||
-    isGrouplessAddressIntraTransfer(tx) ||
-    isBidirectionalTransfer(tx, referenceAddress) ||
-    isContractTx(tx)
-  ) {
-    return [referenceAddress]
-  }
-
-  return getInputOutputBaseAddresses(tx.inputs).filter((address) => addressHasOnlyNegativeAmountDeltas(tx, address))
-}
-
-// TODO: Write tests
-export const getTransactionDestinationAddresses = ({
-  tx,
-  referenceAddress
-}: {
-  tx: e.Transaction | e.PendingTransaction
-  referenceAddress: string
-}): AddressHash[] => {
-  if (!tx.outputs || tx.outputs.length === 0) {
-    return []
-  }
-
-  const infoType = getTransactionInfoType2({ tx, referenceAddress, internalAddresses: [] })
-
-  if (infoType === 'address-self-transfer' || infoType === 'address-group-transfer' || infoType === 'incoming') {
-    return [referenceAddress]
-  }
-
-  if (infoType === 'bidirectional-transfer' || infoType === 'dApp') {
-    return uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
-  }
-
-  return getInputOutputBaseAddresses(tx.outputs).filter((address) => addressHasOnlyPositiveAmountDeltas(tx, address))
-}
-
-const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
-  uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
-
-const addressHasOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
-  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
-
-  const hasNoAlphDelta = !alphAmount
-  const hasNoTokensDeltas = tokenAmounts.length === 0
-
-  if (hasNoAlphDelta && hasNoTokensDeltas) return false
-
-  const hasNegativeAlphDelta = alphAmount < 0
-  const hasNegativeTokensDeltas = tokenAmounts.every(({ amount }) => amount < 0)
-
-  return (
-    (hasNoAlphDelta && hasNegativeTokensDeltas) ||
-    (hasNoTokensDeltas && hasNegativeAlphDelta) ||
-    (hasNegativeAlphDelta && hasNegativeTokensDeltas)
-  )
-}
-
-const addressHasOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
-  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
-
-  const hasNoAlphDelta = !alphAmount
-  const hasNoTokensDeltas = tokenAmounts.length === 0
-
-  if (hasNoAlphDelta && hasNoTokensDeltas) return false
-
-  const hasPositiveAlphDelta = alphAmount > 0
-  const hasPositiveTokensDeltas = tokenAmounts.every(({ amount }) => amount > 0)
-
-  return (
-    (hasNoAlphDelta && hasPositiveTokensDeltas) ||
-    (hasNoTokensDeltas && hasPositiveAlphDelta) ||
-    (hasPositiveAlphDelta && hasPositiveTokensDeltas)
-  )
 }
