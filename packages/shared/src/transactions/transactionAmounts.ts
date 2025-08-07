@@ -1,10 +1,17 @@
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer as e, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 
-import { getBaseAddressStr, getTxAddresses, isSameBaseAddress } from '@/transactions/transactionUtils'
+import {
+  getBaseAddressStr,
+  getInputOutputBaseAddress,
+  getTxAddresses,
+  isSameBaseAddress
+} from '@/transactions/transactionUtils'
+import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
 import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
 import { AmountDeltas, TransactionDirection } from '@/types/transactions'
+import { uniq } from '@/utils/utils'
 
 export const isBidirectionalTransfer = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
@@ -101,6 +108,28 @@ export const isAlphAmountReduced = (
   const { alphAmount } = calcTxAmountsDeltaForAddress(tx, refAddress)
 
   return alphAmount < 0
+}
+
+export const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
+  uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
+
+export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
+  const deltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
+
+  const receivedAlphAndTokens =
+    deltas.alphAmount > 0 && deltas.tokenAmounts.length > 0 && deltas.tokenAmounts.every(({ amount }) => amount > 0)
+
+  if (!receivedAlphAndTokens) return false
+
+  const stringifiedDeltas = JSON.stringify(deltas)
+
+  const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
+  const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
+  const outputAddressesWithoutInputAddresses = outputAddresses.filter((address) => !inputAddresses.includes(address))
+
+  return outputAddressesWithoutInputAddresses.every(
+    (address) => stringifiedDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
+  )
 }
 
 export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {

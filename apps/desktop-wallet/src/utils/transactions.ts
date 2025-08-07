@@ -73,6 +73,7 @@ export const directionOptions: {
 export const infoTypeToDirection = (infoType: TransactionInfoType2): Direction =>
   ({
     incoming: 'received',
+    airdrop: 'received',
     outgoing: 'sent',
     pending: 'sent',
     dApp: 'dApp',

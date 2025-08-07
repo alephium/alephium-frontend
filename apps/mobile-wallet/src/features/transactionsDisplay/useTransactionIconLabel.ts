@@ -1,7 +1,15 @@
 import { UseTransactionProps } from '@alephium/shared'
 import { useTransactionInfoType } from '@alephium/shared-react'
 import { colord } from 'colord'
-import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, RefreshCcw, Repeat } from 'lucide-react-native'
+import {
+  ArrowBigDownDash,
+  ArrowDown,
+  ArrowLeftRight,
+  ArrowUp,
+  CircleEllipsis,
+  RefreshCcw,
+  Repeat
+} from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -16,6 +24,7 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       outgoing: t('Sent'),
       pending: t('Pending'),
       dApp: t('dApp'),
+      airdrop: t('Airdrop'),
       'dApp-failed': t('dApp'),
       'bidirectional-transfer': t('Swapped'),
       'wallet-self-transfer': t('Moved'),
@@ -27,6 +36,7 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       outgoing: ArrowUp,
       pending: CircleEllipsis,
       dApp: Repeat,
+      airdrop: ArrowBigDownDash,
       'dApp-failed': Repeat,
       'bidirectional-transfer': Repeat,
       'wallet-self-transfer': ArrowLeftRight,
@@ -38,6 +48,7 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       outgoing: theme.global.send,
       pending: theme.font.secondary,
       dApp: theme.global.complementary,
+      airdrop: theme.global.valid,
       'dApp-failed': colord(theme.global.complementary).alpha(0.5).toRgbString(),
       'bidirectional-transfer': theme.global.complementary,
       'wallet-self-transfer': theme.font.secondary,
@@ -49,6 +60,7 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       outgoing: colord(theme.global.send).alpha(0.11).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.11).toRgbString(),
       dApp: colord(theme.global.complementary).alpha(0.11).toRgbString(),
+      airdrop: colord(theme.global.valid).alpha(0.08).toRgbString(),
       'dApp-failed': colord(theme.global.complementary).alpha(0.05).toRgbString(),
       'bidirectional-transfer': colord(theme.global.complementary).alpha(0.11).toRgbString(),
       'wallet-self-transfer': colord(theme.font.secondary).alpha(0.11).toRgbString(),

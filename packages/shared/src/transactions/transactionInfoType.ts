@@ -3,12 +3,13 @@ import { explorer as e } from '@alephium/web3'
 import {
   addressHasOnlyNegativeAmountDeltas,
   addressHasOnlyPositiveAmountDeltas,
+  getInputOutputBaseAddresses,
+  isAirdrop,
   isAlphAmountReduced,
   isBidirectionalTransfer
 } from '@/transactions/transactionAmounts'
 import {
   getBaseAddressStr,
-  getInputOutputBaseAddress,
   getTxAddresses,
   isConfirmedTx,
   isContractTx,
@@ -28,6 +29,7 @@ export type TransactionInfoType2 =
   | 'dApp-failed'
   | 'bidirectional-transfer' // the reference address has both positive and negative amount deltas
   | 'outgoing'
+  | 'airdrop'
   | 'incoming'
 
 export const getTransactionInfoType = ({
@@ -55,6 +57,8 @@ export const getTransactionInfoType = ({
     return 'dApp'
   } else if (isAlphAmountReduced(tx, referenceAddress)) {
     return 'outgoing'
+  } else if (isAirdrop(tx, referenceAddress)) {
+    return 'airdrop'
   } else {
     return 'incoming'
   }
@@ -76,6 +80,7 @@ export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAdd
     outgoing: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
     pending: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
     dApp: [referenceAddress],
+    airdrop: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
     'dApp-failed': [referenceAddress],
     'bidirectional-transfer': [referenceAddress],
     'wallet-self-transfer': getInputAddressesWithOnlyNegativeAmountDeltas(tx),
@@ -95,6 +100,7 @@ export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: Get
     outgoing: getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
     pending: getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
     dApp: getDappOperationAddresses(tx, referenceAddress),
+    airdrop: [referenceAddress],
     'dApp-failed': getDappOperationAddresses(tx, referenceAddress),
     'bidirectional-transfer': getDappOperationAddresses(tx, referenceAddress),
     'wallet-self-transfer': getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
@@ -111,9 +117,6 @@ const getDappOperationAddresses = (tx: e.Transaction | e.PendingTransaction, ref
 
 const getOutputAddressesWithOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
   getInputOutputBaseAddresses(tx.outputs ?? []).filter((address) => addressHasOnlyPositiveAmountDeltas(tx, address))
-
-const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
-  uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
 
 const isSelfTransfer = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
