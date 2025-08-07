@@ -155,8 +155,8 @@ const HeaderLeft = () => {
 
 const HeaderRight = () => (
   <HeaderButtonsContainer>
-    <WalletConnectButton />
     <OfflineButton />
+    <WalletConnectButton />
     <WalletSettingsButton />
   </HeaderButtonsContainer>
 )
