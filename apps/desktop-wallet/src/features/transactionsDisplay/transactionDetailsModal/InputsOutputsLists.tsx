@@ -18,9 +18,11 @@ import { useAppSelector } from '@/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {
   tx: e.Transaction | e.PendingTransaction
+  hideLink?: boolean
+  truncate?: boolean
 }
 
-export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink }: InputsListProps) => {
   const { t } = useTranslation()
 
   const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
@@ -38,13 +40,13 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsL
   return (
     <AddressesList>
       {addresses.map((address) => (
-        <ClickableAddressBadge address={address} key={address} />
+        <ClickableAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
     </AddressesList>
   )
 }
 
-export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+export const TransactionDestinationAddressesList = ({ tx, referenceAddress, truncate, hideLink }: InputsListProps) => {
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
@@ -53,10 +55,21 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: In
     return <PendingSentAddressBadge tx={tx} referenceAddress={referenceAddress} isDestinationAddress />
   }
 
+  if (truncate && addresses.length > 1) {
+    const extraAddressesText = `(+${addresses.length - 1})`
+
+    return (
+      <TruncateWrap>
+        <ClickableAddressBadge address={addresses[0]} hideLink={hideLink} />
+        {extraAddressesText && <ExtraAddressesText>{extraAddressesText}</ExtraAddressesText>}
+      </TruncateWrap>
+    )
+  }
+
   return (
     <AddressesList>
       {addresses.map((address) => (
-        <ClickableAddressBadge address={address} key={address} />
+        <ClickableAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
     </AddressesList>
   )
@@ -68,4 +81,17 @@ const AddressesList = styled.div`
   align-items: end;
   overflow: hidden;
   gap: 5px;
+`
+
+const TruncateWrap = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  text-align: left;
+`
+
+const ExtraAddressesText = styled.div`
+  margin-left: 0.5em;
+  font-weight: var(--fontWeight-semiBold);
+  color: ${({ theme }) => theme.font.secondary};
 `

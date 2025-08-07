@@ -361,11 +361,13 @@ export const getTransactionDestinationAddresses = ({
     return []
   }
 
-  if (isSelfTransfer(tx) || isGrouplessAddressIntraTransfer(tx)) {
+  const infoType = getTransactionInfoType2({ tx, referenceAddress, internalAddresses: [] })
+
+  if (infoType === 'address-self-transfer' || infoType === 'address-group-transfer' || infoType === 'incoming') {
     return [referenceAddress]
   }
 
-  if (isBidirectionalTransfer(tx, referenceAddress) || isContractTx(tx)) {
+  if (infoType === 'bidirectional-transfer' || infoType === 'dApp') {
     return uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
   }
 
