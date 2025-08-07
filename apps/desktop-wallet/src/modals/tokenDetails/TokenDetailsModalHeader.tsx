@@ -1,4 +1,4 @@
-import { isFT, isNFT } from '@alephium/shared'
+import { isFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
@@ -31,13 +31,11 @@ const TokenName = ({ tokenId }: TokenDetailsModalProps) => {
   const { data: token } = useFetchToken(tokenId)
   const { t } = useTranslation()
 
-  if (!token) return null
+  if (!token) return <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} />
 
   if (isFT(token)) return <TruncateStyled>{token.name}</TruncateStyled>
 
-  if (isNFT(token)) return <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} />
-
-  return null
+  return <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} />
 }
 
 // TODO: DRY

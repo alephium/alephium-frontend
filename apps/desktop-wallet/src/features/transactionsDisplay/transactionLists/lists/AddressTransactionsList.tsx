@@ -1,11 +1,12 @@
 import { AddressHash } from '@alephium/shared'
-import { useFetchAddressInfiniteTransactions } from '@alephium/shared-react'
+import { useFetchAddressInfiniteTransactions, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import Table, { TableHeader } from '@/components/Table'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { openModal } from '@/features/modals/modalActions'
+import OfflineMessage from '@/features/offline/OfflineMessage'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -20,6 +21,7 @@ interface AddressTransactionListProps {
 const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: confirmedTxs,
@@ -41,6 +43,8 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
       <TableHeader>
         <AddressTransactionsCSVExportButton addressHash={addressHash} />
       </TableHeader>
+
+      {isExplorerOffline && <OfflineMessage />}
 
       {isLoading && <TableRowsLoader />}
 

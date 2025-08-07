@@ -1,8 +1,9 @@
 import {
-  apiClientInitFailed,
   contactDeletedFromPersistentStorage,
   contactStoredInPersistentStorage,
-  customNetworkSettingsSaved
+  customNetworkSettingsSaved,
+  explorerApiClientInitFailed,
+  nodeApiClientInitFailed
 } from '@alephium/shared'
 import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
@@ -41,11 +42,13 @@ import {
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 
 interface ToastMessagesSliceState extends EntityState<SnackbarMessageInstance> {
-  offlineMessageWasVisibleOnce: boolean
+  nodeOfflineMessageWasVisibleOnce: boolean
+  explorerOfflineMessageWasVisibleOnce: boolean
 }
 
 const initialState: ToastMessagesSliceState = toastMessagesAdapter.getInitialState({
-  offlineMessageWasVisibleOnce: false
+  nodeOfflineMessageWasVisibleOnce: false,
+  explorerOfflineMessageWasVisibleOnce: false
 })
 
 const toastMessagesSlice = createSlice({
@@ -57,8 +60,8 @@ const toastMessagesSlice = createSlice({
       .addCase(toastDisplayTimeExpired, (state, action) => {
         toastMessagesAdapter.removeOne(state, action.payload)
       })
-      .addCase(apiClientInitFailed, (state, action) => {
-        if (!state.offlineMessageWasVisibleOnce)
+      .addCase(nodeApiClientInitFailed, (state, action) => {
+        if (!state.nodeOfflineMessageWasVisibleOnce)
           queueMessage(state, {
             text: i18n.t('Could not connect to the {{ currentNetwork }} network.', {
               currentNetwork: action.payload.networkName
@@ -67,7 +70,19 @@ const toastMessagesSlice = createSlice({
             duration: 5000
           })
 
-        state.offlineMessageWasVisibleOnce = true
+        state.nodeOfflineMessageWasVisibleOnce = true
+      })
+      .addCase(explorerApiClientInitFailed, (state) => {
+        if (!state.explorerOfflineMessageWasVisibleOnce)
+          queueMessage(state, {
+            text: i18n.t(
+              'The explorer backend is offline. You can still see your balances and send transactions but some data might be missing.'
+            ),
+            type: 'error',
+            duration: 5000
+          })
+
+        state.explorerOfflineMessageWasVisibleOnce = true
       })
       .addCase(contactStoredInPersistentStorage, (state) =>
         queueMessage(state, { text: i18n.t('Contact saved'), type: 'success' })

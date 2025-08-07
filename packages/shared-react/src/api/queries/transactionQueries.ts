@@ -1,12 +1,13 @@
 import {
   AddressHash,
   FIVE_MINUTES_MS,
+  is5XXError,
   isConfirmedTx,
   ONE_MINUTE_MS,
   throttledClient,
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
-import { explorer as e, sleep } from '@alephium/web3'
+import { explorer as e, node as n, sleep } from '@alephium/web3'
 import { AcceptedTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -69,7 +70,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
                 await invalidateAddressQueries(addressHash)
                 await invalidateWalletQueries()
               } else {
-                latestTx = cachedData?.latestTx
+                latestTx = cachedLatestTx
               }
             }
 
@@ -211,7 +212,19 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTran
           // Delay initial query to give the tx some time to enter the mempool instead of getting 404's
           if (!queryClient.getQueryData(['transaction', 'pending', txHash])) await sleep(3000)
 
-          return throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
+          let pendingTx: AcceptedTransaction | e.PendingTransaction | n.RichTransaction
+
+          try {
+            pendingTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
+          } catch (e) {
+            if (is5XXError(e)) {
+              pendingTx = await throttledClient.node.transactions.getTransactionsRichDetailsTxid(txHash)
+            } else {
+              throw e
+            }
+          }
+
+          return pendingTx
         }
       : skipToken
   })
@@ -221,4 +234,18 @@ export const addressTransactionsCountQuery = ({ addressHash, networkId }: Addres
     queryKey: ['address', addressHash, 'transactions', 'count', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: () => throttledClient.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+  })
+
+export const nodeTransactionStatusQuery = ({ txHash, networkId, skip }: PendingTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', 'node', 'status', txHash],
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    refetchInterval: 3000,
+    queryFn: !skip
+      ? async () => {
+          const status = await throttledClient.node.transactions.getTransactionsStatus({ txId: txHash })
+
+          return status.type
+        }
+      : skipToken
   })

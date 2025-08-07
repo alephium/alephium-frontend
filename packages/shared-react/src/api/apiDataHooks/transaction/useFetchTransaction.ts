@@ -1,4 +1,4 @@
-import { selectSentTransactionByHash } from '@alephium/shared'
+import { isRichTransaction, selectSentTransactionByHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
@@ -24,7 +24,9 @@ export const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) 
   })
 
   return {
-    data: confirmedTx ?? pendingTx,
+    // Until we find an easy way to convert a RichTransaction to a Transaction, we need to return undefined for
+    // RichTransactions which will disable the display of any transaction details component when the EB is down.
+    data: confirmedTx ?? (pendingTx && !isRichTransaction(pendingTx) ? pendingTx : undefined),
     isLoading: isLoadingConfirmedTx || isLoadingPendingTx
   }
 }

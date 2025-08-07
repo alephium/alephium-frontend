@@ -46,7 +46,7 @@
     "@tanstack/react-query-persist-client": "^5.45.0",
     "@yornaath/batshit": "^0.10.1",
     "apexcharts": "^3.35.0",
-    "axios": "^1.8.2",
+    "axios": "^1.11.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
     "framer-motion": "^11.12.0",

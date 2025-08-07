@@ -63,7 +63,8 @@ const ModalNames = {
   SignTransferTxModal: 'SignTransferTxModal',
   SignDeployContractTxModal: 'SignDeployContractTxModal',
   SignExecuteScriptTxModal: 'SignExecuteScriptTxModal',
-  SignChainedTxModal: 'SignChainedTxModal'
+  SignChainedTxModal: 'SignChainedTxModal',
+  OfflineModal: 'OfflineModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -207,6 +208,9 @@ export type OpenModalParams = {
   | {
       name: typeof ModalNames.SignChainedTxModal
       props: SignChainedTxModalProps
+    }
+  | {
+      name: typeof ModalNames.OfflineModal
     }
 )
 

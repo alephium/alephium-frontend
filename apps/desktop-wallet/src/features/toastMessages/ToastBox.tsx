@@ -59,7 +59,8 @@ const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
+  width: fit-content;
+
   background-color: ${({ theme }) => theme.bg.background1};
   border-radius: var(--radius-medium);
 
@@ -79,7 +80,12 @@ const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
     type === 'info' &&
     css`
       ${ToastBoxContent} {
-        background-color: ${theme.bg.background2};
+        background-color: ${colord(theme.font.primary).alpha(0.9).toHex()};
+        color: ${theme.bg.background1};
+
+        svg {
+          stroke: ${theme.bg.background1};
+        }
       }
     `}
 `
@@ -94,11 +100,11 @@ const ToastBoxContent = styled(motion.div)`
   overflow-y: auto;
   font-weight: var(--fontWeight-semiBold);
   pointer-events: all;
-  background-color: ${({ theme }) => theme.bg.highlight};
   z-index: 1;
   padding: 8px var(--spacing-4);
   border-radius: var(--radius-medium);
   width: 100%;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
 
   -webkit-app-region: no-drag;
 `

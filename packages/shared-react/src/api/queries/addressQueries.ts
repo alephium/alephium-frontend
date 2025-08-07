@@ -1,6 +1,8 @@
 import {
   AddressHash,
   ApiBalances,
+  FIVE_MINUTES_MS,
+  is5XXError,
   isFT,
   isNFT,
   PAGINATION_PAGE_LIMIT,
@@ -30,6 +32,13 @@ export type AddressAlphBalancesQueryFnData = {
   balances: ApiBalances
 }
 
+const nodeAddressBalancesQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'level:-1', 'balance', 'node', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    queryFn: () => throttledClient.node.addresses.getAddressesAddressBalance(addressHash)
+  })
+
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
 export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
@@ -42,7 +51,17 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
     queryFn:
       !skip && networkId !== undefined
         ? async () => {
-            const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+            let balances = null
+
+            try {
+              balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+            } catch (e) {
+              if (is5XXError(e)) {
+                balances = await queryClient.fetchQuery(nodeAddressBalancesQuery({ addressHash, networkId }))
+              } else {
+                throw e
+              }
+            }
 
             return {
               addressHash,
@@ -75,24 +94,43 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
             let tokenBalancesInPage = [] as e.AddressTokenBalance[]
             let page = 1
 
-            while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-              tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
-                addressHash,
-                {
-                  limit: PAGINATION_PAGE_LIMIT,
-                  page
-                }
-              )
+            try {
+              while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+                tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+                  addressHash,
+                  {
+                    limit: PAGINATION_PAGE_LIMIT,
+                    page
+                  }
+                )
 
-              tokenBalances.push(
-                ...tokenBalancesInPage.map((tokenBalances) => ({
-                  id: tokenBalances.tokenId,
-                  totalBalance: tokenBalances.balance,
-                  lockedBalance: tokenBalances.lockedBalance,
-                  availableBalance: (BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)).toString()
-                }))
-              )
-              page += 1
+                tokenBalances.push(
+                  ...tokenBalancesInPage.map((tokenBalances) => ({
+                    id: tokenBalances.tokenId,
+                    totalBalance: tokenBalances.balance,
+                    lockedBalance: tokenBalances.lockedBalance,
+                    availableBalance: (BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)).toString()
+                  }))
+                )
+                page += 1
+              }
+            } catch (e) {
+              if (is5XXError(e)) {
+                const balances = await queryClient.fetchQuery(nodeAddressBalancesQuery({ addressHash, networkId }))
+
+                balances.tokenBalances?.forEach((tokenBalance) => {
+                  const lockedBalance = balances.lockedTokenBalances?.find(({ id }) => id === tokenBalance.id)?.amount
+
+                  tokenBalances.push({
+                    id: tokenBalance.id,
+                    totalBalance: tokenBalance.amount,
+                    lockedBalance: lockedBalance ?? '0',
+                    availableBalance: (BigInt(tokenBalance.amount) - BigInt(lockedBalance ?? 0)).toString()
+                  })
+                })
+              } else {
+                throw e
+              }
             }
 
             return {
