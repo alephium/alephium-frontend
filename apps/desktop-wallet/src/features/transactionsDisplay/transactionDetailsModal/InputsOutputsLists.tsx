@@ -24,12 +24,15 @@ interface InputsListProps extends UseTransactionProps {
 
 export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink }: InputsListProps) => {
   const { t } = useTranslation()
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
-  const timestamp = isConfirmedTx(tx) ? tx.timestamp : undefined
+  if (pendingSentTx) {
+    return <PendingSentAddressBadge txHash={tx.hash} direction="from" />
+  }
 
-  if (timestamp === GENESIS_TIMESTAMP) {
+  if (GENESIS_TIMESTAMP === (isConfirmedTx(tx) ? tx.timestamp : undefined)) {
     return <Badge>{t('Genesis TX')}</Badge>
   }
 
@@ -52,7 +55,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress, trun
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} />
+    return <PendingSentAddressBadge txHash={tx.hash} direction="to" />
   }
 
   if (addresses.length > 1 && truncate) {

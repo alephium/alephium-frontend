@@ -7,9 +7,10 @@ import { useAppSelector } from '@/hooks/redux'
 
 interface PendingSentAddressBadgeProps {
   txHash: string
+  direction: 'from' | 'to'
 }
 
-const PendingSentAddressBadge = ({ txHash }: PendingSentAddressBadgeProps) => {
+const PendingSentAddressBadge = ({ txHash, direction }: PendingSentAddressBadgeProps) => {
   const { t } = useTranslation()
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
@@ -19,7 +20,9 @@ const PendingSentAddressBadge = ({ txHash }: PendingSentAddressBadgeProps) => {
 
   if (pendingSentTx.type === 'faucet') return <Badge>{t('Token faucet')}</Badge>
 
-  return <AddressBadge truncate addressHash={pendingSentTx.toAddress} />
+  return (
+    <AddressBadge truncate addressHash={direction === 'from' ? pendingSentTx.fromAddress : pendingSentTx.toAddress} />
+  )
 }
 
 export default PendingSentAddressBadge

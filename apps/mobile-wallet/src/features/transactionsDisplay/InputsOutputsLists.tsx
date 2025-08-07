@@ -18,18 +18,19 @@ import { useAppSelector } from '~/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {
   tx: e.Transaction | e.PendingTransaction
-  hideLink?: boolean
-  truncate?: boolean
 }
 
-export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink }: InputsListProps) => {
+export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
   const { t } = useTranslation()
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
-  const timestamp = isConfirmedTx(tx) ? tx.timestamp : undefined
+  if (pendingSentTx) {
+    return <PendingSentAddressBadge txHash={tx.hash} direction="from" />
+  }
 
-  if (timestamp === GENESIS_TIMESTAMP) {
+  if (GENESIS_TIMESTAMP === (isConfirmedTx(tx) ? tx.timestamp : undefined)) {
     return <AppText bold>{t('Genesis TX')}</AppText>
   }
 
@@ -52,7 +53,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: In
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} />
+    return <PendingSentAddressBadge txHash={tx.hash} direction="to" />
   }
 
   return (
