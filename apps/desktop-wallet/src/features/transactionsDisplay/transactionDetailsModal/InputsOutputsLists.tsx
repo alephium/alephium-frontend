@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Badge from '@/components/Badge'
-import ClickableAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/ClickableAddressBadge'
+import TransactionAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/TransactionAddressBadge'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -43,7 +43,7 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink 
   return (
     <AddressesList>
       {addresses.map((address) => (
-        <ClickableAddressBadge address={address} key={address} hideLink={hideLink} />
+        <TransactionAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
     </AddressesList>
   )
@@ -61,7 +61,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress, trun
   if (addresses.length > 1 && truncate) {
     return (
       <TruncateWrap>
-        <ClickableAddressBadge address={addresses[0]} hideLink={hideLink} />
+        <TransactionAddressBadge address={addresses[0]} hideLink={hideLink} />
         <ExtraAddressesText>(+{addresses.length - 1})</ExtraAddressesText>
       </TruncateWrap>
     )
@@ -70,7 +70,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress, trun
   return (
     <AddressesList>
       {addresses.map((address) => (
-        <ClickableAddressBadge address={address} key={address} hideLink={hideLink} />
+        <TransactionAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
     </AddressesList>
   )
