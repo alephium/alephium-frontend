@@ -13,6 +13,9 @@ import transactions from './fixtures/transactions.json'
 const ONE = '1000000000000000000'
 const TWO = '2000000000000000000'
 const THREE = '2000000000000000000'
+const FIVE = '5000000000000000000'
+const SIX = '6000000000000000000'
+const TEN = '10000000000000000000'
 const ONE_HUNDRED = '100000000000000000000'
 const FORTY = '40000000000000000000'
 const FIFTY = '50000000000000000000'
@@ -21,6 +24,9 @@ const refAddress = '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
 const addressOne = '16VPvbF1ShQsj8TappJWtoW6gRM1AEQXYqwo5rQ7BiAy3'
 const addressTwo = '3cUr7V1JE8Ct3d9eTm5gewMTN1BeF8TGVz4NkLY5Bbuijob9kFY2c'
 const addressThr = '14UAjZ3qcmEVKdTo84Kwf4RprTQi86w2TefnnGFjov9xF'
+const addressFor = '1ABbAzkQPw2Nafj2wtwPBgf9XVRbM9ZVCp4inTNmPn88o'
+const addressFiv = '19qoWawenV1Wp9nAj9rfotA5P2QesrAy6rr2oWknRcmhe'
+const addressSix = '1ChU9K7vgDak4rLVY1DsNqE5E3tpABYPHaWSo9CFuJayb'
 const mockTx = {
   hash: 'test-hash',
   blockHash: 'test-block-hash',
@@ -64,20 +70,43 @@ const outp = {
 }
 
 describe('isAirdrop', () => {
-  describe('should return false when reference address does not receive ALPH and tokens', () => {
-    it('should return false when reference address receives no ALPH', () => {
+  describe('should return false when the minimum number of addresses is not met', () => {
+    it('3 addresses', () => {
       const tx: e.Transaction = {
         ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
+        inputs: [
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: THREE }] }
+        ],
         outputs: [
           { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
+          { ...outp, address: addressTwo, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressThr, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
         ]
       }
 
       expect(isAirdrop(tx, refAddress)).toBe(false)
     })
 
+    it('5 addresses', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: FIVE }] }
+        ],
+        outputs: [
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressTwo, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressThr, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFor, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFiv, attoAlphAmount: SIXTY, tokens: [{ id: 'token-1', amount: ONE }] }
+        ]
+      }
+
+      expect(isAirdrop(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('should return false when reference address does not receive ALPH and tokens', () => {
     it('should return false when reference address receives no tokens', () => {
       const tx: e.Transaction = {
         ...mockTx,
@@ -94,11 +123,22 @@ describe('isAirdrop', () => {
       const tx: e.Transaction = {
         ...mockTx,
         inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
+          { ...input, address: addressOne, attoAlphAmount: FORTY, tokens: [{ id: 'token-1', amount: SIX }] },
+          { ...input, address: refAddress, attoAlphAmount: TEN },
+          { ...input, address: addressTwo, attoAlphAmount: TEN },
+          { ...input, address: addressThr, attoAlphAmount: TEN },
+          { ...input, address: addressFor, attoAlphAmount: TEN },
+          { ...input, address: addressFiv, attoAlphAmount: TEN },
+          { ...input, address: addressSix, attoAlphAmount: TEN }
         ],
         outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressTwo, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressThr, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFor, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFiv, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressSix, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressOne, attoAlphAmount: FORTY }
         ]
       }
 
@@ -108,8 +148,23 @@ describe('isAirdrop', () => {
     it('should return false when only reference address receives outputs', () => {
       const tx: e.Transaction = {
         ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED }]
+        inputs: [
+          { ...input, address: addressOne, attoAlphAmount: FORTY, tokens: [{ id: 'token-1', amount: SIX }] },
+          { ...input, address: addressTwo, attoAlphAmount: TEN },
+          { ...input, address: addressThr, attoAlphAmount: TEN },
+          { ...input, address: addressFor, attoAlphAmount: TEN },
+          { ...input, address: addressFiv, attoAlphAmount: TEN },
+          { ...input, address: addressSix, attoAlphAmount: TEN }
+        ],
+        outputs: [
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressTwo, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressThr, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFor, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressFiv, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressSix, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressOne, attoAlphAmount: FORTY }
+        ]
       }
 
       expect(isAirdrop(tx, refAddress)).toBe(false)
@@ -121,11 +176,16 @@ describe('isAirdrop', () => {
       const tx: e.Transaction = {
         ...mockTx,
         inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: SIX }] }
         ],
         outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FORTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: SIXTY, tokens: [{ id: 'token-1', amount: ONE }] }
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressThr, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFor, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFiv, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FORTY, address: addressSix, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressOne }
         ]
       }
 
@@ -136,11 +196,16 @@ describe('isAirdrop', () => {
       const tx: e.Transaction = {
         ...mockTx,
         inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: THREE }] }
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TEN }] }
         ],
         outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: TWO }] }
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressTwo, tokens: [{ id: 'token-1', amount: TWO }] },
+          { ...outp, attoAlphAmount: TEN, address: addressThr, tokens: [{ id: 'token-1', amount: TWO }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFor, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFiv, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressSix, tokens: [{ id: 'token-1', amount: THREE }] },
+          { ...outp, attoAlphAmount: FORTY, address: addressOne }
         ]
       }
 
@@ -156,14 +221,27 @@ describe('isAirdrop', () => {
             address: addressOne,
             attoAlphAmount: ONE_HUNDRED,
             tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: ONE }
+              { id: 'token-1', amount: SIX },
+              { id: 'token-2', amount: SIX }
             ]
           }
         ],
         outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-2', amount: ONE }] }
+          { ...outp, address: refAddress, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressTwo, tokens: [{ id: 'token-2', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressThr, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFor, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressFiv, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: TEN, address: addressSix, tokens: [{ id: 'token-1', amount: ONE }] },
+          {
+            ...outp,
+            attoAlphAmount: FORTY,
+            address: addressOne,
+            tokens: [
+              { id: 'token-2', amount: FIVE },
+              { id: 'token-1', amount: ONE }
+            ]
+          }
         ]
       }
 
@@ -172,15 +250,19 @@ describe('isAirdrop', () => {
   })
 
   describe('should return true for valid airdrop transactions', () => {
-    it('should return true when multiple addresses receive identical amounts', () => {
+    it('should return true when enough multiple addresses receive identical amounts', () => {
       const tx: e.Transaction = {
         ...mockTx,
         inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: SIX }] }
         ],
         outputs: [
           { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] }
+          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressThr, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressFor, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressFiv, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressSix, tokens: [{ id: 'token-1', amount: ONE }] }
         ]
       }
 
@@ -196,8 +278,8 @@ describe('isAirdrop', () => {
             address: addressOne,
             attoAlphAmount: ONE_HUNDRED,
             tokens: [
-              { id: 'token-1', amount: TWO },
-              { id: 'token-2', amount: TWO }
+              { id: 'token-1', amount: SIX },
+              { id: 'token-2', amount: SIX }
             ]
           }
         ],
@@ -205,7 +287,7 @@ describe('isAirdrop', () => {
           {
             ...outp,
             address: refAddress,
-            attoAlphAmount: FIFTY,
+            attoAlphAmount: TEN,
             tokens: [
               { id: 'token-1', amount: ONE },
               { id: 'token-2', amount: ONE }
@@ -213,27 +295,54 @@ describe('isAirdrop', () => {
           },
           {
             ...outp,
-            attoAlphAmount: FIFTY,
+            attoAlphAmount: TEN,
             address: addressTwo,
             tokens: [
               { id: 'token-1', amount: ONE },
               { id: 'token-2', amount: ONE }
             ]
+          },
+          {
+            ...outp,
+            attoAlphAmount: TEN,
+            address: addressThr,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          },
+          {
+            ...outp,
+            attoAlphAmount: TEN,
+            address: addressFor,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          },
+          {
+            ...outp,
+            attoAlphAmount: TEN,
+            address: addressFiv,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          },
+          {
+            ...outp,
+            attoAlphAmount: TEN,
+            address: addressSix,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          },
+          {
+            ...outp,
+            attoAlphAmount: FORTY,
+            address: addressOne
           }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true for airdrop to multiple recipients', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: THREE, tokens: [{ id: 'token-1', amount: THREE }] }],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressThr, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] }
         ]
       }
 
@@ -269,11 +378,15 @@ describe('isAirdrop', () => {
       const pendingTx: e.PendingTransaction = {
         ...mockPendingTx,
         inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
+          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: SIX }] }
         ],
         outputs: [
           { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] }
+          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressThr, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressFor, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressFiv, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, attoAlphAmount: FIFTY, address: addressSix, tokens: [{ id: 'token-1', amount: ONE }] }
         ]
       }
 
@@ -341,9 +454,12 @@ describe('isBidirectionalTransfer', () => {
     it('should return false when only token amounts are negative', () => {
       const tx: e.Transaction = {
         ...mockTx,
-        inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }],
+        inputs: [
+          { ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...input, address: addressOne, attoAlphAmount: TEN }
+        ],
         outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressOne, attoAlphAmount: TEN, tokens: [{ id: 'token-1', amount: ONE }] },
           { ...outp, address: refAddress, attoAlphAmount: FIFTY }
         ]
       }
@@ -787,9 +903,9 @@ describe('should get the correct transaction type and origin/destinationaddresse
     const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
     const contractAddress = '22ofkfmMz7fLnhKjyXepz64pdVF1W7HiFddBpX8adypXy'
 
-    expectWalletAddressModal(tx, groupedAddress).toEqual('bidirectional-transfer')
-    expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('bidirectional-transfer')
-    expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('bidirectional-transfer')
+    expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+    expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+    expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
 
     expect(getTransactionOriginAddresses({ tx, referenceAddress: groupedAddress })).toEqual([groupedAddress])
     expect(getTransactionDestinationAddresses({ tx, referenceAddress: groupedAddress })).toEqual([contractAddress])

@@ -158,6 +158,8 @@ export const isBidirectionalTransfer = (
   return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)
 }
 
+const MIN_AIRDROP_ADDRESS_COUNT = 5
+
 export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
   const referenceAddressDeltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
 
@@ -177,7 +179,7 @@ export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAdd
   )
 
   return (
-    outputAddressesWithoutInputAddresses.length > 0 &&
+    outputAddressesWithoutInputAddresses.length > MIN_AIRDROP_ADDRESS_COUNT - 1 &&
     outputAddressesWithoutInputAddresses.every(
       (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
     )
