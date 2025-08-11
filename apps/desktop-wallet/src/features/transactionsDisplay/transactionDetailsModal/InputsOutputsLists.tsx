@@ -12,8 +12,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Badge from '@/components/Badge'
-import TransactionAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/TransactionAddressBadge'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
+import TransactionAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/TransactionAddressBadge'
 import { useAppSelector } from '@/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {

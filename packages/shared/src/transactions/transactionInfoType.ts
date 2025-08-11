@@ -75,18 +75,28 @@ export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAdd
 
   const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
-  return {
-    incoming: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
-    outgoing: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
-    pending: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
-    dApp: [referenceAddress],
-    airdrop: getInputAddressesWithOnlyNegativeAmountDeltas(tx),
-    'dApp-failed': [referenceAddress],
-    'bidirectional-transfer': [referenceAddress],
-    'wallet-self-transfer': getInputAddressesWithOnlyNegativeAmountDeltas(tx),
-    'address-self-transfer': [referenceAddress],
-    'address-group-transfer': [referenceAddress]
-  }[infoType]
+  switch (infoType) {
+    case 'incoming':
+      return getInputAddressesWithOnlyNegativeAmountDeltas(tx)
+    case 'outgoing':
+      return getInputAddressesWithOnlyNegativeAmountDeltas(tx)
+    case 'pending':
+      return getInputAddressesWithOnlyNegativeAmountDeltas(tx)
+    case 'dApp':
+      return [referenceAddress]
+    case 'airdrop':
+      return getInputAddressesWithOnlyNegativeAmountDeltas(tx)
+    case 'dApp-failed':
+      return [referenceAddress]
+    case 'bidirectional-transfer':
+      return [referenceAddress]
+    case 'wallet-self-transfer':
+      return getInputAddressesWithOnlyNegativeAmountDeltas(tx)
+    case 'address-self-transfer':
+      return [referenceAddress]
+    case 'address-group-transfer':
+      return [referenceAddress]
+  }
 }
 
 // TODO: Write tests
@@ -95,18 +105,28 @@ export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: Get
 
   const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
-  return {
-    incoming: [referenceAddress],
-    outgoing: getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
-    pending: getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
-    dApp: getDappOperationAddresses(tx, referenceAddress),
-    airdrop: [referenceAddress],
-    'dApp-failed': getDappOperationAddresses(tx, referenceAddress),
-    'bidirectional-transfer': getDappOperationAddresses(tx, referenceAddress),
-    'wallet-self-transfer': getOutputAddressesWithOnlyPositiveAmountDeltas(tx),
-    'address-self-transfer': [referenceAddress],
-    'address-group-transfer': [referenceAddress]
-  }[infoType]
+  switch (infoType) {
+    case 'incoming':
+      return [referenceAddress]
+    case 'outgoing':
+      return getOutputAddressesWithOnlyPositiveAmountDeltas(tx)
+    case 'pending':
+      return getOutputAddressesWithOnlyPositiveAmountDeltas(tx)
+    case 'dApp':
+      return getDappOperationAddresses(tx, referenceAddress)
+    case 'airdrop':
+      return [referenceAddress]
+    case 'dApp-failed':
+      return getDappOperationAddresses(tx, referenceAddress)
+    case 'bidirectional-transfer':
+      return getDappOperationAddresses(tx, referenceAddress)
+    case 'wallet-self-transfer':
+      return getOutputAddressesWithOnlyPositiveAmountDeltas(tx)
+    case 'address-self-transfer':
+      return [referenceAddress]
+    case 'address-group-transfer':
+      return [referenceAddress]
+  }
 }
 
 const getInputAddressesWithOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
