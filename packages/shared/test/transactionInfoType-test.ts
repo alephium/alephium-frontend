@@ -1,6 +1,11 @@
 import { explorer as e } from '@alephium/web3'
 
-import { isAirdrop, isBidirectionalTransfer } from '@/transactions/transactionInfoType'
+import {
+  getTransactionDestinationAddresses,
+  getTransactionOriginAddresses,
+  isAirdrop,
+  isBidirectionalTransfer
+} from '@/transactions/transactionInfoType'
 
 import { getTransactionInfoType } from '../src/transactions'
 import transactions from './fixtures/transactions.json'
@@ -593,7 +598,7 @@ const makeExpectWalletActivityScreenWithAllAddressesAsInternal =
       })
     )
 
-describe('should get the correct transaction type', () => {
+describe('should get the correct transaction type and origin/destinationaddresses', () => {
   // grouped address A to groupless subaddress B:X
   // https://testnet.alephium.org/transactions/13b9b04bfffed88dddb00001cfc6daaea997ab6fc69f3bf071198b7a44f9127e
   it('for grouped to groupless address transfer', () => {
@@ -616,6 +621,15 @@ describe('should get the correct transaction type', () => {
     expectExplorerGroupedAddressPage(tx, fromGroupedAddress).toEqual('outgoing')
     expectExplorerGrouplessAddressPage(tx, toGrouplessAddress).toEqual('incoming')
     expectExplorerGrouplessSubaddressPage(tx, toGrouplessSubaddress).toEqual('incoming')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: fromGroupedAddress })).toEqual([fromGroupedAddress])
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: toGrouplessAddress })).toEqual([fromGroupedAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: toGrouplessAddress })).toEqual([
+      toGrouplessAddress
+    ])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: fromGroupedAddress })).toEqual([
+      toGrouplessAddress
+    ])
   })
 
   // groupless subaddress A:X to groupless subaddress A:Y
@@ -633,6 +647,9 @@ describe('should get the correct transaction type', () => {
     expectExplorerGrouplessAddressPage(tx, grouplessAddress).toEqual('address-group-transfer')
     expectExplorerGrouplessSubaddressPage(tx, fromGrouplessSubaddress1).toEqual('address-group-transfer')
     expectExplorerGrouplessSubaddressPage(tx, toGrouplessSubaddress2).toEqual('address-group-transfer')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: grouplessAddress })).toEqual([grouplessAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: grouplessAddress })).toEqual([grouplessAddress])
   })
 
   // groupless subaddress A:X to grouped address B
@@ -657,6 +674,15 @@ describe('should get the correct transaction type', () => {
     expectExplorerGroupedAddressPage(tx, toGroupedAddress).toEqual('incoming')
     expectExplorerGrouplessAddressPage(tx, fromGrouplessAddress).toEqual('outgoing')
     expectExplorerGrouplessSubaddressPage(tx, fromGrouplessSubaddress).toEqual('outgoing')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: fromGrouplessAddress })).toEqual([
+      fromGrouplessAddress
+    ])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: fromGrouplessAddress })).toEqual([
+      toGroupedAddress
+    ])
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: toGroupedAddress })).toEqual([fromGrouplessAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: toGroupedAddress })).toEqual([toGroupedAddress])
   })
 
   // groupless subaddress A:X to groupless subaddress B:Y
@@ -683,6 +709,17 @@ describe('should get the correct transaction type', () => {
     expectExplorerGrouplessAddressPage(tx, toGrouplessAddress).toEqual('incoming')
     expectExplorerGrouplessSubaddressPage(tx, fromGrouplessSubaddress).toEqual('outgoing')
     expectExplorerGrouplessSubaddressPage(tx, toGrouplessSubaddress).toEqual('incoming')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: fromGrouplessAddress })).toEqual([
+      fromGrouplessAddress
+    ])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: fromGrouplessAddress })).toEqual([
+      toGrouplessAddress
+    ])
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: toGrouplessAddress })).toEqual([fromGrouplessAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: toGrouplessAddress })).toEqual([
+      toGrouplessAddress
+    ])
   })
 
   it('for grouped to the different grouped address transfer', () => {
@@ -702,6 +739,11 @@ describe('should get the correct transaction type', () => {
 
     expectExplorerGroupedAddressPage(tx, fromGroupedAddress).toEqual('outgoing')
     expectExplorerGroupedAddressPage(tx, toGroupedAddress).toEqual('incoming')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: fromGroupedAddress })).toEqual([fromGroupedAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: fromGroupedAddress })).toEqual([toGroupedAddress])
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: toGroupedAddress })).toEqual([fromGroupedAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: toGroupedAddress })).toEqual([toGroupedAddress])
   })
 
   it('for grouped to the same grouped address transfer', () => {
@@ -722,32 +764,47 @@ describe('should get the correct transaction type', () => {
     expectWalletActivityScreenWithSingleAddressAsInternal(tx, grouplessAddress).toEqual('address-self-transfer')
     expectExplorerGrouplessAddressPage(tx, grouplessAddress).toEqual('address-self-transfer')
     expectExplorerGrouplessSubaddressPage(tx, grouplessSubaddress).toEqual('address-self-transfer')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: grouplessAddress })).toEqual([grouplessAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: grouplessAddress })).toEqual([grouplessAddress])
   })
 
   it('for grouped to contract transfer', () => {
     const tx = transactions.transferFromGroupedToContract as e.Transaction
     const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+    const contractAddress = 'vZxibvwxhkobKtuq3V9HWTuSrG2g84ZzESZzZqVwQk39'
 
     expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
     expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
     expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: groupedAddress })).toEqual([groupedAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: groupedAddress })).toEqual([contractAddress])
   })
 
   it('for contract to grouped address transfer', () => {
     const tx = transactions.transferFromGroupedToContractToGrouped as e.Transaction
     const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
+    const contractAddress = '22ofkfmMz7fLnhKjyXepz64pdVF1W7HiFddBpX8adypXy'
 
     expectWalletAddressModal(tx, groupedAddress).toEqual('bidirectional-transfer')
     expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('bidirectional-transfer')
     expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('bidirectional-transfer')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: groupedAddress })).toEqual([groupedAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: groupedAddress })).toEqual([contractAddress])
   })
 
   it('for airdrops', () => {
     const tx = transactions.airdrop as e.Transaction
     const airdropAddress = '1Aye9fZyjT27hknS3PpbbWfQkT1kejMZSEgQcduhvsEMx'
+    const fromAddress = '18RG29XJiG84Mj2nTpSGa9AT3ZprHhm2eHdvwafmJTP9X'
 
     expectWalletAddressModal(tx, airdropAddress).toEqual('airdrop')
     expectWalletActivityScreenWithSingleAddressAsInternal(tx, airdropAddress).toEqual('airdrop')
     expectExplorerGroupedAddressPage(tx, airdropAddress).toEqual('airdrop')
+
+    expect(getTransactionOriginAddresses({ tx, referenceAddress: airdropAddress })).toEqual([fromAddress])
+    expect(getTransactionDestinationAddresses({ tx, referenceAddress: airdropAddress })).toEqual([airdropAddress])
   })
 })

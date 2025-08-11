@@ -69,7 +69,6 @@ interface GetTxAddressesProps {
   referenceAddress: string
 }
 
-// TODO: Write tests
 export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
   if (!tx.inputs || tx.inputs.length === 0) return []
 
@@ -99,7 +98,6 @@ export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAdd
   }
 }
 
-// TODO: Write tests
 export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
   if (!tx.outputs || tx.outputs.length === 0) return []
 
