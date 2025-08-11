@@ -33,6 +33,7 @@ export type AmountDeltas = {
     id: e.Token['id']
     amount: bigint
   }[]
+  fee: bigint
 }
 
 export type SentTransaction = {

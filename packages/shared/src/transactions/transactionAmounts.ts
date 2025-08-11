@@ -32,8 +32,9 @@ export const calcTxAmountsDeltaForAddress = (
     const fee = totalOutputAlph - totalInputAlph
 
     return {
-      alphAmount: fee,
-      tokenAmounts: []
+      alphAmount: BigInt(0),
+      tokenAmounts: [],
+      fee
     }
   }
 
@@ -54,9 +55,12 @@ export const calcTxAmountsDeltaForAddress = (
     }
   })
 
+  const fee = BigInt(tx.gasAmount) * BigInt(tx.gasPrice)
+
   return {
-    alphAmount: outputAmounts.alphAmount - inputAmounts.alphAmount,
-    tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0))
+    alphAmount: outputAmounts.alphAmount - inputAmounts.alphAmount + fee,
+    tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0)),
+    fee
   }
 }
 
@@ -89,7 +93,7 @@ const sumUpAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Out
 
       return acc
     },
-    { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
+    { alphAmount: BigInt(0), tokenAmounts: [] } as Omit<AmountDeltas, 'fee'>
   )
 }
 

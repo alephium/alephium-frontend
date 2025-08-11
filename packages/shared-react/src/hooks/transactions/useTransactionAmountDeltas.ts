@@ -30,5 +30,6 @@ export const useTransactionAmountDeltas = (
 
 const calculatePendingTxAmountsDeltas = (tx: SentTransaction) => ({
   alphAmount: -BigInt(tx.amount ?? 0),
-  tokenAmounts: tx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) })) ?? []
+  tokenAmounts: tx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) })) ?? [],
+  fee: BigInt(0)
 })
