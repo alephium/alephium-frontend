@@ -13,15 +13,6 @@ import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
 import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
-export const isBidirectionalTransfer = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
-  referenceAddress: string
-): boolean => {
-  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, referenceAddress)
-
-  return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)
-}
-
 // TODO: Delete?
 export const getDirection = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
@@ -113,32 +104,6 @@ export const isAlphAmountReduced = (
 
 export const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
   uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
-
-export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
-  const referenceAddressDeltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
-
-  const receivedAlphAndTokens =
-    referenceAddressDeltas.alphAmount > 0 &&
-    referenceAddressDeltas.tokenAmounts.length > 0 &&
-    referenceAddressDeltas.tokenAmounts.every(({ amount }) => amount > 0)
-
-  if (!receivedAlphAndTokens) return false
-
-  const stringifiedReferenceAddressDeltas = JSON.stringify(referenceAddressDeltas)
-
-  const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
-  const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
-  const outputAddressesWithoutInputAddresses = outputAddresses.filter(
-    (address) => !inputAddresses.includes(address) && address !== referenceAddress
-  )
-
-  return (
-    outputAddressesWithoutInputAddresses.length > 0 &&
-    outputAddressesWithoutInputAddresses.every(
-      (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
-    )
-  )
-}
 
 export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {
   const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]

@@ -1,22 +1,17 @@
 import { explorer as e } from '@alephium/web3'
 
 import {
-  calcTxAmountsDeltaForAddress,
-  isAirdrop,
-  isBidirectionalTransfer
+  addressHasOnlyNegativeAmountDeltas,
+  addressHasOnlyPositiveAmountDeltas,
+  calcTxAmountsDeltaForAddress
 } from '../src/transactions/transactionAmounts'
+import transactions from './fixtures/transactions.json'
 
 const ONE = '1000000000000000000'
-const TWO = '2000000000000000000'
-const THREE = '2000000000000000000'
 const ONE_HUNDRED = '100000000000000000000'
-const FORTY = '40000000000000000000'
 const FIFTY = '50000000000000000000'
-const SIXTY = '60000000000000000000'
 const refAddress = '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
 const addressOne = '16VPvbF1ShQsj8TappJWtoW6gRM1AEQXYqwo5rQ7BiAy3'
-const addressTwo = '3cUr7V1JE8Ct3d9eTm5gewMTN1BeF8TGVz4NkLY5Bbuijob9kFY2c'
-const addressThr = '14UAjZ3qcmEVKdTo84Kwf4RprTQi86w2TefnnGFjov9xF'
 const mockTx = {
   hash: 'test-hash',
   blockHash: 'test-block-hash',
@@ -58,502 +53,6 @@ const outp = {
   type: 'transfer',
   fixedOutput: false
 }
-
-describe('isAirdrop', () => {
-  describe('should return false when reference address does not receive ALPH and tokens', () => {
-    it('should return false when reference address receives no ALPH', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when reference address receives no tokens', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED }]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return false when there are no output addresses without input addresses', () => {
-    it('should return false when all output addresses are also input addresses', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when only reference address receives outputs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED }]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return false when output addresses receive different amounts', () => {
-    it('should return false when other addresses receive different ALPH amounts', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FORTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: SIXTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when other addresses receive different token amounts', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: THREE }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: TWO }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when other addresses receive different token IDs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          {
-            ...input,
-            address: addressOne,
-            attoAlphAmount: ONE_HUNDRED,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: ONE }
-            ]
-          }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-2', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return true for valid airdrop transactions', () => {
-    it('should return true when multiple addresses receive identical amounts', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true for airdrop with multiple tokens', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          {
-            ...input,
-            address: addressOne,
-            attoAlphAmount: ONE_HUNDRED,
-            tokens: [
-              { id: 'token-1', amount: TWO },
-              { id: 'token-2', amount: TWO }
-            ]
-          }
-        ],
-        outputs: [
-          {
-            ...outp,
-            address: refAddress,
-            attoAlphAmount: FIFTY,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: ONE }
-            ]
-          },
-          {
-            ...outp,
-            attoAlphAmount: FIFTY,
-            address: addressTwo,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: ONE }
-            ]
-          }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true for airdrop to multiple recipients', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: THREE, tokens: [{ id: 'token-1', amount: THREE }] }],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressTwo, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressThr, attoAlphAmount: ONE, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(tx, refAddress)).toBe(true)
-    })
-  })
-
-  describe('edge cases', () => {
-    it('should handle transactions with no inputs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
-    })
-
-    it('should handle transactions with no outputs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: []
-      }
-
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
-    })
-
-    it('should handle pending transactions', () => {
-      const pendingTx: e.PendingTransaction = {
-        ...mockPendingTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: TWO }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, attoAlphAmount: FIFTY, address: addressTwo, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isAirdrop(pendingTx, refAddress)).toBe(true)
-    })
-  })
-})
-
-describe('isBidirectionalTransfer', () => {
-  describe('should return false when all amounts are positive', () => {
-    it('should return false when only ALPH amount is positive', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED }]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when only token amounts are positive', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when both ALPH and token amounts are positive', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return false when all amounts are negative', () => {
-    it('should return false when only ALPH amount is negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED }],
-        outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY },
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when only token amounts are negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }],
-        outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when both ALPH and token amounts are negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return false when there are no amount deltas', () => {
-    it('should return false when ALPH delta is zero and no tokens', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY }]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-
-    it('should return false when ALPH delta is zero and tokens delta is zero', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }],
-        outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(false)
-    })
-  })
-
-  describe('should return true for bidirectional transfers', () => {
-    it('should return true when ALPH amount is positive and token amount is negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: refAddress, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true when ALPH amount is negative and token amount is positive', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED },
-          { ...input, address: addressOne, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY },
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true when ALPH amount is positive and some token amounts are negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          {
-            ...input,
-            address: refAddress,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: TWO }
-            ]
-          },
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-2', amount: TWO }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true when ALPH amount is negative and some token amounts are positive', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED },
-          {
-            ...input,
-            address: addressOne,
-            attoAlphAmount: ONE_HUNDRED,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: TWO }
-            ]
-          }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-2', amount: TWO }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(true)
-    })
-
-    it('should return true when some token amounts are positive and some are negative', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          {
-            ...input,
-            address: refAddress,
-            attoAlphAmount: ONE_HUNDRED,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: TWO }
-            ]
-          },
-          { ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-3', amount: ONE }] }
-        ],
-        outputs: [
-          {
-            ...outp,
-            address: refAddress,
-            attoAlphAmount: ONE_HUNDRED,
-            tokens: [
-              { id: 'token-1', amount: ONE },
-              { id: 'token-2', amount: ONE },
-              { id: 'token-3', amount: ONE }
-            ]
-          },
-          { ...outp, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-2', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(tx, refAddress)).toBe(true)
-    })
-  })
-
-  describe('edge cases', () => {
-    it('should handle transactions with no inputs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
-    })
-
-    it('should handle transactions with no outputs', () => {
-      const tx: e.Transaction = {
-        ...mockTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: []
-      }
-
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
-    })
-
-    it('should handle pending transactions', () => {
-      const pendingTx: e.PendingTransaction = {
-        ...mockPendingTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: refAddress, attoAlphAmount: FIFTY },
-          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(pendingTx, refAddress)).toBe(false)
-    })
-
-    it('should handle mempool transactions', () => {
-      const mempoolTx: e.MempoolTransaction = {
-        ...mockMempoolTx,
-        inputs: [
-          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ],
-        outputs: [
-          { ...outp, address: addressOne, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
-        ]
-      }
-
-      expect(isBidirectionalTransfer(mempoolTx, refAddress)).toBe(false)
-    })
-  })
-})
 
 describe('calcTxAmountsDeltaForAddress', () => {
   describe('should throw error when transaction details are missing', () => {
@@ -777,6 +276,203 @@ describe('calcTxAmountsDeltaForAddress', () => {
       const result = calcTxAmountsDeltaForAddress(mempoolTx, refAddress)
       expect(result.alphAmount).toBe(BigInt(`-${FIFTY}`))
       expect(result.tokenAmounts).toEqual([])
+    })
+  })
+})
+
+it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
+  expect(
+    calcTxAmountsDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)
+      .alphAmount
+  ).toEqual(BigInt('-50000000000000000000')),
+    expect(
+      calcTxAmountsDeltaForAddress(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)
+        .alphAmount
+    ).toEqual(BigInt('-150000000000000000000')),
+    expect(
+      calcTxAmountsDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
+        .alphAmount
+    ).toEqual(BigInt('-200000000000000000000')),
+    expect(() =>
+      calcTxAmountsDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
+    ).toThrowError('Missing transaction details'),
+    expect(() =>
+      calcTxAmountsDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
+    ).toThrowError('Missing transaction details')
+})
+
+describe('addressHasOnlyNegativeAmountDeltas and addressHasOnlyPositiveAmountDeltas', () => {
+  describe('when there are no amount deltas', () => {
+    it('when no ALPH delta and no token deltas', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY }],
+        outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY }]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(false)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('when only ALPH delta is negative', () => {
+    it('when ALPH amount is negative and no tokens', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [{ ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED }],
+        outputs: [
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY },
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+
+    it('when ALPH amount is negative and tokens delta is zero', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
+        ],
+        outputs: [
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('when only token deltas are negative', () => {
+    it('when no ALPH delta and tokens are negative', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          { ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...input, address: addressOne, attoAlphAmount: FIFTY }
+        ],
+        outputs: [
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('when both ALPH and token deltas are negative', () => {
+    it('when ALPH is negative and tokens are negative', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          { ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED, tokens: [{ id: 'token-1', amount: ONE }] }
+        ],
+        outputs: [
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+
+    it('when ALPH is negative and multiple tokens are negative', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          {
+            ...input,
+            address: refAddress,
+            attoAlphAmount: ONE_HUNDRED,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          }
+        ],
+        outputs: [
+          {
+            ...outp,
+            address: addressOne,
+            attoAlphAmount: FIFTY,
+            tokens: [
+              { id: 'token-1', amount: ONE },
+              { id: 'token-2', amount: ONE }
+            ]
+          },
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('when there are positive deltas', () => {
+    it('when ALPH is positive', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [{ ...input, address: addressOne, attoAlphAmount: ONE_HUNDRED }],
+        outputs: [
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY },
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(false)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(true)
+    })
+
+    it('when tokens are positive', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [{ ...input, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }],
+        outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(false)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(true)
+    })
+
+    it('when some tokens are positive', () => {
+      const tx: e.Transaction = {
+        ...mockTx,
+        inputs: [
+          { ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] },
+          { ...input, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-2', amount: ONE }] }
+        ],
+        outputs: [
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-2', amount: ONE }] },
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(tx, refAddress)).toBe(false)
+      expect(addressHasOnlyPositiveAmountDeltas(tx, refAddress)).toBe(false)
+    })
+  })
+
+  describe('edge cases', () => {
+    it('should handle pending transactions', () => {
+      const pendingTx: e.PendingTransaction = {
+        ...mockPendingTx,
+        inputs: [{ ...input, address: refAddress, attoAlphAmount: ONE_HUNDRED }],
+        outputs: [
+          { ...outp, address: addressOne, attoAlphAmount: FIFTY },
+          { ...outp, address: refAddress, attoAlphAmount: FIFTY }
+        ]
+      }
+
+      expect(addressHasOnlyNegativeAmountDeltas(pendingTx, refAddress)).toBe(true)
+      expect(addressHasOnlyPositiveAmountDeltas(pendingTx, refAddress)).toBe(false)
     })
   })
 })

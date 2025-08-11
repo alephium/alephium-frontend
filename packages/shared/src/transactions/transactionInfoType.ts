@@ -3,10 +3,10 @@ import { explorer as e } from '@alephium/web3'
 import {
   addressHasOnlyNegativeAmountDeltas,
   addressHasOnlyPositiveAmountDeltas,
+  calcTxAmountsDeltaForAddress,
   getInputOutputBaseAddresses,
-  isAirdrop,
-  isAlphAmountReduced,
-  isBidirectionalTransfer
+  hasPositiveAndNegativeAmounts,
+  isAlphAmountReduced
 } from '@/transactions/transactionAmounts'
 import {
   getBaseAddressStr,
@@ -148,5 +148,40 @@ const isSelfTransfer = (tx: e.Transaction | e.PendingTransaction | e.MempoolTran
     inputAddresses[0] !== undefined &&
     outputAddresses[0] !== undefined &&
     inputAddresses[0] === outputAddresses[0]
+  )
+}
+
+export const isBidirectionalTransfer = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
+  referenceAddress: string
+): boolean => {
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, referenceAddress)
+
+  return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)
+}
+
+export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
+  const referenceAddressDeltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
+
+  const receivedAlphAndTokens =
+    referenceAddressDeltas.alphAmount > 0 &&
+    referenceAddressDeltas.tokenAmounts.length > 0 &&
+    referenceAddressDeltas.tokenAmounts.every(({ amount }) => amount > 0)
+
+  if (!receivedAlphAndTokens) return false
+
+  const stringifiedReferenceAddressDeltas = JSON.stringify(referenceAddressDeltas)
+
+  const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
+  const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
+  const outputAddressesWithoutInputAddresses = outputAddresses.filter(
+    (address) => !inputAddresses.includes(address) && address !== getBaseAddressStr(referenceAddress)
+  )
+
+  return (
+    outputAddressesWithoutInputAddresses.length > 0 &&
+    outputAddressesWithoutInputAddresses.every(
+      (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
+    )
   )
 }
