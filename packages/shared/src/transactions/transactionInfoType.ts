@@ -113,13 +113,13 @@ export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: Get
     case 'pending':
       return getOutputAddressesWithOnlyPositiveAmountDeltas(tx)
     case 'dApp':
-      return getDappOperationAddresses(tx, referenceAddress)
+      return getAllTxAddressesExceptReferenceAddress(tx, referenceAddress)
     case 'airdrop':
       return [referenceAddress]
     case 'dApp-failed':
-      return getDappOperationAddresses(tx, referenceAddress)
+      return getAllTxAddressesExceptReferenceAddress(tx, referenceAddress)
     case 'bidirectional-transfer':
-      return getDappOperationAddresses(tx, referenceAddress)
+      return getAllTxAddressesExceptReferenceAddress(tx, referenceAddress)
     case 'wallet-self-transfer':
       return getOutputAddressesWithOnlyPositiveAmountDeltas(tx)
     case 'address-self-transfer':
@@ -132,7 +132,7 @@ export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: Get
 const getInputAddressesWithOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
   getInputOutputBaseAddresses(tx.inputs ?? []).filter((address) => addressHasOnlyNegativeAmountDeltas(tx, address))
 
-const getDappOperationAddresses = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) =>
+const getAllTxAddressesExceptReferenceAddress = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) =>
   uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
 
 const getOutputAddressesWithOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
