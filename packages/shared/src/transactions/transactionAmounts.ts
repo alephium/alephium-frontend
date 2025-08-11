@@ -114,21 +114,28 @@ export const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): Address
   uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
 
 export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
-  const deltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
+  const referenceAddressDeltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
 
   const receivedAlphAndTokens =
-    deltas.alphAmount > 0 && deltas.tokenAmounts.length > 0 && deltas.tokenAmounts.every(({ amount }) => amount > 0)
+    referenceAddressDeltas.alphAmount > 0 &&
+    referenceAddressDeltas.tokenAmounts.length > 0 &&
+    referenceAddressDeltas.tokenAmounts.every(({ amount }) => amount > 0)
 
   if (!receivedAlphAndTokens) return false
 
-  const stringifiedDeltas = JSON.stringify(deltas)
+  const stringifiedReferenceAddressDeltas = JSON.stringify(referenceAddressDeltas)
 
   const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
   const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
-  const outputAddressesWithoutInputAddresses = outputAddresses.filter((address) => !inputAddresses.includes(address))
+  const outputAddressesWithoutInputAddresses = outputAddresses.filter(
+    (address) => !inputAddresses.includes(address) && address !== referenceAddress
+  )
 
-  return outputAddressesWithoutInputAddresses.every(
-    (address) => stringifiedDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
+  return (
+    outputAddressesWithoutInputAddresses.length > 0 &&
+    outputAddressesWithoutInputAddresses.every(
+      (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
+    )
   )
 }
 
