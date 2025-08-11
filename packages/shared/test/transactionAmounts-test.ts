@@ -280,7 +280,7 @@ describe('calcTxAmountsDeltaForAddress', () => {
   })
 })
 
-it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
+it('should calculate the amount delta between the inputs and outputs of an address in a transaction', () => {
   expect(
     calcTxAmountsDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)
       .alphAmount
