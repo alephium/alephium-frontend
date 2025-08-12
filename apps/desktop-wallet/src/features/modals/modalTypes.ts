@@ -16,6 +16,7 @@ import { ConfirmLockTimeModalProps } from '@/features/send/sendModal/ConfirmLock
 import { SendModalProps } from '@/features/send/sendModal/SendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
+import { NetworkSwitchModalProps } from '@/features/walletConnect/NetworkSwitchModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
@@ -64,7 +65,8 @@ const ModalNames = {
   SignDeployContractTxModal: 'SignDeployContractTxModal',
   SignExecuteScriptTxModal: 'SignExecuteScriptTxModal',
   SignChainedTxModal: 'SignChainedTxModal',
-  OfflineModal: 'OfflineModal'
+  OfflineModal: 'OfflineModal',
+  NetworkSwitchModal: 'NetworkSwitchModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -211,6 +213,10 @@ export type OpenModalParams = {
     }
   | {
       name: typeof ModalNames.OfflineModal
+    }
+  | {
+      name: typeof ModalNames.NetworkSwitchModal
+      props: NetworkSwitchModalProps
     }
 )
 
