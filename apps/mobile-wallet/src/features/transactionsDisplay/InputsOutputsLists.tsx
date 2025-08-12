@@ -66,9 +66,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: In
 }
 
 const AddressesList = styled.View`
-  display: flex;
-  flex-direction: column;
-  align-items: end;
+  align-items: flex-end;
   overflow: hidden;
   gap: 5px;
 `

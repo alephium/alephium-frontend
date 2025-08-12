@@ -285,8 +285,6 @@ const AmountsContainer = styled.View`
 `
 
 const AddressesList = styled.View`
-  display: flex;
-  flex-direction: column;
   align-items: flex-end;
   gap: 5px;
 `
