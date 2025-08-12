@@ -84,7 +84,7 @@ jobs:
 
       # Linux
       - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v2
+        uses: samuelmeuli/action-snapcraft@v3
         if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release Linux Electron app
