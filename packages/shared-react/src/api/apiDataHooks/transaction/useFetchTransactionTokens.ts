@@ -49,7 +49,9 @@ export const useFetchTransactionTokens = (
   return {
     data: useMemo(
       () => ({
-        fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens] as TxFT[],
+        fungibleTokens: (alphAmount !== BigInt(0)
+          ? [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens]
+          : tokens.fungibleTokens) as TxFT[],
         nfts: tokens.nfts,
         nsts: tokens.nsts
       }),

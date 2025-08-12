@@ -13,15 +13,6 @@ import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
 import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
-export const isBidirectionalTransfer = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
-  referenceAddress: string
-): boolean => {
-  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, referenceAddress)
-
-  return hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)
-}
-
 // TODO: Delete?
 export const getDirection = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
@@ -32,39 +23,44 @@ export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
   refAddress: string
 ): AmountDeltas => {
-  if (!tx.inputs || !tx.outputs) throw 'Missing transaction details'
+  if (!tx.inputs || tx.inputs.length === 0 || !tx.outputs || tx.outputs.length === 0)
+    throw 'Missing transaction details'
+
+  let alphDelta
+  let tokensDelta: AmountDeltas['tokenAmounts'] = []
 
   if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
-    const fee = totalOutputAlph - totalInputAlph
 
-    return {
-      alphAmount: fee,
-      tokenAmounts: []
-    }
+    alphDelta = totalOutputAlph - totalInputAlph
+    tokensDelta = []
+  } else {
+    const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
+    const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
+
+    alphDelta = outputAmounts.alphAmount - inputAmounts.alphAmount
+    tokensDelta = [...outputAmounts.tokenAmounts]
+
+    inputAmounts.tokenAmounts.forEach((inputToken) => {
+      const existingTokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
+      if (existingTokenDelta) {
+        existingTokenDelta.amount -= inputToken.amount
+      } else {
+        tokensDelta.push({
+          id: inputToken.id,
+          amount: -inputToken.amount
+        })
+      }
+    })
   }
 
-  const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
-  const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
-
-  const tokensDelta = [...outputAmounts.tokenAmounts]
-
-  inputAmounts.tokenAmounts.forEach((inputToken) => {
-    const existingTokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
-    if (existingTokenDelta) {
-      existingTokenDelta.amount -= inputToken.amount
-    } else {
-      tokensDelta.push({
-        id: inputToken.id,
-        amount: -inputToken.amount
-      })
-    }
-  })
+  const fee = BigInt(tx.gasAmount) * BigInt(tx.gasPrice)
 
   return {
-    alphAmount: outputAmounts.alphAmount - inputAmounts.alphAmount,
-    tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0))
+    alphAmount: alphDelta < 0 ? alphDelta + fee : alphDelta,
+    tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0)),
+    fee: fee
   }
 }
 
@@ -97,7 +93,7 @@ const sumUpAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Out
 
       return acc
     },
-    { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
+    { alphAmount: BigInt(0), tokenAmounts: [] } as Omit<AmountDeltas, 'fee'>
   )
 }
 
@@ -112,32 +108,6 @@ export const isAlphAmountReduced = (
 
 export const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
   uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
-
-export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) => {
-  const referenceAddressDeltas = calcTxAmountsDeltaForAddress(tx, referenceAddress)
-
-  const receivedAlphAndTokens =
-    referenceAddressDeltas.alphAmount > 0 &&
-    referenceAddressDeltas.tokenAmounts.length > 0 &&
-    referenceAddressDeltas.tokenAmounts.every(({ amount }) => amount > 0)
-
-  if (!receivedAlphAndTokens) return false
-
-  const stringifiedReferenceAddressDeltas = JSON.stringify(referenceAddressDeltas)
-
-  const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
-  const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
-  const outputAddressesWithoutInputAddresses = outputAddresses.filter(
-    (address) => !inputAddresses.includes(address) && address !== referenceAddress
-  )
-
-  return (
-    outputAddressesWithoutInputAddresses.length > 0 &&
-    outputAddressesWithoutInputAddresses.every(
-      (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
-    )
-  )
-}
 
 export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {
   const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
