@@ -26,39 +26,41 @@ export const calcTxAmountsDeltaForAddress = (
   if (!tx.inputs || tx.inputs.length === 0 || !tx.outputs || tx.outputs.length === 0)
     throw 'Missing transaction details'
 
+  let alphDelta
+  let tokensDelta: AmountDeltas['tokenAmounts'] = []
+
   if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
     const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
-    const fee = totalOutputAlph - totalInputAlph
 
-    return {
-      alphAmount: fee,
-      tokenAmounts: [],
-      fee
-    }
+    alphDelta = totalOutputAlph - totalInputAlph
+    tokensDelta = []
+  } else {
+    const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
+    const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
+
+    alphDelta = outputAmounts.alphAmount - inputAmounts.alphAmount
+    tokensDelta = [...outputAmounts.tokenAmounts]
+
+    inputAmounts.tokenAmounts.forEach((inputToken) => {
+      const existingTokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
+      if (existingTokenDelta) {
+        existingTokenDelta.amount -= inputToken.amount
+      } else {
+        tokensDelta.push({
+          id: inputToken.id,
+          amount: -inputToken.amount
+        })
+      }
+    })
   }
 
-  const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
-  const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
-
-  const tokensDelta = [...outputAmounts.tokenAmounts]
-
-  inputAmounts.tokenAmounts.forEach((inputToken) => {
-    const existingTokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
-    if (existingTokenDelta) {
-      existingTokenDelta.amount -= inputToken.amount
-    } else {
-      tokensDelta.push({
-        id: inputToken.id,
-        amount: -inputToken.amount
-      })
-    }
-  })
+  const fee = BigInt(tx.gasAmount) * BigInt(tx.gasPrice)
 
   return {
-    alphAmount: outputAmounts.alphAmount - inputAmounts.alphAmount,
+    alphAmount: alphDelta < 0 ? alphDelta + fee : alphDelta,
     tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0)),
-    fee: BigInt(tx.gasAmount) * BigInt(tx.gasPrice)
+    fee: fee
   }
 }
 

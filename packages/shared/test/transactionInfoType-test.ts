@@ -903,9 +903,9 @@ describe('should get the correct transaction type and origin/destinationaddresse
     const groupedAddress = '1DZiFFX6fnSHuLnnmtBMUWeELWvnhRudYfzb17HYuV9aW'
     const contractAddress = '22ofkfmMz7fLnhKjyXepz64pdVF1W7HiFddBpX8adypXy'
 
-    expectWalletAddressModal(tx, groupedAddress).toEqual('bidirectional-transfer')
-    expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('bidirectional-transfer')
-    expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('bidirectional-transfer')
+    expectWalletAddressModal(tx, groupedAddress).toEqual('dApp')
+    expectWalletActivityScreenWithSingleAddressAsInternal(tx, groupedAddress).toEqual('dApp')
+    expectExplorerGroupedAddressPage(tx, groupedAddress).toEqual('dApp')
 
     expect(getTransactionOriginAddresses({ tx, referenceAddress: groupedAddress })).toEqual([groupedAddress])
     expect(getTransactionDestinationAddresses({ tx, referenceAddress: groupedAddress })).toEqual([contractAddress])
