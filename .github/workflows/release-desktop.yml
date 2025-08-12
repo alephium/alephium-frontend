@@ -84,7 +84,7 @@ jobs:
 
       # Linux
       - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v2
+        uses: samuelmeuli/action-snapcraft@v3
         if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release Linux Electron app
@@ -96,4 +96,11 @@ jobs:
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
-          pnpm electron-builder --linux --publish always
+
+          # Only publish to Snapcraft for non-rc versions
+          if [[ "${{ github.ref_name }}" != *"-rc"* ]]; then
+            pnpm electron-builder --linux appimage deb snap --publish always
+          else
+            echo "RC version detected, skipping Snapcraft upload"
+            pnpm electron-builder --linux appimage deb --publish always
+          fi
