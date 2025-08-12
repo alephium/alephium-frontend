@@ -7,8 +7,8 @@ import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowProps, TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
-const TokenBadgesListCell = ({ tx, refAddressHash, compact }: TransactionRowSectionProps) => {
-  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, refAddressHash)
+const TokenBadgesListCell = ({ tx, referenceAddress, compact }: TransactionRowSectionProps) => {
+  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, referenceAddress)
 
   return (
     <TokenBadgesListCellStyled compact={compact}>

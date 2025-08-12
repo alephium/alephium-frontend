@@ -47,7 +47,7 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
         </TransactionIcon>
       }
       rightSideContent={
-        <TransactionListItemAmounts tx={sentTransaction} refAddressHash={sentTransaction.fromAddress} />
+        <TransactionListItemAmounts tx={sentTransaction} referenceAddress={sentTransaction.fromAddress} />
       }
     />
   )

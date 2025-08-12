@@ -1,9 +1,9 @@
 import { selectPendingSentTransactionByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
-import AddressBadge from '@/components/AddressBadge'
-import Badge from '@/components/Badge'
-import { useAppSelector } from '@/hooks/redux'
+import AddressBadge from '~/components/AddressBadge'
+import Badge from '~/components/Badge'
+import { useAppSelector } from '~/hooks/redux'
 
 interface PendingSentAddressBadgeProps {
   txHash: string
@@ -20,9 +20,7 @@ const PendingSentAddressBadge = ({ txHash, direction }: PendingSentAddressBadgeP
 
   if (pendingSentTx.type === 'faucet') return <Badge>{t('Token faucet')}</Badge>
 
-  return (
-    <AddressBadge truncate addressHash={direction === 'from' ? pendingSentTx.fromAddress : pendingSentTx.toAddress} />
-  )
+  return <AddressBadge addressHash={direction === 'from' ? pendingSentTx.fromAddress : pendingSentTx.toAddress} />
 }
 
 export default PendingSentAddressBadge

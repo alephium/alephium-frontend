@@ -3,13 +3,13 @@ import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/sha
 import TokenAmountsBox from '@/components/TokenAmountsBox'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 
-const FTAmounts = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+const FTAmounts = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
   const {
     data: { fungibleTokens }
-  } = useFetchTransactionTokens(tx, refAddressHash)
-  const infoType = useTransactionInfoType(tx, refAddressHash)
+  } = useFetchTransactionTokens(tx, referenceAddress)
+  const infoType = useTransactionInfoType({ tx, referenceAddress: referenceAddress, view: 'wallet' })
 
-  const isMoved = infoType === 'move'
+  const isMoved = infoType === 'wallet-self-transfer'
 
   return <TokenAmountsBox assetAmounts={fungibleTokens} highlight={!isMoved} showPlusMinus={!isMoved} />
 }

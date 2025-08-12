@@ -3,7 +3,7 @@ import { explorer as e } from '@alephium/web3'
 
 export type ConfirmedTransactionListItemBaseProps = {
   tx: e.Transaction
-  refAddressHash?: AddressHash
+  referenceAddress?: AddressHash
 }
 
 export type ConfirmedTransactionListItemSubcomponentProps = Required<ConfirmedTransactionListItemBaseProps>
