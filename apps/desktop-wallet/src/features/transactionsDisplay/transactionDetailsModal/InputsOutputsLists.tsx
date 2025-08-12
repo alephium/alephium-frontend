@@ -32,7 +32,7 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink 
     return <PendingSentAddressBadge txHash={tx.hash} direction="from" />
   }
 
-  if (GENESIS_TIMESTAMP === (isConfirmedTx(tx) ? tx.timestamp : undefined)) {
+  if (isConfirmedTx(tx) && tx.timestamp === GENESIS_TIMESTAMP) {
     return <Badge>{t('Genesis TX')}</Badge>
   }
 
