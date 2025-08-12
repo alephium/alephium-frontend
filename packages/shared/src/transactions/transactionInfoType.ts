@@ -179,7 +179,7 @@ export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAdd
   )
 
   return (
-    outputAddressesWithoutInputAddresses.length > MIN_AIRDROP_ADDRESS_COUNT - 1 &&
+    outputAddressesWithoutInputAddresses.length >= MIN_AIRDROP_ADDRESS_COUNT &&
     outputAddressesWithoutInputAddresses.every(
       (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
     )
