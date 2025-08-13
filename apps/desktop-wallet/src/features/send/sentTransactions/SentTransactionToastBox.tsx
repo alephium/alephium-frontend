@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
+import Badge from '@/components/Badge'
 import CircularProgress from '@/components/CircularProgress'
 import HashEllipsed from '@/components/HashEllipsed'
 import { openModal } from '@/features/modals/modalActions'
@@ -95,7 +96,11 @@ const DetailsLink = ({ hash }: Pick<SentTransaction, 'hash'>) => {
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash: hash } }))
   }
 
-  return <DetailsLinkStyled onClick={openTransactionDetailsModal}>{t('See more')}</DetailsLinkStyled>
+  return (
+    <Badge clickable short>
+      <DetailsLinkStyled onClick={openTransactionDetailsModal}>{t('See more')}</DetailsLinkStyled>
+    </Badge>
+  )
 }
 
 const HashAndDetails = styled.div`

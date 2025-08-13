@@ -69,25 +69,11 @@ const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
       case 'error':
         return getToastBoxStyle(theme.global.alert)
       case 'info':
-        return getToastBoxStyle(theme.bg.contrast)
+        return getToastBoxStyle(theme.global.accent)
       case 'success':
         return getToastBoxStyle(theme.global.valid)
     }
   }}
-
-  ${({ type, theme }) =>
-    theme.name === 'light' &&
-    type === 'info' &&
-    css`
-      ${ToastBoxContent} {
-        background-color: ${colord(theme.font.primary).alpha(0.9).toHex()};
-        color: ${theme.bg.background1};
-
-        svg {
-          stroke: ${theme.bg.background1};
-        }
-      }
-    `}
 `
 
 const ToastBoxContent = styled(motion.div)`
@@ -104,7 +90,7 @@ const ToastBoxContent = styled(motion.div)`
   padding: 8px var(--spacing-4);
   border-radius: var(--radius-medium);
   width: 100%;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
 
   -webkit-app-region: no-drag;
 `
@@ -117,6 +103,10 @@ const getToastBoxStyle = (color: string) => css`
         theme.name === 'light' ? colord(color).alpha(0.1).toHex() : colord(color).alpha(0.2).lighten(0.1).toHex()};
     color: ${({ theme }) =>
       theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex()};
+
+    svg {
+      stroke: ${({ theme }) => (theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex())};};
+    }
   }
 `
 

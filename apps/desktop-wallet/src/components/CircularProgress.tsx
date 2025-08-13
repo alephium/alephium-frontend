@@ -4,11 +4,12 @@ import styled, { useTheme } from 'styled-components'
 interface CircularProgressProps {
   value: number
   radius?: number
+  color?: string
   railColor?: string
   className?: string
 }
 
-const CircularProgress = ({ value, radius = 18, railColor, className }: CircularProgressProps) => {
+const CircularProgress = ({ value, radius = 18, color, railColor, className }: CircularProgressProps) => {
   const theme = useTheme()
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = circumference - value * circumference
@@ -31,7 +32,7 @@ const CircularProgress = ({ value, radius = 18, railColor, className }: Circular
               cx="50%"
               cy="50%"
               r={radius}
-              stroke="currentColor"
+              stroke={color || theme.global.accent}
               strokeWidth="4"
               fill="transparent"
               strokeDasharray={circumference}
