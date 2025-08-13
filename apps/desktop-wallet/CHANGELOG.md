@@ -1,5 +1,22 @@
 # alephium-desktop-wallet
 
+## 3.1.0
+
+### Patch Changes
+
+- 4fb20b8: Support chained transaction dApp WalletConnect event
+- 8664e5e: Fix content jump on address details modal tabs hover
+- 3bc6375: Update app icon
+- e78bc2d: Improve discreet mode (unhide individual amounts)
+- 1334f7a: Display network switch on WalletConnect request with wrong network ID
+- 8016406: Fund address with another address if it lacks funds when interacting with a dApp
+- c815496: Improve performance by saving cache only on app quit or wallet lock
+- f8d9989: Fallback to node API when explorer backend API is down
+- da8c0a6: Fix display of transactions label, icons, origin addresses, and destination addresses
+- 8664e5e: Fix state update after sending transactions
+- e78bc2d: Fix amounts in transaction details modal
+- bcdbdad: Fix crash on passphrase unlock from within unlocked wallet
+
 ## 3.0.3
 
 ### Patch Changes
