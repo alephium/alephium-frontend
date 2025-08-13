@@ -14,9 +14,13 @@ export const localStorageNetworkSettingsLoaded = createAction<NetworkSettings>(
   'network/localStorageNetworkSettingsLoaded'
 )
 
-export const apiClientInitSucceeded = createAction<{
+export const nodeApiClientInitSucceeded = createAction<{
   networkId: NetworkSettings['networkId']
   networkName: NetworkName
-}>('network/apiClientInitSucceeded')
+}>('network/nodeApiClientInitSucceeded')
 
-export const apiClientInitFailed = createAction<{ networkName: NetworkName }>('network/apiClientInitFailed')
+export const nodeApiClientInitFailed = createAction<{ networkName: NetworkName }>('network/nodeApiClientInitFailed')
+
+export const explorerApiClientInitSucceeded = createAction('network/explorerApiClientInitSucceeded')
+
+export const explorerApiClientInitFailed = createAction('network/explorerApiClientInitFailed')

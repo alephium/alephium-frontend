@@ -29,7 +29,7 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const { deletePersistedCache, clearQueryCache } = usePersistQueryClientContext()
+  const { deletePersistedCache } = usePersistQueryClientContext()
 
   const removeWallet = () => {
     walletStorage.delete(walletId)
@@ -38,7 +38,6 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
     deletePersistedCache(walletId)
 
     if (activeWalletId === walletId) {
-      clearQueryCache()
       keyring.clear()
     }
 

@@ -1,14 +1,16 @@
-import { AddressMetadata, AddressSettings } from '@alephium/shared'
+import { AddressSettings, AddressStoredMetadataWithoutHash } from '@alephium/shared'
+import { KeyType } from '@alephium/web3'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface AddressMetadataStorageStoreProps {
   index: number
+  keyType: KeyType
   settings: AddressSettings
 }
 
-class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
+class AddressMetadataStorage extends PersistentArrayStorage<AddressStoredMetadataWithoutHash> {
   deleteOne(walletId: StoredEncryptedWallet['id'], addressIndex: number) {
     const addressesMetadata = this.load(walletId)
     const existingAddressMetadata = addressesMetadata.find((address) => address.index === addressIndex)
@@ -28,22 +30,29 @@ class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
     super.store(walletId, addressesMetadata)
   }
 
-  storeOne(walletId: StoredEncryptedWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
+  storeOne(walletId: StoredEncryptedWallet['id'], { index, keyType, settings }: AddressMetadataStorageStoreProps) {
     const addressesMetadata = this.load(walletId)
-    const existingAddressMetadata = addressesMetadata.find((address) => address.index === index)
+    const existingAddressMetadata = addressesMetadata.find(
+      (address) => address.index === index && (address.keyType ?? 'default') === keyType
+    )
     const currentDefaultAddress = addressesMetadata.find((data) => data.isDefault)
 
     if (!existingAddressMetadata) {
       addressesMetadata.push({
         index,
+        keyType,
         ...settings
       })
     } else {
       Object.assign(existingAddressMetadata, settings)
     }
 
-    if (settings.isDefault && currentDefaultAddress && currentDefaultAddress.index !== index) {
-      console.log(`🟠 Removing old default address with index ${index}`)
+    if (
+      settings.isDefault &&
+      currentDefaultAddress &&
+      (currentDefaultAddress.index !== index || (currentDefaultAddress.keyType ?? 'default') !== keyType)
+    ) {
+      console.log(`🟠 Removing old default address with index ${index} and keyType ${keyType}`)
 
       Object.assign(currentDefaultAddress, {
         ...currentDefaultAddress,

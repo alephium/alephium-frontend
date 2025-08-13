@@ -3,5 +3,5 @@ import { explorer as e } from '@alephium/web3'
 
 export interface TransactionDetailsModalTxProps {
   tx: e.Transaction | e.PendingTransaction
-  refAddressHash: AddressHash
+  referenceAddress: AddressHash
 }

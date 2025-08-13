@@ -18,9 +18,9 @@
   "dependencies": {
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.19",
-    "@alephium/web3": "1.11.3",
+    "@alephium/web3": "2.0.0",
     "@tanstack/react-query": "5.45.0",
-    "axios": "^1.8.2",
+    "axios": "^1.11.0",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-redux": "^8.0.5"
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "1.11.3",
+    "@alephium/walletconnect-provider": "2.0.0",
     "@types/react": "~18.3.20",
     "tsup": "^8.4.0",
     "typescript": "^5.3.3"

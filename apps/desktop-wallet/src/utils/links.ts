@@ -14,5 +14,6 @@ export const links = {
     'https://docs.alephium.org/frequently-asked-questions#why-is-there-an-additional-0001-alph-per-token-added-to-my-transaction-when-i-try-to-send-tokens',
   github: 'https://github.com/alephium',
   twitter: 'https://twitter.com/alephium',
-  ledgerLive: 'https://www.ledger.com/ledger-live'
+  ledgerLive: 'https://www.ledger.com/ledger-live',
+  statusPage: 'https://status.alephium.org'
 }

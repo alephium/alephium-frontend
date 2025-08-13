@@ -7,6 +7,7 @@ interface ModalContextType {
   dismissModal: () => void
   onDismiss: () => void
   onUserDismiss?: () => void
+  dismissAll: () => void
 }
 
 const ModalContext = createContext<ModalContextType | null>(null)
@@ -16,10 +17,12 @@ interface ModalContextProviderProps extends UseModalDismissProps {
 }
 
 const ModalContextProvider = ({ id, onUserDismiss, children }: ModalContextProviderProps) => {
-  const { dismissModal, onDismiss } = useModalDismiss({ id, onUserDismiss })
+  const { dismissModal, onDismiss, dismissAll } = useModalDismiss({ id, onUserDismiss })
 
   return (
-    <ModalContext.Provider value={{ id, dismissModal, onDismiss, onUserDismiss }}>{children}</ModalContext.Provider>
+    <ModalContext.Provider value={{ id, dismissModal, onDismiss, onUserDismiss, dismissAll }}>
+      {children}
+    </ModalContext.Provider>
   )
 }
 

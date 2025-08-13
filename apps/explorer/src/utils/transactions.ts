@@ -4,11 +4,12 @@ import {
   hasPositiveAndNegativeAmounts,
   isConfirmedTx,
   isConsolidationTx,
+  isGrouplessAddressIntraTransfer,
   TransactionDirection,
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
+import { explorer, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
@@ -16,8 +17,8 @@ import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
 export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string) => {
   let amount: bigint | undefined = BigInt(0)
-  let direction: TransactionDirection
-  let infoType: TransactionInfoType
+  let direction: TransactionDirection | undefined
+  let infoType: TransactionInfoType | undefined
   let lockTime: Date | undefined
 
   const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
@@ -26,9 +27,21 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
 
   const assetsMetadata = useAssetsMetadata(map(tokenAmounts, 'id'))
 
+  const getDirectionForGrouplessGroupTransfer = () =>
+    isGrouplessAddressWithoutGroupIndex(addressHash) ? undefined : getDirection(tx, addressHash) // If at the groupless "level", don't show direction
+
+  // TODO: Replace isConsolidationTx and then delete it
   if (isConsolidationTx(tx)) {
-    direction = 'out'
-    infoType = 'move'
+    if (isGrouplessAddressIntraTransfer(tx)) {
+      direction = getDirectionForGrouplessGroupTransfer()
+      infoType = 'moveGroup'
+    } else {
+      direction = 'out'
+      infoType = 'move'
+    }
+  } else if (isGrouplessAddressIntraTransfer(tx)) {
+    direction = getDirectionForGrouplessGroupTransfer()
+    infoType = 'moveGroup'
   } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
     infoType = 'swap'

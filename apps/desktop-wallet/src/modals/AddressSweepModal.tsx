@@ -3,8 +3,7 @@ import {
   AddressHash,
   getHumanReadableError,
   selectAddressByHash,
-  selectDefaultAddress,
-  transactionSent
+  selectDefaultAddress
 } from '@alephium/shared'
 import {
   useFetchAddressesHashesSortedByLastUse,
@@ -18,7 +17,7 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
+import { buildSweepTransactions, sendSweepTransactions } from '@/api/transactions'
 import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
@@ -66,10 +65,7 @@ const AddressSweepModal = memo(
         if (!sweepAddresses.from || !sweepAddresses.to) return
         setIsLoading(true)
         try {
-          const { unsignedTxs, fees } = await buildSweepTransactions(
-            sweepAddresses.from.publicKey,
-            sweepAddresses.to.hash
-          )
+          const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from, sweepAddresses.to.hash)
 
           setBuiltUnsignedTxs(unsignedTxs)
           setFee(fees)
@@ -107,32 +103,20 @@ const AddressSweepModal = memo(
     const onClose = () => dispatch(closeModal({ id }))
 
     const handleSweepClick = async () => {
-      if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
-      setIsLoading(true)
+      if (!sweepAddresses.from || !sweepAddresses.to) return
+      setIsLoading(isLedger ? t('Please, check your Ledger.') : true)
       try {
-        for (const { txId, unsignedTx } of builtUnsignedTxs) {
-          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger, onLedgerError)
-
-          if (!data) {
-            return
-          }
-
-          dispatch(
-            transactionSent({
-              hash: data.txId,
-              fromAddress: sweepAddresses.from.hash,
-              toAddress: sweepAddresses.to.hash,
-              timestamp: new Date().getTime(),
-              type: 'sweep',
-              status: 'sent'
-            })
-          )
+        const txParams = {
+          signerAddress: sweepAddresses.from.hash,
+          signerKeyType: sweepAddresses.from.keyType,
+          toAddress: sweepAddresses.to.hash
         }
+        await sendSweepTransactions(txParams, isLedger, { signerIndex: sweepAddresses.from.index, onLedgerError })
 
         onClose()
         onSuccessfulSweep && onSuccessfulSweep()
 
-        sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
+        sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
       } catch (error) {
         dispatch(
           transactionSendFailed(

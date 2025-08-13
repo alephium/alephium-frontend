@@ -1,3 +1,4 @@
+import { TransactionInfoType2 } from '@alephium/shared'
 import dayjs from 'dayjs'
 
 import { SelectOption } from '@/components/Inputs/Select'
@@ -49,18 +50,36 @@ export const directionOptions: {
 }[] = [
   {
     label: 'Sent',
-    value: 'out'
+    value: 'sent'
   },
   {
     label: 'Received',
-    value: 'in'
+    value: 'received'
   },
   {
     label: 'Moved',
-    value: 'move'
+    value: 'moved'
   },
   {
     label: 'Swapped',
-    value: 'swap'
+    value: 'swapped'
+  },
+  {
+    label: 'dApp operation',
+    value: 'dApp'
   }
 ]
+
+export const infoTypeToDirection = (infoType: TransactionInfoType2): Direction =>
+  ({
+    incoming: 'received',
+    airdrop: 'received',
+    outgoing: 'sent',
+    pending: 'sent',
+    dApp: 'dApp',
+    'dApp-failed': 'dApp',
+    'bidirectional-transfer': 'swapped',
+    'wallet-self-transfer': 'moved',
+    'address-self-transfer': 'moved',
+    'address-group-transfer': 'moved'
+  })[infoType] as Direction

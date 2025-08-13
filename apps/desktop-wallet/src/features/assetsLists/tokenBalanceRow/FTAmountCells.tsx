@@ -3,6 +3,7 @@ import { useFetchAddressSingleTokenBalances, useFetchWalletSingleTokenBalances }
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { fadeInSlowly } from '@/animations'
 import FTAmounts, { FTAmountsBaseProp } from '@/components/amounts/FTAmounts'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
@@ -45,7 +46,7 @@ export const FTWalletAmountCell = ({ tokenId }: Omit<FTAddressAmountCellProps, '
 }
 
 const FTAmountCell = (props: FTAmountsBaseProp) => (
-  <TableCell align="right">
+  <TableCell align="right" {...fadeInSlowly}>
     {props.isLoading ? (
       <SkeletonLoader height="20px" width="30%" />
     ) : (

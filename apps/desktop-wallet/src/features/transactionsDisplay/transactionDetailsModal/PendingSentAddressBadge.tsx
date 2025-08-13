@@ -1,6 +1,4 @@
-import { AddressHash, selectPendingSentTransactionByHash } from '@alephium/shared'
-import { useTransactionDirection } from '@alephium/shared-react'
-import { explorer as e } from '@alephium/web3'
+import { selectPendingSentTransactionByHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -8,15 +6,13 @@ import Badge from '@/components/Badge'
 import { useAppSelector } from '@/hooks/redux'
 
 interface PendingSentAddressBadgeProps {
-  tx: e.Transaction | e.PendingTransaction
-  refAddressHash: AddressHash
-  isDestinationAddress?: boolean
+  txHash: string
+  direction: 'from' | 'to'
 }
 
-const PendingSentAddressBadge = ({ tx, refAddressHash, isDestinationAddress }: PendingSentAddressBadgeProps) => {
+const PendingSentAddressBadge = ({ txHash, direction }: PendingSentAddressBadgeProps) => {
   const { t } = useTranslation()
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
-  const direction = useTransactionDirection(tx, refAddressHash)
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   if (!pendingSentTx) return null
 
@@ -25,10 +21,7 @@ const PendingSentAddressBadge = ({ tx, refAddressHash, isDestinationAddress }: P
   if (pendingSentTx.type === 'faucet') return <Badge>{t('Token faucet')}</Badge>
 
   return (
-    <AddressBadge
-      truncate
-      addressHash={isDestinationAddress || direction !== 'in' ? pendingSentTx.toAddress : pendingSentTx.fromAddress}
-    />
+    <AddressBadge truncate addressHash={direction === 'from' ? pendingSentTx.fromAddress : pendingSentTx.toAddress} />
   )
 }
 

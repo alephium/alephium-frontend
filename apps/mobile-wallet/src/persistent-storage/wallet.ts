@@ -7,11 +7,13 @@ import {
 import {
   AddressHash,
   addressMetadataIncludesHash,
-  AddressMetadataWithHash,
+  AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
+  GROUPLESS_ADDRESS_KEY_TYPE,
   resetArray,
   WalletMetadataMobile
 } from '@alephium/shared'
+import { KeyType } from '@alephium/web3'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 import { Alert } from 'react-native'
@@ -144,6 +146,7 @@ export const validateAndRepareStoredWalletData = async (
             addresses: [
               {
                 index: 0,
+                keyType: GROUPLESS_ADDRESS_KEY_TYPE,
                 isDefault: true,
                 color: getRandomLabelColor()
               }
@@ -214,7 +217,7 @@ export const generateAndStoreWallet = async (
 }
 
 const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
-  const initialAddress = await generateAndStoreAddressKeypairForIndex(0)
+  const initialAddress = await generateAndStoreAddressKeypairForIndex(0, GROUPLESS_ADDRESS_KEY_TYPE)
   const walletMetadata = generateWalletMetadata(name, initialAddress.hash, isMnemonicBackedUp)
   storeWalletMetadata(walletMetadata)
 
@@ -355,7 +358,10 @@ const deleteAddressKeyPair = async (addressHash: AddressHash) => {
   await deleteAddressPrivateKey(addressHash)
 }
 
-export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
+export const persistAddressesMetadata = async (
+  walletId: string,
+  addressesMetadata: AddressStoredMetadataWithHash[]
+) => {
   const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
@@ -414,10 +420,13 @@ export const migrateAddressMetadata = async () => {
     const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
-    const updatedAddressesMetadata: AddressMetadataWithHash[] = []
+    const updatedAddressesMetadata: AddressStoredMetadataWithHash[] = []
 
     for (const address of addresses) {
-      const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex: address.index })
+      const { hash, publicKey } = keyring.generateAndCacheAddress({
+        addressIndex: address.index,
+        keyType: address.keyType ?? 'default'
+      })
       let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
       await storeAddressPublicKey(hash, publicKey)
@@ -479,7 +488,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
         )}: ${i18n.t('Address metadata not found')}`
       )
 
-    await generateAndStoreAddressKeypairForIndex(address.index)
+    await generateAndStoreAddressKeypairForIndex(address.index, address.keyType ?? 'default')
     key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
     if (!key)
@@ -500,10 +509,11 @@ const generateWalletMetadata = (name: string, initialAddressHash: string, isMnem
   addresses: [
     {
       index: 0,
+      keyType: GROUPLESS_ADDRESS_KEY_TYPE,
       hash: initialAddressHash,
       isDefault: true,
       color: getRandomLabelColor()
-    }
+    } as AddressStoredMetadataWithHash
   ],
   contacts: []
 })
@@ -546,11 +556,14 @@ const deleteAddressPrivateKey = async (addressHash: AddressHash) =>
     'Could not delete address private key'
   )
 
-const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<NonSensitiveAddressData> => {
+const generateAndStoreAddressKeypairForIndex = async (
+  addressIndex: number,
+  keyType: KeyType
+): Promise<NonSensitiveAddressData> => {
   try {
     if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
 
-    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex })
+    const nonSensitiveAddressData = keyring.generateAndCacheAddress({ addressIndex, keyType })
     let privateKey = keyring.exportPrivateKeyOfAddress(nonSensitiveAddressData.hash)
 
     await storeAddressPublicKey(nonSensitiveAddressData.hash, nonSensitiveAddressData.publicKey)

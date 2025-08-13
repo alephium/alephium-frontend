@@ -19,6 +19,7 @@ import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
+import OfflineButton from '~/features/offline/OfflineButton'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -29,7 +30,6 @@ import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
-import { showToast } from '~/utils/layout'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -153,35 +153,13 @@ const HeaderLeft = () => {
   )
 }
 
-const HeaderRight = () => {
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const { t } = useTranslation()
-
-  const showOfflineMessage = () =>
-    showToast({
-      text1: `${t('Reconnecting')}...`,
-      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
-      type: 'info',
-      onPress: () => navigation.navigate('SettingsScreen')
-    })
-
-  return (
-    <HeaderButtonsContainer>
-      <WalletConnectButton />
-      {networkStatus === 'offline' && (
-        <Button
-          onPress={showOfflineMessage}
-          iconProps={{ name: 'cloud-offline-outline' }}
-          variant="alert"
-          squared
-          compact
-        />
-      )}
-      <WalletSettingsButton />
-    </HeaderButtonsContainer>
-  )
-}
+const HeaderRight = () => (
+  <HeaderButtonsContainer>
+    <OfflineButton />
+    <WalletConnectButton />
+    <WalletSettingsButton />
+  </HeaderButtonsContainer>
+)
 
 const HeaderButtonsContainer = styled.View`
   flex-direction: row;

@@ -1,4 +1,4 @@
-import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
+import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia'
 import { colord } from 'colord'
 import { Group } from 'lucide-react-native'
 import { memo, useEffect, useState } from 'react'
@@ -13,15 +13,16 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useIsScreenOrModaFocused } from '~/utils/navigation'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { useIsScreenOrModalFocused } from '~/utils/navigation'
 
 interface AnimatedBackgroundProps {
   offsetTop?: number
   shade?: string
 }
 
-const GYRO_MULTIPLIER = 100
-const FPS_60 = 1000 / 60 // ~16.67ms for 60fps
+const GYRO_MULTIPLIER = 70
+const FPS_30 = 1000 / 30 // ~33.33ms for 30fps
 
 const springConfig = {
   damping: 10,
@@ -30,34 +31,29 @@ const springConfig = {
 
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
-  const isFocused = useIsScreenOrModaFocused()
+  const isFocused = useIsScreenOrModalFocused()
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
   const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
-    interval: isFocused ? FPS_60 : 1000000
+    interval: isFocused ? FPS_30 : 1000000
   })
   const opacity = useSharedValue(1)
-  const lastUpdate = useSharedValue(0)
-  const lastRollValue = useSharedValue(0)
-  const lastPitchValue = useSharedValue(0)
 
   useEffect(() => {
     opacity.value = withSpring(isFocused ? 1 : 0, springConfig)
   }, [isFocused, opacity])
 
-  const linearGradientPositions = [0.1, 0.2, 0.6, 0.7, 0.75, 1]
-  const radialGradientPositions = [0.4, 0.5, 0.6, 0.7, 0.75, 1]
+  const radialGradientPositions = [0.5, 0.6, 0.7, 0.72, 0.75, 0.95, 1]
 
-  const getGradientColors = (opacity: number) => [
-    colord(shade || theme.global.palette2)
-      .alpha(opacity)
-      .toHex(),
-    colord(shade || theme.global.palette5)
-      .alpha(opacity)
-      .toHex(),
-    colord(theme.global.palette4).alpha(opacity).toHex(),
-    colord(theme.global.palette1).alpha(opacity).toHex(),
-    colord(theme.global.palette3).alpha(opacity).toHex(),
-    theme.bg.back2
+  const getGradientColors = () => [
+    colord('rgb(255, 255, 255)').toHex(),
+    shade ? colord(shade).rotate(30).saturate(1.2).toHex() : colord(theme.global.palette2).toHex(),
+    shade ? colord(shade).rotate(-30).saturate(1.2).toHex() : colord(theme.global.palette5).toHex(),
+    colord(theme.global.palette4).toHex(),
+    colord(theme.global.palette4).toHex(),
+    colord(theme.global.palette3).toHex(),
+    colord(shade || theme.global.accent)
+      .alpha(0)
+      .toHex()
   ]
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -65,60 +61,70 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
     setContainerDimensions({ width, height })
   }
 
-  const shouldUpdate = () => {
+  const lastSensorUpdate = useSharedValue(0)
+  const cachedSinRoll = useSharedValue(0)
+  const cachedSinZ = useSharedValue(0)
+
+  const shouldUpdateSensor = () => {
     'worklet'
     const now = Date.now()
-    if (now - lastUpdate.value < FPS_60) {
+    if (!isFocused || now - lastSensorUpdate.value < FPS_30) {
       return false
     }
-    lastUpdate.value = now
+    lastSensorUpdate.value = now
     return true
   }
 
   const sinRoll = useDerivedValue(() => {
-    if (!shouldUpdate()) return lastRollValue.value
-
-    const newValue = isFocused ? Math.sin(gyroscope?.sensor.get().roll || 0) : 0
-    lastRollValue.value = newValue
+    if (!shouldUpdateSensor()) return cachedSinRoll.value
+    const newValue = Math.sin(gyroscope?.sensor.get().roll)
+    cachedSinRoll.value = newValue
     return newValue
   })
 
   const sinZ = useDerivedValue(() => {
-    if (!shouldUpdate()) return lastPitchValue.value
-
-    const newValue = isFocused ? Math.sin(gyroscope?.sensor.get().pitch || 0) : 0
-    lastPitchValue.value = newValue
+    if (!shouldUpdateSensor()) return cachedSinZ.value
+    const newValue = Math.sin(gyroscope?.sensor.get().pitch)
+    cachedSinZ.value = newValue
     return newValue
   })
 
+  const gradientOffset = useSharedValue(0)
+
+  const linearGradientPositions = useDerivedValue(() => {
+    gradientOffset.value = sinRoll.value
+    return [
+      0,
+      0,
+      0.1 + gradientOffset.value,
+      0.2 + gradientOffset.value,
+      0.3 + gradientOffset.value,
+      0.8 + gradientOffset.value,
+      1.4 + gradientOffset.value
+    ]
+  })
+
   const radialGradientCenter = useDerivedValue(() => {
-    if (!isFocused) {
-      return vec(containerDimensions.width / 2, containerDimensions.height + 70)
-    }
     const x = containerDimensions.width / 2 + sinRoll.value * GYRO_MULTIPLIER
-    const y = containerDimensions.height + 70
+    const y = containerDimensions.height + 80
     return vec(x, y)
   })
 
   const radialGradientRadius = useDerivedValue(() => {
-    const baseRadius = containerDimensions.width * 0.5
-    if (!isFocused) return baseRadius
+    const maxRadius = 250
+    const relativeRadius = containerDimensions.width * 0.45
 
-    return withSpring(baseRadius * (1 - sinZ.value * 0.2))
+    return relativeRadius > maxRadius ? maxRadius : relativeRadius
   })
+
+  const linearGradientEndX = useSharedValue(0)
+  const linearGradientEndY = useSharedValue(0)
 
   const linearGradientEnd = useDerivedValue(() => {
-    if (!isFocused) {
-      return vec(containerDimensions.width, containerDimensions.height)
-    }
-    const x = containerDimensions.width + sinRoll.value * GYRO_MULTIPLIER
-    const y = containerDimensions.height * (1 + sinZ.value * 0.2)
-    return vec(x, y)
+    linearGradientEndX.value = containerDimensions.width + sinRoll.value * GYRO_MULTIPLIER * 2
+    linearGradientEndY.value = containerDimensions.height + sinZ.value * GYRO_MULTIPLIER * 2
+    return vec(linearGradientEndX.value, linearGradientEndY.value)
   })
-
-  const animatedPlaceholderStyle = useAnimatedStyle(() => ({
-    opacity: 1 - opacity.value
-  }))
 
   const animatedGradientStyle = useAnimatedStyle(() => ({
     opacity: opacity.value
@@ -126,28 +132,52 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
 
   return (
     <Container onLayout={handleLayout} style={{ top: offsetTop }}>
-      <AnimatedPlaceholderBackground style={[{ backgroundColor: theme.bg.primary }, animatedPlaceholderStyle]} />
+      <AnimatedPlaceholderBackground style={[{ backgroundColor: theme.bg.primary }]} />
       <AnimatedGradientBackground style={animatedGradientStyle}>
         <Canvas style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+          <Fill color={theme.bg.primary} />
+          <Rect
+            x={0}
+            y={0}
+            width={containerDimensions.width}
+            height={containerDimensions.height}
+            opacity={theme.name === 'light' ? 0.8 : 0.4}
+          >
+            <LinearGradient
+              colors={getGradientColors()}
+              positions={linearGradientPositions}
+              start={vec(0, 0)}
+              end={linearGradientEnd}
+            />
+          </Rect>
           <Group>
-            <Fill color={theme.bg.primary} />
-            <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height}>
-              <LinearGradient
-                colors={getGradientColors(1)}
-                positions={linearGradientPositions}
-                start={vec(0, 0)}
-                end={linearGradientEnd}
-              />
-            </Rect>
-            <Rect x={0} y={0} width={containerDimensions.width} height={containerDimensions.height} opacity={0.9}>
+            <RoundedRect
+              color={theme.bg.back1}
+              x={0}
+              y={0}
+              r={BORDER_RADIUS_BIG}
+              width={containerDimensions.width}
+              height={containerDimensions.height}
+              opacity={theme.name === 'light' ? 0.9 : 1}
+            />
+            <Blur blur={40} />
+          </Group>
+          <Group>
+            <Rect
+              x={0}
+              y={0}
+              width={containerDimensions.width}
+              height={containerDimensions.height}
+              opacity={theme.name === 'light' ? 0.65 : 0.9}
+            >
               <RadialGradient
                 c={radialGradientCenter}
                 r={radialGradientRadius}
-                colors={getGradientColors(theme.name === 'light' ? 0.5 : 0.9)}
+                colors={getGradientColors()}
                 positions={radialGradientPositions}
               />
             </Rect>
-            <Blur blur={20} />
+            <Blur blur={containerDimensions.width * (theme.name === 'light' ? 0.04 : 0.07)} />
           </Group>
         </Canvas>
       </AnimatedGradientBackground>

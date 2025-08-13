@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.11.0
+
+### Minor Changes
+
+- a66dbb8: Support display of groupless addresses
+
 ## 1.10.15
 
 ### Patch Changes

@@ -1,4 +1,4 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { AddressHash, selectAddressGroup } from '@alephium/shared'
 import { useInView } from 'framer-motion'
 import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,9 +16,6 @@ interface SelectOptionAddressProps {
 }
 
 const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionAddressProps) => {
-  const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
 
@@ -36,9 +33,7 @@ const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionA
             <AddressBadgeStyled addressHash={addressHash} disableA11y truncate appendHash />
             {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </AddressBadgeContainer>
-          <Group>
-            {t('Group')} {address?.group}
-          </Group>
+          <AddressGroup addressHash={addressHash} />
         </Header>
       }
       SecondaryContent={
@@ -53,6 +48,19 @@ const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionA
 }
 
 export default SelectOptionAddress
+
+const AddressGroup = ({ addressHash }: Pick<SelectOptionAddressProps, 'addressHash'>) => {
+  const addressGroup = useAppSelector((s) => selectAddressGroup(s, addressHash))
+  const { t } = useTranslation()
+
+  if (addressGroup === undefined) return null
+
+  return (
+    <Group>
+      {t('Group')} {addressGroup}
+    </Group>
+  )
+}
 
 const Header = styled.div`
   flex: 1;

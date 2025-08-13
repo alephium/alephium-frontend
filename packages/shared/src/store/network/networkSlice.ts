@@ -3,19 +3,22 @@ import { createSlice } from '@reduxjs/toolkit'
 import { defaultNetworkSettings, getNetworkName, networkSettingsPresets } from '@/network'
 import { appReset } from '@/store/global/globalActions'
 import {
-  apiClientInitFailed,
-  apiClientInitSucceeded,
   customNetworkSettingsSaved,
+  explorerApiClientInitFailed,
+  explorerApiClientInitSucceeded,
   localStorageNetworkSettingsLoaded,
   localStorageNetworkSettingsMigrated,
-  networkPresetSwitched
+  networkPresetSwitched,
+  nodeApiClientInitFailed,
+  nodeApiClientInitSucceeded
 } from '@/store/network/networkActions'
 import { NetworkNames, NetworkSettings, NetworkState, NetworkStatus } from '@/types/network'
 
 const initialState: NetworkState = {
   name: NetworkNames.mainnet,
   settings: defaultNetworkSettings,
-  status: 'uninitialized'
+  nodeStatus: 'uninitialized',
+  explorerStatus: 'uninitialized'
 }
 
 const networkSlice = createSlice({
@@ -33,15 +36,22 @@ const networkSlice = createSlice({
         return {
           name: networkName,
           settings: networkSettingsPresets[networkName],
-          status: 'connecting'
+          nodeStatus: 'connecting',
+          explorerStatus: 'connecting'
         }
       })
-      .addCase(apiClientInitSucceeded, (state, action) => {
+      .addCase(nodeApiClientInitSucceeded, (state, action) => {
         state.settings.networkId = action.payload.networkId
-        state.status = 'online'
+        state.nodeStatus = 'online'
       })
-      .addCase(apiClientInitFailed, (state) => {
-        state.status = 'offline'
+      .addCase(nodeApiClientInitFailed, (state) => {
+        state.nodeStatus = 'offline'
+      })
+      .addCase(explorerApiClientInitSucceeded, (state) => {
+        state.explorerStatus = 'online'
+      })
+      .addCase(explorerApiClientInitFailed, (state) => {
+        state.explorerStatus = 'offline'
       })
       .addCase(appReset, () => initialState)
   }
@@ -51,12 +61,9 @@ export default networkSlice
 
 // Reducers helper function
 
-const parseSettingsUpdate = (settings: NetworkSettings) => {
-  const missingNetworkSettings = !settings.nodeHost || !settings.explorerApiHost
-
-  return {
-    name: getNetworkName(settings),
-    settings,
-    status: missingNetworkSettings ? ('offline' as NetworkStatus) : ('connecting' as NetworkStatus)
-  }
-}
+const parseSettingsUpdate = (settings: NetworkSettings) => ({
+  name: getNetworkName(settings),
+  settings,
+  nodeStatus: !settings.nodeHost ? ('offline' as NetworkStatus) : ('connecting' as NetworkStatus),
+  explorerStatus: !settings.explorerApiHost ? ('offline' as NetworkStatus) : ('connecting' as NetworkStatus)
+})

@@ -12,7 +12,7 @@ export interface UseModalDismissProps {
 
 const useModalDismiss = ({ id, onUserDismiss }: UseModalDismissProps) => {
   const dispatch = useAppDispatch()
-  const { dismiss } = useBottomSheetModal()
+  const { dismiss, dismissAll } = useBottomSheetModal()
 
   const wasDismissedProgrammatically = useRef(false)
 
@@ -23,17 +23,14 @@ const useModalDismiss = ({ id, onUserDismiss }: UseModalDismissProps) => {
 
   const onDismiss = () => {
     if (!wasDismissedProgrammatically.current) {
-      console.log('MODAL: run custom code here since user closed the modal manually by dragging')
       onUserDismiss?.()
-    } else {
-      console.log('MODAL: dismissed programmatically')
     }
 
     dispatch(closeModal({ id }))
     dispatch(removeModal({ id }))
   }
 
-  return { dismissModal, onDismiss }
+  return { dismissModal, onDismiss, dismissAll }
 }
 
 export default useModalDismiss

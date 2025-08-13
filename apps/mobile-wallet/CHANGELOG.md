@@ -1,5 +1,21 @@
 # @alephium/mobile-wallet
 
+## 2.3.0
+
+### Patch Changes
+
+- 8664e5e: Fix address discovery screen after forgetting address
+- 4fb20b8: Support chained transaction dApp event
+- 48ee490: Fund missing gas from another address
+- f8d9989: Fallback to node API when explorer backend API is down
+- 8664e5e: Fix loading modal text
+- 8664e5e: Fix state update after sending transactions
+- da8c0a6: Fix display of transactions label, icons, origin addresses, and destination addresses
+- 251db88: Adjust gradient bg to better fit large screens & brand style
+- e138def: Fix modal dismissal when sending NFT
+- c815496: Improve performance by saving cache only when app in background
+- 8016406: Fund address with another address if it lacks funds when interacting with a dApp
+
 ## 2.2.1
 
 ### Patch Changes

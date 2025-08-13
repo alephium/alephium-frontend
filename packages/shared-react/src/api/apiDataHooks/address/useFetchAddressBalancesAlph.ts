@@ -4,10 +4,10 @@ import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataH
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useCurrentlyOnlineNetworkId } from '@/network'
 
-export const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseFetchAddressProps) => {
+export const useFetchAddressBalancesAlph = ({ addressHash }: UseFetchAddressProps) => {
   const networkId = useCurrentlyOnlineNetworkId()
 
-  const { data, isLoading } = useQuery(addressAlphBalancesQuery({ addressHash, networkId, skip }))
+  const { data, isLoading } = useQuery(addressAlphBalancesQuery({ addressHash, networkId }))
 
   return {
     data: data?.balances,

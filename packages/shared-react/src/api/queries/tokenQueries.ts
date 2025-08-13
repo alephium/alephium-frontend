@@ -2,6 +2,7 @@ import {
   batchers,
   FtListMap,
   getNetworkNameFromNetworkId,
+  is5XXError,
   NFT,
   NFTDataType,
   NFTDataTypes,
@@ -33,6 +34,19 @@ interface NFTQueryProps extends TokenQueryProps {
   tokenUri?: NFTMetaData['tokenUri']
 }
 
+const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap => {
+  const result: FtListMap = {}
+
+  for (const token of tokenList) {
+    result[token.id] = token
+  }
+
+  return result
+}
+
+const mainnetTokens = convertTokenListToRecord(mainnet.tokens)
+const testnetTokens = convertTokenListToRecord(testnet.tokens)
+
 export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
   const network = getNetworkNameFromNetworkId(networkId) ?? 'mainnet'
 
@@ -50,9 +64,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
               : axios
                   .get(getTokensURL(network))
                   .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || [])),
-    placeholderData: convertTokenListToRecord(
-      network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
-    )
+    placeholderData: network === 'mainnet' ? mainnetTokens : network === 'testnet' ? testnetTokens : undefined
   })
 }
 
@@ -175,27 +187,35 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     queryFn: async (): Promise<Token> => {
       const nst = { id } as NonStandardToken
 
-      // 1. First check if the token is in the token list
-      const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const listedFT = fTList[id]
+      try {
+        // 1. First check if the token is in the token list
+        const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+        const listedFT = fTList[id]
 
-      if (listedFT) return listedFT
+        if (listedFT) return listedFT
 
-      // 2. If not, find the type of the token
-      const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
+        // 2. If not, find the type of the token
+        const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
 
-      // 3. If it is a fungible token, fetch the fungible token metadata
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
-        const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
+        // 3. If it is a fungible token, fetch the fungible token metadata
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+          const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
 
-        return ftMetadata ?? nst
-      }
+          return ftMetadata ?? nst
+        }
 
-      // 4. If it is an NFT, fetch the NFT metadata and data
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
-        const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
+        // 4. If it is an NFT, fetch the NFT metadata and data
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+          const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
 
-        return nft ?? nst
+          return nft ?? nst
+        }
+      } catch (e) {
+        if (is5XXError(e)) {
+          return nst
+        } else {
+          throw e
+        }
       }
 
       // 5. If the type of the token cannot be determined, return the non-standard token
@@ -221,6 +241,3 @@ export const nftQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     },
     enabled: !skip
   })
-
-const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap =>
-  tokenList.reduce((acc, token) => ({ ...acc, [token.id]: token }), {} as FtListMap)

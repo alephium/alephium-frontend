@@ -1,11 +1,12 @@
 import { AddressHash } from '@alephium/shared'
-import { useFetchAddressInfiniteTransactions } from '@alephium/shared-react'
+import { useFetchAddressInfiniteTransactions, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import Table, { TableHeader } from '@/components/Table'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { openModal } from '@/features/modals/modalActions'
+import OfflineMessage from '@/features/offline/OfflineMessage'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -20,6 +21,7 @@ interface AddressTransactionListProps {
 const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const isExplorerOffline = useIsExplorerOffline()
 
   const {
     data: confirmedTxs,
@@ -34,13 +36,15 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
   })
 
   const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, refAddressHash: addressHash } }))
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, referenceAddress: addressHash } }))
 
   return (
     <Table minWidth="500px">
       <TableHeader>
         <AddressTransactionsCSVExportButton addressHash={addressHash} />
       </TableHeader>
+
+      {isExplorerOffline && <OfflineMessage />}
 
       {isLoading && <TableRowsLoader />}
 
@@ -50,8 +54,8 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
         <TransactionRow
           key={tx.hash}
           tx={tx}
-          refAddressHash={addressHash}
-          isInAddressDetailsModal
+          referenceAddress={addressHash}
+          view="address"
           compact
           onClick={() => openTransactionDetailsModal(tx.hash)}
           onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
