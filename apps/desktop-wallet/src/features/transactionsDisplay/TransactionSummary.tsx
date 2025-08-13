@@ -2,12 +2,17 @@ import styled from 'styled-components'
 
 import TransactionAmounts from '@/features/transactionsDisplay/transactionDetailsModal/TransactionAmounts'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
-import { TransactionSummaryProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
+import { TransactionDisplayProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
 
-const TransactionSummary = ({ tx, referenceAddress }: TransactionSummaryProps) => (
-  <SummaryStyled>
+interface TransactionSummaryProps extends TransactionDisplayProps {
+  hideType?: boolean
+  className?: string
+}
+
+const TransactionSummary = ({ tx, referenceAddress, hideType, className }: TransactionSummaryProps) => (
+  <SummaryStyled className={className}>
     <SummaryContent>
-      <TransactionType tx={tx} referenceAddress={referenceAddress} />
+      {!hideType && <TransactionType tx={tx} referenceAddress={referenceAddress} />}
       <TransactionAmounts tx={tx} referenceAddress={referenceAddress} />
     </SummaryContent>
   </SummaryStyled>

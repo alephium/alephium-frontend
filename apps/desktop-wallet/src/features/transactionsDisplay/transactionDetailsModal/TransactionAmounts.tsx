@@ -3,9 +3,9 @@ import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
 import TokenAmountsBox from '@/components/TokenAmountsBox'
-import { TransactionSummaryProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
+import { TransactionDisplayProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
 
-const TransactionAmounts = ({ tx, referenceAddress }: TransactionSummaryProps) => {
+const TransactionAmounts = ({ tx, referenceAddress }: TransactionDisplayProps) => {
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, referenceAddress)
   const assetAmounts = useMemo(
     () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),

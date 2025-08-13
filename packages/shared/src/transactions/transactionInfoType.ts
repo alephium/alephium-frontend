@@ -17,7 +17,7 @@ import {
   isWalletSelfTransfer
 } from '@/transactions/transactionUtils'
 import { AddressHash } from '@/types/addresses'
-import { SentTransaction } from '@/types/transactions'
+import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 export type TransactionInfoType2 =
@@ -37,7 +37,7 @@ export const getTransactionInfoType = ({
   referenceAddress,
   internalAddresses
 }: {
-  tx: e.Transaction | e.PendingTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx
   referenceAddress: string
   internalAddresses: string[]
 }): TransactionInfoType2 => {

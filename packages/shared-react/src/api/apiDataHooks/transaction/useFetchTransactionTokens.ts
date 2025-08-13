@@ -1,5 +1,6 @@
 import {
   AddressHash,
+  ExecuteScriptTx,
   isFT,
   isNFT,
   ListedFT,
@@ -35,7 +36,7 @@ type TransactionTokens = {
 }
 
 export const useFetchTransactionTokens = (
-  tx: e.Transaction | e.PendingTransaction | SentTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx,
   addressHash: AddressHash
 ): TransactionTokens => {
   const networkId = useCurrentlyOnlineNetworkId()

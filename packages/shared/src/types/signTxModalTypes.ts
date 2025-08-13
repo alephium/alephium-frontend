@@ -2,13 +2,15 @@ import {
   BuildTxResult,
   node as n,
   SignChainedTxParams,
-  SignChainedTxResult,
+  SignDeployContractChainedTxResult,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
+  SignExecuteScriptChainedTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
   SignMessageParams,
   SignMessageResult,
+  SignTransferChainedTxResult,
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
@@ -100,17 +102,17 @@ export interface SignChainedTxModalProps extends SignTxModalCommonProps {
     | {
         type: 'TRANSFER'
         txParams: SignTransferTxParams
-        unsignedData: Omit<SignChainedTxResult, 'signature'>
+        unsignedData: Omit<SignTransferChainedTxResult, 'signature'>
       }
     | {
         type: 'DEPLOY_CONTRACT'
         txParams: SignDeployContractTxParams
-        unsignedData: Omit<SignChainedTxResult, 'signature'>
+        unsignedData: Omit<SignDeployContractChainedTxResult, 'signature'>
       }
     | {
         type: 'EXECUTE_SCRIPT'
         txParams: SignExecuteScriptTxParams
-        unsignedData: Omit<SignChainedTxResult, 'signature'>
+        unsignedData: Omit<SignExecuteScriptChainedTxResult, 'signature'>
       }
   >
   onSuccess: (signResult: SignChainedTxModalResult) => void

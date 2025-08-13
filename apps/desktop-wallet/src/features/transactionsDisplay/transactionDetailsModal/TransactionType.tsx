@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-import { TransactionSummaryProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
+import { TransactionDisplayProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TransactionType = ({ tx, referenceAddress }: TransactionSummaryProps) => {
+const TransactionType = ({ tx, referenceAddress }: TransactionDisplayProps) => {
   const { label, Icon, iconColor } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (

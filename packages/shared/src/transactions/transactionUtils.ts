@@ -8,21 +8,25 @@ import {
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances } from '@/types/assets'
-import { SentTransaction } from '@/types/transactions'
+import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 export const isConfirmedTx = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
 ): tx is e.Transaction =>
   // See https://github.com/alephium/alephium-frontend/issues/1367
   'blockHash' in tx && !tx.inputs?.some((input) => input.txHashRef === undefined)
+
+export const isExecuteScriptTx = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
+): tx is ExecuteScriptTx => 'simulationResult' in tx
 
 export const isRichTransaction = (
   tx: e.PendingTransaction | n.RichTransaction | e.AcceptedTransaction | e.Transaction
 ): tx is n.RichTransaction => 'unsigned' in tx
 
 export const isSentTx = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
 ): tx is SentTransaction => 'status' in tx
 
 export const isWalletSelfTransfer = (
@@ -35,10 +39,15 @@ export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.Mempoo
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
-export const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
+export const getTxAddresses = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx
+): AddressHash[] => {
   const addresses = new Set<AddressHash>()
+  const _isExecuteScriptTx = isExecuteScriptTx(tx)
+  const inputs = _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs
+  const outputs = _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
 
-  for (const { address } of [...(tx.outputs ?? []), ...(tx.inputs ?? [])]) {
+  for (const { address } of [...(outputs ?? []), ...(inputs ?? [])]) {
     if (address) addresses.add(address)
   }
 

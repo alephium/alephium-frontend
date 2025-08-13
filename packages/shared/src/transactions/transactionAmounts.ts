@@ -5,12 +5,13 @@ import {
   getBaseAddressStr,
   getInputOutputBaseAddress,
   getTxAddresses,
+  isExecuteScriptTx,
   isSameBaseAddress
 } from '@/transactions/transactionUtils'
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount } from '@/types/assets'
 import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
-import { AmountDeltas, TransactionDirection } from '@/types/transactions'
+import { AmountDeltas, ExecuteScriptTx, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 // TODO: Delete?
@@ -20,24 +21,27 @@ export const getDirection = (
 ): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address).alphAmount < 0 ? 'out' : 'in')
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction,
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx,
   refAddress: string
 ): AmountDeltas => {
-  if (!tx.inputs || tx.inputs.length === 0 || !tx.outputs || tx.outputs.length === 0)
-    throw 'Missing transaction details'
+  const _isExecuteScriptTx = isExecuteScriptTx(tx)
+  const inputs = _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs
+  const outputs = _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
+
+  if (!inputs || inputs.length === 0 || !outputs || outputs.length === 0) throw 'Missing transaction details'
 
   let alphDelta
   let tokensDelta: AmountDeltas['tokenAmounts'] = []
 
   if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
-    const totalInputAlph = tx.inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
-    const totalOutputAlph = tx.outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
+    const totalInputAlph = inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
+    const totalOutputAlph = outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
 
     alphDelta = totalOutputAlph - totalInputAlph
     tokensDelta = []
   } else {
-    const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.outputs)
-    const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, tx.inputs)
+    const outputAmounts = sumUpAddressInputOutputAmounts(refAddress, outputs)
+    const inputAmounts = sumUpAddressInputOutputAmounts(refAddress, inputs)
 
     alphDelta = outputAmounts.alphAmount - inputAmounts.alphAmount
     tokensDelta = [...outputAmounts.tokenAmounts]
@@ -64,7 +68,10 @@ export const calcTxAmountsDeltaForAddress = (
   }
 }
 
-const sumUpAddressInputOutputAmounts = (refAddress: string, io: (e.Input | e.Output)[]) => {
+const sumUpAddressInputOutputAmounts = (
+  refAddress: string,
+  io: Pick<e.Input | e.Output, 'address' | 'attoAlphAmount' | 'tokens'>[]
+) => {
   const isGrouplessRefAddress = isGrouplessAddressWithoutGroupIndex(refAddress)
 
   return io.reduce(
