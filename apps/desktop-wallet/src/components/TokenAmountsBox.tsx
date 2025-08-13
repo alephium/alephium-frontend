@@ -12,11 +12,12 @@ import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
 import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import Amount, { AmountBaseProps } from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
+import Badge from '@/components/Badge'
 import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
@@ -121,13 +122,32 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAm
         )}
       </LogoAndName>
 
-      {!isNFT(token) && (
-        <TokenAmount>
-          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision {...props} />
-          {isFT(token) && <FiatAmount symbol={token.symbol} amount={BigInt(amount)} decimals={token.decimals} />}
-        </TokenAmount>
-      )}
+      <TokenAmountValue tokenId={tokenId} amount={amount} {...props} />
     </AssetAmountRowStyled>
+  )
+}
+
+const TokenAmountValue = ({ tokenId, amount, ...props }: Omit<AssetAmountRowProps, 'extraAlphForDust'>) => {
+  const { data: token } = useFetchToken(tokenId)
+  const theme = useTheme()
+
+  if (!token) return null
+
+  if (isNFT(token)) {
+    const color = props.showPlusMinus ? (BigInt(amount) > 0 ? theme.global.valid : theme.font.highlight) : undefined
+
+    return (
+      <Badge short border color={color}>
+        <Amount suffix="NFT" value={parseInt(amount)} {...props} />
+      </Badge>
+    )
+  }
+
+  return (
+    <TokenAmount>
+      <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision {...props} />
+      {isFT(token) && <FiatAmount symbol={token.symbol} amount={BigInt(amount)} decimals={token.decimals} />}
+    </TokenAmount>
   )
 }
 
