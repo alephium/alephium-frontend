@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionSummaryProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TransactionType = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
+const TransactionType = ({ tx, referenceAddress }: TransactionSummaryProps) => {
   const { label, Icon, iconColor } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (
