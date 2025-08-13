@@ -192,13 +192,17 @@ const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcompone
   } = useFetchTransactionTokens(tx, referenceAddress)
   const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
-  const isMoved =
-    infoType === 'address-group-transfer' || infoType === 'address-self-transfer' || infoType === 'wallet-self-transfer'
-  const isPending = infoType === 'pending'
   const groupedFtAmounts = useMemo(
     () => groupBy(fungibleTokens, (t) => (t.amount > 0 ? 'in' : 'out')),
     [fungibleTokens]
   )
+
+  if (infoType === 'address-group-transfer' || infoType === 'address-self-transfer') {
+    return null
+  }
+
+  const isMoved = infoType === 'wallet-self-transfer'
+  const isPending = infoType === 'pending'
 
   const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData: nfts } }))
 

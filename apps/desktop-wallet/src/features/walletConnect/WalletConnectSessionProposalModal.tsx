@@ -2,7 +2,7 @@ import { isNetworkValid, WalletConnectSessionProposalModalProps } from '@alephiu
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
-import { AlertTriangle, PlusSquare } from 'lucide-react'
+import { PlusSquare } from 'lucide-react'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -16,6 +16,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
+import { NetworkSwitchModalContent } from '@/features/walletConnect/NetworkSwitchModal'
 import useSignerAddress from '@/features/walletConnect/useSignerAddress'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -58,7 +59,7 @@ const WalletConnectSessionProposalModal = memo(
     const { signerAddressHash, signerAddressPublicKey, signerAddressKeyType, setSignerAddressHash, addressesInGroup } =
       useSignerAddress(group)
 
-    const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
+    const { showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
 
     const generateAddressInGroup = async () => {
       try {
@@ -200,28 +201,7 @@ const WalletConnectSessionProposalModal = memo(
         hasFooterButtons
       >
         {showNetworkWarning ? (
-          <>
-            <Section>
-              <InfoBox label="Switch network" Icon={AlertTriangle}>
-                <Trans
-                  t={t}
-                  i18nKey="walletConnectSwitchNetwork"
-                  values={{ currentNetworkName, network: chainInfo.networkId }}
-                  components={{ 1: <Highlight /> }}
-                >
-                  {
-                    'You are currently connected to <1>{{ currentNetworkName }}</1>, but the dApp requires a connection to <1>{{ network }}</1>.'
-                  }
-                </Trans>
-              </InfoBox>
-            </Section>
-            <ModalFooterButtons>
-              <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
-                {t('Decline')}
-              </ModalFooterButton>
-              <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
-            </ModalFooterButtons>
-          </>
+          <NetworkSwitchModalContent networkId={chainInfo.networkId} onUserDismiss={() => rejectAndCloseModal(true)} />
         ) : !signerAddressPublicKey ? (
           <>
             <Section>

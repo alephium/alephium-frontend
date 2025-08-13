@@ -3,6 +3,7 @@ import {
   getHumanReadableError,
   isConsolidationError,
   isInsufficientFundsError,
+  isNetworkValid,
   selectAllAddressByType,
   SessionRequestEvent,
   throttledClient,
@@ -15,7 +16,7 @@ import {
   useFetchWalletBalancesByAddress,
   useUnsortedAddresses
 } from '@alephium/shared-react'
-import { RelayMethod } from '@alephium/walletconnect-provider'
+import { parseChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignChainedTxParams,
@@ -82,12 +83,35 @@ const WalletConnectSessionRequestEventHandler = memo(
         }
 
         const {
-          params: { request }
+          params: { request, chainId }
         } = event
 
         let transactionParams: TransactionParams | undefined = undefined
 
         try {
+          const { networkId } = parseChain(chainId)
+          const showNetworkWarning =
+            !!networkId &&
+            currentlyOnlineNetworkId !== undefined &&
+            !isNetworkValid(networkId, currentlyOnlineNetworkId)
+
+          if (showNetworkWarning) {
+            dispatch(
+              openModal({
+                name: 'NetworkSwitchModal',
+                onUserDismiss: () => respondToWalletConnectWithError(event, getSdkError('USER_REJECTED')),
+                props: { networkId }
+              })
+            )
+
+            respondToWalletConnectWithError(event, {
+              message: 'Network mismatch',
+              code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+            })
+
+            return
+          }
+
           try {
             switch (request.method as RelayMethod) {
               case 'alph_signAndSubmitTransferTx': {

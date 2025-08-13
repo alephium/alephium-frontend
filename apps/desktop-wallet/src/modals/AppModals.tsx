@@ -12,6 +12,7 @@ import SendModal from '@/features/send/sendModal/SendModal'
 import SignConsolidateTxModal from '@/features/send/SignConsolidateTxModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import TransactionDetailsModal from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
+import NetworkSwitchModal from '@/features/walletConnect/NetworkSwitchModal'
 import SignChainedTxModal from '@/features/walletConnect/SignChainedTxModal'
 import SignDeployContractTxModal from '@/features/walletConnect/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '@/features/walletConnect/SignExecuteScriptTxModal'
@@ -151,6 +152,8 @@ export const AppModalsUnlockedWallet = () => {
             return <SignChainedTxModal key={modal.id} {...props} {...modal.params.props} />
           case 'OfflineModal':
             return <OfflineModal key={modal.id} {...props} />
+          case 'NetworkSwitchModal':
+            return <NetworkSwitchModal key={modal.id} {...props} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>
