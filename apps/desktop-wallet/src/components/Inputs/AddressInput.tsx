@@ -9,14 +9,16 @@ import Input from '@/components/Inputs/Input'
 import { useAppSelector } from '@/hooks/redux'
 import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 
+// Create selector outside component to avoid recreation on every render
+const selectContactByAddress = makeSelectContactByAddress()
+
 type InputFieldMode = 'view' | 'edit'
 
 const AddressInput = ({ value, ...props }: InputProps) => {
   const addressHashInput = value?.toString() || ''
   const ownAddress = useAppSelector((s) => selectAddressByHash(s, addressHashInput))
-  const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHashInput))
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [inputFieldMode, setInputFieldMode] = useState<InputFieldMode>('view')
 

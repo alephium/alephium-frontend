@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, ReactElement, useContext } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 type RouteParams = {
@@ -17,7 +17,7 @@ const initialContext: StepsContext = {
 export const StepsContext = createContext<StepsContext>(initialContext)
 
 interface StepsContextProviderProps {
-  stepElements: JSX.Element[]
+  stepElements: ReactElement[]
   baseUrl: string
 }
 
