@@ -30,7 +30,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'bidirectional-transfer': t('Swapped'),
       'wallet-self-transfer': t('Moved'),
       'address-self-transfer': t('Self transfer'),
-      'address-group-transfer': t('Group transfer')
+      'address-group-transfer': t('Group transfer'),
+      simulated: ''
     }[infoType],
     connectingWord: {
       incoming: t('from'),
@@ -42,7 +43,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'bidirectional-transfer': t('with'),
       'wallet-self-transfer': '',
       'address-self-transfer': '',
-      'address-group-transfer': ''
+      'address-group-transfer': '',
+      simulated: ''
     }[infoType],
     Icon: {
       incoming: ArrowDown,
@@ -54,7 +56,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'bidirectional-transfer': Repeat,
       'wallet-self-transfer': ArrowLeftRight,
       'address-self-transfer': RefreshCcw,
-      'address-group-transfer': RefreshCcw
+      'address-group-transfer': RefreshCcw,
+      simulated: Repeat
     }[infoType],
     iconColor: {
       incoming: theme.global.valid,
@@ -66,7 +69,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'bidirectional-transfer': theme.global.complementary,
       'wallet-self-transfer': theme.font.secondary,
       'address-self-transfer': theme.font.secondary,
-      'address-group-transfer': theme.font.secondary
+      'address-group-transfer': theme.font.secondary,
+      simulated: theme.global.complementary
     }[infoType],
     iconBgColor: {
       incoming: colord(theme.global.valid).alpha(0.08).toRgbString(),
@@ -78,7 +82,8 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'bidirectional-transfer': colord(theme.global.complementary).alpha(0.08).toRgbString(),
       'wallet-self-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),
       'address-self-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),
-      'address-group-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString()
+      'address-group-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),
+      simulated: colord(theme.global.complementary).alpha(0.08).toRgbString()
     }[infoType]
   }
 }

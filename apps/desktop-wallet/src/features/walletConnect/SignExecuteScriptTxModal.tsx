@@ -14,12 +14,14 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import Box from '@/components/Box'
 import TokenAmountsBox from '@/components/TokenAmountsBox'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
+import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
 import TransactionSummary from '@/features/transactionsDisplay/TransactionSummary'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
 import TransactionsSeparator from '@/features/walletConnect/TransactionsSeparator'
@@ -81,24 +83,25 @@ export const SignExecuteScriptTxModalContent = ({
   dAppUrl,
   unsignedData
 }: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl' | 'unsignedData'> & { fees: bigint }) => {
-  const txParamsAssetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
+  const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
   const { t } = useTranslation()
 
   return (
     <>
       <SectionTitle>{t('Sending')}</SectionTitle>
-      {txParamsAssetAmounts && txParamsAssetAmounts.length > 0 && (
-        <TokenAmountsBox assetAmounts={txParamsAssetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />
+      {assetAmounts && assetAmounts.length > 0 && (
+        <TokenAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />
       )}
       <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
-      {txParamsAssetAmounts && (
-        <CheckWorthBox assetAmounts={txParamsAssetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
-      )}
+      {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
 
       <TransactionsSeparator Icon={ChevronsDown} />
 
       <SectionTitle>{t('Simulated result')}</SectionTitle>
       <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType />
+      <Box hasBg hasHorizontalPadding>
+        <AddressesDataRows tx={unsignedData} referenceAddress={txParams.signerAddress} />
+      </Box>
     </>
   )
 }
@@ -127,6 +130,7 @@ const calculateAssetAmounts = ({ tokens, attoAlphAmount }: SignExecuteScriptTxMo
 
 const TransactionSummaryStyled = styled(TransactionSummary)`
   margin: 0;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const SectionTitle = styled.div`

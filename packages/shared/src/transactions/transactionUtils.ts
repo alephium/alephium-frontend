@@ -39,13 +39,22 @@ export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.Mempoo
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
+export const getTxInputsOutputs = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx
+) => {
+  const _isExecuteScriptTx = isExecuteScriptTx(tx)
+
+  return {
+    inputs: _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs,
+    outputs: _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
+  }
+}
+
 export const getTxAddresses = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx
 ): AddressHash[] => {
   const addresses = new Set<AddressHash>()
-  const _isExecuteScriptTx = isExecuteScriptTx(tx)
-  const inputs = _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs
-  const outputs = _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
+  const { inputs, outputs } = getTxInputsOutputs(tx)
 
   for (const { address } of [...(outputs ?? []), ...(inputs ?? [])]) {
     if (address) addresses.add(address)
@@ -72,7 +81,7 @@ export const isGrouplessAddressIntraTransfer = (
 // Address without group number
 export const getBaseAddressStr = (address: string): string => address.split(':')[0]
 
-export const getInputOutputBaseAddress = (io: e.Input | e.Output): string | undefined =>
+export const getInputOutputBaseAddress = (io: { address?: string }): string | undefined =>
   io.address ? getBaseAddressStr(io.address) : undefined
 
 export const isSameBaseAddress = (address1: string, address2: string): boolean =>

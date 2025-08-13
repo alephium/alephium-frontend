@@ -5,7 +5,7 @@ import {
   getBaseAddressStr,
   getInputOutputBaseAddress,
   getTxAddresses,
-  isExecuteScriptTx,
+  getTxInputsOutputs,
   isSameBaseAddress
 } from '@/transactions/transactionUtils'
 import { AddressHash } from '@/types/addresses'
@@ -24,9 +24,7 @@ export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx,
   refAddress: string
 ): AmountDeltas => {
-  const _isExecuteScriptTx = isExecuteScriptTx(tx)
-  const inputs = _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs
-  const outputs = _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
+  const { inputs, outputs } = getTxInputsOutputs(tx)
 
   if (!inputs || inputs.length === 0 || !outputs || outputs.length === 0) throw 'Missing transaction details'
 
@@ -113,7 +111,7 @@ export const isAlphAmountReduced = (
   return alphAmount < 0
 }
 
-export const getInputOutputBaseAddresses = (io: e.Input[] | e.Output[]): AddressHash[] =>
+export const getInputOutputBaseAddresses = (io: Array<{ address?: string }>): AddressHash[] =>
   uniq(io.map(getInputOutputBaseAddress).filter((address): address is string => address !== undefined))
 
 export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {
@@ -177,7 +175,10 @@ export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
 export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
   assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }
 
-export const addressHasOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
+export const addressHasOnlyNegativeAmountDeltas = (
+  tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx,
+  address: string
+) => {
   const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
 
   const hasNoAlphDelta = !alphAmount
@@ -195,7 +196,10 @@ export const addressHasOnlyNegativeAmountDeltas = (tx: e.Transaction | e.Pending
   )
 }
 
-export const addressHasOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction, address: string) => {
+export const addressHasOnlyPositiveAmountDeltas = (
+  tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx,
+  address: string
+) => {
   const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, address)
 
   const hasNoAlphDelta = !alphAmount
