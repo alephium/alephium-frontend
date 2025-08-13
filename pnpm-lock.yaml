@@ -274,6 +274,9 @@ importers:
       nanoid:
         specifier: ^3.3.8
         version: 3.3.8
+      overlayscrollbars-react:
+        specifier: ^0.5.6
+        version: 0.5.6(overlayscrollbars@2.11.5)(react@19.0.0)
       posthog-js:
         specifier: ^1.52.0
         version: 1.97.1
@@ -292,9 +295,6 @@ importers:
       react-confetti:
         specifier: ^6.0.1
         version: 6.1.0(react@19.0.0)
-      react-custom-scroll:
-        specifier: ^7.0.0
-        version: 7.0.0
       react-detect-click-outside:
         specifier: ^1.1.2
         version: 1.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -8496,6 +8496,15 @@ packages:
   outvariant@1.4.3:
     resolution: {integrity: sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==}
 
+  overlayscrollbars-react@0.5.6:
+    resolution: {integrity: sha512-E5To04bL5brn9GVCZ36SnfGanxa2I2MDkWoa4Cjo5wol7l+diAgi4DBc983V7l2nOk/OLJ6Feg4kySspQEGDBw==}
+    peerDependencies:
+      overlayscrollbars: ^2.0.0
+      react: 19.0.0
+
+  overlayscrollbars@2.11.5:
+    resolution: {integrity: sha512-vTUfCtjJbTjiarrxl9qdK04ZxlQdB4ugXfiqctVZytYDXH259OM4whROMGDE6T8uCYmSYPqiOFIKZ1erVkJnFg==}
+
   own-keys@1.0.1:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
     engines: {node: '>= 0.4'}
@@ -9008,9 +9017,6 @@ packages:
     engines: {node: '>=10.18'}
     peerDependencies:
       react: 19.0.0
-
-  react-custom-scroll@7.0.0:
-    resolution: {integrity: sha512-Obxsr299+7cMItEL4hIF5/pDUJastpjzEGVM5+yetiDSZF6upIocZTu4sf+Z5QYp+O0hnXm+Z2kSLvtrlTeMPA==}
 
   react-detect-click-outside@1.1.7:
     resolution: {integrity: sha512-dMrBZD7JW0Eh/uYNmMLTNwFj6afGYxAnc80fDSGJdjXjxJddH8ZazyMg2emyb8CAx9Hilr+r1fY+tm7O7m9eJg==}
@@ -9892,6 +9898,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -21202,6 +21209,13 @@ snapshots:
 
   outvariant@1.4.3: {}
 
+  overlayscrollbars-react@0.5.6(overlayscrollbars@2.11.5)(react@19.0.0):
+    dependencies:
+      overlayscrollbars: 2.11.5
+      react: 19.0.0
+
+  overlayscrollbars@2.11.5: {}
+
   own-keys@1.0.1:
     dependencies:
       get-intrinsic: 1.2.7
@@ -21687,14 +21701,6 @@ snapshots:
     dependencies:
       react: 19.0.0
       tween-functions: 1.2.0
-
-  react-custom-scroll@7.0.0:
-    dependencies:
-      '@types/lodash': 4.14.202
-      lodash: 4.17.21
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      styled-components: 6.1.19(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
 
   react-detect-click-outside@1.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:

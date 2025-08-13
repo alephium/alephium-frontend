@@ -1,5 +1,6 @@
 import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/features/localization/i18n'
+import 'overlayscrollbars/overlayscrollbars.css'
 
 import { ApiContextProvider, PersistQueryClientContextProvider } from '@alephium/shared-react'
 import isPropValid from '@emotion/is-prop-valid'
