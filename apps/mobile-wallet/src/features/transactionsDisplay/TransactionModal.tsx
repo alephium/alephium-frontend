@@ -1,4 +1,4 @@
-import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
+import { AddressHash, ExecuteScriptTx, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
 import {
   useFetchTransaction,
   useFetchTransactionTokens,
@@ -81,7 +81,7 @@ const TransactionModalContent = ({ txHash }: TransactionModalProps) => {
 }
 
 interface TransactionModalSubcomponentProps {
-  tx: e.AcceptedTransaction | e.PendingTransaction
+  tx: e.AcceptedTransaction | e.PendingTransaction | ExecuteScriptTx
   referenceAddress: AddressHash
 }
 
@@ -183,7 +183,11 @@ const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>
   )
 }
 
-const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcomponentProps) => {
+interface TransactionAmountsProps extends TransactionModalSubcomponentProps {
+  isLast?: boolean
+}
+
+export const TransactionAmounts = ({ tx, referenceAddress, isLast }: TransactionAmountsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
@@ -209,7 +213,7 @@ const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcompone
   return (
     <>
       {isMoved && (
-        <Row title={t('Moved')} transparent>
+        <Row title={t('Moved')} transparent isLast={isLast && nfts.length === 0}>
           <AmountsContainer>
             {fungibleTokens.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
@@ -218,7 +222,12 @@ const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcompone
         </Row>
       )}
       {!isMoved && groupedFtAmounts.out && (
-        <Row title={t(isPending ? 'Sending' : 'Sent')} transparent titleColor={theme.global.send}>
+        <Row
+          title={t(isPending ? 'Sending' : 'Sent')}
+          transparent
+          titleColor={theme.global.send}
+          isLast={isLast && nfts.length === 0}
+        >
           <AmountsContainer>
             {groupedFtAmounts.out.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
@@ -227,7 +236,7 @@ const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcompone
         </Row>
       )}
       {!isMoved && groupedFtAmounts.in && (
-        <Row title={t('Received')} transparent titleColor={theme.global.receive}>
+        <Row title={t('Received')} transparent titleColor={theme.global.receive} isLast={isLast && nfts.length === 0}>
           <AmountsContainer>
             {groupedFtAmounts.in.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
@@ -237,17 +246,17 @@ const TransactionAmounts = ({ tx, referenceAddress }: TransactionModalSubcompone
       )}
 
       {nfts.length === 1 && (
-        <Row title={t('NFT')} noMaxWidth transparent>
+        <Row title={t('NFT')} noMaxWidth transparent isLast={isLast}>
           <NFTThumbnail nftId={nfts[0].id} size={100} />
         </Row>
       )}
       {nfts.length > 1 && (
-        <Row title={t('NFTs')} noMaxWidth transparent>
+        <Row title={t('NFTs')} noMaxWidth transparent isLast={isLast}>
           <Button title={t('See NFTs')} onPress={openNftGridModal} short />
         </Row>
       )}
       {nsts.length > 0 && (
-        <Row title={t('Unknown tokens')} transparent>
+        <Row title={t('Unknown tokens')} transparent isLast={isLast}>
           {nsts.map(({ id, amount }) => (
             <UnknownTokenAmount key={id}>
               <Amount
