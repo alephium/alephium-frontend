@@ -1,5 +1,7 @@
 import { SignUnsignedTxModalProps } from '@alephium/shared'
-import { memo } from 'react'
+import { useTransactionAmountDeltas } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -8,10 +10,16 @@ import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
+import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
 import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
+import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import {
+  TransactionDestinationAddressesList,
+  TransactionOriginAddressesList
+} from '~/features/transactionsDisplay/InputsOutputsLists'
 import { signer } from '~/signer'
 
 const SignUnsignedTxModal = memo(
@@ -30,20 +38,38 @@ const SignUnsignedTxModal = memo(
       }
     })
 
+    const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
+    const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(unsignedData, txParams.signerAddress)
+    const assetAmounts = useMemo(
+      () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
+      [alphAmount, tokenAmounts]
+    )
+
     return (
       <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
+            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+            <Row title={t('From')} transparent>
+              <TransactionOriginAddressesList
+                tx={unsignedData}
+                referenceAddress={txParams.signerAddress}
+                view="wallet"
+              />
+            </Row>
+            <Row title={t('To')} transparent>
+              <TransactionDestinationAddressesList
+                tx={unsignedData}
+                referenceAddress={txParams.signerAddress}
+                view="wallet"
+              />
+            </Row>
             <Row title={t('Signing with')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
-            <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
-              <AppText>{unsignedData.hash}</AppText>
-            </Row>
-
-            {/* TODO: Should show decoded unsigned data, see https://github.com/alephium/alephium-web3/blob/3cb9b2f5079b8cb41d284f81078bc2894880d143/packages/web3/src/signer/signer.ts#L186 */}
             <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
+            <SignModalFeesRow fees={fees} />
           </Surface>
         </ScreenSection>
 
