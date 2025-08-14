@@ -3,10 +3,11 @@ import {
   getTransactionDestinationAddresses,
   getTransactionOriginAddresses,
   isConfirmedTx,
+  isExecuteScriptTx,
   selectPendingSentTransactionByHash,
+  SentTransaction,
   UseTransactionProps
 } from '@alephium/shared'
-import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -17,26 +18,27 @@ import TransactionAddressBadge from '@/features/transactionsDisplay/transactionD
 import { useAppSelector } from '@/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {
-  tx: e.Transaction | e.PendingTransaction
+  tx: Exclude<UseTransactionProps['tx'], SentTransaction>
   hideLink?: boolean
   truncate?: boolean
 }
 
 export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink }: InputsListProps) => {
   const { t } = useTranslation()
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} direction="from" />
+    return <PendingSentAddressBadge txHash={txHash} direction="from" />
   }
 
   if (isConfirmedTx(tx) && tx.timestamp === GENESIS_TIMESTAMP) {
     return <Badge>{t('Genesis TX')}</Badge>
   }
 
-  if (!tx.inputs || tx.inputs.length === 0) {
+  if (isConfirmedTx(tx) && (!tx.inputs || tx.inputs.length === 0)) {
     return <Badge>{t('Mining Rewards')}</Badge>
   }
 
@@ -50,12 +52,13 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink 
 }
 
 export const TransactionDestinationAddressesList = ({ tx, referenceAddress, truncate, hideLink }: InputsListProps) => {
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} direction="to" />
+    return <PendingSentAddressBadge txHash={txHash} direction="to" />
   }
 
   if (addresses.length > 1 && truncate) {

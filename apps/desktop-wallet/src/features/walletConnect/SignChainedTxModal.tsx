@@ -18,6 +18,7 @@ import { SignDeployContractTxModalContent } from '@/features/walletConnect/SignD
 import { SignExecuteScriptTxModalContent } from '@/features/walletConnect/SignExecuteScriptTxModal'
 import { SignTransferTxModalContent } from '@/features/walletConnect/SignTransferTxModal'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
+import TransactionsSeparator from '@/features/walletConnect/TransactionsSeparator'
 import { useAppDispatch } from '@/hooks/redux'
 import { signer } from '@/signer'
 
@@ -90,59 +91,47 @@ export const SignChainedTxModalContent = ({ props, dAppUrl }: Pick<SignChainedTx
       }
       case 'EXECUTE_SCRIPT': {
         const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
-        content = <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
+
+        content = (
+          <SignExecuteScriptTxModalContent
+            txParams={txParams}
+            fees={fees}
+            dAppUrl={dAppUrl}
+            unsignedData={unsignedData}
+          />
+        )
         break
       }
     }
 
     return (
       <Fragment key={index}>
-        <Title>{t('Transaction {{ number }}', { number: index + 1 })}</Title>
-        {content}
-        {index !== props.length - 1 && (
-          <Separator>
-            <SeparatorLine />
-            <SeparatorIcon>
-              <ChainIcon name="link-outline" size={18} />
-            </SeparatorIcon>
-          </Separator>
-        )}
+        <Transaction>
+          <TransactionTitle>{t('Transaction {{ number }}', { number: index + 1 })}</TransactionTitle>
+          {content}
+        </Transaction>
+        {index !== props.length - 1 && <TransactionsSeparator Icon={ChainIcon} />}
       </Fragment>
     )
   })
 }
 
-const Separator = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  padding: var(--spacing-2) 0;
-`
-
-const SeparatorLine = styled.div`
-  height: 2px;
-  background-color: ${({ theme }) => theme.border.primary};
-  width: 100%;
-`
-
-const SeparatorIcon = styled.div`
-  position: absolute;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-`
-
-const ChainIcon = styled(Link2Icon)`
-  margin-left: auto;
-  margin-right: auto;
-  background-color: ${({ theme }) => theme.bg.background1};
-  transform: rotate(90deg);
-`
-
-const Title = styled.div`
+const TransactionTitle = styled.div`
   text-align: center;
   margin-top: var(--spacing-2);
   font-size: 16px;
   font-weight: var(--fontWeight-bold);
+`
+
+const ChainIcon = styled(Link2Icon)`
+  transform: rotate(90deg);
+`
+
+const Transaction = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: var(--radius-big);
+  padding: var(--spacing-4);
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `

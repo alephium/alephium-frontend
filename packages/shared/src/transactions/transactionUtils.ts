@@ -8,21 +8,25 @@ import {
 
 import { AddressHash } from '@/types/addresses'
 import { AssetAmount, TokenApiBalances } from '@/types/assets'
-import { SentTransaction } from '@/types/transactions'
+import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 export const isConfirmedTx = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
 ): tx is e.Transaction =>
   // See https://github.com/alephium/alephium-frontend/issues/1367
   'blockHash' in tx && !tx.inputs?.some((input) => input.txHashRef === undefined)
+
+export const isExecuteScriptTx = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
+): tx is ExecuteScriptTx => 'simulationResult' in tx
 
 export const isRichTransaction = (
   tx: e.PendingTransaction | n.RichTransaction | e.AcceptedTransaction | e.Transaction
 ): tx is n.RichTransaction => 'unsigned' in tx
 
 export const isSentTx = (
-  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
 ): tx is SentTransaction => 'status' in tx
 
 export const isWalletSelfTransfer = (
@@ -35,10 +39,24 @@ export const isContractTx = (tx: e.Transaction | e.PendingTransaction | e.Mempoo
 
 const inputOutputIsContractAddress = (io: e.Input | e.Output): boolean => !!io.address && isContractAddress(io.address)
 
-export const getTxAddresses = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): AddressHash[] => {
-  const addresses = new Set<AddressHash>()
+export const getTxInputsOutputs = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx
+) => {
+  const _isExecuteScriptTx = isExecuteScriptTx(tx)
 
-  for (const { address } of [...(tx.outputs ?? []), ...(tx.inputs ?? [])]) {
+  return {
+    inputs: _isExecuteScriptTx ? tx.simulationResult.contractInputs : tx.inputs,
+    outputs: _isExecuteScriptTx ? tx.simulationResult.generatedOutputs : tx.outputs
+  }
+}
+
+export const getTxAddresses = (
+  tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx
+): AddressHash[] => {
+  const addresses = new Set<AddressHash>()
+  const { inputs, outputs } = getTxInputsOutputs(tx)
+
+  for (const { address } of [...(outputs ?? []), ...(inputs ?? [])]) {
     if (address) addresses.add(address)
   }
 
@@ -63,7 +81,7 @@ export const isGrouplessAddressIntraTransfer = (
 // Address without group number
 export const getBaseAddressStr = (address: string): string => address.split(':')[0]
 
-export const getInputOutputBaseAddress = (io: e.Input | e.Output): string | undefined =>
+export const getInputOutputBaseAddress = (io: { address?: string }): string | undefined =>
   io.address ? getBaseAddressStr(io.address) : undefined
 
 export const isSameBaseAddress = (address1: string, address2: string): boolean =>

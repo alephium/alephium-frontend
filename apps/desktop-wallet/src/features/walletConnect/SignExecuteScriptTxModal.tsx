@@ -9,17 +9,22 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { partition } from 'lodash'
+import { ChevronsDown } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
+import Box from '@/components/Box'
 import TokenAmountsBox from '@/components/TokenAmountsBox'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
-import BytecodeExpandableSection from '@/features/walletConnect/BytecodeExpandableSection'
+import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
+import TransactionSummary from '@/features/transactionsDisplay/TransactionSummary'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
+import TransactionsSeparator from '@/features/walletConnect/TransactionsSeparator'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { signer } from '@/signer'
 
@@ -65,7 +70,7 @@ const SignExecuteScriptTxModal = ({
 
   return (
     <SignTxBaseModal title={t('Call contract')} sign={handleSignAndSubmit} type="EXECUTE_SCRIPT" {...props}>
-      <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} />
+      <SignExecuteScriptTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} unsignedData={unsignedData} />
     </SignTxBaseModal>
   )
 }
@@ -75,16 +80,28 @@ export default SignExecuteScriptTxModal
 export const SignExecuteScriptTxModalContent = ({
   txParams,
   fees,
-  dAppUrl
-}: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl'> & { fees: bigint }) => {
+  dAppUrl,
+  unsignedData
+}: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl' | 'unsignedData'> & { fees: bigint }) => {
   const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
+  const { t } = useTranslation()
 
   return (
     <>
-      {assetAmounts && <TokenAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />}
+      <SectionTitle>{t('Sending')}</SectionTitle>
+      {assetAmounts && assetAmounts.length > 0 && (
+        <TokenAmountsBox assetAmounts={assetAmounts} hasBg hasHorizontalPadding shouldAddAlphForDust />
+      )}
       <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
       {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
-      <BytecodeExpandableSection bytecode={txParams.bytecode} />
+
+      <TransactionsSeparator Icon={ChevronsDown} />
+
+      <SectionTitle>{t('Simulated result')}</SectionTitle>
+      <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType />
+      <Box hasBg hasHorizontalPadding>
+        <AddressesDataRows tx={unsignedData} referenceAddress={txParams.signerAddress} />
+      </Box>
     </>
   )
 }
@@ -110,3 +127,16 @@ const calculateAssetAmounts = ({ tokens, attoAlphAmount }: SignExecuteScriptTxMo
 
   return assetAmounts
 }
+
+const TransactionSummaryStyled = styled(TransactionSummary)`
+  margin: 0;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+`
+
+const SectionTitle = styled.div`
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 14px;
+  margin-top: 0;
+  font-weight: var(--fontWeight-bold);
+  text-align: center;
+`

@@ -4,8 +4,11 @@ import {
   SignChainedTxParams,
   SignChainedTxResult,
   SignDeployContractChainedTxParams,
+  SignDeployContractChainedTxResult,
   SignExecuteScriptChainedTxParams,
-  SignTransferChainedTxParams
+  SignExecuteScriptChainedTxResult,
+  SignTransferChainedTxParams,
+  SignTransferChainedTxResult
 } from '@alephium/web3'
 import { capitalize } from 'lodash'
 
@@ -77,13 +80,25 @@ export const getChainedTxPropsFromTransactionParams = (
   txParams.map(({ type, params }, index) => {
     switch (type) {
       case 'TRANSFER': {
-        return { type, txParams: params, unsignedData: unsignedData[index] }
+        return {
+          type,
+          txParams: params,
+          unsignedData: unsignedData[index] as Omit<SignTransferChainedTxResult, 'signature'>
+        }
       }
       case 'DEPLOY_CONTRACT': {
-        return { type, txParams: params, unsignedData: unsignedData[index] }
+        return {
+          type,
+          txParams: params,
+          unsignedData: unsignedData[index] as Omit<SignDeployContractChainedTxResult, 'signature'>
+        }
       }
       case 'EXECUTE_SCRIPT': {
-        return { type, txParams: params, unsignedData: unsignedData[index] }
+        return {
+          type,
+          txParams: params,
+          unsignedData: unsignedData[index] as Omit<SignExecuteScriptChainedTxResult, 'signature'>
+        }
       }
       default: {
         throw new Error(`Unsupported transaction type: ${type}`)

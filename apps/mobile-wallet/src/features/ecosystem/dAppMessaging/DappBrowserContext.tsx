@@ -14,6 +14,7 @@ import {
   buildTransferTxQuery,
   decodeUnsignedTxQuery,
   getRefillMissingBalancesChainedTxParams,
+  nodeTransactionDecodeUnsignedTxQuery,
   queryClient,
   useCurrentlyOnlineNetworkId,
   useUnsortedAddresses
@@ -307,8 +308,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               case 'UNSIGNED_TX': {
                 // We could be using unsignedTxCodec.decodeApiUnsignedTx(hexToBinUnsafe(unsignedTx)) but then we get
                 // problems with unpolyfilled crypto Node JS module.
-                const decodedResult = await queryClient.fetchQuery(
-                  decodeUnsignedTxQuery({ unsignedTx: params.unsignedTx })
+                const decodedTx = await queryClient.fetchQuery(
+                  nodeTransactionDecodeUnsignedTxQuery({
+                    unsignedTx: params.unsignedTx,
+                    networkId: currentlyOnlineNetworkId
+                  })
                 )
 
                 dispatch(
@@ -321,7 +325,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       ),
                     props: {
                       txParams: params,
-                      unsignedData: decodedResult.unsignedTx,
+                      unsignedData: decodedTx,
                       submitAfterSign: true,
                       onSuccess: (result) =>
                         replyToDapp(
@@ -425,7 +429,9 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_RES', data: { actionHash } }, messageId)
 
       dispatch(activateAppLoading('Loading'))
-      const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+      const decodedTx = await queryClient.fetchQuery(
+        nodeTransactionDecodeUnsignedTxQuery({ unsignedTx, networkId: currentlyOnlineNetworkId })
+      )
       dispatch(deactivateAppLoading())
 
       dispatch(
@@ -440,7 +446,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
             dAppUrl: host ?? dAppUrl,
             dAppIcon: icon,
             txParams: data,
-            unsignedData: decodedResult.unsignedTx,
+            unsignedData: decodedTx,
             submitAfterSign: false,
             origin: 'in-app-browser',
             onError: (error) =>

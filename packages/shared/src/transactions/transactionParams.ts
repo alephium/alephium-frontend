@@ -6,12 +6,15 @@ import {
   SignChainedTxParams,
   SignChainedTxResult,
   SignDeployContractChainedTxParams,
+  SignDeployContractChainedTxResult,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptChainedTxParams,
+  SignExecuteScriptChainedTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
   SignTransferChainedTxParams,
+  SignTransferChainedTxResult,
   SignTransferTxParams,
   SignTransferTxResult
 } from '@alephium/web3'
@@ -33,21 +36,21 @@ export const getChainedTxPropsFromSignChainedTxParams = (
         return {
           type: 'TRANSFER',
           txParams: rest as SignTransferTxParams,
-          unsignedData: unsignedData[index]
+          unsignedData: unsignedData[index] as Omit<SignTransferChainedTxResult, 'signature'>
         }
       }
       case 'DeployContract': {
         return {
           type: 'DEPLOY_CONTRACT',
           txParams: rest as SignDeployContractTxParams,
-          unsignedData: unsignedData[index]
+          unsignedData: unsignedData[index] as Omit<SignDeployContractChainedTxResult, 'signature'>
         }
       }
       case 'ExecuteScript': {
         return {
           type: 'EXECUTE_SCRIPT',
           txParams: rest as SignExecuteScriptTxParams,
-          unsignedData: unsignedData[index]
+          unsignedData: unsignedData[index] as Omit<SignExecuteScriptChainedTxResult, 'signature'>
         }
       }
       default: {

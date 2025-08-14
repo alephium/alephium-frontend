@@ -1,8 +1,10 @@
 import {
+  ExecuteScriptTx,
   GENESIS_TIMESTAMP,
   getTransactionDestinationAddresses,
   getTransactionOriginAddresses,
   isConfirmedTx,
+  isExecuteScriptTx,
   selectPendingSentTransactionByHash,
   UseTransactionProps
 } from '@alephium/shared'
@@ -17,24 +19,25 @@ import PendingSentAddressBadge from '~/features/transactionsDisplay/PendingSentA
 import { useAppSelector } from '~/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {
-  tx: e.Transaction | e.PendingTransaction
+  tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx
 }
 
 export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
   const { t } = useTranslation()
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   const addresses = useMemo(() => getTransactionOriginAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} direction="from" />
+    return <PendingSentAddressBadge txHash={txHash} direction="from" />
   }
 
   if (isConfirmedTx(tx) && tx.timestamp === GENESIS_TIMESTAMP) {
     return <AppText bold>{t('Genesis TX')}</AppText>
   }
 
-  if (!tx.inputs || tx.inputs.length === 0) {
+  if (isConfirmedTx(tx) && (!tx.inputs || tx.inputs.length === 0)) {
     return <AppText bold>{t('Mining Rewards')}</AppText>
   }
 
@@ -48,12 +51,13 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsL
 }
 
 export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
-  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   const addresses = useMemo(() => getTransactionDestinationAddresses({ tx, referenceAddress }), [tx, referenceAddress])
 
   if (pendingSentTx) {
-    return <PendingSentAddressBadge txHash={tx.hash} direction="to" />
+    return <PendingSentAddressBadge txHash={txHash} direction="to" />
   }
 
   return (

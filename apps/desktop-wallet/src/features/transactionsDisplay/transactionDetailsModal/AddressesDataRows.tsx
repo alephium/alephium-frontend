@@ -7,9 +7,9 @@ import {
   TransactionDestinationAddressesList,
   TransactionOriginAddressesList
 } from '@/features/transactionsDisplay/transactionDetailsModal/InputsOutputsLists'
-import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDisplayProps } from '@/features/transactionsDisplay/transactionDisplayTypes'
 
-const AddressesDataRows = ({ tx, referenceAddress }: TransactionDetailsModalTxProps) => {
+const AddressesDataRows = ({ tx, referenceAddress }: TransactionDisplayProps) => {
   const { t } = useTranslation()
   const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 

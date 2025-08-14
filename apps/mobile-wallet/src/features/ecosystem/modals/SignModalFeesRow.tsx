@@ -1,17 +1,17 @@
 import { useTranslation } from 'react-i18next'
 
-import Row from '~/components/Row'
+import Row, { RowProps } from '~/components/Row'
 import FeeAmounts from '~/features/send/screens/FeeAmounts'
 
-interface SignModalFeesRowProps {
+interface SignModalFeesRowProps extends RowProps {
   fees: bigint
 }
 
-const SignModalFeesRow = ({ fees }: SignModalFeesRowProps) => {
+const SignModalFeesRow = ({ fees, ...props }: SignModalFeesRowProps) => {
   const { t } = useTranslation()
 
   return (
-    <Row title={t('Estimated fees')} titleColor="secondary" isLast>
+    <Row title={t('Estimated fees')} titleColor="secondary" isLast {...props}>
       <FeeAmounts fees={fees} />
     </Row>
   )

@@ -81,5 +81,6 @@ export const infoTypeToDirection = (infoType: TransactionInfoType2): Direction =
     'bidirectional-transfer': 'swapped',
     'wallet-self-transfer': 'moved',
     'address-self-transfer': 'moved',
-    'address-group-transfer': 'moved'
+    'address-group-transfer': 'moved',
+    simulated: 'dApp'
   })[infoType] as Direction

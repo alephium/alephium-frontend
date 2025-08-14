@@ -551,5 +551,7 @@
   "Not supported": "Not supported",
   "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
   "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.",
-  "Click to display the amount": "Click to display the amount"
+  "Click to display the amount": "Click to display the amount",
+  "Sending": "Sending",
+  "Simulated result": "Simulated result"
 }
