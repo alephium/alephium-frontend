@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
-import FlatListScreen from '~/components/layout/FlatListScreen'
+import FlashListScreen from '~/components/layout/FlashListScreen'
 import Row from '~/components/Row'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -35,11 +35,12 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   }
 
   return (
-    <FlatListScreen
+    <FlashListScreen
       headerOptions={{ headerTitle: t('Public keys'), type: 'stack' }}
       screenTitle={t('Public keys')}
       screenIntro={t('Tap on an address to copy its public key to the clipboard.')}
       data={addresses}
+      contentPaddingTop
       renderItem={({ item: addressHash }) => (
         <Row
           key={addressHash}
