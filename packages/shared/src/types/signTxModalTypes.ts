@@ -1,6 +1,6 @@
 import {
   BuildTxResult,
-  node as n,
+  explorer as e,
   SignChainedTxParams,
   SignDeployContractChainedTxResult,
   SignDeployContractTxParams,
@@ -52,7 +52,7 @@ export interface SignDeployContractTxModalProps extends SignTxModalCommonProps {
 
 export interface SignUnsignedTxModalProps extends SignTxModalCommonProps {
   txParams: SignUnsignedTxParams
-  unsignedData: n.UnsignedTx
+  unsignedData: e.AcceptedTransaction
   submitAfterSign: boolean
   onSuccess: (signResult: SignUnsignedTxResult) => void
 }

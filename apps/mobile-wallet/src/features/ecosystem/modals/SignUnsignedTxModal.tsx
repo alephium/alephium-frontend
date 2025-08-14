@@ -39,7 +39,7 @@ const SignUnsignedTxModal = memo(
             </Row>
 
             <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
-              <AppText>{unsignedData.txId}</AppText>
+              <AppText>{unsignedData.hash}</AppText>
             </Row>
 
             {/* TODO: Should show decoded unsigned data, see https://github.com/alephium/alephium-web3/blob/3cb9b2f5079b8cb41d284f81078bc2894880d143/packages/web3/src/signer/signer.ts#L186 */}

@@ -1,13 +1,22 @@
 import { isGrouplessAddress, selectAddressByHash, SignUnsignedTxModalProps, transactionSent } from '@alephium/shared'
+import { useTransactionAmountDeltas } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import { SignUnsignedTxResult } from '@alephium/web3'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
+import Box from '@/components/Box'
+import ExpandableSection from '@/components/ExpandableSection'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import CheckAddressesBox from '@/features/send/CheckAddressesBox'
+import CheckWorthBox from '@/features/send/CheckWorthBox'
+import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
+import TransactionSummary from '@/features/transactionsDisplay/TransactionSummary'
 import SignTxBaseModal from '@/features/walletConnect/SignTxBaseModal'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { signer } from '@/signer'
@@ -57,6 +66,16 @@ const SignUnsignedTxModal = memo(
       }
     }
 
+    const fees = useMemo(
+      () => BigInt(props.unsignedData.gasAmount) * BigInt(props.unsignedData.gasPrice),
+      [props.unsignedData]
+    )
+    const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(props.unsignedData, txParams.signerAddress)
+    const assetAmounts = useMemo(
+      () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
+      [alphAmount, tokenAmounts]
+    )
+
     return (
       <SignTxBaseModal
         title={t(submitAfterSign ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
@@ -65,14 +84,37 @@ const SignUnsignedTxModal = memo(
         type="UNSIGNED_TX"
         {...props}
       >
-        <InputFieldsColumn>
-          <InfoBox label={t('Transaction ID')} text={props.unsignedData.txId} wordBreak />
-          {/* TODO: Should show decoded unsigned data, see https://github.com/alephium/alephium-web3/blob/3cb9b2f5079b8cb41d284f81078bc2894880d143/packages/web3/src/signer/signer.ts#L186 */}
-          <InfoBox label={t('Unsigned transaction')} text={txParams.unsignedTx} wordBreak />
-        </InputFieldsColumn>
+        <TransactionSummaryStyled tx={props.unsignedData} referenceAddress={txParams.signerAddress} hideType />
+        <Box hasBg hasHorizontalPadding>
+          <AddressesDataRows tx={props.unsignedData} referenceAddress={txParams.signerAddress} />
+        </Box>
+
+        {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
+
+        <ExpandableSection
+          sectionTitleClosed={t('Unsigned transaction')}
+          sectionTitleOpen={t('Unsigned transaction')}
+          centered
+        >
+          <CheckAddressesBox
+            fromAddressStr={txParams.signerAddress}
+            dAppUrl={props.dAppUrl}
+            hasBg
+            hasHorizontalPadding
+          />
+          <InputFieldsColumn style={{ marginTop: 'var(--spacing-4)' }}>
+            <InfoBox label={t('Transaction ID')} text={props.unsignedData.hash} wordBreak />
+            <InfoBox label={t('Unsigned transaction')} text={txParams.unsignedTx} wordBreak />
+          </InputFieldsColumn>
+        </ExpandableSection>
       </SignTxBaseModal>
     )
   }
 )
 
 export default SignUnsignedTxModal
+
+const TransactionSummaryStyled = styled(TransactionSummary)`
+  margin: 0;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+`
