@@ -29,7 +29,7 @@ import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
-import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()

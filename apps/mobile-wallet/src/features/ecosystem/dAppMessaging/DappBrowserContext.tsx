@@ -12,7 +12,6 @@ import {
   buildDeployContractTxQuery,
   buildExecuteScriptTxQuery,
   buildTransferTxQuery,
-  decodeUnsignedTxQuery,
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,
   queryClient,

@@ -5,10 +5,8 @@ import {
   transactionSent
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
@@ -31,7 +29,7 @@ import {
 import { TransactionAmounts } from '~/features/transactionsDisplay/TransactionModal'
 import { useAppDispatch } from '~/hooks/redux'
 import { signer } from '~/signer'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const SignExecuteScriptTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignExecuteScriptTxModalProps) => {

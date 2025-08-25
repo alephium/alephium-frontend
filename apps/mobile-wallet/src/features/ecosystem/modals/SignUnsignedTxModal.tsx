@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
-import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'

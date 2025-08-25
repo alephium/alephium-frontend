@@ -1,8 +1,6 @@
 import { SignChainedTxModalProps } from '@alephium/shared'
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { Fragment, memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { sendChainedTransactions } from '~/api/transactions'
@@ -15,7 +13,6 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import TransactionSeparator from '~/features/ecosystem/modals/TransactionSeparator'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const SignChainedTxModal = memo(
   ({ txParams, props, origin, onError, onSuccess, dAppUrl, dAppIcon }: SignChainedTxModalProps) => {
