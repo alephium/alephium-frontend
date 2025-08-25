@@ -64,10 +64,10 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <RoundedCardStyled>
+        <RoundedCard>
           <AnimatedBackground />
           <WalletBalanceSummary />
-        </RoundedCardStyled>
+        </RoundedCard>
       </CardContainer>
 
       <ButtonsRowContainer>
@@ -129,7 +129,15 @@ const WalletBalanceSummary = () => {
   const { t } = useTranslation()
   const { data: worth, isLoading, error } = useFetchWalletWorth()
 
-  return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} error={error} />
+  return (
+    <BalanceSummary
+      label={t('Wallet worth')}
+      worth={worth}
+      isLoading={isLoading}
+      error={error}
+      showDiscreetModeToggle
+    />
+  )
 }
 
 const HeaderLeft = () => {
@@ -174,10 +182,6 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
   flex: 1;
-`
-
-const RoundedCardStyled = styled(RoundedCard)`
-  padding-top: ${VERTICAL_GAP}px;
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

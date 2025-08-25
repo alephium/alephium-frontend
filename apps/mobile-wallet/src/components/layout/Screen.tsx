@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { KeyboardAvoidingView, StyleProp, ViewProps, ViewStyle } from 'react-native'
+import { SharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
@@ -14,9 +15,10 @@ export interface ScreenProps extends ViewProps {
   }
   titleAlwaysVisible?: boolean
   safeAreaPadding?: boolean
+  scrollY?: SharedValue<number>
 }
 
-const Screen = ({ children, headerOptions, safeAreaPadding, titleAlwaysVisible, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, titleAlwaysVisible, scrollY, ...props }: ScreenProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -34,6 +36,7 @@ const Screen = ({ children, headerOptions, safeAreaPadding, titleAlwaysVisible, 
             onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
             options={headerOptions}
             titleAlwaysVisible={titleAlwaysVisible}
+            scrollY={scrollY}
           />
         )}
         {children}
