@@ -5,6 +5,7 @@ import {
   Optional,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
   SignTransferTxParams,
   SignUnsignedTxParams
 } from '@alephium/web3'
@@ -99,7 +100,9 @@ export type TransactionParams =
 export type TransactionView = 'address' | 'wallet'
 
 export type UseTransactionProps = {
-  tx: e.Transaction | e.PendingTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx
   referenceAddress: AddressHash
   view: TransactionView
 }
+
+export type ExecuteScriptTx = Pick<SignExecuteScriptTxResult, 'gasAmount' | 'gasPrice' | 'txId' | 'simulationResult'>

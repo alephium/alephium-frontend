@@ -11,13 +11,15 @@ import {
 import {
   getBaseAddressStr,
   getTxAddresses,
+  getTxInputsOutputs,
   isConfirmedTx,
   isContractTx,
+  isExecuteScriptTx,
   isGrouplessAddressIntraTransfer,
   isWalletSelfTransfer
 } from '@/transactions/transactionUtils'
 import { AddressHash } from '@/types/addresses'
-import { SentTransaction } from '@/types/transactions'
+import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
 import { uniq } from '@/utils/utils'
 
 export type TransactionInfoType2 =
@@ -31,17 +33,20 @@ export type TransactionInfoType2 =
   | 'outgoing'
   | 'airdrop'
   | 'incoming'
+  | 'simulated'
 
 export const getTransactionInfoType = ({
   tx,
   referenceAddress,
   internalAddresses
 }: {
-  tx: e.Transaction | e.PendingTransaction | SentTransaction
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx
   referenceAddress: string
   internalAddresses: string[]
 }): TransactionInfoType2 => {
-  if (!isConfirmedTx(tx)) {
+  if (isExecuteScriptTx(tx)) {
+    return 'simulated'
+  } else if (!isConfirmedTx(tx)) {
     return 'pending'
   } else if (!tx.scriptExecutionOk) {
     return 'dApp-failed'
@@ -65,12 +70,14 @@ export const getTransactionInfoType = ({
 }
 
 interface GetTxAddressesProps {
-  tx: e.Transaction | e.PendingTransaction
+  tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx
   referenceAddress: string
 }
 
 export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
-  if (!tx.inputs || tx.inputs.length === 0) return []
+  const { inputs } = getTxInputsOutputs(tx)
+
+  if (!inputs || inputs.length === 0) return []
 
   const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
@@ -95,11 +102,15 @@ export const getTransactionOriginAddresses = ({ tx, referenceAddress }: GetTxAdd
       return [referenceAddress]
     case 'address-group-transfer':
       return [referenceAddress]
+    case 'simulated':
+      return getAllTxAddressesExceptReferenceAddress(tx, referenceAddress)
   }
 }
 
 export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: GetTxAddressesProps): AddressHash[] => {
-  if (!tx.outputs || tx.outputs.length === 0) return []
+  const { outputs } = getTxInputsOutputs(tx)
+
+  if (!outputs || outputs.length === 0) return []
 
   const infoType = getTransactionInfoType({ tx, referenceAddress, internalAddresses: [] })
 
@@ -124,17 +135,25 @@ export const getTransactionDestinationAddresses = ({ tx, referenceAddress }: Get
       return [referenceAddress]
     case 'address-group-transfer':
       return [referenceAddress]
+    case 'simulated':
+      return [referenceAddress]
   }
 }
 
-const getInputAddressesWithOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
-  getInputOutputBaseAddresses(tx.inputs ?? []).filter((address) => addressHasOnlyNegativeAmountDeltas(tx, address))
+const getInputAddressesWithOnlyNegativeAmountDeltas = (tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx) =>
+  getInputOutputBaseAddresses(getTxInputsOutputs(tx).inputs ?? []).filter((address) =>
+    addressHasOnlyNegativeAmountDeltas(tx, address)
+  )
 
-const getAllTxAddressesExceptReferenceAddress = (tx: e.Transaction | e.PendingTransaction, referenceAddress: string) =>
-  uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
+const getAllTxAddressesExceptReferenceAddress = (
+  tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx,
+  referenceAddress: string
+) => uniq(getTxAddresses(tx).map(getBaseAddressStr)).filter((address) => address !== referenceAddress)
 
-const getOutputAddressesWithOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction) =>
-  getInputOutputBaseAddresses(tx.outputs ?? []).filter((address) => addressHasOnlyPositiveAmountDeltas(tx, address))
+const getOutputAddressesWithOnlyPositiveAmountDeltas = (tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx) =>
+  getInputOutputBaseAddresses(getTxInputsOutputs(tx).outputs ?? []).filter((address) =>
+    addressHasOnlyPositiveAmountDeltas(tx, address)
+  )
 
 const isSelfTransfer = (tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []

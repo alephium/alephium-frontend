@@ -8,7 +8,6 @@ import {
   TRANSACTIONS_PAGE_DEFAULT_LIMIT
 } from '@alephium/shared'
 import { explorer as e, node as n, sleep } from '@alephium/web3'
-import { AcceptedTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -195,7 +194,7 @@ export const confirmedTransactionQuery = ({ txHash, addressHashes, networkId, sk
         .flatMap(({ pageTransactions }) => pageTransactions)
         .find((tx) => tx.hash === txHash)
 
-      return tx ? ({ ...tx, type: 'confirmed' } as AcceptedTransaction) : undefined
+      return tx ? ({ ...tx, type: 'confirmed' } as e.AcceptedTransaction) : undefined
     }
   })
 
@@ -212,7 +211,7 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: PendingTran
           // Delay initial query to give the tx some time to enter the mempool instead of getting 404's
           if (!queryClient.getQueryData(['transaction', 'pending', txHash])) await sleep(3000)
 
-          let pendingTx: AcceptedTransaction | e.PendingTransaction | n.RichTransaction
+          let pendingTx: e.AcceptedTransaction | e.PendingTransaction | n.RichTransaction
 
           try {
             pendingTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
@@ -246,6 +245,73 @@ export const nodeTransactionStatusQuery = ({ txHash, networkId, skip }: PendingT
           const status = await throttledClient.node.transactions.getTransactionsStatus({ txId: txHash })
 
           return status.type
+        }
+      : skipToken
+  })
+
+interface NodeTransactionDecodeUnsignedTxQueryProps {
+  unsignedTx: string
+  networkId?: number
+  skip?: boolean
+}
+
+export const nodeTransactionDecodeUnsignedTxQuery = ({
+  unsignedTx,
+  networkId,
+  skip
+}: NodeTransactionDecodeUnsignedTxQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', 'node', 'decode', 'unsigned', unsignedTx],
+    ...getQueryConfig({ gcTime: ONE_MINUTE_MS, networkId }),
+    queryFn: !skip
+      ? async () => {
+          const result = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+
+          const mockedTransaction: e.AcceptedTransaction = {
+            inputs: [],
+            outputs: result.unsignedTx.fixedOutputs.map((output) => ({ ...output, fixedOutput: true, type: '' })),
+            hash: result.unsignedTx.txId,
+            version: result.unsignedTx.version,
+            networkId: result.unsignedTx.networkId,
+            gasAmount: result.unsignedTx.gasAmount,
+            gasPrice: result.unsignedTx.gasPrice,
+            blockHash: '',
+            timestamp: 0,
+            scriptExecutionOk: true,
+            coinbase: false,
+            type: ''
+          }
+
+          for (const input of result.unsignedTx.inputs) {
+            const inputTxHash = await throttledClient.node.transactions.getTransactionsTxIdFromOutputref({
+              hint: input.outputRef.hint,
+              key: input.outputRef.key
+            })
+
+            let outputs: Array<e.Output> | undefined
+
+            try {
+              const inputTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(inputTxHash)
+              outputs = inputTx.outputs
+            } catch (e) {
+              if (is5XXError(e)) {
+                const richTx = await throttledClient.node.transactions.getTransactionsRichDetailsTxid(inputTxHash)
+                outputs = richTx.generatedOutputs.map((output) => ({ ...output, fixedOutput: true }))
+              } else {
+                throw e
+              }
+            }
+
+            const inputTxData = outputs?.find(
+              (output) => output.hint === input.outputRef.hint && output.key === input.outputRef.key
+            )
+
+            if (inputTxData) {
+              mockedTransaction.inputs?.push({ ...inputTxData, outputRef: input.outputRef, contractInput: false })
+            }
+          }
+
+          return mockedTransaction
         }
       : skipToken
   })

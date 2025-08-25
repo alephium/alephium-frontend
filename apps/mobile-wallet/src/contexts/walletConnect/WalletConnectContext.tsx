@@ -18,6 +18,8 @@ import {
 } from '@alephium/shared'
 import {
   getRefillMissingBalancesChainedTxParams,
+  nodeTransactionDecodeUnsignedTxQuery,
+  queryClient,
   useCurrentlyOnlineNetworkId,
   useInterval
 } from '@alephium/shared-react'
@@ -629,9 +631,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               const submitAfterSign = requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
 
               dispatch(activateAppLoading(t('Processing WalletConnect request')))
-              const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-                unsignedTx: txParams.unsignedTx
-              })
+              const decodedTx = await queryClient.fetchQuery(
+                nodeTransactionDecodeUnsignedTxQuery({
+                  unsignedTx: txParams.unsignedTx,
+                  networkId: currentlyOnlineNetworkId
+                })
+              )
 
               dispatch(
                 openModal({
@@ -641,7 +646,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
                     txParams,
-                    unsignedData: decodedResult.unsignedTx,
+                    unsignedData: decodedTx,
                     submitAfterSign,
                     origin: 'walletconnect',
                     onError: (message) => {

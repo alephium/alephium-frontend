@@ -12,6 +12,8 @@ import {
 } from '@alephium/shared'
 import {
   getRefillMissingBalancesChainedTxParams,
+  nodeTransactionDecodeUnsignedTxQuery,
+  queryClient,
   useCurrentlyOnlineNetworkId,
   useFetchWalletBalancesByAddress,
   useUnsortedAddresses
@@ -253,9 +255,12 @@ const WalletConnectSessionRequestEventHandler = memo(
                 const submitAfterSign = event.params.request.method === 'alph_signAndSubmitUnsignedTx'
 
                 dispatch(toggleAppLoading(true))
-                const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-                  unsignedTx: txParams.unsignedTx
-                })
+                const decodedTx = await queryClient.fetchQuery(
+                  nodeTransactionDecodeUnsignedTxQuery({
+                    unsignedTx: txParams.unsignedTx,
+                    networkId: currentlyOnlineNetworkId
+                  })
+                )
                 dispatch(toggleAppLoading(false))
 
                 dispatch(
@@ -266,7 +271,7 @@ const WalletConnectSessionRequestEventHandler = memo(
                       dAppUrl: event.verifyContext.verified.origin,
                       dAppIcon: getDappIcon(event.topic),
                       txParams,
-                      unsignedData: decodedResult.unsignedTx,
+                      unsignedData: decodedTx,
                       submitAfterSign,
                       origin: 'walletconnect',
                       onError: (message) => {

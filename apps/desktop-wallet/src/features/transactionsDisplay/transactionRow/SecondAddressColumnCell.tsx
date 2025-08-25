@@ -1,6 +1,9 @@
 import { useTransactionInfoType } from '@alephium/shared-react'
 
-import { TransactionDestinationAddressesList } from '@/features/transactionsDisplay/transactionDetailsModal/InputsOutputsLists'
+import {
+  TransactionDestinationAddressesList,
+  TransactionOriginAddressesList
+} from '@/features/transactionsDisplay/transactionDetailsModal/InputsOutputsLists'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 
@@ -13,13 +16,17 @@ const SecondAddressColumnCell = ({ tx, referenceAddress, view }: TransactionRowS
 
   return (
     <AddressCell shrink={view === 'address'}>
-      <TransactionDestinationAddressesList
-        tx={tx}
-        referenceAddress={referenceAddress}
-        view="wallet"
-        hideLink
-        truncate
-      />
+      {view === 'address' && (infoType === 'incoming' || infoType === 'airdrop') ? (
+        <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view={view} hideLink truncate />
+      ) : (
+        <TransactionDestinationAddressesList
+          tx={tx}
+          referenceAddress={referenceAddress}
+          view={view}
+          hideLink
+          truncate
+        />
+      )}
     </AddressCell>
   )
 }

@@ -17,13 +17,10 @@ import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
-import FTAmounts from '@/features/transactionsDisplay/transactionDetailsModal/FTAmounts'
 import GasUTXOsExpandableSection from '@/features/transactionsDisplay/transactionDetailsModal/GasUTXOsExpandableSection'
 import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/LockTimeDataListRow'
-import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
-import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
-import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
+import TransactionSummary from '@/features/transactionsDisplay/TransactionSummary'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal, { SideModalTitle } from '@/modals/SideModal'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
@@ -87,14 +84,7 @@ const Summary = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
 
   if (!referenceAddress) return null
 
-  return (
-    <SummaryStyled>
-      <SummaryContent>
-        <TransactionType tx={tx} referenceAddress={referenceAddress} />
-        <FTAmounts tx={tx} referenceAddress={referenceAddress} />
-      </SummaryContent>
-    </SummaryStyled>
-  )
+  return <TransactionSummary tx={tx} referenceAddress={referenceAddress} />
 }
 
 const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
@@ -160,9 +150,6 @@ const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
             <DataList.Row label={t('Fee')}>
               <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
             </DataList.Row>
-
-            <NFTsDataListRow tx={tx} referenceAddress={referenceAddress} />
-            <NSTsDataListRow tx={tx} referenceAddress={referenceAddress} />
           </DataList>
 
           <GasUTXOsExpandableSection tx={tx} />
@@ -171,20 +158,6 @@ const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
     </DetailsStyled>
   )
 }
-
-const SummaryStyled = styled.div`
-  padding: var(--spacing-3) var(--spacing-3) var(--spacing-1);
-  background-color: ${({ theme }) => theme.bg.secondary};
-  margin: var(--spacing-2);
-  border-radius: var(--radius-huge);
-`
-
-const SummaryContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-radius: var(--radius-big);
-`
 
 const DetailsStyled = styled.div`
   padding: var(--spacing-2) var(--spacing-3);
