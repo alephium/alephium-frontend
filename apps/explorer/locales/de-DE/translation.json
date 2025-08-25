@@ -136,5 +136,10 @@
   "Unsupported media type": "Nicht unterstützter Medientyp",
   "Video thumbnail": "Video Vorschaubild",
   "No media": "Keine Medien",
-  "Address worth": "Adresswert"
+  "Address worth": "Adresswert",
+  "Group": "Gruppe",
+  "Group(s)": "Gruppe(n)",
+  "All": "Alle",
+  "Group {{ number }}": "Gruppe {{ number }}",
+  "Group transfer": "Gruppentransfer"
 }

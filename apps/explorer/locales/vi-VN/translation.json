@@ -136,5 +136,10 @@
   "Unsupported media type": "Định dạng media không hỗ trợ",
   "Video thumbnail": "Video thu nhỏ",
   "No media": "Không có phương tiện",
-  "Address worth": "Giá trị của địa chỉ"
+  "Address worth": "Giá trị của địa chỉ",
+  "Group": "Nhóm",
+  "Group(s)": "(Các) Nhóm",
+  "All": "Tất cả",
+  "Group {{ number }}": "Nhóm {{ number }}",
+  "Group transfer": "Giao dịch nhóm"
 }

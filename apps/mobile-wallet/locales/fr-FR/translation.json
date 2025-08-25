@@ -135,7 +135,6 @@
   "To": "À",
   "Initial amount": "Montant initial",
   "Issue token amount": "Montant d'émission du jeton",
-  "Unsigned TX ID": "ID de transaction non signée",
   "Unsigned TX": "Transaction non signée",
   "Fast": "Rapide",
   "{{ seconds }} seconds": "{{ seconds }} secondes",

@@ -136,5 +136,10 @@
   "Unsupported media type": "ไม่รองรับประเภทสื่อ",
   "Video thumbnail": "ขนาดย่อวิดีโอ",
   "No media": "ไม่มีสื่อ",
-  "Address worth": "มูลค่าที่อยู่"
+  "Address worth": "มูลค่าที่อยู่",
+  "Group": "กลุ่ม",
+  "Group(s)": "กลุ่ม",
+  "All": "ทั้งหมด",
+  "Group {{ number }}": "กลุ่ม {{ number }}",
+  "Group transfer": "การโอนกลุ่ม"
 }
