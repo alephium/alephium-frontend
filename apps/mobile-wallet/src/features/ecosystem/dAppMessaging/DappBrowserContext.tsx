@@ -456,7 +456,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         })
       )
     },
-    [dAppUrl, dispatch, replyToDapp]
+    [dAppUrl, dispatch, replyToDapp, currentlyOnlineNetworkId]
   )
 
   const handleSignMessage = useCallback(
