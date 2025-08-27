@@ -63,7 +63,16 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
               ? { [ALPH.id]: ALPH }
               : axios
                   .get(getTokensURL(network))
-                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || [])),
+                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || []))
+                  .catch((error) => {
+                    if (error instanceof AxiosError && error.response?.status === 429) {
+                      throw error
+                    } else if (network === 'mainnet') {
+                      return mainnetTokens
+                    } else {
+                      return testnetTokens
+                    }
+                  }),
     placeholderData: network === 'mainnet' ? mainnetTokens : network === 'testnet' ? testnetTokens : undefined
   })
 }
