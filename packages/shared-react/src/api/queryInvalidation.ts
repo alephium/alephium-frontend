@@ -1,4 +1,6 @@
 import { AddressHash } from '@alephium/shared'
+import { explorer as e } from '@alephium/web3'
+import { InfiniteData } from '@tanstack/react-query'
 
 import { queryClient } from '@/api/queryClient'
 
@@ -13,5 +15,23 @@ export const invalidateAddressQueries = async (addressHash: AddressHash) => {
 }
 
 export const invalidateWalletQueries = async () => {
-  await queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+  await invalidateWalletTransactionsQuery()
+}
+
+type WalletTransactionsQueryData = InfiniteData<{
+  pageTransactions: e.Transaction[]
+  addressesWithMoreTxPages: AddressHash[]
+}>
+
+const invalidateWalletTransactionsQuery = async () => {
+  const queryKey = ['wallet', 'transactions']
+
+  // Keep only the first page of the wallet transactions query to avoid refetching all loaded pages
+  // See: https://github.com/alephium/alephium-frontend/issues/1475
+  queryClient.setQueriesData({ queryKey }, (data: WalletTransactionsQueryData | undefined) => ({
+    pages: data?.pages.slice(0, 1) ?? [],
+    pageParams: data?.pageParams.slice(0, 1) ?? []
+  }))
+
+  await queryClient.invalidateQueries({ queryKey })
 }
