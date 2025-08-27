@@ -67,6 +67,11 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
                   .catch((error) => {
                     if (error instanceof AxiosError && error.response?.status === 429) {
                       throw error
+                    }
+                    const cachedTokenList = queryClient.getQueryData(['tokenList', { networkId }])
+
+                    if (cachedTokenList) {
+                      return cachedTokenList as FtListMap
                     } else if (network === 'mainnet') {
                       return mainnetTokens
                     } else {
