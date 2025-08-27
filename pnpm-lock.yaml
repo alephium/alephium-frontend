@@ -109,8 +109,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared-react
       '@alephium/token-list':
-        specifier: ^0.0.19
-        version: 0.0.19(encoding@0.1.13)
+        specifier: ^0.0.20
+        version: 0.0.20(encoding@0.1.13)
       '@alephium/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -379,8 +379,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared-react
       '@alephium/token-list':
-        specifier: ^0.0.19
-        version: 0.0.19(encoding@0.1.13)
+        specifier: ^0.0.20
+        version: 0.0.20(encoding@0.1.13)
       '@alephium/web3':
         specifier: 2.0.0
         version: 2.0.0(encoding@0.1.13)
@@ -551,8 +551,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared-react
       '@alephium/token-list':
-        specifier: ^0.0.19
-        version: 0.0.19(encoding@0.1.13)
+        specifier: ^0.0.20
+        version: 0.0.20(encoding@0.1.13)
       '@alephium/wallet-dapp-provider':
         specifier: workspace:*
         version: link:../../packages/wallet-dapp-provider
@@ -1028,8 +1028,8 @@ importers:
   packages/shared:
     dependencies:
       '@alephium/token-list':
-        specifier: ^0.0.19
-        version: 0.0.19(encoding@0.1.13)
+        specifier: ^0.0.20
+        version: 0.0.20(encoding@0.1.13)
       '@alephium/walletconnect-provider':
         specifier: 2.0.0
         version: 2.0.0(@react-native-async-storage/async-storage@1.23.1)(encoding@0.1.13)
@@ -1180,8 +1180,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/token-list':
-        specifier: ^0.0.19
-        version: 0.0.19(encoding@0.1.13)
+        specifier: ^0.0.20
+        version: 0.0.20(encoding@0.1.13)
       '@alephium/web3':
         specifier: 2.0.0
         version: 2.0.0(encoding@0.1.13)
@@ -1331,8 +1331,8 @@ packages:
     resolution: {integrity: sha512-MWBtzOPbatF6rn510FuXX8FvFdA5VBccPJXSGoYzdx7fHkM8Az6oFlSosCQdW56JXI9jff1MD8eW/cs9IrNt5g==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
-  '@alephium/token-list@0.0.19':
-    resolution: {integrity: sha512-5DJjIue90c1zEXdqSICBbzi4nCQEx/VX85Elcbi3wP2UIBwaR9TH7gQDqPR1/OABXYgh+hMhnke6K/Yk0QVUgQ==}
+  '@alephium/token-list@0.0.20':
+    resolution: {integrity: sha512-0JoFLsdxqp2M0k0ohsCe0F+tdMEJ1LjJQrNm4s+3c8CY2dDnTNbH1zxPPQ9xF2HbTUHbhAN9VCMB1SmWRuMm7g==}
     engines: {node: '>=16', npm: '>=8'}
 
   '@alephium/walletconnect-provider@2.0.0':
@@ -12096,7 +12096,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/token-list@0.0.19(encoding@0.1.13)':
+  '@alephium/token-list@0.0.20(encoding@0.1.13)':
     dependencies:
       cross-fetch: 3.1.8(encoding@0.1.13)
     transitivePeerDependencies:

@@ -60,7 +60,7 @@
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
-    "@alephium/token-list": "^0.0.19",
+    "@alephium/token-list": "^0.0.20",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "2.0.0",
     "@alephium/web3": "2.0.0",
