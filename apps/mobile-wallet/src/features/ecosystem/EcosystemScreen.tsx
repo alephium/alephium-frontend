@@ -12,14 +12,15 @@ import { ScreenSection } from '~/components/layout/Screen'
 import SearchInput from '~/components/SearchInput'
 import DAppsList from '~/features/ecosystem/DAppsList'
 import DAppsTags from '~/features/ecosystem/DAppsTags'
+import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
+import { useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-
-const showComingSoon = false
 
 const EcosystemScreen = () => {
   const { t } = useTranslation()
+  const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
 
-  const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [selectedTag, setSelectedTag] = useState<string | null>(hasFavoriteDApps ? 'fav' : null)
   const [searchText, setSearchText] = useState('')
 
   return (
@@ -32,20 +33,9 @@ const EcosystemScreen = () => {
       hasKeyboard
       fill
     >
-      {showComingSoon ? (
-        <ScreenSection>
-          <EmptyPlaceholder>
-            <AppText size={32}>📣👀</AppText>
-            <AppText>{t('Coming soon!')}</AppText>
-          </EmptyPlaceholder>
-        </ScreenSection>
-      ) : (
-        <>
-          <SearchBar value={searchText} onChangeText={setSearchText} />
-          <DAppsTags selectedTag={selectedTag} onTagPress={setSelectedTag} />
-          <DAppsList selectedTag={selectedTag} searchText={searchText} />
-        </>
-      )}
+      <SearchBar value={searchText} onChangeText={setSearchText} />
+      <DAppsTags selectedTag={selectedTag} onTagPress={setSelectedTag} />
+      <DAppsList selectedTag={selectedTag} searchText={searchText} />
     </BottomBarScrollScreen>
   )
 }
