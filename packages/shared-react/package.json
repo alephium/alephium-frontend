@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
-    "@alephium/token-list": "^0.0.19",
+    "@alephium/token-list": "^0.0.20",
     "@alephium/web3": "2.0.0",
     "@tanstack/react-query": "5.45.0",
     "axios": "^1.11.0",
