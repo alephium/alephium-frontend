@@ -1,3 +1,6 @@
+// Mock @alephium/web3-wallet to prevent @noble/secp256k1 loading issues
+vi.mock('@alephium/web3-wallet', () => ({}))
+
 import { keyring } from '@alephium/keyring'
 import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { encrypt } from '@alephium/shared-crypto'

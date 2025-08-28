@@ -9,21 +9,26 @@ export const discoverAndCacheActiveAddresses = async (
   skipIndexesForGrouplessAddresses: number[] = [],
   minGap = 5
 ): Promise<NonSensitiveAddressData[]> => {
-  const activeAddresses: NonSensitiveAddressData[] = []
+  const groupedActiveAddresses = await discoverGroupedAddresses(skipIndexesForAddressesWithGroup, minGap)
+  const grouplessActiveAddresses = await discoverGrouplessAddresses(skipIndexesForGrouplessAddresses, minGap)
 
-  // "Old" addresses
+  return [...groupedActiveAddresses, ...grouplessActiveAddresses]
+}
+
+export const discoverGroupedAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
+  const activeAddresses: NonSensitiveAddressData[] = []
   const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): NonSensitiveAddressData[] => [])
-  const _skipIndexesForAddressesWithGroup = Array.from(skipIndexesForAddressesWithGroup)
+  const _skipIndexes = Array.from(skipIndexes)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
     const newAddresses = deriveAddresses({
       group,
       amount: minGap,
       keyType: 'default',
-      skipIndexes: _skipIndexesForAddressesWithGroup
+      skipIndexes: _skipIndexes
     })
     addressesPerGroup[group] = newAddresses
-    _skipIndexesForAddressesWithGroup.push(...newAddresses.map((address) => address.index))
+    _skipIndexes.push(...newAddresses.map((address) => address.index))
   }
 
   const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.hash)
@@ -45,9 +50,9 @@ export const discoverAndCacheActiveAddresses = async (
         group,
         amount: remainingGap,
         keyType: 'default',
-        skipIndexes: _skipIndexesForAddressesWithGroup
+        skipIndexes: _skipIndexes
       })
-      _skipIndexesForAddressesWithGroup.push(...newAddresses.map((address) => address.index))
+      _skipIndexes.push(...newAddresses.map((address) => address.index))
 
       const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
       const results = await getActiveAddressesResults(newAddressesToCheckIfActive)
@@ -62,13 +67,17 @@ export const discoverAndCacheActiveAddresses = async (
     }
   }
 
-  // Groupless addresses
-  const _skipIndexesForGrouplessAddresses = Array.from(skipIndexesForGrouplessAddresses)
+  return activeAddresses
+}
+
+const discoverGrouplessAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
+  const activeAddresses: NonSensitiveAddressData[] = []
+  const _skipIndexes = Array.from(skipIndexes)
 
   const newGrouplessAddresses = deriveAddresses({
     amount: minGap,
     keyType: GROUPLESS_ADDRESS_KEY_TYPE,
-    skipIndexes: _skipIndexesForGrouplessAddresses
+    skipIndexes: _skipIndexes
   })
 
   const grouplessAddressesToCheckIfActive = newGrouplessAddresses.flat().map((address) => address.hash)
@@ -87,9 +96,9 @@ export const discoverAndCacheActiveAddresses = async (
     const newAddresses = deriveAddresses({
       amount: remainingGap,
       keyType: GROUPLESS_ADDRESS_KEY_TYPE,
-      skipIndexes: _skipIndexesForGrouplessAddresses
+      skipIndexes: _skipIndexes
     })
-    _skipIndexesForGrouplessAddresses.push(...newAddresses.map((address) => address.index))
+    _skipIndexes.push(...newAddresses.map((address) => address.index))
 
     const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
     const results = await getActiveAddressesResults(newAddressesToCheckIfActive)
