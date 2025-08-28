@@ -40,7 +40,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
   }
 
   return (
-    <TouchableWithoutFeedback onPress={onPress} key={routeName}>
+    <TouchableWithoutFeedback onPress={onPress} key={routeName} hitSlop={{ top: 25, bottom: 50, left: 5, right: 5 }}>
       <Tab active={isFocused}>{Icon}</Tab>
     </TouchableWithoutFeedback>
   )
