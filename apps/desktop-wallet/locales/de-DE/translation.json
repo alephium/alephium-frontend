@@ -551,5 +551,7 @@
   "Not supported": "Nicht unterstützt",
   "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "Die Ursprungsadresse hat nicht genug ALPH für Gasgebühren. Aber keine Sorge, {{ amount }} ALPH wird automatisch von einer anderen Adresse in Ihrer Wallet übertragen!",
   "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Lassen Sie diese Einstellung aus, um eine gruppenlose Adresse zu generieren (empfohlen). Wenn Sie eine Adresse in einer speziellen Gruppe benötigen, können Sie sie unten auswählen.",
-  "Click to display the amount": "Klicken, um den Betrag anzuzeigen"
+  "Click to display the amount": "Klicken, um den Betrag anzuzeigen",
+  "Sending": "Wird gesendet",
+  "Simulated result": "Simuliertes Ergebnis"
 }
