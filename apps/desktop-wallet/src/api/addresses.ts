@@ -10,7 +10,7 @@ export const discoverAndCacheActiveAddresses = async (
   minGap = 5
 ): Promise<NonSensitiveAddressData[]> => {
   const groupedActiveAddresses = await discoverGroupedAddresses(skipIndexesForAddressesWithGroup, minGap)
-  const grouplessActiveAddresses = await disscoverGrouplessAddresses(skipIndexesForGrouplessAddresses, minGap)
+  const grouplessActiveAddresses = await discoverGrouplessAddresses(skipIndexesForGrouplessAddresses, minGap)
 
   return [...groupedActiveAddresses, ...grouplessActiveAddresses]
 }
@@ -70,7 +70,7 @@ export const discoverGroupedAddresses = async (skipIndexes: number[] = [], minGa
   return activeAddresses
 }
 
-const disscoverGrouplessAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
+const discoverGrouplessAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
   const activeAddresses: NonSensitiveAddressData[] = []
   const _skipIndexes = Array.from(skipIndexes)
 
