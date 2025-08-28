@@ -5,8 +5,6 @@ import { TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 
 import { dAppsQuery } from '~/api/queries/dAppQueries'
-import AppText from '~/components/AppText'
-import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
 import SearchInput from '~/components/SearchInput'
