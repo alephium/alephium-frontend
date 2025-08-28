@@ -34,6 +34,7 @@ overrides:
   brace-expansion@=1.1.11: '=1.1.12'
   brace-expansion@=2.0.1: '=2.0.2'
   pbkdf2@<=3.1.2: '>=3.1.3'
+  form-data@=3.0.1: '=3.0.4'
 
 patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
@@ -6917,8 +6918,8 @@ packages:
     resolution: {integrity: sha512-TMKDUnIte6bfb5nWv7V/caI169OHgvwjb7V4WkeUvbQQdjr5rWKqHFiKWb/fcOwB+CzBT+qbWjvj+DVwRskpIg==}
     engines: {node: '>=14'}
 
-  form-data@3.0.1:
-    resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
+  form-data@3.0.4:
+    resolution: {integrity: sha512-f0cRzm6dkyVYV3nPoooP8XlccPQukegwhAnpoLcXy+X+A8KfpGOoXwDr9FLZd3wzgLaBGQBE3lY93Zm/i1JvIQ==}
     engines: {node: '>= 6'}
 
   form-data@4.0.0:
@@ -14397,7 +14398,7 @@ snapshots:
       debug: 4.4.0
       env-editor: 0.4.2
       fast-glob: 3.3.2
-      form-data: 3.0.1
+      form-data: 3.0.4
       freeport-async: 2.0.0
       fs-extra: 8.1.0
       getenv: 1.0.0
@@ -21136,10 +21137,12 @@ snapshots:
       cross-spawn: 7.0.5
       signal-exit: 4.1.0
 
-  form-data@3.0.1:
+  form-data@3.0.4:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.2
       mime-types: 2.1.35
 
   form-data@4.0.0:
