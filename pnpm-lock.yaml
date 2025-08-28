@@ -31,6 +31,7 @@ overrides:
   '@babel/runtime@<7.26.10': '>=7.26.10'
   '@babel/helpers@<7.26.10': '>=7.26.10'
   base-x@<=3.0.10: '>=3.0.11'
+  base-x@=4.0.0: '>=4.0.1'
   brace-expansion@=1.1.11: '=1.1.12'
   brace-expansion@=2.0.1: '=2.0.2'
   pbkdf2@<=3.1.2: '>=3.1.3'
@@ -1113,7 +1114,7 @@ importers:
   packages/shared-crypto:
     dependencies:
       base-x:
-        specifier: ^4.0.0
+        specifier: '>=4.0.1'
         version: 4.0.1
       bcfg:
         specifier: ~0.1.6
@@ -4910,9 +4911,6 @@ packages:
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
-
-  base-x@4.0.0:
-    resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
 
   base-x@4.0.1:
     resolution: {integrity: sha512-uAZ8x6r6S3aUM9rbHGVOIsR15U/ZSc82b3ymnCPsT45Gk1DDvhDPdIgB5MrhirZWt+5K0EEPQH985kNqZgNPFw==}
@@ -12210,7 +12208,7 @@ snapshots:
   '@alephium/web3@1.11.3(encoding@0.1.13)':
     dependencies:
       '@noble/secp256k1': 1.7.1
-      base-x: 4.0.0
+      base-x: 4.0.1
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bn.js: 5.2.1
@@ -12226,7 +12224,7 @@ snapshots:
   '@alephium/web3@2.0.0(encoding@0.1.13)':
     dependencies:
       '@noble/secp256k1': 1.7.1
-      base-x: 4.0.0
+      base-x: 4.0.1
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bn.js: 5.2.1
@@ -18659,8 +18657,6 @@ snapshots:
     optional: true
 
   balanced-match@1.0.2: {}
-
-  base-x@4.0.0: {}
 
   base-x@4.0.1: {}
 
