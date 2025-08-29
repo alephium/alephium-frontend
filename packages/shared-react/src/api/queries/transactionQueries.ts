@@ -115,7 +115,12 @@ interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQuery
   addressHashes: AddressHash[]
 }
 
-type PageParam = {
+export type AddressTransactionsInfiniteQueryPageData = {
+  pageTransactions: e.Transaction[]
+  addressesWithMoreTxPages: AddressHash[]
+}
+
+export type WalletTransactionsInfiniteQueryPageParam = {
   page: number
   addressesWithMoreTxPages: AddressHash[]
 }
@@ -159,14 +164,14 @@ export const walletTransactionsInfiniteQuery = ({
     initialPageParam: {
       page: 1,
       addressesWithMoreTxPages: []
-    } as PageParam,
+    } as WalletTransactionsInfiniteQueryPageParam,
     getNextPageParam: ({ addressesWithMoreTxPages }, _, lastPageParam) =>
       lastPageParam.page !== 1 && lastPageParam.addressesWithMoreTxPages.length === 0
         ? null
         : ({
             page: lastPageParam.page + 1,
             addressesWithMoreTxPages
-          } as PageParam)
+          } as WalletTransactionsInfiniteQueryPageParam)
   })
 
 interface PendingTransactionQueryProps extends SkipProp {

@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.11.1
+
+### Patch Changes
+
+- e78bc2d: Improve display of groupless TXs
+
 ## 1.11.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 2.3.1
+
+### Patch Changes
+
+- fb18d10: Improve app performance when sending/receiving transactions
+- 1958c3b: Display decoded info when signing transactions
+- 1958c3b: Display simulated transaction info when calling smart contracts
+- ac85148: Add discreet mode toggle button in dashboard screen
+- ac074a0: Fix tokens list when GitHub is unreachable
+- 0eb693b: Open favorites dApp tab by default if favorites exist
+
 ## 2.3.0
 
 ### Patch Changes
