@@ -24,6 +24,7 @@ export interface AddressLatestTransactionQueryProps {
 export interface AddressLatestTransactionQueryFnData {
   addressHash: AddressHash
   latestTx?: Pick<e.Transaction, 'hash' | 'timestamp'>
+  previousTxHash?: string
 }
 
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
@@ -75,7 +76,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
 
             return {
               addressHash, // Needed in combine functions to identify which address the latestTx refers to
-              latestTx: latestTx ? { hash: latestTx.hash, timestamp: latestTx.timestamp } : undefined
+              latestTx: latestTx ? { hash: latestTx.hash, timestamp: latestTx.timestamp } : undefined,
+              previousTxHash: cachedLatestTx?.hash
             }
           }
         : skipToken
