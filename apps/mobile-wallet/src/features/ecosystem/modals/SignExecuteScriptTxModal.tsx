@@ -1,11 +1,12 @@
 import {
   AssetAmount,
+  getTxAddresses,
   signAndSubmitTxResultToSentTx,
   SignExecuteScriptTxModalProps,
   transactionSent
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -105,26 +106,54 @@ export const SignExecuteScriptTxModalContent = ({
 
       <TransactionSeparator />
 
-      <Surface type="primary" withPadding>
-        <Surface>
-          <AppText size={16} bold style={{ textAlign: 'center' }}>
-            {t('Simulated result')}
-          </AppText>
-
-          <Row title={t('From')} transparent>
-            <TransactionOriginAddressesList tx={unsignedData} referenceAddress={txParams.signerAddress} view="wallet" />
-          </Row>
-          <Row title={t('To')} transparent>
-            <TransactionDestinationAddressesList
-              tx={unsignedData}
-              referenceAddress={txParams.signerAddress}
-              view="wallet"
-            />
-          </Row>
-          <TransactionAmounts tx={unsignedData} referenceAddress={txParams.signerAddress} isLast />
-        </Surface>
-      </Surface>
+      <SimulatedResult unsignedData={unsignedData} txParams={txParams} />
     </>
+  )
+}
+
+const SimulatedResult = ({
+  unsignedData,
+  txParams
+}: Pick<SignExecuteScriptTxModalProps, 'unsignedData' | 'txParams'>) => {
+  const { t } = useTranslation()
+
+  const isRelevant = useMemo(
+    () => getTxAddresses(unsignedData).some((address) => address === txParams.signerAddress),
+    [unsignedData]
+  )
+
+  return (
+    <Surface type="primary" withPadding>
+      <Surface>
+        <AppText size={16} bold style={{ textAlign: 'center' }}>
+          {t('Simulated result')}
+        </AppText>
+
+        {isRelevant ? (
+          <>
+            <Row title={t('From')} transparent>
+              <TransactionOriginAddressesList
+                tx={unsignedData}
+                referenceAddress={txParams.signerAddress}
+                view="wallet"
+              />
+            </Row>
+            <Row title={t('To')} transparent>
+              <TransactionDestinationAddressesList
+                tx={unsignedData}
+                referenceAddress={txParams.signerAddress}
+                view="wallet"
+              />
+            </Row>
+            <TransactionAmounts tx={unsignedData} referenceAddress={txParams.signerAddress} isLast />
+          </>
+        ) : (
+          <AppText style={{ textAlign: 'center', marginTop: DEFAULT_MARGIN }} color="secondary">
+            {t('Nothing relevant to the signer address.')}
+          </AppText>
+        )}
+      </Surface>
+    </Surface>
   )
 }
 

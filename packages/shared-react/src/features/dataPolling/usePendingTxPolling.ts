@@ -49,6 +49,8 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
 
   // When EB is down, we use the node to get the tx status
   useEffect(() => {
+    if (!isExplorerOffline) return
+
     if (txStatus === 'MemPooled') {
       dispatch(sentTransactionStatusChanged({ hash: txHash, status: 'mempooled' }))
     } else if (txStatus === 'Confirmed' && tx && isRichTransaction(tx)) {
@@ -56,5 +58,5 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
 
       findTransactionInternalAddresses(allAddressHashes, tx).forEach(invalidateAddressQueries)
     }
-  }, [allAddressHashes, dispatch, tx, txHash, txStatus])
+  }, [allAddressHashes, dispatch, isExplorerOffline, tx, txHash, txStatus])
 }

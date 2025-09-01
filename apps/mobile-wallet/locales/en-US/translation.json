@@ -28,7 +28,6 @@
   "Group transfer": "Group transfer",
   "and": "and",
   "Smart contract": "Smart contract",
-  "Token faucet": "Token faucet",
   "Send funds": "Send funds",
   "Moved": "Moved",
   "Are you sure?": "Are you sure?",
@@ -494,5 +493,6 @@
   "Useful tip": "Useful tip",
   "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect.",
   "Transaction {{ number }}": "Transaction {{ number }}",
-  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
+  "Nothing relevant to the signer address.": "Nothing relevant to the signer address."
 }
