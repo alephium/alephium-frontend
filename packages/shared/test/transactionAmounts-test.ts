@@ -58,22 +58,28 @@ const outp = {
 
 describe('calcTxAmountsDeltaForAddress', () => {
   describe('should throw error when transaction details are missing', () => {
-    it('should throw error when inputs are missing', () => {
+    it('should return zero amounts when inputs are missing', () => {
       const tx: e.Transaction = {
         ...mockTx,
         outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY }]
       }
 
-      expect(() => calcTxAmountsDeltaForAddress(tx, refAddress)).toThrow('Missing transaction details')
+      const result = calcTxAmountsDeltaForAddress(tx, refAddress)
+      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.tokenAmounts).toEqual([])
+      expect(result.fee).toBe(BigInt(ONE))
     })
 
-    it('should throw error when outputs are missing', () => {
+    it('should return zero amounts when outputs are missing', () => {
       const tx: e.Transaction = {
         ...mockTx,
         inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY }]
       }
 
-      expect(() => calcTxAmountsDeltaForAddress(tx, refAddress)).toThrow('Missing transaction details')
+      const result = calcTxAmountsDeltaForAddress(tx, refAddress)
+      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.tokenAmounts).toEqual([])
+      expect(result.fee).toBe(BigInt(ONE))
     })
   })
 
@@ -231,7 +237,9 @@ describe('calcTxAmountsDeltaForAddress', () => {
         inputs: [],
         outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }]
       }
-      expect(() => calcTxAmountsDeltaForAddress(tx, refAddress)).toThrow('Missing transaction details')
+      const result = calcTxAmountsDeltaForAddress(tx, refAddress)
+      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.tokenAmounts).toEqual([])
     })
     it('should handle transactions with no outputs', () => {
       const tx: e.Transaction = {
@@ -239,7 +247,9 @@ describe('calcTxAmountsDeltaForAddress', () => {
         inputs: [{ ...input, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }],
         outputs: []
       }
-      expect(() => calcTxAmountsDeltaForAddress(tx, refAddress)).toThrow('Missing transaction details')
+      const result = calcTxAmountsDeltaForAddress(tx, refAddress)
+      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.tokenAmounts).toEqual([])
     })
     it('should handle inputs/outputs with undefined addresses', () => {
       const tx: e.Transaction = {
@@ -298,12 +308,13 @@ it('should calculate the amount delta between the inputs and outputs of an addre
       calcTxAmountsDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
         .alphAmount
     ).toEqual(BigInt('-199993194000000000000')),
-    expect(() =>
-      calcTxAmountsDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
-    ).toThrowError('Missing transaction details'),
-    expect(() =>
+    expect(
+      calcTxAmountsDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address).alphAmount
+    ).toEqual(BigInt(0)),
+    expect(
       calcTxAmountsDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
-    ).toThrowError('Missing transaction details')
+        .alphAmount
+    ).toEqual(BigInt(0))
 })
 
 describe('addressHasOnlyNegativeAmountDeltas and addressHasOnlyPositiveAmountDeltas', () => {
