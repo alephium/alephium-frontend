@@ -215,13 +215,14 @@ export const TransactionAmounts = ({ tx, referenceAddress, isLast }: Transaction
 
   const isMoved = infoType === 'wallet-self-transfer'
   const isPending = infoType === 'pending'
+  const isFtLastRow = isLast && nfts.length === 0 && nsts.length === 0
 
   const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData: nfts } }))
 
   return (
     <>
       {isMoved && (
-        <Row title={t('Moved')} transparent isLast={isLast && nfts.length === 0}>
+        <Row title={t('Moved')} transparent isLast={isFtLastRow}>
           <AmountsContainer>
             {fungibleTokens.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
@@ -230,12 +231,7 @@ export const TransactionAmounts = ({ tx, referenceAddress, isLast }: Transaction
         </Row>
       )}
       {!isMoved && groupedFtAmounts.out && (
-        <Row
-          title={t(isPending ? 'Sending' : 'Sent')}
-          transparent
-          titleColor={theme.global.send}
-          isLast={isLast && nfts.length === 0}
-        >
+        <Row title={t(isPending ? 'Sending' : 'Sent')} transparent titleColor={theme.global.send} isLast={isFtLastRow}>
           <AmountsContainer>
             {groupedFtAmounts.out.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
@@ -244,7 +240,7 @@ export const TransactionAmounts = ({ tx, referenceAddress, isLast }: Transaction
         </Row>
       )}
       {!isMoved && groupedFtAmounts.in && (
-        <Row title={t('Received')} transparent titleColor={theme.global.receive} isLast={isLast && nfts.length === 0}>
+        <Row title={t('Received')} transparent titleColor={theme.global.receive} isLast={isFtLastRow}>
           <AmountsContainer>
             {groupedFtAmounts.in.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />

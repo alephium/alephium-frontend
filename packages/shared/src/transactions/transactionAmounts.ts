@@ -24,15 +24,14 @@ export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx,
   refAddress: string
 ): AmountDeltas => {
-  const { inputs, outputs } = getTxInputsOutputs(tx)
+  const { inputs: _inputs, outputs: _outputs } = getTxInputsOutputs(tx)
+  const inputs = _inputs ?? []
+  const outputs = _outputs ?? []
 
   let alphDelta
   let tokensDelta: AmountDeltas['tokenAmounts'] = []
 
-  if (!inputs || inputs.length === 0 || !outputs || outputs.length === 0) {
-    alphDelta = BigInt(0)
-    tokensDelta = []
-  } else if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
+  if (getTxAddresses(tx).every((address) => getBaseAddressStr(address) === refAddress)) {
     const totalInputAlph = inputs.reduce((sum, i) => sum + BigInt(i.attoAlphAmount ?? 0), BigInt(0))
     const totalOutputAlph = outputs.reduce((sum, o) => sum + BigInt(o.attoAlphAmount ?? 0), BigInt(0))
 

@@ -1,5 +1,6 @@
 import {
   AssetAmount,
+  getBaseAddressStr,
   getTxAddresses,
   signAndSubmitTxResultToSentTx,
   SignExecuteScriptTxModalProps,
@@ -118,7 +119,7 @@ const SimulatedResult = ({
   const { t } = useTranslation()
 
   const isRelevant = useMemo(
-    () => getTxAddresses(unsignedData).some((address) => address === txParams.signerAddress),
+    () => getTxAddresses(unsignedData).some((address) => getBaseAddressStr(address) === txParams.signerAddress),
     [unsignedData, txParams.signerAddress]
   )
 
@@ -131,20 +132,26 @@ const SimulatedResult = ({
 
         {isRelevant ? (
           <>
-            <Row title={t('From')} transparent>
-              <TransactionOriginAddressesList
-                tx={unsignedData}
-                referenceAddress={txParams.signerAddress}
-                view="wallet"
-              />
-            </Row>
-            <Row title={t('To')} transparent>
-              <TransactionDestinationAddressesList
-                tx={unsignedData}
-                referenceAddress={txParams.signerAddress}
-                view="wallet"
-              />
-            </Row>
+            {unsignedData.simulationResult.contractInputs &&
+              unsignedData.simulationResult.contractInputs.length > 0 && (
+                <Row title={t('From')} transparent>
+                  <TransactionOriginAddressesList
+                    tx={unsignedData}
+                    referenceAddress={txParams.signerAddress}
+                    view="wallet"
+                  />
+                </Row>
+              )}
+            {unsignedData.simulationResult.generatedOutputs &&
+              unsignedData.simulationResult.generatedOutputs.length > 0 && (
+                <Row title={t('To')} transparent>
+                  <TransactionDestinationAddressesList
+                    tx={unsignedData}
+                    referenceAddress={txParams.signerAddress}
+                    view="wallet"
+                  />
+                </Row>
+              )}
             <TransactionAmounts tx={unsignedData} referenceAddress={txParams.signerAddress} isLast />
           </>
         ) : (
