@@ -1,7 +1,8 @@
 import { keyring } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE, newAddressesSaved, selectAllAddressIndexes } from '@alephium/shared'
+import { newAddressesSaved } from '@alephium/shared'
+import { useUnsortedAddresses } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -10,7 +11,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -21,7 +22,8 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
-  const { indexesOfGrouplessAddresses } = useAppSelector(selectAllAddressIndexes)
+  const addresses = useUnsortedAddresses()
+  const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
@@ -34,7 +36,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const [values, setValues] = useState<AddressFormData>(initialValues)
 
   const handleGeneratePress = async () => {
-    const { isDefault, label, color } = values
+    const { isDefault, label, color, group } = values
 
     dispatch(activateAppLoading(t('Generating new address')))
 
@@ -42,8 +44,9 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       await initializeKeyringWithStoredWallet()
       const newAddress = {
         ...keyring.generateAndCacheAddress({
-          skipAddressIndexes: indexesOfGrouplessAddresses,
-          keyType: GROUPLESS_ADDRESS_KEY_TYPE
+          group,
+          skipAddressIndexes: currentAddressIndexes.current,
+          keyType: 'default'
         }),
         label,
         color,
@@ -53,7 +56,12 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       await persistAddressSettings(newAddress)
       dispatch(newAddressesSaved([newAddress]))
 
-      sendAnalytics({ event: 'Address: Generated new address', props: { note: 'groupless' } })
+      sendAnalytics({
+        event: 'Address: Generated new address',
+        props: {
+          note: group === undefined ? 'In random group' : 'In specific group'
+        }
+      })
     } catch (error) {
       const message = 'Could not save new address'
 
@@ -79,7 +87,12 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       {...props}
     >
       <ScreenSection>
-        <AddressForm screenTitle={t('New address')} initialValues={initialValues} onValuesChange={setValues} />
+        <AddressForm
+          screenTitle={t('New address')}
+          initialValues={initialValues}
+          onValuesChange={setValues}
+          allowGroupSelection
+        />
       </ScreenSection>
     </ScrollScreen>
   )
