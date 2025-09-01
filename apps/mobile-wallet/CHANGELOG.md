@@ -10,6 +10,7 @@
 - ac85148: Add discreet mode toggle button in dashboard screen
 - ac074a0: Fix tokens list when GitHub is unreachable
 - 0eb693b: Open favorites dApp tab by default if favorites exist
+- a366555: Allow user to generate address in old format
 
 ## 2.3.0
 
