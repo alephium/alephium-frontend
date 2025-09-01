@@ -57,7 +57,7 @@ const outp = {
 }
 
 describe('calcTxAmountsDeltaForAddress', () => {
-  describe('should throw error when transaction details are missing', () => {
+  describe('when something is missing', () => {
     it('should return zero amounts when inputs are missing', () => {
       const tx: e.Transaction = {
         ...mockTx,
@@ -65,7 +65,7 @@ describe('calcTxAmountsDeltaForAddress', () => {
       }
 
       const result = calcTxAmountsDeltaForAddress(tx, refAddress)
-      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.alphAmount).toBe(BigInt(FIFTY))
       expect(result.tokenAmounts).toEqual([])
       expect(result.fee).toBe(BigInt(ONE))
     })
@@ -77,7 +77,7 @@ describe('calcTxAmountsDeltaForAddress', () => {
       }
 
       const result = calcTxAmountsDeltaForAddress(tx, refAddress)
-      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.alphAmount).toBe(BigInt(`-${FORTY_NINE}`))
       expect(result.tokenAmounts).toEqual([])
       expect(result.fee).toBe(BigInt(ONE))
     })
@@ -238,7 +238,7 @@ describe('calcTxAmountsDeltaForAddress', () => {
         outputs: [{ ...outp, address: refAddress, attoAlphAmount: FIFTY, tokens: [{ id: 'token-1', amount: ONE }] }]
       }
       const result = calcTxAmountsDeltaForAddress(tx, refAddress)
-      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.alphAmount).toBe(BigInt(FIFTY))
       expect(result.tokenAmounts).toEqual([])
     })
     it('should handle transactions with no outputs', () => {
@@ -248,7 +248,7 @@ describe('calcTxAmountsDeltaForAddress', () => {
         outputs: []
       }
       const result = calcTxAmountsDeltaForAddress(tx, refAddress)
-      expect(result.alphAmount).toBe(BigInt(0))
+      expect(result.alphAmount).toBe(BigInt(`-${FORTY_NINE}`))
       expect(result.tokenAmounts).toEqual([])
     })
     it('should handle inputs/outputs with undefined addresses', () => {
@@ -310,11 +310,11 @@ it('should calculate the amount delta between the inputs and outputs of an addre
     ).toEqual(BigInt('-199993194000000000000')),
     expect(
       calcTxAmountsDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address).alphAmount
-    ).toEqual(BigInt(0)),
+    ).toEqual(BigInt('150000000000000000000')),
     expect(
       calcTxAmountsDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
         .alphAmount
-    ).toEqual(BigInt(0))
+    ).toEqual(BigInt('-199993194000000000000'))
 })
 
 describe('addressHasOnlyNegativeAmountDeltas and addressHasOnlyPositiveAmountDeltas', () => {
