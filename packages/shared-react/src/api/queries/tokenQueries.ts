@@ -164,8 +164,14 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
             }
 
             try {
-              const res = await axios.get(tokenUri)
-              const nftData = res.data as NFTTokenUriMetaData
+              let nftData: NFTTokenUriMetaData
+
+              if (tokenUri.startsWith('data:application/json,')) {
+                nftData = JSON.parse(tokenUri.split('data:application/json,')[1])
+              } else {
+                const res = await axios.get(tokenUri)
+                nftData = res.data
+              }
 
               if (!nftData || !nftData.name) {
                 return errorResponse
@@ -182,8 +188,11 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
                 : {
                     id,
                     dataType,
+                    ...nftData,
                     name: nftData.name,
-                    image: nftData.image ? nftData.image.toString() : ''
+                    image: nftData.image
+                      ? nftData.image.toString()
+                      : `https://placehold.co/400x400/000000/FFFFFF/jpeg?text=${encodeURIComponent(nftData.name)}`
                   }
             } catch (error) {
               errorResponse.description =
