@@ -119,7 +119,7 @@ const SimulatedResult = ({
 
   const isRelevant = useMemo(
     () => getTxAddresses(unsignedData).some((address) => address === txParams.signerAddress),
-    [unsignedData]
+    [unsignedData, txParams.signerAddress]
   )
 
   return (
