@@ -36,7 +36,15 @@ if (!__DEV__) {
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Send report',
-        onPress: () => Linking.canOpenURL(url).then((result) => (result ? Linking.openURL(url) : false))
+        onPress: () => {
+          Linking.openURL(url).catch((error) => {
+            Alert.alert(
+              'Could not open email app, please take a screenshot and send the report manually.',
+              `${error}`,
+              [{ text: 'Close', style: 'cancel' }]
+            )
+          })
+        }
       }
     ])
   })
