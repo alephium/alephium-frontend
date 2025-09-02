@@ -3,7 +3,7 @@ import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { PlusSquare } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -58,6 +58,7 @@ const WalletConnectSessionProposalModal = memo(
 
     const { signerAddressHash, signerAddressPublicKey, signerAddressKeyType, setSignerAddressHash, addressesInGroup } =
       useSignerAddress(group)
+    const addressHashesInGroup = useMemo(() => addressesInGroup.map((a) => a.hash), [addressesInGroup])
 
     const { showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
 
@@ -244,7 +245,7 @@ const WalletConnectSessionProposalModal = memo(
             <AddressSelect
               label={t('Connect with address')}
               title={t('Select an address to connect with.')}
-              addressOptions={addressesInGroup}
+              addressOptions={addressHashesInGroup}
               selectedAddress={signerAddressHash}
               onAddressChange={setSignerAddressHash}
               id="from-address"

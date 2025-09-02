@@ -49,10 +49,6 @@ export const selectAddressesInGroup = createSelector(
   getAddressesInGroup
 )
 
-export const selectAddressesStrsInGroup = createSelector(selectAddressesInGroup, (addresses) =>
-  addresses.map(({ hash }) => hash)
-)
-
 export const selectAddressGroup = createSelector(selectAddressByHash, (address) =>
   address === undefined || isGrouplessAddress(address) ? undefined : address.group
 )
