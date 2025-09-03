@@ -13,7 +13,15 @@ const AddressesDataRows = ({ tx, referenceAddress }: TransactionDisplayProps) =>
   const { t } = useTranslation()
   const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
-  if (infoType === 'bidirectional-transfer' || infoType === 'dApp' || infoType === 'dApp-failed') {
+  if (infoType === 'dApp-failed') {
+    return (
+      <DataList.Row label={t('Addresses')}>
+        <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+      </DataList.Row>
+    )
+  }
+
+  if (infoType === 'bidirectional-transfer' || infoType === 'dApp') {
     return (
       <DataList.Row label={t('Addresses')}>
         <AddressesInvolved>
