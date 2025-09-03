@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 3.1.1
+
+### Patch Changes
+
+- 1958c3b: Display simulated transaction info when calling smart contracts
+- 22c325c: Display decoded info when signing transactions
+- fb18d10: Improve app performance when sending/receiving transactions
+
 ## 3.1.0
 
 ### Patch Changes
