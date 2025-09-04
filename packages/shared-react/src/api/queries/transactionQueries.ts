@@ -273,17 +273,38 @@ export const nodeTransactionDecodeUnsignedTxQuery = ({
     queryKey: ['transaction', 'node', 'decode', 'unsigned', unsignedTx],
     ...getQueryConfig({ gcTime: ONE_MINUTE_MS, networkId }),
     queryFn: !skip
-      ? async () => {
-          const result = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+      ? () => throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+      : skipToken
+  })
 
+interface NodeTransactionReconstructDecodedUnsignedTxQueryProps {
+  decodedUnsignedTx: n.DecodeUnsignedTxResult
+  networkId?: number
+  skip?: boolean
+}
+
+export const nodeTransactionReconstructDecodedUnsignedTxQuery = ({
+  decodedUnsignedTx,
+  networkId,
+  skip
+}: NodeTransactionReconstructDecodedUnsignedTxQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', 'node', 'reconstruct-tx', decodedUnsignedTx],
+    ...getQueryConfig({ gcTime: ONE_MINUTE_MS, networkId }),
+    queryFn: !skip
+      ? async () => {
           const mockedTransaction: e.AcceptedTransaction = {
             inputs: [],
-            outputs: result.unsignedTx.fixedOutputs.map((output) => ({ ...output, fixedOutput: true, type: '' })),
-            hash: result.unsignedTx.txId,
-            version: result.unsignedTx.version,
-            networkId: result.unsignedTx.networkId,
-            gasAmount: result.unsignedTx.gasAmount,
-            gasPrice: result.unsignedTx.gasPrice,
+            outputs: decodedUnsignedTx.unsignedTx.fixedOutputs.map((output) => ({
+              ...output,
+              fixedOutput: true,
+              type: ''
+            })),
+            hash: decodedUnsignedTx.unsignedTx.txId,
+            version: decodedUnsignedTx.unsignedTx.version,
+            networkId: decodedUnsignedTx.unsignedTx.networkId,
+            gasAmount: decodedUnsignedTx.unsignedTx.gasAmount,
+            gasPrice: decodedUnsignedTx.unsignedTx.gasPrice,
             blockHash: '',
             timestamp: 0,
             scriptExecutionOk: true,
@@ -291,7 +312,7 @@ export const nodeTransactionDecodeUnsignedTxQuery = ({
             type: ''
           }
 
-          for (const input of result.unsignedTx.inputs) {
+          for (const input of decodedUnsignedTx.unsignedTx.inputs) {
             const inputTxHash = await throttledClient.node.transactions.getTransactionsTxIdFromOutputref({
               hint: input.outputRef.hint,
               key: input.outputRef.key
