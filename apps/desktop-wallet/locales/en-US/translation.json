@@ -554,5 +554,6 @@
   "Click to display the amount": "Click to display the amount",
   "Sending": "Sending",
   "Simulated result": "Simulated result",
-  "Nothing relevant to the signer address.": "Nothing relevant to the signer address."
+  "Nothing relevant to the signer address.": "Nothing relevant to the signer address.",
+  "Decoded transaction details": "Decoded transaction details"
 }
