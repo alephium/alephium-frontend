@@ -16,11 +16,11 @@ const PendingSentAddressBadge = ({ txHash, direction }: PendingSentAddressBadgeP
 
   if (!pendingSentTx) return null
 
+  if (direction === 'from') return <AddressBadge addressHash={pendingSentTx.fromAddress} />
+
   if (pendingSentTx.type === 'contract') return <Badge>{t('Smart contract')}</Badge>
 
-  if (pendingSentTx.type === 'faucet') return <Badge>{t('Token faucet')}</Badge>
-
-  return <AddressBadge addressHash={direction === 'from' ? pendingSentTx.fromAddress : pendingSentTx.toAddress} />
+  return <AddressBadge addressHash={pendingSentTx.toAddress} />
 }
 
 export default PendingSentAddressBadge

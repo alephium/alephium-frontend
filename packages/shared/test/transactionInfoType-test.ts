@@ -361,7 +361,7 @@ describe('isAirdrop', () => {
         ]
       }
 
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
+      expect(isAirdrop(tx, refAddress)).toBe(false)
     })
 
     it('should handle transactions with no outputs', () => {
@@ -371,7 +371,7 @@ describe('isAirdrop', () => {
         outputs: []
       }
 
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
+      expect(isAirdrop(tx, refAddress)).toBe(false)
     })
 
     it('should handle pending transactions', () => {
@@ -629,7 +629,7 @@ describe('isBidirectionalTransfer', () => {
         ]
       }
 
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
+      expect(isAirdrop(tx, refAddress)).toBe(false)
     })
 
     it('should handle transactions with no outputs', () => {
@@ -641,7 +641,7 @@ describe('isBidirectionalTransfer', () => {
         outputs: []
       }
 
-      expect(() => isAirdrop(tx, refAddress)).toThrow('Missing transaction details')
+      expect(isAirdrop(tx, refAddress)).toBe(false)
     })
 
     it('should handle pending transactions', () => {

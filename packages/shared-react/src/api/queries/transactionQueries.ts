@@ -101,11 +101,13 @@ export const addressTransactionsInfiniteQuery = ({
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
-        ? ({ pageParam }) =>
-            throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-              page: pageParam,
-              limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
-            })
+        ? async ({ pageParam }) =>
+            (
+              await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+                page: pageParam,
+                limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+              })
+            ).filter(isConfirmedTx)
         : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
@@ -115,7 +117,12 @@ interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQuery
   addressHashes: AddressHash[]
 }
 
-type PageParam = {
+export type AddressTransactionsInfiniteQueryPageData = {
+  pageTransactions: e.Transaction[]
+  addressesWithMoreTxPages: AddressHash[]
+}
+
+export type WalletTransactionsInfiniteQueryPageParam = {
   page: number
   addressesWithMoreTxPages: AddressHash[]
 }
@@ -137,10 +144,12 @@ export const walletTransactionsInfiniteQuery = ({
             const pageResults = await Promise.all(
               addresses.map(async (addressHash) => ({
                 addressHash,
-                transactions: await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-                  page: pageParam.page,
-                  limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
-                })
+                transactions: (
+                  await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+                    page: pageParam.page,
+                    limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+                  })
+                ).filter(isConfirmedTx)
               }))
             )
 
@@ -159,14 +168,14 @@ export const walletTransactionsInfiniteQuery = ({
     initialPageParam: {
       page: 1,
       addressesWithMoreTxPages: []
-    } as PageParam,
+    } as WalletTransactionsInfiniteQueryPageParam,
     getNextPageParam: ({ addressesWithMoreTxPages }, _, lastPageParam) =>
       lastPageParam.page !== 1 && lastPageParam.addressesWithMoreTxPages.length === 0
         ? null
         : ({
             page: lastPageParam.page + 1,
             addressesWithMoreTxPages
-          } as PageParam)
+          } as WalletTransactionsInfiniteQueryPageParam)
   })
 
 interface PendingTransactionQueryProps extends SkipProp {

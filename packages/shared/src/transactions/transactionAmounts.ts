@@ -24,9 +24,7 @@ export const calcTxAmountsDeltaForAddress = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | ExecuteScriptTx,
   refAddress: string
 ): AmountDeltas => {
-  const { inputs, outputs } = getTxInputsOutputs(tx)
-
-  if (!inputs || inputs.length === 0 || !outputs || outputs.length === 0) throw 'Missing transaction details'
+  const { inputs = [], outputs = [] } = getTxInputsOutputs(tx)
 
   let alphDelta
   let tokensDelta: AmountDeltas['tokenAmounts'] = []

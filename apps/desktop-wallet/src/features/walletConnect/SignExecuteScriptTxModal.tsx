@@ -1,5 +1,7 @@
 import {
   AssetAmount,
+  getBaseAddressStr,
+  getTxAddresses,
   isGrouplessAddress,
   selectAddressByHash,
   signAndSubmitTxResultToSentTx,
@@ -97,11 +99,37 @@ export const SignExecuteScriptTxModalContent = ({
 
       <TransactionsSeparator Icon={ChevronsDown} />
 
+      <SimulatedResult unsignedData={unsignedData} txParams={txParams} />
+    </>
+  )
+}
+
+const SimulatedResult = ({
+  unsignedData,
+  txParams
+}: Pick<SignExecuteScriptTxModalProps, 'unsignedData' | 'txParams'>) => {
+  const { t } = useTranslation()
+
+  const isRelevant = useMemo(
+    () => getTxAddresses(unsignedData).some((address) => getBaseAddressStr(address) === txParams.signerAddress),
+    [unsignedData, txParams.signerAddress]
+  )
+
+  return (
+    <>
       <SectionTitle>{t('Simulated result')}</SectionTitle>
-      <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType />
-      <Box hasBg hasHorizontalPadding>
-        <AddressesDataRows tx={unsignedData} referenceAddress={txParams.signerAddress} />
-      </Box>
+      {isRelevant ? (
+        <>
+          <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType />
+          <Box hasBg hasHorizontalPadding>
+            <AddressesDataRows tx={unsignedData} referenceAddress={txParams.signerAddress} />
+          </Box>
+        </>
+      ) : (
+        <BoxStyled hasBg hasHorizontalPadding hasVerticalPadding hasBorder>
+          {t('Nothing relevant to the signer address.')}
+        </BoxStyled>
+      )}
     </>
   )
 }
@@ -138,5 +166,9 @@ const SectionTitle = styled.div`
   font-size: 14px;
   margin-top: 0;
   font-weight: var(--fontWeight-bold);
+  text-align: center;
+`
+
+const BoxStyled = styled(Box)`
   text-align: center;
 `

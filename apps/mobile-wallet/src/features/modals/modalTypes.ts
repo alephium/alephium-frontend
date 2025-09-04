@@ -49,6 +49,7 @@ import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPa
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
+import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -74,6 +75,7 @@ export const ModalComponents = {
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
   WalletConnectSessionProposalModal,
+  GroupSelectModal,
   TokenAmountModal,
   AddressDetailsModal,
   ReceiveQRCodeModal,

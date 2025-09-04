@@ -1,8 +1,8 @@
 import {
-  AddressHash,
+  Address,
   isNetworkValid,
   networkSettingsPresets,
-  selectAddressesStrsInGroup,
+  selectAddressesInGroup,
   selectDefaultAddressHash,
   WalletConnectSessionProposalModalProps
 } from '@alephium/shared'
@@ -46,14 +46,14 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
     const group = chainInfo.addressGroup
-    const addressesInGroup = useAppSelector((s) => selectAddressesStrsInGroup(s, group))
+    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
     const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
     const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
     const { dismissModal } = useModalContext()
 
-    const [signerAddress, setSignerAddress] = useState<AddressHash>()
+    const [signerAddress, setSignerAddress] = useState<Address>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
 
     const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId, () =>
@@ -63,12 +63,12 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     useEffect(() => {
       setSignerAddress(
         addressesInGroup.length > 0
-          ? addressesInGroup.find((a) => a === defaultAddressHash) ?? addressesInGroup.at(0)
+          ? addressesInGroup.find((a) => a.hash === defaultAddressHash) ?? addressesInGroup.at(0)
           : undefined
       )
     }, [addressesInGroup, defaultAddressHash])
 
-    const handleApproveProposal = async (signerAddressHash: AddressHash) => {
+    const handleApproveProposal = async (signerAddress: Address) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
 
@@ -107,13 +107,13 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
           })
         }
 
-        const publicKey = await getAddressAsymetricKey(signerAddressHash, 'public')
+        const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
 
         const namespaces: SessionTypes.Namespaces = {
           alephium: {
             methods: requiredNamespaceMethods,
             events: requiredNamespaceEvents,
-            accounts: [`${chain}:${publicKey}/default`]
+            accounts: [`${chain}:${publicKey}/${signerAddress.keyType}`]
           }
         }
 
@@ -182,13 +182,13 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                 </SectionTitle>
                 <SectionSubtitle color="secondary">{t('Tap to select another one')}</SectionSubtitle>
                 <AddressList>
-                  {addressesInGroup.map((addressHash, i) => (
+                  {addressesInGroup.map((address, i) => (
                     <AddressBox
-                      key={addressHash}
-                      addressHash={addressHash}
-                      isSelected={addressHash === signerAddress}
+                      key={address.hash}
+                      addressHash={address.hash}
+                      isSelected={address.hash === signerAddress.hash}
                       onPress={() => {
-                        setSignerAddress(addressHash)
+                        setSignerAddress(address)
                         setShowAlternativeSignerAddresses(false)
                         sendAnalytics({ event: 'WC: Switched signer address' })
                       }}
@@ -204,7 +204,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                 <SectionSubtitle color="secondary">{t('Tap to change the address to connect with.')}</SectionSubtitle>
                 <AddressList>
                   <AddressBox
-                    addressHash={signerAddress}
+                    addressHash={signerAddress.hash}
                     onPress={() => setShowAlternativeSignerAddresses(true)}
                     isSelected
                     isLast

@@ -28,7 +28,6 @@
   "Group transfer": "Group transfer",
   "and": "and",
   "Smart contract": "Smart contract",
-  "Token faucet": "Token faucet",
   "Send funds": "Send funds",
   "Moved": "Moved",
   "Are you sure?": "Are you sure?",
@@ -90,6 +89,7 @@
   "Addresses in group {{ groupNumber }}": "Addresses in group {{ groupNumber }}",
   "Your addresses": "Your addresses",
   "Address settings": "Address settings",
+  "Address group": "Address group",
   "Contacts": "Contacts",
   "No contact yet!": "No contact yet!",
   "Add contact": "Add contact",
@@ -138,6 +138,7 @@
   "New contact": "New contact",
   "Importing wallet": "Importing wallet",
   "dAppRequiredNetwork": "You are currently connected to <1>{{ currentNetwork }}</1>, but the dApp requires a connection to <1>{{ requiredNetwork }}</1>.",
+  "dAppRequiredGroup": "The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!",
   "Tap to select another one": "Tap to select another one",
   "Connect with address": "Connect with address",
   "Tap to change the address to connect with.": "Tap to change the address to connect with.",
@@ -494,5 +495,8 @@
   "Useful tip": "Useful tip",
   "connectTipModalMessage": "For a smoother experience when connecting to a dApp, use the <1>Browser/Extension</1> button instead of WalletConnect.",
   "Transaction {{ number }}": "Transaction {{ number }}",
-  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!",
+  "Nothing relevant to the signer address.": "Nothing relevant to the signer address.",
+  "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.",
+  "Groupless": "Groupless"
 }

@@ -54,6 +54,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
     paddingHorizontal: props.noPadding ? 0 : DEFAULT_MARGIN,
     paddingBottom: safeAreaInsets.bottom || VERTICAL_GAP
   }
+  const stylesWithGap = { ...styles, gap: props.contentVerticalGap ? VERTICAL_GAP : undefined }
 
   return (
     <BottomSheetModal
@@ -96,12 +97,8 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
           !isFlashList(props) &&
           BottomSheetComponent && (
             <BottomSheetComponent
-              style={
-                props.notScrollable
-                  ? { ...styles, gap: props.contentVerticalGap ? VERTICAL_GAP : undefined }
-                  : undefined
-              }
-              contentContainerStyle={props.notScrollable ? undefined : styles}
+              style={props.notScrollable ? stylesWithGap : undefined}
+              contentContainerStyle={props.notScrollable ? undefined : stylesWithGap}
               // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
             >
               {/* Note: Same as above regarding header. */}

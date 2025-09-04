@@ -21,7 +21,7 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
-  const { indexesOfGrouplessAddresses } = useAppSelector(selectAllAddressIndexes)
+  const { indexesOfGrouplessAddresses, indexesOfAddressesWithGroup } = useAppSelector(selectAllAddressIndexes)
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
@@ -34,26 +34,44 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const [values, setValues] = useState<AddressFormData>(initialValues)
 
   const handleGeneratePress = async () => {
-    const { isDefault, label, color } = values
+    const { isDefault, label, color, group } = values
 
     dispatch(activateAppLoading(t('Generating new address')))
 
     try {
       await initializeKeyringWithStoredWallet()
-      const newAddress = {
-        ...keyring.generateAndCacheAddress({
-          skipAddressIndexes: indexesOfGrouplessAddresses,
-          keyType: GROUPLESS_ADDRESS_KEY_TYPE
-        }),
-        label,
-        color,
-        isDefault
-      }
+
+      const newAddress =
+        group === undefined
+          ? {
+              ...keyring.generateAndCacheAddress({
+                skipAddressIndexes: indexesOfGrouplessAddresses,
+                keyType: GROUPLESS_ADDRESS_KEY_TYPE
+              }),
+              label,
+              color,
+              isDefault
+            }
+          : {
+              ...keyring.generateAndCacheAddress({
+                group,
+                skipAddressIndexes: indexesOfAddressesWithGroup,
+                keyType: 'default'
+              }),
+              label,
+              color,
+              isDefault
+            }
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressesSaved([newAddress]))
 
-      sendAnalytics({ event: 'Address: Generated new address', props: { note: 'groupless' } })
+      sendAnalytics({
+        event: 'Address: Generated new address',
+        props: {
+          note: group === undefined ? 'groupless' : 'In specific group'
+        }
+      })
     } catch (error) {
       const message = 'Could not save new address'
 
@@ -79,7 +97,12 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       {...props}
     >
       <ScreenSection>
-        <AddressForm screenTitle={t('New address')} initialValues={initialValues} onValuesChange={setValues} />
+        <AddressForm
+          screenTitle={t('New address')}
+          initialValues={initialValues}
+          onValuesChange={setValues}
+          allowGroupSelection
+        />
       </ScreenSection>
     </ScrollScreen>
   )
