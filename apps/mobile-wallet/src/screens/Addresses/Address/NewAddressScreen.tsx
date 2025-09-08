@@ -50,8 +50,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
               }),
               label,
               color,
-              isDefault,
-              isNew: true
+              isDefault
             }
           : {
               ...keyring.generateAndCacheAddress({
@@ -61,12 +60,11 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
               }),
               label,
               color,
-              isDefault,
-              isNew: true
+              isDefault
             }
 
       await persistAddressSettings(newAddress)
-      dispatch(newAddressesSaved([newAddress]))
+      dispatch(newAddressesSaved([{ ...newAddress, isNew: true }]))
 
       sendAnalytics({
         event: 'Address: Generated new address',
