@@ -115,7 +115,7 @@ const DecodedTransactionDetails = ({
   txParams: SignUnsignedTxModalProps['txParams']
 }) => {
   const { t } = useTranslation()
-  const fees = useMemo(() => BigInt(tx.gasAmount) * BigInt(tx.gasPrice), [tx])
+  const fees = useMemo(() => BigInt(tx.gasAmount) * BigInt(tx.gasPrice), [tx.gasAmount, tx.gasPrice])
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, txParams.signerAddress)
   const assetAmounts = useMemo(
     () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),

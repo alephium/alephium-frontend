@@ -289,7 +289,7 @@ export const nodeTransactionReconstructDecodedUnsignedTxQuery = ({
   skip
 }: NodeTransactionReconstructDecodedUnsignedTxQueryProps) =>
   queryOptions({
-    queryKey: ['transaction', 'node', 'reconstruct-tx', decodedUnsignedTx],
+    queryKey: ['transaction', 'node', 'reconstruct-tx', decodedUnsignedTx.unsignedTx.txId],
     ...getQueryConfig({ gcTime: ONE_MINUTE_MS, networkId }),
     queryFn: !skip
       ? async () => {
