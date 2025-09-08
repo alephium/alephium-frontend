@@ -20,7 +20,34 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
+const WalletDeleteModal = memo<WalletDeleteModalProps>((props) => {
+  const walletName = useAppSelector((s) => s.wallet.name)
+  const { t } = useTranslation()
+
+  return (
+    <BottomModal2 contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t('Do you really want to delete this wallet from your device?')}
+        </AppText>
+        <AppText color="secondary" size={18}>
+          {t('You can always restore it later using your secret recovery phrase.')}
+        </AppText>
+        <AppText color="secondary" size={18}>
+          {t('If so, please enter the wallet name below, and hit the delete button.')}
+        </AppText>
+      </ScreenSection>
+      <WalletDeleteModalContent {...props} />
+    </BottomModal2>
+  )
+})
+
+export default WalletDeleteModal
+
+const WalletDeleteModalContent = ({ onDelete }: WalletDeleteModalProps) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const walletId = useAppSelector((s) => s.wallet.id)
@@ -52,21 +79,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
   }
 
   return (
-    <BottomModal2 contentVerticalGap>
-      <ScreenSection>
-        <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
-      </ScreenSection>
-      <ScreenSection>
-        <AppText color="secondary" size={18}>
-          {t('Do you really want to delete this wallet from your device?')}
-        </AppText>
-        <AppText color="secondary" size={18}>
-          {t('You can always restore it later using your secret recovery phrase.')}
-        </AppText>
-        <AppText color="secondary" size={18}>
-          {t('If so, please enter the wallet name below, and hit the delete button.')}
-        </AppText>
-      </ScreenSection>
+    <>
       <ScreenSection>
         <Input isInModal label={t('Wallet name')} defaultValue={inputWalletName} onChangeText={setInputWalletName} />
       </ScreenSection>
@@ -79,8 +92,6 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>(({ onDelete }) => {
           iconProps={{ name: 'trash-outline' }}
         />
       </ScreenSection>
-    </BottomModal2>
+    </>
   )
-})
-
-export default WalletDeleteModal
+}

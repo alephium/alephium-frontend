@@ -14,6 +14,20 @@ import { walletNameChanged } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
 const EditWalletNameModal = memo(() => {
+  const { t } = useTranslation()
+
+  return (
+    <BottomModal2 notScrollable title={t('Wallet name')}>
+      <ScreenSection verticalGap>
+        <EditWalletNameModalContent />
+      </ScreenSection>
+    </BottomModal2>
+  )
+})
+
+export default EditWalletNameModal
+
+const EditWalletNameModalContent = () => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -41,13 +55,9 @@ const EditWalletNameModal = memo(() => {
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Wallet name')}>
-      <ScreenSection verticalGap>
-        <Input isInModal defaultValue={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
-        <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
-      </ScreenSection>
-    </BottomModal2>
+    <>
+      <Input isInModal defaultValue={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+      <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
+    </>
   )
-})
-
-export default EditWalletNameModal
+}
