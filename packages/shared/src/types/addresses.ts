@@ -33,6 +33,7 @@ export type AddressStoredMetadataWithHash = AddressStoredMetadataWithoutHash & {
 export type AddressBase = AddressStoredMetadataWithoutHash & {
   hash: AddressHash
   publicKey: string // TODO: Replace by NonSensitiveAddressData by moving it to shared?
+  isNew?: boolean
 }
 
 export type AddressWithGroup = AddressBase & {
