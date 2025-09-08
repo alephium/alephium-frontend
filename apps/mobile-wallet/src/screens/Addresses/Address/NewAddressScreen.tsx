@@ -50,7 +50,8 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
               }),
               label,
               color,
-              isDefault
+              isDefault,
+              isNew: true
             }
           : {
               ...keyring.generateAndCacheAddress({
@@ -60,7 +61,8 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
               }),
               label,
               color,
-              isDefault
+              isDefault,
+              isNew: true
             }
 
       await persistAddressSettings(newAddress)

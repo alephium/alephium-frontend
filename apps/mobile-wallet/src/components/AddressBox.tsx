@@ -135,6 +135,11 @@ const AddressBox = ({
               >
                 {address?.label || addressHash}
               </AppText>
+              {address.isNew && (
+                <Badge compact color={theme.global.accent}>
+                  {t('New')}
+                </Badge>
+              )}
             </AddressLabel>
 
             {tokenId ? (
