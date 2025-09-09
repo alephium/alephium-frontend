@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm ci:build
           pnpm electron-builder --mac --universal --publish always
 
@@ -78,7 +78,7 @@ jobs:
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm ci:build
           pnpm electron-builder --windows --publish always
 
@@ -94,7 +94,7 @@ jobs:
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm ci:build
 
           # Only publish to Snapcraft for non-rc versions
