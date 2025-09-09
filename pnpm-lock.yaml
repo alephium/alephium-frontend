@@ -123,14 +123,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@alephium/walletconnect-provider':
-        specifier: 2.0.2
-        version: 2.0.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@alephium/web3-wallet':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@electron/notarize':
         specifier: ^1.2.3
         version: 1.2.4
@@ -390,8 +390,8 @@ importers:
         specifier: ^0.0.20
         version: 0.0.20(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@reduxjs/toolkit':
         specifier: ^1.9.1
         version: 1.9.7(react-redux@8.1.3(@types/react-dom@18.2.18)(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react-native@0.76.9(@babel/core@7.26.10)(@types/react@18.3.20)(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
@@ -565,11 +565,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/wallet-dapp-provider
       '@alephium/walletconnect-provider':
-        specifier: 2.0.2
-        version: 2.0.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@dev-plugins/react-query':
         specifier: ^0.3.1
         version: 0.3.1(@tanstack/react-query@5.45.0(react@18.3.1))(expo@52.0.46(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(encoding@0.1.13)(graphql@16.10.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1))
@@ -978,11 +978,11 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@alephium/web3-wallet':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1039,11 +1039,11 @@ importers:
         specifier: ^0.0.20
         version: 0.0.20(encoding@0.1.13)
       '@alephium/walletconnect-provider':
-        specifier: 2.0.2
-        version: 2.0.2(@react-native-async-storage/async-storage@1.23.1)(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(@react-native-async-storage/async-storage@1.23.1)(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1191,8 +1191,8 @@ importers:
         specifier: ^0.0.20
         version: 0.0.20(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       '@tanstack/react-query':
         specifier: 5.45.0
         version: 5.45.0(react@18.3.1)
@@ -1216,8 +1216,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@alephium/walletconnect-provider':
-        specifier: 2.0.2
-        version: 2.0.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
+        specifier: 2.0.3
+        version: 2.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
       '@types/react':
         specifier: ~18.3.20
         version: 18.3.20
@@ -1233,11 +1233,11 @@ importers:
   packages/wallet-dapp-provider:
     dependencies:
       '@alephium/get-extension-wallet':
-        specifier: 2.0.2
-        version: 2.0.2
+        specifier: 2.0.3
+        version: 2.0.3
       '@alephium/web3':
-        specifier: 2.0.2
-        version: 2.0.2(encoding@0.1.13)
+        specifier: 2.0.3
+        version: 2.0.3(encoding@0.1.13)
       lodash.isplainobject:
         specifier: 4.0.6
         version: 4.0.6
@@ -1332,8 +1332,8 @@ packages:
   '@adobe/css-tools@4.3.2':
     resolution: {integrity: sha512-DA5a1C0gD/pLOvhv33YMrbf2FK3oUzwNl9oOJqE4XVjuEtt6XIakRcsd7eLiOSPkp1kTRQGICTA8cKra/vFbjw==}
 
-  '@alephium/get-extension-wallet@2.0.2':
-    resolution: {integrity: sha512-FrX64OcoFU7KyLmOTcldt0Dn7Mi5GBaI2t/MOuEds6eEt7XxtePEHEEmMbY9mikEXS9acL/GYHi7tfPy88Pl3w==}
+  '@alephium/get-extension-wallet@2.0.3':
+    resolution: {integrity: sha512-2af4SoPu5EunusjYF722eqYBxn+t8IyyaEbNh0QRDfbZa7hoM5ouTNTDbYMDseXjt4BFbKsz8jShA9N905FQ0Q==}
 
   '@alephium/ledger-app@0.6.2':
     resolution: {integrity: sha512-MWBtzOPbatF6rn510FuXX8FvFdA5VBccPJXSGoYzdx7fHkM8Az6oFlSosCQdW56JXI9jff1MD8eW/cs9IrNt5g==}
@@ -1343,20 +1343,20 @@ packages:
     resolution: {integrity: sha512-0JoFLsdxqp2M0k0ohsCe0F+tdMEJ1LjJQrNm4s+3c8CY2dDnTNbH1zxPPQ9xF2HbTUHbhAN9VCMB1SmWRuMm7g==}
     engines: {node: '>=16', npm: '>=8'}
 
-  '@alephium/walletconnect-provider@2.0.2':
-    resolution: {integrity: sha512-93vId2MTqGOMj9nog5p0IgeBY90W8QaKIGO42WDcbYiXsskHL7P4TphJXivrEsMwtnhfF5A/ab0JGnZnFa41mA==}
+  '@alephium/walletconnect-provider@2.0.3':
+    resolution: {integrity: sha512-TKQ6MBKb35AJQOZtrEu0QZtSJPIQXYFHcz4Fgt8/9nELzuQvbh9BaO6I4fK80uQopRubkA3rRXzYwbSIIskXhA==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
-  '@alephium/web3-wallet@2.0.2':
-    resolution: {integrity: sha512-qxqurhWQ+TKc4PCNTMq8SEiAHAyMuqOFeWFypVyHvQLQDiRntnooeU+JUAD5iIDpiCnk6gfgGbPlp6fHvOoCJA==}
+  '@alephium/web3-wallet@2.0.3':
+    resolution: {integrity: sha512-mghVXYFPJgGBnfdQupYw8h/uuiFwtVsVq0SXlt7tcqdx11VTjAkNAA0cOFm9Y/BcNKd2zDeRKuSg+LZqua631Q==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
   '@alephium/web3@1.11.3':
     resolution: {integrity: sha512-EySFublnjSrEY29jeNHingFAMd2bY4v51tlmOZrhQFkg3bjzX7UemfYyR4uokeYugErQa8hJrKPQLj9oQttCPw==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
-  '@alephium/web3@2.0.2':
-    resolution: {integrity: sha512-3sIqTdgXQvO68HJuRrbw9wAzXQFk6/BB4ThEzP43kXTbjKxTmbBk42LYK1ZJBmZ7plWWvBJ1CWaF9Zbvb7NrAw==}
+  '@alephium/web3@2.0.3':
+    resolution: {integrity: sha512-XA9sXPhHh7XPjJe4hhXxuONQgvtxP4uBMuawcGzQkUjPKEYWjdFwjR6KdM8vVqcnEB0qb+MAlw0T7E0kPh0ukw==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
   '@ampproject/remapping@2.3.0':
@@ -12077,9 +12077,9 @@ snapshots:
 
   '@adobe/css-tools@4.3.2': {}
 
-  '@alephium/get-extension-wallet@2.0.2':
+  '@alephium/get-extension-wallet@2.0.3':
     dependencies:
-      '@alephium/web3': 2.0.2(encoding@0.1.13)
+      '@alephium/web3': 2.0.3(encoding@0.1.13)
       bowser: 2.11.0
     transitivePeerDependencies:
       - encoding
@@ -12098,10 +12098,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/walletconnect-provider@2.0.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)':
+  '@alephium/walletconnect-provider@2.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))(encoding@0.1.13)':
     dependencies:
-      '@alephium/web3': 2.0.2(encoding@0.1.13)
-      '@alephium/web3-wallet': 2.0.2(encoding@0.1.13)
+      '@alephium/web3': 2.0.3(encoding@0.1.13)
+      '@alephium/web3-wallet': 2.0.3(encoding@0.1.13)
       '@walletconnect/core': 2.17.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))
       '@walletconnect/sign-client': 2.17.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)))
@@ -12127,10 +12127,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@alephium/walletconnect-provider@2.0.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))':
+  '@alephium/walletconnect-provider@2.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))':
     dependencies:
-      '@alephium/web3': 2.0.2(encoding@0.1.13)
-      '@alephium/web3-wallet': 2.0.2(encoding@0.1.13)
+      '@alephium/web3': 2.0.3(encoding@0.1.13)
+      '@alephium/web3-wallet': 2.0.3(encoding@0.1.13)
       '@walletconnect/core': 2.17.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
       '@walletconnect/sign-client': 2.17.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
@@ -12156,10 +12156,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@alephium/walletconnect-provider@2.0.2(@react-native-async-storage/async-storage@1.23.1)(encoding@0.1.13)':
+  '@alephium/walletconnect-provider@2.0.3(@react-native-async-storage/async-storage@1.23.1)(encoding@0.1.13)':
     dependencies:
-      '@alephium/web3': 2.0.2(encoding@0.1.13)
-      '@alephium/web3-wallet': 2.0.2(encoding@0.1.13)
+      '@alephium/web3': 2.0.3(encoding@0.1.13)
+      '@alephium/web3-wallet': 2.0.3(encoding@0.1.13)
       '@walletconnect/core': 2.17.3(@react-native-async-storage/async-storage@1.23.1)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.76.9(@types/react@18.3.20)(react@18.3.1)))
       '@walletconnect/sign-client': 2.17.3(@react-native-async-storage/async-storage@1.23.1)
@@ -12185,9 +12185,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@alephium/web3-wallet@2.0.2(encoding@0.1.13)':
+  '@alephium/web3-wallet@2.0.3(encoding@0.1.13)':
     dependencies:
-      '@alephium/web3': 2.0.2(encoding@0.1.13)
+      '@alephium/web3': 2.0.3(encoding@0.1.13)
       '@noble/secp256k1': 1.7.1
       '@types/node': 16.18.74
       bip32: 3.1.0
@@ -12214,7 +12214,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/web3@2.0.2(encoding@0.1.13)':
+  '@alephium/web3@2.0.3(encoding@0.1.13)':
     dependencies:
       '@noble/secp256k1': 1.7.1
       base-x: 4.0.1
