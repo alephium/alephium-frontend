@@ -28,7 +28,6 @@
   "Group transfer": "การโอนกลุ่ม",
   "and": "และ",
   "Smart contract": "สัญญาอัจฉริยะ",
-  "Token faucet": "โทเค็นทดลอง (faucet)",
   "Send funds": "ส่งเงิน",
   "Moved": "ย้ายแล้ว",
   "Are you sure?": "แน่ใจไหม",
@@ -90,6 +89,7 @@
   "Addresses in group {{ groupNumber }}": "ที่อยู่ในกลุ่ม {{ groupNumber }}",
   "Your addresses": "ที่อยู่ของคุณทั้งหมด",
   "Address settings": "การตั้งค่าที่อยู่",
+  "Address group": "กลุ่มที่อยู่",
   "Contacts": "ผู้ติดต่อ",
   "No contact yet!": "ยังไม่มีรายชื่อผู้ติดต่อ",
   "Add contact": "เพิ่มผู้ติดต่อ",
@@ -138,6 +138,7 @@
   "New contact": "เพิ่มผู้ติดต่อใหม่",
   "Importing wallet": "นำเข้ากระเป๋าเงิน",
   "dAppRequiredNetwork": "ขณะนี้คุณกำลังเชื่อมต่อกับ <1>{{ currentNetwork }}</1> แต่ dApp ต้องการเชื่อมต่อกับ <1>{{ requiredNetwork }}</1>",
+  "dAppRequiredGroup": "dApp จะขอที่อยู่ในกลุ่ม <1>{{ group }}</1> คลิกด้านล่างเพื่อสร้างที่อยู่ใหม่",
   "Tap to select another one": "แตะเพื่อเลือกรายการอื่น",
   "Connect with address": "เชื่อมต่อกับที่อยู่",
   "Tap to change the address to connect with.": "แตะเพื่อเปลี่ยนที่อยู่ที่จะเชื่อมต่อ",
@@ -494,5 +495,8 @@
   "Useful tip": "เคล็ดลับที่เป็นประโยชน์",
   "connectTipModalMessage": "หากต้องการประสบการณ์ที่ราบรื่นยิ่งขึ้นเมื่อเชื่อมต่อกับ dApp ให้ใช้ปุ่ม <1>เบราว์เซอร์/ส่วนขยาย</1> แทน WalletConnect",
   "Transaction {{ number }}": "ธุรกรรม {{ number }}",
-  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "ที่อยู่ต้นทางไม่มี ALPH เพียงพอสำหรับค่าแก๊ส แต่อย่ากังวล เพราะ {{ amount }} ALPH จะถูกโอนจากที่อยู่อื่นในกระเป๋าเงินโดยอัตโนมัติ!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "ที่อยู่ต้นทางไม่มี ALPH เพียงพอสำหรับค่าแก๊ส แต่อย่ากังวล เพราะ {{ amount }} ALPH จะถูกโอนจากที่อยู่อื่นในกระเป๋าเงินโดยอัตโนมัติ!",
+  "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม",
+  "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "ปล่อยให้การตั้งค่านี้ปิดอยู่เพื่อสร้างที่อยู่แบบไม่มีกลุ่ม (แนะนำ) หากต้องการที่อยู่เฉพาะในกลุ่มใดกลุ่มหนึ่ง สามารถเลือกได้ด้านล่าง",
+  "Groupless": "แบบไม่มีกลุ่ม"
 }

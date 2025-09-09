@@ -28,7 +28,6 @@
   "Group transfer": "Giao dịch nhóm",
   "and": "và",
   "Smart contract": "Hợp đồng thông minh",
-  "Token faucet": "Token faucet",
   "Send funds": "Gửi tài sản",
   "Moved": "Di chuyển",
   "Are you sure?": "Bạn chắc chứ?",
@@ -90,6 +89,7 @@
   "Addresses in group {{ groupNumber }}": "Địa chỉ trong nhóm {{ groupNumber }}",
   "Your addresses": "Địa chỉ của bạn",
   "Address settings": "Cài đặt địa chỉ ví",
+  "Address group": "Nhóm địa chỉ",
   "Contacts": "Danh bạ",
   "No contact yet!": "Chưa có danh bạ nào!",
   "Add contact": "Thêm danh bạ",
@@ -138,6 +138,7 @@
   "New contact": "Danh bạ mới",
   "Importing wallet": "Đang thêm ví",
   "dAppRequiredNetwork": "Bạn hiện đang được kết nối đến <1>{{ currentNetwork }}</1>, nhưng dApp yêu cầu kết nối đến <1>{{ requiredNetwork }}</1>.",
+  "dAppRequiredGroup": "dApp yêu cầu một địa chỉ ở nhóm <1>{{ group }}</1>. Nhấn vào bên dưới để tạo!",
   "Tap to select another one": "Chạm để chọn một địa chỉ khác",
   "Connect with address": "Kết nối với địa chỉ",
   "Tap to change the address to connect with.": "Chạm để thay đổi địa chỉ ví cần kết nối vào.",
@@ -152,6 +153,8 @@
   "Initial amount": "Số lượng ban đầu",
   "Issue token amount": "Phát hành số lượng token",
   "Bytecode": "Bytecode",
+  "Simulated result": "Kết quả dự kiến",
+  "Call contract": "Gọi hợp đồng",
   "Unsigned TX": "Giao dịch chưa thực thi",
   "Message": "Thông điệp",
   "Fast": "Nhanh",
@@ -492,5 +495,9 @@
   "Useful tip": "Mẹo hữu ích",
   "connectTipModalMessage": "Để kết nối với dApp mượt mà hơn, hãy sử dụng nút <1>Browser/Extension</1> thay vì WalletConnect.",
   "Transaction {{ number }}": "Giao dịch {{ number }}",
-  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "Địa chỉ gốc không đủ ALPH để trả phí gas. Nhưng đừng lo, {{ amount }} ALPH sẽ tự động được chuyển từ một địa chỉ khác trong ví của bạn!"
+  "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "Địa chỉ gốc không đủ ALPH để trả phí gas. Nhưng đừng lo, {{ amount }} ALPH sẽ tự động được chuyển từ một địa chỉ khác trong ví của bạn!",
+  "Nothing relevant to the signer address.": "Không có gì liên quan đến địa chỉ ký.",
+  "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Giữ cài đặt này ở trạng thái tắt để tạo địa chỉ không nhóm (khuyến nghị). Nếu bạn cần địa chỉ tại một nhóm riêng, hãy chọn bên dưới.",
+  "Groupless": "Không nhóm",
+  "New": "Mới"
 }
