@@ -13,7 +13,21 @@ export interface EditDappUrlModalProps {
   onUrlChange: (url: string) => void
 }
 
-const EditDappUrlModal = memo<EditDappUrlModalProps>(({ url, onUrlChange }) => {
+const EditDappUrlModal = memo<EditDappUrlModalProps>((props) => {
+  const { t } = useTranslation()
+
+  return (
+    <BottomModal2 notScrollable title={t('DApp URL')}>
+      <ScreenSection verticalGap>
+        <EditDappUrlModalContent {...props} />
+      </ScreenSection>
+    </BottomModal2>
+  )
+})
+
+export default EditDappUrlModal
+
+const EditDappUrlModalContent = ({ url, onUrlChange }: EditDappUrlModalProps) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
@@ -38,20 +52,16 @@ const EditDappUrlModal = memo<EditDappUrlModalProps>(({ url, onUrlChange }) => {
   }
 
   return (
-    <BottomModal2 notScrollable title={t('DApp URL')}>
-      <ScreenSection verticalGap>
-        <Input
-          isInModal
-          defaultValue={newUrl}
-          onChangeText={handleUrlChange}
-          label={t('DApp URL')}
-          autoFocus
-          error={error}
-        />
-        <Button title={t('Load dApp')} onPress={handleSavePress} variant="highlight" />
-      </ScreenSection>
-    </BottomModal2>
+    <>
+      <Input
+        isInModal
+        defaultValue={newUrl}
+        onChangeText={handleUrlChange}
+        label={t('DApp URL')}
+        autoFocus
+        error={error}
+      />
+      <Button title={t('Load dApp')} onPress={handleSavePress} variant="highlight" />
+    </>
   )
-})
-
-export default EditDappUrlModal
+}
