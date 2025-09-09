@@ -1,6 +1,8 @@
 import { SignUnsignedTxModalProps } from '@alephium/shared'
-import { useTransactionAmountDeltas } from '@alephium/shared-react'
+import { nodeTransactionReconstructDecodedUnsignedTxQuery, useTransactionAmountDeltas } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
+import { explorer as e } from '@alephium/web3'
+import { useQuery } from '@tanstack/react-query'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -37,38 +39,18 @@ const SignUnsignedTxModal = memo(
       }
     })
 
-    const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
-    const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(unsignedData, txParams.signerAddress)
-    const assetAmounts = useMemo(
-      () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
-      [alphAmount, tokenAmounts]
-    )
-
     return (
       <BottomModal2 contentVerticalGap>
         <ScreenSection>
           <Surface>
-            <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
-            <Row title={t('From')} transparent>
-              <TransactionOriginAddressesList
-                tx={unsignedData}
-                referenceAddress={txParams.signerAddress}
-                view="wallet"
-              />
-            </Row>
-            <Row title={t('To')} transparent>
-              <TransactionDestinationAddressesList
-                tx={unsignedData}
-                referenceAddress={txParams.signerAddress}
-                view="wallet"
-              />
-            </Row>
             <Row title={t('Signing with')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
 
+            <ReconstructedTransactionDetails unsignedData={unsignedData} txParams={txParams} />
+
             <SignModalCopyEncodedTextRow text={txParams.unsignedTx} title={t('Unsigned TX')} />
-            <SignModalFeesRow fees={fees} />
+            <FeesRow unsignedData={unsignedData} />
           </Surface>
         </ScreenSection>
 
@@ -83,3 +65,50 @@ const SignUnsignedTxModal = memo(
 )
 
 export default SignUnsignedTxModal
+
+const ReconstructedTransactionDetails = ({
+  unsignedData,
+  txParams
+}: Pick<SignUnsignedTxModalProps, 'unsignedData' | 'txParams'>) => {
+  const { data: tx } = useQuery(nodeTransactionReconstructDecodedUnsignedTxQuery({ decodedUnsignedTx: unsignedData }))
+
+  if (!tx) return null
+
+  return <DecodedTransactionDetails tx={tx} txParams={txParams} />
+}
+
+const DecodedTransactionDetails = ({
+  tx,
+  txParams
+}: {
+  tx: e.AcceptedTransaction
+  txParams: SignUnsignedTxModalProps['txParams']
+}) => {
+  const { t } = useTranslation()
+  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, txParams.signerAddress)
+  const assetAmounts = useMemo(
+    () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
+    [alphAmount, tokenAmounts]
+  )
+
+  return (
+    <>
+      <SignModalAssetsAmountsRows assetAmounts={assetAmounts} />
+      <Row title={t('From')} transparent>
+        <TransactionOriginAddressesList tx={tx} referenceAddress={txParams.signerAddress} view="wallet" />
+      </Row>
+      <Row title={t('To')} transparent>
+        <TransactionDestinationAddressesList tx={tx} referenceAddress={txParams.signerAddress} view="wallet" />
+      </Row>
+    </>
+  )
+}
+
+const FeesRow = ({ unsignedData }: Pick<SignUnsignedTxModalProps, 'unsignedData'>) => {
+  const fees = useMemo(
+    () => BigInt(unsignedData.unsignedTx.gasAmount) * BigInt(unsignedData.unsignedTx.gasPrice),
+    [unsignedData.unsignedTx.gasAmount, unsignedData.unsignedTx.gasPrice]
+  )
+
+  return <SignModalFeesRow fees={fees} />
+}

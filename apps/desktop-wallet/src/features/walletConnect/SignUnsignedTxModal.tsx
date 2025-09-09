@@ -1,7 +1,8 @@
 import { isGrouplessAddress, selectAddressByHash, SignUnsignedTxModalProps, transactionSent } from '@alephium/shared'
-import { useTransactionAmountDeltas } from '@alephium/shared-react'
+import { nodeTransactionReconstructDecodedUnsignedTxQuery, useTransactionAmountDeltas } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { SignUnsignedTxResult } from '@alephium/web3'
+import { explorer as e, SignUnsignedTxResult } from '@alephium/web3'
+import { useQuery } from '@tanstack/react-query'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -66,16 +67,6 @@ const SignUnsignedTxModal = memo(
       }
     }
 
-    const fees = useMemo(
-      () => BigInt(props.unsignedData.gasAmount) * BigInt(props.unsignedData.gasPrice),
-      [props.unsignedData]
-    )
-    const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(props.unsignedData, txParams.signerAddress)
-    const assetAmounts = useMemo(
-      () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
-      [alphAmount, tokenAmounts]
-    )
-
     return (
       <SignTxBaseModal
         title={t(submitAfterSign ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
@@ -84,26 +75,17 @@ const SignUnsignedTxModal = memo(
         type="UNSIGNED_TX"
         {...props}
       >
-        <TransactionSummaryStyled tx={props.unsignedData} referenceAddress={txParams.signerAddress} hideType />
-        <Box hasBg hasHorizontalPadding>
-          <AddressesDataRows tx={props.unsignedData} referenceAddress={txParams.signerAddress} />
-        </Box>
+        <CheckAddressesBox fromAddressStr={txParams.signerAddress} dAppUrl={props.dAppUrl} hasBg hasHorizontalPadding />
 
-        {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
+        <ReconstructedTransactionDetails unsignedData={props.unsignedData} txParams={txParams} />
 
         <ExpandableSection
           sectionTitleClosed={t('Unsigned transaction')}
           sectionTitleOpen={t('Unsigned transaction')}
           centered
         >
-          <CheckAddressesBox
-            fromAddressStr={txParams.signerAddress}
-            dAppUrl={props.dAppUrl}
-            hasBg
-            hasHorizontalPadding
-          />
           <InputFieldsColumn style={{ marginTop: 'var(--spacing-4)' }}>
-            <InfoBox label={t('Transaction ID')} text={props.unsignedData.hash} wordBreak />
+            <InfoBox label={t('Transaction ID')} text={props.unsignedData.unsignedTx.txId} wordBreak />
             <InfoBox label={t('Unsigned transaction')} text={txParams.unsignedTx} wordBreak />
           </InputFieldsColumn>
         </ExpandableSection>
@@ -114,7 +96,54 @@ const SignUnsignedTxModal = memo(
 
 export default SignUnsignedTxModal
 
+const ReconstructedTransactionDetails = ({
+  unsignedData,
+  txParams
+}: Pick<SignUnsignedTxModalProps, 'unsignedData' | 'txParams'>) => {
+  const { data: tx } = useQuery(nodeTransactionReconstructDecodedUnsignedTxQuery({ decodedUnsignedTx: unsignedData }))
+
+  if (!tx) return null
+
+  return <DecodedTransactionDetails tx={tx} txParams={txParams} />
+}
+
+const DecodedTransactionDetails = ({
+  tx,
+  txParams
+}: {
+  tx: e.AcceptedTransaction
+  txParams: SignUnsignedTxModalProps['txParams']
+}) => {
+  const { t } = useTranslation()
+  const fees = useMemo(() => BigInt(tx.gasAmount) * BigInt(tx.gasPrice), [tx.gasAmount, tx.gasPrice])
+  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, txParams.signerAddress)
+  const assetAmounts = useMemo(
+    () => (alphAmount !== BigInt(0) ? [{ id: ALPH.id, amount: alphAmount }, ...tokenAmounts] : tokenAmounts),
+    [alphAmount, tokenAmounts]
+  )
+
+  return (
+    <>
+      <SectionTitle>{t('Decoded transaction details')}</SectionTitle>
+      <TransactionSummaryStyled tx={tx} referenceAddress={txParams.signerAddress} hideType />
+      <Box hasBg hasHorizontalPadding>
+        <AddressesDataRows tx={tx} referenceAddress={txParams.signerAddress} />
+      </Box>
+
+      {assetAmounts && <CheckWorthBox assetAmounts={assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />}
+    </>
+  )
+}
+
 const TransactionSummaryStyled = styled(TransactionSummary)`
   margin: 0;
   background-color: ${({ theme }) => theme.bg.tertiary};
+`
+
+const SectionTitle = styled.div`
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 14px;
+  margin-top: 0;
+  font-weight: var(--fontWeight-bold);
+  text-align: center;
 `
