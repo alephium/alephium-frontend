@@ -107,7 +107,7 @@ const DecodedTransactionDetails = ({
 const FeesRow = ({ unsignedData }: Pick<SignUnsignedTxModalProps, 'unsignedData'>) => {
   const fees = useMemo(
     () => BigInt(unsignedData.unsignedTx.gasAmount) * BigInt(unsignedData.unsignedTx.gasPrice),
-    [unsignedData]
+    [unsignedData.unsignedTx.gasAmount, unsignedData.unsignedTx.gasPrice]
   )
 
   return <SignModalFeesRow fees={fees} />
