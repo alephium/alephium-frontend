@@ -1,5 +1,15 @@
 # @alephium/mobile-wallet
 
+## 2.3.2
+
+### Patch Changes
+
+- 4250d1e: Fix laggy text input field
+- 235a954: Allow user to sign unsigned tx even if decoding fails
+- 4038b69: Improve discoverability of newly created addresses
+- 74ec941: Fix transaction building with groupless addresses
+- d07d389: Fix missing address when setting another one as the default one
+
 ## 2.3.1
 
 ### Patch Changes

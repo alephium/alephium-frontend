@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -16,7 +16,8 @@
     "install:pods": "pnpm dlx pod-install",
     "clean": "rm -rf .turbo expo ios/build ios/Pods",
     "clean:node-modules": "rm -rf node_modules",
-    "postinstall": "turbo build:deps"
+    "postinstall": "turbo build:deps",
+    "eas-build-pre-install": "set -e; corepack enable && corepack prepare pnpm@9.4.0 --activate && pnpm -w install --frozen-lockfile && git -C \"$(git rev-parse --show-toplevel)\" diff --exit-code -- pnpm-lock.yaml"
   },
   "dependencies": {
     "@alephium/keyring": "workspace:*",

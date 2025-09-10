@@ -15,7 +15,7 @@ const useDeleteAddress = () => {
     if (!address || !activeWalletId) return
 
     try {
-      addressMetadataStorage.deleteOne(activeWalletId, address.index)
+      addressMetadataStorage.deleteOne(activeWalletId, address.index, address.keyType)
       queryClient.removeQueries({ queryKey: ['address', addressHash] })
       dispatch(addressDeleted(address.hash))
     } catch (error) {

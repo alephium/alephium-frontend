@@ -9,7 +9,10 @@
     },
     "production": {
       "extends": "baseConfig",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EAS_NO_FROZEN_LOCKFILE": "0"
+      }
     },
     "internal": {
       "extends": "production",
