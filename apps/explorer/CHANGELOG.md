@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.11.2
+
+### Patch Changes
+
+- a1691f2: Tag conflicted transactions
+
 ## 1.11.1
 
 ### Patch Changes
