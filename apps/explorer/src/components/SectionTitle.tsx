@@ -11,14 +11,15 @@ interface PageTitleProps {
   subtitle?: string | JSX.Element
   isLoading?: boolean
   badge?: string
+  badgeType?: 'accent' | 'neutral' | 'plus' | 'minus' | 'neutralHighlight'
 }
 
-const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitleProps) => (
+const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading, badgeType = 'accent' }: PageTitleProps) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
     <TitleRow>
       <Title>{title}</Title>
-      {badge && <Badge type="accent" content={badge} />}
+      {badge && <Badge type={badgeType} content={badge} />}
       {isLoading && <LoadingSpinner size={18} />}
     </TitleRow>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
