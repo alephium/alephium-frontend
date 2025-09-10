@@ -554,5 +554,6 @@
   "Click to display the amount": "Nhấp để hiển thị số tiền",
   "Sending": "Đang gửi",
   "Simulated result": "Kết quả dự kiến",
-  "Nothing relevant to the signer address.": "Không có gì liên quan đến địa chỉ ký."
+  "Nothing relevant to the signer address.": "Không có gì liên quan đến địa chỉ ký.",
+  "Decoded transaction details": "Thông tin giải mã giao dịch"
 }
