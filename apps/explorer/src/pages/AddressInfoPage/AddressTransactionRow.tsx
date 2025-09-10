@@ -9,6 +9,7 @@ import styled, { css, useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
+import FailedTXBubble from '@/components/FailedTXBubble'
 import { AddressLink, TightLink } from '@/components/Links'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
@@ -111,9 +112,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
             <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
           {!isPending && !tx.scriptExecutionOk && (
-            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
-              !
-            </FailedTXBubble>
+            <FailedTXBubble tooltipContent={t('Script execution failed')}>!</FailedTXBubble>
           )}
         </TxLabelBadgeContainer>
 
@@ -328,21 +327,6 @@ const IODetailsContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
-`
-
-const FailedTXBubble = styled.div`
-  position: absolute;
-  height: 14px;
-  width: 14px;
-  border-radius: 14px;
-  background-color: ${({ theme }) => theme.global.alert};
-  color: white;
-  top: auto;
-  bottom: auto;
-  right: -20px;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 800;
 `
 
 const ArrowContainer = styled.div`

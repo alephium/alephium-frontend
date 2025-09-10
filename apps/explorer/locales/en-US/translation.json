@@ -141,5 +141,6 @@
   "Group(s)": "Group(s)",
   "All": "All",
   "Group {{ number }}": "Group {{ number }}",
-  "Group transfer": "Group transfer"
+  "Group transfer": "Group transfer",
+  "Conflicted transaction": "Conflicted transaction"
 }

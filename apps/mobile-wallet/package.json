@@ -26,7 +26,7 @@
     "@alephium/token-list": "^0.0.20",
     "@alephium/wallet-dapp-provider": "workspace:*",
     "@alephium/walletconnect-provider": "2.0.3",
-    "@alephium/web3": "2.0.3",
+    "@alephium/web3": "2.0.4",
     "@dev-plugins/react-query": "^0.3.1",
     "@expo/vector-icons": "^14.0.4",
     "@fugashu/alphland-api-client": "^1.0.4",
