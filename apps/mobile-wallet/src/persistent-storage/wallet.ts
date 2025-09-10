@@ -367,7 +367,9 @@ export const persistAddressesMetadata = async (
   )
 
   for (const metadata of addressesMetadata) {
-    const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === metadata.index)
+    const addressIndex = walletMetadata.addresses.findIndex(
+      (data) => data.index === metadata.index && (data.keyType ?? 'default') === (metadata.keyType ?? 'default')
+    )
 
     if (addressIndex >= 0) {
       walletMetadata.addresses.splice(addressIndex, 1, metadata)
@@ -375,7 +377,7 @@ export const persistAddressesMetadata = async (
       walletMetadata.addresses.push(metadata)
     }
 
-    console.log(`💽 Storing address index ${metadata.index} metadata in persistent storage`)
+    console.log(`💽 Storing address index ${metadata.index} keyType ${metadata.keyType} metadata in persistent storage`)
   }
 
   storeWalletMetadata(walletMetadata)
