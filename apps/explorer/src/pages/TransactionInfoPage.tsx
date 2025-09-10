@@ -77,6 +77,7 @@ const TransactionInfoPage = () => {
   }, [transactionInfoError])
 
   const confirmedTxInfo = transactionData && isConfirmedTx(transactionData) ? transactionData : undefined
+  const isConflicted = confirmedTxInfo?.conflicted
 
   const { data: txBlock } = useQuery({
     ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
@@ -148,7 +149,11 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
-      <SectionTitle title={t('Transaction')} />
+      <SectionTitle
+        title={t('Transaction')}
+        badge={isConflicted ? t('Conflicted') : undefined}
+        badgeType={isConflicted ? 'minus' : 'accent'}
+      />
       {!errorMessage ? (
         <>
           <Table noBorder bodyOnly isLoading={txInfoLoading}>
@@ -161,14 +166,16 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>{t('Status')}</span>
                   {confirmedTxInfo ? (
-                    confirmedTxInfo.scriptExecutionOk ? (
+                    isConflicted ? (
+                      <Badge type="minus" content={<span>{t('Conflicted')}</span>} />
+                    ) : confirmedTxInfo.scriptExecutionOk ? (
                       <Badge
                         type="plus"
                         content={
-                          <span>
+                          <>
                             <RiCheckLine style={{ marginRight: 5 }} size={15} />
                             {t('Success')}
-                          </span>
+                          </>
                         }
                         inline
                       />

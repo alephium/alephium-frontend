@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@alephium/get-extension-wallet": "2.0.3",
-    "@alephium/web3": "2.0.3",
+    "@alephium/web3": "2.0.4",
     "lodash.isplainobject": "4.0.6"
   },
   "devDependencies": {
