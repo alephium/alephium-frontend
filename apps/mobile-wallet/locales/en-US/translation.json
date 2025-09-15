@@ -269,6 +269,7 @@
   "The node is offline. You can see your balances but you cannot send transactions.": "The node is offline. You can see your balances but you cannot send transactions.",
   "offlineModalStatusPageMessage": "Check your network settings and the <1>Status page</1> for updates on this issue.",
   "Scan for active addresses": "Scan for active addresses",
+  "When you re-establish an internet connection, you can go to your app settings to scan the blockchain to find addresses that you used in the past.": "When you re-establish an internet connection, you can go to your app settings to scan the blockchain to find addresses that you used in the past.",
   "Scan QR code": "Scan QR code",
   "Scan an Alephium address QR code": "Scan an Alephium address QR code",
   "Scan an Alephium address QR code to add to your contacts list.": "Scan an Alephium address QR code to add to your contacts list.",
