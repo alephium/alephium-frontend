@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 3.1.2
+
+### Patch Changes
+
+- 235a954: Allow user to sign unsigned tx even if decoding fails
+- 74ec941: Fix transaction building with groupless addresses
+- d07d389: Fix address deletion
+
 ## 3.1.1
 
 ### Patch Changes
