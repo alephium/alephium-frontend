@@ -554,5 +554,6 @@
   "Click to display the amount": "คลิกเพื่อแสดงจำนวน",
   "Sending": "กำลังส่ง",
   "Simulated result": "ผลการจำลอง",
-  "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม"
+  "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม",
+  "Decoded transaction details": "รายละเอียดธุรกรรมที่ถอดรหัส"
 }

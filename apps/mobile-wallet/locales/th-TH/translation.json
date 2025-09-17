@@ -498,5 +498,6 @@
   "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "ที่อยู่ต้นทางไม่มี ALPH เพียงพอสำหรับค่าแก๊ส แต่อย่ากังวล เพราะ {{ amount }} ALPH จะถูกโอนจากที่อยู่อื่นในกระเป๋าเงินโดยอัตโนมัติ!",
   "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม",
   "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "ปล่อยให้การตั้งค่านี้ปิดอยู่เพื่อสร้างที่อยู่แบบไม่มีกลุ่ม (แนะนำ) หากต้องการที่อยู่เฉพาะในกลุ่มใดกลุ่มหนึ่ง สามารถเลือกได้ด้านล่าง",
-  "Groupless": "แบบไม่มีกลุ่ม"
+  "Groupless": "แบบไม่มีกลุ่ม",
+  "New": "ใหม่"
 }
