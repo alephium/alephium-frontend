@@ -141,5 +141,7 @@
   "Group(s)": "(Các) Nhóm",
   "All": "Tất cả",
   "Group {{ number }}": "Nhóm {{ number }}",
-  "Group transfer": "Giao dịch nhóm"
+  "Group transfer": "Giao dịch nhóm",
+  "Conflicted": "Xung đột",
+  "Conflicted transaction": "Giao dịch xung đột"
 }
