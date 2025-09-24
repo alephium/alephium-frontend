@@ -53,7 +53,7 @@ const authorizedConnectionsSlice = createSlice({
 export const authorizedConnectionsListenerMiddleware = createListenerMiddleware()
 
 authorizedConnectionsListenerMiddleware.startListening({
-  matcher: isAnyOf(connectionAuthorized, connectionRemoved, connectionsCleared, appReset),
+  matcher: isAnyOf(connectionAuthorized, connectionRemoved, connectionsCleared, hostConnectionRemoved, appReset),
   effect: async (_, { getState }) =>
     persistAuthorizedConnections(selectAllAuthorizedConnections(getState() as RootState))
 })
