@@ -106,10 +106,14 @@ const WalletConnectSessionRequestEventHandler = memo(
               })
             )
 
-            respondToWalletConnectWithError(event, {
-              message: 'Network mismatch',
-              code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-            })
+            respondToWalletConnectWithError(
+              event,
+              {
+                message: 'Network mismatch',
+                code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+              },
+              false
+            )
 
             return
           }
@@ -141,10 +145,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       unsignedData: unsignedBuiltTx,
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                          },
+                          false
+                        )
                       },
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result }),
                       dAppIcon: getDappIcon(event.topic),
@@ -177,10 +185,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       unsignedData,
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                          },
+                          false
+                        )
                       },
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                     }
@@ -211,10 +223,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       unsignedData: unsignedBuiltTx,
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                          },
+                          false
+                        )
                       },
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                     }
@@ -237,10 +253,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       unsignedData: signParams.message,
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                          },
+                          false
+                        )
                       },
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                     }
@@ -275,12 +295,16 @@ const WalletConnectSessionRequestEventHandler = memo(
                       submitAfterSign,
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: submitAfterSign
-                            ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
-                            : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: submitAfterSign
+                              ? WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+                              : WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                          },
+                          false
+                        )
                       },
                       onSuccess: (result) => respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
                     }
@@ -309,10 +333,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       dAppIcon: getDappIcon(event.topic),
                       origin: 'walletconnect',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                          },
+                          false
+                        )
                       }
                     }
                   })
@@ -325,7 +353,7 @@ const WalletConnectSessionRequestEventHandler = memo(
                 const p = request.params as ApiRequestArguments
                 const result = await throttledClient.node.request(p)
 
-                await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
+                await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result }, false)
                 await cleanStorage(event)
                 break
               }
@@ -334,12 +362,12 @@ const WalletConnectSessionRequestEventHandler = memo(
                 const p = request.params as ApiRequestArguments
                 const result = await throttledClient.explorer.request(p)
 
-                await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
+                await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result }, false)
                 await cleanStorage(event)
                 break
               }
               default:
-                respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'))
+                respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'), false)
                 throw new Error(`Method not supported: ${request.method}`)
             }
           } catch (e) {
@@ -366,10 +394,14 @@ const WalletConnectSessionRequestEventHandler = memo(
                       dAppIcon: getDappIcon(event.topic),
                       origin: 'walletconnect:insufficient-funds',
                       onError: (message) => {
-                        respondToWalletConnectWithError(event, {
-                          message,
-                          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                        })
+                        respondToWalletConnectWithError(
+                          event,
+                          {
+                            message,
+                            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                          },
+                          false
+                        )
                       }
                     }
                   })
@@ -388,10 +420,14 @@ const WalletConnectSessionRequestEventHandler = memo(
           const message = 'Could not parse WalletConnect session request'
 
           sendAnalytics({ type: 'error', error: e, message })
-          respondToWalletConnectWithError(event, {
-            message: getHumanReadableError(e, message),
-            code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
-          })
+          respondToWalletConnectWithError(
+            event,
+            {
+              message: getHumanReadableError(e, message),
+              code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
+            },
+            false
+          )
         }
       },
       [

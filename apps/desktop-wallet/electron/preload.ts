@@ -58,7 +58,6 @@ contextBridge.exposeInMainWorld('electron', {
     getDeepLinkUri: () => ipcRenderer.invoke('wc:getDeepLinkUri')
   },
   app: {
-    hide: () => ipcRenderer.invoke('app:hide'),
     show: () => ipcRenderer.invoke('app:show'),
     quit: () => ipcRenderer.invoke('app:quit'),
     onBeforeQuit: (callback: () => void) => {

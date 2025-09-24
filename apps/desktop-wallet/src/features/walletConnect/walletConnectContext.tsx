@@ -4,12 +4,10 @@ import {
   parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
-  WalletConnectClientStatus,
-  WalletConnectError
+  WalletConnectClientStatus
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { formatChain } from '@alephium/walletconnect-provider'
-import { node, SignMessageResult, SignUnsignedTxResult } from '@alephium/web3'
 import { Expirer } from '@walletconnect/core'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SessionTypes, SignClientTypes } from '@walletconnect/types'
@@ -19,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import WalletConnectSessionRequestEventHandler from '@/features/walletConnect/WalletConnectSessionRequestEventHandler'
 import {
   cleanBeforeInit,
@@ -38,18 +37,17 @@ export interface WalletConnectContextProps {
   activeSessions: SessionTypes.Struct[]
   refreshActiveSessions: () => void
   reset: () => Promise<void>
-  sendUserRejectedResponse: (hideApp?: boolean) => void
-  sendSuccessResponse: (
-    result: node.SignResult | SignUnsignedTxResult | SignMessageResult,
-    hideApp?: boolean
-  ) => Promise<void>
-  sendFailureResponse: (error: WalletConnectError) => void
   resetPendingDappConnectionUrl: () => void
   isAwaitingSessionRequestApproval: boolean
-  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
+  respondToWalletConnect: (
+    event: SessionRequestEvent,
+    response: EngineTypes.RespondParams['response'],
+    notifyUser?: boolean
+  ) => Promise<void>
   respondToWalletConnectWithError: (
     sessionRequestEvent: SessionRequestEvent,
-    error: ReturnType<typeof getSdkError>
+    error: ReturnType<typeof getSdkError>,
+    notifyUser?: boolean
   ) => Promise<void>
   pendingDappConnectionUrl?: string
   reinitializeWalletConnectClient: () => void
@@ -63,9 +61,6 @@ const initialContext: WalletConnectContextProps = {
   activeSessions: [],
   refreshActiveSessions: () => null,
   reset: () => Promise.resolve(),
-  sendUserRejectedResponse: () => null,
-  sendSuccessResponse: () => Promise.resolve(),
-  sendFailureResponse: () => null,
   resetPendingDappConnectionUrl: () => null,
   isAwaitingSessionRequestApproval: false,
   respondToWalletConnectWithError: () => Promise.resolve(),
@@ -141,29 +136,32 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   )
 
   const respondToWalletConnect = useCallback(
-    async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
+    async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response'], notifyUser = true) => {
       if (!walletConnectClient) return
 
       console.log('⏳ RESPONDING TO WC WITH:', { topic: event.topic, response })
       await walletConnectClient.respond({ topic: event.topic, response })
       console.log('✅ RESPONDING: DONE!')
 
+      if (notifyUser) {
+        dispatch(
+          showToast({
+            text: t('You can go back to your browser.'),
+            duration: 'short',
+            type: 'info'
+          })
+        )
+      }
+
       await cleanStorage(event)
       setSessionRequestEvent(undefined)
     },
-    [cleanStorage, walletConnectClient]
-  )
-
-  const respondToWalletConnectWithSuccess = useCallback(
-    async (event: SessionRequestEvent, result: node.SignResult | SignUnsignedTxResult | SignMessageResult) => {
-      await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
-    },
-    [respondToWalletConnect]
+    [cleanStorage, dispatch, t, walletConnectClient]
   )
 
   const respondToWalletConnectWithError = useCallback(
-    async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>) => {
-      await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error })
+    async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>, notifyUser = true) => {
+      await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error }, notifyUser)
     },
     [respondToWalletConnect]
   )
@@ -173,15 +171,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const refreshActiveSessions = useCallback(() => {
     setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
   }, [walletConnectClient])
-
-  const sendUserRejectedResponse = useCallback(
-    async (hideApp?: boolean) => {
-      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
-
-      if (hideApp) window.electron?.app.hide()
-    },
-    [respondToWalletConnectWithError, sessionRequestEvent]
-  )
 
   const onSessionProposal = useCallback(
     async (proposalEvent: SessionProposalEvent) => {
@@ -243,22 +232,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       }
     },
     [dispatch, t]
-  )
-
-  const sendSuccessResponse = async (
-    result: node.SignResult | SignUnsignedTxResult | SignMessageResult,
-    hideApp?: boolean
-  ) => {
-    if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
-
-    if (hideApp) window.electron?.app.hide()
-  }
-
-  const sendFailureResponse = useCallback(
-    async (error: WalletConnectError) => {
-      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
-    },
-    [respondToWalletConnectWithError, sessionRequestEvent]
   )
 
   const onSessionRequest = useCallback(
@@ -514,9 +487,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         resetPendingDappConnectionUrl,
         reset,
         isAwaitingSessionRequestApproval: !!sessionRequestEvent,
-        sendUserRejectedResponse,
-        sendSuccessResponse,
-        sendFailureResponse,
         refreshActiveSessions,
         respondToWalletConnectWithError,
         respondToWalletConnect,

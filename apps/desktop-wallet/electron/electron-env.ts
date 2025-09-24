@@ -27,7 +27,6 @@ declare global {
         getDeepLinkUri: () => Promise<string | null>
       }
       app: {
-        hide: () => void
         show: () => void
         quit: () => void
         onBeforeQuit: (callback: () => void) => () => void

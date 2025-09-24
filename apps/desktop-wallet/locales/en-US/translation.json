@@ -555,5 +555,8 @@
   "Sending": "Sending",
   "Simulated result": "Simulated result",
   "Nothing relevant to the signer address.": "Nothing relevant to the signer address.",
-  "Decoded transaction details": "Decoded transaction details"
+  "Decoded transaction details": "Decoded transaction details",
+  "dApp request approved.": "dApp request approved.",
+  "dApp request rejected.": "dApp request rejected.",
+  "You can go back to your browser.": "You can go back to your browser."
 }

@@ -156,7 +156,13 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Approved WalletConnect connection' })
 
-        window.electron?.app.hide()
+        dispatch(
+          showToast({
+            text: `${t('dApp request approved.')} ${t('You can go back to your browser.')}`,
+            duration: 'short',
+            type: 'info'
+          })
+        )
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -176,7 +182,11 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
 
-        window.electron?.app.hide()
+        showToast({
+          text: `${t('dApp request rejected.')} ${t('You can go back to your browser.')}`,
+          duration: 'short',
+          type: 'info'
+        })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {

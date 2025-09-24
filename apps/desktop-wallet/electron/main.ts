@@ -145,16 +145,6 @@ app.on('ready', async function () {
 
   handleOnRampWindows(mainWindow)
 
-  ipcMain.handle('app:hide', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
-
-    if (isWindows) {
-      mainWindow?.blur()
-    } else {
-      app.hide()
-    }
-  })
-
   ipcMain.handle('app:quit', ({ senderFrame }) => {
     if (!isIpcSenderValid(senderFrame)) return null
 
