@@ -56,9 +56,9 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
     // it will never become inactive (since it's always used by a mount component).
     ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
     queryFn:
-      !network || skip
+      networkId === undefined || skip
         ? skipToken
-        : () =>
+        : ({ queryKey }) =>
             network === 'devnet'
               ? { [ALPH.id]: ALPH }
               : axios
@@ -68,7 +68,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
                     if (error instanceof AxiosError && error.response?.status === 429) {
                       throw error
                     }
-                    const cachedTokenList = queryClient.getQueryData(['tokenList', { networkId }])
+                    const cachedTokenList = queryClient.getQueryData(queryKey)
 
                     if (cachedTokenList) {
                       return cachedTokenList as FtListMap
