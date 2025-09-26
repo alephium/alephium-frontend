@@ -7,14 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
-import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
 import RegionSettingsRow from '~/features/settings/regionSettings/RegionSettingsRow'
@@ -41,7 +39,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
 
-  const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
 
   const openLanguageSelectModal = () => dispatch(openModal({ name: 'LanguageSelectModal' }))
@@ -77,11 +74,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     dispatch(
       openModal({ name: 'WalletDeleteModal', props: { onDelete: () => resetNavigation(navigation, 'LandingScreen') } })
     )
-  }
-
-  const handleWalletConnectClearCache = () => {
-    resetWalletConnectStorage()
-    resetWalletConnectClientInitializationAttempts()
   }
 
   return (
@@ -123,14 +115,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <SettingsSecuritySection />
 
         <SettingsAssetsSection />
-
-        <ScreenSection>
-          <ScreenSectionTitle>{t('DApps')}</ScreenSectionTitle>
-
-          <Row title="WalletConnect" subtitle={t('Remove all connections')} isLast>
-            <Button title={t('Clear cache')} short onPress={handleWalletConnectClearCache} />
-          </Row>
-        </ScreenSection>
 
         <SettingsDappsSection />
 
