@@ -500,5 +500,7 @@
   "Nothing relevant to the signer address.": "Nothing relevant to the signer address.",
   "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.",
   "Groupless": "Groupless",
-  "New": "New"
+  "New": "New",
+  "App cache": "App cache",
+  "Delete app cached data and reload.": "Delete app cached data and reload."
 }
