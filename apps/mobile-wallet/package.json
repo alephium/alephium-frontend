@@ -97,7 +97,7 @@
     "react-hook-form": "^7.42.1",
     "react-i18next": "^13.2.1",
     "react-native": "0.76.9",
-    "react-native-aes-crypto": "^2.1.0",
+    "react-native-aes-crypto": "2.1.1",
     "react-native-background-timer": "^2.4.1",
     "react-native-gesture-handler": "^2.20.2",
     "react-native-get-random-values": "~1.11.0",
