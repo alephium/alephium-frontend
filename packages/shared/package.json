@@ -18,7 +18,7 @@
     "typecheck": "tsup"
   },
   "dependencies": {
-    "@alephium/token-list": "^0.0.20",
+    "@alephium/token-list": "^0.0.21",
     "@alephium/walletconnect-provider": "2.0.3",
     "@alephium/web3": "2.0.4",
     "@metamask/scure-bip39": "^2.1.1",
