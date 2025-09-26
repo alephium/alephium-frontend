@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 2.3.3
+
+### Patch Changes
+
+- 640e781: Fix disconnecting from dApp
+- f5852d6: Fix annoying clipboard paste message on iOS
+- 26e98a2: Force address discovery on wallet import
+
 ## 2.3.2
 
 ### Patch Changes
