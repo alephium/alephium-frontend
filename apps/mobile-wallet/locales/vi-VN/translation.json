@@ -269,6 +269,7 @@
   "The node is offline. You can see your balances but you cannot send transactions.": "Node hiện đang offline. Bạn vẫn có thể xem số dư nhưng không thể gửi giao dịch.",
   "offlineModalStatusPageMessage": "Hãy kiểm tra cài đặt mạng và trang <1>Status page</1> để cập nhật về sự cố này.",
   "Scan for active addresses": "Quét các địa chỉ ví đang hoạt động",
+  "When you re-establish an internet connection, you can go to your app settings to scan the blockchain to find addresses that you used in the past.": "Sau khi kết nối lại Internet, bạn có thể vào cài đặt ứng dụng để quét trên blockchain và tìm các địa chỉ đã dùng trước đó.",
   "Scan QR code": "Quét mã QR",
   "Scan an Alephium address QR code": "Quét mã QR địa chỉ ví Alephium",
   "Scan an Alephium address QR code to add to your contacts list.": "Quét mã QR địa chỉ Alephium để thêm vào danh sách liên hệ của bạn.",
