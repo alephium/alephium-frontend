@@ -1,10 +1,11 @@
-import { NativeModules } from 'react-native'
+import Crypto from 'react-native-quick-crypto'
 
-const Aes = NativeModules.Aes
+const KEYLEN = 32
+const ITER = 10000
+const DIGEST = 'sha512'
 
-export const pbkdf2 = async (password: string, salt: Buffer): Promise<Buffer> => {
-  const _salt = salt.toString('base64')
-  const data = await Aes.pbkdf2(password, _salt, 10000, 256)
+export const pbkdf2 = (password: Buffer, salt: Buffer) => {
+  const key = Crypto.pbkdf2Sync(password, salt, ITER, KEYLEN, DIGEST)
 
-  return Buffer.from(data, 'hex')
+  return Buffer.from(key)
 }

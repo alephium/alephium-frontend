@@ -1,5 +1,5 @@
 import { DeprecatedEncryptedMnemonicStoredAsString } from '@alephium/keyring'
-import { decryptAsync } from '@alephium/shared-crypto'
+import { decrypt } from '@alephium/shared-crypto'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -84,7 +84,7 @@ const DeprecatedAuthenticationModal = ({
     if (!pin || !deprecatedEncryptedWallet) return false
 
     try {
-      const data = await decryptAsync(pin, deprecatedEncryptedWallet.mnemonic, pbkdf2)
+      const data = decrypt(pin, deprecatedEncryptedWallet.mnemonic, pbkdf2)
       const { mnemonic } = JSON.parse(data) as DeprecatedEncryptedMnemonicStoredAsString
 
       onConfirm(mnemonic)

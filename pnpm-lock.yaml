@@ -47,9 +47,6 @@ patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
     hash: 4mkpybhyrxbheknii5rno7c5b4
     path: patches/@metamask__scure-bip39@2.1.1.patch
-  react-native-aes-crypto@2.1.1:
-    hash: sm7rpv6bikakdvmsl6ekayqewu
-    path: patches/react-native-aes-crypto@2.1.1.patch
 
 importers:
 
@@ -780,9 +777,6 @@ importers:
       react-native:
         specifier: 0.76.9
         version: 0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)
-      react-native-aes-crypto:
-        specifier: 2.1.1
-        version: 2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu)
       react-native-background-timer:
         specifier: ^2.4.1
         version: 2.4.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))
@@ -807,6 +801,9 @@ importers:
       react-native-progress:
         specifier: ^5.0.0
         version: 5.0.1(react-native-svg@15.12.0(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1))
+      react-native-quick-crypto:
+        specifier: 0.7.17
+        version: 0.7.17(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
       react-native-reanimated:
         specifier: ^3.18.0
         version: 3.18.0(@babel/core@7.25.7)(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
@@ -2270,6 +2267,9 @@ packages:
 
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
+
+  '@craftzdog/react-native-buffer@6.1.0':
+    resolution: {integrity: sha512-lJXdjZ7fTllLbzDrwg/FrJLjQ5sBcAgwcqgAB6OPpXTHdCenEhHZblQpfmBLLe7/S7m0yKXL3kN3jpwOEkpjGg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6936,9 +6936,6 @@ packages:
   fontfaceobserver@2.3.0:
     resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
 
-  for-each@0.3.3:
-    resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
-
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
@@ -7197,9 +7194,6 @@ packages:
 
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
-
-  gopd@1.0.1:
-    resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -7765,10 +7759,6 @@ packages:
 
   is-symbol@1.1.1:
     resolution: {integrity: sha512-9gGx6GTtCQM73BgmHQXfDmLtfjjTUDSyoxTCbp5WtoixAhfgsDirWIcVQ/IHpvI5Vgd5i/J5F7B9cN/WlVbC/w==}
-    engines: {node: '>= 0.4'}
-
-  is-typed-array@1.1.12:
-    resolution: {integrity: sha512-Z14TF2JNG8Lss5/HMqt0//T9JeHXttXy5pH/DBU4vi98ozO2btxzq9MwYDZYnKwU8nRsz/+GVFVRDq3DkVuSPg==}
     engines: {node: '>= 0.4'}
 
   is-typed-array@1.1.15:
@@ -9658,9 +9648,6 @@ packages:
       react: ^16.8 || ^17 || ^18
       react-dom: ^16.8 || ^17 || ^18
 
-  react-native-aes-crypto@2.1.1:
-    resolution: {integrity: sha512-huAt7k43myFiY0bPnvoaCP0oBjTMw4VsL2mjkmCPzzDA56Sm3ps5xXIejPo5Z9qfnei9iijHzATV8eRNMEPtbQ==}
-
   react-native-background-timer@2.4.1:
     resolution: {integrity: sha512-TE4Kiy7jUyv+hugxDxitzu38sW1NqjCk4uE5IgU2WevLv7sZacaBc6PZKOShNRPGirLl1NWkaG3LDEkdb9Um5g==}
     peerDependencies:
@@ -9716,6 +9703,15 @@ packages:
     resolution: {integrity: sha512-TYfJ4auAe5vubDma2yfFvt7ktSI+UCfysqJnkdHEcLXqAitRFOozgF/cLgN5VNi/iLdaf3ga1ETi2RF4jVZ/+g==}
     peerDependencies:
       react-native-svg: '*'
+
+  react-native-quick-base64@2.2.2:
+    resolution: {integrity: sha512-WLHSifHLoamr2kF00Gov0W9ud6CfPshe1rmqWTquVIi9c62qxOaJCFVDrXFZhEBU8B8PvGLVuOlVKH78yhY0Fg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-quick-crypto@0.7.17:
+    resolution: {integrity: sha512-cJzp6oA/dM1lujt+Rwtn46Mgcs3w9F/0oQvNz1jcADc/AXktveAOUTzzKrDMxyg6YPziCYnoqMDzHBo6OLSU1g==}
 
   react-native-reanimated@3.18.0:
     resolution: {integrity: sha512-eVcNcqeOkMW+BUWAHdtvN3FKgC8J8wiEJkX6bNGGQaLS7m7e4amTfjIcqf/Ta+lerZLurmDaQ0lICI1CKPrb1Q==}
@@ -9902,6 +9898,10 @@ packages:
   readable-stream@3.6.2:
     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
     engines: {node: '>= 6'}
+
+  readable-stream@4.7.0:
+    resolution: {integrity: sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
   readable-web-to-node-stream@3.0.2:
     resolution: {integrity: sha512-ePeK6cc1EcKLEhJFt/AebMCLL+GgSKhuygrZ/GLaKZYEecIgIECf4UaUuaByiGtzckwR4ain9VzUh95T1exYGw==}
@@ -11879,10 +11879,6 @@ packages:
 
   which-module@2.0.1:
     resolution: {integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==}
-
-  which-typed-array@1.1.13:
-    resolution: {integrity: sha512-P5Nra0qjSncduVPEAr7xhoF5guty49ArDTwzJ/yNuPIbZppyRxFQsRCWrocxIY+CnMVG+qfbU2FmDKyvSGClow==}
-    engines: {node: '>= 0.4'}
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
@@ -13999,6 +13995,14 @@ snapshots:
       fs-extra: 7.0.1
       human-id: 4.1.1
       prettier: 2.8.8
+
+  '@craftzdog/react-native-buffer@6.1.0(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      ieee754: 1.2.1
+      react-native-quick-base64: 2.2.2(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-native
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -18358,12 +18362,12 @@ snapshots:
 
   array-buffer-byte-length@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       is-array-buffer: 3.0.2
 
   array-buffer-byte-length@1.0.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       is-array-buffer: 3.0.5
 
   array-includes@3.1.7:
@@ -18434,7 +18438,7 @@ snapshots:
   arraybuffer.prototype.slice@1.0.2:
     dependencies:
       array-buffer-byte-length: 1.0.0
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
       get-intrinsic: 1.3.0
@@ -19668,19 +19672,19 @@ snapshots:
 
   data-view-buffer@1.0.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
   data-view-byte-length@1.0.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
   data-view-byte-offset@1.0.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
@@ -19728,7 +19732,7 @@ snapshots:
   deep-equal@2.2.3:
     dependencies:
       array-buffer-byte-length: 1.0.0
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       es-get-iterator: 1.1.3
       get-intrinsic: 1.2.7
       is-arguments: 1.1.1
@@ -19744,7 +19748,7 @@ snapshots:
       side-channel: 1.1.0
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.1
-      which-typed-array: 1.1.13
+      which-typed-array: 1.1.19
 
   deep-extend@0.6.0: {}
 
@@ -20161,7 +20165,7 @@ snapshots:
       is-regex: 1.1.4
       is-shared-array-buffer: 1.0.2
       is-string: 1.0.7
-      is-typed-array: 1.1.12
+      is-typed-array: 1.1.15
       is-weakref: 1.0.2
       object-inspect: 1.13.3
       object-keys: 1.1.1
@@ -20177,7 +20181,7 @@ snapshots:
       typed-array-byte-offset: 1.0.0
       typed-array-length: 1.0.4
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.13
+      which-typed-array: 1.1.19
 
   es-abstract@1.23.9:
     dependencies:
@@ -20239,7 +20243,7 @@ snapshots:
 
   es-get-iterator@1.1.3:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
       has-symbols: 1.1.0
       is-arguments: 1.1.1
@@ -21221,10 +21225,6 @@ snapshots:
 
   fontfaceobserver@2.3.0: {}
 
-  for-each@0.3.3:
-    dependencies:
-      is-callable: 1.2.7
-
   for-each@0.3.5:
     dependencies:
       is-callable: 1.2.7
@@ -21342,7 +21342,7 @@ snapshots:
 
   function.prototype.name@1.1.6:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
       functions-have-names: 1.2.3
@@ -21350,7 +21350,7 @@ snapshots:
   function.prototype.name@1.1.8:
     dependencies:
       call-bind: 1.0.8
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       define-properties: 1.2.1
       functions-have-names: 1.2.3
       hasown: 2.0.2
@@ -21417,7 +21417,7 @@ snapshots:
   get-proto@1.0.1:
     dependencies:
       dunder-proto: 1.0.1
-      es-object-atoms: 1.0.1
+      es-object-atoms: 1.1.1
 
   get-stdin@9.0.0: {}
 
@@ -21433,12 +21433,12 @@ snapshots:
 
   get-symbol-description@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
 
   get-symbol-description@1.1.0:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
 
@@ -21561,10 +21561,6 @@ snapshots:
       slash: 4.0.0
 
   globrex@0.1.2: {}
-
-  gopd@1.0.1:
-    dependencies:
-      get-intrinsic: 1.3.0
 
   gopd@1.2.0: {}
 
@@ -21904,19 +21900,19 @@ snapshots:
 
   is-arguments@1.1.1:
     dependencies:
-      call-bind: 1.0.5
-      has-tostringtag: 1.0.0
+      call-bind: 1.0.8
+      has-tostringtag: 1.0.2
 
   is-array-buffer@3.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
-      is-typed-array: 1.1.12
+      is-typed-array: 1.1.15
 
   is-array-buffer@3.0.5:
     dependencies:
       call-bind: 1.0.8
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       get-intrinsic: 1.3.0
 
   is-arrayish@0.2.1: {}
@@ -21941,12 +21937,12 @@ snapshots:
 
   is-boolean-object@1.1.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       has-tostringtag: 1.0.2
 
   is-boolean-object@1.2.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-tostringtag: 1.0.2
 
   is-buffer@1.1.6: {}
@@ -21967,7 +21963,7 @@ snapshots:
 
   is-data-view@1.0.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       get-intrinsic: 1.3.0
       is-typed-array: 1.1.15
 
@@ -21977,7 +21973,7 @@ snapshots:
 
   is-date-object@1.1.0:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-tostringtag: 1.0.2
 
   is-directory@0.3.1: {}
@@ -21990,11 +21986,11 @@ snapshots:
 
   is-finalizationregistry@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
 
   is-finalizationregistry@1.1.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
 
   is-fullwidth-code-point@2.0.0:
     optional: true
@@ -22007,7 +22003,7 @@ snapshots:
 
   is-generator-function@1.0.10:
     dependencies:
-      has-tostringtag: 1.0.0
+      has-tostringtag: 1.0.2
 
   is-glob@4.0.3:
     dependencies:
@@ -22037,7 +22033,7 @@ snapshots:
 
   is-number-object@1.1.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-tostringtag: 1.0.2
 
   is-number@7.0.0: {}
@@ -22068,12 +22064,12 @@ snapshots:
 
   is-regex@1.1.4:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       has-tostringtag: 1.0.2
 
   is-regex@1.2.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       gopd: 1.2.0
       has-tostringtag: 1.0.2
       hasown: 2.0.2
@@ -22084,11 +22080,11 @@ snapshots:
 
   is-shared-array-buffer@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
 
   is-shared-array-buffer@1.0.4:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
 
   is-stream@1.1.0: {}
 
@@ -22102,7 +22098,7 @@ snapshots:
 
   is-string@1.1.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-tostringtag: 1.0.2
 
   is-subdir@1.2.0:
@@ -22115,13 +22111,9 @@ snapshots:
 
   is-symbol@1.1.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-symbols: 1.1.0
       safe-regex-test: 1.1.0
-
-  is-typed-array@1.1.12:
-    dependencies:
-      which-typed-array: 1.1.13
 
   is-typed-array@1.1.15:
     dependencies:
@@ -22135,20 +22127,20 @@ snapshots:
 
   is-weakref@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
 
   is-weakref@1.1.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
 
   is-weakset@2.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
 
   is-weakset@2.0.4:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       get-intrinsic: 1.3.0
 
   is-windows@1.0.2: {}
@@ -23725,7 +23717,7 @@ snapshots:
 
   object-is@1.1.5:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
 
   object-keys@1.1.1: {}
@@ -23740,7 +23732,7 @@ snapshots:
   object.assign@4.1.7:
     dependencies:
       call-bind: 1.0.8
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.0.1
       has-symbols: 1.1.0
@@ -24460,8 +24452,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  react-native-aes-crypto@2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu): {}
-
   react-native-background-timer@2.4.1(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)):
     dependencies:
       react-native: 0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)
@@ -24513,6 +24503,22 @@ snapshots:
     dependencies:
       prop-types: 15.8.1
       react-native-svg: 15.12.0(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
+
+  react-native-quick-base64@2.2.2(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)
+
+  react-native-quick-crypto@0.7.17(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@craftzdog/react-native-buffer': 6.1.0(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
+      events: 3.3.0
+      readable-stream: 4.7.0
+      string_decoder: 1.3.0
+      util: 0.12.5
+    transitivePeerDependencies:
+      - react
+      - react-native
 
   react-native-reanimated@3.18.0(@babel/core@7.25.7)(react-native@0.76.9(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -24927,6 +24933,14 @@ snapshots:
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
+  readable-stream@4.7.0:
+    dependencies:
+      abort-controller: 3.0.0
+      buffer: 6.0.3
+      events: 3.3.0
+      process: 0.11.10
+      string_decoder: 1.3.0
+
   readable-web-to-node-stream@3.0.2:
     dependencies:
       readable-stream: 3.6.2
@@ -25007,7 +25021,7 @@ snapshots:
 
   reflect.getprototypeof@1.0.4:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
       get-intrinsic: 1.3.0
@@ -25032,7 +25046,7 @@ snapshots:
 
   regexp.prototype.flags@1.5.1:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       set-function-name: 2.0.1
 
@@ -25276,7 +25290,7 @@ snapshots:
 
   safe-array-concat@1.0.1:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
       has-symbols: 1.1.0
       isarray: 2.0.5
@@ -25303,13 +25317,13 @@ snapshots:
 
   safe-regex-test@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
       is-regex: 1.1.4
 
   safe-regex-test@1.1.0:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       is-regex: 1.2.1
 
@@ -25507,14 +25521,14 @@ snapshots:
 
   side-channel-map@1.0.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       object-inspect: 1.13.3
 
   side-channel-weakmap@1.0.2:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       object-inspect: 1.13.3
@@ -25796,7 +25810,7 @@ snapshots:
   string.prototype.trim@1.2.10:
     dependencies:
       call-bind: 1.0.8
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       define-data-property: 1.1.4
       define-properties: 1.2.1
       es-abstract: 1.23.9
@@ -25805,26 +25819,26 @@ snapshots:
 
   string.prototype.trim@1.2.8:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
   string.prototype.trimend@1.0.7:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
   string.prototype.trimend@1.0.9:
     dependencies:
       call-bind: 1.0.8
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.0.1
 
   string.prototype.trimstart@1.0.7:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.22.3
 
@@ -26409,44 +26423,44 @@ snapshots:
 
   typed-array-buffer@1.0.0:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
-      is-typed-array: 1.1.12
+      is-typed-array: 1.1.15
 
   typed-array-buffer@1.0.3:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       es-errors: 1.3.0
       is-typed-array: 1.1.15
 
   typed-array-byte-length@1.0.0:
     dependencies:
-      call-bind: 1.0.5
-      for-each: 0.3.3
+      call-bind: 1.0.8
+      for-each: 0.3.5
       has-proto: 1.0.1
-      is-typed-array: 1.1.12
+      is-typed-array: 1.1.15
 
   typed-array-byte-length@1.0.3:
     dependencies:
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.2.0
       is-typed-array: 1.1.15
 
   typed-array-byte-offset@1.0.0:
     dependencies:
-      available-typed-arrays: 1.0.5
-      call-bind: 1.0.5
-      for-each: 0.3.3
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      for-each: 0.3.5
       has-proto: 1.0.1
-      is-typed-array: 1.1.12
+      is-typed-array: 1.1.15
 
   typed-array-byte-offset@1.0.4:
     dependencies:
       available-typed-arrays: 1.0.7
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.2.0
       is-typed-array: 1.1.15
@@ -26454,14 +26468,14 @@ snapshots:
 
   typed-array-length@1.0.4:
     dependencies:
-      call-bind: 1.0.5
-      for-each: 0.3.3
-      is-typed-array: 1.1.12
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      is-typed-array: 1.1.15
 
   typed-array-length@1.0.7:
     dependencies:
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       is-typed-array: 1.1.15
       possible-typed-array-names: 1.1.0
@@ -26489,14 +26503,14 @@ snapshots:
 
   unbox-primitive@1.0.2:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.8
       has-bigints: 1.0.2
       has-symbols: 1.1.0
       which-boxed-primitive: 1.0.2
 
   unbox-primitive@1.1.0:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       has-bigints: 1.0.2
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
@@ -26660,8 +26674,8 @@ snapshots:
       inherits: 2.0.4
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
-      is-typed-array: 1.1.12
-      which-typed-array: 1.1.13
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   utils-merge@1.0.1: {}
 
@@ -27296,11 +27310,11 @@ snapshots:
       isarray: 2.0.5
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.1
-      which-typed-array: 1.1.13
+      which-typed-array: 1.1.19
 
   which-builtin-type@1.2.1:
     dependencies:
-      call-bound: 1.0.3
+      call-bound: 1.0.4
       function.prototype.name: 1.1.8
       has-tostringtag: 1.0.2
       is-async-function: 2.0.0
@@ -27330,14 +27344,6 @@ snapshots:
 
   which-module@2.0.1:
     optional: true
-
-  which-typed-array@1.1.13:
-    dependencies:
-      available-typed-arrays: 1.0.5
-      call-bind: 1.0.5
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-tostringtag: 1.0.0
 
   which-typed-array@1.1.19:
     dependencies:
