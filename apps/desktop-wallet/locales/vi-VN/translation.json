@@ -555,5 +555,8 @@
   "Sending": "Đang gửi",
   "Simulated result": "Kết quả dự kiến",
   "Nothing relevant to the signer address.": "Không có gì liên quan đến địa chỉ ký.",
-  "Decoded transaction details": "Thông tin giải mã giao dịch"
+  "Decoded transaction details": "Thông tin giải mã giao dịch",
+  "dApp request approved.": "Đã phê duyệt yêu cầu dApp.",
+  "dApp request rejected.": "Đã từ chối yêu cầu dApp.",
+  "You can go back to your browser.": "Bạn có thể trở về trình duyệt."
 }
