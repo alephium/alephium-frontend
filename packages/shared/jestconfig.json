@@ -11,5 +11,5 @@
   "moduleNameMapper": {
     "@/(.*)": "<rootDir>/src/$1"
   },
-  "transformIgnorePatterns": ["node_modules/(?!(p-throttle)/)"]
+  "transformIgnorePatterns": ["node_modules/(?!(p-throttle|react-redux|@reduxjs/toolkit)/)"]
 }

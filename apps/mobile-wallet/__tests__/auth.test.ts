@@ -36,7 +36,7 @@ describe(tryLocalAuthenticate, () => {
 
     const status = await tryLocalAuthenticate()
 
-    expect(status).toEqual(BiometricAuthenticationStatus.Rejected)
+    expect(status).toEqual(BiometricAuthenticationStatus.UserCancel)
   })
 
   it('authenticates when user accepts', async () => {
