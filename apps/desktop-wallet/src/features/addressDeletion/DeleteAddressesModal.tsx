@@ -1,6 +1,6 @@
 import { AddressHash, selectDefaultAddressHash, selectInitialAddress } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@alephium/shared-react'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -26,18 +26,20 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const reversedAddressesArray = useMemo(() => [...sortedAddresses].reverse(), [sortedAddresses])
 
   const [selectedAddressesForDeletion, setSelectedAddressesForDeletion] = useState<AddressHash[]>([])
-  const hasInitialized = useRef(false)
 
   useEffect(() => {
-    if (!isLoadingSortedAddresses && !hasInitialized.current) {
+    if (!isLoadingSortedAddresses) {
       const neverUsedAddresses = sortedAddresses
         .filter(({ latestTx }) => latestTx?.timestamp === undefined)
         .map(({ addressHash }) => addressHash)
 
       setSelectedAddressesForDeletion(neverUsedAddresses)
-      hasInitialized.current = true
     }
-  }, [isLoadingSortedAddresses, sortedAddresses])
+
+    // We want to initialize the selected addresses only once, we don't care if txs come in the meantime that will update the data array
+    // eslint-disable-next-line react-compiler/react-compiler
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingSortedAddresses])
 
   if (isLoadingSortedAddresses) return <SkeletonLoader height="300px" />
 

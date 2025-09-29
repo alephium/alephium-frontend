@@ -22,16 +22,7 @@ export function useAsyncData<T>(
     error: undefined
   })
   const onCancelRef = useRef(onCancel)
-  const asyncCallbackRef = useRef(asyncCallback)
-  const [callbackId, setCallbackId] = useState(0)
-  const [lastCompletedCallbackId, setLastCompletedCallbackId] = useState(0)
-
-  // Update refs when props change
-  useEffect(() => {
-    asyncCallbackRef.current = asyncCallback
-    onCancelRef.current = onCancel
-    setCallbackId((prev) => prev + 1)
-  }, [asyncCallback, onCancel])
+  const lastCompletedAsyncCallbackRef = useRef(asyncCallback)
 
   useEffect(() => {
     let isPending = false
@@ -45,9 +36,9 @@ export function useAsyncData<T>(
         }
         return { ...prevState, error: undefined }
       })
-      const data = await asyncCallbackRef.current()
+      const data = await asyncCallback()
       if (isPending) {
-        setLastCompletedCallbackId(callbackId)
+        lastCompletedAsyncCallbackRef.current = asyncCallback
         setState((prevState) => ({ ...prevState, data, isLoading: false }))
       }
     }
@@ -56,7 +47,7 @@ export function useAsyncData<T>(
       .catch((error) => {
         setState((prevState) => ({ ...prevState, error }))
         if (isPending) {
-          setLastCompletedCallbackId(callbackId)
+          lastCompletedAsyncCallbackRef.current = asyncCallback
           setState((prevState) => ({ ...prevState, isLoading: false }))
         }
       })
@@ -75,12 +66,13 @@ export function useAsyncData<T>(
         handleCancel()
       }
     }
-  }, [callbackId])
+  }, [asyncCallback])
 
   return useMemo(() => {
-    if (callbackId !== lastCompletedCallbackId) {
+    // eslint-disable-next-line react-compiler/react-compiler
+    if (asyncCallback !== lastCompletedAsyncCallbackRef.current) {
       return { isLoading: true, data: undefined }
     }
     return state
-  }, [callbackId, lastCompletedCallbackId, state])
+  }, [asyncCallback, state])
 }

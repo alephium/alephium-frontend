@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export const useTimeout = (callback: () => void, delay: number) => {
-  const savedCallback = useRef<() => void | undefined>(undefined)
+  const savedCallback = useRef<() => void>()
 
   useEffect(() => {
     savedCallback.current = callback
@@ -40,7 +40,6 @@ export const useWindowSize = () => {
   return windowSize
 }
 
-// Helper function to run React effect only once
-// This is intentionally empty dependency array as it's meant to run only on mount
+// Helper function to run React effect only once, without eslint screaming
 // eslint-disable-next-line react-hooks/exhaustive-deps
 export const useMountEffect = (fun: () => void) => useEffect(fun, [])

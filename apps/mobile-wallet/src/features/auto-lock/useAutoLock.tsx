@@ -9,7 +9,6 @@ let lockTimer: number | undefined
 
 const useAutoLock = (unlockApp: () => Promise<void>) => {
   const appState = useRef<AppStateStatus>('active')
-  const unlockAppRef = useRef(unlockApp)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -18,11 +17,6 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
   const dispatch = useAppDispatch()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
-
-  // Update ref when unlockApp changes
-  useEffect(() => {
-    unlockAppRef.current = unlockApp
-  }, [unlockApp])
 
   useEffect(() => {
     if (!settingsLoadedFromStorage) return
@@ -44,11 +38,11 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
           clearBackgroundTimer()
 
           if (!isWalletUnlocked && !isCameraOpen) {
-            unlockAppRef.current()
+            unlockApp()
           }
         }
       } else if (nextAppState === 'active' && !isWalletUnlocked) {
-        unlockAppRef.current()
+        unlockApp()
       }
 
       appState.current = nextAppState
@@ -70,7 +64,8 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
     isAppStateChangeCallbackRegistered,
     isCameraOpen,
     isWalletUnlocked,
-    settingsLoadedFromStorage
+    settingsLoadedFromStorage,
+    unlockApp
   ])
 
   const clearBackgroundTimer = () => {
