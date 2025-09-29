@@ -95,7 +95,7 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.58.1",
     "react-i18next": "^15.5.3",
-    "react-native": "0.79.4",
+    "react-native": "0.79.5",
     "react-native-aes-crypto": "^2.1.0",
     "react-native-background-timer": "^2.4.1",
     "react-native-gesture-handler": "^2.24.0",
