@@ -202,10 +202,11 @@ export default styled(Button)`
         }
       }
 
-      ${children &&
-      css`
-        gap: 10px;
-      `}
+      ${children
+        ? css`
+            gap: 10px;
+          `
+        : ''}
     `
   }}
 

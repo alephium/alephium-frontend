@@ -7,8 +7,6 @@ interface DataListProps {
 }
 
 const DataList = ({ children, title }: DataListProps) => (
-  // validateChildrenType({ children, childType: DataListRow, parentName: 'DataList' })
-
   <DataListStyled>
     {title && <DataListTitle>{title}</DataListTitle>}
     {children}

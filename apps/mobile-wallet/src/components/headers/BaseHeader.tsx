@@ -19,7 +19,7 @@ export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' 
 
 export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
-  headerRef?: RefObject<Animated.View>
+  headerRef?: RefObject<Animated.View | null>
   titleAlwaysVisible?: boolean
   onBackPress?: () => void
   scrollY?: SharedValue<number>

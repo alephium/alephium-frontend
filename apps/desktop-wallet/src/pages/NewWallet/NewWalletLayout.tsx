@@ -1,10 +1,12 @@
+import { ReactNode } from 'react'
+
 import AppHeader from '@/components/AppHeader'
 import { StepsContextProvider } from '@/contexts/steps'
 import { WalletContextProvider } from '@/contexts/wallet'
 import LockedWalletLayout from '@/pages/LockedWalletLayout'
 
 interface NewWalletLayoutProps {
-  steps: JSX.Element[]
+  steps: ReactNode[]
   baseUrl: 'import' | 'create'
 }
 
