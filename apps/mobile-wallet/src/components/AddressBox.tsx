@@ -1,4 +1,4 @@
-import { Address, AddressHash, CURRENCIES, selectAddressByHash } from '@alephium/shared'
+import { Address, AddressHash, CURRENCIES, isGrouplessAddress, selectAddressByHash } from '@alephium/shared'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,
@@ -135,6 +135,11 @@ const AddressBox = ({
               >
                 {address?.label || addressHash}
               </AppText>
+              {address.isNew && (
+                <Badge compact color={theme.global.accent}>
+                  {t('New')}
+                </Badge>
+              )}
             </AddressLabel>
 
             {tokenId ? (
@@ -161,7 +166,7 @@ const AddressBox = ({
               ) : (
                 <AddressTokensBadgesList addressHash={addressHash} />
               )}
-              {showGroup && (
+              {showGroup && !isGrouplessAddress(address) && (
                 <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
                   {t('Group {{ groupNumber }}', { groupNumber: address.group })}
                 </AppText>

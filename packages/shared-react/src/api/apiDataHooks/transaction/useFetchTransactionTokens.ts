@@ -1,5 +1,6 @@
 import {
   AddressHash,
+  ExecuteScriptTx,
   isFT,
   isNFT,
   ListedFT,
@@ -35,7 +36,7 @@ type TransactionTokens = {
 }
 
 export const useFetchTransactionTokens = (
-  tx: e.Transaction | e.PendingTransaction | SentTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx,
   addressHash: AddressHash
 ): TransactionTokens => {
   const networkId = useCurrentlyOnlineNetworkId()
@@ -49,7 +50,9 @@ export const useFetchTransactionTokens = (
   return {
     data: useMemo(
       () => ({
-        fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens] as TxFT[],
+        fungibleTokens: (alphAmount !== BigInt(0)
+          ? [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens]
+          : tokens.fungibleTokens) as TxFT[],
         nfts: tokens.nfts,
         nsts: tokens.nsts
       }),

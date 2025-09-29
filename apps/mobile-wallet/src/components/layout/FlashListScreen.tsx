@@ -41,7 +41,7 @@ const FlashListScreen = <T,>({
   }
 
   return (
-    <Screen headerOptions={headerOptions}>
+    <Screen headerOptions={headerOptions} scrollY={screenScrollY}>
       <FlashList
         ref={FlashListRef}
         onScroll={screenScrollHandler}

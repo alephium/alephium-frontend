@@ -14,6 +14,23 @@ import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
 const WalletConnectPasteUrlModal = memo(() => {
+  const { t } = useTranslation()
+
+  return (
+    <BottomModal2 title={t('Connect to dApp')} contentVerticalGap bottomSheetModalProps={{ stackBehavior: 'replace' }}>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t('Paste the WalletConnect URI you copied from the dApp')}:
+        </AppText>
+      </ScreenSection>
+      <WalletConnectPasteUrlModalContent />
+    </BottomModal2>
+  )
+})
+
+export default WalletConnectPasteUrlModal
+
+const WalletConnectPasteUrlModalContent = () => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -46,12 +63,7 @@ const WalletConnectPasteUrlModal = memo(() => {
   }
 
   return (
-    <BottomModal2 title={t('Connect to dApp')} contentVerticalGap bottomSheetModalProps={{ stackBehavior: 'replace' }}>
-      <ScreenSection>
-        <AppText color="secondary" size={18}>
-          {t('Paste the WalletConnect URI you copied from the dApp')}:
-        </AppText>
-      </ScreenSection>
+    <>
       <ScreenSection>
         <Input
           isInModal
@@ -66,8 +78,6 @@ const WalletConnectPasteUrlModal = memo(() => {
       <ScreenSection>
         <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
       </ScreenSection>
-    </BottomModal2>
+    </>
   )
-})
-
-export default WalletConnectPasteUrlModal
+}

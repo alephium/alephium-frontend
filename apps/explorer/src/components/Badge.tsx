@@ -85,6 +85,7 @@ export default styled(Badge)`
       border-radius: ${compact ? '3px' : '5px'};
       font-size: ${compact ? '10px' : 'inherit'};
       padding: ${compact ? '2px 4px' : '3px 5px'};
+      line-height: 1.1;
     `
   }}
 `

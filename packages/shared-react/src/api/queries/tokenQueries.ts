@@ -2,6 +2,7 @@ import {
   batchers,
   FtListMap,
   getNetworkNameFromNetworkId,
+  is5XXError,
   NFT,
   NFTDataType,
   NFTDataTypes,
@@ -33,6 +34,19 @@ interface NFTQueryProps extends TokenQueryProps {
   tokenUri?: NFTMetaData['tokenUri']
 }
 
+const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap => {
+  const result: FtListMap = {}
+
+  for (const token of tokenList) {
+    result[token.id] = token
+  }
+
+  return result
+}
+
+const mainnetTokens = convertTokenListToRecord(mainnet.tokens)
+const testnetTokens = convertTokenListToRecord(testnet.tokens)
+
 export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
   const network = getNetworkNameFromNetworkId(networkId) ?? 'mainnet'
 
@@ -42,17 +56,29 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
     // it will never become inactive (since it's always used by a mount component).
     ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
     queryFn:
-      !network || skip
+      networkId === undefined || skip
         ? skipToken
-        : () =>
+        : ({ queryKey }) =>
             network === 'devnet'
               ? { [ALPH.id]: ALPH }
               : axios
                   .get(getTokensURL(network))
-                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || [])),
-    placeholderData: convertTokenListToRecord(
-      network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
-    )
+                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || []))
+                  .catch((error) => {
+                    if (error instanceof AxiosError && error.response?.status === 429) {
+                      throw error
+                    }
+                    const cachedTokenList = queryClient.getQueryData(queryKey)
+
+                    if (cachedTokenList) {
+                      return cachedTokenList as FtListMap
+                    } else if (network === 'mainnet') {
+                      return mainnetTokens
+                    } else {
+                      return testnetTokens
+                    }
+                  }),
+    placeholderData: network === 'mainnet' ? mainnetTokens : network === 'testnet' ? testnetTokens : undefined
   })
 }
 
@@ -138,8 +164,14 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
             }
 
             try {
-              const res = await axios.get(tokenUri)
-              const nftData = res.data as NFTTokenUriMetaData
+              let nftData: NFTTokenUriMetaData
+
+              if (tokenUri.startsWith('data:application/json,')) {
+                nftData = JSON.parse(tokenUri.split('data:application/json,')[1])
+              } else {
+                const res = await axios.get(tokenUri)
+                nftData = res.data
+              }
 
               if (!nftData || !nftData.name) {
                 return errorResponse
@@ -156,8 +188,11 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
                 : {
                     id,
                     dataType,
+                    ...nftData,
                     name: nftData.name,
-                    image: nftData.image ? nftData.image.toString() : ''
+                    image: nftData.image
+                      ? nftData.image.toString()
+                      : `https://placehold.co/400x400/000000/FFFFFF/jpeg?text=${encodeURIComponent(nftData.name)}`
                   }
             } catch (error) {
               errorResponse.description =
@@ -175,27 +210,35 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     queryFn: async (): Promise<Token> => {
       const nst = { id } as NonStandardToken
 
-      // 1. First check if the token is in the token list
-      const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const listedFT = fTList[id]
+      try {
+        // 1. First check if the token is in the token list
+        const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+        const listedFT = fTList[id]
 
-      if (listedFT) return listedFT
+        if (listedFT) return listedFT
 
-      // 2. If not, find the type of the token
-      const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
+        // 2. If not, find the type of the token
+        const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
 
-      // 3. If it is a fungible token, fetch the fungible token metadata
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
-        const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
+        // 3. If it is a fungible token, fetch the fungible token metadata
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+          const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
 
-        return ftMetadata ?? nst
-      }
+          return ftMetadata ?? nst
+        }
 
-      // 4. If it is an NFT, fetch the NFT metadata and data
-      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
-        const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
+        // 4. If it is an NFT, fetch the NFT metadata and data
+        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+          const nft = await queryClient.fetchQuery(nftQuery({ id, networkId }))
 
-        return nft ?? nst
+          return nft ?? nst
+        }
+      } catch (e) {
+        if (is5XXError(e)) {
+          return nst
+        } else {
+          throw e
+        }
       }
 
       // 5. If the type of the token cannot be determined, return the non-standard token
@@ -221,6 +264,3 @@ export const nftQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     },
     enabled: !skip
   })
-
-const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap =>
-  tokenList.reduce((acc, token) => ({ ...acc, [token.id]: token }), {} as FtListMap)

@@ -1,8 +1,7 @@
 import { keyring } from '@alephium/keyring'
-import { newAddressesSaved } from '@alephium/shared'
-import { useUnsortedAddresses } from '@alephium/shared-react'
+import { GROUPLESS_ADDRESS_KEY_TYPE, newAddressesSaved, selectAllAddressIndexes } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
@@ -11,7 +10,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -22,8 +21,7 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
-  const addresses = useUnsortedAddresses()
-  const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
+  const { indexesOfGrouplessAddresses, indexesOfAddressesWithGroup } = useAppSelector(selectAllAddressIndexes)
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
@@ -42,20 +40,36 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
     try {
       await initializeKeyringWithStoredWallet()
-      const newAddress = {
-        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
-        label,
-        color,
-        isDefault
-      }
+
+      const newAddress =
+        group === undefined
+          ? {
+              ...keyring.generateAndCacheAddress({
+                skipAddressIndexes: indexesOfGrouplessAddresses,
+                keyType: GROUPLESS_ADDRESS_KEY_TYPE
+              }),
+              label,
+              color,
+              isDefault
+            }
+          : {
+              ...keyring.generateAndCacheAddress({
+                group,
+                skipAddressIndexes: indexesOfAddressesWithGroup,
+                keyType: 'default'
+              }),
+              label,
+              color,
+              isDefault
+            }
 
       await persistAddressSettings(newAddress)
-      dispatch(newAddressesSaved([newAddress]))
+      dispatch(newAddressesSaved([{ ...newAddress, isNew: true }]))
 
       sendAnalytics({
         event: 'Address: Generated new address',
         props: {
-          note: group === undefined ? 'In random group' : 'In specific group'
+          note: group === undefined ? 'groupless' : 'In specific group'
         }
       })
     } catch (error) {

@@ -45,7 +45,11 @@ export const appDataCleared = createAction('app/appDataCleared')
 
 export const appDataClearFailed = createAction('app/appDataClearFailed')
 
-export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+export const receiveFaucetTokens = createAsyncThunk<
+  SentTransaction | undefined,
+  AddressHash,
+  { rejectValue: SnackbarMessage }
+>(
   'assets/receiveFaucetTokens',
   async (destinationAddress: AddressHash, { getState, rejectWithValue, fulfillWithValue, dispatch }) => {
     const state = getState() as RootState

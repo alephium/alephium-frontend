@@ -11,14 +11,15 @@ interface PageTitleProps {
   subtitle?: string | ReactNode
   isLoading?: boolean
   badge?: string
+  badgeType?: 'accent' | 'neutral' | 'plus' | 'minus' | 'neutralHighlight'
 }
 
-const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitleProps) => (
+const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading, badgeType = 'accent' }: PageTitleProps) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
     <TitleRow>
       <Title>{title}</Title>
-      {badge && <Badge type="accent" content={badge} />}
+      {badge && <Badge type={badgeType} content={badge} />}
       {isLoading && <LoadingSpinner size={18} />}
     </TitleRow>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
@@ -26,7 +27,7 @@ const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitle
 )
 
 const TitleWrapper = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `
 
 const TitleRow = styled.div`
@@ -41,6 +42,7 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   display: flex;
+  gap: 14px;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2rem;
@@ -61,7 +63,7 @@ const Subtitle = styled.h2`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.font.secondary};
   margin: 0;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
 `
 
 export const SecondaryTitle = styled.h2`

@@ -1,7 +1,11 @@
+/**
+ * @vitest-environment node
+ */
+
 import { keyring } from '@alephium/keyring'
 import { throttledClient } from '@alephium/shared'
 
-import { discoverAndCacheActiveAddresses } from '@/api/addresses'
+import { discoverGroupedAddresses } from '@/api/addresses'
 
 import derivedAddresses from './fixtures/address-discovery.json'
 
@@ -23,7 +27,7 @@ describe('Address discovery', () => {
       ...[false, false, false, false, false]
     ])
 
-    let results = await discoverAndCacheActiveAddresses()
+    let results = await discoverGroupedAddresses()
     expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(1)
     expect(results).toHaveLength(0)
     mockedPostAddressesActive.mockClear()
@@ -41,7 +45,7 @@ describe('Address discovery', () => {
       ])
       .mockResolvedValueOnce([false, false, false, false, false])
 
-    results = await discoverAndCacheActiveAddresses()
+    results = await discoverGroupedAddresses()
     expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(2)
     expect(results).toHaveLength(1)
     expect(results.map((a) => a.hash)).toContain(derivedAddresses.group0[4])
@@ -68,7 +72,7 @@ describe('Address discovery', () => {
       // group 2, query 1
       .mockResolvedValueOnce([false, false, false, false, false])
 
-    results = await discoverAndCacheActiveAddresses()
+    results = await discoverGroupedAddresses()
     expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(4)
     expect(results).toHaveLength(3)
     const addresses = results.map((a) => a.hash)

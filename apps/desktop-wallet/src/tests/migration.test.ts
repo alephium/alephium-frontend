@@ -1,5 +1,8 @@
+// Mock @alephium/web3-wallet to prevent @noble/secp256k1 loading issues
+vi.mock('@alephium/web3-wallet', () => ({}))
+
 import { keyring } from '@alephium/keyring'
-import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { encrypt } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
@@ -555,14 +558,16 @@ describe('_20230209_124300', () => {
 describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
   it('should decrypt encrypted address metadata', async () => {
     const localStorageKey = `addresses-metadata-${activeWallet.id}`
-    const addressMetadata: AddressMetadata[] = [
+    const addressMetadata: AddressStoredMetadataWithoutHash[] = [
       {
         index: 0,
+        keyType: 'default',
         isDefault: false,
         color: 'pink'
       },
       {
         index: 1,
+        keyType: 'default',
         isDefault: true,
         color: 'red',
         label: 'My main one'

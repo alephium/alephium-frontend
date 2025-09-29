@@ -29,7 +29,6 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch",
       "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch"
     },
     "overrides": {
@@ -60,7 +59,15 @@
       "base-x@<=3.0.10": ">=3.0.11",
       "base-x@=4.0.0": ">=4.0.1",
       "brace-expansion@=1.1.11": "=1.1.12",
-      "brace-expansion@=2.0.1": "=2.0.2"
+      "brace-expansion@=2.0.1": "=2.0.2",
+      "pbkdf2@<=3.1.2": ">=3.1.3",
+      "form-data@=3.0.1": "=3.0.4",
+      "form-data@=4.0.0": ">=4.0.4",
+      "sha.js@<=2.4.11": ">=2.4.12",
+      "cipher-base@<=1.0.4": ">=1.0.5",
+      "on-headers@<1.1.0": ">=1.1.0",
+      "tar-fs@=2.1.1": "=2.1.3",
+      "tmp@=0.2.1": "=0.2.4"
     }
   },
   "manypkg": {
@@ -71,7 +78,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@changesets/cli": "^2.28.1",
+    "@changesets/cli": "^2.29.6",
     "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
     "turbo": "1.13.4"

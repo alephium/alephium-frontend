@@ -109,13 +109,8 @@ const AddressTokensFlashListScreen = ({
   const handleContinueButtonPress = useCallback(async () => {
     dispatch(activateAppLoading(t('Building transaction')))
 
-    await buildTransaction(
-      {
-        onBuildSuccess,
-        onConsolidationSuccess
-      },
-      shouldSweep
-    )
+    await buildTransaction({ onBuildSuccess, onConsolidationSuccess }, shouldSweep)
+
     dispatch(deactivateAppLoading())
   }, [buildTransaction, dispatch, onBuildSuccess, onConsolidationSuccess, shouldSweep, t])
 

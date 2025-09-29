@@ -33,7 +33,7 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
     ? isTestnetOrDevnet
       ? t('The wallet is empty. Use the faucet in the developer tools in the app settings.')
       : isOffline
-        ? t('The wallet is offline.')
+        ? t('There is an issue connecting to the node and explorer backend servers.')
         : t('To send funds you first need to load your wallet with some.')
     : undefined
 
@@ -44,8 +44,8 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
 
     dispatch(
       openModal({
-        name: 'TransferSendModal',
-        props: { initialTxData: { fromAddress, toAddress: toAddressHash, tokenId: sendToken } }
+        name: 'SendModal',
+        props: { fromAddress, toAddress: toAddressHash, tokenId: sendToken }
       })
     )
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })

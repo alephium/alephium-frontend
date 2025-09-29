@@ -4,15 +4,15 @@ description: Prepare and install everything for the monorepo
 inputs:
   node-version:
     description: Version of Node to use
-    default: 20.x
+    default: 20.18.0
 
   pnpm-version:
     description: Version of pnpm to use
-    default: 9.x
+    default: 9.4.0
 
   eas-version:
     description: Version of EAS CLI to use
-    default: latest
+    default: 16.18.0
 
   expo-token:
     description: Expo token to authenticate with
@@ -40,7 +40,7 @@ runs:
         token: ${{ inputs.expo-token }}
 
     - name: 📦 Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
       shell: bash
 
     - name: ♻️ Restore cache

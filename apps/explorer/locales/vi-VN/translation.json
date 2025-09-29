@@ -121,7 +121,6 @@
   "Name": "Tên",
   "Description": "Mô tả",
   "Collection": "Bộ sưu tập",
-  "Group by collection": "Nhóm theo bộ sưu tập",
   "Unknown collection": "Bộ sưu tập không xác định",
   "Raw amount": "Số lượng gốc",
   "Page not found": "Không tìm thấy trang",
@@ -137,5 +136,12 @@
   "Unsupported media type": "Định dạng media không hỗ trợ",
   "Video thumbnail": "Video thu nhỏ",
   "No media": "Không có phương tiện",
-  "Address worth": "Giá trị của địa chỉ"
+  "Address worth": "Giá trị của địa chỉ",
+  "Group": "Nhóm",
+  "Group(s)": "(Các) Nhóm",
+  "All": "Tất cả",
+  "Group {{ number }}": "Nhóm {{ number }}",
+  "Group transfer": "Giao dịch nhóm",
+  "Conflicted": "Xung đột",
+  "Conflicted transaction": "Giao dịch xung đột"
 }

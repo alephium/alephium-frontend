@@ -88,13 +88,20 @@ const AddressForm = ({
       </Row>
       {allowGroupSelection && (
         <AdvancedOptionSection>
-          <Surface>
-            <Row title={t('Address group')} onPress={openGroupSelectModal}>
+          <Surface type="accent" withPadding>
+            <AppText>
+              {t(
+                'Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.'
+              )}
+            </AppText>
+          </Surface>
+          <SurfaceStyled type="secondary">
+            <Row title={t('Address group')} onPress={openGroupSelectModal} isLast>
               <AppText>
-                {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+                {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Groupless')}
               </AppText>
             </Row>
-          </Surface>
+          </SurfaceStyled>
         </AdvancedOptionSection>
       )}
     </View>
@@ -105,4 +112,9 @@ export default AddressForm
 
 const AdvancedOptionSection = styled(ExpandableRow)`
   margin-top: ${VERTICAL_GAP}px;
+`
+
+const SurfaceStyled = styled(Surface)`
+  margin-top: ${VERTICAL_GAP}px;
+  padding: 0 20px;
 `

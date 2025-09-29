@@ -15,7 +15,31 @@ export interface FundPasswordModalProps {
   successCallback: () => void
 }
 
-const FundPasswordModal = memo<FundPasswordModalProps>(({ successCallback }) => {
+const FundPasswordModal = memo<FundPasswordModalProps>((props) => {
+  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
+  const fundPassword = useFundPassword()
+  const { t } = useTranslation()
+
+  if (!isUsingFundPassword || !fundPassword) return null
+
+  return (
+    <BottomModal2 contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t('Please, enter your fund password.')}
+        </AppText>
+      </ScreenSection>
+      <FundPasswordModalContent {...props} />
+    </BottomModal2>
+  )
+})
+
+export default FundPasswordModal
+
+const FundPasswordModalContent = ({ successCallback }: FundPasswordModalProps) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()
@@ -44,15 +68,7 @@ const FundPasswordModal = memo<FundPasswordModalProps>(({ successCallback }) => 
   }
 
   return (
-    <BottomModal2 contentVerticalGap>
-      <ScreenSection>
-        <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
-      </ScreenSection>
-      <ScreenSection>
-        <AppText color="secondary" size={18}>
-          {t('Please, enter your fund password.')}
-        </AppText>
-      </ScreenSection>
+    <>
       <ScreenSection>
         <Input
           isInModal
@@ -69,8 +85,6 @@ const FundPasswordModal = memo<FundPasswordModalProps>(({ successCallback }) => 
       <ScreenSection>
         <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
       </ScreenSection>
-    </BottomModal2>
+    </>
   )
-})
-
-export default FundPasswordModal
+}

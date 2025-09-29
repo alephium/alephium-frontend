@@ -2,7 +2,6 @@ import { HasOptionalProps, HasRequiredProps } from '@alephium/shared'
 import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
-import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
@@ -22,8 +21,8 @@ import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
-import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import SignChainedTxModal from '~/features/ecosystem/modals/SignChainedTxModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
@@ -35,6 +34,7 @@ import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeSc
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
+import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
@@ -69,7 +69,7 @@ export const ModalComponents = {
   FundPasswordModal,
   SafePlaceWarningModal,
   SelectAddressModal,
-  ConsolidationModal,
+  SignConsolidateTxModal,
   SelectContactModal,
   WalletConnectErrorModal,
   WalletConnectPasteUrlModal,
@@ -94,7 +94,6 @@ export const ModalComponents = {
   AddressNftsGridModal,
   ConnectDappModal,
   NetworkSwitchModal,
-  ConnectDappNewAddressModal,
   SignExecuteScriptTxModal,
   SignDeployContractTxModal,
   SignTransferTxModal,
@@ -102,7 +101,8 @@ export const ModalComponents = {
   SignMessageTxModal,
   EditDappUrlModal,
   DataFetchErrorModal,
-  ConnectTipModal
+  ConnectTipModal,
+  SignChainedTxModal
 }
 
 export type ModalName = keyof typeof ModalComponents

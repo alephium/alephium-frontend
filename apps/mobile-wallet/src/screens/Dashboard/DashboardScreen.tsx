@@ -19,6 +19,7 @@ import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
+import OfflineButton from '~/features/offline/OfflineButton'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -28,8 +29,7 @@ import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
-import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
-import { showToast } from '~/utils/layout'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -64,10 +64,10 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <RoundedCardStyled>
+        <RoundedCard>
           <AnimatedBackground />
           <WalletBalanceSummary />
-        </RoundedCardStyled>
+        </RoundedCard>
       </CardContainer>
 
       <ButtonsRowContainer>
@@ -129,7 +129,15 @@ const WalletBalanceSummary = () => {
   const { t } = useTranslation()
   const { data: worth, isLoading, error } = useFetchWalletWorth()
 
-  return <BalanceSummary label={t('Wallet worth')} worth={worth} isLoading={isLoading} error={error} />
+  return (
+    <BalanceSummary
+      label={t('Wallet worth')}
+      worth={worth}
+      isLoading={isLoading}
+      error={error}
+      showDiscreetModeToggle
+    />
+  )
 }
 
 const HeaderLeft = () => {
@@ -153,35 +161,13 @@ const HeaderLeft = () => {
   )
 }
 
-const HeaderRight = () => {
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const { t } = useTranslation()
-
-  const showOfflineMessage = () =>
-    showToast({
-      text1: `${t('Reconnecting')}...`,
-      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
-      type: 'info',
-      onPress: () => navigation.navigate('SettingsScreen')
-    })
-
-  return (
-    <HeaderButtonsContainer>
-      <WalletConnectButton />
-      {networkStatus === 'offline' && (
-        <Button
-          onPress={showOfflineMessage}
-          iconProps={{ name: 'cloud-offline-outline' }}
-          variant="alert"
-          squared
-          compact
-        />
-      )}
-      <WalletSettingsButton />
-    </HeaderButtonsContainer>
-  )
-}
+const HeaderRight = () => (
+  <HeaderButtonsContainer>
+    <OfflineButton />
+    <WalletConnectButton />
+    <WalletSettingsButton />
+  </HeaderButtonsContainer>
+)
 
 const HeaderButtonsContainer = styled.View`
   flex-direction: row;
@@ -196,10 +182,6 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
   flex: 1;
-`
-
-const RoundedCardStyled = styled(RoundedCard)`
-  padding-top: ${VERTICAL_GAP}px;
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

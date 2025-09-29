@@ -1,5 +1,23 @@
 # @alephium/explorer
 
+## 1.11.2
+
+### Patch Changes
+
+- a1691f2: Tag conflicted transactions
+
+## 1.11.1
+
+### Patch Changes
+
+- e78bc2d: Improve display of groupless TXs
+
+## 1.11.0
+
+### Minor Changes
+
+- a66dbb8: Support display of groupless addresses
+
 ## 1.10.15
 
 ### Patch Changes

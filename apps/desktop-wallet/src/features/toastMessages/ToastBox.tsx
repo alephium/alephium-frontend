@@ -59,7 +59,8 @@ const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
+  width: fit-content;
+
   background-color: ${({ theme }) => theme.bg.background1};
   border-radius: var(--radius-medium);
 
@@ -68,20 +69,11 @@ const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
       case 'error':
         return getToastBoxStyle(theme.global.alert)
       case 'info':
-        return getToastBoxStyle(theme.bg.contrast)
+        return getToastBoxStyle(theme.global.accent)
       case 'success':
         return getToastBoxStyle(theme.global.valid)
     }
   }}
-
-  ${({ type, theme }) =>
-    theme.name === 'light' &&
-    type === 'info' &&
-    css`
-      ${ToastBoxContent} {
-        background-color: ${theme.bg.background2};
-      }
-    `}
 `
 
 const ToastBoxContent = styled(motion.div)`
@@ -94,11 +86,11 @@ const ToastBoxContent = styled(motion.div)`
   overflow-y: auto;
   font-weight: var(--fontWeight-semiBold);
   pointer-events: all;
-  background-color: ${({ theme }) => theme.bg.highlight};
   z-index: 1;
   padding: 8px var(--spacing-4);
   border-radius: var(--radius-medium);
   width: 100%;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
 
   -webkit-app-region: no-drag;
 `
@@ -111,6 +103,10 @@ const getToastBoxStyle = (color: string) => css`
         theme.name === 'light' ? colord(color).alpha(0.1).toHex() : colord(color).alpha(0.2).lighten(0.1).toHex()};
     color: ${({ theme }) =>
       theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex()};
+
+    svg {
+      stroke: ${({ theme }) => (theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex())};};
+    }
   }
 `
 

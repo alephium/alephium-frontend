@@ -1,8 +1,7 @@
-import { Children, isValidElement, ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
-import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
@@ -22,8 +21,8 @@ import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
 import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import EditDappUrlModal from '~/features/ecosystem/EditDappUrlModal'
 import ConnectDappModal from '~/features/ecosystem/modals/ConnectDappModal'
-import ConnectDappNewAddressModal from '~/features/ecosystem/modals/ConnectDappNewAddressModal'
 import NetworkSwitchModal from '~/features/ecosystem/modals/NetworkSwitchModal'
+import SignChainedTxModal from '~/features/ecosystem/modals/SignChainedTxModal'
 import SignDeployContractTxModal from '~/features/ecosystem/modals/SignDeployContractTxModal'
 import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScriptTxModal'
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
@@ -34,11 +33,11 @@ import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import ModalContextProvider from '~/features/modals/ModalContext'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { ModalInstance } from '~/features/modals/modalTypes'
-import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
+import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
@@ -118,8 +117,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <SelectAddressModal {...params.props} />
     case 'SelectContactModal':
       return <SelectContactModal {...params.props} />
-    case 'ConsolidationModal':
-      return <ConsolidationModal {...params.props} />
+    case 'SignConsolidateTxModal':
+      return <SignConsolidateTxModal {...params.props} />
     case 'WalletConnectErrorModal':
       return <WalletConnectErrorModal />
     case 'WalletConnectPairingsModal':
@@ -164,8 +163,6 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <ConnectDappModal {...params.props} />
     case 'NetworkSwitchModal':
       return <NetworkSwitchModal {...params.props} />
-    case 'ConnectDappNewAddressModal':
-      return <ConnectDappNewAddressModal {...params.props} />
     case 'SignExecuteScriptTxModal':
       return <SignExecuteScriptTxModal {...params.props} />
     case 'SignDeployContractTxModal':
@@ -182,6 +179,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <DataFetchErrorModal {...params.props} />
     case 'ConnectTipModal':
       return <ConnectTipModal />
+    case 'SignChainedTxModal':
+      return <SignChainedTxModal {...params.props} />
     default:
       return null
   }
@@ -193,14 +192,6 @@ interface ModalsContainerProps {
 
 const ModalsContainer = ({ children }: ModalsContainerProps) => {
   const hasOpenedModals = useAppSelector((s) => selectAllModals(s).length > 0)
-
-  useEffect(() => {
-    Children.forEach(children, (child) => {
-      if (isValidElement(child) && !isModalWrapped(child)) {
-        console.warn(`Warning: ${getElementName(child)} is not wrapped! Please wrap it with the memo function.`)
-      }
-    })
-  }, [children])
 
   return <ModalsContainerStyled pointerEvents={hasOpenedModals ? 'auto' : 'none'}>{children}</ModalsContainerStyled>
 }

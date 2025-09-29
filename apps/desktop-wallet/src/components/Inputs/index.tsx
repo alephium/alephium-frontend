@@ -33,7 +33,7 @@ export interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> 
 }
 
 export const inputPlaceHolderVariants: Variants = {
-  up: { y: '-10px', scale: 0.8 },
+  up: { y: '-8px', scale: 0.75 },
   down: { y: 0, scale: 1 }
 }
 
@@ -70,7 +70,7 @@ export const inputDefaultStyle = (
   ${topPadding &&
   hasLabel &&
   css`
-    padding-top: 13px;
+    padding-top: 10px;
   `}
 
   &:focus {

@@ -11,6 +11,7 @@ import { blocksQueries } from '@/api/blocks/blocksApi'
 import client from '@/api/client'
 import { transactionsQueries } from '@/api/transactions/transactionsApi'
 import Badge from '@/components/Badge'
+import FailedTXBubble from '@/components/FailedTXBubble'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, TightLink } from '@/components/Links'
 import PageSwitch from '@/components/PageSwitch'
@@ -83,7 +84,7 @@ const BlockInfoPage = () => {
         badge={isUncleBlock ? t('Uncle') : isOrphanBlock ? t('Orphan') : undefined}
         isLoading={isBlockInfoPending || isTxListPending}
       />
-      <Table bodyOnly isLoading={isBlockInfoPending}>
+      <Table bodyOnly noBorder isLoading={isBlockInfoPending}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
@@ -128,7 +129,7 @@ const BlockInfoPage = () => {
         !isTxListPending && !txList ? (
           <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
-          <Table main hasDetails scrollable isLoading={isTxListPending}>
+          <Table noBorder main hasDetails scrollable isLoading={isTxListPending}>
             {txList && (
               <>
                 <TableHeader
@@ -163,19 +164,26 @@ interface TransactionRowProps {
 }
 
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
-  const t = transaction
-  const outputs = t.outputs as explorer.AssetOutput[]
+  const { t } = useTranslation()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
+
+  const tx = transaction
+  const outputs = tx.outputs as explorer.AssetOutput[]
+  const isConflicted = transaction.conflicted
+  const isScriptExecutionOk = transaction.scriptExecutionOk
 
   const totalAmount = outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))
 
   return (
     <>
-      <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
-        <TransactionIcon />
-        <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="150px" />
+      <TableRow key={tx.hash} isActive={detailOpen} onClick={toggleDetail}>
+        <TransactionIcon>
+          {isConflicted && <FailedTXBubble tooltipContent={t('Conflicted transaction')}>x</FailedTXBubble>}
+          {!isScriptExecutionOk && <FailedTXBubble tooltipContent={t('Script execution failed')}>!</FailedTXBubble>}
+        </TransactionIcon>
+        <TightLink to={`/transactions/${tx.hash}`} text={tx.hash} maxWidth="150px" />
         <span>
-          {t.inputs ? t.inputs.length : 0} {t.inputs && t.inputs.length === 1 ? 'address' : 'addresses'}
+          {tx.inputs ? tx.inputs.length : 0} {tx.inputs && tx.inputs.length === 1 ? 'address' : 'addresses'}
         </span>
         <RiArrowRightLine size={15} />
         <span>
@@ -187,10 +195,9 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <td />
-        <td />
         <AnimatedCell>
-          {t.inputs &&
-            t.inputs.map(
+          {tx.inputs &&
+            tx.inputs.map(
               (input, i) =>
                 input.address && (
                   <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
@@ -236,9 +243,7 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   },
   {
     tdPos: 3,
-    style: css`
-      color: ${({ theme }) => theme.global.highlight};
-    `
+    style: css``
   },
   {
     tdPos: 4,
@@ -249,15 +254,14 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   },
   {
     tdPos: 5,
-    style: css`
-      color: ${({ theme }) => theme.global.highlight};
-    `
+    style: css``
   }
 ]
 
 export default BlockInfoPage
 
 const TransactionIcon = styled.div`
+  position: relative;
   background-image: url(${transactionIcon});
   background-position: center;
   background-repeat: no-repeat;
@@ -271,7 +275,7 @@ const IODetailList = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 10px;
 `
 

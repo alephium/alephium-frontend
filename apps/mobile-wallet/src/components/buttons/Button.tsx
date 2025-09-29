@@ -48,7 +48,7 @@ const Button = ({
   compact,
   flex,
   animated,
-  haptics,
+  haptics = true,
   wide,
   loading = false,
   ...props

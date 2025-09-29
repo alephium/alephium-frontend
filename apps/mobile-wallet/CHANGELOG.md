@@ -1,5 +1,52 @@
 # @alephium/mobile-wallet
 
+## 2.3.3
+
+### Patch Changes
+
+- 640e781: Fix disconnecting from dApp
+- f5852d6: Fix annoying clipboard paste message on iOS
+- 26e98a2: Force address discovery on wallet import
+
+## 2.3.2
+
+### Patch Changes
+
+- 4250d1e: Fix laggy text input field
+- 235a954: Allow user to sign unsigned tx even if decoding fails
+- 4038b69: Improve discoverability of newly created addresses
+- 74ec941: Fix transaction building with groupless addresses
+- d07d389: Fix missing address when setting another one as the default one
+
+## 2.3.1
+
+### Patch Changes
+
+- fb18d10: Improve app performance when sending/receiving transactions
+- 1958c3b: Display decoded info when signing transactions
+- 1958c3b: Display simulated transaction info when calling smart contracts
+- ac85148: Add discreet mode toggle button in dashboard screen
+- ac074a0: Fix tokens list when GitHub is unreachable
+- 0eb693b: Open favorites dApp tab by default if favorites exist
+- a366555: Allow user to generate address in old format
+- e0d49f8: Fix WalletConnect signer address in mobile wallet
+
+## 2.3.0
+
+### Patch Changes
+
+- 8664e5e: Fix address discovery screen after forgetting address
+- 4fb20b8: Support chained transaction dApp event
+- 48ee490: Fund missing gas from another address
+- f8d9989: Fallback to node API when explorer backend API is down
+- 8664e5e: Fix loading modal text
+- 8664e5e: Fix state update after sending transactions
+- da8c0a6: Fix display of transactions label, icons, origin addresses, and destination addresses
+- 251db88: Adjust gradient bg to better fit large screens & brand style
+- e138def: Fix modal dismissal when sending NFT
+- c815496: Improve performance by saving cache only when app in background
+- 8016406: Fund address with another address if it lacks funds when interacting with a dApp
+
 ## 2.2.1
 
 ### Patch Changes

@@ -1,4 +1,5 @@
-import { isConfirmedTx } from '@alephium/shared'
+import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared'
+import { isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -8,6 +9,7 @@ import styled, { css, useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
+import FailedTXBubble from '@/components/FailedTXBubble'
 import { AddressLink, TightLink } from '@/components/Links'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
@@ -33,9 +35,11 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
 
-  const { assets, infoType } = useTransactionInfo(tx, addressHash)
+  const { assets, infoType, direction } = useTransactionInfo(tx, addressHash)
+  const isGrouplessAddress = isGrouplessAddressWithoutGroupIndex(addressHash)
 
-  const isMoved = infoType === 'move'
+  const isMoved = infoType === 'move' || (infoType === 'moveGroup' && isGrouplessAddress)
+
   const isPending = !isConfirmedTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
 
@@ -43,27 +47,34 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
     infoType,
     isFailedScriptTx: isFailedScriptExecution,
     isInContract,
-    theme
+    theme,
+    direction
   })
 
   const renderOutputAccounts = () => {
     if (!tx.outputs) return
-    // Check for auto-sent tx
-    if (tx.outputs.every((o) => o.address === addressHash)) {
-      return <AddressLink key={addressHash} address={addressHash} maxWidth="250px" />
-    } else {
-      const outputs = _(tx.outputs.filter((o) => o.address !== addressHash))
-        .map((v) => v.address)
-        .uniq()
-        .value()
 
-      return (
-        <div>
-          <AddressLink address={outputs[0]} maxWidth="250px" />
-          {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
-        </div>
-      )
+    // Check if all output addresses are the same for self-transfer, group transfer, or sweep
+    const firstAddress = tx.outputs[0]?.address
+    if (firstAddress && tx.outputs.every((o) => o.address === firstAddress)) {
+      return <AddressLink key={firstAddress} address={firstAddress} maxWidth="250px" />
     }
+
+    const outputs = _(
+      tx.outputs.filter((o) =>
+        isGrouplessAddress ? !isSameBaseAddress(addressHash, o.address) : o.address !== addressHash
+      )
+    )
+      .map((v) => v.address)
+      .uniq()
+      .value()
+
+    return (
+      <div>
+        <AddressLink address={outputs.at(0) ?? ''} maxWidth="250px" />
+        {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
+      </div>
+    )
   }
 
   const renderInputAccounts = () => {
@@ -101,9 +112,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
             <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
           {!isPending && !tx.scriptExecutionOk && (
-            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
-              !
-            </FailedTXBubble>
+            <FailedTXBubble tooltipContent={t('Script execution failed')}>!</FailedTXBubble>
           )}
         </TxLabelBadgeContainer>
 
@@ -118,29 +127,38 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
 
         <Badge type="neutral" compact content={directionText} floatRight minWidth={40} />
 
-        {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
+        {!isPending &&
+          (infoType === 'moveGroup' && direction === 'in' ? (
+            renderInputAccounts()
+          ) : infoType === 'move' || infoType === 'moveGroup' || infoType === 'out' ? (
+            isGrouplessAddress && !direction ? (
+              <AddressLink address={addressHash} maxWidth="250px" />
+            ) : (
+              renderOutputAccounts()
+            )
+          ) : (
+            renderInputAccounts()
+          ))}
         {!isPending && (
           <AmountCell>
             <Amount
               key={assets.alph.id}
               assetId={assets.alph.id}
               value={assets.alph.amount}
-              highlight={!isMoved}
-              displaySign={!isMoved}
-              color={isMoved ? theme.font.secondary : undefined}
               suffix={assets.alph.symbol}
               decimals={assets.alph.decimals}
+              highlight
+              displaySign
             />
             {assets.fungible.map((asset) => (
               <Amount
                 key={asset.id}
                 assetId={asset.id}
                 value={asset.amount}
-                highlight={!isMoved}
-                displaySign={!isMoved}
-                color={isMoved ? theme.font.secondary : undefined}
                 suffix={asset.symbol}
                 decimals={asset.decimals}
+                highlight
+                displaySign
               />
             ))}
             {assets['non-fungible'].map((asset) => (
@@ -148,9 +166,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
                 key={asset.id}
                 assetId={asset.id}
                 value={asset.amount}
-                highlight={!isMoved}
-                displaySign={!isMoved}
                 color={isMoved ? theme.font.secondary : undefined}
+                highlight
+                displaySign
               />
             ))}
           </AmountCell>
@@ -160,8 +178,13 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
       {!isPending && (
         <TableDetailsRow openCondition={detailOpen}>
           <AnimatedCell colSpan={7}>
-            <Table>
-              <TableHeader headerTitles={[t('Inputs'), '', t('Outputs')]} columnWidths={['', '50px', '']} compact />
+            <Table transparent noBorder>
+              <TableHeader
+                headerTitles={[t('Inputs'), '', t('Outputs')]}
+                columnWidths={['', '50px', '']}
+                compact
+                transparent
+              />
               <TableBody>
                 <TableRow>
                   <IODetailList>
@@ -177,9 +200,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
                     )}
                   </IODetailList>
 
-                  <span style={{ textAlign: 'center' }}>
+                  <ArrowContainer>
                     <RiArrowRightLine size={12} />
-                  </span>
+                  </ArrowContainer>
 
                   <IODetailList>
                     {tx.outputs && (
@@ -236,8 +259,11 @@ const BlockRewardLabel = styled.span`
 `
 
 const BlockRewardInputLabel = styled(BlockRewardLabel)`
-  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 6px 10px;
 `
 
 const AmountCell = styled.span`
@@ -286,32 +312,25 @@ const Assets = styled.div`
 `
 
 const IODetailList = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 8px;
+  border-radius: 6px;
 `
 
 const IODetailsContainer = styled.div`
-  padding: 8px 10px;
+  padding: 6px 10px;
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 `
 
-const FailedTXBubble = styled.div`
-  position: absolute;
-  height: 14px;
-  width: 14px;
-  border-radius: 14px;
-  background-color: ${({ theme }) => theme.global.alert};
-  color: white;
-  top: auto;
-  bottom: auto;
-  right: -20px;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 800;
+const ArrowContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

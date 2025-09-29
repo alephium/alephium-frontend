@@ -121,7 +121,6 @@
   "Name": "ชื่อ",
   "Description": "คำอธิบาย",
   "Collection": "คอลเล็กชัน",
-  "Group by collection": "กลุ่มตามคอลเลคชั่น",
   "Unknown collection": "ไม่ทราบคอลเลคชั่นนี้",
   "Raw amount": "วัตถุดิบรวม",
   "Page not found": "ไม่พบหน้าเพจ",
@@ -137,5 +136,12 @@
   "Unsupported media type": "ไม่รองรับประเภทสื่อ",
   "Video thumbnail": "ขนาดย่อวิดีโอ",
   "No media": "ไม่มีสื่อ",
-  "Address worth": "มูลค่าที่อยู่"
+  "Address worth": "มูลค่าที่อยู่",
+  "Group": "กลุ่ม",
+  "Group(s)": "กลุ่ม",
+  "All": "ทั้งหมด",
+  "Group {{ number }}": "กลุ่ม {{ number }}",
+  "Group transfer": "การโอนกลุ่ม",
+  "Conflicted": "ขัดแย้งกัน",
+  "Conflicted transaction": "ธุรกรรมที่ขัดแย้ง"
 }

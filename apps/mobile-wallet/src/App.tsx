@@ -20,12 +20,14 @@ import { sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
+import usePersistQueryCacheOnBackground from '~/features/persistQueryCache/usePersistQueryCacheOnBackground'
 import { useSystemRegion } from '~/features/settings/regionSettings/useSystemRegion'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { hasMigratedFromAsyncStorage, migrateFromAsyncStorage } from '~/persistent-storage/storage'
 import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
 import {
@@ -70,7 +72,6 @@ const App = () => {
 }
 
 const AppContent = () => {
-  const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
   useEffect(
@@ -92,28 +93,47 @@ const AppContent = () => {
   return (
     <Provider store={store}>
       <PersistQueryClientContextProvider createPersister={createTanstackAsyncStoragePersister}>
-        <ApiContextProvider>
-          <Main>
-            <ThemeProvider theme={theme}>
-              <StatusBar animated translucent style="light" />
-              {showAppContent ? (
-                <RootStackNavigation
-                  initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
-                />
-              ) : (
-                // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
-                // splash screen to be show after the default one gets hidden, before we can show app content.
-                <View style={{ flex: 1, alignItems: 'center' }}>
-                  <AlephiumLogo style={{ width: '15%' }} />
-                </View>
-              )}
-              <ToastAnchor />
-              <LoadingManager />
-            </ThemeProvider>
-          </Main>
-        </ApiContextProvider>
+        <Main>
+          <ThemeProvider theme={theme}>
+            <StatusBar animated translucent style="light" />
+
+            <AppRoutes />
+
+            <ToastAnchor />
+            <LoadingManager />
+          </ThemeProvider>
+        </Main>
       </PersistQueryClientContextProvider>
     </Provider>
+  )
+}
+
+const AppRoutes = () => {
+  const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
+  const isQueryCacheRestored = useIsQueryCacheRestored()
+
+  const showSplashScreen = !showAppContent || !isQueryCacheRestored
+
+  if (showSplashScreen) {
+    return (
+      // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+      // splash screen to be show after the default one gets hidden, before we can show app content.
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <AlephiumLogo style={{ width: '15%' }} />
+      </View>
+    )
+  }
+
+  return <Routes initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined} />
+}
+
+const Routes = ({ initialRouteName }: { initialRouteName: keyof RootStackParamList | undefined }) => {
+  useAddressesDataPolling()
+
+  return (
+    <ApiContextProvider>
+      <RootStackNavigation initialRouteName={initialRouteName} />
+    </ApiContextProvider>
   )
 }
 
@@ -136,23 +156,39 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
   return state
 }
 
-const Main = ({ children, ...props }: ViewProps) => {
+const useIsQueryCacheRestored = () => {
   const dispatch = useAppDispatch()
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const { restoreQueryCache } = usePersistQueryClientContext()
 
+  const [isQueryCacheRestored, setIsQueryCacheRestored] = useState(false)
+
+  useEffect(() => {
+    if (walletMetadata === undefined) {
+      return
+    } else if (walletMetadata === null) {
+      setIsQueryCacheRestored(true)
+    } else {
+      dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+      restoreQueryCache(walletMetadata.id)
+        .then(() => {
+          setIsQueryCacheRestored(true)
+        })
+        .catch(() => {
+          setIsQueryCacheRestored(true)
+        })
+    }
+  }, [dispatch, restoreQueryCache, walletMetadata])
+
+  return isQueryCacheRestored
+}
+
+const Main = ({ children, ...props }: ViewProps) => {
   useLoadStoredSettings()
   useInitializeThrottledClient()
   useLocalization()
   useSystemRegion()
-  useAddressesDataPolling()
-
-  useEffect(() => {
-    if (walletMetadata) {
-      dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
-      restoreQueryCache(walletMetadata.id)
-    }
-  }, [dispatch, restoreQueryCache, walletMetadata])
+  usePersistQueryCacheOnBackground()
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

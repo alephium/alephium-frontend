@@ -2,7 +2,7 @@ import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/features/localization/i18n'
 import 'overlayscrollbars/overlayscrollbars.css'
 
-import { ApiContextProvider, PersistQueryClientContextProvider } from '@alephium/shared-react'
+import { PersistQueryClientContextProvider } from '@alephium/shared-react'
 import isPropValid from '@emotion/is-prop-valid'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
@@ -16,7 +16,7 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
-import { createTanstackIndexedDBPersister } from '@/storage/tanstackIndexedDBPersister'
+import { createTanstackIndexedDBPersister } from '@/storage/tanstackQueryCache/tanstackIndexedDBPersister'
 
 const root = createRoot(document.getElementById('root')!)
 
@@ -28,9 +28,8 @@ root.render(
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <PersistQueryClientContextProvider createPersister={createTanstackIndexedDBPersister}>
-                <ApiContextProvider>
-                  <App />
-                </ApiContextProvider>
+                <App />
+
                 <ReactQueryDevtools initialIsOpen={false} />
               </PersistQueryClientContextProvider>
               <Tooltips />

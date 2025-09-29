@@ -16,7 +16,7 @@ const authTagLength = 16
 
 type Digest = 'sha256' | 'sha512'
 
-type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
+type Pbkdf2Function = (password: Buffer, salt: Buffer) => Buffer
 
 // Export a polyfilled version of createHash
 export { createHash } from 'crypto'
@@ -44,11 +44,7 @@ const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
   return JSON.stringify(payload)
 }
 
-export const decryptAsync = async (
-  password: string,
-  payloadRaw: string,
-  pbkdf2CustomFunc: Pbkdf2Function
-): Promise<string> => {
+export const decrypt = (password: string, payloadRaw: string, pbkdf2CustomFunc: Pbkdf2Function): string => {
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
@@ -59,7 +55,7 @@ export const decryptAsync = async (
   const salt = Buffer.from(payload.salt, 'hex')
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
-  const derivedKey = await keyFromPasswordAsync(password, salt, pbkdf2CustomFunc)
+  const derivedKey = keyFromPasswordCustom(Buffer.from(password, 'utf8'), salt, pbkdf2CustomFunc)
 
   return _decrypt(iv, encrypted, derivedKey)
 }
@@ -83,5 +79,5 @@ const createDecipher = (key: CipherKey, iv: BinaryLike | null) =>
 const keyFromPassword = (password: BinaryLike, salt: BinaryLike, digest: Digest): Buffer =>
   pbkdf2Sync(password, salt, 10000, 32, digest)
 
-const keyFromPasswordAsync = (password: string, salt: Buffer, pbkdf2CustomFunc: Pbkdf2Function): Promise<Buffer> =>
+const keyFromPasswordCustom = (password: Buffer, salt: Buffer, pbkdf2CustomFunc: Pbkdf2Function): Buffer =>
   pbkdf2CustomFunc(password, salt)

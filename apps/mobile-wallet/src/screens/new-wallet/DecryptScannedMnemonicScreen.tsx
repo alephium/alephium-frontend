@@ -1,4 +1,4 @@
-import { decryptAsync } from '@alephium/shared-crypto'
+import { decrypt } from '@alephium/shared-crypto'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -68,7 +68,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     try {
       dispatch(activateAppLoading(t('Importing wallet')))
 
-      const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
+      const decryptedData = decrypt(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData // TODO: Verify JSON data
 
       try {

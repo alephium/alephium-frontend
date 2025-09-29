@@ -4,6 +4,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },
-  "eslint.validate": ["javascript", "typescript"],
-  "cSpell.language": "en,fr"
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }

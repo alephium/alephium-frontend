@@ -1721,8 +1721,7 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
-  - react-native-aes (2.0.0):
-    - React-Core
+    - Yoga
   - react-native-background-timer (2.4.1):
     - React-Core
   - react-native-compat (2.21.3):
@@ -1821,6 +1820,29 @@ PODS:
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-quick-crypto (0.7.17):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - OpenSSL-Universal
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
     - React-rendererdebug
     - React-utils
     - ReactCodegen
@@ -2737,7 +2759,6 @@ DEPENDENCIES:
   - React-logger (from `../../../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../../../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
-  - react-native-aes (from `../../../node_modules/react-native-aes-crypto`)
   - react-native-background-timer (from `../../../node_modules/react-native-background-timer`)
   - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
@@ -2949,8 +2970,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
-  react-native-aes:
-    :path: "../../../node_modules/react-native-aes-crypto"
   react-native-background-timer:
     :path: "../../../node_modules/react-native-background-timer"
   react-native-compat:

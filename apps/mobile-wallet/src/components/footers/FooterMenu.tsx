@@ -42,7 +42,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
 
   return (
     <View style={style} onLayout={handleFooterLayout}>
-      <FooterBlurContainer style={{ height: gradientHeight }}>
+      <FooterBlurContainer style={{ height: gradientHeight }} pointerEvents="none">
         {Platform.OS === 'ios' ? (
           <MaskedView
             style={{ flex: 1 }}

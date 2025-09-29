@@ -2,6 +2,8 @@ import {
   AddressHash,
   AmountDeltas,
   calcTxAmountsDeltaForAddress,
+  ExecuteScriptTx,
+  isExecuteScriptTx,
   isSentTx,
   selectPendingSentTransactionByHash,
   SentTransaction
@@ -12,10 +14,11 @@ import { useMemo } from 'react'
 import { useSharedSelector } from '@/redux'
 
 export const useTransactionAmountDeltas = (
-  tx: e.Transaction | e.PendingTransaction | SentTransaction,
+  tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx,
   addressHash: AddressHash
 ): AmountDeltas => {
-  const pendingSentTx = useSharedSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+  const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
+  const pendingSentTx = useSharedSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
   return useMemo(
     () =>
@@ -30,5 +33,6 @@ export const useTransactionAmountDeltas = (
 
 const calculatePendingTxAmountsDeltas = (tx: SentTransaction) => ({
   alphAmount: -BigInt(tx.amount ?? 0),
-  tokenAmounts: tx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) })) ?? []
+  tokenAmounts: tx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) })) ?? [],
+  fee: BigInt(0)
 })

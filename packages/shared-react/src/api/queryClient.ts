@@ -2,7 +2,7 @@ import { FIVE_MINUTES_MS, ONE_MINUTE_MS } from '@alephium/shared'
 import { QueryClient, QueryClientConfig } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
-const MAX_RETRIES = 3
+const MAX_RETRIES = 10
 const RETRY_ERROR_CODE = 429
 
 // Unfortunately, Tanstack's retry callback does not include an argument for the status code. The web3 package returns

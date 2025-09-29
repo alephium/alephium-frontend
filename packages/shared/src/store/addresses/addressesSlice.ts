@@ -1,4 +1,4 @@
-import { groupOfAddress } from '@alephium/web3'
+import { groupOfAddress, isGroupedKeyType, KeyType } from '@alephium/web3'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
@@ -94,10 +94,20 @@ export default addressesSlice
 
 // Reducers helper functions
 
-const getDefaultAddressState = (address: AddressBase): Address => ({
-  ...address,
-  group: groupOfAddress(address.hash)
-})
+const getDefaultAddressState = (addressBase: AddressBase): Address => {
+  const keyType: KeyType = addressBase.keyType ?? 'default'
+
+  return isGroupedKeyType(keyType)
+    ? {
+        ...addressBase,
+        keyType,
+        group: groupOfAddress(addressBase.hash)
+      }
+    : {
+        ...addressBase,
+        keyType
+      }
+}
 
 const addInitialAddress = (state: AddressesState, address: AddressBase) => {
   addressesAdapter.removeAll(state)

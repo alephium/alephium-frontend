@@ -2,8 +2,8 @@ import { isNetworkValid, WalletConnectSessionProposalModalProps } from '@alephiu
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
-import { AlertTriangle, PlusSquare } from 'lucide-react'
-import { memo } from 'react'
+import { PlusSquare } from 'lucide-react'
+import { memo, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -16,6 +16,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { showToast } from '@/features/toastMessages/toastMessagesActions'
+import { NetworkSwitchModalContent } from '@/features/walletConnect/NetworkSwitchModal'
 import useSignerAddress from '@/features/walletConnect/useSignerAddress'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -55,10 +56,11 @@ const WalletConnectSessionProposalModal = memo(
 
     const group = chainInfo.addressGroup
 
-    const { signerAddressHash, signerAddressPublicKey, setSignerAddressHash, addressesInGroup } =
+    const { signerAddressHash, signerAddressPublicKey, signerAddressKeyType, setSignerAddressHash, addressesInGroup } =
       useSignerAddress(group)
+    const addressHashesInGroup = useMemo(() => addressesInGroup.map((a) => a.hash), [addressesInGroup])
 
-    const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
+    const { showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
 
     const generateAddressInGroup = async () => {
       try {
@@ -120,7 +122,7 @@ const WalletConnectSessionProposalModal = memo(
         alephium: {
           methods: requiredNamespaceMethods,
           events: requiredNamespaceEvents,
-          accounts: [`${chain}:${signerAddressPublicKey}/default`]
+          accounts: [`${chain}:${signerAddressPublicKey}/${signerAddressKeyType ?? 'default'}`]
         }
       }
 
@@ -154,7 +156,13 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Approved WalletConnect connection' })
 
-        window.electron?.app.hide()
+        dispatch(
+          showToast({
+            text: `${t('dApp request approved.')} ${t('You can go back to your browser.')}`,
+            duration: 'short',
+            type: 'info'
+          })
+        )
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -174,7 +182,11 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
 
-        window.electron?.app.hide()
+        showToast({
+          text: `${t('dApp request rejected.')} ${t('You can go back to your browser.')}`,
+          duration: 'short',
+          type: 'info'
+        })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -200,28 +212,7 @@ const WalletConnectSessionProposalModal = memo(
         hasFooterButtons
       >
         {showNetworkWarning ? (
-          <>
-            <Section>
-              <InfoBox label="Switch network" Icon={AlertTriangle}>
-                <Trans
-                  t={t}
-                  i18nKey="walletConnectSwitchNetwork"
-                  values={{ currentNetworkName, network: chainInfo.networkId }}
-                  components={{ 1: <Highlight /> }}
-                >
-                  {
-                    'You are currently connected to <1>{{ currentNetworkName }}</1>, but the dApp requires a connection to <1>{{ network }}</1>.'
-                  }
-                </Trans>
-              </InfoBox>
-            </Section>
-            <ModalFooterButtons>
-              <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
-                {t('Decline')}
-              </ModalFooterButton>
-              <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
-            </ModalFooterButtons>
-          </>
+          <NetworkSwitchModalContent networkId={chainInfo.networkId} onUserDismiss={() => rejectAndCloseModal(true)} />
         ) : !signerAddressPublicKey ? (
           <>
             <Section>
@@ -264,7 +255,7 @@ const WalletConnectSessionProposalModal = memo(
             <AddressSelect
               label={t('Connect with address')}
               title={t('Select an address to connect with.')}
-              addressOptions={addressesInGroup}
+              addressOptions={addressHashesInGroup}
               selectedAddress={signerAddressHash}
               onAddressChange={setSignerAddressHash}
               id="from-address"

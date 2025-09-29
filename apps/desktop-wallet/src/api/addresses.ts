@@ -1,25 +1,34 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { throttledClient } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE, throttledClient } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
-import {
-  deriveAddressesInGroup,
-  getGapFromLastActiveAddress,
-  splitResultsArrayIntoOneArrayPerGroup
-} from '@/utils/addresses'
+import { deriveAddresses, getGapFromLastActiveAddress, splitResultsArrayIntoOneArrayPerGroup } from '@/utils/addresses'
 
 export const discoverAndCacheActiveAddresses = async (
-  addressIndexesToSkip: number[] = [],
+  skipIndexesForAddressesWithGroup: number[] = [],
+  skipIndexesForGrouplessAddresses: number[] = [],
   minGap = 5
 ): Promise<NonSensitiveAddressData[]> => {
-  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): NonSensitiveAddressData[] => [])
+  const groupedActiveAddresses = await discoverGroupedAddresses(skipIndexesForAddressesWithGroup, minGap)
+  const grouplessActiveAddresses = await discoverGrouplessAddresses(skipIndexesForGrouplessAddresses, minGap)
+
+  return [...groupedActiveAddresses, ...grouplessActiveAddresses]
+}
+
+export const discoverGroupedAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
   const activeAddresses: NonSensitiveAddressData[] = []
-  const skipIndexes = Array.from(addressIndexesToSkip)
+  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): NonSensitiveAddressData[] => [])
+  const _skipIndexes = Array.from(skipIndexes)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-    const newAddresses = deriveAddressesInGroup(group, minGap, skipIndexes)
+    const newAddresses = deriveAddresses({
+      group,
+      amount: minGap,
+      keyType: 'default',
+      skipIndexes: _skipIndexes
+    })
     addressesPerGroup[group] = newAddresses
-    skipIndexes.push(...newAddresses.map((address) => address.index))
+    _skipIndexes.push(...newAddresses.map((address) => address.index))
   }
 
   const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.hash)
@@ -37,8 +46,13 @@ export const discoverAndCacheActiveAddresses = async (
 
     while (gapPerGroup < minGap) {
       const remainingGap = minGap - gapPerGroup
-      const newAddresses = deriveAddressesInGroup(group, remainingGap, skipIndexes)
-      skipIndexes.push(...newAddresses.map((address) => address.index))
+      const newAddresses = deriveAddresses({
+        group,
+        amount: remainingGap,
+        keyType: 'default',
+        skipIndexes: _skipIndexes
+      })
+      _skipIndexes.push(...newAddresses.map((address) => address.index))
 
       const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
       const results = await getActiveAddressesResults(newAddressesToCheckIfActive)
@@ -51,6 +65,51 @@ export const discoverAndCacheActiveAddresses = async (
       gapPerGroup = gap
       activeAddresses.push(...newActiveAddresses)
     }
+  }
+
+  return activeAddresses
+}
+
+const discoverGrouplessAddresses = async (skipIndexes: number[] = [], minGap = 5) => {
+  const activeAddresses: NonSensitiveAddressData[] = []
+  const _skipIndexes = Array.from(skipIndexes)
+
+  const newGrouplessAddresses = deriveAddresses({
+    amount: minGap,
+    keyType: GROUPLESS_ADDRESS_KEY_TYPE,
+    skipIndexes: _skipIndexes
+  })
+
+  const grouplessAddressesToCheckIfActive = newGrouplessAddresses.flat().map((address) => address.hash)
+  const grouplessResults = await getActiveAddressesResults(grouplessAddressesToCheckIfActive)
+
+  const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+    newGrouplessAddresses,
+    grouplessResults
+  )
+
+  let grouplessGap = gap
+  activeAddresses.push(...newActiveAddresses)
+
+  while (grouplessGap < minGap) {
+    const remainingGap = minGap - grouplessGap
+    const newAddresses = deriveAddresses({
+      amount: remainingGap,
+      keyType: GROUPLESS_ADDRESS_KEY_TYPE,
+      skipIndexes: _skipIndexes
+    })
+    _skipIndexes.push(...newAddresses.map((address) => address.index))
+
+    const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
+    const results = await getActiveAddressesResults(newAddressesToCheckIfActive)
+
+    const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+      newAddresses,
+      results,
+      grouplessGap
+    )
+    grouplessGap = gap
+    activeAddresses.push(...newActiveAddresses)
   }
 
   return activeAddresses

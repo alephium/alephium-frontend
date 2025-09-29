@@ -77,6 +77,7 @@ const TransactionInfoPage = () => {
   }, [transactionInfoError])
 
   const confirmedTxInfo = transactionData && isConfirmedTx(transactionData) ? transactionData : undefined
+  const isConflicted = confirmedTxInfo?.conflicted
 
   const { data: txBlock } = useQuery({
     ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
@@ -148,10 +149,14 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
-      <SectionTitle title={t('Transaction')} />
+      <SectionTitle
+        title={t('Transaction')}
+        badge={isConflicted ? t('Conflicted') : undefined}
+        badgeType={isConflicted ? 'minus' : 'accent'}
+      />
       {!errorMessage ? (
         <>
-          <Table bodyOnly isLoading={txInfoLoading}>
+          <Table noBorder bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
               <TableBody>
                 <TableRow>
@@ -161,14 +166,16 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>{t('Status')}</span>
                   {confirmedTxInfo ? (
-                    confirmedTxInfo.scriptExecutionOk ? (
+                    isConflicted ? (
+                      <Badge type="minus" content={<span>{t('Conflicted')}</span>} />
+                    ) : confirmedTxInfo.scriptExecutionOk ? (
                       <Badge
                         type="plus"
                         content={
-                          <span>
+                          <>
                             <RiCheckLine style={{ marginRight: 5 }} size={15} />
                             {t('Success')}
-                          </span>
+                          </>
                         }
                         inline
                       />
@@ -270,7 +277,7 @@ const TransactionInfoPage = () => {
             )}
           </Table>
 
-          <FeesTable bodyOnly>
+          <FeesTable bodyOnly noBorder>
             {transactionData && (
               <TableBody>
                 <TableRow>
@@ -301,7 +308,7 @@ const TransactionInfoPage = () => {
           </FeesTable>
 
           <SecondaryTitle>{t('Inputs & outputs')}</SecondaryTitle>
-          <IOTable bodyOnly isLoading={txInfoLoading}>
+          <IOTable noBorder bodyOnly isLoading={txInfoLoading}>
             <TableBody>
               {confirmedTxInfo && (
                 <TableRow>
@@ -367,7 +374,7 @@ const AssetLogos = styled.div`
 `
 
 const FeesTable = styled(Table)`
-  margin-top: 30px;
+  margin-top: 20px;
 `
 
 const IOTable = styled(Table)``
@@ -397,6 +404,8 @@ const AmountList = styled.div`
 `
 
 const DeltaAmountsTitle = styled.div`
+  display: flex;
+  align-items: center;
   flex: 1;
   overflow: hidden;
 `
