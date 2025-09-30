@@ -83,7 +83,7 @@
     "@types/semver-compare": "^1.0.1",
     "@types/zxcvbn": "^4.4.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/coverage-v8": "^2.1.2",
+    "@vitest/coverage-v8": "^2.1.8",
     "@vitest/web-worker": "^2.1.2",
     "@walletconnect/core": "2.21.3",
     "@walletconnect/keyvaluestorage": "1.1.1",
