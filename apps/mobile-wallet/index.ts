@@ -1,8 +1,6 @@
 import './shim'
 import '~/features/localization/i18n'
 import './setupErrorHandling'
-// Node polyfills to be removed when dependencies are updated
-import 'react-native-url-polyfill/auto'
 
 import * as Sentry from '@sentry/react-native'
 import { registerRootComponent } from 'expo'

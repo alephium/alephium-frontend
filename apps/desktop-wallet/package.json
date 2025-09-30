@@ -77,7 +77,7 @@
     "@types/events": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.14.0",
-    "@types/react": "~19.0.0",
+    "@types/react": "19.0.14",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^19.1.6",
     "@types/semver-compare": "^1.0.1",

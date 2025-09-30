@@ -29,7 +29,7 @@
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "2.0.3",
-    "@types/react": "~19.0.0",
+    "@types/react": "19.0.14",
     "tsup": "^8.4.0",
     "typescript": "~5.8.3"
   }
