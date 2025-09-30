@@ -9,7 +9,7 @@ overrides:
   react: 19.0.0
   react-dom: 19.0.0
   '@types/react': 19.0.14
-  '@types/react-dom': 19.0.0
+  '@types/react-dom': 19.1.6
   ip@<=2.0.0: '>=2.0.1'
   undici@<6.21.1: '>=6.21.1'
   tar@<6.2.1: '>=6.2.1'
@@ -158,7 +158,7 @@ importers:
         version: 5.17.0
       '@testing-library/react':
         specifier: ^14.0.0
-        version: 14.1.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 14.1.2(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3
@@ -175,8 +175,8 @@ importers:
         specifier: ^3.0.6
         version: 3.0.11
       '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
+        specifier: 19.1.6
+        version: 19.1.6(@types/react@19.0.14)
       '@types/semver-compare':
         specifier: ^1.0.1
         version: 1.0.3
@@ -503,8 +503,8 @@ importers:
         specifier: 19.0.14
         version: 19.0.14
       '@types/react-dom':
-        specifier: 19.0.0
-        version: 19.0.0
+        specifier: 19.1.6
+        version: 19.1.6(@types/react@19.0.14)
       '@types/react-page-visibility':
         specifier: ^6.4.1
         version: 6.4.4
@@ -3787,8 +3787,10 @@ packages:
   '@types/react-color@3.0.11':
     resolution: {integrity: sha512-20m5GpzmdqwmSdnPeMs4UPPUuvkS4ESwakL6u2YN1hbo+ajWiiTwGYIMGhdcJFGeoLyAsr7TVonbZrMhU3+pdw==}
 
-  '@types/react-dom@19.0.0':
-    resolution: {integrity: sha512-1KfiQKsH1o00p9m5ag12axHQSb3FOU9H20UTrujVSkNhuCrRHiQWFqgEnTNK5ZNfnzZv8UWrnXVqCmCF9fgY3w==}
+  '@types/react-dom@19.1.6':
+    resolution: {integrity: sha512-4hOiT/dwO8Ko0gV1m/TJZYk3y0KBnY9vzDh7W+DH17b2HFSOGgdj33dhihPeuy3l0q23+4e+hoXHV6hCC4dCXw==}
+    peerDependencies:
+      '@types/react': 19.0.14
 
   '@types/react-native-background-timer@2.0.2':
     resolution: {integrity: sha512-cMAep0M5yqUHjiiRPvGiviqiJYdI45KSjbI5ufsIFSQGFwHwrHJC/8yawNhy0G3Gix6fufWLsEj6jC5niUNHiQ==}
@@ -9421,7 +9423,7 @@ packages:
     resolution: {integrity: sha512-n0ZrutD7DaX/j9VscF+uTALI3oUPa/pO4Z3soOBIjuRn/FzVu6aehhysxZCLi6y7duMf52WNZGMl7CtuK5EnRw==}
     peerDependencies:
       '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
+      '@types/react-dom': 19.1.6
       react: 19.0.0
       react-dom: 19.0.0
       react-native: '>=0.59'
@@ -14994,13 +14996,15 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
 
-  '@testing-library/react@14.1.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@testing-library/react@14.1.2(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@testing-library/dom': 9.3.4
-      '@types/react-dom': 19.0.0
+      '@types/react-dom': 19.1.6(@types/react@19.0.14)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@tokenizer/token@0.3.0': {}
 
@@ -15185,7 +15189,7 @@ snapshots:
       '@types/react': 19.0.14
       '@types/reactcss': 1.2.11
 
-  '@types/react-dom@19.0.0':
+  '@types/react-dom@19.1.6(@types/react@19.0.14)':
     dependencies:
       '@types/react': 19.0.14
 
