@@ -1,6 +1,6 @@
 import { createHash } from '@alephium/shared-crypto'
 import dayjs from 'dayjs'
-import { Children, Fragment, isValidElement, KeyboardEvent, ReactNode } from 'react'
+import { KeyboardEvent } from 'react'
 
 // ===================== //
 // ==== RUNNING ENV ==== //
@@ -72,27 +72,4 @@ export const cleanUrl = (url: string) => url.replace('https://', '')
 
 export const restartElectron = () => {
   window.electron?.app.restart()
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateChildrenType = <T extends (props: any) => ReactNode>({
-  children,
-  childType,
-  parentName
-}: {
-  children: ReactNode
-  childType: T
-  parentName: string
-}) => {
-  Children.forEach(children, (child) => {
-    if (!child || !isValidElement(child)) return
-
-    if (child.type === Fragment) {
-      validateChildrenType({ children: child.props.children, childType, parentName })
-    } else if (child.type !== childType) {
-      console.error(
-        `${parentName} only accepts ${childType.name} as children. Invalid child type: ${child.type.toString()}.`
-      )
-    }
-  })
 }

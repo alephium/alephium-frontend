@@ -27,4 +27,8 @@ config.transformer.minifierConfig = {
   }
 }
 
+// TODO: Remove this when we update the dependencies
+// https://github.com/expo/expo/issues/36375#issuecomment-2845231862
+config.resolver.unstable_enablePackageExports = false
+
 module.exports = config

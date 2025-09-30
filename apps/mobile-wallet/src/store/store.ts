@@ -1,6 +1,5 @@
 import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
-import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
 import hiddenTokensListenerMiddleware from '~/features/assetsDisplay/hideTokens/hiddenTokensMiddleware'
 import backupSlice from '~/features/backup/backupSlice'
@@ -39,7 +38,6 @@ export const store = configureStore({
     [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer
   },
   devTools: false,
-  enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({
       serializableCheck: false

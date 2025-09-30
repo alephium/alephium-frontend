@@ -209,7 +209,7 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   optionRender?: (option: SelectOption<T>, isSelected: boolean) => ReactNode
   searchPlaceholder?: string
   emptyListPlaceholder?: string
-  parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement>
+  parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement | null>
   minWidth?: number
   ListBottomComponent?: ReactNode
   isSearchable?: boolean

@@ -38,7 +38,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
-  scrollViewRef?: RefObject<ScrollView>
+  scrollViewRef?: RefObject<ScrollView | null>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
   hasKeyboard?: boolean

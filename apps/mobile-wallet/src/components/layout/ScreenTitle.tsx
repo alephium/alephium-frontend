@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import Animated, { Extrapolate, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'

@@ -84,9 +84,9 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
-        <BottomSheetModalProvider>
-          <Analytics>
-            <WalletConnectContextProvider>
+        <WalletConnectContextProvider>
+          <BottomSheetModalProvider>
+            <Analytics>
               <RootStack.Navigator
                 initialRouteName={initialRouteName || 'LandingScreen'}
                 screenOptions={{
@@ -127,10 +127,10 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="AuthorizedConnectionsScreen" component={AuthorizedConnectionsScreen} />
               </RootStack.Navigator>
               <AppModals />
-            </WalletConnectContextProvider>
-          </Analytics>
-          <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
-        </BottomSheetModalProvider>
+            </Analytics>
+            <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
+          </BottomSheetModalProvider>
+        </WalletConnectContextProvider>
       </NavigationContainer>
     </GestureHandlerRootView>
   )

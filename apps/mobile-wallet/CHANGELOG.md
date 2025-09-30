@@ -1,5 +1,17 @@
 # @alephium/mobile-wallet
 
+## 2.4.0
+
+### Minor Changes
+
+- 5bf55ab: Major upgrade of tech stack
+
+### Patch Changes
+
+- ec260f3: Add clear cache button in app settings
+- a7aecf8: Fix import from desktop wallet
+- 2f14465: Ensure cache is restored before firing API requests
+
 ## 2.3.3
 
 ### Patch Changes

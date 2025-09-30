@@ -79,7 +79,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
           )}
           <CompactToggle
             toggled={discreetMode}
-            onToggle={toggleDiscreetMode}
+            onClick={toggleDiscreetMode}
             IconOn={EyeOff}
             IconOff={Eye}
             data-tooltip-id="default"

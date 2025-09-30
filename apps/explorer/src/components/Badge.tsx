@@ -1,5 +1,6 @@
 import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
+import { ReactNode } from 'react'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
@@ -8,7 +9,7 @@ type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight' | 'accent'
 
 interface BadgeProps {
   type: BadgeType
-  content?: JSX.Element | string | undefined
+  content?: ReactNode | string | undefined
   amount?: string | bigint | undefined
   assetId?: string
   displayAmountSign?: boolean

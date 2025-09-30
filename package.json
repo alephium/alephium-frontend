@@ -18,7 +18,11 @@
     "postinstall": "pnpm check:deps"
   },
   "resolutions": {
-    "semver": "^7.5.2"
+    "semver": "^7.5.2",
+    "react": "~19.0.0",
+    "react-dom": "~19.0.0",
+    "@types/react": "~19.0.14",
+    "@types/react-dom": "~19.1.6"
   },
   "engines": {
     "node": ">=20"

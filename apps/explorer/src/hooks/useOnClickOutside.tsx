@@ -5,7 +5,7 @@ interface UseOnClickOutsideProps<T> {
   handler: (e: MouseEvent) => void
 }
 
-const useOnClickOutside = <T extends HTMLElement>({ ref, handler }: UseOnClickOutsideProps<T>) => {
+const useOnClickOutside = <T extends HTMLElement | null>({ ref, handler }: UseOnClickOutsideProps<T>) => {
   useEffect(() => {
     const listener = (e: MouseEvent) => {
       if (!ref.current || ref.current.contains(e.target as Node)) {

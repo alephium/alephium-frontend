@@ -4,7 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import BottomButtons from '~/components/buttons/BottomButtons'
