@@ -153,7 +153,12 @@ const TransactionAddresses = ({ tx, referenceAddress }: TransactionModalSubcompo
         <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
       </Row>
       <Row title={t('To')} transparent>
-        <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        <TransactionDestinationAddressesList
+          tx={tx}
+          referenceAddress={referenceAddress}
+          view="wallet"
+          showAddToContactsButton
+        />
       </Row>
     </>
   )
