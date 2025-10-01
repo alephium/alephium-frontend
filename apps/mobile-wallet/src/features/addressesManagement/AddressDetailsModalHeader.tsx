@@ -14,6 +14,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import Box from '~/components/layout/Box'
 import RoundedCard from '~/components/RoundedCard'
 import Row from '~/components/Row'
+import AddressLastActivity from '~/features/addressesManagement/AddressLastActivity'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
@@ -62,6 +63,8 @@ const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }
         </Row>
 
         <AddressGroupBadge addressHash={addressHash} />
+
+        <AddressLastActivity addressHash={addressHash} />
       </AddressDetailsBox>
 
       <AddressTokensBadges addressHash={addressHash} />

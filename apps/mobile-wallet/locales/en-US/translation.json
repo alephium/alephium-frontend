@@ -502,5 +502,7 @@
   "Groupless": "Groupless",
   "New": "New",
   "App cache": "App cache",
-  "Delete app cached data and reload.": "Delete app cached data and reload."
+  "Delete app cached data and reload.": "Delete app cached data and reload.",
+  "Never used": "Never used",
+  "Last activity": "Last activity"
 }
