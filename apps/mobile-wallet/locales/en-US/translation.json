@@ -504,5 +504,7 @@
   "App cache": "App cache",
   "Delete app cached data and reload.": "Delete app cached data and reload.",
   "Never used": "Never used",
-  "Last activity": "Last activity"
+  "Last activity": "Last activity",
+  "Unknown address": "Unknown address",
+  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending."
 }
