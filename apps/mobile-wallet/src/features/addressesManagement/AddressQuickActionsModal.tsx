@@ -1,4 +1,6 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
+import { useAddressExplorerLink } from '@alephium/shared-react'
+import { openBrowserAsync } from 'expo-web-browser'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -34,6 +36,7 @@ const AddressQuickActionsModal = memo<AddressQuickActionsModalProps>(({ addressH
           <SetDefaultAddressButton addressHash={addressHash} />
           <CopyAddressHashButton addressHash={addressHash} />
           <AddressSettingsButton addressHash={addressHash} onActionCompleted={dismissModal} />
+          <AddressExplorerButton addressHash={addressHash} />
           <DeleteAddressButton addressHash={addressHash} onActionCompleted={dismissModal} />
         </QuickActionButtons>
       </ScreenSection>
@@ -141,6 +144,19 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
       loading={defaultAddressIsChanging}
       color={address?.isDefault ? address.color : undefined}
       disabled={isDefaultAddress}
+    />
+  )
+}
+
+const AddressExplorerButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
+  const { t } = useTranslation()
+  const addressExplorerUrl = useAddressExplorerLink(addressHash)
+
+  return (
+    <QuickActionButton
+      iconProps={{ name: 'open-outline' }}
+      onPress={() => openBrowserAsync(addressExplorerUrl)}
+      title={t('Explorer')}
     />
   )
 }

@@ -1,4 +1,5 @@
 import { getBaseAddressStr, selectAddressGroup } from '@alephium/shared'
+import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { isGrouplessAddress, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -36,13 +37,13 @@ const AddressGroup = ({ addressStr }: AddressGroupProps) => {
               {
                 text: t('All'),
                 onClick: () => {
-                  navigate(`/addresses/${baseAddressStr}`)
+                  navigate(getAddressExplorerPagePath(baseAddressStr))
                 }
               },
               ...Array.from({ length: 4 }).map((_, i) => ({
                 text: t('Group {{ number }}', { number: i }),
                 onClick: () => {
-                  navigate(`/addresses/${baseAddressStr}:${i}`)
+                  navigate(getAddressExplorerPagePath(`${baseAddressStr}:${i}`))
                 }
               }))
             ]}

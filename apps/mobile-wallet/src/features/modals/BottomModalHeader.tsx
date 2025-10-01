@@ -12,6 +12,7 @@ interface BottomModalHeaderProps {
   title?: string | ReactNode
   showCloseButton?: boolean
   titleAlign?: BottomModalBaseProps['titleAlign']
+  rightButton?: ReactNode
 }
 
 const BottomModalHeader = ({
@@ -19,13 +20,14 @@ const BottomModalHeader = ({
   onClose,
   title,
   showCloseButton,
-  titleAlign = 'center'
+  titleAlign = 'center',
+  rightButton
 }: BottomModalHeaderProps) => {
   if (!title && !showCloseButton) return null
 
   return (
     <HeaderContainer style={{ height }}>
-      {titleAlign !== 'left' && showCloseButton && <HeaderSideContainer align="left" />}
+      {titleAlign !== 'left' && (showCloseButton || rightButton) && <HeaderSideContainer align="left" />}
       <HeaderTitleOutterContainer style={{ justifyContent: titleAlign === 'left' ? 'flex-start' : 'center' }}>
         <TitleContainer titleAlign={titleAlign}>
           {title &&
@@ -38,9 +40,10 @@ const BottomModalHeader = ({
             ))}
         </TitleContainer>
       </HeaderTitleOutterContainer>
-      {showCloseButton && (
+      {(showCloseButton || rightButton) && (
         <HeaderSideContainer align="right">
-          <CloseButton onPress={onClose} />
+          {rightButton}
+          {showCloseButton && <CloseButton onPress={onClose} />}
         </HeaderSideContainer>
       )}
     </HeaderContainer>
@@ -60,6 +63,7 @@ const HeaderSideContainer = styled.View<{ align: 'right' | 'left' }>`
   width: 10%;
   flex-direction: row;
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
+  gap: 5px;
 `
 
 const HeaderTitleOutterContainer = styled.View`

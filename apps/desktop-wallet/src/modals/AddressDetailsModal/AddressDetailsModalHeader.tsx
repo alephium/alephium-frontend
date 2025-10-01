@@ -1,4 +1,5 @@
 import { isGrouplessAddress, selectAddressByHash } from '@alephium/shared'
+import { useAddressExplorerLink } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -13,9 +14,9 @@ import { openInWebBrowser } from '@/utils/misc'
 
 const Header = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const addressExplorerUrl = useAddressExplorerLink(addressHash)
 
-  const handleExplorerLinkClick = () => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
+  const handleExplorerLinkClick = () => openInWebBrowser(addressExplorerUrl)
 
   return (
     <HeaderStyled>

@@ -1,8 +1,10 @@
 import { AddressHash } from '@alephium/shared'
-import { useFetchAddressBalances, useFetchAddressFtsSorted } from '@alephium/shared-react'
+import { useAddressExplorerLink, useFetchAddressBalances, useFetchAddressFtsSorted } from '@alephium/shared-react'
+import { openBrowserAsync } from 'expo-web-browser'
 import { memo } from 'react'
 
 import AddressBadge from '~/components/AddressBadge'
+import Button from '~/components/buttons/Button'
 import EmptyTokensListPlaceholders from '~/components/tokensLists/EmptyTokensListPlaceholder'
 import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDetailsModalHeader'
 import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
@@ -21,6 +23,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
   return (
     <BottomModal2
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
+      titleButton={<AddressExplorerButton addressHash={addressHash} />}
       flashListProps={{
         data: sortedFts,
         estimatedItemSize: 70,
@@ -50,6 +53,14 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
 })
 
 export default AddressDetailsModal
+
+const AddressExplorerButton = ({ addressHash }: { addressHash: AddressHash }) => {
+  const addressExplorerUrl = useAddressExplorerLink(addressHash)
+
+  return (
+    <Button iconProps={{ name: 'open-outline' }} onPress={() => openBrowserAsync(addressExplorerUrl)} compact squared />
+  )
+}
 
 const AddressesTokensListEmpty = ({ addressHash }: { addressHash: AddressHash }) => {
   const { data: addressTokens, isLoading: isLoadingAddressTokens } = useFetchAddressBalances(addressHash)
