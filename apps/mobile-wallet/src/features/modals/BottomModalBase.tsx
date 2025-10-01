@@ -13,6 +13,7 @@ export interface BottomModalBaseProps {
   onClose?: () => void
   title?: string | ReactNode
   titleAlign?: 'left' | 'center'
+  titleButton?: ReactNode
   maximisedContent?: boolean
   minHeight?: number
   noPadding?: boolean
@@ -35,6 +36,7 @@ const BottomModalBase = ({
   titleAlign,
   isContentScrollable,
   children,
+  titleButton,
   keyboardAvoidingViewBehavior = 'height'
 }: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => {
   useEffect(() => {
@@ -62,6 +64,7 @@ const BottomModalBase = ({
                 onClose={handleClose}
                 titleAlign={titleAlign}
                 showCloseButton={isContentScrollable}
+                rightButton={titleButton}
               />
               {!isContentScrollable && children}
             </View>

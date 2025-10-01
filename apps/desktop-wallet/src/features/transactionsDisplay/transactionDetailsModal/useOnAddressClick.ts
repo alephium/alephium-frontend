@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { useUnsortedAddressesHashes } from '@alephium/shared-react'
+import { getAddressExplorerLink, useUnsortedAddressesHashes } from '@alephium/shared-react'
 
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -14,7 +14,7 @@ const useOnAddressClick = () => {
   const onShowAddress = (addressHash: AddressHash) =>
     internalAddressHashes.includes(addressHash)
       ? dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
-      : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
+      : openInWebBrowser(getAddressExplorerLink(explorerUrl, addressHash))
 
   return onShowAddress
 }

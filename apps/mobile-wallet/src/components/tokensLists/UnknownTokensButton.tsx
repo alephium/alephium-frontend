@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { getAddressExplorerLink } from '@alephium/shared-react'
 import { openBrowserAsync } from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -22,7 +23,7 @@ const UnknownTokensButton = ({ tokensCount, addressHash }: UnknownTokensButtonPr
 
   const handleUnknownTokensPress = () =>
     addressHash
-      ? openBrowserAsync(`${explorerBaseUrl}/addresses/${addressHash}`)
+      ? openBrowserAsync(getAddressExplorerLink(explorerBaseUrl, addressHash))
       : dispatch(openModal({ name: 'UnknownTokensModal' }))
 
   return (

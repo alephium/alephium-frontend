@@ -84,6 +84,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
                   height={props.navHeight}
                   onClose={handleClose}
                   titleAlign={props.titleAlign}
+                  rightButton={props.titleButton}
                 />
                 {typeof props.flashListProps.ListHeaderComponent === 'function' ? (
                   <props.flashListProps.ListHeaderComponent />

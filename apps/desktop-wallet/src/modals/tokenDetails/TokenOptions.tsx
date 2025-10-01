@@ -1,4 +1,5 @@
 import { hideToken, selectIsTokenHidden, unhideToken } from '@alephium/shared'
+import { useAddressExplorerLink } from '@alephium/shared-react'
 import { addressFromTokenId } from '@alephium/web3'
 import { MoreVertical } from 'lucide-react'
 import { useMemo } from 'react'
@@ -15,13 +16,13 @@ const TokenDropdownOptions = ({ tokenId }: TokenDetailsModalProps) => {
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const isTokenHidden = useAppSelector((s) => selectIsTokenHidden(s, tokenId))
-  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const addressExplorerUrl = useAddressExplorerLink(addressFromTokenId(tokenId))
 
   const options: Array<DropdownOption> = useMemo(
     () => [
       {
         label: t('Show in explorer'),
-        onClick: () => openInWebBrowser(`${explorerUrl}/addresses/${addressFromTokenId(tokenId)}`)
+        onClick: () => openInWebBrowser(addressExplorerUrl)
       },
       {
         label: t(isTokenHidden ? 'Unhide asset' : 'Hide asset'),
@@ -31,7 +32,7 @@ const TokenDropdownOptions = ({ tokenId }: TokenDetailsModalProps) => {
         }
       }
     ],
-    [dispatch, explorerUrl, isTokenHidden, sendAnalytics, t, tokenId]
+    [addressExplorerUrl, dispatch, isTokenHidden, sendAnalytics, t, tokenId]
   )
 
   return <DropdownButton options={options} Icon={MoreVertical} circle tiny role="secondary" />

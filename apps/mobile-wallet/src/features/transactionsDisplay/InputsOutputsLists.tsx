@@ -15,11 +15,13 @@ import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
+import AddToContactsButton from '~/features/transactionsDisplay/AddToContactsButton'
 import PendingSentAddressBadge from '~/features/transactionsDisplay/PendingSentAddressBadge'
 import { useAppSelector } from '~/hooks/redux'
 
 interface InputsListProps extends UseTransactionProps {
   tx: e.Transaction | e.PendingTransaction | ExecuteScriptTx
+  showAddToContactsButton?: boolean
 }
 
 export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
@@ -50,7 +52,11 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress }: InputsL
   )
 }
 
-export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: InputsListProps) => {
+export const TransactionDestinationAddressesList = ({
+  tx,
+  referenceAddress,
+  showAddToContactsButton
+}: InputsListProps) => {
   const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
@@ -65,6 +71,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress }: In
       {addresses.map((address) => (
         <AddressBadge addressHash={address} key={address} />
       ))}
+      {addresses.length === 1 && showAddToContactsButton && <AddToContactsButton addressHash={addresses[0]} />}
     </AddressesList>
   )
 }

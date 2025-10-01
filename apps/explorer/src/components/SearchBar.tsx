@@ -1,3 +1,4 @@
+import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { addressFromPublicKey, isValidAddress } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import React, { useRef, useState } from 'react'
@@ -70,7 +71,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
         const addressHash = addressFromPublicKey(word)
 
         if (isValidAddress(addressHash)) {
-          redirect(`/addresses/${addressHash}`)
+          redirect(getAddressExplorerPagePath(addressHash))
         } else {
           displaySnackbar({ text: t('There seems to be an error in the public key format.'), type: 'info' })
         }
@@ -79,7 +80,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
       }
     } else {
       if (isValidAddress(word)) {
-        redirect(`/addresses/${word}`)
+        redirect(getAddressExplorerPagePath(word))
       } else {
         displaySnackbar({ text: t('There seems to be an error in the address format.'), type: 'info' })
       }
