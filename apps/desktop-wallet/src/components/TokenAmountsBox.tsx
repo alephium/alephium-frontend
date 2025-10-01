@@ -90,6 +90,7 @@ interface AssetAmountRowProps extends AmountBaseProps {
   tokenId: string
   amount: string
   extraAlphForDust: bigint
+  skipCaching?: boolean
 }
 
 const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAmountRowProps) => {

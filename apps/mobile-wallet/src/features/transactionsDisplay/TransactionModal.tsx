@@ -193,15 +193,16 @@ const TransactionStatus = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>
 
 interface TransactionAmountsProps extends TransactionModalSubcomponentProps {
   isLast?: boolean
+  skipCaching?: boolean
 }
 
-export const TransactionAmounts = ({ tx, referenceAddress, isLast }: TransactionAmountsProps) => {
+export const TransactionAmounts = ({ tx, referenceAddress, isLast, skipCaching }: TransactionAmountsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const {
     data: { fungibleTokens, nfts, nsts }
-  } = useFetchTransactionTokens(tx, referenceAddress)
+  } = useFetchTransactionTokens(tx, referenceAddress, skipCaching)
   const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
   const groupedFtAmounts = useMemo(

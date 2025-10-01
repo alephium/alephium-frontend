@@ -120,7 +120,7 @@ const SimulatedResult = ({
       <SectionTitle>{t('Simulated result')}</SectionTitle>
       {isRelevant ? (
         <>
-          <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType />
+          <TransactionSummaryStyled tx={unsignedData} referenceAddress={txParams.signerAddress} hideType skipCaching />
           <Box hasBg hasHorizontalPadding>
             <AddressesDataRows tx={unsignedData} referenceAddress={txParams.signerAddress} />
           </Box>

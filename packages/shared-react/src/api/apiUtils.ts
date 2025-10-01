@@ -2,6 +2,7 @@ import {
   AddressWithGroup,
   getMissingBalancesChainedTxParams,
   getTransactionExpectedBalances,
+  ONE_MINUTE_MS,
   TokenId,
   TransactionParams,
   UnlistedFT
@@ -16,11 +17,12 @@ interface GetQueryConfigProps {
   gcTime: number
   staleTime?: number
   networkId?: number
+  skipCaching?: boolean
 }
 
-export const getQueryConfig = ({ staleTime, gcTime, networkId }: GetQueryConfigProps) => ({
-  staleTime,
-  gcTime,
+export const getQueryConfig = ({ staleTime, gcTime, networkId, skipCaching }: GetQueryConfigProps) => ({
+  staleTime: skipCaching ? 0 : staleTime,
+  gcTime: skipCaching ? ONE_MINUTE_MS : gcTime,
   meta: { isMainnet: networkId === 0 }
 })
 
