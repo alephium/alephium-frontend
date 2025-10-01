@@ -7,13 +7,14 @@ import { TransactionDisplayProps } from '@/features/transactionsDisplay/transact
 interface TransactionSummaryProps extends TransactionDisplayProps {
   hideType?: boolean
   className?: string
+  skipCaching?: boolean
 }
 
-const TransactionSummary = ({ tx, referenceAddress, hideType, className }: TransactionSummaryProps) => (
+const TransactionSummary = ({ tx, referenceAddress, hideType, className, skipCaching }: TransactionSummaryProps) => (
   <SummaryStyled className={className}>
     <SummaryContent>
       {!hideType && <TransactionType tx={tx} referenceAddress={referenceAddress} />}
-      <TransactionAmounts tx={tx} referenceAddress={referenceAddress} />
+      <TransactionAmounts tx={tx} referenceAddress={referenceAddress} skipCaching={skipCaching} />
     </SummaryContent>
   </SummaryStyled>
 )

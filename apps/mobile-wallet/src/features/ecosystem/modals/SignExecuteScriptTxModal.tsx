@@ -152,7 +152,7 @@ const SimulatedResult = ({
                   />
                 </Row>
               )}
-            <TransactionAmounts tx={unsignedData} referenceAddress={txParams.signerAddress} isLast />
+            <TransactionAmounts tx={unsignedData} referenceAddress={txParams.signerAddress} isLast skipCaching />
           </>
         ) : (
           <AppText style={{ textAlign: 'center', marginTop: DEFAULT_MARGIN }} color="secondary">
