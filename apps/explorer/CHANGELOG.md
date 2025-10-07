@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.12.0
+
+### Minor Changes
+
+- 5bf55ab: Major upgrade of tech stack
+
 ## 1.11.2
 
 ### Patch Changes

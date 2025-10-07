@@ -2,7 +2,7 @@ import { AnalyticsProps, cleanExceptionMessage, getHumanReadableError, throttleE
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
 import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
-import { useCallback, useEffect } from 'react'
+import { ReactNode, useCallback, useEffect } from 'react'
 
 import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -57,7 +57,7 @@ export const sendAnalytics = (params: AnalyticsParams) => {
   }
 }
 
-export const Analytics = ({ children }: { children: JSX.Element }) => {
+export const Analytics = ({ children }: { children: ReactNode }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const analyticsId = useAppSelector((s) => s.settings.analyticsId)
   const usesBiometrics = useAppSelector((s) => s.settings.usesBiometrics)

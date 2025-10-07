@@ -20,9 +20,9 @@ const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }:
       <ModalWrapper>
         <Backdrop
           onClick={onClose}
-          initial={{ WebkitBackdropFilter: 'blur(0px)', backdropFilter: 'blur(0px)', opacity: 0 }}
-          animate={{ WebkitBackdropFilter: 'blur(3px)', backdropFilter: 'blur(3px)', opacity: 1 }}
-          exit={{ WebkitBackdropFilter: 'blur(0px)', backdropFilter: 'blur(0px)', opacity: 0 }}
+          initial={{ backdropFilter: 'blur(0px)', opacity: 0 }}
+          animate={{ backdropFilter: 'blur(3px)', opacity: 1 }}
+          exit={{ backdropFilter: 'blur(0px)', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 310, damping: 30 }}
         />
         <ModalContentWrapper

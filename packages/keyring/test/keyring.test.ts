@@ -138,13 +138,14 @@ describe('keyring', function () {
 
   it('should fail to initialize from old-format encrypted mnemonic when an incorrect password is given', () => {
     keyring.clear()
-    expect(() => keyring.initFromEncryptedMnemonic(encryptedWalletOld, wrongPassword, '')).rejects.toThrow()
+    expect(async () => await keyring.initFromEncryptedMnemonic(encryptedWalletOld, wrongPassword, '')).rejects.toThrow()
     expect(keyring['hdWallet']).toBeNull()
     expect(keyring['addresses']).toHaveLength(0)
   })
 
   it('should fail to initialize from new-format encrypted mnemonic when an incorrect password is given', () => {
-    expect(() => keyring.initFromEncryptedMnemonic(encryptedWalletNew, wrongPassword, '')).rejects.toThrow()
+    keyring.clear()
+    expect(async () => await keyring.initFromEncryptedMnemonic(encryptedWalletNew, wrongPassword, '')).rejects.toThrow()
     expect(keyring['hdWallet']).toBeNull()
     expect(keyring['addresses']).toHaveLength(0)
   })
@@ -316,10 +317,10 @@ describe('keyring', function () {
     expect(dangerouslyConvertUint8ArrayMnemonicToString(decrypted.decryptedMnemonic)).toBe(mnemonicStr)
   })
 
-  it('should fail to encrypt an invalid Uint8Array mnemonic', () => {
+  it('should fail to encrypt an invalid Uint8Array mnemonic', async () => {
     keyring.clear()
     const mnemonic = keyring.generateRandomMnemonic()
     mnemonic[0] = -1
-    expect(() => encryptMnemonic(mnemonic, correctPassword)).rejects.toThrow()
+    await expect(encryptMnemonic(mnemonic, correctPassword)).rejects.toThrow()
   })
 })

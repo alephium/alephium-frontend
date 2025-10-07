@@ -7,8 +7,8 @@ import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface PageTitleProps {
   title: ReactNode
-  surtitle?: string | JSX.Element
-  subtitle?: string | JSX.Element
+  surtitle?: string | ReactNode
+  subtitle?: string | ReactNode
   isLoading?: boolean
   badge?: string
   badgeType?: 'accent' | 'neutral' | 'plus' | 'minus' | 'neutralHighlight'

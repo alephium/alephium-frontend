@@ -56,7 +56,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { signer } from '~/signer'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-type DappBrowserContextValue = RefObject<WebView>
+type DappBrowserContextValue = RefObject<WebView | null>
 
 const DappBrowserContext = createContext<DappBrowserContextValue | null>(null)
 

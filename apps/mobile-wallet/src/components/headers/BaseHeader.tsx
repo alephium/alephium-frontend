@@ -1,6 +1,5 @@
 import MaskedView from '@react-native-masked-view/masked-view'
 import { StackHeaderProps } from '@react-navigation/stack'
-import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -20,13 +19,13 @@ export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' 
 
 export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
-  headerRef?: RefObject<Animated.View>
+  headerRef?: RefObject<Animated.View | null>
   titleAlwaysVisible?: boolean
   onBackPress?: () => void
   scrollY?: SharedValue<number>
   scrollEffectOffset?: number
   CustomContent?: ReactNode
-  progress?: SceneProgress
+  progress?: NonNullable<StackHeaderProps['progress']>
   isCentered?: boolean
 }
 

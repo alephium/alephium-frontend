@@ -114,7 +114,7 @@ const core = new Core({
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
-  const wcDeepLink = useRef<string>()
+  const wcDeepLink = useRef<string>('')
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { t } = useTranslation()

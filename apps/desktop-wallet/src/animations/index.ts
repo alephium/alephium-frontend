@@ -1,3 +1,5 @@
+import { AnimationGeneratorType } from 'framer-motion'
+
 const transition = { duration: 0.3 }
 
 export const fadeIn = {
@@ -43,11 +45,11 @@ export const slowTransition = {
 }
 
 export const normalTransition = {
-  transition: { type: 'spring', damping: 50, stiffness: 600 }
+  transition: { type: 'spring' as AnimationGeneratorType, damping: 50, stiffness: 600 }
 }
 
 export const fastTransition = {
-  transition: { type: 'spring', damping: 40, stiffness: 900 }
+  transition: { type: 'spring' as AnimationGeneratorType, damping: 40, stiffness: 900 }
 }
 
 export const fadeInSlowly = {
