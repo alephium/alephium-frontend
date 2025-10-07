@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useAddressExplorerLink } from '@alephium/shared-react'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -7,7 +8,6 @@ import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
-import { useAppSelector } from '@/hooks/redux'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface CheckAddressesBoxProps extends BoxProps {
@@ -53,13 +53,10 @@ export default CheckAddressesBox
 
 const ExplorerLink = ({ addressHash }: { addressHash: AddressHash }) => {
   const { t } = useTranslation()
-  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const addressExplorerUrl = useAddressExplorerLink(addressHash)
 
   return (
-    <ActionLinkStyled
-      onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)}
-      tooltip={t('Show in explorer')}
-    >
+    <ActionLinkStyled onClick={() => openInWebBrowser(addressExplorerUrl)} tooltip={t('Show in explorer')}>
       <ExternalLinkIcon size={12} />
     </ActionLinkStyled>
   )

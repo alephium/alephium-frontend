@@ -1,4 +1,5 @@
 import { isFT, isListedFT, Token } from '@alephium/shared'
+import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { addressFromTokenId } from '@alephium/web3'
 import { motion } from 'framer-motion'
@@ -26,7 +27,7 @@ const TokenList = ({ tokens, addressStr, isLoading, className }: TokenListProps)
   const handleTokenNameClick = (tokenId: string) => {
     try {
       const tokenAddress = addressFromTokenId(tokenId)
-      navigate(`/addresses/${tokenAddress}`)
+      navigate(getAddressExplorerPagePath(tokenAddress))
     } catch (e) {
       console.error(e)
     }

@@ -16,7 +16,7 @@ const AddressGroupBadge = ({ addressHash, ...props }: AddressGroupBadgeProps) =>
   if (addressGroup === undefined) return null
 
   return (
-    <Row title={t('Group')} isLast short>
+    <Row title={t('Group')} short>
       <Badge light border {...props}>
         {addressGroup}
       </Badge>

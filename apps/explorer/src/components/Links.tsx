@@ -1,4 +1,5 @@
 import { AssetAmount } from '@alephium/shared'
+import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import { map } from 'lodash'
 import { ReactNode } from 'react'
@@ -92,7 +93,7 @@ const AddressLinkBase = ({
 
   return (
     <div className={className}>
-      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
+      <TightLink to={getAddressExplorerPagePath(address)} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tooltip-id="default" data-tooltip-content={txHashRef}>
           <RiExternalLinkLine size={10} />

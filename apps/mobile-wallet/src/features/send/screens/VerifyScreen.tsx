@@ -15,6 +15,7 @@ import { SignChainedTxModalContent } from '~/features/ecosystem/modals/SignChain
 import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import { SignTransferTxModalAddressesRows } from '~/features/ecosystem/modals/SignTransferTxModal'
+import UnknownAddressWarning from '~/features/send/screens/UnknownAddressWarning'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
@@ -74,6 +75,8 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
             <SignModalFeesRow fees={fees} />
           </Surface>
         )}
+
+        <UnknownAddressWarning addressHash={toAddress} />
       </ScreenSection>
     </ScrollScreen>
   )
