@@ -15,6 +15,7 @@ import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
 import { queryClient } from '@/api/queryClient'
+import { useIsExplorerOffline } from '@/network'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
@@ -46,6 +47,8 @@ export const PersistQueryClientContextProvider = ({
   children,
   createPersister
 }: PersistQueryClientContextProviderProps) => {
+  const isExplorerOffline = useIsExplorerOffline()
+
   const [isRestoring, setIsRestoring] = useState(false)
 
   const clearQueryCache = useCallback(() => {
@@ -54,6 +57,8 @@ export const PersistQueryClientContextProvider = ({
 
   const persistQueryCache = useCallback(
     async (walletId: string) => {
+      if (isExplorerOffline) return
+
       console.log('⤵️ saving query client for wallet', walletId)
 
       try {
@@ -71,7 +76,7 @@ export const PersistQueryClientContextProvider = ({
         console.error('Error saving query client for wallet', walletId, error)
       }
     },
-    [createPersister]
+    [createPersister, isExplorerOffline]
   )
 
   const restoreQueryCache = useCallback(
