@@ -2,7 +2,7 @@ import {
   batchers,
   FtListMap,
   getNetworkNameFromNetworkId,
-  is5XXError,
+  ListedFT,
   NFT,
   NFTDataType,
   NFTDataTypes,
@@ -29,6 +29,7 @@ interface TokenQueryProps extends SkipProp {
   id: TokenId
   networkId?: number
   skipCaching?: boolean
+  isExplorerOffline?: boolean
 }
 
 interface NFTQueryProps extends TokenQueryProps {
@@ -65,10 +66,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
               : axios
                   .get(getTokensURL(network))
                   .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || []))
-                  .catch((error) => {
-                    if (error instanceof AxiosError && error.response?.status === 429) {
-                      throw error
-                    }
+                  .catch(() => {
                     const cachedTokenList = queryClient.getQueryData(queryKey)
 
                     if (cachedTokenList) {
@@ -206,7 +204,13 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
 
 export const NOCACHE_PREFIX = 'nocache-'
 
-export const tokenQuery = ({ id: dirtyId, networkId, skip, skipCaching: skipCachingProp }: TokenQueryProps) => {
+export const tokenQuery = ({
+  id: dirtyId,
+  networkId,
+  skip,
+  skipCaching: skipCachingProp,
+  isExplorerOffline
+}: TokenQueryProps) => {
   const isDirtyId = dirtyId.startsWith(NOCACHE_PREFIX)
   const id = isDirtyId ? dirtyId.split(NOCACHE_PREFIX)[1] : dirtyId
   const skipCaching = isDirtyId || skipCachingProp
@@ -220,15 +224,23 @@ export const tokenQuery = ({ id: dirtyId, networkId, skip, skipCaching: skipCach
       skipCaching
     }),
     queryFn: async (): Promise<Token> => {
+      if (id === ALPH.id) return ALPH as ListedFT
+
+      // 1. First check if the token is in the token list
+      let ftList: FtListMap
+      try {
+        ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+      } catch {
+        ftList = networkId === 0 ? mainnetTokens : testnetTokens
+      }
+
+      const listedFT = ftList[id]
+
+      if (listedFT) return listedFT
+
       const nst = { id } as NonStandardToken
 
       try {
-        // 1. First check if the token is in the token list
-        const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-        const listedFT = fTList[id]
-
-        if (listedFT) return listedFT
-
         // 2. If not, find the type of the token
         const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId, skipCaching }))
 
@@ -245,18 +257,16 @@ export const tokenQuery = ({ id: dirtyId, networkId, skip, skipCaching: skipCach
 
           return nft ?? nst
         }
-      } catch (e) {
-        if (is5XXError(e)) {
-          return nst
-        } else {
-          throw e
-        }
+      } catch (error) {
+        if (isExplorerOffline) return nst
+
+        throw error
       }
 
       // 5. If the type of the token cannot be determined, return the non-standard token
       return nst
     },
-    enabled: !skip
+    enabled: !skip && networkId !== undefined
   })
 }
 

@@ -18,6 +18,7 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { tokenQuery } from '@/api/queries/tokenQueries'
 import { useTransactionAmountDeltas } from '@/hooks/transactions/useTransactionAmountDeltas'
 import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { useIsExplorerOffline } from '@/network/useIsServerOffline'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT
@@ -41,10 +42,11 @@ export const useFetchTransactionTokens = (
   skipCaching: boolean = false
 ): TransactionTokens => {
   const networkId = useCurrentlyOnlineNetworkId()
+  const isExplorerOffline = useIsExplorerOffline()
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const { data: tokens, isLoading } = useQueries({
-    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId, skipCaching })),
+    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId, skipCaching, isExplorerOffline })),
     combine: (results) => combineTokens(results, tokenAmounts)
   })
 
