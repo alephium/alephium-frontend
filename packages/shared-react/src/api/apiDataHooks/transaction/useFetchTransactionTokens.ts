@@ -37,13 +37,14 @@ type TransactionTokens = {
 
 export const useFetchTransactionTokens = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx,
-  addressHash: AddressHash
+  addressHash: AddressHash,
+  skipCaching: boolean = false
 ): TransactionTokens => {
   const networkId = useCurrentlyOnlineNetworkId()
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const { data: tokens, isLoading } = useQueries({
-    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId })),
+    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId, skipCaching })),
     combine: (results) => combineTokens(results, tokenAmounts)
   })
 
