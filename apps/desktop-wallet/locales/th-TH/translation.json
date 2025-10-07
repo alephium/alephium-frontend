@@ -555,5 +555,8 @@
   "Sending": "กำลังส่ง",
   "Simulated result": "ผลการจำลอง",
   "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม",
-  "Decoded transaction details": "รายละเอียดธุรกรรมที่ถอดรหัส"
+  "Decoded transaction details": "รายละเอียดธุรกรรมที่ถอดรหัส",
+  "dApp request approved.": "คำขอ dApp ได้รับการอนุมัติ",
+  "dApp request rejected.": "คำขอ dApp ถูกปฏิเสธ",
+  "You can go back to your browser.": "สามารถกลับไปที่เบราว์เซอร์ได้"
 }
