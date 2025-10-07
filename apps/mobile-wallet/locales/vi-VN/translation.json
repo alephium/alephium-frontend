@@ -500,5 +500,7 @@
   "Nothing relevant to the signer address.": "Không có gì liên quan đến địa chỉ ký.",
   "Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.": "Giữ cài đặt này ở trạng thái tắt để tạo địa chỉ không nhóm (khuyến nghị). Nếu bạn cần địa chỉ tại một nhóm riêng, hãy chọn bên dưới.",
   "Groupless": "Không nhóm",
-  "New": "Mới"
+  "New": "Mới",
+  "App cache": "Bộ nhớ đệm ứng dụng",
+  "Delete app cached data and reload.": "Xoá bộ nhớ đệm của ứng dụng và khởi chạy lại."
 }
