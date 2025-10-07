@@ -9,6 +9,6 @@ export const useAddressExplorerLink = (addressHash: AddressHash) => {
 }
 
 export const getAddressExplorerLink = (explorerUrl: string, addressHash: AddressHash) =>
-  `${explorerUrl}${getAddressExplorerPagePath(addressHash)}`
+  `${explorerUrl.replace(/\/$/, '')}${getAddressExplorerPagePath(addressHash)}`
 
 export const getAddressExplorerPagePath = (addressHash: AddressHash) => `/addresses/${addressHash}`

@@ -207,7 +207,7 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
 export const NOCACHE_PREFIX = 'nocache-'
 
 export const tokenQuery = ({ id: dirtyId, networkId, skip, skipCaching: skipCachingProp }: TokenQueryProps) => {
-  const isDirtyId = dirtyId.includes(NOCACHE_PREFIX)
+  const isDirtyId = dirtyId.startsWith(NOCACHE_PREFIX)
   const id = isDirtyId ? dirtyId.split(NOCACHE_PREFIX)[1] : dirtyId
   const skipCaching = isDirtyId || skipCachingProp
 
