@@ -1,5 +1,16 @@
 # alephium-desktop-wallet
 
+## 3.2.0
+
+### Minor Changes
+
+- 5bf55ab: Major upgrade of tech stack
+
+### Patch Changes
+
+- 62f91cf: Fix wallet hiding after signing
+- 2b5d4f4: Fix display of NFT when minting
+
 ## 3.1.2
 
 ### Patch Changes
