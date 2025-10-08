@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 2.4.1
+
+### Patch Changes
+
+- 626dade: Show last activity in address details modal
+- 7c81c8d: Add buttons to address explorer page
+- b733def: Warn user when inactive destination address detected
+- aaefa02: Add button to add unknown address to contacts
+- b8a44af: Fix missing tokens due to GitHub 429 errors
+- 2b5d4f4: Fix display of NFT when minting
+
 ## 2.4.0
 
 ### Minor Changes
