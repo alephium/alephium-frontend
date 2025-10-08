@@ -1,17 +1,18 @@
-import { BarcodeScanningResult, Camera, CameraView } from 'expo-camera'
+import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera'
 import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import InfoBox from '~/components/InfoBox'
 import Screen, { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface QRCodeScannerModalProps {
   onClose: () => void
@@ -25,19 +26,10 @@ let frames: FrameState
 const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text }: QRCodeScannerModalProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
+  const [permission, requestPermission] = useCameraPermissions()
 
-  const [hasPermission, setHasPermission] = useState<boolean>()
   const [scanned, setScanned] = useState(false)
   const [progress, setProgress] = useState(0)
-
-  useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      setHasPermission(status === 'granted')
-    }
-
-    getCameraPermissions()
-  }, [qrCodeMode])
 
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     if (qrCodeMode === 'animated') {
@@ -88,7 +80,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   return (
     <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary} showCloseButton animationType="fade">
       <ScreenStyled>
-        {!scanned && hasPermission && (
+        {!scanned && permission?.status === 'granted' && (
           <CameraStyled
             facing="back"
             onBarcodeScanned={handleBarCodeScanned}
@@ -98,10 +90,13 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
           </CameraStyled>
         )}
 
-        {hasPermission === false && (
+        {permission?.granted === false && (
           <ScreenSection fill verticallyCentered>
             <InfoBox title={t('Camera permissions required')} Icon={CameraIcon}>
               <AppText>{t('Please, enable access to camera through the settings of your device.')}</AppText>
+              {permission.canAskAgain && (
+                <Button title={t('Allow')} onPress={requestPermission} style={{ marginTop: VERTICAL_GAP }} />
+              )}
             </InfoBox>
           </ScreenSection>
         )}
