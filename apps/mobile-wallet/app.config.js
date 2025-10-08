@@ -61,6 +61,7 @@ export default {
       },
       // See https://github.com/alephium/alephium-frontend/issues/1021
       blockedPermissions: ['android.permission.READ_MEDIA_IMAGES', 'android.permission.READ_MEDIA_VIDEO'],
+      permissions: ['android.permission.WRITE_SETTINGS'],
       package: 'org.alephium.wallet'
     },
     web: {

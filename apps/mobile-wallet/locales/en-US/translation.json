@@ -506,5 +506,7 @@
   "Never used": "Never used",
   "Last activity": "Last activity",
   "Unknown address": "Unknown address",
-  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending."
+  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.",
+  "The app can adjust the brightness when displaying QR codes.": "The app can adjust the brightness when displaying QR codes.",
+  "Allow": "Allow"
 }
