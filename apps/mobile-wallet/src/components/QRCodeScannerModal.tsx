@@ -1,3 +1,4 @@
+import { isValidAddress } from '@alephium/web3'
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera'
 import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
@@ -13,6 +14,7 @@ import InfoBox from '~/components/InfoBox'
 import Screen, { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface QRCodeScannerModalProps {
   onClose: () => void
@@ -33,6 +35,19 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
 
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     if (qrCodeMode === 'animated') {
+      if (isValidAddress(data)) {
+        onClose()
+        showToast({
+          text1: t('This is not the QR code you are looking for.'),
+          text2: t(
+            'To import from the desktop wallet, find the "Export current wallet" feature in the desktop wallet app settings.'
+          ),
+          type: 'error',
+          visibilityTime: ToastDuration.LONG
+        })
+        return
+      }
+
       try {
         frames = parseFramesReducer(frames, data)
 
