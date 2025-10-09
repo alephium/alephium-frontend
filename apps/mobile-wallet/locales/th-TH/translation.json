@@ -502,5 +502,9 @@
   "Groupless": "แบบไม่มีกลุ่ม",
   "New": "ใหม่",
   "App cache": "แคชแอป",
-  "Delete app cached data and reload.": "ลบข้อมูลแคชของแอปและโหลดใหม่"
+  "Delete app cached data and reload.": "ลบข้อมูลแคชของแอปและโหลดใหม่",
+  "Never used": "ไม่เคยใช้",
+  "Last activity": "กิจกรรมล่าสุด",
+  "Unknown address": "ที่อยู่ที่ไม่รู้จัก",
+  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "ที่อยู่ปลายทางไม่เคยถูกใช้มาก่อน และไม่ปรากฏในประวัติการทำธุรกรรม โปรดตรวจสอบให้แน่ใจว่าที่อยู่ถูกต้องก่อนส่ง"
 }
