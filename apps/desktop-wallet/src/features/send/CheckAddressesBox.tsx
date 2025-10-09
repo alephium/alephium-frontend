@@ -93,4 +93,6 @@ const DAppAndDestinationAddress = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+  flex: 1;
+  min-width: 0;
 `
