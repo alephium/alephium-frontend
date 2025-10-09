@@ -54,6 +54,11 @@ export default {
       }
     },
     android: {
+      splash: {
+        image: './assets/adaptive-icon.png',
+        resizeMode: 'contain',
+        backgroundColor: '#000000'
+      },
       allowBackup: false,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
