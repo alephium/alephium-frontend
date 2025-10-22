@@ -91,6 +91,7 @@ android {
 
     namespace 'org.alephium.wallet'
     defaultConfig {
+		missingDimensionStrategy "react-native-capture-protection", "fullMediaCapture"
         applicationId 'org.alephium.wallet'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
