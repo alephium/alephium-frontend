@@ -1,10 +1,10 @@
-import { usePreventScreenCapture } from 'expo-screen-capture'
 import { useTranslation } from 'react-i18next'
 import { Pressable, PressableProps } from 'react-native'
 import Animated, { AnimatedProps, FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import usePreventScreenCapture from '~/hooks/usePreventScreenCapture'
 
 interface SecretPhraseWordListProps {
   words: SelectedWord[]

@@ -116,7 +116,8 @@ export default {
           organization: 'alephium'
         }
       ],
-      ['expo-web-browser']
+      ['expo-web-browser'],
+      'react-native-capture-protection'
     ],
     extra: {
       eas: {

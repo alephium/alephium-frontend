@@ -787,6 +787,9 @@ importers:
       react-native-background-timer:
         specifier: ^2.4.1
         version: 2.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
+      react-native-capture-protection:
+        specifier: ^2.3.2
+        version: 2.3.2(expo-dev-client@5.2.4(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)))(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-gesture-handler:
         specifier: ^2.24.0
         version: 2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -9273,6 +9276,20 @@ packages:
     resolution: {integrity: sha512-TE4Kiy7jUyv+hugxDxitzu38sW1NqjCk4uE5IgU2WevLv7sZacaBc6PZKOShNRPGirLl1NWkaG3LDEkdb9Um5g==}
     peerDependencies:
       react-native: '>=0.47.0'
+
+  react-native-capture-protection@2.3.2:
+    resolution: {integrity: sha512-ZeaNyDFO77piyLcJrvES52Su8cEgciuWOd0dToCMfODY2FFiSbgJIneqYWIeXQhfYP6eTosncmY+IqKHuLeTRA==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      expo: '>=47.0.0'
+      expo-dev-client: '>=5.0.0'
+      react: ~19.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      expo-dev-client:
+        optional: true
 
   react-native-edge-to-edge@1.6.0:
     resolution: {integrity: sha512-2WCNdE3Qd6Fwg9+4BpbATUxCLcouF6YRY7K+J36KJ4l3y+tWN6XCqAC4DuoGblAAbb2sLkhEDp4FOlbOIot2Og==}
@@ -22679,6 +22696,14 @@ snapshots:
   react-native-background-timer@2.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)):
     dependencies:
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
+
+  react-native-capture-protection@2.3.2(expo-dev-client@5.2.4(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)))(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
+    optionalDependencies:
+      expo: 53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-dev-client: 5.2.4(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))
 
   react-native-edge-to-edge@1.6.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
