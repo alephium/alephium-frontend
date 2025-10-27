@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 2.4.2
+
+### Patch Changes
+
+- 1899ab3: Fix recovery phrase confirming after wallet creation
+- 4f473ab: Auto-adjust brightness when displaying QR codes
+- 59bf1a1: Fix Android splash screen logo size
+- 306a889: Show warning when using wrong QR code to import wallet from desktop wallet
+- 1899ab3: Fix black screen after dismissing recovery screen modal
+- 1899ab3: Fix typing of recovery phrase on wallet import
+
 ## 2.4.1
 
 ### Patch Changes
