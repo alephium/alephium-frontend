@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -100,6 +100,7 @@
     "react-i18next": "^15.5.3",
     "react-native": "0.79.5",
     "react-native-background-timer": "^2.4.1",
+    "react-native-capture-protection": "^2.3.2",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-get-random-values": "~1.11.0",
     "react-native-image-colors": "^2.4.0",

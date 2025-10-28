@@ -58,21 +58,19 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const selectWord = (word: string) => {
     if (!word) return
 
-    setSelectedWords(
-      selectedWords.concat([
-        {
-          word,
-          timestamp: new Date()
-        }
-      ])
-    )
+    setSelectedWords((prev) => [...prev, { word, timestamp: new Date() }])
     setTypedInput('')
+    setPossibleMatches([])
   }
 
   const removeSelectedWord = (word: SelectedWord) =>
     setSelectedWords(selectedWords.filter((selectedWord) => selectedWord.timestamp !== word.timestamp))
 
-  const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
+  const handleEnterPress = () => {
+    if (possibleMatches.length > 0) {
+      selectWord(possibleMatches[0])
+    }
+  }
 
   const importWallet = async () => {
     // This should never happen, but if it does, let the user restart the process of creating a wallet
@@ -167,7 +165,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
                 contextMenuHidden={true}
                 onSubmitEditing={handleEnterPress}
                 autoFocus
-                blurOnSubmit={false}
+                submitBehavior="submit"
                 autoCorrect={false}
                 error={typedInput.split(' ').length > 1 ? t('Please, type the words one by one') : ''}
                 label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}

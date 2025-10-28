@@ -3,7 +3,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '2.4.1',
+    version: '2.4.2',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -116,7 +116,8 @@ export default {
           organization: 'alephium'
         }
       ],
-      ['expo-web-browser']
+      ['expo-web-browser'],
+      'react-native-capture-protection'
     ],
     extra: {
       eas: {
