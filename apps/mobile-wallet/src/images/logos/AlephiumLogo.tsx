@@ -1,6 +1,5 @@
-import { Canvas, FitBox, Path, rect } from '@shopify/react-native-skia'
-import { useState } from 'react'
-import { LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native'
+import { Canvas, FitBox, Path, rect, useCanvasSize } from '@shopify/react-native-skia'
+import { StyleProp, ViewStyle } from 'react-native'
 
 interface AlephiumLogoProps {
   style?: StyleProp<ViewStyle>
@@ -8,17 +7,10 @@ interface AlephiumLogoProps {
 }
 
 const AlephiumLogo = ({ style, color }: AlephiumLogoProps) => {
-  const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 })
-
-  const handleLayout = (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout
-    setCanvasDimensions({ width, height })
-  }
-
-  const { width, height } = canvasDimensions
+  const { ref: canvasRef, size: { width, height } } = useCanvasSize()
 
   return (
-    <Canvas style={[{ flex: 1 }, style]} onLayout={handleLayout}>
+    <Canvas style={[{ flex: 1 }, style]} ref={canvasRef}>
       <FitBox src={rect(0, 0, 362, 618)} dst={rect(0, 0, width, height)}>
         <Path
           color={color}

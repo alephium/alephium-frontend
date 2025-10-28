@@ -620,8 +620,8 @@ importers:
         specifier: 1.7.6
         version: 1.7.6(@babel/runtime@7.27.6)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@shopify/react-native-skia':
-        specifier: 2.0.0-next.4
-        version: 2.0.0-next.4(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        specifier: 2.3.7
+        version: 2.3.7(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.81.2
         version: 5.81.2
@@ -3406,13 +3406,13 @@ packages:
       react: ~19.0.0
       react-native: '*'
 
-  '@shopify/react-native-skia@2.0.0-next.4':
-    resolution: {integrity: sha512-NzvdgryRz6tkKMHgCChCKa3wXfN9TZhlV0/LrfIU/wKLC1uKgGXkoZgNz7Is0wwdhtao1JJJJ81fqHCGHgzk9g==}
+  '@shopify/react-native-skia@2.3.7':
+    resolution: {integrity: sha512-g/fOnZ3f6Yfbvbb09cg6MxcjYKSLJ9l7y9Kd3cojfyru2SPnY9n2oEkPvpjYout5wnGusTK828YuUvX5eQL9MQ==}
     hasBin: true
     peerDependencies:
       react: ~19.0.0
       react-native: '>=0.78'
-      react-native-reanimated: ^3.0
+      react-native-reanimated: '>=3.19.1'
     peerDependenciesMeta:
       react-native:
         optional: true
@@ -7968,6 +7968,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
@@ -14768,7 +14769,7 @@ snapshots:
       recyclerlistview: 4.2.3(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       tslib: 2.8.1
 
-  '@shopify/react-native-skia@2.0.0-next.4(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@shopify/react-native-skia@2.3.7(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       canvaskit-wasm: 0.40.0
       react: 19.0.0
