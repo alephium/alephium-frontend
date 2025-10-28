@@ -107,7 +107,7 @@ importers:
         version: link:../../packages/keyring
       '@alephium/ledger-app':
         specifier: ^0.6.2
-        version: 0.6.2
+        version: 0.6.2(encoding@0.1.13)
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -125,7 +125,7 @@ importers:
         version: link:../../packages/typescript-config
       '@alephium/walletconnect-provider':
         specifier: 2.0.3
-        version: 2.0.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
+        version: 2.0.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(encoding@0.1.13)
       '@alephium/web3':
         specifier: 2.0.4
         version: 2.0.4(encoding@0.1.13)
@@ -135,9 +135,6 @@ importers:
       '@electron/notarize':
         specifier: ^1.2.3
         version: 1.2.4
-      '@json-rpc-tools/utils':
-        specifier: ^1.7.6
-        version: 1.7.6
       '@ledgerhq/devices':
         specifier: ^8.4.4
         version: 8.4.4
@@ -194,22 +191,22 @@ importers:
         version: 2.1.2(vitest@2.1.9(@types/node@20.17.8)(happy-dom@15.11.7)(jsdom@21.1.2)(lightningcss@1.27.0)(msw@2.7.0(@types/node@20.17.8)(typescript@5.8.3))(terser@5.39.0))
       '@walletconnect/core':
         specifier: 2.21.3
-        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
+        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
       '@walletconnect/keyvaluestorage':
         specifier: 1.1.1
-        version: 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
+        version: 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/react-native-compat':
         specifier: 2.21.3
-        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(@react-native-community/netinfo@11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(expo-application@6.1.5)(react-native-get-random-values@1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
+        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(@react-native-community/netinfo@11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(expo-application@6.1.5)(react-native-get-random-values@1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
       '@walletconnect/sign-client':
         specifier: 2.21.3
-        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
+        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
       '@walletconnect/types':
         specifier: 2.21.3
-        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
+        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/utils':
         specifier: 2.21.3
-        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
+        version: 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
       '@yornaath/batshit':
         specifier: ^0.10.1
         version: 0.10.1
@@ -311,7 +308,7 @@ importers:
         version: 7.58.1(react@19.0.0)
       react-i18next:
         specifier: ^15.5.3
-        version: 15.5.3(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
+        version: 15.5.3(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
       react-idle-timer:
         specifier: ^5.7.2
         version: 5.7.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -583,9 +580,6 @@ importers:
       '@gorhom/bottom-sheet':
         specifier: ^5
         version: 5.1.4(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@json-rpc-tools/utils':
-        specifier: ^1.7.6
-        version: 1.7.6
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
@@ -620,8 +614,8 @@ importers:
         specifier: 1.7.6
         version: 1.7.6(@babel/runtime@7.27.6)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@shopify/react-native-skia':
-        specifier: 2.0.0-next.4
-        version: 2.0.0-next.4(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        specifier: 2.3.7
+        version: 2.3.7(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.81.2
         version: 5.81.2
@@ -2631,14 +2625,6 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@json-rpc-tools/types@1.7.6':
-    resolution: {integrity: sha512-nDSqmyRNEqEK9TZHtM15uNnDljczhCUdBmRhpNZ95bIPKEDQ+nTDmGMFd2lLin3upc5h2VVVd9tkTDdbXUhDIQ==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
-  '@json-rpc-tools/utils@1.7.6':
-    resolution: {integrity: sha512-HjA8x/U/Q78HRRe19yh8HVKoZ+Iaoo3YZjakJYxR+rw52NHo6jM+VE9b8+7ygkCFXl/EHID5wh/MkXaE/jGyYw==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
   '@ledgerhq/devices@8.4.4':
     resolution: {integrity: sha512-sz/ryhe/R687RHtevIE9RlKaV8kkKykUV4k29e7GAVwzHX1gqG+O75cu1NCJUHLbp3eABV5FdvZejqRUlLis9A==}
 
@@ -2893,9 +2879,6 @@ packages:
   '@parcel/watcher@2.3.0':
     resolution: {integrity: sha512-pW7QaFiL11O0BphO+bq3MgqeX/INAk9jgBldVDYjlQPO4VddoZnF22TcF9onMhnLVHuNqBJeRf+Fj7eezi/+rQ==}
     engines: {node: '>= 10.0.0'}
-
-  '@pedrouid/environment@1.0.1':
-    resolution: {integrity: sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3406,13 +3389,13 @@ packages:
       react: ~19.0.0
       react-native: '*'
 
-  '@shopify/react-native-skia@2.0.0-next.4':
-    resolution: {integrity: sha512-NzvdgryRz6tkKMHgCChCKa3wXfN9TZhlV0/LrfIU/wKLC1uKgGXkoZgNz7Is0wwdhtao1JJJJ81fqHCGHgzk9g==}
+  '@shopify/react-native-skia@2.3.7':
+    resolution: {integrity: sha512-g/fOnZ3f6Yfbvbb09cg6MxcjYKSLJ9l7y9Kd3cojfyru2SPnY9n2oEkPvpjYout5wnGusTK828YuUvX5eQL9MQ==}
     hasBin: true
     peerDependencies:
       react: ~19.0.0
       react-native: '>=0.78'
-      react-native-reanimated: ^3.0
+      react-native-reanimated: '>=3.19.1'
     peerDependenciesMeta:
       react-native:
         optional: true
@@ -7968,6 +7951,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
@@ -11677,9 +11661,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/ledger-app@0.6.2':
+  '@alephium/ledger-app@0.6.2(encoding@0.1.13)':
     dependencies:
-      '@alephium/web3': 1.11.3
+      '@alephium/web3': 1.11.3(encoding@0.1.13)
       '@ledgerhq/hw-transport': 6.31.9
       blakejs: 1.2.1
     transitivePeerDependencies:
@@ -11749,35 +11733,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@alephium/walletconnect-provider@2.0.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@alephium/web3': 2.0.4(encoding@0.1.13)
-      '@alephium/web3-wallet': 2.0.3(encoding@0.1.13)
-      '@walletconnect/core': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/sign-client': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/types': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/utils': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      async-sema: 3.1.1
-      eventemitter3: 4.0.7
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
   '@alephium/web3-wallet@2.0.3(encoding@0.1.13)':
     dependencies:
       '@alephium/web3': 2.0.4(encoding@0.1.13)
@@ -11791,7 +11746,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/web3@1.11.3':
+  '@alephium/web3@1.11.3(encoding@0.1.13)':
     dependencies:
       '@noble/secp256k1': 1.7.1
       base-x: 4.0.1
@@ -13692,15 +13647,6 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@json-rpc-tools/types@1.7.6':
-    dependencies:
-      keyvaluestorage-interface: 1.0.0
-
-  '@json-rpc-tools/utils@1.7.6':
-    dependencies:
-      '@json-rpc-tools/types': 1.7.6
-      '@pedrouid/environment': 1.0.1
-
   '@ledgerhq/devices@8.4.4':
     dependencies:
       '@ledgerhq/errors': 6.19.1
@@ -14008,8 +13954,6 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.3.0
       '@parcel/watcher-win32-x64': 2.3.0
 
-  '@pedrouid/environment@1.0.1': {}
-
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -14043,11 +13987,6 @@ snapshots:
     dependencies:
       merge-options: 3.0.4
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
-
-  '@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))':
-    dependencies:
-      merge-options: 3.0.4
-      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
 
   '@react-native-community/cli-clean@13.6.9(encoding@0.1.13)':
     dependencies:
@@ -14212,10 +14151,6 @@ snapshots:
     dependencies:
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
 
-  '@react-native-community/netinfo@11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))':
-    dependencies:
-      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
-
   '@react-native-masked-view/masked-view@0.3.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       react: 19.0.0
@@ -14300,6 +14235,23 @@ snapshots:
       nullthrows: 1.1.1
       yargs: 17.7.2
 
+  '@react-native/community-cli-plugin@0.79.5(@react-native-community/cli@13.6.9(encoding@0.1.13))':
+    dependencies:
+      '@react-native/dev-middleware': 0.79.5
+      chalk: 4.1.2
+      debug: 2.6.9
+      invariant: 2.2.4
+      metro: 0.82.4
+      metro-config: 0.82.4
+      metro-core: 0.82.4
+      semver: 7.6.3
+    optionalDependencies:
+      '@react-native-community/cli': 13.6.9(encoding@0.1.13)
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@react-native/community-cli-plugin@0.79.5(@react-native-community/cli@13.6.9)':
     dependencies:
       '@react-native/dev-middleware': 0.79.5
@@ -14316,6 +14268,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   '@react-native/debugger-frontend@0.79.5': {}
 
@@ -14384,6 +14337,7 @@ snapshots:
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
     optionalDependencies:
       '@types/react': 19.0.14
+    optional: true
 
   '@react-navigation/bottom-tabs@7.3.10(@react-native-masked-view/masked-view@0.3.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(@react-navigation/native@7.1.6(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.4.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-screens@4.11.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -14768,7 +14722,7 @@ snapshots:
       recyclerlistview: 4.2.3(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       tslib: 2.8.1
 
-  '@shopify/react-native-skia@2.0.0-next.4(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@shopify/react-native-skia@2.3.7(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       canvaskit-wasm: 0.40.0
       react: 19.0.0
@@ -15644,42 +15598,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@walletconnect/core@2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-provider': 1.0.14
-      '@walletconnect/jsonrpc-types': 1.0.4
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/jsonrpc-ws-connection': 1.0.16
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/relay-api': 1.0.11
-      '@walletconnect/relay-auth': 1.0.4
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/utils': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/window-getters': 1.0.1
-      events: 3.3.0
-      lodash.isequal: 4.5.0
-      uint8arrays: 3.1.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   '@walletconnect/core@2.21.3(@react-native-async-storage/async-storage@1.23.1)(typescript@5.8.3)(zod@3.23.8)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
@@ -15733,44 +15651,6 @@ snapshots:
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/utils': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
-      '@walletconnect/window-getters': 1.0.1
-      es-toolkit: 1.39.3
-      events: 3.3.0
-      uint8arrays: 3.1.1
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@walletconnect/core@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)':
-    dependencies:
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-provider': 1.0.14
-      '@walletconnect/jsonrpc-types': 1.0.4
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/jsonrpc-ws-connection': 1.0.16
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/relay-api': 1.0.11
-      '@walletconnect/relay-auth': 1.1.0
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/utils': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.39.3
       events: 3.3.0
@@ -15878,43 +15758,22 @@ snapshots:
       - '@vercel/kv'
       - supports-color
 
-  '@walletconnect/keyvaluestorage@1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@walletconnect/safe-json': 1.0.2
-      idb-keyval: 6.2.1
-      unstorage: 1.10.1(idb-keyval@6.2.1)
-    optionalDependencies:
-      '@react-native-async-storage/async-storage': 2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - supports-color
-
   '@walletconnect/logger@2.1.2':
     dependencies:
       '@walletconnect/safe-json': 1.0.2
       pino: 7.11.0
 
-  '@walletconnect/react-native-compat@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(@react-native-community/netinfo@11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(expo-application@6.1.5)(react-native-get-random-values@1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))':
+  '@walletconnect/react-native-compat@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(@react-native-community/netinfo@11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(expo-application@6.1.5)(react-native-get-random-values@1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))':
     dependencies:
-      '@react-native-async-storage/async-storage': 2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
-      '@react-native-community/netinfo': 11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
+      '@react-native-async-storage/async-storage': 2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
+      '@react-native-community/netinfo': 11.4.1(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
       events: 3.3.0
       fast-text-encoding: 1.0.6
-      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
-      react-native-get-random-values: 1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
-      react-native-url-polyfill: 2.0.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))
+      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
+      react-native-get-random-values: 1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
+      react-native-url-polyfill: 2.0.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
     optionalDependencies:
-      expo-application: 6.1.5(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))
+      expo-application: 6.1.5
 
   '@walletconnect/react-native-compat@2.21.3(in3al7j2wqz3hkyxtwolldhqge)':
     dependencies:
@@ -16009,34 +15868,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@walletconnect/sign-client@2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@walletconnect/core': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/utils': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   '@walletconnect/sign-client@2.21.3(@react-native-async-storage/async-storage@1.23.1)(typescript@5.8.3)(zod@3.23.8)':
     dependencies:
       '@walletconnect/core': 2.21.3(@react-native-async-storage/async-storage@1.23.1)(typescript@5.8.3)(zod@3.23.8)
@@ -16077,36 +15908,6 @@ snapshots:
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/utils': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@walletconnect/sign-client@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)':
-    dependencies:
-      '@walletconnect/core': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/utils': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -16177,29 +15978,6 @@ snapshots:
       - '@vercel/kv'
       - supports-color
 
-  '@walletconnect/types@2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-types': 1.0.4
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/logger': 2.1.2
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - supports-color
-
   '@walletconnect/types@2.21.3(@react-native-async-storage/async-storage@1.23.1)':
     dependencies:
       '@walletconnect/events': 1.0.1
@@ -16229,29 +16007,6 @@ snapshots:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/logger': 2.1.2
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - supports-color
-
-  '@walletconnect/types@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.2
-      '@walletconnect/jsonrpc-types': 1.0.4
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/logger': 2.1.2
       events: 3.3.0
     transitivePeerDependencies:
@@ -16343,43 +16098,6 @@ snapshots:
       - '@vercel/kv'
       - supports-color
 
-  '@walletconnect/utils@2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))':
-    dependencies:
-      '@ethersproject/hash': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@stablelib/chacha20poly1305': 1.0.1
-      '@stablelib/hkdf': 1.0.1
-      '@stablelib/random': 1.0.2
-      '@stablelib/sha256': 1.0.1
-      '@stablelib/x25519': 1.0.3
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/relay-api': 1.0.11
-      '@walletconnect/relay-auth': 1.0.4
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.17.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/window-getters': 1.0.1
-      '@walletconnect/window-metadata': 1.0.1
-      detect-browser: 5.3.0
-      elliptic: 6.6.1
-      query-string: 7.1.3
-      uint8arrays: 3.1.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - supports-color
-
   '@walletconnect/utils@2.21.3(@react-native-async-storage/async-storage@1.23.1)(typescript@5.8.3)(zod@3.23.8)':
     dependencies:
       '@msgpack/msgpack': 3.1.2
@@ -16435,47 +16153,6 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/window-getters': 1.0.1
-      '@walletconnect/window-metadata': 1.0.1
-      blakejs: 1.2.1
-      bs58: 6.0.0
-      detect-browser: 5.3.0
-      query-string: 7.1.3
-      uint8arrays: 3.1.1
-      viem: 2.31.0(typescript@5.8.3)(zod@3.23.8)
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@walletconnect/utils@2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))(typescript@5.8.3)(zod@3.23.8)':
-    dependencies:
-      '@msgpack/msgpack': 3.1.2
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
-      '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.6
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
-      '@walletconnect/relay-api': 1.0.11
-      '@walletconnect/relay-auth': 1.1.0
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.21.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)))
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       blakejs: 1.2.1
@@ -19171,6 +18848,9 @@ snapshots:
       jest-matcher-utils: 29.7.0
       jest-message-util: 29.7.0
       jest-util: 29.7.0
+
+  expo-application@6.1.5:
+    optional: true
 
   expo-application@6.1.5(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)):
     dependencies:
@@ -22723,11 +22403,6 @@ snapshots:
       fast-base64-decode: 1.0.0
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
 
-  react-native-get-random-values@1.11.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)):
-    dependencies:
-      fast-base64-decode: 1.0.0
-      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
-
   react-native-image-colors@2.4.0(expo@53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
       expo: 53.0.23(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -22836,11 +22511,6 @@ snapshots:
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
       whatwg-url-without-unicode: 8.0.0-3
 
-  react-native-url-polyfill@2.0.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)):
-    dependencies:
-      react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0)
-      whatwg-url-without-unicode: 8.0.0-3
-
   react-native-web@0.20.0(encoding@0.1.13)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.27.6
@@ -22868,7 +22538,7 @@ snapshots:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.79.5
       '@react-native/codegen': 0.79.5(@babel/core@7.26.10)
-      '@react-native/community-cli-plugin': 0.79.5(@react-native-community/cli@13.6.9)
+      '@react-native/community-cli-plugin': 0.79.5(@react-native-community/cli@13.6.9(encoding@0.1.13))
       '@react-native/gradle-plugin': 0.79.5
       '@react-native/js-polyfills': 0.79.5
       '@react-native/normalize-colors': 0.79.5
@@ -22958,6 +22628,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   react-page-visibility@7.0.0(react@19.0.0):
     dependencies:
@@ -25264,7 +24935,7 @@ snapshots:
       '@webassemblyjs/wasm-edit': 1.14.1
       '@webassemblyjs/wasm-parser': 1.14.1
       acorn: 8.14.1
-      browserslist: 4.24.0
+      browserslist: 4.24.4
       chrome-trace-event: 1.0.3
       enhanced-resolve: 5.17.1
       es-module-lexer: 1.6.0

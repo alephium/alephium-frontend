@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 2.4.3
+
+### Patch Changes
+
+- 12394ad: Fix wallet delete modal layout
+- 12394ad: Fix Google Play warning for 16KB memory pages
+
 ## 2.4.2
 
 ### Patch Changes

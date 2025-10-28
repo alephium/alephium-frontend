@@ -25,7 +25,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>((props) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal2 contentVerticalGap notScrollable>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>
