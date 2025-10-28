@@ -7,7 +7,10 @@ interface AlephiumLogoProps {
 }
 
 const AlephiumLogo = ({ style, color }: AlephiumLogoProps) => {
-  const { ref: canvasRef, size: { width, height } } = useCanvasSize()
+  const {
+    ref: canvasRef,
+    size: { width, height }
+  } = useCanvasSize()
 
   return (
     <Canvas style={[{ flex: 1 }, style]} ref={canvasRef}>
