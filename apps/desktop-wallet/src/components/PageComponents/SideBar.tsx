@@ -32,7 +32,6 @@ const SideBarStyled = styled.div`
   width: ${walletSidebarWidthPx}px;
   padding: ${platform.isMac ? appHeaderHeightPx + 'px' : 'var(--spacing-2)'} var(--spacing-2) var(--spacing-2)
     var(--spacing-2);
-  background-color: ${({ theme }) => theme.bg.background2};
   border-right: 1px solid ${({ theme }) => theme.border.secondary};
 
   @media (min-width: ${sidebarExpandThresholdPx}px) {

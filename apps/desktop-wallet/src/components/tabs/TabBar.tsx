@@ -89,7 +89,7 @@ const TabsContainer = styled.div`
   flex: 1;
   display: flex;
   gap: 30px;
-  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 export const Tab = styled(motion.div)<{ isActive: boolean }>`

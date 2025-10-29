@@ -45,6 +45,7 @@ const WalletNameButtonStyled = styled.div`
   align-items: center;
   padding: 4px;
   border: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   margin-bottom: var(--spacing-3);
   height: 36px;
 
