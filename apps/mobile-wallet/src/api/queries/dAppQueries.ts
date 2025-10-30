@@ -1,3 +1,5 @@
+import { ONE_HOUR_MS } from '@alephium/shared'
+import { getQueryConfig, queryClient } from '@alephium/shared-react'
 import { queryOptions } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -10,7 +12,20 @@ interface DAppsQueryOptions<T> {
 export const dAppsQuery = <T>({ select }: DAppsQueryOptions<T>) =>
   queryOptions({
     queryKey: ['dApps'],
-    queryFn: () => axios.get('https://publicapi.alph.land/api/dapps').then((res) => res.data),
+    ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
+    queryFn: ({ queryKey }) =>
+      axios
+        .get('https://publicapi.alph.land/api/dapps')
+        .then((res) => res.data)
+        .catch((e) => {
+          const cachedDApps = queryClient.getQueryData(queryKey)
+
+          if (cachedDApps) {
+            return cachedDApps
+          } else {
+            throw e
+          }
+        }),
     select
   })
 
@@ -28,6 +43,19 @@ const sortTags = (tags: string[]) => [
 
 export const dAppsTagsQuery = queryOptions({
   queryKey: ['dAppsTags'],
-  queryFn: () => axios.get('https://publicapi.alph.land/api/tags').then((res) => res.data as string[]),
+  ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
+  queryFn: ({ queryKey }) =>
+    axios
+      .get('https://publicapi.alph.land/api/tags')
+      .then((res) => res.data as string[])
+      .catch((e) => {
+        const cachedTags = queryClient.getQueryData(queryKey)
+
+        if (cachedTags) {
+          return cachedTags as string[]
+        } else {
+          throw e
+        }
+      }),
   select: sortTags
 })
