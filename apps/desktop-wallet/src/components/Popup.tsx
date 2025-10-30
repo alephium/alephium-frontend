@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { fadeInOutBottomFast, fastTransition } from '@/animations'
 import Scrollbar from '@/components/Scrollbar'
 import ModalContainer from '@/modals/ModalContainer'
-import { appHeaderHeightPx } from '@/style/globalStyles'
+import { appHeaderHeightPx, maxPopupHeightPx } from '@/style/globalStyles'
 import { Coordinates } from '@/types/numbers'
 import { useWindowSize } from '@/utils/hooks'
 
@@ -16,6 +16,7 @@ export interface PopupProps {
   extraHeaderContent?: ReactNode
   hookCoordinates?: Coordinates
   minWidth?: number
+  maxHeight?: number
 }
 
 const minMarginToEdge = 20
@@ -67,6 +68,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
       animate={hookOffset && { ...fadeInOutBottomFast.animate, ...hookOffset }}
       exit={fadeInOutBottomFast.exit}
       minWidth={minWidth}
+      maxHeight={windowHeight !== undefined && windowHeight < maxPopupHeightPx ? windowHeight : undefined}
       {...fastTransition}
     >
       {title && (
@@ -139,7 +141,7 @@ const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
   left: ${({ hookCoordinates, contentWidth }) => hookCoordinates.x - contentWidth / 2}px;
 `
 
-const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
+const Content = styled(motion.div)<Pick<PopupProps, 'minWidth' | 'maxHeight'>>`
   opacity: 0; // for initial mount computation
   position: relative;
   overflow: hidden;
@@ -149,7 +151,7 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   padding-bottom: var(--spacing-1);
 
   min-width: ${({ minWidth }) => minWidth}px;
-  max-height: 660px;
+  max-height: ${({ maxHeight }) => (maxHeight ?? maxPopupHeightPx) - headerHeight}px;
   margin: auto;
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};

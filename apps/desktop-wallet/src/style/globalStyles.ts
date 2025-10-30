@@ -7,6 +7,7 @@ export const appHeaderHeightPx = 40
 export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
 export const sidebarExpandThresholdPx = 1100
+export const maxPopupHeightPx = 660
 
 const electronWindowDimensions = `
   height: 100%;
