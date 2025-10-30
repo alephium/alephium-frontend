@@ -116,7 +116,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 export default AppHeader
 
 const AppHeaderStyled = styled(motion.header)`
-  position: absolute;
+  position: sticky;
   top: 0;
   right: 0;
   left: 0;

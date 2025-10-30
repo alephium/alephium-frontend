@@ -14,7 +14,6 @@ import Scrollbar from '@/components/Scrollbar'
 import WalletNameButton from '@/components/WalletNameButton'
 import ActivityIndicator from '@/features/transactionsDisplay/ActivityIndicator'
 import { useAppSelector } from '@/hooks/redux'
-import { appHeaderHeightPx } from '@/style/globalStyles'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -96,9 +95,7 @@ const ScrollableContent = styled.div`
   overflow: hidden;
 `
 
-const MainContent = styled.div`
-  padding-top: ${appHeaderHeightPx}px;
-`
+const MainContent = styled.div``
 
 const SideNavigation = styled.nav`
   flex: 1;

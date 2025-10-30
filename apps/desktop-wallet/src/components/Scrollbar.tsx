@@ -1,6 +1,6 @@
 import { useMotionValue } from 'framer-motion'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-import { ReactNode, UIEvent, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTheme } from 'styled-components'
 
 import { ScrollContextProvider, ScrollContextType } from '@/contexts/scroll'
@@ -16,7 +16,7 @@ const Scrollbar = ({ children, className, onScroll }: ScrollbarProps) => {
   const [contextValue] = useState<ScrollContextType>({ scrollY })
   const theme = useTheme()
 
-  const handleScrollUpdate = (e: UIEvent<Element>) => {
+  const handleScrollUpdate = (_: unknown, e: Event) => {
     const scrollTop = (e.target as HTMLElement).scrollTop
 
     scrollY.set(scrollTop)
@@ -30,7 +30,7 @@ const Scrollbar = ({ children, className, onScroll }: ScrollbarProps) => {
     <OverlayScrollbarsComponent
       style={{ flex: 1 }}
       defer
-      onScroll={handleScrollUpdate}
+      events={{ scroll: handleScrollUpdate }}
       className={className}
       options={{
         scrollbars: {
