@@ -1,12 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
@@ -14,6 +12,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import SearchInput from '~/components/SearchInput'
 import DAppsList from '~/features/ecosystem/DAppsList'
 import DAppsTags from '~/features/ecosystem/DAppsTags'
+import { getValidUrl } from '~/features/ecosystem/ecosystemUtils'
 import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -23,9 +22,18 @@ const EcosystemScreen = () => {
   const { t } = useTranslation()
   const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
   const authorizedConnectionsCount = useAppSelector((s) => s.authorizedConnections.ids.length)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const [selectedTag, setSelectedTag] = useState<string | null>(hasFavoriteDApps ? 'fav' : null)
   const [searchText, setSearchText] = useState('')
+
+  const handleSearchSubmit = () => {
+    const urlToLoad = getValidUrl(searchText)
+
+    if (urlToLoad) {
+      navigation.navigate('DAppWebViewScreen', { dAppUrl: urlToLoad, dAppName: '' })
+    }
+  }
 
   return (
     <BottomBarScrollScreen
@@ -40,7 +48,7 @@ const EcosystemScreen = () => {
       hasKeyboard
       fill
     >
-      <SearchBar value={searchText} onChangeText={setSearchText} />
+      <SearchBar value={searchText} onChangeText={setSearchText} onSubmitEditing={handleSearchSubmit} />
       <DAppsTags selectedTag={selectedTag} onTagPress={setSelectedTag} />
       <DAppsList selectedTag={selectedTag} searchText={searchText} />
     </BottomBarScrollScreen>
@@ -67,17 +75,11 @@ const AuthorizedConnectionsButton = () => {
   )
 }
 
-const SearchBar = (props: TextInputProps) => {
-  const { data: dApps } = useQuery(dAppsQuery({ select: (dApps) => dApps }))
-
-  if (!dApps || dApps.length < 5) return null
-
-  return (
-    <SearchBarStyled>
-      <SearchInput {...props} />
-    </SearchBarStyled>
-  )
-}
+const SearchBar = (props: TextInputProps) => (
+  <SearchBarStyled>
+    <SearchInput {...props} />
+  </SearchBarStyled>
+)
 
 const SearchBarStyled = styled(ScreenSection)`
   margin-bottom: ${DEFAULT_MARGIN}px;

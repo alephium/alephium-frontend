@@ -467,7 +467,7 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "คุณรู้ไหม",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "การแบ่งเงินออกเป็นหลาย ๆ ที่อยู่สามารถช่วยให้จัดระเบียบและเพิ่มความเป็นส่วนตัวได้",
-  "No dApps match your search: \"{{ searchText }}\"": "ไม่มี dApps ที่ตรงกับการค้นหา: \"{{ searchText }}\"",
+  "No dApps match your search": "ไม่มี dApps ที่ตรงกับการค้นหา",
   "Visit dApp": "เยี่ยมชม dApp",
   "Region": "ภูมิภาค",
   "Choose your region to update formats of dates, time, and currencies.": "เลือกภูมิภาคเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
