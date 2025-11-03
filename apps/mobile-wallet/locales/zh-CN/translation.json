@@ -447,7 +447,6 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "你知道吗？",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "将您的资金分散到多个地址可以帮助您保持条理清晰并增加私密性。",
-  "No dApps match your search": "没有dApps匹配您的搜索：“{{ searchText }}”",
   "Visit dApp": "访问dApp",
   "Region": "地区",
   "Choose your region to update formats of dates, time, and currencies.": "选择您的地区来更新日期、时间和货币的格式。",

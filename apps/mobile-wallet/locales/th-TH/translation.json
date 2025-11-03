@@ -467,7 +467,6 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "คุณรู้ไหม",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "การแบ่งเงินออกเป็นหลาย ๆ ที่อยู่สามารถช่วยให้จัดระเบียบและเพิ่มความเป็นส่วนตัวได้",
-  "No dApps match your search": "ไม่มี dApps ที่ตรงกับการค้นหา",
   "Visit dApp": "เยี่ยมชม dApp",
   "Region": "ภูมิภาค",
   "Choose your region to update formats of dates, time, and currencies.": "เลือกภูมิภาคเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
@@ -506,5 +505,9 @@
   "Never used": "ไม่เคยใช้",
   "Last activity": "กิจกรรมล่าสุด",
   "Unknown address": "ที่อยู่ที่ไม่รู้จัก",
-  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "ที่อยู่ปลายทางไม่เคยถูกใช้มาก่อน และไม่ปรากฏในประวัติการทำธุรกรรม โปรดตรวจสอบให้แน่ใจว่าที่อยู่ถูกต้องก่อนส่ง"
+  "The destination address has never been used before and does not appear in your transaction history. Please, ensure the address is correct before sending.": "ที่อยู่ปลายทางไม่เคยถูกใช้มาก่อน และไม่ปรากฏในประวัติการทำธุรกรรม โปรดตรวจสอบให้แน่ใจว่าที่อยู่ถูกต้องก่อนส่ง",
+  "The app can adjust the brightness when displaying QR codes.": "แอปสามารถปรับความสว่างเมื่อแสดงรหัส QR",
+  "Allow": "อนุญาต",
+  "This is not the QR code you are looking for.": "นี่ไม่ใช่รหัส QR ที่คุณกำลังมองหา",
+  "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.": "หากต้องการนำเข้าจากกระเป๋าเงินเดสก์ท็อป ให้ค้นหาฟีเจอร์ \"ส่งออกกระเป๋าเงินปัจจุบัน\" ในการตั้งค่าแอปกระเป๋าเงินเดสก์ท็อป"
 }

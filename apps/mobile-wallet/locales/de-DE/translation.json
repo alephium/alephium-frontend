@@ -464,7 +464,6 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "Schon gewusst?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Die Aufteilung des Guthabens in mehrere Adressen kann Ihnen helfen, die Privatsphäre zu verbessern und zu organisieren.",
-  "No dApps match your search": "Keine dApps stimmen mit Ihrer Suche überein",
   "Visit dApp": "dApp besuchen",
   "Region": "Region",
   "Choose your region to update formats of dates, time, and currencies.": "Wählen Sie Ihre Region aus, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
