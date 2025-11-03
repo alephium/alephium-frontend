@@ -51,11 +51,16 @@ const BrowserHeaderStyled = styled.View`
 
 const PressableUrl = styled(Pressable)`
   flex-shrink: 1;
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border-radius: 100px;
+  padding: 0 14px 0 18px;
+  width: 100%;
 `
 
 const Url = styled(AppText)`
   flex-shrink: 1;
   padding: 10px 0;
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const AddToFavoritesButtonStyled = styled(AddToFavoritesButton)`
