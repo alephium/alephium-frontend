@@ -467,7 +467,6 @@
   "nfts_in_addresses_other": "{{ count }} NFT",
   "Did you know?": "Bạn có biết?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư.",
-  "No dApps match your search": "Không có dApp nào khớp với tìm kiếm của bạn",
   "Visit dApp": "Đi đến dApp",
   "Region": "Vùng",
   "Choose your region to update formats of dates, time, and currencies.": "Chọn khu vực của bạn để cập nhật định dạng ngày, giờ và tiền tệ.",
