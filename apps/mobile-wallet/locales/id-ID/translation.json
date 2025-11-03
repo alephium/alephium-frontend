@@ -451,7 +451,7 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "Sudahkah Anda tahu?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Membagi dana anda ke beberapa alamat dapat membantu anda tetap teratur dan meningkatkan privasi.",
-  "No dApps match your search: \"{{ searchText }}\"": "Tidak ada dApps yang cocok dengan pencarian anda: \"{{ searchText }}\"",
+  "No dApps match your search": "Tidak ada dApps yang cocok dengan pencarian anda",
   "Visit dApp": "Kunjungi dApp",
   "Region": "Kawasan daerah",
   "Choose your region to update formats of dates, time, and currencies.": "Pilih kawasan daerah anda untuk memperbarui format - format pada tanggal, waktu, dan jenis mata uang.",

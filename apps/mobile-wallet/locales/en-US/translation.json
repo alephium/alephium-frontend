@@ -467,7 +467,7 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "Did you know?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Splitting your funds into multiple addresses can help you stay organized and increase privacy.",
-  "No dApps match your search: \"{{ searchText }}\"": "No dApps match your search: \"{{ searchText }}\"",
+  "No dApps match your search": "No dApps match your search",
   "Visit dApp": "Visit dApp",
   "Region": "Region",
   "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
@@ -510,5 +510,6 @@
   "The app can adjust the brightness when displaying QR codes.": "The app can adjust the brightness when displaying QR codes.",
   "Allow": "Allow",
   "This is not the QR code you are looking for.": "This is not the QR code you are looking for.",
-  "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.": "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings."
+  "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.": "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.",
+  "Visit website": "Visit website"
 }

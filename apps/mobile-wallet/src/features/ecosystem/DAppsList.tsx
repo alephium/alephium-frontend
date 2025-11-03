@@ -1,4 +1,6 @@
 import { getHumanReadableError } from '@alephium/shared'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,12 +8,15 @@ import styled from 'styled-components/native'
 
 import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import { getValidUrl } from '~/features/ecosystem/ecosystemUtils'
 import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface DAppsListProps {
@@ -56,7 +61,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
       </DAppsListStyled>
     )
 
-  if (isError || !filteredDApps)
+  if ((isError || !filteredDApps) && !searchText)
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
@@ -77,12 +82,14 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
       </DAppsListStyled>
     )
 
-  if (!filteredDApps.length)
+  if (!filteredDApps?.length)
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
           <AppText size={32}>🧐</AppText>
-          <AppText>{t('No dApps match your search: "{{ searchText }}"', { searchText })}</AppText>
+          <AppText>{t('No dApps match your search')}</AppText>
+          <AppText color="tertiary">"{searchText}"</AppText>
+          <OpenUrlButton searchText={searchText} />
         </EmptyPlaceholder>
       </DAppsListStyled>
     )
@@ -97,6 +104,27 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
 }
 
 export default DAppsList
+
+const OpenUrlButton = ({ searchText }: { searchText: string }) => {
+  const { t } = useTranslation()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  const dAppUrl = useMemo(() => getValidUrl(searchText), [searchText])
+
+  if (!dAppUrl) return null
+
+  const openDappBrowser = () => navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
+
+  return (
+    <Button
+      compact
+      title={t('Visit website')}
+      onPress={openDappBrowser}
+      iconProps={{ name: 'open-outline' }}
+      variant="accent"
+    />
+  )
+}
 
 const filterDAppsByTag =
   (selectedTag: string | null) =>
