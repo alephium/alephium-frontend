@@ -167,6 +167,8 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
 
               if (tokenUri.startsWith('data:application/json,')) {
                 nftData = JSON.parse(tokenUri.split('data:application/json,')[1])
+              } else if (tokenUri.startsWith('data:application/json;utf8,')) {
+                nftData = JSON.parse(tokenUri.split('data:application/json;utf8,')[1])
               } else {
                 const res = await axios.get(tokenUri)
                 nftData = res.data
