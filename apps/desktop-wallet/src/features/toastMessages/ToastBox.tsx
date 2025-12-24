@@ -105,7 +105,8 @@ const getToastBoxStyle = (color: string) => css`
       theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex()};
 
     svg {
-      stroke: ${({ theme }) => (theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex())};};
+      stroke: ${({ theme }) =>
+        theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex()};};
     }
   }
 `

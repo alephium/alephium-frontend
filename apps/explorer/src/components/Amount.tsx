@@ -97,22 +97,45 @@ const Amount = ({
               data-tooltip-content={
                 (!fullPrecision &&
                   value &&
-                  getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })) ||
+                  getAmount({
+                    value,
+                    isFiat,
+                    decimals,
+                    nbOfDecimalsToShow,
+                    fullPrecision: true,
+                    useSubscriptNotation: true
+                  })) ||
                 undefined
               }
             >
               {displaySign && <span>{isNegative ? '-' : '+'}</span>}
-              {fadeDecimals ? (
-                <>
-                  <span>{integralPart}</span>
-                  {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-                  {quantitySymbol && <span>{quantitySymbol}</span>}
-                </>
-              ) : fractionalPart ? (
-                `${integralPart}.${fractionalPart}`
-              ) : (
-                integralPart
-              )}
+              {fadeDecimals
+                ? (() => {
+                    const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
+                    if (subscriptMatch) {
+                      const subscript = subscriptMatch[1]
+                      const [preSubscript, postSubscript] = fractionalPart.split(subscript)
+                      return (
+                        <>
+                          <span>{integralPart}</span>
+                          <Decimals>.{preSubscript}</Decimals>
+                          <Subscript>{subscript}</Subscript>
+                          <span>{postSubscript}</span>
+                          {quantitySymbol && <span>{quantitySymbol}</span>}
+                        </>
+                      )
+                    }
+                    return (
+                      <>
+                        <span>{integralPart}</span>
+                        {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+                        {quantitySymbol && <span>{quantitySymbol}</span>}
+                      </>
+                    )
+                  })()
+                : fractionalPart
+                  ? `${integralPart}.${fractionalPart}`
+                  : integralPart}
             </NumberContainer>
             <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix}</Suffix>
           </>
@@ -140,8 +163,9 @@ const getAmount = ({
   decimals,
   nbOfDecimalsToShow,
   fullPrecision,
-  smartRounding
-}: Partial<AmountProps>) =>
+  smartRounding,
+  useSubscriptNotation
+}: Partial<AmountProps> & { useSubscriptNotation?: boolean }) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
     : value !== undefined
@@ -150,9 +174,14 @@ const getAmount = ({
           amountDecimals: decimals,
           displayDecimals: nbOfDecimalsToShow,
           fullPrecision,
-          smartRounding
+          smartRounding,
+          useSubscriptNotation
         })
       : ''
+
+const Subscript = styled.span`
+  color: ${({ theme }) => theme.font.secondary};
+`
 
 export default styled(Amount)`
   color: ${({ color, highlight, value, theme }) =>

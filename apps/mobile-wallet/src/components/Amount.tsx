@@ -80,15 +80,11 @@ const Amount = ({
           amountDecimals: decimals,
           displayDecimals: nbOfDecimalsToShow,
           fullPrecision,
-          region
+          region,
+          useSubscriptNotation: true
         })
 
-        const amountIsTooSmall = formatAmountForDisplay({
-          amount: convertToPositive(value as bigint),
-          amountDecimals: decimals,
-          displayDecimals: nbOfDecimalsToShow,
-          fullPrecision
-        }).startsWith('0.0000')
+        const amountIsTooSmall = amount.startsWith('0.0000')
 
         tinyAmount =
           useTinyAmountShorthand && amountIsTooSmall

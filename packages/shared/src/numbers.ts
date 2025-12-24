@@ -4,6 +4,65 @@ export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
 
 const AMOUNT_SUFFIXES = ['', ...MAGNITUDE_SYMBOL]
 
+// Subscript digit mapping for Unicode subscript characters
+const SUBSCRIPT_DIGITS: Record<string, string> = {
+  '0': '₀',
+  '1': '₁',
+  '2': '₂',
+  '3': '₃',
+  '4': '₄',
+  '5': '₅',
+  '6': '₆',
+  '7': '₇',
+  '8': '₈',
+  '9': '₉'
+}
+
+/**
+ * Converts a number to its subscript representation
+ * @param num - The number to convert to subscript
+ * @returns The subscript representation of the number
+ */
+const toSubscript = (num: number): string =>
+  num
+    .toString()
+    .split('')
+    .map((digit) => SUBSCRIPT_DIGITS[digit] || digit)
+    .join('')
+
+/**
+ * Formats a number string with subscript notation for consecutive zeros after decimal point.
+ * For example: "0.000001" becomes "0.0₅1" where ₅ indicates 5 zeros.
+ * @param numString - The number string to format
+ * @param minZerosForSubscript - Minimum consecutive zeros required to apply subscript (default: 4)
+ * @returns The formatted string with subscript notation if applicable
+ */
+export const formatWithSubscript = (numString: string, minZerosForSubscript = 4): string => {
+  // Only process if the string contains a decimal point
+  if (!numString.includes('.')) return numString
+
+  const [integerPart, decimalPart] = numString.split('.')
+
+  // Match consecutive zeros at the start of the decimal part
+  const zeroMatch = decimalPart.match(/^(0+)/)
+
+  if (!zeroMatch) return numString
+
+  const consecutiveZeros = zeroMatch[1].length
+
+  // Only apply subscript if we have enough consecutive zeros
+  if (consecutiveZeros < minZerosForSubscript) return numString
+
+  // Get the remaining significant digits after the zeros
+  const significantDigits = decimalPart.substring(consecutiveZeros)
+
+  // If there are no significant digits, return the original
+  if (!significantDigits) return numString
+
+  // Format: "0.0" + subscript(count) + significant digits
+  return `${integerPart}.0${toSubscript(consecutiveZeros)}${significantDigits}`
+}
+
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
 const getNumberOfTrailingZeros = (numString: string) => {
@@ -64,6 +123,7 @@ interface FormatAmountForDisplayProps {
   fullPrecision?: boolean
   smartRounding?: boolean
   region?: string
+  useSubscriptNotation?: boolean
 }
 
 export const formatAmountForDisplay = ({
@@ -73,7 +133,8 @@ export const formatAmountForDisplay = ({
   truncate,
   smartRounding = true,
   fullPrecision = false,
-  region = 'en-US'
+  region = 'en-US',
+  useSubscriptNotation = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
@@ -82,7 +143,8 @@ export const formatAmountForDisplay = ({
 
   if (amountNumber < 0.0001) {
     if (smartRounding && !fullPrecision) {
-      return smartRound(amountString, region)
+      const rounded = smartRound(amountString, region)
+      return useSubscriptNotation ? formatWithSubscript(rounded) : rounded
     } else {
       fullPrecision = true
     }
@@ -96,10 +158,12 @@ export const formatAmountForDisplay = ({
   }
 
   if (fullPrecision) {
-    return formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay, region)
+    const formatted = formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay, region)
+    return useSubscriptNotation ? formatWithSubscript(formatted) : formatted
   }
 
-  return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals, region)
+  const formatted = formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals, region)
+  return useSubscriptNotation ? formatWithSubscript(formatted) : formatted
 }
 
 const getMinNumberOfDecimals = (amountNumber: number): number =>

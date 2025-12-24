@@ -7,6 +7,7 @@ import {
   exponentialToLiteral,
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
+  formatWithSubscript,
   fromHumanReadableAmount,
   isNumber,
   produceZeros,
@@ -465,4 +466,94 @@ it('Should check if string is a number', () => {
     expect(isNumber('1.01e+1')).toBeTruthy(),
     expect(isNumber('')).toBeFalsy(),
     expect(isNumber('1a')).toBeFalsy()
+})
+
+it('Should format numbers with subscript notation for consecutive zeros', () => {
+  // No subscript - not enough consecutive zeros (threshold is 4)
+  expect(formatWithSubscript('0.1')).toEqual('0.1'),
+    expect(formatWithSubscript('0.01')).toEqual('0.01'),
+    expect(formatWithSubscript('0.001')).toEqual('0.001'),
+    expect(formatWithSubscript('0.0001')).toEqual('0.0001'),
+    // Subscript applied - 4 or more consecutive zeros
+    expect(formatWithSubscript('0.00001')).toEqual('0.0₄1'),
+    expect(formatWithSubscript('0.000001')).toEqual('0.0₅1'),
+    expect(formatWithSubscript('0.0000001')).toEqual('0.0₆1'),
+    expect(formatWithSubscript('0.00000001')).toEqual('0.0₇1'),
+    expect(formatWithSubscript('0.000000001')).toEqual('0.0₈1'),
+    expect(formatWithSubscript('0.0000000001')).toEqual('0.0₉1'),
+    expect(formatWithSubscript('0.00000000001')).toEqual('0.0₁₀1'),
+    expect(formatWithSubscript('0.000000000001')).toEqual('0.0₁₁1'),
+    // Multiple significant digits after zeros
+    expect(formatWithSubscript('0.00001234')).toEqual('0.0₄1234'),
+    expect(formatWithSubscript('0.000000123456')).toEqual('0.0₆123456'),
+    // Integer part other than 0
+    expect(formatWithSubscript('1.00001')).toEqual('1.0₄1'),
+    expect(formatWithSubscript('123.000001')).toEqual('123.0₅1'),
+    // No decimal point
+    expect(formatWithSubscript('123')).toEqual('123'),
+    // No significant digits after zeros (should return original)
+    expect(formatWithSubscript('0.0000')).toEqual('0.0000'),
+    // Decimal starts with non-zero
+    expect(formatWithSubscript('0.1234')).toEqual('0.1234'),
+    expect(formatWithSubscript('1.5678')).toEqual('1.5678'),
+    // Custom threshold
+    expect(formatWithSubscript('0.001', 2)).toEqual('0.0₂1'),
+    expect(formatWithSubscript('0.01', 2)).toEqual('0.01'), // Only 1 zero, threshold not met
+    expect(formatWithSubscript('0.00001', 5)).toEqual('0.00001'), // 4 zeros, threshold 5 not met
+    expect(formatWithSubscript('0.000001', 5)).toEqual('0.0₅1') // 5 zeros, threshold met
+})
+
+it('Should integrate subscript notation with formatAmountForDisplay', () => {
+  // Very small amounts with subscript enabled
+  expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 18, useSubscriptNotation: true })).toEqual(
+    '0.0₁₇1'
+  ),
+    expect(formatAmountForDisplay({ amount: BigInt('10'), amountDecimals: 18, useSubscriptNotation: true })).toEqual(
+      '0.0₁₆1'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('100'), amountDecimals: 18, useSubscriptNotation: true })).toEqual(
+      '0.0₁₅1'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('1000'), amountDecimals: 18, useSubscriptNotation: true })).toEqual(
+      '0.0₁₄1'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('10000'), amountDecimals: 18, useSubscriptNotation: true })).toEqual(
+      '0.0₁₃1'
+    ),
+    expect(
+      formatAmountForDisplay({ amount: BigInt('100000'), amountDecimals: 18, useSubscriptNotation: true })
+    ).toEqual('0.0₁₂1'),
+    // Very small amounts with subscript disabled
+    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 18, useSubscriptNotation: false })).toEqual(
+      '0.000000000000000001'
+    ),
+    expect(
+      formatAmountForDisplay({ amount: BigInt('100000'), amountDecimals: 18, useSubscriptNotation: false })
+    ).toEqual('0.0000000000001'),
+    // Amounts that don't trigger subscript (not enough zeros)
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000'), amountDecimals: 18 })).toEqual('0.001'),
+    expect(formatAmountForDisplay({ amount: BigInt('10000000000000000'), amountDecimals: 18 })).toEqual('0.01'),
+    expect(formatAmountForDisplay({ amount: BigInt('100000000000000000'), amountDecimals: 18 })).toEqual('0.10'),
+    // Regular amounts (no subscript needed)
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), amountDecimals: 18 })).toEqual('1.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000'), amountDecimals: 18 })).toEqual(
+      '1,230.00'
+    ),
+    // Full precision with subscript
+    expect(
+      formatAmountForDisplay({
+        amount: BigInt('100001'),
+        amountDecimals: 18,
+        fullPrecision: true,
+        useSubscriptNotation: true
+      })
+    ).toEqual('0.0₁₂100001'),
+    expect(
+      formatAmountForDisplay({
+        amount: BigInt('1000000001'),
+        amountDecimals: 18,
+        fullPrecision: true,
+        useSubscriptNotation: true
+      })
+    ).toEqual('0.0₈1000000001')
 })
