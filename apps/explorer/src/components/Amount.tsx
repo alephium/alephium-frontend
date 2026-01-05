@@ -85,6 +85,33 @@ const Amount = ({
       </>
     )
 
+  // Process subscript notation for faded decimals
+  let formattedAmount: React.ReactNode = fractionalPart ? `${integralPart}.${fractionalPart}` : integralPart
+  if (fadeDecimals) {
+    const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
+    if (subscriptMatch) {
+      const subscript = subscriptMatch[1]
+      const [preSubscript, postSubscript] = fractionalPart.split(subscript)
+      formattedAmount = (
+        <>
+          <span>{integralPart}</span>
+          <Decimals>.{preSubscript}</Decimals>
+          <Subscript>{subscript}</Subscript>
+          <span>{postSubscript}</span>
+          {quantitySymbol && <span>{quantitySymbol}</span>}
+        </>
+      )
+    } else {
+      formattedAmount = (
+        <>
+          <span>{integralPart}</span>
+          {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+          {quantitySymbol && <span>{quantitySymbol}</span>}
+        </>
+      )
+    }
+  }
+
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
       {assetType === 'fungible' || isFiat ? (
@@ -109,33 +136,7 @@ const Amount = ({
               }
             >
               {displaySign && <span>{isNegative ? '-' : '+'}</span>}
-              {fadeDecimals
-                ? (() => {
-                    const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
-                    if (subscriptMatch) {
-                      const subscript = subscriptMatch[1]
-                      const [preSubscript, postSubscript] = fractionalPart.split(subscript)
-                      return (
-                        <>
-                          <span>{integralPart}</span>
-                          <Decimals>.{preSubscript}</Decimals>
-                          <Subscript>{subscript}</Subscript>
-                          <span>{postSubscript}</span>
-                          {quantitySymbol && <span>{quantitySymbol}</span>}
-                        </>
-                      )
-                    }
-                    return (
-                      <>
-                        <span>{integralPart}</span>
-                        {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-                        {quantitySymbol && <span>{quantitySymbol}</span>}
-                      </>
-                    )
-                  })()
-                : fractionalPart
-                  ? `${integralPart}.${fractionalPart}`
-                  : integralPart}
+              {formattedAmount}
             </NumberContainer>
             <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix}</Suffix>
           </>
