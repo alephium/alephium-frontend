@@ -268,9 +268,7 @@ const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: Amou
   )
 }
 
-const Subscript = styled.span`
-  color: ${({ theme }) => theme.font.secondary};
-`
+const Subscript = styled.span``
 
 const DataFetchIndicator = ({ isLoading, isFetching, error }: AmountLoaderProps) => {
   const { t } = useTranslation()

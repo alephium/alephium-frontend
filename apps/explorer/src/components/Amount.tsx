@@ -180,9 +180,7 @@ const getAmount = ({
         })
       : ''
 
-const Subscript = styled.span`
-  color: ${({ theme }) => theme.font.secondary};
-`
+const Subscript = styled.span``
 
 export default styled(Amount)`
   color: ${({ color, highlight, value, theme }) =>
