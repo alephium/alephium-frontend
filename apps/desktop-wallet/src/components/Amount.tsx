@@ -176,7 +176,8 @@ const TokenAmount = ({
         amount: convertToPositive(value),
         amountDecimals: token.decimals,
         displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
+        fullPrecision,
+        useSubscriptNotation: true
       })
     : value.toString()
 
@@ -236,6 +237,24 @@ const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: Amou
     fractionalPart = '0001'
   }
 
+  // Check for subscripts (₀-₉)
+  const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
+
+  if (subscriptMatch) {
+    const subscript = subscriptMatch[1]
+    const [preSubscript, postSubscript] = fractionalPart.split(subscript)
+
+    return (
+      <>
+        <span>{integralPart}</span>
+        <Decimals>.{preSubscript}</Decimals>
+        <Subscript>{subscript}</Subscript>
+        <span>{postSubscript}</span>
+        {quantitySymbol && <span>{quantitySymbol}</span>}
+      </>
+    )
+  }
+
   return fadeDecimals ? (
     <>
       <span>{integralPart}</span>
@@ -248,6 +267,8 @@ const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: Amou
     integralPart
   )
 }
+
+const Subscript = styled.span``
 
 const DataFetchIndicator = ({ isLoading, isFetching, error }: AmountLoaderProps) => {
   const { t } = useTranslation()
