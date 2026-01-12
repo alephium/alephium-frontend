@@ -102,7 +102,7 @@
     "react-native-capture-protection": "^2.3.2",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-get-random-values": "~1.11.0",
-    "react-native-image-colors": "^2.4.0",
+    "react-native-image-colors": "^2.5.1",
     "react-native-localize": "^3.2.0",
     "react-native-mmkv": "^3.2.0",
     "react-native-pager-view": "6.7.1",
