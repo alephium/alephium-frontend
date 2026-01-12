@@ -64,7 +64,7 @@
     "react-middle-ellipsis": "^1.2.1",
     "react-page-visibility": "^7.0.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.30.3",
     "react-tooltip": "^5.25.1",
     "redux": "^4.2.0",
     "styled-components": "^6.1.19",
