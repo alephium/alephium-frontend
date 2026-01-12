@@ -44,7 +44,7 @@ overrides:
   sha.js@<=2.4.11: '>=2.4.12'
   cipher-base@<=1.0.4: '>=1.0.5'
   on-headers@<1.1.0: '>=1.1.0'
-  tar-fs@=2.1.1: '=2.1.3'
+  tar-fs@=2.1.3: '=2.1.4'
   tmp@=0.2.1: '=0.2.4'
   node-forge@=1.3.2: '>=1.3.2'
   glob@>=10.2.0 <10.5.0: '=10.5.0'
@@ -10413,8 +10413,8 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tar-fs@2.1.3:
-    resolution: {integrity: sha512-090nwYJDmlhwFwEW3QQl+vaNnxsO2yVsd45eTKRBzSzu+hlb1w2K9inVq5b0ngXuLVqQ4ApvsUHHnu/zQNkWAg==}
+  tar-fs@2.1.4:
+    resolution: {integrity: sha512-mDAjwmZdh7LTT6pNleZ05Yt65HC3E+NiQzl672vQG38jIrehtJk/J3mNwIg+vShQPcLF/LV7CMnDW6vjj6sfYQ==}
 
   tar-stream@2.2.0:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
@@ -14114,7 +14114,7 @@ snapshots:
       nocache: 3.0.4
       pretty-format: 26.6.2
       serve-static: 1.16.2
-      ws: 8.18.2
+      ws: 8.19.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -22413,7 +22413,7 @@ snapshots:
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
-      tar-fs: 2.1.3
+      tar-fs: 2.1.4
       tunnel-agent: 0.6.0
 
   prelude-ls@1.2.1: {}
@@ -24114,7 +24114,7 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tar-fs@2.1.3:
+  tar-fs@2.1.4:
     dependencies:
       chownr: 1.1.4
       mkdirp-classic: 0.5.3
