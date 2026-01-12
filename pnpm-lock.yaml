@@ -48,6 +48,7 @@ overrides:
   tmp@=0.2.1: '=0.2.4'
   node-forge@=1.3.2: '>=1.3.2'
   glob@>=10.2.0 <10.5.0: '=10.5.0'
+  qs@<6.14.1: '>=6.14.1'
 
 patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
@@ -9111,8 +9112,8 @@ packages:
   qrloop@1.4.1:
     resolution: {integrity: sha512-LXkwCl1Qd8imTHb+KqjMn+cHmuncyFT81AXoooWJvbG3+g9q61l9udSRPgY4cgl+5goQHuAK4teEdUF6UErYXw==}
 
-  qs@6.13.1:
-    resolution: {integrity: sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==}
+  qs@6.14.1:
+    resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
 
   quansync@0.2.8:
@@ -13725,7 +13726,7 @@ snapshots:
 
   '@malept/cross-spawn-promise@1.1.1':
     dependencies:
-      cross-spawn: 7.0.5
+      cross-spawn: 7.0.6
 
   '@malept/cross-spawn-promise@2.0.0':
     dependencies:
@@ -17424,7 +17425,7 @@ snapshots:
       bluebird-lst: 1.0.9
       builder-util-runtime: 9.2.4
       chalk: 4.1.2
-      cross-spawn: 7.0.5
+      cross-spawn: 7.0.6
       debug: 4.4.0
       fs-extra: 10.1.0
       http-proxy-agent: 5.0.0
@@ -22533,7 +22534,7 @@ snapshots:
       buffer: 6.0.3
       md5: 2.3.0
 
-  qs@6.13.1:
+  qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
 
@@ -24698,7 +24699,7 @@ snapshots:
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
-      qs: 6.13.1
+      qs: 6.14.1
 
   use-latest-callback@0.1.9(react@19.0.0):
     dependencies:
