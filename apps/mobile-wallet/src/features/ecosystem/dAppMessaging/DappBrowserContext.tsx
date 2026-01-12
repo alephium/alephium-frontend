@@ -52,6 +52,7 @@ import {
 } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
+import { selectIsConnectToDappModalOpen } from '~/features/modals/modalSelectors'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { signer } from '~/signer'
 import { showToast, ToastDuration } from '~/utils/layout'
@@ -74,6 +75,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
   const network = useNetwork()
   const dispatch = useAppDispatch()
+  const isConnectToDappModalOpen = useAppSelector(selectIsConnectToDappModalOpen)
 
   const replyToDapp = useCallback(
     (message: MessageType, messageId: string) => {
@@ -122,6 +124,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
   const handleConnectDapp = useCallback(
     async (data: ConnectDappMessageData, messageId: string) => {
+      if (isConnectToDappModalOpen) return
+
       const authorizedConnection = getAuthorizedConnection(data)
 
       const isWrongNetwork =
@@ -185,6 +189,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       dispatch,
       handleApproveDappConnection,
       handleRejectDappConnection,
+      isConnectToDappModalOpen,
       network
     ]
   )
