@@ -25,3 +25,7 @@ export const selectIsTopModal = createSelector(
   [(state: RootState) => state.modals, (_, modalId: string) => modalId],
   (modals, modalId) => modals.ids[modals.ids.length - 1] === modalId
 )
+
+export const selectIsConnectToDappModalOpen = createSelector([(state: RootState) => state.modals], (modals) =>
+  Object.values(modals.entities).some((modal) => modal?.params.name === 'ConnectDappModal')
+)
