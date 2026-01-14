@@ -1,5 +1,14 @@
 # @alephium/mobile-wallet
 
+## 2.4.4
+
+### Patch Changes
+
+- 45c5629: Implement subscript notation for small amounts (e.g. 0.0₅1)
+- a706072: Fix Connect to dApp modal when switching networks
+- 31d8f55: Open dApp browser from ecosystem screen search bar
+- 6e143ed: Persist dApp data cache
+
 ## 2.4.3
 
 ### Patch Changes
