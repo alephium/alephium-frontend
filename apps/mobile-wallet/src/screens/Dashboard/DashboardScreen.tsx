@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import CoreDappAnnouncement from '~/screens/Dashboard/CoreDappAnnouncement'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
@@ -64,6 +65,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
+        <CoreDappAnnouncement />
         <RoundedCard>
           <AnimatedBackground />
           <WalletBalanceSummary />
