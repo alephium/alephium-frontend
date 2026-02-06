@@ -13,6 +13,7 @@ import AppCacheRow from '~/features/settings/settingsScreen/AppCacheRow'
 import CurrencyRow from '~/features/settings/settingsScreen/CurrencyRow'
 import DeleteWalletRow from '~/features/settings/settingsScreen/DeleteWalletRow'
 import DiscreetModeRow from '~/features/settings/settingsScreen/DiscreetModeRow'
+import ImportWatchOnlyWalletRow from '~/features/settings/settingsScreen/ImportWatchOnlyWalletRow'
 import LanguageRow from '~/features/settings/settingsScreen/LanguageRow'
 import NetworkRow from '~/features/settings/settingsScreen/NetworkRow'
 import PublicKeysRow from '~/features/settings/settingsScreen/PublicKeysRow'
@@ -40,6 +41,7 @@ const SettingsScreen = (props: ScreenProps) => {
     >
       <ScreenSection>
         <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
+        <ImportWatchOnlyWalletRow />
         <LanguageRow />
         <RegionSettingsRow />
         <CurrencyRow />

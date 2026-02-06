@@ -1,9 +1,16 @@
-import { formatAmountForDisplay, MAXIMAL_GAS_FEE } from '@alephium/shared'
+import {
+  AddressHash,
+  formatAmountForDisplay,
+  getTransferTxParams,
+  MAXIMAL_GAS_FEE,
+  selectAddressByHash
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { fetchTransferUnsignedTx } from '~/api/transactions'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -15,7 +22,10 @@ import { SignChainedTxModalContent } from '~/features/ecosystem/modals/SignChain
 import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import { SignTransferTxModalAddressesRows } from '~/features/ecosystem/modals/SignTransferTxModal'
+import { openModal } from '~/features/modals/modalActions'
+import SigningDeviceWarning from '~/features/send/screens/SigningDeviceWarning'
 import UnknownAddressWarning from '~/features/send/screens/UnknownAddressWarning'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
@@ -23,7 +33,7 @@ import { showToast } from '~/utils/layout'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, chainedTxProps } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, chainedTxProps } = useSendContext()
   const { screenScrollHandler, parentNavigation } = useHeaderContext()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
@@ -44,9 +54,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       screenTitle={t('Verify')}
       screenIntro={t('Please, double check that everything is correct before sending.')}
       onScroll={screenScrollHandler}
-      bottomButtonsRender={() => (
-        <Button title={t('Send')} variant="valid" onPress={() => sendTransaction(onSendSuccess)} />
-      )}
+      bottomButtonsRender={() => <FooterButton addressHash={fromAddress} onSendSuccess={onSendSuccess} />}
       {...props}
     >
       <ScreenSection>
@@ -77,9 +85,35 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
 
         <UnknownAddressWarning addressHash={toAddress} />
+        <SigningDeviceWarning addressHash={fromAddress} />
       </ScreenSection>
     </ScrollScreen>
   )
 }
 
 export default VerifyScreen
+
+const FooterButton = ({ addressHash, onSendSuccess }: { addressHash: AddressHash; onSendSuccess: () => void }) => {
+  const { t } = useTranslation()
+  const { sendTransaction } = useSendContext()
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const { fromAddress, toAddress, assetAmounts } = useSendContext()
+
+  const dispatch = useAppDispatch()
+
+  const buttonTitle = address?.isWatchOnly ? 'Show QR code' : t('Send')
+
+  const handlePress = async () => {
+    if (address?.isWatchOnly && fromAddress && toAddress) {
+      const sendFlowData = { fromAddress: address, toAddress, assetAmounts }
+      const txParams = getTransferTxParams(sendFlowData)
+      const unsignedTx = await fetchTransferUnsignedTx(txParams)
+
+      dispatch(openModal({ name: 'UnsignedTxQrCodeModal', props: { unsignedTxData: unsignedTx.unsignedTx } }))
+    } else {
+      sendTransaction(onSendSuccess)
+    }
+  }
+
+  return <Button title={buttonTitle} variant="valid" onPress={handlePress} />
+}

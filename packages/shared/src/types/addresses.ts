@@ -24,6 +24,7 @@ export type AddressIndex = number
 export type AddressStoredMetadataWithoutHash = AddressSettings & {
   index: AddressIndex
   keyType?: KeyType
+  isWatchOnly?: boolean
 }
 
 export type AddressStoredMetadataWithHash = AddressStoredMetadataWithoutHash & {

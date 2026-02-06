@@ -29,6 +29,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { signer } from '~/signer'
+import { store } from '~/store/store'
 import { showExceptionToast } from '~/utils/layout'
 
 export type BuildTransactionCallbacks = {
@@ -175,7 +176,14 @@ export const SendContextProvider = ({
           setFees(fees)
         } else {
           const txParams = getTransferTxParams(sendFlowData)
+
+          console.log({ addresses: store.getState().addresses.entities })
+
+          console.log({ txParams })
+
           const fees = await fetchTransferTransactionsFees(txParams)
+
+          console.log({ fees })
           setFees(fees)
         }
 

@@ -222,6 +222,21 @@ export class Keyring {
 
     return { hash: address, publicKey, privateKey, index: addressIndex, keyType }
   }
+
+  public deriveAddressFromPublicKey = (publicKey: string, keyType: KeyType, index: number): NonSensitiveAddressData => {
+    const addressHash = addressFromPublicKey(publicKey, keyType)
+
+    const address: NonSensitiveAddressData = {
+      hash: addressHash,
+      index,
+      publicKey,
+      keyType
+    }
+
+    this.addresses.push({ ...address, privateKey: null })
+
+    return address
+  }
 }
 
 export const keyring = new Keyring()

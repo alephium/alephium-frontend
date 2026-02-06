@@ -39,6 +39,7 @@ import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
+import UnsignedTxQrCodeModal from '~/features/send/screens/UnsignedTxQrCodeModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
@@ -83,6 +84,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
   switch (params.name) {
     case 'BuyModal':
       return <BuyModal {...params.props} />
+    case 'UnsignedTxQrCodeModal':
+      return <UnsignedTxQrCodeModal {...params.props} />
     case 'BackupReminderModal':
       return <BackupReminderModal {...params.props} />
     case 'SwitchNetworkModal':

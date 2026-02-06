@@ -36,6 +36,7 @@ import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import SignConsolidateTxModal from '~/features/send/modals/SignConsolidateTxModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
+import UnsignedTxQrCodeModal from '~/features/send/screens/UnsignedTxQrCodeModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
@@ -54,6 +55,7 @@ import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
   BuyModal,
+  UnsignedTxQrCodeModal,
   BackupReminderModal,
   SwitchNetworkModal,
   TransactionModal,
