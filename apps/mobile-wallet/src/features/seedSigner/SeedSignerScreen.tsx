@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
 import Button from '~/components/buttons/Button'
-import FlashListScreen from '~/components/layout/FlashListScreen'
-import { ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -17,7 +18,6 @@ import { showToast } from '~/utils/layout'
 interface SeedSignerScreenProps extends StackScreenProps<RootStackParamList, 'SeedSignerScreen'> {}
 
 const SeedSignerScreen = ({ navigation, ...props }: SeedSignerScreenProps) => {
-  const watchOnlyAddressesHashes = useAppSelector(selectWatchOnlyAddressesHashes)
   const { t } = useTranslation()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
@@ -51,35 +51,24 @@ const SeedSignerScreen = ({ navigation, ...props }: SeedSignerScreenProps) => {
     })
   }
 
-  const handleAddressPress = (addressHash: AddressHash) => {
-    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
-  }
-
   return (
     <>
-      <FlashListScreen
-        headerOptions={{ headerTitle: t('Watch-only addresses'), type: 'stack' }}
+      <ScrollScreen
+        verticalGap
+        fill
+        contentPaddingTop
         screenTitle={t('Watch-only addresses')}
         screenIntro={t('Scan the animated QR code from SeedSigner to import public keys.')}
-        data={watchOnlyAddressesHashes}
-        contentPaddingTop
-        ListHeaderComponent={() => (
-          <>
-            <Button title={t('Import public key')} onPress={openQRCodeScannerModal} />
-            <ScreenSectionTitle>{t('Imported watch-only addresses')}</ScreenSectionTitle>
-          </>
-        )}
-        renderItem={({ item: addressHash, index }) => (
-          <AddressBox
-            key={addressHash}
-            addressHash={addressHash}
-            isLast={index === watchOnlyAddressesHashes.length - 1}
-            onPress={() => handleAddressPress(addressHash)}
-            origin="watchOnlyAddressesScreen"
-          />
-        )}
+        headerOptions={{ type: 'stack' }}
         {...props}
-      />
+      >
+        <ScreenSection>
+          <Button title={t('Import public key')} onPress={openQRCodeScannerModal} />
+        </ScreenSection>
+        <ScreenSection fill>
+          <CurrentAddresses />
+        </ScreenSection>
+      </ScrollScreen>
       {isCameraOpen && (
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
@@ -92,3 +81,32 @@ const SeedSignerScreen = ({ navigation, ...props }: SeedSignerScreenProps) => {
 }
 
 export default SeedSignerScreen
+
+const CurrentAddresses = () => {
+  const watchOnlyAddressesHashes = useAppSelector(selectWatchOnlyAddressesHashes)
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  if (!watchOnlyAddressesHashes.length) return null
+
+  const handleAddressPress = (addressHash: AddressHash) => {
+    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
+  }
+
+  return (
+    <>
+      <ScreenSectionTitle>{t('Imported watch-only addresses')}</ScreenSectionTitle>
+      <Surface>
+        {watchOnlyAddressesHashes.map((addressHash, index) => (
+          <AddressBox
+            key={addressHash}
+            addressHash={addressHash}
+            isLast={index === watchOnlyAddressesHashes.length - 1}
+            onPress={() => handleAddressPress(addressHash)}
+            origin="addressesScreen"
+          />
+        ))}
+      </Surface>
+    </>
+  )
+}

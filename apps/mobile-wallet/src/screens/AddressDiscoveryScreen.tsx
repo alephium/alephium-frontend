@@ -258,6 +258,7 @@ const CurrentAddresses = () => {
     </>
   )
 }
+
 const ScanningIndication = styled.View`
   margin-bottom: 20px;
   align-items: center;

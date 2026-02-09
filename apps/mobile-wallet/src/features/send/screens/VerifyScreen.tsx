@@ -95,13 +95,13 @@ export default VerifyScreen
 
 const FooterButton = ({ addressHash, onSendSuccess }: { addressHash: AddressHash; onSendSuccess: () => void }) => {
   const { t } = useTranslation()
-  const { sendTransaction } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const { fromAddress, toAddress, assetAmounts } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, sendTransaction } = useSendContext()
 
   const dispatch = useAppDispatch()
 
   const buttonTitle = address?.isWatchOnly ? t('Show QR code') : t('Send')
+  const variant = address?.isWatchOnly ? 'contrast' : 'valid'
 
   const handlePress = async () => {
     if (address?.isWatchOnly && fromAddress && toAddress) {
@@ -109,11 +109,13 @@ const FooterButton = ({ addressHash, onSendSuccess }: { addressHash: AddressHash
       const txParams = getTransferTxParams(sendFlowData)
       const unsignedTx = await fetchTransferUnsignedTx(txParams)
 
-      dispatch(openModal({ name: 'UnsignedTxQrCodeModal', props: { unsignedTxData: unsignedTx.unsignedTx } }))
+      dispatch(
+        openModal({ name: 'UnsignedTxQrCodeModal', props: { unsignedTxData: unsignedTx.unsignedTx, onSendSuccess } })
+      )
     } else {
       sendTransaction(onSendSuccess)
     }
   }
 
-  return <Button title={buttonTitle} variant="valid" onPress={handlePress} />
+  return <Button title={buttonTitle} variant={variant} onPress={handlePress} />
 }
