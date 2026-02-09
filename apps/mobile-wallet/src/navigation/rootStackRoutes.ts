@@ -53,6 +53,7 @@ type RootStackParamList = {
   }
   HiddenTokensScreen: undefined
   AuthorizedConnectionsScreen: undefined
+  SeedSignerScreen: undefined
 }
 
 export default RootStackParamList

@@ -33,6 +33,10 @@ export const selectAllAddressIndexes = createSelector(
   })
 )
 
+export const selectWatchOnlyAddressesHashes = createSelector(selectAllAddresses, (addresses) =>
+  addresses.filter((address) => address.isWatchOnly).map(({ hash }) => hash)
+)
+
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
   (addresses) => addresses.find((address) => address.isDefault) || addresses.at(0)

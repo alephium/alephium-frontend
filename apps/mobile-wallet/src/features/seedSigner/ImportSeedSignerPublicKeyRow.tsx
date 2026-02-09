@@ -7,18 +7,23 @@ import { useTheme } from 'styled-components/native'
 import Row from '~/components/Row'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const PublicKeysRow = () => {
+const ImportWatchOnlyWalletRow = () => {
   const { t } = useTranslation()
   const theme = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-  const openPublicKeysScreen = () => navigation.navigate('PublicKeysScreen')
+  const openSeedSignerScreen = () => navigation.navigate('SeedSignerScreen')
 
   return (
-    <Row onPress={openPublicKeysScreen} title={t('Get public keys')}>
+    <Row
+      onPress={openSeedSignerScreen}
+      title={t('Import SeedSigner public key')}
+      subtitle={t('Temporarily import public keys from SeedSigner to build and broadcast transactions.')}
+      isLast
+    >
       <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
     </Row>
   )
 }
 
-export default PublicKeysRow
+export default ImportWatchOnlyWalletRow

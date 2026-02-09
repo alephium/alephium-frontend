@@ -511,5 +511,16 @@
   "Allow": "Allow",
   "This is not the QR code you are looking for.": "This is not the QR code you are looking for.",
   "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.": "To import from the desktop wallet, find the \"Export current wallet\" feature in the desktop wallet app settings.",
-  "Visit website": "Visit website"
+  "Visit website": "Visit website",
+  "Verify that the transaction data is correct on the signing device.": "Verify that the transaction data is correct on the signing device.",
+  "Show QR code": "Show QR code",
+  "Verify on signing device": "Verify on signing device",
+  "Scan this animated QR code with your signer device.": "Scan this animated QR code with your signer device.",
+  "Scan the animated QR code from SeedSigner.": "Scan the animated QR code from SeedSigner.",
+  "Import SeedSigner public key": "Import SeedSigner public key",
+  "Temporarily import public keys from SeedSigner to build and broadcast transactions.": "Temporarily import public keys from SeedSigner to build and broadcast transactions.",
+  "Watch-only addresses": "Watch-only addresses",
+  "Scan the animated QR code from SeedSigner to import public keys.": "Scan the animated QR code from SeedSigner to import public keys.",
+  "Import public key": "Import public key",
+  "Imported watch-only addresses": "Imported watch-only addresses"
 }

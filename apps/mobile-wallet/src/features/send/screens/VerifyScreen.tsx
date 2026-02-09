@@ -23,7 +23,7 @@ import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAss
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import { SignTransferTxModalAddressesRows } from '~/features/ecosystem/modals/SignTransferTxModal'
 import { openModal } from '~/features/modals/modalActions'
-import SigningDeviceWarning from '~/features/send/screens/SigningDeviceWarning'
+import SigningDeviceWarning from '~/features/seedSigner/SigningDeviceWarning'
 import UnknownAddressWarning from '~/features/send/screens/UnknownAddressWarning'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -101,7 +101,7 @@ const FooterButton = ({ addressHash, onSendSuccess }: { addressHash: AddressHash
 
   const dispatch = useAppDispatch()
 
-  const buttonTitle = address?.isWatchOnly ? 'Show QR code' : t('Send')
+  const buttonTitle = address?.isWatchOnly ? t('Show QR code') : t('Send')
 
   const handlePress = async () => {
     if (address?.isWatchOnly && fromAddress && toAddress) {

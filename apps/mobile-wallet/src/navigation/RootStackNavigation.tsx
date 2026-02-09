@@ -18,6 +18,7 @@ import DAppWebViewScreen from '~/features/ecosystem/DAppWebViewScreen'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import AppModals from '~/features/modals/AppModals'
+import SeedSignerScreen from '~/features/seedSigner/SeedSignerScreen'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import SettingsScreen from '~/features/settings/settingsScreen/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -125,6 +126,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   component={ImportWalletAddressDiscoveryScreen}
                 />
                 <RootStack.Screen name="AuthorizedConnectionsScreen" component={AuthorizedConnectionsScreen} />
+                <RootStack.Screen name="SeedSignerScreen" component={SeedSignerScreen} />
               </RootStack.Navigator>
               <AppModals />
             </Analytics>

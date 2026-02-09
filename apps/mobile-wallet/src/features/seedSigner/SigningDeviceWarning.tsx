@@ -1,6 +1,7 @@
 import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { colord } from 'colord'
 import { AlertCircle } from 'lucide-react-native'
+import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -13,6 +14,7 @@ interface SigningDeviceWarningProps {
 }
 
 const SigningDeviceWarning = ({ addressHash }: SigningDeviceWarningProps) => {
+  const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const theme = useTheme()
 
@@ -21,12 +23,12 @@ const SigningDeviceWarning = ({ addressHash }: SigningDeviceWarningProps) => {
   return (
     <InfoBoxStyled
       narrow
-      title="Verify on signing device"
+      title={t('Verify on signing device')}
       Icon={AlertCircle}
       bgColor={colord(theme.global.warning).alpha(0.15).toHex()}
       iconColor={theme.global.warning}
     >
-      <AppText>Verify that the transaction data is correct on the signing device.</AppText>
+      <AppText>{t('Verify that the transaction data is correct on the signing device.')}</AppText>
     </InfoBoxStyled>
   )
 }

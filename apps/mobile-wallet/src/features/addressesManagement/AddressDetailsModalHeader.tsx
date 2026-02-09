@@ -1,4 +1,4 @@
-import { selectAddressByHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
@@ -31,11 +31,6 @@ interface AddressDetailsModalHeaderProps {
 
 const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-
-  const handleSettingsPress = () => {
-    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, onForgetAddress } }))
-  }
 
   return (
     <AddressDetailsModalHeaderStyled>
@@ -48,11 +43,7 @@ const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }
         <AddressSendButton addressHash={addressHash} onSendPress={onSendPress} />
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
-        <ActionCardButton
-          title={t('Settings')}
-          onPress={handleSettingsPress}
-          iconProps={{ name: 'settings-outline' }}
-        />
+        <ActionCardSettingsButton addressHash={addressHash} onForgetAddress={onForgetAddress} />
       </ActionButtons>
 
       <AddressDetailsBox>
@@ -73,6 +64,27 @@ const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }
 }
 
 export default AddressDetailsModalHeader
+
+interface ActionCardSettingsButtonProps {
+  addressHash: AddressHash
+  onForgetAddress: () => void
+}
+
+const ActionCardSettingsButton = ({ addressHash, onForgetAddress }: ActionCardSettingsButtonProps) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+
+  if (address?.isWatchOnly) return null
+
+  const handleSettingsPress = () => {
+    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, onForgetAddress } }))
+  }
+
+  return (
+    <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings-outline' }} />
+  )
+}
 
 const AddressBalanceSummary = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const { t } = useTranslation()

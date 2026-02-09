@@ -8,7 +8,7 @@ import { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import InfoBox from '~/components/InfoBox'
 import BottomModal2 from '~/features/modals/BottomModal2'
-import QRCodeLoop, { QRCodeLoopProps } from '~/features/send/screens/QRCodeLoop'
+import QRCodeLoop, { QRCodeLoopProps } from '~/features/seedSigner/QRCodeLoop'
 
 export interface UnsignedTxQrCodeModalProps {
   unsignedTxData: string
@@ -31,7 +31,7 @@ const UnsignedTxQrCodeModal = memo<UnsignedTxQrCodeModalProps>(({ unsignedTxData
         bgColor={colord(theme.global.accent).alpha(0.15).toHex()}
         iconColor={theme.global.accent}
       >
-        <AppText>Scan this animated QR code with your signer device</AppText>
+        <AppText>{t('Scan this animated QR code with your signer device.')}</AppText>
       </InfoBox>
       <QRCodeLoop frames={frames} />
     </BottomModal2>

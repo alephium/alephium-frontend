@@ -35,6 +35,7 @@ export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
     | 'walletConnectPairing'
     | 'selectAddressModal'
     | 'connectDappModal'
+    | 'watchOnlyAddressesScreen'
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean

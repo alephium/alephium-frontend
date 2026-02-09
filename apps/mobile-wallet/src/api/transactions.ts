@@ -27,31 +27,18 @@ export const fetchSweepTransactionsFees = async (txParams: SweepTxParams): Promi
 }
 
 export const fetchTransferTransactionsFees = async (txParams: SignTransferTxParams): Promise<bigint> => {
-  console.log({ txParams: JSON.stringify(txParams, null, 2) })
-  const pub = await signer.getPublicKey(txParams.signerAddress)
-
-  console.log({ pub })
-
   const { gasAmount, gasPrice } = await throttledClient.txBuilder.buildTransferTx(
     txParams,
     await signer.getPublicKey(txParams.signerAddress)
   )
-
-  console.log({ gasAmount })
 
   return BigInt(gasAmount) * BigInt(gasPrice)
 }
 
 export const fetchTransferUnsignedTx = async (
   txParams: SignTransferTxParams
-): Promise<BuildTxResult<SignTransferTxResult>> => {
-  console.log({ txParams: JSON.stringify(txParams, null, 2) })
-  const pub = await signer.getPublicKey(txParams.signerAddress)
-
-  console.log({ pub })
-
-  return await throttledClient.txBuilder.buildTransferTx(txParams, await signer.getPublicKey(txParams.signerAddress))
-}
+): Promise<BuildTxResult<SignTransferTxResult>> =>
+  await throttledClient.txBuilder.buildTransferTx(txParams, await signer.getPublicKey(txParams.signerAddress))
 
 export const sendChainedTransactions = async (
   txParams: Array<SignChainedTxParams>
