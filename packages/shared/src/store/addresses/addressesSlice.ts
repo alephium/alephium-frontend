@@ -97,7 +97,7 @@ export default addressesSlice
 const getDefaultAddressState = (addressBase: AddressBase): Address => {
   const keyType: KeyType = addressBase.keyType ?? 'default'
 
-  const res: Address = isGroupedKeyType(keyType)
+  return isGroupedKeyType(keyType)
     ? {
         ...addressBase,
         keyType,
@@ -107,10 +107,6 @@ const getDefaultAddressState = (addressBase: AddressBase): Address => {
         ...addressBase,
         keyType
       }
-
-  console.log({ res })
-
-  return res
 }
 
 const addInitialAddress = (state: AddressesState, address: AddressBase) => {
