@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { AlertCircle } from 'lucide-react-native'
@@ -7,6 +7,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import InfoBox from '~/components/InfoBox'
+import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface UnknownAddressWarningProps {
@@ -16,11 +17,12 @@ interface UnknownAddressWarningProps {
 const UnknownAddressWarning = ({ addressHash }: UnknownAddressWarningProps) => {
   const { t } = useTranslation()
   const { data, isLoading } = useFetchAddressLatestTransaction(addressHash)
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const theme = useTheme()
 
   const addressIsActive = !!data?.latestTx?.timestamp
 
-  if (isLoading || addressIsActive) return null
+  if (!!address || isLoading || addressIsActive) return null
 
   return (
     <InfoBoxStyled
