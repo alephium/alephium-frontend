@@ -48,6 +48,24 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
 
 export default DAppCard
 
+export const FavoriteCustomDAppCard = ({ dAppUrl }: { dAppUrl: string }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  const handleCardPress = () => {
+    navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
+    sendAnalytics({ event: 'Opened favorite custom dApp', props: { origin: 'dapp_card', dAppUrl } })
+  }
+
+  return (
+    <DappCardStyled onPress={handleCardPress}>
+      <DAppIcon dAppName={dAppUrl} />
+      <TextContent>
+        <AppText bold>{dAppUrl}</AppText>
+      </TextContent>
+    </DappCardStyled>
+  )
+}
+
 const DappCardStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;

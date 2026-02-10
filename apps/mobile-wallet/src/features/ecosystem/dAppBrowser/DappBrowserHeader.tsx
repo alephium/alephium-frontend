@@ -32,7 +32,7 @@ const DappBrowserHeader = ({ dAppName, currentUrl, onUrlChange }: BrowserHeaderP
           {currentUrl}
         </Url>
       </PressableUrl>
-      {dAppName && <AddToFavoritesButtonStyled dAppName={dAppName} />}
+      <AddToFavoritesButtonStyled dAppName={dAppName ?? ''} dAppUrl={!dAppName ? currentUrl : undefined} />
     </BrowserHeaderStyled>
   )
 }
