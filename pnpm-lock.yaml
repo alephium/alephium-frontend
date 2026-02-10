@@ -583,8 +583,8 @@ importers:
         specifier: ^1.0.4
         version: 1.0.4
       '@gorhom/bottom-sheet':
-        specifier: ^5
-        version: 5.1.4(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        specifier: ^5.2.8
+        version: 5.2.8(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))
@@ -2383,15 +2383,15 @@ packages:
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
 
-  '@gorhom/bottom-sheet@5.1.4':
-    resolution: {integrity: sha512-A49fbCLL3wxDhGvEsMzHDpBF+BqVCbXHEhLJo9plPSAxNjjPJFzJ65axj95R38+iqML0gmXyawpZ45PD4EEMAw==}
+  '@gorhom/bottom-sheet@5.2.8':
+    resolution: {integrity: sha512-+N27SMpbBxXZQ/IA2nlEV6RGxL/qSFHKfdFKcygvW+HqPG5jVNb1OqehLQsGfBP+Up42i0gW5ppI+DhpB7UCzA==}
     peerDependencies:
       '@types/react': ~19.0.14
       '@types/react-native': '*'
       react: ~19.0.0
       react-native: '*'
       react-native-gesture-handler: '>=2.16.1'
-      react-native-reanimated: '>=3.16.0'
+      react-native-reanimated: '>=3.16.0 || >=4.0.0-'
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -13296,7 +13296,7 @@ snapshots:
 
   '@gar/promisify@1.1.3': {}
 
-  '@gorhom/bottom-sheet@5.1.4(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@gorhom/bottom-sheet@5.2.8(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.1(@babel/core@7.26.10)(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       invariant: 2.2.4
