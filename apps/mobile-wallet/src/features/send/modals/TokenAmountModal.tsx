@@ -94,6 +94,7 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
   return (
     <BottomModal2
       titleAlign="left"
+      notScrollable
       title={
         <ModalHeader>
           <AssetLogo size={18} assetId={token.id} />
