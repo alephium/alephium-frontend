@@ -408,24 +408,25 @@ const WalletConnectSessionRequestEventHandler = memo(
                 )
               } else throw e
             } else if (isConsolidationError(e)) {
-              showToast({
-                text: t(
-                  'It appears that your wallet has too many UTXOs to be able to send this transaction. Please, consolidate (merge) your UTXOs first. This will cost a small fee.'
-                ),
-                duration: 'long'
-              })
+              dispatch(
+                showToast({
+                  text: t(
+                    'It appears that your wallet has too many UTXOs to be able to send this transaction. Please, consolidate (merge) your UTXOs first. This will cost a small fee.'
+                  ),
+                  duration: 'long'
+                })
+              )
             } else throw e
           }
         } catch (e) {
           const message = 'Could not parse WalletConnect session request'
+          const errorMessage = getHumanReadableError(e, message)
 
+          dispatch(showToast({ text: errorMessage, duration: 'long', type: 'error' }))
           sendAnalytics({ type: 'error', error: e, message })
           respondToWalletConnectWithError(
             event,
-            {
-              message: getHumanReadableError(e, message),
-              code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
-            },
+            { message: errorMessage, code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED },
             false
           )
         }
