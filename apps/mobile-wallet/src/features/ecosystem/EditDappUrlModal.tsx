@@ -52,14 +52,7 @@ const EditDappUrlModalContent = ({ url, onUrlChange }: EditDappUrlModalProps) =>
 
   return (
     <>
-      <Input
-        isInModal
-        defaultValue={newUrl}
-        onChangeText={handleUrlChange}
-        label={t('DApp URL')}
-        autoFocus
-        error={error}
-      />
+      <Input isInModal defaultValue={newUrl} onChangeText={handleUrlChange} label={t('DApp URL')} error={error} />
       <Button title={t('Load dApp')} onPress={handleSavePress} variant="highlight" />
     </>
   )

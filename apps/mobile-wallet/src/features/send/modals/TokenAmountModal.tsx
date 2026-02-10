@@ -112,7 +112,6 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
             placeholder="0"
             keyboardType="numeric"
             autoComplete="off"
-            autoFocus
             allowFontScaling
             fontSize={fontSize}
             style={{

@@ -17,7 +17,12 @@ const WalletConnectPasteUrlModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 title={t('Connect to dApp')} contentVerticalGap bottomSheetModalProps={{ stackBehavior: 'replace' }}>
+    <BottomModal2
+      title={t('Connect to dApp')}
+      notScrollable
+      contentVerticalGap
+      bottomSheetModalProps={{ stackBehavior: 'replace' }}
+    >
       <ScreenSection>
         <AppText color="secondary" size={18}>
           {t('Paste the WalletConnect URI you copied from the dApp')}:
@@ -71,7 +76,6 @@ const WalletConnectPasteUrlModalContent = () => {
           defaultValue={inputWcUrl}
           onChangeText={handleInputChange}
           error={error}
-          autoFocus
           showPasteButton
         />
       </ScreenSection>

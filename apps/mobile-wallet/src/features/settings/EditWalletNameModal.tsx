@@ -56,7 +56,7 @@ const EditWalletNameModalContent = () => {
 
   return (
     <>
-      <Input isInModal defaultValue={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+      <Input isInModal defaultValue={name} onChangeText={setName} label={t('New name')} maxLength={24} />
       <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
     </>
   )
