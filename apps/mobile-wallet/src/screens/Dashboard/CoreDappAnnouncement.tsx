@@ -12,15 +12,15 @@ const CoreDappAnnouncement = () => {
 
   const handleClick = () => {
     navigation.navigate('DAppWebViewScreen', {
-      dAppUrl: '', // TODO: add the actual URL. Should match Alphland.
-      dAppName: 'Alephium Core' // TODO: add the actual name. Should match Alphland.
+      dAppUrl: 'https://powfi.alephium.org/',
+      dAppName: 'Powfi'
     })
   }
 
   return (
     <CoreDappAnnouncementStyled>
       <AppText>
-        <AppText bold>Alephium Core</AppText> is on Testnet!
+        <AppText bold>Powfi</AppText> is on Testnet!
       </AppText>
       <Button title="Open" onPress={handleClick} iconProps={{ name: 'open-outline' }} variant="accent" short />
     </CoreDappAnnouncementStyled>
