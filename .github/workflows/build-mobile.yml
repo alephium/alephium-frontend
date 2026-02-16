@@ -10,6 +10,7 @@ on:
         default: android
         options:
           - android
+          - android-release-apk
           - ios-registered-devices
           - ios-testflight
 
@@ -39,3 +40,31 @@ jobs:
         if: ${{ github.event.inputs.platform == 'ios-testflight' }}
         working-directory: apps/mobile-wallet
         run: eas build --platform=ios --profile=production --non-interactive --wait --auto-submit
+
+      - name: 🤖 Build and submit Android release APK
+        if: ${{ github.event.inputs.platform == 'android-release-apk' }}
+        working-directory: apps/mobile-wallet
+        run: eas build --platform=android --profile=release-apk --non-interactive --wait --local --output=app-release.apk
+
+      - name: Create Release
+        if: ${{ github.event.inputs.platform == 'android-release-apk' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+
+      - name: Upload APK asset
+        if: ${{ github.event.inputs.platform == 'android-release-apk' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
