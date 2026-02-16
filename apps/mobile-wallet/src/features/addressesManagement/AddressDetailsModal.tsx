@@ -24,6 +24,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
     <BottomModal2
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
       titleButton={<AddressExplorerButton addressHash={addressHash} />}
+      bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: ['50%', '100%'] }}
       flashListProps={{
         data: sortedFts,
         estimatedItemSize: 70,

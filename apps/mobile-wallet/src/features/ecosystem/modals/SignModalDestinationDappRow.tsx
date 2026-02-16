@@ -16,7 +16,9 @@ const SignModalDestinationDappRow = ({ dAppUrl, dAppIcon }: SignModalDestination
   return (
     <Row title={t('To')} titleColor="secondary">
       {dAppIcon && <DappIcon source={{ uri: dAppIcon }} />}
-      <AppText semiBold>{dAppUrl}</AppText>
+      <AppTextStyled truncate semiBold>
+        {dAppUrl}
+      </AppTextStyled>
     </Row>
   )
 }
@@ -26,4 +28,8 @@ export default SignModalDestinationDappRow
 const DappIcon = styled(Image)`
   width: 20px;
   height: 20px;
+`
+
+const AppTextStyled = styled(AppText)`
+  flex-shrink: 1;
 `

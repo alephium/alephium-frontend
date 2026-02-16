@@ -11,10 +11,13 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
-import DAppCard from '~/features/ecosystem/DAppCard'
+import DAppCard, { FavoriteCustomDAppCard } from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { getValidUrl } from '~/features/ecosystem/ecosystemUtils'
-import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
+import {
+  selectFavoriteCustomDApps,
+  selectFavoriteDApps
+} from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -27,6 +30,7 @@ interface DAppsListProps {
 const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
   const { t } = useTranslation()
   const favoriteDApps = useAppSelector(selectFavoriteDApps)
+  const favoriteCustomDApps = useAppSelector(selectFavoriteCustomDApps)
   const { data: dApps, isLoading, isError, error } = useQuery(dAppsQuery({ select: filterDAppsByTag(selectedTag) }))
 
   const [readableError, setReadableError] = useState<string>()
@@ -44,11 +48,15 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
     }
   }, [error, t])
 
-  const tagFilteredDApps = selectedTag === 'fav' ? favoriteDApps : dApps
+  const tagFilteredDAppNames = selectedTag === 'fav' ? favoriteDApps : dApps
 
-  const filteredDApps = useMemo(
-    () => (tagFilteredDApps ? filterDAppsByText(searchText, tagFilteredDApps) : undefined),
-    [searchText, tagFilteredDApps]
+  const filteredDAppNames = useMemo(
+    () => (tagFilteredDAppNames ? filterDAppsByText(searchText, tagFilteredDAppNames) : undefined),
+    [searchText, tagFilteredDAppNames]
+  )
+  const filteredFavDAppUrls = useMemo(
+    () => (selectedTag === 'fav' ? filterDAppsByText(searchText, favoriteCustomDApps) : undefined),
+    [favoriteCustomDApps, searchText, selectedTag]
   )
 
   if (isLoading)
@@ -61,7 +69,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
       </DAppsListStyled>
     )
 
-  if ((isError || !filteredDApps) && !searchText)
+  if ((isError || !filteredDAppNames) && !searchText)
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
@@ -72,7 +80,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
       </DAppsListStyled>
     )
 
-  if (selectedTag === 'fav' && tagFilteredDApps && !tagFilteredDApps.length)
+  if (selectedTag === 'fav' && tagFilteredDAppNames && !tagFilteredDAppNames.length && !filteredFavDAppUrls?.length)
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
@@ -82,7 +90,7 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
       </DAppsListStyled>
     )
 
-  if (!filteredDApps?.length)
+  if (!filteredDAppNames?.length && !filteredFavDAppUrls?.length)
     return (
       <DAppsListStyled>
         <EmptyPlaceholder>
@@ -96,9 +104,8 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
 
   return (
     <DAppsListStyled>
-      {filteredDApps.map((dAppName) => (
-        <DAppCard key={dAppName} dAppName={dAppName} />
-      ))}
+      {filteredDAppNames?.map((dAppName) => <DAppCard key={dAppName} dAppName={dAppName} />)}
+      {filteredFavDAppUrls?.map((dAppUrl) => <FavoriteCustomDAppCard key={dAppUrl} dAppUrl={dAppUrl} />)}
     </DAppsListStyled>
   )
 }

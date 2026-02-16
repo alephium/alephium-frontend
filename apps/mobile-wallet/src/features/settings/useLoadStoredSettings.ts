@@ -7,7 +7,11 @@ import {
 import { useEffect } from 'react'
 
 import { getHiddenTokensIds } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'
-import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
+import { getFavoriteCustomDApps } from '~/features/ecosystem/favoriteDApps/favoriteCustomDAppsStorage'
+import {
+  favoriteCustomDAppsLoadedFromStorage,
+  favoriteDAppsLoadedFromStorage
+} from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
 import { getFavoriteDApps } from '~/features/ecosystem/favoriteDApps/favoriteDAppsStorage'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
@@ -35,6 +39,9 @@ const useLoadStoredSettings = () => {
 
       const favoriteDApps = getFavoriteDApps()
       dispatch(favoriteDAppsLoadedFromStorage(favoriteDApps))
+
+      const favoriteCustomDApps = getFavoriteCustomDApps()
+      dispatch(favoriteCustomDAppsLoadedFromStorage(favoriteCustomDApps))
 
       const hiddenTokensIds = getHiddenTokensIds()
       dispatch(hiddenTokensLoadedFromStorage(hiddenTokensIds))

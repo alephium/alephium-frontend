@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -31,7 +31,7 @@
     "@dev-plugins/react-query": "^0.3.1",
     "@expo/vector-icons": "^14.1.0",
     "@fugashu/alphland-api-client": "^1.0.4",
-    "@gorhom/bottom-sheet": "^5",
+    "@gorhom/bottom-sheet": "^5.2.8",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-native-masked-view/masked-view": "^0.3.2",

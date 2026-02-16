@@ -1,12 +1,12 @@
 import {
   BottomSheetBackdropProps,
-  BottomSheetFlashList,
   BottomSheetModal,
   BottomSheetModalProps,
   BottomSheetScrollView,
-  BottomSheetView
+  BottomSheetView,
+  useBottomSheetScrollableCreator
 } from '@gorhom/bottom-sheet'
-import { BottomSheetFlashListProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/BottomSheetFlashList'
+import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { useCallback, useEffect, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
@@ -26,7 +26,7 @@ interface BottomModalWithChildrenProps extends BottomModalBaseProps {
 }
 
 interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'children'> {
-  flashListProps?: BottomSheetFlashListProps<T>
+  flashListProps?: FlashListProps<T>
   bottomSheetModalProps?: Omit<BottomSheetModalProps, 'children'>
 }
 
@@ -35,6 +35,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const safeAreaInsets = useSafeAreaInsets()
   const modalContext = useModalContext()
   const theme = useTheme()
+  const BottomSheetScrollable = useBottomSheetScrollableCreator()
 
   useEffect(() => {
     bottomSheetModalRef.current?.present()
@@ -73,9 +74,10 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       See: https://github.com/gorhom/react-native-portal/blob/master/src/components/portalProvider/PortalProvider.tsx#L21 */}
       <ModalContextProvider {...modalContext}>
         {isFlashList(props) && props.flashListProps ? (
-          <BottomSheetFlashList
+          <FlashList
             contentContainerStyle={styles}
             {...props.flashListProps}
+            renderScrollComponent={BottomSheetScrollable}
             ListHeaderComponent={
               <>
                 {/* Note: The header is kept INSIDE the sheet so that it behaves properly. Moving it outside creates issues with calculating its height. To be looked into. */}
