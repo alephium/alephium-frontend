@@ -37,6 +37,7 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
 
   const openProviderUrl = async () => {
     receiveAddress &&
+      providerUrl &&
       openBrowserAsync(providerUrl, {
         createTask: false, // Android: the browser opens within our app without a new task in the task manager
         toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
@@ -63,7 +64,12 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
       </AppText>
 
       <BottomButtons fullWidth backgroundColor="back1">
-        <Button title={t('I understand')} onPress={openProviderUrl} variant="highlight" />
+        <Button
+          title={t('I understand')}
+          onPress={providerUrl ? openProviderUrl : undefined}
+          variant="highlight"
+          loading={!providerUrl}
+        />
       </BottomButtons>
     </BottomModal2>
   )
