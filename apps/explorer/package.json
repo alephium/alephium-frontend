@@ -52,7 +52,7 @@
     "framer-motion": "^12.19.1",
     "i18next": "^25.8.13",
     "i18next-browser-languagedetector": "^8.0.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "qrcode.react": "^3.1.0",
     "react": "~19.0.0",
     "react-apexcharts": "^1.4.0",

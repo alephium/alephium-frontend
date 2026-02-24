@@ -264,8 +264,8 @@ importers:
         specifier: ^21.1.1
         version: 21.1.2
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       lucide-react:
         specifier: ^0.287.0
         version: 0.287.0(react@19.0.0)
@@ -429,8 +429,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@19.0.0)
@@ -745,8 +745,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       lottie-react-native:
         specifier: ^7.2.2
         version: 7.2.2(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -1072,8 +1072,8 @@ importers:
         specifier: ^5.0.6
         version: 5.0.6
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       p-throttle:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1197,8 +1197,8 @@ importers:
         specifier: ^1.13.5
         version: 1.13.5
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       react:
         specifier: ~19.0.0
         version: 19.0.0
@@ -8002,8 +8002,8 @@ packages:
   lodash.union@4.6.0:
     resolution: {integrity: sha512-c4pB2CdGrGdjMKYLA+XiRDO7Y0PRQbm/Gzg8qMj+QH+pFVAoTp5sBpO0odL3FjoPCGjK96p6qsP+yQoiLoOBcw==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}
@@ -13722,7 +13722,7 @@ snapshots:
     dependencies:
       debug: 4.4.0
       fs-extra: 9.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       tmp-promise: 3.0.3
     transitivePeerDependencies:
       - supports-color
@@ -14425,7 +14425,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.6
       '@redux-devtools/instrument': 2.2.0(redux@5.0.1)
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 19.0.0
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1)
       redux: 5.0.1
@@ -14433,7 +14433,7 @@ snapshots:
   '@redux-devtools/instrument@2.2.0(redux@5.0.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      lodash: 4.17.21
+      lodash: 4.17.23
       redux: 5.0.1
 
   '@redux-devtools/serialize@0.4.2(immutable@4.3.7)':
@@ -14983,7 +14983,7 @@ snapshots:
       chalk: 3.0.0
       css.escape: 1.5.1
       dom-accessibility-api: 0.5.16
-      lodash: 4.17.21
+      lodash: 4.17.23
       redent: 3.0.0
 
   '@testing-library/react@14.1.2(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
@@ -17867,7 +17867,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       date-fns: 2.30.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       rxjs: 7.8.1
       shell-quote: 1.8.1
       spawn-command: 0.0.2-1
@@ -19041,7 +19041,7 @@ snapshots:
       indent-string: 4.0.0
       is-builtin-module: 3.2.1
       jsesc: 3.0.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       pluralize: 8.0.0
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
@@ -20882,7 +20882,7 @@ snapshots:
       jest-watch-select-projects: 2.0.0
       jest-watch-typeahead: 2.2.1(jest@29.7.0(@types/node@22.19.5)(ts-node@10.9.2(@types/node@22.19.5)(typescript@5.8.3)))
       json5: 2.2.3
-      lodash: 4.17.21
+      lodash: 4.17.23
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
       react-test-renderer: 19.0.0(react@19.0.0)
       server-only: 0.0.1
@@ -21456,7 +21456,7 @@ snapshots:
 
   lodash.union@4.6.0: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-symbols@2.2.0:
     dependencies:
@@ -22710,7 +22710,7 @@ snapshots:
   react-color@2.19.3(react@19.0.0):
     dependencies:
       '@icons/material': 0.2.4(react@19.0.0)
-      lodash: 4.17.21
+      lodash: 4.17.23
       lodash-es: 4.17.21
       material-colors: 1.2.6
       prop-types: 15.8.1
@@ -23154,7 +23154,7 @@ snapshots:
 
   reactcss@1.2.3(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 19.0.0
 
   read-binary-file-arch@1.0.6:
@@ -24850,7 +24850,7 @@ snapshots:
 
   victory-area@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -24858,14 +24858,14 @@ snapshots:
 
   victory-axis@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-bar@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -24873,7 +24873,7 @@ snapshots:
 
   victory-box-plot@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -24881,7 +24881,7 @@ snapshots:
 
   victory-brush-container@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24889,7 +24889,7 @@ snapshots:
 
   victory-brush-line@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24897,14 +24897,14 @@ snapshots:
 
   victory-candlestick@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-canvas@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-bar: 36.7.0(react@19.0.0)
@@ -24912,7 +24912,7 @@ snapshots:
 
   victory-chart@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24923,7 +24923,7 @@ snapshots:
 
   victory-core@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24931,7 +24931,7 @@ snapshots:
 
   victory-create-container@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 19.0.0
       victory-brush-container: 36.7.0(react@19.0.0)
       victory-core: 36.7.0(react@19.0.0)
@@ -24942,21 +24942,21 @@ snapshots:
 
   victory-cursor-container@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-errorbar@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-group@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24965,7 +24965,7 @@ snapshots:
 
   victory-histogram@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -24975,14 +24975,14 @@ snapshots:
 
   victory-legend@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-line@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -24990,7 +24990,7 @@ snapshots:
 
   victory-native@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -25024,7 +25024,7 @@ snapshots:
 
   victory-pie@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -25032,21 +25032,21 @@ snapshots:
 
   victory-polar-axis@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-scatter@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-selection-container@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -25054,7 +25054,7 @@ snapshots:
   victory-shared-events@36.7.0(react@19.0.0):
     dependencies:
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -25062,7 +25062,7 @@ snapshots:
 
   victory-stack@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -25071,7 +25071,7 @@ snapshots:
 
   victory-tooltip@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -25096,7 +25096,7 @@ snapshots:
   victory-voronoi-container@36.7.0(react@19.0.0):
     dependencies:
       delaunay-find: 0.0.6
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       react-fast-compare: 3.2.2
@@ -25106,14 +25106,14 @@ snapshots:
   victory-voronoi@36.7.0(react@19.0.0):
     dependencies:
       d3-voronoi: 1.1.4
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
 
   victory-zoom-container@36.7.0(react@19.0.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 19.0.0
       victory-core: 36.7.0(react@19.0.0)
@@ -25268,7 +25268,7 @@ snapshots:
     dependencies:
       axios: 1.13.5
       joi: 17.11.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       minimist: 1.2.8
       rxjs: 7.8.1
     transitivePeerDependencies:
