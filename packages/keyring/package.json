@@ -24,7 +24,7 @@
     "@alephium/web3-wallet": "2.0.3",
     "@metamask/scure-bip39": "^2.1.1",
     "blakejs": "^1.1.1",
-    "bn.js": "5.2.1",
+    "bn.js": "5.2.3",
     "buffer": "^6.0.3",
     "elliptic": "6.6.1",
     "ethereum-cryptography": "^2.1.3"
