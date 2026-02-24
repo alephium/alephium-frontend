@@ -30,7 +30,7 @@ config.transformer.minifierConfig = {
 
 // TODO: Remove this when we update the dependencies
 // https://github.com/expo/expo/issues/36375#issuecomment-2845231862
-config.resolver.unstable_enablePackageExports = false
+// config.resolver.unstable_enablePackageExports = false
 
 // Force axios to use the browser build in React Native (avoids Node's crypto, http, etc.)
 // Axios 1.13+ has a "react-native" export condition but we have package exports disabled above.
