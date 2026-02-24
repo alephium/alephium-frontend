@@ -43,7 +43,7 @@
     "@reown/walletkit": "^1.2.7",
     "@sentry/react-native": "^6.14.0",
     "@shopify/flash-list": "1.7.6",
-    "@shopify/react-native-skia": "2.3.7",
+    "@shopify/react-native-skia": "2.4.21",
     "@tanstack/query-sync-storage-persister": "^5.81.2",
     "@tanstack/react-query": "^5.81.2",
     "@tanstack/react-query-persist-client": "^5.81.2",
