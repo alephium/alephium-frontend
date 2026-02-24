@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 3.2.1
+
+### Patch Changes
+
+- e7c8b65: Fix popups size in small screens
+- 7aedd14: Fix app header disappearing
+- 2e387ae: Implement subscript notation for small amounts (e.g. 0.0₅1)
+
 ## 3.2.0
 
 ### Minor Changes
