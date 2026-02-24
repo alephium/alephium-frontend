@@ -4,6 +4,7 @@ const { FileStore } = require('metro-cache')
 const path = require('path')
 
 const { getSentryExpoConfig } = require('@sentry/react-native/metro')
+// const { resolve } = require('metro-resolver')
 // Find the project and workspace directories
 const projectRoot = __dirname
 const monorepoRoot = path.resolve(projectRoot, '../..')
@@ -30,5 +31,23 @@ config.transformer.minifierConfig = {
 // TODO: Remove this when we update the dependencies
 // https://github.com/expo/expo/issues/36375#issuecomment-2845231862
 config.resolver.unstable_enablePackageExports = false
+
+// Force axios to use the browser build in React Native (avoids Node's crypto, http, etc.)
+// Axios 1.13+ has a "react-native" export condition but we have package exports disabled above.
+// const defaultResolveRequest = config.resolver.resolveRequest
+// config.resolver.resolveRequest = (context, moduleName, platform) => {
+//   if (moduleName === 'axios') {
+//     // Use built-in resolve with context that points to itself to avoid re-entering this custom resolver
+//     return resolve(
+//       { ...context, resolveRequest: resolve },
+//       'axios/dist/browser/axios.cjs',
+//       platform
+//     )
+//   }
+//   if (defaultResolveRequest) {
+//     return defaultResolveRequest(context, moduleName, platform)
+//   }
+//   return resolve(context, moduleName, platform)
+// }
 
 module.exports = config
