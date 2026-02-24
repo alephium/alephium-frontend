@@ -258,8 +258,8 @@ importers:
         specifier: ^12.19.1
         version: 12.19.1(@emotion/is-prop-valid@1.2.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       i18next:
-        specifier: ^23.4.6
-        version: 23.7.16
+        specifier: ^25.8.13
+        version: 25.8.13(typescript@5.8.3)
       jsdom:
         specifier: ^21.1.1
         version: 21.1.2
@@ -310,7 +310,7 @@ importers:
         version: 7.58.1(react@19.0.0)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.8.3))(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
       react-idle-timer:
         specifier: ^5.7.2
         version: 5.7.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -423,8 +423,8 @@ importers:
         specifier: ^12.19.1
         version: 12.19.1(@emotion/is-prop-valid@1.2.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       i18next:
-        specifier: ^23.4.6
-        version: 23.7.16
+        specifier: ^25.8.13
+        version: 25.8.13(typescript@5.8.3)
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
@@ -445,7 +445,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.8.3))(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
       react-icons:
         specifier: ^4.10.1
         version: 4.12.0(react@19.0.0)
@@ -776,7 +776,7 @@ importers:
         version: 7.58.1(react@19.0.0)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.8.3))(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3)
       react-native:
         specifier: 0.79.5
         version: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
@@ -7062,8 +7062,13 @@ packages:
   i18next-browser-languagedetector@8.0.0:
     resolution: {integrity: sha512-zhXdJXTTCoG39QsrOCiOabnWj2jecouOqbchu3EfhtSHxIB5Uugnm9JaizenOy39h7ne3+fLikIjeW88+rgszw==}
 
-  i18next@23.7.16:
-    resolution: {integrity: sha512-SrqFkMn9W6Wb43ZJ9qrO6U2U4S80RsFMA7VYFSqp7oc7RllQOYDCdRfsse6A7Cq/V8MnpxKvJCYgM8++27n4Fw==}
+  i18next@25.8.13:
+    resolution: {integrity: sha512-E0vzjBY1yM+nsFrtgkjLhST2NBkirkvOVoQa0MSldhsuZ3jUge7ZNpuwG0Cfc74zwo5ZwRzg3uOgT+McBn32iA==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-corefoundation@1.1.7:
     resolution: {integrity: sha512-T10qvkw0zz4wnm560lOEg0PovVqUXuOFhhHAkixw8/sycy7TJt7v/RrkEKEQnAw2viPSJu6iAkErxnzR0g8PpQ==}
@@ -12981,7 +12986,7 @@ snapshots:
   '@expo/cli@0.24.22(graphql@16.10.0)':
     dependencies:
       '@0no-co/graphql.web': 1.1.2(graphql@16.10.0)
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       '@expo/code-signing-certificates': 0.0.5
       '@expo/config': 11.0.13
       '@expo/config-plugins': 10.1.2
@@ -13738,7 +13743,7 @@ snapshots:
 
   '@manypkg/find-root@1.1.0':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       '@types/node': 12.20.55
       find-up: 4.1.0
       fs-extra: 8.1.0
@@ -13749,7 +13754,7 @@ snapshots:
 
   '@manypkg/get-packages@1.1.3':
     dependencies:
-      '@babel/runtime': 7.26.10
+      '@babel/runtime': 7.28.6
       '@changesets/types': 4.1.0
       '@manypkg/find-root': 1.1.0
       fs-extra: 8.1.0
@@ -14427,19 +14432,19 @@ snapshots:
 
   '@redux-devtools/instrument@2.2.0(redux@5.0.1)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       lodash: 4.17.21
       redux: 5.0.1
 
   '@redux-devtools/serialize@0.4.2(immutable@4.3.7)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       immutable: 4.3.7
       jsan: 3.1.14
 
   '@redux-devtools/utils@3.0.1(@redux-devtools/core@4.0.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)(redux@5.0.1))(immutable@4.3.7)(redux@5.0.1)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       '@redux-devtools/core': 4.0.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)(redux@5.0.1)
       '@redux-devtools/serialize': 0.4.2(immutable@4.3.7)
       '@types/get-params': 0.1.2
@@ -18927,7 +18932,7 @@ snapshots:
 
   eslint-plugin-jsx-a11y@6.8.0(eslint@8.56.0):
     dependencies:
-      '@babel/runtime': 7.26.10
+      '@babel/runtime': 7.28.6
       aria-query: 5.3.0
       array-includes: 3.1.7
       array.prototype.flatmap: 1.3.2
@@ -20175,9 +20180,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.10
 
-  i18next@23.7.16:
+  i18next@25.8.13(typescript@5.8.3):
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
+    optionalDependencies:
+      typescript: 5.8.3
 
   iconv-corefoundation@1.1.7:
     dependencies:
@@ -21665,7 +21672,7 @@ snapshots:
 
   metro-runtime@0.82.4:
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       flow-enums-runtime: 0.0.6
 
   metro-source-map@0.82.4:
@@ -22744,11 +22751,11 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  react-i18next@16.5.4(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3):
+  react-i18next@16.5.4(i18next@25.8.13(typescript@5.8.3))(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3):
     dependencies:
       '@babel/runtime': 7.28.6
       html-parse-stringify: 3.0.1
-      i18next: 23.7.16
+      i18next: 25.8.13(typescript@5.8.3)
       react: 19.0.0
       use-sync-external-store: 1.6.0(react@19.0.0)
     optionalDependencies:
@@ -22756,11 +22763,11 @@ snapshots:
       react-native: 0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.0.14)(react@19.0.0)
       typescript: 5.8.3
 
-  react-i18next@16.5.4(i18next@23.7.16)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3):
+  react-i18next@16.5.4(i18next@25.8.13(typescript@5.8.3))(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(typescript@5.8.3):
     dependencies:
       '@babel/runtime': 7.28.6
       html-parse-stringify: 3.0.1
-      i18next: 23.7.16
+      i18next: 25.8.13(typescript@5.8.3)
       react: 19.0.0
       use-sync-external-store: 1.6.0(react@19.0.0)
     optionalDependencies:
@@ -23089,13 +23096,13 @@ snapshots:
 
   react-redux@8.1.3(react@19.0.0):
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       '@types/hoist-non-react-statics': 3.3.7
       '@types/use-sync-external-store': 0.0.3
       hoist-non-react-statics: 3.3.2
       react: 19.0.0
       react-is: 18.3.1
-      use-sync-external-store: 1.5.0(react@19.0.0)
+      use-sync-external-store: 1.6.0(react@19.0.0)
     optional: true
 
   react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@4.2.1):
@@ -23301,7 +23308,7 @@ snapshots:
 
   regenerator-transform@0.15.2:
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
 
   regexp-tree@0.1.27: {}
 
