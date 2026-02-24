@@ -53,6 +53,7 @@ overrides:
   js-yaml@=4.1.0: '=4.1.1'
   h3@<=1.15.4: '>=1.15.5'
   ajv@>=7.0.0-alpha.0 <8.18.0: '>=8.18.0'
+  bn.js@<5.2.3: '>=5.2.3'
 
 patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
@@ -4735,12 +4736,6 @@ packages:
 
   bmp-js@0.1.0:
     resolution: {integrity: sha512-vHdS19CnY3hwiNdkaqk93DvjVLfbEcI8mys4UjuWrlX1haDmroo8o4xCzh4wD6DGV6HxRCyauwhHRqMTfERtjw==}
-
-  bn.js@4.12.0:
-    resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
-
-  bn.js@5.2.1:
-    resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
 
   bn.js@5.2.3:
     resolution: {integrity: sha512-EAcmnPkxpntVL+DS7bO1zhcZNvCkxqtkd0ZY53h06GNQ3DEkkGZ/gKgmDv6DdZQGj9BgfSPKtJJ7Dp1GPP8f7w==}
@@ -11759,7 +11754,7 @@ snapshots:
       base-x: 4.0.1
       bignumber.js: 9.1.2
       blakejs: 1.2.1
-      bn.js: 5.2.1
+      bn.js: 5.2.3
       cross-fetch: 3.1.8(encoding@0.1.13)
       crypto-browserify: 3.12.0
       elliptic: 6.6.1
@@ -11775,7 +11770,7 @@ snapshots:
       base-x: 4.0.1
       bignumber.js: 9.1.2
       blakejs: 1.2.1
-      bn.js: 5.2.1
+      bn.js: 5.2.3
       cross-fetch: 3.1.8(encoding@0.1.13)
       crypto-browserify: 3.12.0
       elliptic: 6.6.1
@@ -17064,7 +17059,7 @@ snapshots:
 
   asn1.js@5.4.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
       safer-buffer: 2.1.2
@@ -17297,10 +17292,6 @@ snapshots:
   bluebird@3.7.2: {}
 
   bmp-js@0.1.0: {}
-
-  bn.js@4.12.0: {}
-
-  bn.js@5.2.1: {}
 
   bn.js@5.2.3: {}
 
@@ -17959,7 +17950,7 @@ snapshots:
 
   create-ecdh@4.0.4:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       elliptic: 6.6.1
 
   create-hash@1.1.3:
@@ -18341,7 +18332,7 @@ snapshots:
 
   diffie-hellman@5.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       miller-rabin: 4.0.1
       randombytes: 2.1.0
 
@@ -18552,7 +18543,7 @@ snapshots:
 
   elliptic@6.6.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       brorand: 1.1.0
       hash.js: 1.1.7
       hmac-drbg: 1.0.1
@@ -21806,7 +21797,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       brorand: 1.1.0
 
   mime-db@1.33.0: {}
@@ -22635,7 +22626,7 @@ snapshots:
 
   public-encrypt@4.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 5.2.3
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       parse-asn1: 5.1.6
