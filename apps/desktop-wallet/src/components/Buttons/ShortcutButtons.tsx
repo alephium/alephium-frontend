@@ -185,7 +185,7 @@ const ShortcutButton = styled.button<{ color?: string }>`
 `
 
 const ButtonText = styled.div`
-  text-align: center;
+  text-align: left;
 `
 
 const ButtonsContainer = styled.div`

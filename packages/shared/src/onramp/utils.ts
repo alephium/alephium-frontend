@@ -11,15 +11,24 @@ interface OnramperUrlThemeOptions {
   primaryColor?: string
 }
 
+interface OnramperSignatureOptions {
+  receiveAddressHash: AddressHash
+  signature: string
+  options: OnramperUrlThemeOptions
+}
+
 // See https://docs.onramper.com/docs/supported-widget-parameters
-export const getOnramperUrl = (receiveAddressHash: AddressHash, options: OnramperUrlThemeOptions) =>
+export const getOnramperUrl = ({ receiveAddressHash, signature, options }: OnramperSignatureOptions) =>
   'https://buy.onramper.com/' +
   '?mode=buy' +
   `&onlyCryptos=${ALPH_CODE}` +
   `&successRedirectUrl=${encodeURIComponent(ONRAMP_TARGET_LOCATION)}` +
-  `&wallets=${ALPH_CODE}:${receiveAddressHash}` +
+  `&${getOnramperSignContent(receiveAddressHash)}` +
   `&apiKey=${ONRAMPER_CLIENT_UUID}` +
   `&themeName=${options.themeName}` +
   (options.containerColor ? `&containerColor=${options.containerColor}` : '') +
   (options.primaryTextColor ? `&primaryTextColor=${options.primaryTextColor}` : '') +
-  (options.primaryColor ? `&primaryColor=${options.primaryColor}` : '')
+  (options.primaryColor ? `&primaryColor=${options.primaryColor}` : '') +
+  `&signature=${signature}`
+
+export const getOnramperSignContent = (receiveAddressHash: AddressHash) => `wallets=${ALPH_CODE}:${receiveAddressHash}`

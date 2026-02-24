@@ -55,7 +55,7 @@ const AddressSweepModal = memo(
     })
     const [fee, setFee] = useState(BigInt(0))
     const [builtUnsignedTxs, setBuiltUnsignedTxs] = useState<node.SweepAddressTransaction[]>()
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState<boolean | string>(false)
 
     const isConsolidationRedundant = builtUnsignedTxs && builtUnsignedTxs.length === 0
     const isConsolidationButtonDisabled = !builtUnsignedTxs || builtUnsignedTxs.length === 0

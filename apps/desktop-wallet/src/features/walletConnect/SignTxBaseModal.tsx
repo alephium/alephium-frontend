@@ -54,7 +54,7 @@ const SignTxBaseModal = ({
   const { isLedger } = useLedger()
   const { sendAnalytics } = useAnalytics()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean | string>(false)
 
   const handleError = useCallback(
     (e: unknown) => {
