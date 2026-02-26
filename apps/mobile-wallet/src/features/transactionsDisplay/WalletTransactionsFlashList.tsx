@@ -7,7 +7,7 @@ import {
 } from '@alephium/shared'
 import { useFetchWalletTransactionsInfinite, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
-import { FlashList, FlashListProps } from '@shopify/flash-list'
+import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list'
 import { orderBy, uniqBy } from 'lodash'
 import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +31,7 @@ interface WalletTransactionsFlashListProps extends Partial<FlashListProps<e.Tran
 const WalletTransactionsFlashList = forwardRef(
   (
     { forContactAddress, ListHeaderComponent, ...props }: WalletTransactionsFlashListProps,
-    ref: ForwardedRef<FlashList<e.Transaction>>
+    ref: ForwardedRef<FlashListRef<e.Transaction>>
   ) => {
     const theme = useTheme()
     const dispatch = useAppDispatch()
@@ -94,7 +94,6 @@ const WalletTransactionsFlashList = forwardRef(
         refreshControl={<RefreshSpinner />}
         refreshing={isFetching}
         extraData={displayedConfirmedTransactions.length > 0 ? displayedConfirmedTransactions[0].hash : ''}
-        estimatedItemSize={64}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
         ListEmptyComponent={
           <EmptyConfirmedTransactionsListPlaceholder isLoading={isLoading} hasNextPage={hasNextPage} />

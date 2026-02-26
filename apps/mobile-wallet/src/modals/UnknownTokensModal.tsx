@@ -28,7 +28,6 @@ const UnknownTokensModal = memo(() => {
       title={t('unknownTokensKey', { count: nstIds.length })}
       flashListProps={{
         data: nstIds,
-        estimatedItemSize: 65,
         ListHeaderComponent: (
           <AppText>
             {t(

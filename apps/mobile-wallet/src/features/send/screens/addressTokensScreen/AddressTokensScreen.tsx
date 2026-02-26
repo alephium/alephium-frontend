@@ -27,6 +27,8 @@ interface ScreenProps
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { maintainVisibleContentPosition, ...flashListProps } = props as any
   const { fromAddress, setAssetAmount } = useSendContext()
   const { parentNavigation } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
@@ -75,7 +77,7 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
       addressHash={address.hash}
       onBuildSuccess={onBuildSuccess}
       onConsolidationSuccess={onConsolidationSuccess}
-      {...props}
+      {...flashListProps}
     />
   )
 }
@@ -131,7 +133,6 @@ const AddressTokensFlashListScreen = ({
       contentPaddingTop
       screenTitle={t('Assets')}
       screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
-      estimatedItemSize={64}
       onScroll={screenScrollHandler}
       bottomButtonsRender={() => (
         <Button

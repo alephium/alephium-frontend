@@ -1,5 +1,5 @@
 import { explorer as e } from '@alephium/web3'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,7 +12,7 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 
 const ActivityScreen = () => {
   const { t } = useTranslation()
-  const listRef = useRef<FlashList<e.Transaction>>(null)
+  const listRef = useRef<FlashListRef<e.Transaction>>(null)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 

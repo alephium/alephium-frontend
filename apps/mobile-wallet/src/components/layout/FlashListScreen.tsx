@@ -1,6 +1,6 @@
-import { FlashList, FlashListProps } from '@shopify/flash-list'
+import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list'
 import { useRef, useState } from 'react'
-import { Platform } from 'react-native'
+import { Platform, StyleProp, StyleSheet, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -12,10 +12,11 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlashListScreenProps<T>
-  extends FlashListProps<T>,
+  extends Omit<FlashListProps<T>, 'style'>,
     Omit<ScrollScreenBaseProps, 'contentContainerStyle'> {
   shouldUseGaps?: boolean
   contentPaddingTop?: boolean | number
+  style?: StyleProp<ViewStyle>
 }
 
 const FlashListScreen = <T,>({
@@ -31,7 +32,7 @@ const FlashListScreen = <T,>({
   ...props
 }: FlashListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
-  const FlashListRef = useRef<FlashList<T>>(null)
+  const flashListRef = useRef<FlashListRef<T>>(null)
   const [paddingBottom, setPaddingBottom] = useState(0)
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
@@ -40,12 +41,16 @@ const FlashListScreen = <T,>({
     setPaddingBottom(newHeight)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const safeProps: any = props
+
   return (
     <Screen headerOptions={headerOptions} scrollY={screenScrollY}>
       <FlashList
-        ref={FlashListRef}
+        ref={flashListRef}
         onScroll={screenScrollHandler}
         scrollEventThrottle={16}
+        style={StyleSheet.flatten(style)}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={() =>
           screenTitle && (
@@ -57,15 +62,17 @@ const FlashListScreen = <T,>({
             />
           )
         }
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + paddingBottom,
-          paddingTop:
-            typeof contentPaddingTop === 'boolean'
-              ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * 2
-              : contentPaddingTop,
-          ...contentContainerStyle
-        }}
-        {...props}
+        contentContainerStyle={[
+          {
+            paddingBottom: insets.bottom + paddingBottom,
+            paddingTop:
+              typeof contentPaddingTop === 'boolean'
+                ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * 2
+                : contentPaddingTop
+          },
+          contentContainerStyle
+        ]}
+        {...safeProps}
       />
       {bottomButtonsRender && (
         <BottomButtonsContainer>

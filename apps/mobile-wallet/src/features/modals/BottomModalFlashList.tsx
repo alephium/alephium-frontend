@@ -1,5 +1,5 @@
-import { ContentStyle } from '@shopify/flash-list'
 import { ReactNode } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
 
 import BottomModalBase, { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import { useModalContext } from '~/features/modals/ModalContext'
@@ -11,7 +11,7 @@ export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'c
 }
 
 export interface FlashListRenderProps {
-  contentContainerStyle: ContentStyle
+  contentContainerStyle: StyleProp<ViewStyle>
   onContentSizeChange: (w: number, h: number) => void
 }
 

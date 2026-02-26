@@ -20,7 +20,6 @@ const SelectTokenToHideModal = memo(() => {
       title={t('Asset to hide')}
       flashListProps={{
         data: knownFungibleTokens.filter(({ id }) => id !== ALPH.id),
-        estimatedItemSize: 60,
         renderItem: ({ item: { id, name } }) => (
           <ListItem
             key={id}
