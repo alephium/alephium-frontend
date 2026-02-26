@@ -1730,7 +1730,7 @@ PODS:
     - YttriumWrapper (= 0.10.40)
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-mmkv (3.2.0):
+  - react-native-mmkv (3.3.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -3095,7 +3095,7 @@ SPEC CHECKSUMS:
   react-native-capture-protection: c84cea028829f237c35e519e284b8b6877ca8e6b
   react-native-compat: 0d1aeb10e625b52ef9650ededaa5620622ade2f2
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
-  react-native-mmkv: 50aa9ba6329ec84f493c7f5d4500cf8924875704
+  react-native-mmkv: 3d69c8bbdbceb1c0d3754863ecffa6ec24e4be12
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-pager-view: c8817c1d9f4643417e68f0b846c51214b2252eea
   react-native-quick-base64: 6568199bb2ac8e72ecdfdc73a230fbc5c1d3aac4
