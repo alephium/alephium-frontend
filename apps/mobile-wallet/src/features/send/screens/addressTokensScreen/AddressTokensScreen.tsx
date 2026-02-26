@@ -27,7 +27,7 @@ interface ScreenProps
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   const { maintainVisibleContentPosition, ...flashListProps } = props as any
   const { fromAddress, setAssetAmount } = useSendContext()
   const { parentNavigation } = useHeaderContext()

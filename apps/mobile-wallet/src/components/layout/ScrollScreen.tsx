@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
