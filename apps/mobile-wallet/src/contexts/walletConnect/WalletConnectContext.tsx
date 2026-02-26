@@ -38,6 +38,7 @@ import {
   Core,
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
+  Expirer,
   HISTORY_CONTEXT,
   HISTORY_STORAGE_VERSION,
   MESSAGES_CONTEXT,
@@ -181,8 +182,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     try {
       client = await WalletKit.init({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        core: core as any,
+        core,
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
@@ -856,8 +856,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       refreshActiveSessions()
 
       console.log('Clear walletconnect cache')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const expirer = walletConnectClient.core.expirer as any
+      const expirer = walletConnectClient.core.expirer as Expirer
       expirer.expirations.clear()
       walletConnectClient.core.history.records.clear()
       walletConnectClient.core.crypto.keychain.keychain.clear()

@@ -41,9 +41,6 @@ const FlashListScreen = <T,>({
     setPaddingBottom(newHeight)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const safeProps: any = props
-
   return (
     <Screen headerOptions={headerOptions} scrollY={screenScrollY}>
       <FlashList
@@ -72,7 +69,7 @@ const FlashListScreen = <T,>({
           },
           contentContainerStyle
         ]}
-        {...safeProps}
+        {...props}
       />
       {bottomButtonsRender && (
         <BottomButtonsContainer>

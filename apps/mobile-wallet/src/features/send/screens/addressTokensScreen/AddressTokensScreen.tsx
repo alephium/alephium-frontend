@@ -26,9 +26,12 @@ interface ScreenProps
   extends StackScreenProps<SendNavigationParamList, 'AddressTokensScreen'>,
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
-const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  const { maintainVisibleContentPosition, ...flashListProps } = props as any
+const AddressTokensScreen = ({
+  navigation,
+  route: { params },
+  maintainVisibleContentPosition,
+  ...props
+}: ScreenProps) => {
   const { fromAddress, setAssetAmount } = useSendContext()
   const { parentNavigation } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
@@ -77,7 +80,7 @@ const AddressTokensScreen = ({ navigation, route: { params }, ...props }: Screen
       addressHash={address.hash}
       onBuildSuccess={onBuildSuccess}
       onConsolidationSuccess={onConsolidationSuccess}
-      {...flashListProps}
+      {...props}
     />
   )
 }
