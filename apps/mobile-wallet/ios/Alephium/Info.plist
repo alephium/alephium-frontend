@@ -23,7 +23,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>2.4.5</string>
+    <string>2.4.6</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -61,11 +61,13 @@
     <key>NSCameraUsageDescription</key>
     <string>The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.</string>
     <key>NSFaceIDUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
+    <string>Allow $(PRODUCT_NAME) to use Face ID</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSMotionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your device motion</string>
+    <key>RCTNewArchEnabled</key>
+    <true/>
     <key>UIAppFonts</key>
     <array>
       <string>Geist-Medium.ttf</string>

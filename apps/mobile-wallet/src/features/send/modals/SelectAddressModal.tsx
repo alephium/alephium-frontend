@@ -26,7 +26,6 @@ const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress }) =>
       title={t('Addresses')}
       flashListProps={{
         data,
-        estimatedItemSize: 70,
         renderItem: ({ item: addressHash, index }) => (
           <AddressBox
             key={addressHash}

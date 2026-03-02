@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.12.1
+
+### Patch Changes
+
+- 2e387ae: Implement subscript notation for small amounts (e.g. 0.0₅1)
+
 ## 1.12.0
 
 ### Minor Changes

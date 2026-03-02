@@ -23,9 +23,9 @@
     "@alephium/web3": "2.0.4",
     "@metamask/scure-bip39": "^2.1.1",
     "@reduxjs/toolkit": "^1.9.1",
-    "@walletconnect/sign-client": "2.21.3",
-    "@walletconnect/types": "2.21.3",
-    "@walletconnect/utils": "2.21.3",
+    "@walletconnect/sign-client": "2.23.6",
+    "@walletconnect/types": "2.23.6",
+    "@walletconnect/utils": "2.23.6",
     "@yornaath/batshit": "^0.10.1",
     "cross-fetch": "^3.1.5",
     "dayjs": "^1.10.7",
@@ -43,7 +43,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^8.48.0",
     "tslib": "^2.3.1",
-    "typescript": "~5.8.3",
+    "typescript": "~5.9.2",
     "vitest": "^2.1.9"
   }
 }

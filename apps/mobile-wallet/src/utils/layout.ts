@@ -1,15 +1,15 @@
 import { getHumanReadableError } from '@alephium/shared'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
 import Toast, { ToastShowParams } from 'react-native-toast-message'
 
-export const checkIfScrollView = (view: ScrollView | FlatList | FlashList<unknown>): view is ScrollView =>
+export const checkIfScrollView = (view: ScrollView | FlatList | FlashListRef<unknown>): view is ScrollView =>
   'scrollTo' in view
 
 export const scrollScreenTo = (
   position: number,
-  viewRef: MutableRefObject<ScrollView | FlatList | FlashList<unknown> | null>,
+  viewRef: MutableRefObject<ScrollView | FlatList | FlashListRef<unknown> | null>,
   animated = false
 ) => {
   if (!viewRef?.current) return

@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
@@ -38,7 +38,6 @@ export interface ScrollScreenBaseProps extends ScreenProps {
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
-  scrollViewRef?: RefObject<ScrollView | null>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
   hasKeyboard?: boolean
