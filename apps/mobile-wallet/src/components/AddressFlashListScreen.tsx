@@ -24,7 +24,6 @@ const AddressFlashListScreen = ({
 }: AddressFlashListScreenProps) => (
   <FlashListScreen
     data={data}
-    estimatedItemSize={70}
     extraData={{ selectedAddress }}
     renderItem={({ item: addressHash, index, extraData }) => (
       <AddressBoxStyled

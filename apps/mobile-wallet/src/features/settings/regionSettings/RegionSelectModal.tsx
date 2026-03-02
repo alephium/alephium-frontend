@@ -49,7 +49,6 @@ const RegionsFlashList = ({
       </ScreenSectionStyled>
       <FlashList
         data={filteredRegionOptions}
-        estimatedItemSize={65}
         renderItem={({ item: { label, value }, index }) => (
           <RegionRadioButton
             label={label}

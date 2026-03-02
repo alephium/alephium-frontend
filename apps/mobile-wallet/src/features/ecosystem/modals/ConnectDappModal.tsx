@@ -44,7 +44,6 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
       contentVerticalGap={allAddressesStrInGroup.length > 1}
       flashListProps={{
         data: allAddressesStrInGroup,
-        estimatedItemSize: 70,
         renderItem: ({ item: addressHash, index }) => (
           <AddressBox
             key={addressHash}

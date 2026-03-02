@@ -26,7 +26,12 @@ interface ScreenProps
   extends StackScreenProps<SendNavigationParamList, 'AddressTokensScreen'>,
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
-const AddressTokensScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+const AddressTokensScreen = ({
+  navigation,
+  route: { params },
+  maintainVisibleContentPosition,
+  ...props
+}: ScreenProps) => {
   const { fromAddress, setAssetAmount } = useSendContext()
   const { parentNavigation } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
@@ -131,7 +136,6 @@ const AddressTokensFlashListScreen = ({
       contentPaddingTop
       screenTitle={t('Assets')}
       screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
-      estimatedItemSize={64}
       onScroll={screenScrollHandler}
       bottomButtonsRender={() => (
         <Button

@@ -1,6 +1,6 @@
 import { NFT } from '@alephium/shared'
 import { useFetchWalletNfts, useIsExplorerOffline } from '@alephium/shared-react'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,7 +15,7 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 const NFTListScreen = () => {
   const { t } = useTranslation()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
-  const listRef = useRef<FlashList<NFT[] | NFT['collectionId']>>(null)
+  const listRef = useRef<FlashListRef<NFT[] | NFT['collectionId']>>(null)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
   const isExplorerOffline = useIsExplorerOffline()
 

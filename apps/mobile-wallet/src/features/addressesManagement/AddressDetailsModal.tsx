@@ -27,7 +27,6 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
       bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: ['50%', '100%'] }}
       flashListProps={{
         data: sortedFts,
-        estimatedItemSize: 70,
         ListHeaderComponent: () => (
           <AddressDetailsModalHeader
             addressHash={addressHash}

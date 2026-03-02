@@ -34,7 +34,6 @@ const AuthorizedConnectionsScreen = () => {
   return (
     <FlashListScreen
       data={connections}
-      estimatedItemSize={70}
       headerOptions={{ headerTitle: t('Preauthorized connections'), type: 'stack' }}
       screenTitle={t('Preauthorized connections')}
       screenIntro={t('Manage dApp connections')}

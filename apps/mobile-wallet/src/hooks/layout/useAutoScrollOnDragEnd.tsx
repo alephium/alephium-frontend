@@ -1,4 +1,4 @@
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
@@ -10,7 +10,7 @@ type UseAutoScrollOnDragEnd = {
   (scrollViewRef?: RefObject<ScrollView | null>): UseAutoScrollReturnedHandler
   (flatListRef?: RefObject<FlatList<unknown> | null>): UseAutoScrollReturnedHandler
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (flashListRef?: RefObject<FlashList<any> | null>): UseAutoScrollReturnedHandler
+  (flashListRef?: RefObject<FlashListRef<any> | null>): UseAutoScrollReturnedHandler
 }
 
 const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
