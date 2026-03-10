@@ -121,7 +121,6 @@
     "react-qr-code": "^2.0.15",
     "react-redux": "^9.2.0",
     "readable-stream": "^4.7.0",
-    "redux-devtools-expo-dev-plugin": "^1.0.0",
     "styled-components": "^6.1.19",
     "stylis": "^4.0.0",
     "victory-native": "^36.6.10",
