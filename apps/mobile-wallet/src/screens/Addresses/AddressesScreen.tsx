@@ -29,7 +29,6 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
       data={addresses}
       refreshControl={<RefreshSpinner progressViewOffset={150} />}
       contentPaddingTop={165}
-      estimatedItemSize={78}
       onScroll={onScroll}
       contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN, paddingBottom: bottomBarHeight }}
       renderItem={({ item: addressHash, index }) => (

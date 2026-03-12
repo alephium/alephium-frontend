@@ -26,7 +26,7 @@
     "blakejs": "^1.1.1",
     "bn.js": "5.2.3",
     "buffer": "^6.0.3",
-    "elliptic": "6.6.1",
+    "elliptic": "^6.6.1",
     "ethereum-cryptography": "^2.1.3"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^8.48.0",
     "tslib": "^2.3.1",
-    "typescript": "~5.8.3",
+    "typescript": "~5.9.2",
     "vitest": "^2.1.9"
   }
 }

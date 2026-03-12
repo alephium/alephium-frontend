@@ -110,7 +110,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
             <InfoBox title={t('Camera permissions required')} Icon={CameraIcon}>
               <AppText>{t('Please, enable access to camera through the settings of your device.')}</AppText>
               {permission.canAskAgain && (
-                <Button title={t('Allow')} onPress={requestPermission} style={{ marginTop: VERTICAL_GAP }} />
+                <Button title={t('Continue')} onPress={requestPermission} style={{ marginTop: VERTICAL_GAP }} />
               )}
             </InfoBox>
           </ScreenSection>

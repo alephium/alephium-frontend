@@ -18,14 +18,12 @@ export interface UseNftsGridFlashListPropsProps {
   nftsPerRow?: number
   nftSize?: number
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
-  estimatedItemSize?: number
 }
 
 const useNftsGridFlashListProps = ({
   nfts,
   nftsPerRow = 3,
-  isLoading,
-  estimatedItemSize
+  isLoading
 }: UseNftsGridFlashListPropsProps): FlashListProps<NFT[] | NFT['collectionId']> => {
   const theme = useTheme()
   const { t } = useTranslation()
@@ -55,7 +53,6 @@ const useNftsGridFlashListProps = ({
         </NftsRow>
       ),
     contentContainerStyle: { paddingHorizontal: DEFAULT_MARGIN, paddingBottom: 70 },
-    estimatedItemSize: estimatedItemSize || 64,
     ListEmptyComponent: isLoading ? (
       <EmptyPlaceholder>
         <AppText color={theme.font.tertiary}>👀</AppText>

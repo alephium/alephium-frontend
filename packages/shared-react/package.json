@@ -22,15 +22,15 @@
     "@tanstack/react-query": "^5.81.2",
     "axios": "^1.13.5",
     "lodash": "^4.17.23",
-    "react": "~19.0.0",
+    "react": "^19.1.0",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "2.0.3",
-    "@types/react": "~19.0.14",
+    "@types/react": "~19.1.10",
     "tsup": "^8.4.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.2"
   }
 }

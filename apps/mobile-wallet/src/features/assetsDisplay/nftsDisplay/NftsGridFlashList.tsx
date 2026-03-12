@@ -1,5 +1,5 @@
 import { NFT } from '@alephium/shared'
-import { FlashList, FlashListProps } from '@shopify/flash-list'
+import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list'
 import { ForwardedRef, forwardRef } from 'react'
 
 import useNftsGridFlashListProps, {
@@ -15,7 +15,7 @@ type NftsGridFlashListProps = Omit<
 const NftsGridFlastList = forwardRef(
   (
     { nfts, nftSize, nftsPerRow = 3, isLoading, ...props }: NftsGridFlashListProps,
-    ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
+    ref: ForwardedRef<FlashListRef<NFT[] | NFT['collectionId']>>
   ) => {
     const flashListProps = useNftsGridFlashListProps({ nfts, nftSize, nftsPerRow, isLoading })
 
