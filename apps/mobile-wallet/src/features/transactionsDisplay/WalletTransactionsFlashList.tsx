@@ -95,9 +95,7 @@ const WalletTransactionsFlashList = forwardRef(
         refreshing={isFetching}
         extraData={displayedConfirmedTransactions.length > 0 ? displayedConfirmedTransactions[0].hash : ''}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
-        ListEmptyComponent={
-          <EmptyConfirmedTransactionsListPlaceholder isLoading={isLoading} hasNextPage={hasNextPage} />
-        }
+        ListEmptyComponent={<EmptyConfirmedTransactionsListPlaceholder isLoading={isLoading} />}
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
@@ -127,13 +125,7 @@ const WalletTransactionsFlashList = forwardRef(
 
 export default WalletTransactionsFlashList
 
-const EmptyConfirmedTransactionsListPlaceholder = ({
-  isLoading,
-  hasNextPage
-}: {
-  isLoading: boolean
-  hasNextPage: boolean
-}) => {
+const EmptyConfirmedTransactionsListPlaceholder = ({ isLoading }: { isLoading: boolean }) => {
   const { t } = useTranslation()
   const pendingSentTransactions = useAppSelector(selectAllPendingSentTransactions)
 
@@ -147,15 +139,12 @@ const EmptyConfirmedTransactionsListPlaceholder = ({
       </EmptyPlaceholder>
     )
 
-  if (!hasNextPage)
-    return (
-      <EmptyPlaceholder>
-        <AppText size={32}>🤷‍♂️</AppText>
-        <AppText color="secondary">{t('No transactions yet')}</AppText>
-      </EmptyPlaceholder>
-    )
-
-  return null
+  return (
+    <EmptyPlaceholder>
+      <AppText size={32}>🤷‍♂️</AppText>
+      <AppText color="secondary">{t('No transactions yet')}</AppText>
+    </EmptyPlaceholder>
+  )
 }
 
 const Footer = styled.View`
