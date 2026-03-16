@@ -31,7 +31,6 @@
     "@alphland/dapps": "^1.0.3",
     "@dev-plugins/react-query": "^0.3.1",
     "@expo/vector-icons": "^15.1.1",
-    "@fugashu/alphland-api-client": "^1.0.4",
     "@gorhom/bottom-sheet": "^5.2.8",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^11.4.1",

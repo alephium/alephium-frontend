@@ -583,9 +583,6 @@ importers:
       '@expo/vector-icons':
         specifier: ^15.1.1
         version: 15.1.1(expo-font@14.0.11(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      '@fugashu/alphland-api-client':
-        specifier: ^1.0.4
-        version: 1.0.4
       '@gorhom/bottom-sheet':
         specifier: ^5.2.8
         version: 5.2.8(@types/react@19.1.17)(react-native-gesture-handler@2.28.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.6(@babel/core@7.26.10)(react-native-worklets@0.7.4(@babel/core@7.26.10)(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -2585,9 +2582,6 @@ packages:
 
   '@floating-ui/utils@0.2.1':
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
-
-  '@fugashu/alphland-api-client@1.0.4':
-    resolution: {integrity: sha512-mHar67evpvMhkaqLacgtMA8Er8KO241ZE6x8Mj7kYi5NotQd9MCevk1/A2/MBniM2sM7jmkScVgqdGoFw2C3og==}
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -13744,12 +13738,6 @@ snapshots:
       '@floating-ui/utils': 0.2.1
 
   '@floating-ui/utils@0.2.1': {}
-
-  '@fugashu/alphland-api-client@1.0.4':
-    dependencies:
-      axios: 1.13.5
-    transitivePeerDependencies:
-      - debug
 
   '@gar/promisify@1.1.3': {}
 
