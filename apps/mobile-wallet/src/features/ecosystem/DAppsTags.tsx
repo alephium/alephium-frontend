@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { dAppsTagsQuery } from '~/api/queries/dAppQueries'
+import { dAppsQuery, selectTagsFromDApps } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
@@ -17,7 +18,9 @@ interface DAppsCategoriesProps {
 }
 
 const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
-  const { data: dAppTags } = useQuery(dAppsTagsQuery)
+  const { data: dAppTags } = useQuery(
+    dAppsQuery({ select: selectTagsFromDApps, onlyWhitelisted: Platform.OS === 'ios' })
+  )
   const theme = useTheme()
 
   if (!dAppTags) return null

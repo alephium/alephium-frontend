@@ -42,21 +42,4 @@ const sortTags = (tags: string[]) => [
   ...tags.filter((tag) => !defaultSortedTags.includes(tag)).sort()
 ]
 
-export const dAppsTagsQuery = queryOptions({
-  queryKey: ['dAppsTags'],
-  ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
-  queryFn: ({ queryKey }) =>
-    axios
-      .get('https://publicapi.alph.land/api/tags')
-      .then((res) => res.data as string[])
-      .catch((e) => {
-        const cachedTags = queryClient.getQueryData(queryKey)
-
-        if (cachedTags) {
-          return cachedTags as string[]
-        } else {
-          throw e
-        }
-      }),
-  select: sortTags
-})
+export const selectTagsFromDApps = (dApps: DApp[]) => sortTags([...new Set(dApps.flatMap((dApp) => dApp.tags))])

@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Platform } from 'react-native'
 import styled from 'styled-components/native'
 
 import { dAppsQuery } from '~/api/queries/dAppQueries'
@@ -31,7 +32,13 @@ const DAppsList = ({ selectedTag, searchText }: DAppsListProps) => {
   const { t } = useTranslation()
   const favoriteDApps = useAppSelector(selectFavoriteDApps)
   const favoriteCustomDApps = useAppSelector(selectFavoriteCustomDApps)
-  const { data: dApps, isLoading, isError, error } = useQuery(dAppsQuery({ select: filterDAppsByTag(selectedTag) }))
+
+  const {
+    data: dApps,
+    isLoading,
+    isError,
+    error
+  } = useQuery(dAppsQuery({ select: filterDAppsByTag(selectedTag), onlyWhitelisted: Platform.OS === 'ios' }))
 
   const [readableError, setReadableError] = useState<string>()
 

@@ -3,7 +3,7 @@ import { queryClient } from '@alephium/shared-react'
 import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { dAppsQuery, dAppsTagsQuery } from '~/api/queries/dAppQueries'
+import { dAppsQuery, selectTagsFromDApps } from '~/api/queries/dAppQueries'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
 jest.mock('axios')
@@ -113,57 +113,38 @@ describe('dAppQueries', () => {
     })
   })
 
-  describe('dAppsTagsQuery', () => {
-    const mockTags = ['DeFi', 'NFTs', 'Gaming', 'Social']
-
-    it('returns cached data on API failure if available', async () => {
-      // First, populate the cache with data
-      mockedAxios.get.mockResolvedValueOnce({ data: mockTags })
-      await queryClient.fetchQuery(dAppsTagsQuery)
-
-      // Verify data is cached
-      expect(queryClient.getQueryData(['dAppsTags'])).toEqual(mockTags)
-
-      // Now simulate API failure
-      mockedAxios.get.mockRejectedValueOnce(new Error('API Error'))
-
-      // Query should return cached data (sorted by select function)
-      const result = await queryClient.fetchQuery(dAppsTagsQuery)
-      // The sortTags function keeps default tags in order and sorts remaining alphabetically
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Social'])
+  describe('selectTagsFromDApps', () => {
+    const makeDApp = (tags: string[]): DApp => ({
+      name: 'TestDApp',
+      links: { website: 'https://test.com' },
+      short_description: 'Test',
+      tags,
+      verified: true,
+      councils_choice: false,
+      dotw: false,
+      teamInfo: { contactEmail: 'test@test.com', founded: '2021-01-01', anonymous: false },
+      media: { logoUrl: '', bannerUrl: '', previewUrl: '' },
+      description: 'Test'
     })
 
-    it('throws an error on API failure if no cached data is available', async () => {
-      const apiError = new Error('API Error')
-      mockedAxios.get.mockRejectedValueOnce(apiError)
+    it('extracts unique tags from all dApps', () => {
+      const dApps = [makeDApp(['DeFi', 'NFTs']), makeDApp(['NFTs', 'Gaming'])]
 
-      await expect(queryClient.fetchQuery(dAppsTagsQuery)).rejects.toThrow('API Error')
+      expect(selectTagsFromDApps(dApps)).toEqual(['DeFi', 'NFTs', 'Gaming'])
     })
 
-    it('correctly applies staleTime and gcTime configurations', () => {
-      expect(dAppsTagsQuery.staleTime).toBe(ONE_HOUR_MS)
-      expect(dAppsTagsQuery.gcTime).toBe(Infinity)
+    it('sorts tags with default tags first, then remaining alphabetically', () => {
+      const dApps = [makeDApp(['Wallets', 'Bridges']), makeDApp(['Gaming', 'NFTs', 'DeFi'])]
+
+      expect(selectTagsFromDApps(dApps)).toEqual(['DeFi', 'NFTs', 'Gaming', 'Wallets', 'Bridges'])
     })
 
-    it('fetches data successfully from API', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockTags })
-
-      const result = await queryClient.fetchQuery(dAppsTagsQuery)
-
-      expect(mockedAxios.get).toHaveBeenCalledWith('https://publicapi.alph.land/api/tags')
-      // The sortTags function maintains default order for matched tags
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Social'])
+    it('returns empty array for dApps with no tags', () => {
+      expect(selectTagsFromDApps([makeDApp([])])).toEqual([])
     })
 
-    it('sorts tags correctly with default tags first', () => {
-      const unsortedTags = ['Wallets', 'Bridges', 'Gaming', 'NFTs', 'DeFi']
-
-      // Call the select function directly to test sorting logic
-      const result = (dAppsTagsQuery.select as (tags: string[]) => string[])(unsortedTags)
-
-      // Default sorted tags come first: DeFi, NFTs, Gaming, Wallets (all in defaultSortedTags)
-      // Then remaining tags sorted alphabetically: Bridges
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Wallets', 'Bridges'])
+    it('returns empty array for empty dApps list', () => {
+      expect(selectTagsFromDApps([])).toEqual([])
     })
   })
 })
