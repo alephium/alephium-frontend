@@ -54,7 +54,8 @@ describe('dAppQueries', () => {
         audits: [],
         tokens: [],
         twitterName: 'test1',
-        url: 'https://test1.com'
+        isFeatured: true,
+        slug: 'test1'
       },
       {
         name: 'TestDApp2',
@@ -87,7 +88,8 @@ describe('dAppQueries', () => {
         audits: [],
         tokens: [],
         twitterName: 'test2',
-        url: 'https://test2.com'
+        isFeatured: true,
+        slug: 'test2'
       }
     ]
 
@@ -174,7 +176,8 @@ describe('dAppQueries', () => {
       audits: [],
       tokens: [],
       twitterName: 'test',
-      url: 'https://test.com'
+      isFeatured: true,
+      slug: 'test'
     })
 
     it('extracts unique tags from all dApps', () => {
