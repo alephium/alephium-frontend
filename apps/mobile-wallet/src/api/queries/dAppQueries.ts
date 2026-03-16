@@ -12,7 +12,7 @@ interface DAppsQueryOptions<T> {
 
 export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>) =>
   queryOptions({
-    queryKey: ['dApps'],
+    queryKey: ['dApps', { onlyWhitelisted }],
     ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
     queryFn: ({ queryKey }) =>
       axios

@@ -25,7 +25,19 @@ describe('dAppQueries', () => {
     const mockDApps: DApp[] = [
       {
         name: 'TestDApp1',
-        links: { website: 'https://test1.com' },
+        links: {
+          website: 'https://test1.com',
+          mirror: 'https://test1.com/mirror',
+          twitter: 'https://test1.com/twitter',
+          telegram: 'https://test1.com/telegram',
+          discord: 'https://test1.com/discord',
+          github: 'https://test1.com/github',
+          youtube: 'https://test1.com/youtube',
+          medium: 'https://test1.com/medium',
+          careers: 'https://test1.com/careers',
+          linkedin: 'https://test1.com/linkedin',
+          docs: 'https://test1.com/docs'
+        },
         short_description: 'Test 1',
         tags: ['DeFi'],
         verified: true,
@@ -35,13 +47,30 @@ describe('dAppQueries', () => {
         media: {
           logoUrl: 'https://test1.com/logo.png',
           bannerUrl: 'https://test1.com/banner.png',
-          previewUrl: 'https://test1.com/preview.png'
+          previewUrl: 'https://test1.com/preview.png',
+          gallery: []
         },
-        description: 'Test 1'
+        description: 'Test 1',
+        audits: [],
+        tokens: [],
+        twitterName: 'test1',
+        url: 'https://test1.com'
       },
       {
         name: 'TestDApp2',
-        links: { website: 'https://test2.com' },
+        links: {
+          website: 'https://test2.com',
+          mirror: 'https://test2.com/mirror',
+          twitter: 'https://test2.com/twitter',
+          telegram: 'https://test2.com/telegram',
+          discord: 'https://test2.com/discord',
+          github: 'https://test2.com/github',
+          youtube: 'https://test2.com/youtube',
+          medium: 'https://test2.com/medium',
+          careers: 'https://test2.com/careers',
+          linkedin: 'https://test2.com/linkedin',
+          docs: 'https://test2.com/docs'
+        },
         short_description: 'Test 2',
         tags: ['NFTs'],
         verified: true,
@@ -51,9 +80,14 @@ describe('dAppQueries', () => {
         media: {
           logoUrl: 'https://test2.com/logo.png',
           bannerUrl: 'https://test2.com/banner.png',
-          previewUrl: 'https://test2.com/preview.png'
+          previewUrl: 'https://test2.com/preview.png',
+          gallery: []
         },
-        description: 'Test 2'
+        description: 'Test 2',
+        audits: [],
+        tokens: [],
+        twitterName: 'test2',
+        url: 'https://test2.com'
       }
     ]
 
@@ -116,15 +150,31 @@ describe('dAppQueries', () => {
   describe('selectTagsFromDApps', () => {
     const makeDApp = (tags: string[]): DApp => ({
       name: 'TestDApp',
-      links: { website: 'https://test.com' },
+      links: {
+        website: 'https://test.com',
+        mirror: 'https://test.com/mirror',
+        twitter: 'https://test.com/twitter',
+        telegram: 'https://test.com/telegram',
+        discord: 'https://test.com/discord',
+        github: 'https://test.com/github',
+        youtube: 'https://test.com/youtube',
+        medium: 'https://test.com/medium',
+        careers: 'https://test.com/careers',
+        linkedin: 'https://test.com/linkedin',
+        docs: 'https://test.com/docs'
+      },
       short_description: 'Test',
       tags,
       verified: true,
       councils_choice: false,
       dotw: false,
       teamInfo: { contactEmail: 'test@test.com', founded: '2021-01-01', anonymous: false },
-      media: { logoUrl: '', bannerUrl: '', previewUrl: '' },
-      description: 'Test'
+      media: { logoUrl: '', bannerUrl: '', previewUrl: '', gallery: [] },
+      description: 'Test',
+      audits: [],
+      tokens: [],
+      twitterName: 'test',
+      url: 'https://test.com'
     })
 
     it('extracts unique tags from all dApps', () => {

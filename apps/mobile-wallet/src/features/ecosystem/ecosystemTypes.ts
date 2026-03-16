@@ -1,6 +1,6 @@
-import { DAppDto } from '@fugashu/alphland-api-client'
+import { DappInfo } from '@alphland/dapps'
 
-export type DApp = DAppDto
+export type DApp = DappInfo
 
 export type DAppProps = {
   dAppName: string
