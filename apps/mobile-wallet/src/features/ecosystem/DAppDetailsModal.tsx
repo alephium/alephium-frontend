@@ -59,7 +59,7 @@ const DAppBannerImage = ({ dAppName }: DAppProps) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (dApp?.media.bannerUrl) {
+    if (dApp?.media?.bannerUrl) {
       try {
         RNImage.getSize(dApp.media.bannerUrl, (width, height) => {
           setImageAspectRatio(width / height)
@@ -70,9 +70,9 @@ const DAppBannerImage = ({ dAppName }: DAppProps) => {
         setIsLoading(false)
       }
     }
-  }, [dApp?.media.bannerUrl])
+  }, [dApp?.media?.bannerUrl])
 
-  if (!dApp) return null
+  if (!dApp || !dApp.media?.bannerUrl) return null
 
   if (isLoading) return <ActivityIndicator color={theme.font.primary} />
 

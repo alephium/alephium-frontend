@@ -119,7 +119,7 @@ export default DAppsList
 const filterDAppsByTag =
   (selectedTag: string | null) =>
   (dApps: DApp[]): DApp['name'][] =>
-    (selectedTag ? dApps.filter((dApp) => dApp.tags.includes(selectedTag)) : dApps).map(({ name }) => name)
+    (selectedTag ? dApps.filter((dApp) => dApp.tags?.includes(selectedTag)) : dApps).map(({ name }) => name)
 
 const filterDAppsByText = (searchText: string, dAppsNames: DApp['name'][]): DApp['name'][] =>
   searchText ? dAppsNames.filter((dAppName) => dAppName.toLowerCase().includes(searchText.toLowerCase())) : dAppsNames

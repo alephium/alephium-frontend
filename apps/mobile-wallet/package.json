@@ -28,7 +28,7 @@
     "@alephium/wallet-dapp-provider": "workspace:*",
     "@alephium/walletconnect-provider": "2.0.3",
     "@alephium/web3": "2.0.4",
-    "@alphland/dapps": "^1.0.3",
+    "@alphland/dapps": "^2.0.0",
     "@dev-plugins/react-query": "^0.3.1",
     "@expo/vector-icons": "^15.1.1",
     "@gorhom/bottom-sheet": "^5.2.8",

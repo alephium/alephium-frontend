@@ -575,8 +575,8 @@ importers:
         specifier: 2.0.4
         version: 2.0.4(encoding@0.1.13)
       '@alphland/dapps':
-        specifier: ^1.0.3
-        version: 1.0.3
+        specifier: ^2.0.0
+        version: 2.0.0
       '@dev-plugins/react-query':
         specifier: ^0.3.1
         version: 0.3.1(@tanstack/react-query@5.81.2(react@19.1.0))(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))
@@ -1369,8 +1369,8 @@ packages:
     resolution: {integrity: sha512-kjzy09sT4LUA1Pp/OBrU2bKltPTcLzW50oLK9jLh4WGnukVDpOkk1EgiyYTf1vtYBx5afGC/fbu2bX92w6wImg==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
-  '@alphland/dapps@1.0.3':
-    resolution: {integrity: sha512-JKpYJOvHa6FvNZM6S270Aqsax7PeRMmIUYtzsWl5a+am2zEft78hzhe+h9uSjhi0ew2sJRFaDU0Izks0LjbaKA==}
+  '@alphland/dapps@2.0.0':
+    resolution: {integrity: sha512-5I/x8YhbAODnFj8eYDTuhb+uHtnRfMARjeUF/LsKi9KwD6TlAQwicjxNL6QajIsSGH5z3gH/G2gUc4/v3ftnLg==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -12015,7 +12015,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alphland/dapps@1.0.3': {}
+  '@alphland/dapps@2.0.0': {}
 
   '@ampproject/remapping@2.3.0':
     dependencies:

@@ -29,7 +29,7 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
   if (!dApp) return null
 
   const handleCardPress = () => {
-    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
+    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links?.website ?? '', dAppName: dApp.name })
     sendAnalytics({ event: 'Opened dApp', props: { origin: 'dapp_card', dAppName } })
   }
 
