@@ -1,5 +1,6 @@
 import { ONE_HOUR_MS } from '@alephium/shared'
 import { getQueryConfig, queryClient } from '@alephium/shared-react'
+import { dapps } from '@alphland/dapps'
 import { queryOptions } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -27,6 +28,7 @@ export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>)
             throw e
           }
         }),
+    placeholderData: dapps,
     select: (data) => {
       const dAppsList = onlyWhitelisted
         ? data.filter((dApp) => dApp.isFeatured)
