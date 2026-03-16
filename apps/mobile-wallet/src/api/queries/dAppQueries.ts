@@ -15,7 +15,7 @@ export const dAppsQuery = <T>({ select }: DAppsQueryOptions<T>) =>
     ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
     queryFn: ({ queryKey }) =>
       axios
-        .get('https://publicapi.alph.land/api/dapps')
+        .get('https://alph.land/api/dapps-directory')
         .then((res) => res.data)
         .catch((e) => {
           const cachedDApps = queryClient.getQueryData(queryKey)

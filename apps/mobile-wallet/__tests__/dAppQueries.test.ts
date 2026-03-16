@@ -96,7 +96,7 @@ describe('dAppQueries', () => {
       const query = dAppsQuery({ select: (dApps) => dApps })
       const result = await queryClient.fetchQuery(query)
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('https://publicapi.alph.land/api/dapps')
+      expect(mockedAxios.get).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
       expect(result).toEqual(mockDApps)
     })
 
