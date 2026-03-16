@@ -7,15 +7,16 @@ import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
 interface DAppsQueryOptions<T> {
   select: (dApps: DApp[]) => T
+  onlyWhitelisted?: boolean
 }
 
-export const dAppsQuery = <T>({ select }: DAppsQueryOptions<T>) =>
+export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>) =>
   queryOptions({
     queryKey: ['dApps'],
     ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
     queryFn: ({ queryKey }) =>
       axios
-        .get('https://alph.land/api/dapps-directory')
+        .get(onlyWhitelisted ? 'https://alph.land/api/featured-dapps' : 'https://alph.land/api/dapps-directory')
         .then((res) => res.data)
         .catch((e) => {
           const cachedDApps = queryClient.getQueryData(queryKey)
