@@ -27,7 +27,13 @@ export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>)
             throw e
           }
         }),
-    select: (data) => select(onlyWhitelisted ? data.filter((dApp) => dApp.isFeatured) : data)
+    select: (data) => {
+      const dAppsList = onlyWhitelisted
+        ? data.filter((dApp) => dApp.isFeatured)
+        : data.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0))
+
+      return select(dAppsList)
+    }
   })
 
 export const dAppQuery = (dAppName: string) => ({
