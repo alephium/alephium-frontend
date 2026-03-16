@@ -14,9 +14,9 @@ export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>)
   queryOptions({
     queryKey: ['dApps', { onlyWhitelisted }],
     ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
-    queryFn: ({ queryKey }) =>
+    queryFn: ({ queryKey }): Promise<DApp[]> =>
       axios
-        .get(onlyWhitelisted ? 'https://alph.land/api/featured-dapps' : 'https://alph.land/api/dapps-directory')
+        .get('https://alph.land/api/dapps-directory')
         .then((res) => res.data)
         .catch((e) => {
           const cachedDApps = queryClient.getQueryData(queryKey)
@@ -27,7 +27,7 @@ export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>)
             throw e
           }
         }),
-    select
+    select: (data) => select(onlyWhitelisted ? data.filter((dApp) => dApp.isFeatured) : data)
   })
 
 export const dAppQuery = (dAppName: string) => ({
@@ -42,4 +42,4 @@ const sortTags = (tags: string[]) => [
   ...tags.filter((tag) => !defaultSortedTags.includes(tag)).sort()
 ]
 
-export const selectTagsFromDApps = (dApps: DApp[]) => sortTags([...new Set(dApps.flatMap((dApp) => dApp.tags))])
+export const selectTagsFromDApps = (dApps: DApp[]) => sortTags([...new Set(dApps.flatMap((dApp) => dApp.tags || []))])

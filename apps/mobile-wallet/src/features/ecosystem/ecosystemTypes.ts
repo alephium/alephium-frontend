@@ -1,6 +1,6 @@
-import { DappInfo } from '@alphland/dapps'
+import { DappDirectory } from '@alphland/dapps'
 
-export type DApp = DappInfo
+export type DApp = DappDirectory
 
 export type DAppProps = {
   dAppName: string
