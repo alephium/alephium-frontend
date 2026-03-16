@@ -27,7 +27,7 @@ import viteTsconfigPaths from 'vite-tsconfig-paths'
 /// <reference types="vitest" />
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
     host: true,
     port: 3000
@@ -42,7 +42,7 @@ export default defineConfig({
     },
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), nodePolyfills()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), ...(mode === 'test' ? [] : [nodePolyfills()])],
   test: {
     globals: true,
     environment: 'jsdom',
@@ -60,4 +60,4 @@ export default defineConfig({
     }
   },
   base: ''
-})
+}))
