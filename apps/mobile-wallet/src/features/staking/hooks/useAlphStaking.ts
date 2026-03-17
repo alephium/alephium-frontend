@@ -24,7 +24,7 @@ const useAlphStaking = () => {
     }
   }, [sdk])
 
-  const trackSentTransaction = useCallback(
+  const sendStakingTx = useCallback(
     ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {
       dispatch(
         transactionSent({
@@ -57,44 +57,44 @@ const useAlphStaking = () => {
   const stakeAlph = useCallback(
     async (amount: bigint) => {
       const result = await sdk.staking.stakeAlph(amount)
-      trackSentTransaction({ txId: result.txId, amount: amount.toString() })
+      sendStakingTx({ txId: result.txId, amount: amount.toString() })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, trackSentTransaction]
+    [sdk, refreshAll, sendStakingTx]
   )
 
   const startUnstake = useCallback(
     async (amount: bigint) => {
       const result = await sdk.staking.startUnstake(amount)
-      trackSentTransaction({
+      sendStakingTx({
         txId: result.txId,
         tokens: xAlphTokenId ? [{ id: xAlphTokenId, amount: amount.toString() }] : undefined
       })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, trackSentTransaction, xAlphTokenId]
+    [sdk, refreshAll, sendStakingTx, xAlphTokenId]
   )
 
   const claimUnstaked = useCallback(
     async (vaultIndex: bigint, amount: bigint) => {
       const result = await sdk.staking.claimUnstaked(vaultIndex, amount)
-      trackSentTransaction({ txId: result.txId, amount: amount.toString() })
+      sendStakingTx({ txId: result.txId, amount: amount.toString() })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, trackSentTransaction]
+    [sdk, refreshAll, sendStakingTx]
   )
 
   const cancelUnstake = useCallback(
     async (vaultIndex: bigint) => {
       const result = await sdk.staking.cancelUnstake(vaultIndex)
-      trackSentTransaction({ txId: result.txId })
+      sendStakingTx({ txId: result.txId })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, trackSentTransaction]
+    [sdk, refreshAll, sendStakingTx]
   )
 
   return {
