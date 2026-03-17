@@ -4,7 +4,6 @@ import { ComponentProps } from 'react'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
-import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import SelectTokenToHideModal from '~/features/assetsDisplay/hideTokens/SelectTokenToHideModal'
@@ -91,7 +90,6 @@ export const ModalComponents = {
   DAppDetailsModal,
   RegionSelectModal,
   UnknownTokensModal,
-  AddressNftsGridModal,
   ConnectDappModal,
   NetworkSwitchModal,
   SignExecuteScriptTxModal,

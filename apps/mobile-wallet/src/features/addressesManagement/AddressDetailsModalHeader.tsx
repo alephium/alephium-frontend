@@ -1,19 +1,18 @@
 import { selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
-import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
-import { Pressable } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { SharedValue } from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
 import AddressGroupBadge from '~/components/AddressGroupBadge'
 import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import AppText from '~/components/AppText'
-import Badge from '~/components/Badge'
 import BalanceSummary from '~/components/BalanceSummary'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import Box from '~/components/layout/Box'
 import RoundedCard from '~/components/RoundedCard'
 import Row from '~/components/Row'
+import TopTabBar from '~/components/TopTabBar'
 import AddressLastActivity from '~/features/addressesManagement/AddressLastActivity'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
@@ -27,11 +26,28 @@ interface AddressDetailsModalHeaderProps {
   addressHash: string
   onForgetAddress: () => void
   onSendPress: () => void
+  activeTab: number
+  setActiveTab: (tab: number) => void
+  pagerScrollEvent: SharedValue<{ position: number; offset: number }>
 }
 
-const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }: AddressDetailsModalHeaderProps) => {
+const AddressDetailsModalHeader = ({
+  addressHash,
+  onForgetAddress,
+  onSendPress,
+  activeTab,
+  setActiveTab,
+  pagerScrollEvent
+}: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+
+  const {
+    data: { listedFts, unlistedFtIds, nftIds }
+  } = useFetchAddressTokensByType(addressHash)
+
+  const ftsLength = listedFts.length + unlistedFtIds.length
+  const nftsLength = nftIds.length
 
   const handleSettingsPress = () => {
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, onForgetAddress } }))
@@ -67,7 +83,16 @@ const AddressDetailsModalHeader = ({ addressHash, onForgetAddress, onSendPress }
         <AddressLastActivity addressHash={addressHash} />
       </AddressDetailsBox>
 
-      <AddressTokensBadges addressHash={addressHash} />
+      <TokenTypeTabs>
+        <TopTabBar
+          tabLabels={[
+            { name: t('Tokens'), count: ftsLength },
+            { name: t('NFTs'), count: nftsLength }
+          ]}
+          pagerScrollEvent={pagerScrollEvent}
+          onTabPress={setActiveTab}
+        />
+      </TokenTypeTabs>
     </AddressDetailsModalHeaderStyled>
   )
 }
@@ -92,100 +117,6 @@ const AddressSendButton = ({
   return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={onSendPress} />
 }
 
-const AddressTokensBadges = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
-  const { data: addressBalances } = useFetchAddressBalances(addressHash)
-
-  if (!addressBalances?.length) return null
-
-  return (
-    <TokensBadges>
-      <FungibleTokensBadge addressHash={addressHash} />
-      <AddressNftsBadge addressHash={addressHash} />
-    </TokensBadges>
-  )
-}
-
-const FungibleTokensBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
-  const { t } = useTranslation()
-  const theme = useTheme()
-  const color = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
-
-  const editableColor = colord(color || theme.bg.contrast)
-  const isLightTheme = theme.name === 'light'
-
-  return (
-    <BadgeStyled
-      rounded
-      solid
-      color={editableColor
-        .desaturate(isLightTheme ? 0.1 : 0.3)
-        .alpha(isLightTheme ? 0.15 : 0.25)
-        .toHex()}
-    >
-      <AppText
-        color={editableColor
-          .desaturate(isLightTheme ? 0.4 : 0.3)
-          .lighten(isLightTheme ? -0.3 : 0.1)
-          .toHex()}
-        semiBold
-      >
-        {t('Tokens')}
-      </AppText>
-
-      <AssetNumberText
-        color={editableColor
-          .desaturate(isLightTheme ? 0.4 : 0.3)
-          .lighten(isLightTheme ? -0.3 : 0.1)
-          .alpha(0.5)
-          .toHex()}
-        size={12}
-      >
-        <AddressFtsCount addressHash={addressHash} />
-      </AssetNumberText>
-    </BadgeStyled>
-  )
-}
-
-const AddressFtsCount = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
-  const {
-    data: { listedFts, unlistedFtIds }
-  } = useFetchAddressTokensByType(addressHash)
-
-  const ftsLength = listedFts.length + unlistedFtIds.length
-
-  return ftsLength
-}
-
-const AddressNftsBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
-  const { t } = useTranslation()
-  const theme = useTheme()
-  const dispatch = useAppDispatch()
-
-  const handlePress = () => dispatch(openModal({ name: 'AddressNftsGridModal', props: { addressHash } }))
-
-  return (
-    <Pressable onPress={handlePress}>
-      <BadgeStyled rounded color={theme.bg.secondary} solid>
-        <AppText semiBold color="secondary">
-          {t('NFTs')}
-        </AppText>
-
-        <AssetNumberText size={12} color="tertiary">
-          <AddressNftsCount addressHash={addressHash} />
-        </AssetNumberText>
-      </BadgeStyled>
-    </Pressable>
-  )
-}
-
-const AddressNftsCount = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
-  const {
-    data: { nftIds }
-  } = useFetchAddressTokensByType(addressHash)
-
-  return nftIds.length
-}
-
 const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
@@ -205,22 +136,14 @@ const ActionButtons = styled.View`
   gap: 10px;
 `
 
-const TokensBadges = styled.View`
-  flex-direction: row;
-  gap: 10px;
-  padding-top: ${VERTICAL_GAP}px;
-`
-
-const AssetNumberText = styled(AppText)`
-  padding: 4px 10px 4px 0px;
-`
-
-const BadgeStyled = styled(Badge)`
-  padding: 7px 6px 7px 14px;
-  gap: 10px;
-`
-
 const AddressDetailsBox = styled(Box)`
   padding-top: 0;
   padding-bottom: 0;
+`
+
+const TokenTypeTabs = styled.View`
+  margin-top: ${VERTICAL_GAP}px;
+  padding-top: ${VERTICAL_GAP}px;
+  border-top-width: 1px;
+  border-top-color: ${({ theme }) => theme.border.secondary};
 `

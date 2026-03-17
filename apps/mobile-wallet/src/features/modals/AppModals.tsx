@@ -4,7 +4,6 @@ import styled from 'styled-components/native'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
-import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import SelectTokenToHideModal from '~/features/assetsDisplay/hideTokens/SelectTokenToHideModal'
@@ -93,8 +92,6 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <NftModal {...params.props} />
     case 'NftGridModal':
       return <NftGridModal {...params.props} />
-    case 'AddressNftsGridModal':
-      return <AddressNftsGridModal {...params.props} />
     case 'WalletDeleteModal':
       return <WalletDeleteModal {...params.props} />
     case 'BiometricsWarningModal':
