@@ -1,14 +1,9 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
-import {
-  useFetchWalletBalancesAlph,
-  useFetchWalletFtsSorted,
-  useFetchWalletNfts,
-  useFetchWalletWorth
-} from '@alephium/shared-react'
+import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Animated, { useSharedValue } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -45,17 +40,13 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const { t } = useTranslation()
 
   const [activeTab, setActiveTab] = useState(0)
-  const pagerScrollEvent = useSharedValue({ position: 0, offset: 0 })
 
-  useEffect(() => {
-    pagerScrollEvent.value = { position: activeTab, offset: 0 }
-  }, [activeTab, pagerScrollEvent])
+  const { data: tokensByType, isLoading: isTokensByTypeLoading } = useFetchWalletTokensByType({ includeHidden: false })
 
-  const { data: nfts, isLoading: isNftsLoading } = useFetchWalletNfts()
-  const { data: sortedFts, isLoading: isFtsLoading } = useFetchWalletFtsSorted()
-
-  const tokensCount = isFtsLoading ? '-' : sortedFts.length
-  const nftsCount = isNftsLoading ? '-' : nfts?.length || 0
+  const tokensCount = isTokensByTypeLoading
+    ? '-'
+    : (tokensByType?.listedFts?.length ?? 0) + (tokensByType?.unlistedFtIds?.length ?? 0)
+  const nftsCount = isTokensByTypeLoading ? '-' : tokensByType?.nftIds?.length ?? 0
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
@@ -106,7 +97,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
               { name: t('Tokens'), count: tokensCount !== '-' ? tokensCount : undefined },
               { name: t('NFTs'), count: nftsCount !== '-' ? nftsCount : undefined }
             ]}
-            pagerScrollEvent={pagerScrollEvent}
+            activeTab={activeTab}
             onTabPress={setActiveTab}
           />
         </TokenTypeTabs>

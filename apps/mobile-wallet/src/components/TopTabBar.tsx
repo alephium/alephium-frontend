@@ -1,13 +1,13 @@
 import { ReactNode, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
-import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, {
   AnimatedRef,
   interpolate,
   interpolateColor,
   SharedValue,
   useAnimatedStyle,
-  useDerivedValue
+  useSharedValue,
+  withSpring
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -19,7 +19,7 @@ type TabsLayout = Record<number, LayoutRectangle>
 
 interface TopTabBarProps {
   tabLabels: Array<string | { name: string; count?: string | number }>
-  pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
+  activeTab: number
   onTabPress: (index: number) => void
   tabBarRef?: AnimatedRef<Reanimated.View>
   customContent?: ReactNode
@@ -27,10 +27,15 @@ interface TopTabBarProps {
 
 const indicatorXPadding = DEFAULT_MARGIN
 
-const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, activeTab, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
-  const position = useDerivedValue(() => pagerScrollEvent.get().position + pagerScrollEvent.get().offset, [])
+  const position = useSharedValue(activeTab)
+
+  // Sync position with activeTab immediately when it changes
+  if (position.value !== activeTab) {
+    position.value = withSpring(activeTab, { damping: 20, stiffness: 200, mass: 0.5 })
+  }
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]

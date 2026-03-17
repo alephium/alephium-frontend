@@ -1,7 +1,6 @@
 import { selectAddressByHash } from '@alephium/shared'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
-import { SharedValue } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AddressGroupBadge from '~/components/AddressGroupBadge'
@@ -28,7 +27,6 @@ interface AddressDetailsModalHeaderProps {
   onSendPress: () => void
   activeTab: number
   setActiveTab: (tab: number) => void
-  pagerScrollEvent: SharedValue<{ position: number; offset: number }>
 }
 
 const AddressDetailsModalHeader = ({
@@ -36,8 +34,7 @@ const AddressDetailsModalHeader = ({
   onForgetAddress,
   onSendPress,
   activeTab,
-  setActiveTab,
-  pagerScrollEvent
+  setActiveTab
 }: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -89,7 +86,7 @@ const AddressDetailsModalHeader = ({
             { name: t('Tokens'), count: ftsLength },
             { name: t('NFTs'), count: nftsLength }
           ]}
-          pagerScrollEvent={pagerScrollEvent}
+          activeTab={activeTab}
           onTabPress={setActiveTab}
         />
       </TokenTypeTabs>

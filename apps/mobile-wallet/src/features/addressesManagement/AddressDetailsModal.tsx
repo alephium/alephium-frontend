@@ -7,8 +7,7 @@ import {
 } from '@alephium/shared-react'
 import { FlashListProps } from '@shopify/flash-list'
 import { openBrowserAsync } from 'expo-web-browser'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { useSharedValue } from 'react-native-reanimated'
+import { memo, useCallback, useMemo, useState } from 'react'
 
 import AddressBadge from '~/components/AddressBadge'
 import Button from '~/components/buttons/Button'
@@ -25,16 +24,21 @@ export interface AddressDetailsModalProps {
 }
 
 const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => {
-  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
-  const { data: nfts, isLoading: isNftsLoading } = useFetchAddressNfts(addressHash)
-  const { dismissModal } = useModalContext()
-
   const [activeTab, setActiveTab] = useState(0)
-  const pagerScrollEvent = useSharedValue({ position: 0, offset: 0 })
 
-  useEffect(() => {
-    pagerScrollEvent.value = { position: activeTab, offset: 0 }
-  }, [activeTab, pagerScrollEvent])
+  const [hasAccessedNfts, setHasAccessedNfts] = useState(false)
+
+  const handleTabChange = useCallback((tabIndex: number) => {
+    setActiveTab(tabIndex)
+    if (tabIndex === 1) setHasAccessedNfts(true)
+  }, [])
+
+  const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
+  const { data: nfts, isLoading: isNftsLoading } = useFetchAddressNfts(
+    hasAccessedNfts ? addressHash : (undefined as unknown as AddressHash)
+  )
+
+  const { dismissModal } = useModalContext()
 
   const tokensFlashListProps = useMemo(
     () => ({
@@ -69,26 +73,25 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
   // We combine the active list props with the mandatory header component.
   const activeFlashListProps = (activeTab === 0 ? tokensFlashListProps : nftsFlashListProps) as FlashListProps<unknown>
 
-  const ListHeaderComponent = useCallback(
+  const listHeaderElement = useMemo(
     () => (
       <AddressDetailsModalHeader
         addressHash={addressHash}
         onForgetAddress={dismissModal}
         onSendPress={dismissModal}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        pagerScrollEvent={pagerScrollEvent}
+        setActiveTab={handleTabChange}
       />
     ),
-    [addressHash, dismissModal, activeTab, pagerScrollEvent]
+    [addressHash, dismissModal, activeTab, handleTabChange]
   )
 
   const flashListProps = useMemo(
     () => ({
       ...activeFlashListProps,
-      ListHeaderComponent
+      ListHeaderComponent: listHeaderElement
     }),
-    [activeFlashListProps, ListHeaderComponent]
+    [activeFlashListProps, listHeaderElement]
   )
 
   return (
