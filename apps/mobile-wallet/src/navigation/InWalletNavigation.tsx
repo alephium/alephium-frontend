@@ -9,11 +9,9 @@ import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
-import NFTListScreen from '~/screens/NFTs/NFTListScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
-  NFTListScreen: undefined
   AddressesTabNavigation: undefined
   ActivityScreen: undefined
   EcosystemScreen: undefined
@@ -41,16 +39,6 @@ const InWalletTabsNavigation = () => {
             title: t('Overview'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />
-            )
-          }}
-        />
-        <InWalletTabs.Screen
-          name="NFTListScreen"
-          component={NFTListScreen}
-          options={{
-            title: t('NFTs'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'image' : 'image-outline'} color={color} size={size} />
             )
           }}
         />

@@ -18,7 +18,7 @@ import { ImpactStyle, vibrate } from '~/utils/haptics'
 type TabsLayout = Record<number, LayoutRectangle>
 
 interface TopTabBarProps {
-  tabLabels: string[]
+  tabLabels: Array<string | { name: string; count?: string | number }>
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   onTabPress: (index: number) => void
   tabBarRef?: AnimatedRef<Reanimated.View>
@@ -74,16 +74,19 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
       <HeaderContainer ref={tabBarRef}>
         <TabsContainer>
           <Indicator style={indicatorStyle} />
-          {tabLabels.map((label, i) => (
-            <TabBarItem
-              key={label}
-              index={i}
-              label={label}
-              position={position}
-              onPress={() => handleOnTabPress(i)}
-              onLayout={(e) => handleTabLayoutEvent(i, e)}
-            />
-          ))}
+          {tabLabels.map((label, i) => {
+            const key = typeof label === 'string' ? label : label.name
+            return (
+              <TabBarItem
+                key={key}
+                index={i}
+                label={label}
+                position={position}
+                onPress={() => handleOnTabPress(i)}
+                onLayout={(e) => handleTabLayoutEvent(i, e)}
+              />
+            )
+          })}
         </TabsContainer>
       </HeaderContainer>
     </TopTabBarStyled>
@@ -93,13 +96,15 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
 const AnimatedAppText = Reanimated.createAnimatedComponent(AppText)
 
 interface TabBarItemProps extends PressableProps {
-  label: string
+  label: string | { name: string; count?: string | number }
   index: number
   position: SharedValue<number>
 }
 
 const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const theme = useTheme()
+  const name = typeof label === 'string' ? label : label.name
+  const count = typeof label === 'string' ? undefined : label.count
 
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.get() - index
@@ -111,7 +116,8 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   return (
     <TabBarItemStyled {...props}>
       <AnimatedAppText style={animatedTextStyle} size={16} semiBold>
-        {label}
+        {name}
+        {count !== undefined && count !== '' && <AppText style={{ opacity: 0.3 }}>{`  ${count}`}</AppText>}
       </AnimatedAppText>
     </TabBarItemStyled>
   )
