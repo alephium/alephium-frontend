@@ -1,6 +1,6 @@
 {
   "extends": "@alephium/typescript-config/react",
-  "include": ["src", "electron", "./vite.config.ts"],
+  "include": ["src", "electron", "./vite.config.mts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",

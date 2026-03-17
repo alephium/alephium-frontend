@@ -580,7 +580,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
     )
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
 
-    expect(() =>
+    await expect(() =>
       migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
     ).rejects.toThrowError(
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
@@ -631,7 +631,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
 
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
 
-    expect(() =>
+    await expect(() =>
       migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
     ).rejects.toThrowError(
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'

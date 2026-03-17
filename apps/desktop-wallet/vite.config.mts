@@ -1,10 +1,10 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron/simple'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
 
 /// <reference types="vitest" />
 
@@ -27,7 +27,9 @@ export default defineConfig({
   plugins: [
     react(),
     viteTsconfigPaths(),
-    svgrPlugin(),
+    svgrPlugin({
+      include: '**/*.svg?react'
+    }),
     electron({
       main: { entry: 'electron/main.ts' },
       preload: { input: 'electron/preload.ts' }

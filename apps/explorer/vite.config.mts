@@ -1,20 +1,29 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      events: 'rollup-plugin-node-polyfills/polyfills/events'
-    }
-  },
+export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [
+    react(),
+    viteTsconfigPaths(),
+    svgrPlugin({
+      include: '**/*.svg?react'
+    }),
+    nodePolyfills({
+      exclude: mode === 'test' ? ['fs', 'http', 'https'] : [],
+      globals: {
+        Buffer: true,
+        process: true
+      }
+    })
+  ],
   test: {
     globals: true,
     environment: 'happy-dom',
@@ -31,4 +40,4 @@ export default defineConfig({
       include: [/node_modules/, /shared-crypto/]
     }
   }
-})
+}))

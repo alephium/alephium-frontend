@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import ColoredLabelInput, { ColoredLabelInputValue } from '@/components/Inputs/ColoredLabelInput'
 import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
-import { ReactComponent as MainAddressBadge } from '@/images/main_address_badge.svg'
+import MainAddressBadge from '@/images/main_address_badge.svg?react'
 
 interface AddressMetadataFormProps {
   label: ColoredLabelInputValue

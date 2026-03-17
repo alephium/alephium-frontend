@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
-import { ReactComponent as LedgerLogo } from '@/images/ledger.svg'
+import LedgerLogo from '@/images/ledger.svg?react'
 
 const ConnectWithLedgerButton = () => {
   const { t } = useTranslation()

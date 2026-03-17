@@ -6,6 +6,7 @@
   "main": "dist-electron/main.js",
   "homepage": "./",
   "private": true,
+
   "repository": {
     "type": "git",
     "url": "git@github.com:alephium/alephium-frontend.git"
@@ -82,8 +83,8 @@
     "@types/semver-compare": "^1.0.1",
     "@types/zxcvbn": "^4.4.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/coverage-v8": "^2.1.8",
-    "@vitest/web-worker": "^2.1.2",
+    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/web-worker": "^4.1.0",
     "@walletconnect/core": "2.23.6",
     "@walletconnect/keyvaluestorage": "1.1.1",
     "@walletconnect/react-native-compat": "2.23.6",
@@ -137,11 +138,11 @@
     "ts-json-schema-generator": "^1.5.0",
     "type-fest": "^3.5.1",
     "typescript": "~5.9.2",
-    "vite": "^5.4.20",
-    "vite-plugin-electron": "^0.29.0",
-    "vite-plugin-svgr": "^3.2.0",
-    "vite-tsconfig-paths": "^4.2.0",
-    "vitest": "^2.1.9",
+    "vite": "^6.0.0",
+    "vite-plugin-electron": "^0.29.1",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.1.0",
     "wait-on": "^7.0.1",
     "zxcvbn": "^4.4.2"
   },
