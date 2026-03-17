@@ -9,11 +9,13 @@ import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
+import StakingScreen from '~/screens/Staking/StakingScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
-  AddressesTabNavigation: undefined
   ActivityScreen: undefined
+  StakingScreen: undefined
+  AddressesTabNavigation: undefined
   EcosystemScreen: undefined
 }
 
@@ -49,6 +51,16 @@ const InWalletTabsNavigation = () => {
             title: t('Activity'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'time' : 'time-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="StakingScreen"
+          component={StakingScreen}
+          options={{
+            title: t('Staking'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'layers' : 'layers-outline'} color={color} size={size} />
             )
           }}
         />

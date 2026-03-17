@@ -53,6 +53,8 @@ import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsMo
 import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
+import StakeModal from '~/screens/Staking/StakeModal'
+import UnstakeModal from '~/screens/Staking/UnstakeModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
@@ -178,6 +180,10 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <ConnectTipModal />
     case 'SignChainedTxModal':
       return <SignChainedTxModal {...params.props} />
+    case 'StakeModal':
+      return <StakeModal />
+    case 'UnstakeModal':
+      return <UnstakeModal />
     default:
       return null
   }

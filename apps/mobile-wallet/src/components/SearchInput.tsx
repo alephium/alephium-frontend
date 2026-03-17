@@ -17,11 +17,13 @@ const SearchInput = ({ isInModal, ...props }: SearchInputProps) => {
     props.onChangeText?.('')
   }
 
-  const InputComponent = isInModal ? BottomSheetInputStyled : TextInputStyled
-
   return (
     <SearchInputStyled>
-      <InputComponent placeholder={t('Search')} placeholderTextColor={theme.font.tertiary} {...props} />
+      {isInModal ? (
+        <BottomSheetInputStyled placeholder={t('Search')} placeholderTextColor={theme.font.tertiary} {...props} />
+      ) : (
+        <TextInputStyled placeholder={t('Search')} placeholderTextColor={theme.font.tertiary} {...props} />
+      )}
 
       {props.value && (
         <ClearButtonContainer>

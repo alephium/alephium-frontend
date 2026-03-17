@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@alephium/keyring": "workspace:*",
+    "@alephium/powfi-sdk": "0.0.1-rc.20",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
