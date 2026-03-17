@@ -1,13 +1,16 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { dAppQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import DAppIcon from '~/features/ecosystem/DAppIcon'
+import OpenUrlButton from '~/features/ecosystem/OpenUrlButton'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -26,7 +29,7 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
   if (!dApp) return null
 
   const handleCardPress = () => {
-    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
+    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links?.website ?? '', dAppName: dApp.name })
     sendAnalytics({ event: 'Opened dApp', props: { origin: 'dapp_card', dAppName } })
   }
 
@@ -63,6 +66,18 @@ export const FavoriteCustomDAppCard = ({ dAppUrl }: { dAppUrl: string }) => {
         <AppText bold>{dAppUrl}</AppText>
       </TextContent>
     </DappCardStyled>
+  )
+}
+
+export const AlphLandCard = () => {
+  const { t } = useTranslation()
+
+  return (
+    <EmptyPlaceholder>
+      <AppText size={32}>💟</AppText>
+      <AppText>{t('Explore the ecosystem on Alph.land')}</AppText>
+      <OpenUrlButton url="https://alph.land/" />
+    </EmptyPlaceholder>
   )
 }
 

@@ -21,12 +21,15 @@ const VisitDAppButton = ({ dAppName, onVisitDappButtonPress, buttonType, ...prop
   const { t } = useTranslation()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-  if (!dApp) return null
+  if (!dApp || !dApp.links?.website) return null
 
   const handleVisitDApp = () => {
     onVisitDappButtonPress()
-    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
-    sendAnalytics({ event: 'Opened dApp', props: { origin: 'quick_actions', dAppName } })
+
+    if (dApp.links?.website) {
+      navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
+      sendAnalytics({ event: 'Opened dApp', props: { origin: 'quick_actions', dAppName } })
+    }
   }
 
   const ButtonComponent = buttonType === 'default' ? Button : QuickActionButton
