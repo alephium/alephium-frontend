@@ -3,7 +3,8 @@ import { useEffect, useMemo } from 'react'
 
 import { getPowfiSdk, networkIdToSdkNetworkId } from '~/api/powfi'
 import { useAppSelector } from '~/hooks/redux'
-import { resolveAccountFromAddress, signer } from '~/signer'
+
+import { resolveAccountFromAddress, stakingSigner } from '../stakingSigner'
 
 type PowfiSdkSigner = ReturnType<typeof getPowfiSdk>['signer']
 
@@ -15,7 +16,7 @@ const usePowfiSdk = () => {
     const sdkNetworkId = networkIdToSdkNetworkId(networkId)
     const powfiSdk = getPowfiSdk(sdkNetworkId)
 
-    powfiSdk.signer = signer as unknown as PowfiSdkSigner
+    powfiSdk.signer = stakingSigner as unknown as PowfiSdkSigner
     powfiSdk.setCurrentProviders()
 
     return powfiSdk
@@ -33,7 +34,7 @@ const usePowfiSdk = () => {
       try {
         if (isCancelled) return
 
-        sdk.account = await resolveAccountFromAddress(defaultAddress, signer.getPublicKey)
+        sdk.account = await resolveAccountFromAddress(defaultAddress, stakingSigner.getPublicKey)
       } catch {
         if (!isCancelled) {
           sdk.clearAccount()

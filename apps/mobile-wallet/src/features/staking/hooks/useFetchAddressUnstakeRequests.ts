@@ -2,8 +2,8 @@ import { selectDefaultAddress } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAppSelector } from '~/hooks/redux'
-import { resolveAccountFromAddress, signer } from '~/signer'
 
+import { resolveAccountFromAddress, stakingSigner } from '../stakingSigner'
 import usePowfiSdk from './usePowfiSdk'
 
 export interface UnstakeRequest {
@@ -29,7 +29,7 @@ const useFetchAddressUnstakeRequests = () => {
   } = useQuery({
     queryKey: ['unstakeVaultIndexes', networkId, defaultAddress?.hash],
     queryFn: async () => {
-      const account = await resolveAccountFromAddress(defaultAddress!, signer.getPublicKey)
+      const account = await resolveAccountFromAddress(defaultAddress!, stakingSigner.getPublicKey)
 
       return sdk.staking.getActiveUnstakeVaultIndexes(account.address)
     },
@@ -47,7 +47,7 @@ const useFetchAddressUnstakeRequests = () => {
     queryFn: async () => {
       if (!defaultAddress || !activeIndexes?.length) return []
 
-      const account = await resolveAccountFromAddress(defaultAddress, signer.getPublicKey)
+      const account = await resolveAccountFromAddress(defaultAddress, stakingSigner.getPublicKey)
 
       return Promise.all(
         activeIndexes.map(async (index) => {
