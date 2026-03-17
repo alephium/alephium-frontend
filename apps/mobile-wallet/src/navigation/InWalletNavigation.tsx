@@ -6,6 +6,7 @@ import { useTheme } from 'styled-components/native'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
+import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
@@ -24,6 +25,7 @@ const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 const InWalletTabsNavigation = () => {
   const theme = useTheme()
   const { t } = useTranslation()
+  const isStakingEnabled = useIsStakingEnabled()
 
   return (
     <>
@@ -54,16 +56,18 @@ const InWalletTabsNavigation = () => {
             )
           }}
         />
-        <InWalletTabs.Screen
-          name="StakingScreen"
-          component={StakingScreen}
-          options={{
-            title: t('Staking'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'layers' : 'layers-outline'} color={color} size={size} />
-            )
-          }}
-        />
+        {isStakingEnabled && (
+          <InWalletTabs.Screen
+            name="StakingScreen"
+            component={StakingScreen}
+            options={{
+              title: t('Staking'),
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'layers' : 'layers-outline'} color={color} size={size} />
+              )
+            }}
+          />
+        )}
         <InWalletTabs.Screen
           name="AddressesTabNavigation"
           component={AddressesTabNavigation}

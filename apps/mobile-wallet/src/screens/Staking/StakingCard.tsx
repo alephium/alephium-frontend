@@ -3,13 +3,25 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useStakingData from '~/features/staking/hooks/useStakingData'
+import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
+import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
+import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
+import useStakedValue from '~/features/staking/hooks/useStakedValue'
+import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const StakingCard = () => {
   const { t } = useTranslation()
-  const { formattedStakedValue, formattedXAlphBalance, formattedXAlphRate, formattedAvailableToStake, isLoading } =
-    useStakingData()
+  const { data: stakedValueAlph, isLoading: isStakedValueLoading } = useStakedValue()
+  const { data: xAlphBalance, isLoading: isXAlphBalanceLoading } = useFetchXAlphBalance()
+  const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
+  const { data: availableToStake, isLoading: isAvailableToStakeLoading } = useFetchAvailableToStake()
+
+  const formattedStakedValue = formatTokenAmount(stakedValueAlph, ALPH.decimals)
+  const formattedXAlphBalance = formatTokenAmount(xAlphBalance, ALPH.decimals)
+  const formattedXAlphRate = xAlphRate.toFixed(4)
+  const formattedAvailableToStake = formatTokenAmount(availableToStake, ALPH.decimals)
+  const isLoading = isStakedValueLoading || isXAlphBalanceLoading || isXAlphRateLoading || isAvailableToStakeLoading
 
   return (
     <CardContainer>
@@ -36,7 +48,7 @@ const StakingCard = () => {
 export default StakingCard
 
 const CardContainer = styled.View`
-  background-color: ${({ theme }) => theme.global.accent};
+  background-color: ${({ theme }) => theme.global.palette3};
   border-radius: ${BORDER_RADIUS_BIG}px;
   padding: ${DEFAULT_MARGIN}px;
   gap: 16px;

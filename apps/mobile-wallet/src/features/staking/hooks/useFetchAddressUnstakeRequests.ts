@@ -15,30 +15,35 @@ export interface UnstakeRequest {
   contractAddress: string
 }
 
-const useUnstakingRequests = () => {
+const useFetchAddressUnstakeRequests = () => {
   const sdk = usePowfiSdk()
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const networkId = sdk.network.id
+  const shouldFetch = !!defaultAddressHash
 
-  const { data: activeIndexes, refetch: refetchIndexes } = useQuery({
+  const {
+    data: activeIndexes,
+    refetch: refetchIndexes,
+    ...activeIndexesQuery
+  } = useQuery({
     queryKey: ['unstakeVaultIndexes', networkId, defaultAddressHash],
     queryFn: () => sdk.staking.getActiveUnstakeVaultIndexes(defaultAddressHash!),
-    enabled: !!defaultAddressHash,
+    enabled: shouldFetch,
     staleTime: 60_000,
     refetchInterval: 60_000
   })
 
   const {
     data: unstakeRequests,
-    isLoading,
-    refetch: refetchRequests
+    refetch: refetchUnstakeRequests,
+    ...unstakeRequestsQuery
   } = useQuery({
     queryKey: ['unstakeRequests', networkId, defaultAddressHash, activeIndexes?.map((index) => index.toString())],
     queryFn: async () => {
       if (!defaultAddressHash || !activeIndexes?.length) return []
 
-      const results = await Promise.all(
-        activeIndexes.map(async (index: bigint) => {
+      return Promise.all(
+        activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
             sdk.staking.getClaimableAmount(defaultAddressHash, index),
             sdk.staking.getAlphUnstakeVaultState(defaultAddressHash, index)
@@ -52,27 +57,25 @@ const useUnstakingRequests = () => {
             duration: state.fields.unstakeDuration,
             withdrawnAmount: state.fields.withdrawnAmount,
             contractAddress: state.address
-          } as UnstakeRequest
+          } satisfies UnstakeRequest
         })
       )
-
-      return results
     },
-    enabled: !!defaultAddressHash && !!activeIndexes?.length,
+    enabled: shouldFetch && !!activeIndexes?.length,
     staleTime: 60_000,
     refetchInterval: 60_000
   })
 
   const refresh = async () => {
-    await refetchIndexes()
-    await refetchRequests()
+    await Promise.all([refetchIndexes(), refetchUnstakeRequests()])
   }
 
   return {
-    unstakeRequests: unstakeRequests ?? [],
-    isLoading,
-    refresh
+    data: unstakeRequests ?? [],
+    refresh,
+    ...activeIndexesQuery,
+    ...unstakeRequestsQuery
   }
 }
 
-export default useUnstakingRequests
+export default useFetchAddressUnstakeRequests

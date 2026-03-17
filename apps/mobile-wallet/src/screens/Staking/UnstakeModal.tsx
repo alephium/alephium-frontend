@@ -13,7 +13,9 @@ import Input from '~/components/inputs/Input'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
-import useStakingData from '~/features/staking/hooks/useStakingData'
+import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
+import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
+import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { isNumericStringValid } from '~/utils/numbers'
@@ -26,8 +28,10 @@ const UnstakeModal = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { startUnstake } = useAlphStaking()
-  const { xAlphRate, xAlphBalance, formattedXAlphBalance } = useStakingData()
+  const { data: xAlphRate } = useFetchXAlphRate()
+  const { data: xAlphBalance } = useFetchXAlphBalance()
   const maxUnstakeAmount = useMemo(() => toHumanReadableAmount(xAlphBalance, ALPH.decimals), [xAlphBalance])
+  const formattedXAlphBalance = formatTokenAmount(xAlphBalance, ALPH.decimals)
 
   const amountInWei = useMemo(() => {
     if (!amount || error) return undefined

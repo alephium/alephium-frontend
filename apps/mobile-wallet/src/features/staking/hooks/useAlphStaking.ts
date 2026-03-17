@@ -1,14 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 
+import useFetchAddressUnstakeRequests from './useFetchAddressUnstakeRequests'
+import useFetchXAlphTokenState from './useFetchXAlphTokenState'
 import usePowfiSdk from './usePowfiSdk'
-import useStakingData from './useStakingData'
-import useUnstakingRequests from './useUnstakingRequests'
 
 const useAlphStaking = () => {
   const sdk = usePowfiSdk()
-  const { refresh: refreshStakingData } = useStakingData()
-  const { refresh: refreshUnstakingRequests } = useUnstakingRequests()
+  const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
+  const { refresh: refreshUnstakeRequests } = useFetchAddressUnstakeRequests()
   const queryClient = useQueryClient()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -16,8 +16,8 @@ const useAlphStaking = () => {
     setIsRefreshing(true)
     try {
       await Promise.all([
-        refreshStakingData(),
-        refreshUnstakingRequests(),
+        refetchXAlphTokenState(),
+        refreshUnstakeRequests(),
         queryClient.invalidateQueries({ queryKey: ['address'] })
       ])
     } catch (error) {
@@ -25,7 +25,7 @@ const useAlphStaking = () => {
     } finally {
       setIsRefreshing(false)
     }
-  }, [queryClient, refreshStakingData, refreshUnstakingRequests])
+  }, [queryClient, refetchXAlphTokenState, refreshUnstakeRequests])
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {

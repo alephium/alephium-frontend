@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch } from '~/hooks/redux'
+import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 import StakingCard from './StakingCard'
@@ -16,7 +17,11 @@ import UnstakingRequestsList from './UnstakingRequestsList'
 const StakingScreen = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const isStakingEnabled = useIsStakingEnabled()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
+  const theme = useTheme()
+
+  if (!isStakingEnabled) return null
 
   const handleStakePress = () => {
     dispatch(openModal({ name: 'StakeModal' }))
@@ -36,7 +41,12 @@ const StakingScreen = () => {
           <StakingCard />
 
           <ButtonsRow>
-            <Button title={t('Stake') as string} onPress={handleStakePress} variant="highlight" flex />
+            <Button
+              title={t('Stake') as string}
+              onPress={handleStakePress}
+              flex
+              style={{ backgroundColor: theme.global.palette3 }}
+            />
             <Button
               title={t('Unstake') as string}
               onPress={handleUnstakePress}

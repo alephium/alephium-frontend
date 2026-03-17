@@ -13,7 +13,9 @@ import Input from '~/components/inputs/Input'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
-import useStakingData from '~/features/staking/hooks/useStakingData'
+import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
+import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
+import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { isNumericStringValid } from '~/utils/numbers'
@@ -26,8 +28,10 @@ const StakeModal = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { stakeAlph } = useAlphStaking()
-  const { availableToStake, formattedAvailableToStake, xAlphRate } = useStakingData()
+  const { data: availableToStake } = useFetchAvailableToStake()
+  const { data: xAlphRate } = useFetchXAlphRate()
   const maxStakeAmount = useMemo(() => toHumanReadableAmount(availableToStake, ALPH.decimals), [availableToStake])
+  const formattedAvailableToStake = formatTokenAmount(availableToStake, ALPH.decimals)
 
   const amountInAttoAlph = useMemo(() => {
     if (!amount || error) return undefined

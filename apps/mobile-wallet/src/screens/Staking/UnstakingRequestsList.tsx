@@ -2,15 +2,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useUnstakingRequests from '~/features/staking/hooks/useUnstakingRequests'
-
-import { UnstakeRequest } from '~/features/staking/hooks/useUnstakingRequests'
+import useFetchAddressUnstakeRequests, { UnstakeRequest } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
 
 import UnstakingRequestItem from './UnstakingRequestItem'
 
 const UnstakingRequestsList = () => {
   const { t } = useTranslation()
-  const { unstakeRequests } = useUnstakingRequests()
+  const { data: unstakeRequests } = useFetchAddressUnstakeRequests()
 
   if (!unstakeRequests.length) return null
 
