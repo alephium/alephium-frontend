@@ -219,6 +219,9 @@ const CardContainer = styled.View`
 
 const TokenTypeTabs = styled.View`
   margin-top: ${DEFAULT_MARGIN}px;
+  padding-top: ${DEFAULT_MARGIN}px;
+  border-top-width: 1px;
+  border-top-color: ${({ theme }) => theme.border.secondary};
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
