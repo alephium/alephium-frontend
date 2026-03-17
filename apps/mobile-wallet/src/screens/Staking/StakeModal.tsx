@@ -103,7 +103,7 @@ const StakeModal = () => {
   }
 
   return (
-    <BottomModal2 title={t('Stake ALPH') as string} contentVerticalGap>
+    <BottomModal2 title={t('Stake ALPH') as string}>
       <Content>
         <InfoCard>
           <AppText color="secondary" size={13}>

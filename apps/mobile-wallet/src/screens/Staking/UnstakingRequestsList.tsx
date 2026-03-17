@@ -8,20 +8,22 @@ import UnstakingRequestItem from './UnstakingRequestItem'
 
 const UnstakingRequestsList = () => {
   const { t } = useTranslation()
-  const { data: unstakeRequests } = useFetchAddressUnstakeRequests()
-
-  if (!unstakeRequests.length) return null
+  const { data: unstakeRequests, isLoading } = useFetchAddressUnstakeRequests()
 
   return (
     <Container>
       <SectionTitle color="secondary">
         {t('Pending unstakings')} ({unstakeRequests.length})
       </SectionTitle>
-      <ListContainer>
-        {unstakeRequests.map((req: UnstakeRequest) => (
-          <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} />
-        ))}
-      </ListContainer>
+      {unstakeRequests.length > 0 ? (
+        <ListContainer>
+          {unstakeRequests.map((req: UnstakeRequest) => (
+            <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} />
+          ))}
+        </ListContainer>
+      ) : (
+        <EmptyText color="secondary">{isLoading ? '...' : t('No pending unstakings')}</EmptyText>
+      )}
     </Container>
   )
 }
@@ -39,4 +41,8 @@ const SectionTitle = styled(AppText)`
 
 const ListContainer = styled.View`
   gap: 10px;
+`
+
+const EmptyText = styled(AppText)`
+  font-size: 14px;
 `

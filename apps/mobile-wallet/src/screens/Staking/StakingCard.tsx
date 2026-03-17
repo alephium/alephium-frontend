@@ -1,11 +1,14 @@
+import { usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
+import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
 import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
+import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
 import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -16,6 +19,7 @@ const StakingCard = () => {
   const { data: xAlphBalance, isLoading: isXAlphBalanceLoading } = useFetchXAlphBalance()
   const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
   const { data: availableToStake, isLoading: isAvailableToStakeLoading } = useFetchAvailableToStake()
+  const pendingStakingTransaction = usePendingStakingTransaction()
 
   const formattedStakedValue = formatTokenAmount(stakedValueAlph, ALPH.decimals)
   const formattedXAlphBalance = formatTokenAmount(xAlphBalance, ALPH.decimals)
@@ -25,9 +29,13 @@ const StakingCard = () => {
 
   return (
     <CardContainer>
+      {pendingStakingTransaction && <PendingStakingTransactionPoller txHash={pendingStakingTransaction.hash} />}
       <LabeledDataContainer>
         <Label>{t('Staked')}</Label>
-        <Value>{isLoading ? '...' : `${formattedStakedValue} ${ALPH.symbol}`}</Value>
+        <ValueRow>
+          <Value>{isLoading ? '...' : `${formattedStakedValue} ${ALPH.symbol}`}</Value>
+          {pendingStakingTransaction && <ActivityIndicator color="white" size="small" />}
+        </ValueRow>
         <Badge>
           <BadgeText>
             {formattedXAlphBalance} xALPH @ {formattedXAlphRate} ALPH
@@ -46,6 +54,12 @@ const StakingCard = () => {
 }
 
 export default StakingCard
+
+const PendingStakingTransactionPoller = ({ txHash }: { txHash: string }) => {
+  usePendingTxPolling(txHash)
+
+  return null
+}
 
 const CardContainer = styled.View`
   background-color: ${({ theme }) => theme.global.palette3};
@@ -68,6 +82,12 @@ const Value = styled(AppText)`
   font-size: 28px;
   font-weight: 700;
   color: white;
+`
+
+const ValueRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `
 
 const AvailableValue = styled(AppText)`

@@ -1,7 +1,8 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAppSelector } from '~/hooks/redux'
+import { resolveAccountFromAddress, signer } from '~/signer'
 
 import usePowfiSdk from './usePowfiSdk'
 
@@ -17,17 +18,21 @@ export interface UnstakeRequest {
 
 const useFetchAddressUnstakeRequests = () => {
   const sdk = usePowfiSdk()
-  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
   const networkId = sdk.network.id
-  const shouldFetch = !!defaultAddressHash
+  const shouldFetch = !!defaultAddress
 
   const {
     data: activeIndexes,
     refetch: refetchIndexes,
     ...activeIndexesQuery
   } = useQuery({
-    queryKey: ['unstakeVaultIndexes', networkId, defaultAddressHash],
-    queryFn: () => sdk.staking.getActiveUnstakeVaultIndexes(defaultAddressHash!),
+    queryKey: ['unstakeVaultIndexes', networkId, defaultAddress?.hash],
+    queryFn: async () => {
+      const account = await resolveAccountFromAddress(defaultAddress!, signer.getPublicKey)
+
+      return sdk.staking.getActiveUnstakeVaultIndexes(account.address)
+    },
     enabled: shouldFetch,
     staleTime: 60_000,
     refetchInterval: 60_000
@@ -38,15 +43,17 @@ const useFetchAddressUnstakeRequests = () => {
     refetch: refetchUnstakeRequests,
     ...unstakeRequestsQuery
   } = useQuery({
-    queryKey: ['unstakeRequests', networkId, defaultAddressHash, activeIndexes?.map((index) => index.toString())],
+    queryKey: ['unstakeRequests', networkId, defaultAddress?.hash, activeIndexes?.map((index) => index.toString())],
     queryFn: async () => {
-      if (!defaultAddressHash || !activeIndexes?.length) return []
+      if (!defaultAddress || !activeIndexes?.length) return []
+
+      const account = await resolveAccountFromAddress(defaultAddress, signer.getPublicKey)
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            sdk.staking.getClaimableAmount(defaultAddressHash, index),
-            sdk.staking.getAlphUnstakeVaultState(defaultAddressHash, index)
+            sdk.staking.getClaimableAmount(account.address, index),
+            sdk.staking.getAlphUnstakeVaultState(account.address, index)
           ])
 
           return {
@@ -71,10 +78,12 @@ const useFetchAddressUnstakeRequests = () => {
   }
 
   return {
-    data: unstakeRequests ?? [],
-    refresh,
     ...activeIndexesQuery,
-    ...unstakeRequestsQuery
+    ...unstakeRequestsQuery,
+    data: unstakeRequests ?? [],
+    isLoading: activeIndexesQuery.isLoading || unstakeRequestsQuery.isLoading,
+    isFetching: activeIndexesQuery.isFetching || unstakeRequestsQuery.isFetching,
+    refresh
   }
 }
 

@@ -26,7 +26,7 @@ export const useFetchAddressSingleTokenBalances = ({
   })
 
   const { data: addressTokenBalances, isLoading: isLoadingTokenBalances } = useQuery({
-    ...addressTokensBalancesQuery({ addressHash, networkId }),
+    ...addressTokensBalancesQuery({ addressHash, networkId, skip: skip || !addressHash }),
     select: (data) => data?.balances.find(({ id }) => id === tokenId)
   })
 

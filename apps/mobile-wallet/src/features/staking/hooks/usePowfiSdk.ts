@@ -1,16 +1,15 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
-import { groupOfAddress } from '@alephium/web3'
+import { selectDefaultAddress } from '@alephium/shared'
 import { useEffect, useMemo } from 'react'
 
 import { getPowfiSdk, networkIdToSdkNetworkId } from '~/api/powfi'
 import { useAppSelector } from '~/hooks/redux'
-import { signer } from '~/signer'
+import { resolveAccountFromAddress, signer } from '~/signer'
 
 type PowfiSdkSigner = ReturnType<typeof getPowfiSdk>['signer']
 
 const usePowfiSdk = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const sdk = useMemo(() => {
     const sdkNetworkId = networkIdToSdkNetworkId(networkId)
@@ -25,23 +24,16 @@ const usePowfiSdk = () => {
   useEffect(() => {
     let isCancelled = false
 
-    if (!defaultAddressHash) {
+    if (!defaultAddress) {
       sdk.clearAccount()
       return
     }
 
     const syncAccount = async () => {
       try {
-        const publicKey = await signer.getPublicKey(defaultAddressHash)
-
         if (isCancelled) return
 
-        sdk.account = {
-          address: defaultAddressHash,
-          group: groupOfAddress(defaultAddressHash),
-          keyType: 'default',
-          publicKey
-        }
+        sdk.account = await resolveAccountFromAddress(defaultAddress, signer.getPublicKey)
       } catch {
         if (!isCancelled) {
           sdk.clearAccount()
@@ -54,7 +46,7 @@ const usePowfiSdk = () => {
     return () => {
       isCancelled = true
     }
-  }, [defaultAddressHash, sdk])
+  }, [defaultAddress, sdk])
 
   return sdk
 }

@@ -1,7 +1,11 @@
-import { useFetchWalletBalancesAlph } from '@alephium/shared-react'
+import { selectDefaultAddressHash } from '@alephium/shared'
+import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
+
+import { useAppSelector } from '~/hooks/redux'
 
 const useFetchAvailableToStake = () => {
-  const { data: alphBalances, isLoading } = useFetchWalletBalancesAlph()
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const { data: alphBalances, isLoading } = useFetchAddressBalancesAlph({ addressHash: defaultAddressHash ?? '' })
 
   return {
     data: BigInt(alphBalances?.availableBalance ?? '0'),
