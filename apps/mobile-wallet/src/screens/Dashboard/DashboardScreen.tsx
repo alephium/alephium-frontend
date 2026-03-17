@@ -3,7 +3,7 @@ import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletW
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Animated from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -101,7 +101,9 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
             onTabPress={setActiveTab}
           />
         </TokenTypeTabs>
-        {activeTab === 0 ? <WalletTokensList /> : <WalletNftsList />}
+        <Animated.View key={activeTab} entering={FadeIn.duration(200)} exiting={FadeOut.duration(200)}>
+          {activeTab === 0 ? <WalletTokensList /> : <WalletNftsList />}
+        </Animated.View>
       </ScreenSection>
 
       <WalletEmptyPlaceholder />

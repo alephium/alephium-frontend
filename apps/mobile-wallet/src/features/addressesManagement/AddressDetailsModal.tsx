@@ -8,6 +8,7 @@ import {
 import { FlashListProps } from '@shopify/flash-list'
 import { openBrowserAsync } from 'expo-web-browser'
 import { memo, useCallback, useMemo, useState } from 'react'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import AddressBadge from '~/components/AddressBadge'
 import Button from '~/components/buttons/Button'
@@ -51,17 +52,18 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
       renderItem: ({ item, index }: { item: unknown; index: number }) => {
         const { id: itemId } = item as { id: string }
         return (
-          <AddressFtListItem
-            key={itemId}
-            tokenId={itemId}
-            hideSeparator={index === sortedFts.length - 1}
-            addressHash={addressHash}
-            onTokenDetailsModalClose={dismissModal}
-          />
+          <Animated.View key={`${activeTab}-${itemId}`} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+            <AddressFtListItem
+              tokenId={itemId}
+              hideSeparator={index === sortedFts.length - 1}
+              addressHash={addressHash}
+              onTokenDetailsModalClose={dismissModal}
+            />
+          </Animated.View>
         )
       }
     }),
-    [sortedFts, addressHash, dismissModal]
+    [sortedFts, addressHash, dismissModal, activeTab]
   )
 
   const nftsFlashListProps = useNftsGridFlashListProps({

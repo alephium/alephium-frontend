@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react'
-import { ScrollViewProps } from 'react-native'
-import Animated, { AnimatedProps, useAnimatedRef } from 'react-native-reanimated'
+import { ScrollViewProps, StyleSheet } from 'react-native'
+import Animated, { AnimatedProps, FadeIn, FadeOut, useAnimatedRef } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
@@ -58,7 +58,14 @@ const TabBarPager = ({
     <Screen>
       <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} isCentered={false} />
       <PageContainer>
-        <WrappedPage Page={ActivePage} onScroll={screenScrollHandler} />
+        <Animated.View
+          key={activeTab}
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(300)}
+          style={StyleSheet.absoluteFillObject}
+        >
+          <WrappedPage Page={ActivePage} onScroll={screenScrollHandler} />
+        </Animated.View>
       </PageContainer>
     </Screen>
   )

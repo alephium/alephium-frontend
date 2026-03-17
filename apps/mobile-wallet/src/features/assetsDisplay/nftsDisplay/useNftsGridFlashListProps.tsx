@@ -4,6 +4,7 @@ import { chunk, groupBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -46,15 +47,19 @@ const useNftsGridFlashListProps = ({
     getItemType: (item) => (typeof item === 'string' ? 'sectionHeader' : 'row'),
     renderItem: ({ item, index }) =>
       typeof item === 'string' ? (
-        <NftsCollectionTitle collectionId={item} isFirst={index === 0} />
+        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+          <NftsCollectionTitle collectionId={item} isFirst={index === 0} />
+        </Animated.View>
       ) : (
-        <NftsRow nftsPerRow={nftsPerRow}>
-          {item.map((nft) => (
-            <NFTThumbnailContainer key={nft.id}>
-              <NFTThumbnail nftId={nft.id} />
-            </NFTThumbnailContainer>
-          ))}
-        </NftsRow>
+        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+          <NftsRow nftsPerRow={nftsPerRow}>
+            {item.map((nft) => (
+              <NFTThumbnailContainer key={nft.id}>
+                <NFTThumbnail nftId={nft.id} />
+              </NFTThumbnailContainer>
+            ))}
+          </NftsRow>
+        </Animated.View>
       ),
     contentContainerStyle: { paddingHorizontal: contentContainerPaddingHorizontal, paddingBottom: 70 },
     estimatedItemSize: estimatedItemSize || 64,
