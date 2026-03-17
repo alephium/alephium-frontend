@@ -14,10 +14,16 @@ type NftsGridFlashListProps = Omit<
 
 const NftsGridFlastList = forwardRef(
   (
-    { nfts, nftSize, nftsPerRow = 3, isLoading, ...props }: NftsGridFlashListProps,
+    { nfts, nftSize, nftsPerRow = 3, isLoading, contentContainerPaddingHorizontal, ...props }: NftsGridFlashListProps,
     ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
   ) => {
-    const flashListProps = useNftsGridFlashListProps({ nfts, nftSize, nftsPerRow, isLoading })
+    const flashListProps = useNftsGridFlashListProps({
+      nfts,
+      nftSize,
+      nftsPerRow,
+      isLoading,
+      contentContainerPaddingHorizontal
+    })
 
     return <FlashList {...props} {...flashListProps} ref={ref} />
   }
