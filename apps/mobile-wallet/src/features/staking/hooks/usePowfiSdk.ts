@@ -10,17 +10,19 @@ type PowfiSdkSigner = ReturnType<typeof getPowfiSdk>['signer']
 
 const usePowfiSdk = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const nodeHost = useAppSelector((s) => s.network.settings.nodeHost)
+  const explorerApiHost = useAppSelector((s) => s.network.settings.explorerApiHost)
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const sdk = useMemo(() => {
     const sdkNetworkId = networkIdToSdkNetworkId(networkId)
-    const powfiSdk = getPowfiSdk(sdkNetworkId)
+    const powfiSdk = getPowfiSdk(sdkNetworkId, { nodeHost, explorerApiHost })
 
     powfiSdk.signer = stakingSigner as unknown as PowfiSdkSigner
     powfiSdk.setCurrentProviders()
 
     return powfiSdk
-  }, [networkId])
+  }, [networkId, nodeHost, explorerApiHost])
 
   useEffect(() => {
     let isCancelled = false
