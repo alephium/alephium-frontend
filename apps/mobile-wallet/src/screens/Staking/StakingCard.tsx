@@ -5,7 +5,6 @@ import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
 import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
 import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
@@ -18,14 +17,12 @@ const StakingCard = () => {
   const { data: stakedValueAlph, isLoading: isStakedValueLoading } = useStakedValue()
   const { data: xAlphBalance, isLoading: isXAlphBalanceLoading } = useFetchXAlphBalance()
   const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
-  const { data: availableToStake, isLoading: isAvailableToStakeLoading } = useFetchAvailableToStake()
   const pendingStakingTransaction = usePendingStakingTransaction()
 
   const formattedStakedValue = formatTokenAmount(stakedValueAlph, ALPH.decimals)
   const formattedXAlphBalance = formatTokenAmount(xAlphBalance, ALPH.decimals)
   const formattedXAlphRate = xAlphRate.toFixed(4)
-  const formattedAvailableToStake = formatTokenAmount(availableToStake, ALPH.decimals)
-  const isLoading = isStakedValueLoading || isXAlphBalanceLoading || isXAlphRateLoading || isAvailableToStakeLoading
+  const isLoading = isStakedValueLoading || isXAlphBalanceLoading || isXAlphRateLoading
 
   return (
     <CardContainer>
@@ -46,8 +43,8 @@ const StakingCard = () => {
       <Divider />
 
       <LabeledDataContainer>
-        <Label>{t('Available to stake')}</Label>
-        <AvailableValue>{isLoading ? '...' : `${formattedAvailableToStake} ${ALPH.symbol}`}</AvailableValue>
+        <Label>{t('APR')}</Label>
+        <AvailableValue>-</AvailableValue>
       </LabeledDataContainer>
     </CardContainer>
   )
