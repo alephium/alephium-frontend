@@ -1,6 +1,7 @@
 import { selectAllPendingSentTransactions } from '@alephium/shared'
 import { useMemo } from 'react'
 
+import { getPowfiStakingContractAddress } from '~/features/staking/stakingUtils'
 import { useAppSelector } from '~/hooks/redux'
 
 import usePowfiSdk from './usePowfiSdk'
@@ -8,14 +9,7 @@ import usePowfiSdk from './usePowfiSdk'
 const usePendingStakingTransaction = () => {
   const sdk = usePowfiSdk()
   const pendingTransactions = useAppSelector(selectAllPendingSentTransactions)
-
-  const stakingContractAddress = useMemo(() => {
-    try {
-      return sdk.staking.getConfig().xAlphTokenAddress
-    } catch {
-      return ''
-    }
-  }, [sdk])
+  const stakingContractAddress = useMemo(() => getPowfiStakingContractAddress(sdk), [sdk])
 
   return useMemo(() => {
     let accountAddress: string | undefined

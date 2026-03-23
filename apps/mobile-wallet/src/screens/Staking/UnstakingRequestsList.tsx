@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useFetchAddressUnstakeRequests, { UnstakeRequest } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import useFetchAddressUnstakeRequests from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
 
 import UnstakingRequestItem from './UnstakingRequestItem'
 
@@ -17,7 +17,7 @@ const UnstakingRequestsList = () => {
       </SectionTitle>
       {unstakeRequests.length > 0 ? (
         <ListContainer>
-          {unstakeRequests.map((req: UnstakeRequest) => (
+          {unstakeRequests.map((req) => (
             <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} />
           ))}
         </ListContainer>

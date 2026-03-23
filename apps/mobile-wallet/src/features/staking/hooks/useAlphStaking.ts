@@ -2,6 +2,7 @@ import { transactionSent } from '@alephium/shared'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 
+import { getPowfiStakingContractAddress } from '~/features/staking/stakingUtils'
 import { useAppDispatch } from '~/hooks/redux'
 
 import useFetchAddressUnstakeRequests from './useFetchAddressUnstakeRequests'
@@ -16,13 +17,7 @@ const useAlphStaking = () => {
   const { refresh: refreshUnstakeRequests } = useFetchAddressUnstakeRequests()
   const queryClient = useQueryClient()
   const xAlphTokenId = useXAlphTokenId()
-  const stakingContractAddress = useMemo(() => {
-    try {
-      return sdk.staking.getConfig().xAlphTokenAddress
-    } catch {
-      return ''
-    }
-  }, [sdk])
+  const stakingContractAddress = useMemo(() => getPowfiStakingContractAddress(sdk), [sdk])
 
   const sendStakingTx = useCallback(
     ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {

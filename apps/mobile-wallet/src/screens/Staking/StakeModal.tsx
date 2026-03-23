@@ -1,7 +1,4 @@
-import { getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { convertAlphAmountWithDecimals } from '@alephium/web3'
-import Decimal from 'decimal.js'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
@@ -15,70 +12,37 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
 import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
-import { formatTokenAmount } from '~/features/staking/stakingUtils'
+import { previewXAlphForStake } from '~/features/staking/stakingUtils'
+import useFungibleTokenAmountInput from '~/hooks/useFungibleTokenAmountInput'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { isNumericStringValid } from '~/utils/numbers'
 
 const StakeModal = () => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
-  const inputRef = useRef<TextInput>(null)
-  const [amount, setAmount] = useState('')
-  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const inputRef = useRef<TextInput>(null)
   const { stakeAlph } = useAlphStaking()
   const { data: availableToStake } = useFetchAvailableToStake()
   const { data: xAlphRate } = useFetchXAlphRate()
-  const maxStakeAmount = useMemo(() => toHumanReadableAmount(availableToStake, ALPH.decimals), [availableToStake])
-  const formattedAvailableToStake = formatTokenAmount(availableToStake, ALPH.decimals)
 
-  const amountInAttoAlph = useMemo(() => {
-    if (!amount || error) return undefined
+  const {
+    amount,
+    error,
+    amountParsed: amountInAttoAlph,
+    handleAmountChange,
+    handleMax,
+    formattedMaxBalance
+  } = useFungibleTokenAmountInput({
+    maxBalance: availableToStake,
+    decimals: ALPH.decimals,
+    nativeInputRef: inputRef
+  })
 
-    try {
-      return convertAlphAmountWithDecimals(amount)
-    } catch {
-      return undefined
-    }
-  }, [amount, error])
-
-  const xAlphToReceive = useMemo(() => {
-    if (!amountInAttoAlph || xAlphRate.lte(0)) return ''
-
-    return new Decimal(amountInAttoAlph.toString())
-      .div(xAlphRate)
-      .div(new Decimal(10).pow(ALPH.decimals))
-      .toDecimalPlaces(4, Decimal.ROUND_DOWN)
-      .toString()
-  }, [amountInAttoAlph, xAlphRate])
-
-  const handleAmountChange = (value: string) => {
-    let cleanedAmount = value.replace(',', '.')
-    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
-
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > ALPH.decimals
-    let parsedAmount: bigint | undefined
-
-    if (cleanedAmount && !tooManyDecimals) {
-      try {
-        parsedAmount = convertAlphAmountWithDecimals(cleanedAmount)
-      } catch {
-        parsedAmount = undefined
-      }
-    }
-
-    const exceedsAvailable = parsedAmount ? parsedAmount > availableToStake : false
-
-    setError(
-      tooManyDecimals
-        ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', { numberOfDecimals: ALPH.decimals })
-        : exceedsAvailable
-          ? t('Amount exceeds available balance')
-          : ''
-    )
-    setAmount(cleanedAmount)
-  }
+  const xAlphToReceive = useMemo(
+    () => (amountInAttoAlph ? previewXAlphForStake(amountInAttoAlph, xAlphRate) : ''),
+    [amountInAttoAlph, xAlphRate]
+  )
 
   const handleStake = async () => {
     if (!amountInAttoAlph || !!error) return
@@ -89,17 +53,11 @@ const StakeModal = () => {
       await stakeAlph(amountInAttoAlph)
       showToast({ type: 'success', text1: t('Transaction sent') })
       dismissModal()
-    } catch (error) {
-      showExceptionToast(error, t('Stake ALPH'))
+    } catch (err) {
+      showExceptionToast(err, t('Stake ALPH'))
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleMax = () => {
-    setAmount(maxStakeAmount)
-    setError('')
-    inputRef.current?.setNativeProps({ text: maxStakeAmount })
   }
 
   return (
@@ -120,7 +78,7 @@ const StakeModal = () => {
             </AppText>
             <MaxButton onPress={handleMax}>
               <AppText color="accent" size={13} semiBold>
-                {t('Max')}: {formattedAvailableToStake} ALPH
+                {t('Max')}: {formattedMaxBalance} ALPH
               </AppText>
             </MaxButton>
           </InputHeader>
