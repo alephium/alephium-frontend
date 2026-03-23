@@ -44,7 +44,6 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
   const tokensFlashListProps = useMemo(
     () => ({
       data: sortedFts,
-      estimatedItemSize: 70,
       ListFooterComponent: () => (
         <AddressTokensListFooter addressHash={addressHash} onHiddenTokensButtonPress={dismissModal} />
       ),
@@ -68,8 +67,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
 
   const nftsFlashListProps = useNftsGridFlashListProps({
     nfts,
-    isLoading: isNftsLoading,
-    estimatedItemSize: 64
+    isLoading: isNftsLoading
   })
 
   // We combine the active list props with the mandatory header component.

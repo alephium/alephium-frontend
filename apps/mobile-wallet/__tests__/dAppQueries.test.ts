@@ -3,7 +3,7 @@ import { queryClient } from '@alephium/shared-react'
 import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { dAppsQuery, dAppsTagsQuery } from '~/api/queries/dAppQueries'
+import { dAppsQuery, selectTagsFromDApps } from '~/api/queries/dAppQueries'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
 jest.mock('axios')
@@ -25,7 +25,19 @@ describe('dAppQueries', () => {
     const mockDApps: DApp[] = [
       {
         name: 'TestDApp1',
-        links: { website: 'https://test1.com' },
+        links: {
+          website: 'https://test1.com',
+          mirror: 'https://test1.com/mirror',
+          twitter: 'https://test1.com/twitter',
+          telegram: 'https://test1.com/telegram',
+          discord: 'https://test1.com/discord',
+          github: 'https://test1.com/github',
+          youtube: 'https://test1.com/youtube',
+          medium: 'https://test1.com/medium',
+          careers: 'https://test1.com/careers',
+          linkedin: 'https://test1.com/linkedin',
+          docs: 'https://test1.com/docs'
+        },
         short_description: 'Test 1',
         tags: ['DeFi'],
         verified: true,
@@ -35,13 +47,31 @@ describe('dAppQueries', () => {
         media: {
           logoUrl: 'https://test1.com/logo.png',
           bannerUrl: 'https://test1.com/banner.png',
-          previewUrl: 'https://test1.com/preview.png'
+          previewUrl: 'https://test1.com/preview.png',
+          gallery: []
         },
-        description: 'Test 1'
+        description: 'Test 1',
+        audits: [],
+        tokens: [],
+        twitterName: 'test1',
+        isFeatured: true,
+        slug: 'test1'
       },
       {
         name: 'TestDApp2',
-        links: { website: 'https://test2.com' },
+        links: {
+          website: 'https://test2.com',
+          mirror: 'https://test2.com/mirror',
+          twitter: 'https://test2.com/twitter',
+          telegram: 'https://test2.com/telegram',
+          discord: 'https://test2.com/discord',
+          github: 'https://test2.com/github',
+          youtube: 'https://test2.com/youtube',
+          medium: 'https://test2.com/medium',
+          careers: 'https://test2.com/careers',
+          linkedin: 'https://test2.com/linkedin',
+          docs: 'https://test2.com/docs'
+        },
         short_description: 'Test 2',
         tags: ['NFTs'],
         verified: true,
@@ -51,9 +81,15 @@ describe('dAppQueries', () => {
         media: {
           logoUrl: 'https://test2.com/logo.png',
           bannerUrl: 'https://test2.com/banner.png',
-          previewUrl: 'https://test2.com/preview.png'
+          previewUrl: 'https://test2.com/preview.png',
+          gallery: []
         },
-        description: 'Test 2'
+        description: 'Test 2',
+        audits: [],
+        tokens: [],
+        twitterName: 'test2',
+        isFeatured: true,
+        slug: 'test2'
       }
     ]
 
@@ -96,7 +132,7 @@ describe('dAppQueries', () => {
       const query = dAppsQuery({ select: (dApps) => dApps })
       const result = await queryClient.fetchQuery(query)
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('https://publicapi.alph.land/api/dapps')
+      expect(mockedAxios.get).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
       expect(result).toEqual(mockDApps)
     })
 
@@ -113,57 +149,55 @@ describe('dAppQueries', () => {
     })
   })
 
-  describe('dAppsTagsQuery', () => {
-    const mockTags = ['DeFi', 'NFTs', 'Gaming', 'Social']
-
-    it('returns cached data on API failure if available', async () => {
-      // First, populate the cache with data
-      mockedAxios.get.mockResolvedValueOnce({ data: mockTags })
-      await queryClient.fetchQuery(dAppsTagsQuery)
-
-      // Verify data is cached
-      expect(queryClient.getQueryData(['dAppsTags'])).toEqual(mockTags)
-
-      // Now simulate API failure
-      mockedAxios.get.mockRejectedValueOnce(new Error('API Error'))
-
-      // Query should return cached data (sorted by select function)
-      const result = await queryClient.fetchQuery(dAppsTagsQuery)
-      // The sortTags function keeps default tags in order and sorts remaining alphabetically
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Social'])
+  describe('selectTagsFromDApps', () => {
+    const makeDApp = (tags: string[]): DApp => ({
+      name: 'TestDApp',
+      links: {
+        website: 'https://test.com',
+        mirror: 'https://test.com/mirror',
+        twitter: 'https://test.com/twitter',
+        telegram: 'https://test.com/telegram',
+        discord: 'https://test.com/discord',
+        github: 'https://test.com/github',
+        youtube: 'https://test.com/youtube',
+        medium: 'https://test.com/medium',
+        careers: 'https://test.com/careers',
+        linkedin: 'https://test.com/linkedin',
+        docs: 'https://test.com/docs'
+      },
+      short_description: 'Test',
+      tags,
+      verified: true,
+      councils_choice: false,
+      dotw: false,
+      teamInfo: { contactEmail: 'test@test.com', founded: '2021-01-01', anonymous: false },
+      media: { logoUrl: '', bannerUrl: '', previewUrl: '', gallery: [] },
+      description: 'Test',
+      audits: [],
+      tokens: [],
+      twitterName: 'test',
+      isFeatured: true,
+      slug: 'test'
     })
 
-    it('throws an error on API failure if no cached data is available', async () => {
-      const apiError = new Error('API Error')
-      mockedAxios.get.mockRejectedValueOnce(apiError)
+    it('extracts unique tags from all dApps', () => {
+      const dApps = [makeDApp(['DeFi', 'NFTs']), makeDApp(['NFTs', 'Gaming'])]
 
-      await expect(queryClient.fetchQuery(dAppsTagsQuery)).rejects.toThrow('API Error')
+      expect(selectTagsFromDApps(dApps)).toEqual(['DeFi', 'NFTs', 'Gaming'])
     })
 
-    it('correctly applies staleTime and gcTime configurations', () => {
-      expect(dAppsTagsQuery.staleTime).toBe(ONE_HOUR_MS)
-      expect(dAppsTagsQuery.gcTime).toBe(Infinity)
+    it('sorts tags with default tags first, then remaining alphabetically', () => {
+      const dApps = [makeDApp(['Wallets', 'Bridges']), makeDApp(['Gaming', 'NFTs', 'DeFi'])]
+
+      expect(selectTagsFromDApps(dApps)).toEqual(['DeFi', 'NFTs', 'Gaming', 'Wallets', 'Bridges'])
     })
 
-    it('fetches data successfully from API', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockTags })
-
-      const result = await queryClient.fetchQuery(dAppsTagsQuery)
-
-      expect(mockedAxios.get).toHaveBeenCalledWith('https://publicapi.alph.land/api/tags')
-      // The sortTags function maintains default order for matched tags
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Social'])
+    it('returns empty array for dApps with no tags', () => {
+      expect(selectTagsFromDApps([makeDApp([])])).toEqual([])
     })
 
-    it('sorts tags correctly with default tags first', () => {
-      const unsortedTags = ['Wallets', 'Bridges', 'Gaming', 'NFTs', 'DeFi']
-
-      // Call the select function directly to test sorting logic
-      const result = (dAppsTagsQuery.select as (tags: string[]) => string[])(unsortedTags)
-
-      // Default sorted tags come first: DeFi, NFTs, Gaming, Wallets (all in defaultSortedTags)
-      // Then remaining tags sorted alphabetically: Bridges
-      expect(result).toEqual(['DeFi', 'NFTs', 'Gaming', 'Wallets', 'Bridges'])
+    it('returns empty array for empty dApps list', () => {
+      expect(selectTagsFromDApps([])).toEqual([])
     })
   })
 })

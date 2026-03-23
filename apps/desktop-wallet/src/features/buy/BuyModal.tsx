@@ -29,7 +29,9 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   const onRamperUrl = useOnramperUrl(addressHash)
 
   const handleAcceptDisclaimer = () => {
-    window.electron?.app.openOnRampServiceWindow({ url: onRamperUrl, targetLocation: ONRAMP_TARGET_LOCATION })
+    if (onRamperUrl) {
+      window.electron?.app.openOnRampServiceWindow({ url: onRamperUrl, targetLocation: ONRAMP_TARGET_LOCATION })
+    }
     setDisclaimerAccepted(true)
   }
 
@@ -61,7 +63,12 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
       </TextContainer>
       <ModalFooterButtons>
         {!disclaimerAccepted ? (
-          <ModalFooterButton onClick={handleAcceptDisclaimer} role="primary" tall>
+          <ModalFooterButton
+            onClick={onRamperUrl ? handleAcceptDisclaimer : undefined}
+            role="primary"
+            tall
+            loading={!onRamperUrl}
+          >
             {t('Continue')}
           </ModalFooterButton>
         ) : (

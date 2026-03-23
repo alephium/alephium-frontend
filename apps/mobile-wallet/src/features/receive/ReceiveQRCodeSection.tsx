@@ -48,7 +48,7 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
         {permissionResponse?.granted === false && (
           <Surface type="accent" withPadding style={{ marginBottom: VERTICAL_GAP }}>
             <RowStyled title={t('The app can adjust the brightness when displaying QR codes.')} isLast short>
-              <Button title={t('Allow')} onPress={requestPermission} compact variant="highlight" />
+              <Button title={t('Continue')} onPress={requestPermission} compact variant="highlight" />
             </RowStyled>
           </Surface>
         )}

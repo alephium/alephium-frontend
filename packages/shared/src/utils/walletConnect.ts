@@ -1,5 +1,5 @@
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
-import { SignClient } from '@walletconnect/sign-client/dist/types/client'
+import SignClient from '@walletconnect/sign-client'
 
 import { networkSettingsPresets } from '@/network'
 import { NetworkPreset, NetworkSettings } from '@/types/network'

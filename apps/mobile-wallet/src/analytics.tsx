@@ -1,7 +1,7 @@
 import { AnalyticsProps, cleanExceptionMessage, getHumanReadableError, throttleEvent } from '@alephium/shared'
+import { PostHogCaptureOptions } from '@posthog/core'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
-import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
 import { ReactNode, useCallback, useEffect } from 'react'
 
 import { analyticsIdGenerated } from '~/features/settings/settingsActions'
@@ -11,18 +11,18 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
-export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_KEY, {
+export const posthog = new PostHog(PUBLIC_POSTHOG_KEY, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
   customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),
-  captureNativeAppLifecycleEvents: false
+  captureAppLifecycleEvents: false
 })
 
 type EventAnalyticsParams = {
   event: string
   type?: 'event'
   props?: AnalyticsProps
-  options?: PosthogCaptureOptions
+  options?: PostHogCaptureOptions
 }
 
 type ErrorAnalyticsParams = {
@@ -53,7 +53,7 @@ export const sendAnalytics = (params: AnalyticsParams) => {
 
     if (props) props.$ip = ''
 
-    posthogAsync.then((client) => throttleEvent(() => client.capture(event, props, options), event, props))
+    throttleEvent(() => posthog.capture(event, props, options), event, props)
   }
 }
 
@@ -74,17 +74,15 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (shouldOptOut) {
-      posthogAsync.then((client) => client.optOut())
+      posthog.optOut()
       return
     }
 
     if (analytics && analyticsId) {
-      posthogAsync.then((client) => {
-        client.identify()
-        client.optIn()
-      })
+      posthog.identify()
+      posthog.optIn()
     } else if (!analytics && analyticsId) {
-      posthogAsync.then((client) => client.optOut())
+      posthog.optOut()
     } else if (!analyticsId) {
       const newAnalyticsId = nanoid()
       dispatch(analyticsIdGenerated(newAnalyticsId))

@@ -11,7 +11,6 @@ const WalletNftsList = () => {
       <NftsGridFlashList
         nfts={nfts}
         isLoading={isLoading}
-        estimatedItemSize={64}
         contentContainerPaddingHorizontal={0}
       />
     </WalletNftsListStyled>
