@@ -13,7 +13,7 @@ interface DAppIconProps extends DAppProps {
 const DAppIcon = ({ dAppName, size = 70 }: DAppIconProps) => {
   const { data: dApp } = useQuery(dAppQuery(dAppName))
 
-  if (!dApp) return null
+  if (!dApp || !dApp.media?.logoUrl) return null
 
   return <DappIconStyled source={{ uri: dApp.media.logoUrl }} contentFit="cover" size={size} />
 }
