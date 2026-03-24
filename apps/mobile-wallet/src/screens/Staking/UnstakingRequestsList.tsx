@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -8,14 +9,23 @@ import UnstakingRequestItem from './UnstakingRequestItem'
 
 const UnstakingRequestsList = () => {
   const { t } = useTranslation()
-  const { data: unstakeRequests, isLoading } = useFetchAddressUnstakeRequests()
+  const { data: unstakeRequests, isLoading, isError, error, refetch, isRefetching } = useFetchAddressUnstakeRequests()
+
+  const errorMessage: string = error instanceof Error ? error.message : String(error ?? '')
 
   return (
     <Container>
       <SectionTitle color="secondary">
         {t('Pending unstakings')} ({unstakeRequests.length})
       </SectionTitle>
-      {unstakeRequests.length > 0 ? (
+      {isError ? (
+        <Fragment>
+          <EmptyText color="secondary">{errorMessage}</EmptyText>
+          <RetryText color="accent" onPress={() => refetch()}>
+            {isRefetching ? '…' : t('Tap to retry')}
+          </RetryText>
+        </Fragment>
+      ) : unstakeRequests.length > 0 ? (
         <ListContainer>
           {unstakeRequests.map((req) => (
             <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} />
@@ -45,4 +55,9 @@ const ListContainer = styled.View`
 
 const EmptyText = styled(AppText)`
   font-size: 14px;
+`
+
+const RetryText = styled(AppText)`
+  font-size: 14px;
+  margin-top: 8px;
 `

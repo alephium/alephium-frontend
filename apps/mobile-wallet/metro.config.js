@@ -1,6 +1,7 @@
 // See https://github.com/byCedric/expo-monorepo-example/blob/main/apps/mobile/metro.config.js
 const { FileStore } = require('metro-cache')
 // See https://docs.expo.dev/guides/monorepos/#modify-the-metro-config
+const fs = require('fs')
 const path = require('path')
 
 const { getSentryExpoConfig } = require('@sentry/react-native/metro')
@@ -33,6 +34,20 @@ config.transformer.minifierConfig = {
 //    The ESM build still has require("ws") in a fallback; in RN global WebSocket exists so that path isn't used.
 const defaultResolveRequest = config.resolver.resolveRequest
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // @walletconnect/react-native-compat uses require("./Native*.ts"). Metro does not resolve explicit
+  // ".ts" in relative requires; point to the real file on disk.
+  if (
+    context.originModulePath &&
+    context.originModulePath.includes(
+      `${path.sep}@walletconnect${path.sep}react-native-compat${path.sep}`
+    ) &&
+    /^\.\/[^/]+\.ts$/.test(moduleName)
+  ) {
+    const filePath = path.resolve(path.dirname(context.originModulePath), moduleName)
+    if (fs.existsSync(filePath)) {
+      return { type: 'sourceFile', filePath }
+    }
+  }
   if (moduleName === '@walletconnect/jsonrpc-ws-connection') {
     return resolve(
       { ...context, resolveRequest: resolve },
