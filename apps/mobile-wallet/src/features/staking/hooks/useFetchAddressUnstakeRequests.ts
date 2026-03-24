@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useAppSelector } from '~/hooks/redux'
 
-import usePowfiSdk from './usePowfiSdk'
+import usePowfiSDK from './usePowfiSDK'
 
 export interface UnstakeRequest {
   vaultIndex: bigint
@@ -17,25 +17,25 @@ export interface UnstakeRequest {
 }
 
 const useFetchAddressUnstakeRequests = () => {
-  const sdk = usePowfiSdk()
+  const { staking, network } = usePowfiSDK()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const nodeHost = useAppSelector((s) => s.network.settings.nodeHost)
   const address = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined
-  const networkId = sdk.network.id
+  const networkId = network.id
   const shouldFetch = !!address
 
-  const query = useQuery({
+  const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ['unstakeVaultRequests', networkId, nodeHost, address],
     queryFn: async () => {
       const userAddress = address!
-      const activeIndexes = await sdk.staking.getActiveUnstakeVaultIndexes(userAddress)
+      const activeIndexes = await staking.getActiveUnstakeVaultIndexes(userAddress)
       if (!activeIndexes.length) return []
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            sdk.staking.getClaimableAmount(userAddress, index),
-            sdk.staking.getAlphUnstakeVaultState(userAddress, index)
+            staking.getClaimableAmount(userAddress, index),
+            staking.getAlphUnstakeVaultState(userAddress, index)
           ])
 
           return {
@@ -56,9 +56,13 @@ const useFetchAddressUnstakeRequests = () => {
   })
 
   return {
-    ...query,
-    data: query.data ?? [],
-    refresh: query.refetch
+    data: data ?? [],
+    error,
+    isError,
+    isLoading,
+    isRefetching,
+    refetch,
+    refresh: refetch
   }
 }
 

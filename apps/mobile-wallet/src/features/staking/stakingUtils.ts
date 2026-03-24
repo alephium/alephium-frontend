@@ -30,15 +30,3 @@ export const previewAlphForUnstake = (xAlphAmountAtto: bigint, alphPerXAlph: Dec
     .div(pow10AlphDecimals)
     .toDecimalPlaces(4, Decimal.ROUND_DOWN)
     .toString()
-
-type PowfiSdkWithStaking = {
-  staking: { getConfig: () => { xAlphTokenAddress: string } }
-}
-
-export const getPowfiStakingContractAddress = (sdk: PowfiSdkWithStaking): string => {
-  try {
-    return sdk.staking.getConfig().xAlphTokenAddress
-  } catch {
-    return ''
-  }
-}

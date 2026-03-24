@@ -1,5 +1,7 @@
-import { Powfi } from '@alephium/powfi-sdk'
+import { Powfi, type PowfiLoadParams } from '@alephium/powfi-sdk'
 import type { NetworkSettings } from '@alephium/shared'
+
+import { stakingSigner } from '~/features/staking/stakingSigner'
 
 type PowfiNetworkId = 'mainnet' | 'testnet' | 'devnet'
 
@@ -9,8 +11,8 @@ let instance: ReturnType<typeof Powfi.load> | undefined
 let instanceKey: string | undefined
 
 /**
- * Several staking hooks share one Powfi instance for the same network + URLs (otherwise each hook’s useMemo would
- * allocate a separate SDK). Still uses the wallet’s node/explorer hosts, not Powfi defaults.
+ * Single Powfi SDK instance per (logical network + node + explorer). Signer is fixed at load time; staking txs use the
+ * signer’s selected account from the wallet store, not `powfi.account`.
  */
 export const getPowfiSdk = (networkId: PowfiNetworkId, endpoints: Endpoints) => {
   const key = `${networkId}|${endpoints.nodeHost}|${endpoints.explorerApiHost}`
@@ -21,8 +23,10 @@ export const getPowfiSdk = (networkId: PowfiNetworkId, endpoints: Endpoints) => 
     networkOverrides: {
       nodeUrl: endpoints.nodeHost,
       explorerApiUrl: endpoints.explorerApiHost
-    }
+    },
+    signer: stakingSigner as unknown as NonNullable<PowfiLoadParams['signer']>
   })
+  instance.setCurrentProviders()
   instanceKey = key
   return instance
 }

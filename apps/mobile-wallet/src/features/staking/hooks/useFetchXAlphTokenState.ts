@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import usePowfiSdk from './usePowfiSdk'
+import usePowfiSDK from './usePowfiSDK'
 
 const useFetchXAlphTokenState = () => {
-  const sdk = usePowfiSdk()
+  const { staking, network } = usePowfiSDK()
 
   return useQuery({
-    queryKey: ['xAlphTokenState', sdk.network.id],
-    queryFn: () => sdk.staking.getXAlphTokenState(),
+    queryKey: ['xAlphTokenState', network.id],
+    queryFn: () => staking.getXAlphTokenState(),
     staleTime: 60_000,
     refetchInterval: 60_000
   })

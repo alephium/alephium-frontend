@@ -1,31 +1,32 @@
-import { selectAllPendingSentTransactions } from '@alephium/shared'
+import { selectAllPendingSentTransactions, selectDefaultAddress } from '@alephium/shared'
+import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { getPowfiStakingContractAddress } from '~/features/staking/stakingUtils'
 import { useAppSelector } from '~/hooks/redux'
 
-import usePowfiSdk from './usePowfiSdk'
+import usePowfiSDK from './usePowfiSDK'
 
 const usePendingStakingTransaction = () => {
-  const sdk = usePowfiSdk()
+  const { staking } = usePowfiSDK()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
   const pendingTransactions = useAppSelector(selectAllPendingSentTransactions)
-  const stakingContractAddress = useMemo(() => getPowfiStakingContractAddress(sdk), [sdk])
+  const stakingContractAddress = useMemo(() => {
+    try {
+      return staking.getConfig().xAlphTokenAddress
+    } catch {
+      return ''
+    }
+  }, [staking])
 
   return useMemo(() => {
-    let accountAddress: string | undefined
-
-    try {
-      accountAddress = sdk.account.address
-    } catch {
-      accountAddress = undefined
-    }
+    const accountAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined
 
     if (!accountAddress) return undefined
 
     return pendingTransactions
       .filter((tx) => tx.fromAddress === accountAddress && tx.toAddress === stakingContractAddress)
       .sort((a, b) => b.timestamp - a.timestamp)[0]
-  }, [pendingTransactions, sdk, stakingContractAddress])
+  }, [defaultAddress, pendingTransactions, stakingContractAddress])
 }
 
 export default usePendingStakingTransaction

@@ -1,17 +1,17 @@
 import { useMemo } from 'react'
 
-import usePowfiSdk from './usePowfiSdk'
+import usePowfiSDK from './usePowfiSDK'
 
 const useXAlphTokenId = () => {
-  const sdk = usePowfiSdk()
+  const { staking } = usePowfiSDK()
 
   return useMemo(() => {
     try {
-      return sdk.staking.getConfig().xAlphTokenId
+      return staking.getConfig().xAlphTokenId
     } catch {
       return undefined
     }
-  }, [sdk])
+  }, [staking])
 }
 
 export default useXAlphTokenId

@@ -1,30 +1,40 @@
-import { transactionSent } from '@alephium/shared'
+import { selectDefaultAddress, transactionSent } from '@alephium/shared'
+import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 
-import { getPowfiStakingContractAddress } from '~/features/staking/stakingUtils'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 import useFetchAddressUnstakeRequests from './useFetchAddressUnstakeRequests'
 import useFetchXAlphTokenState from './useFetchXAlphTokenState'
-import usePowfiSdk from './usePowfiSdk'
+import usePowfiSDK from './usePowfiSDK'
 import useXAlphTokenId from './useXAlphTokenId'
 
 const useAlphStaking = () => {
-  const sdk = usePowfiSdk()
+  const { staking } = usePowfiSDK()
   const dispatch = useAppDispatch()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
   const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
   const { refresh: refreshUnstakeRequests } = useFetchAddressUnstakeRequests()
   const queryClient = useQueryClient()
   const xAlphTokenId = useXAlphTokenId()
-  const stakingContractAddress = useMemo(() => getPowfiStakingContractAddress(sdk), [sdk])
+  const stakingContractAddress = useMemo(() => {
+    try {
+      return staking.getConfig().xAlphTokenAddress
+    } catch {
+      return ''
+    }
+  }, [staking])
 
   const sendStakingTx = useCallback(
     ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {
+      if (!fromAddress) return
+
       dispatch(
         transactionSent({
           hash: txId,
-          fromAddress: sdk.account.address,
+          fromAddress,
           toAddress: stakingContractAddress,
           amount,
           tokens,
@@ -34,7 +44,7 @@ const useAlphStaking = () => {
         })
       )
     },
-    [dispatch, sdk, stakingContractAddress]
+    [dispatch, fromAddress, stakingContractAddress]
   )
 
   const refreshAll = useCallback(async () => {
@@ -51,17 +61,17 @@ const useAlphStaking = () => {
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {
-      const result = await sdk.staking.stakeAlph(amount)
+      const result = await staking.stakeAlph(amount)
       sendStakingTx({ txId: result.txId, amount: amount.toString() })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, sendStakingTx]
+    [staking, refreshAll, sendStakingTx]
   )
 
   const startUnstake = useCallback(
     async (amount: bigint) => {
-      const result = await sdk.staking.startUnstake(amount)
+      const result = await staking.startUnstake(amount)
       sendStakingTx({
         txId: result.txId,
         tokens: xAlphTokenId ? [{ id: xAlphTokenId, amount: amount.toString() }] : undefined
@@ -69,27 +79,27 @@ const useAlphStaking = () => {
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, sendStakingTx, xAlphTokenId]
+    [staking, refreshAll, sendStakingTx, xAlphTokenId]
   )
 
   const claimUnstaked = useCallback(
     async (vaultIndex: bigint, amount: bigint) => {
-      const result = await sdk.staking.claimUnstaked(vaultIndex, amount)
+      const result = await staking.claimUnstaked(vaultIndex, amount)
       sendStakingTx({ txId: result.txId, amount: amount.toString() })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, sendStakingTx]
+    [staking, refreshAll, sendStakingTx]
   )
 
   const cancelUnstake = useCallback(
     async (vaultIndex: bigint) => {
-      const result = await sdk.staking.cancelUnstake(vaultIndex)
+      const result = await staking.cancelUnstake(vaultIndex)
       sendStakingTx({ txId: result.txId })
       await refreshAll()
       return result
     },
-    [sdk, refreshAll, sendStakingTx]
+    [staking, refreshAll, sendStakingTx]
   )
 
   return {
