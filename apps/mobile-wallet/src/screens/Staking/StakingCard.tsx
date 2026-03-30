@@ -9,6 +9,7 @@ import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
 import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
+import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
 import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -53,7 +54,8 @@ const StakingCard = () => {
 export default StakingCard
 
 const PendingStakingTransactionPoller = ({ txHash }: { txHash: string }) => {
-  usePendingTxPolling(txHash)
+  const onStakingTxConfirmed = useStakingQueriesAfterTxConfirmed()
+  usePendingTxPolling(txHash, { onConfirmed: onStakingTxConfirmed })
 
   return null
 }

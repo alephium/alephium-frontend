@@ -5,7 +5,6 @@ import { useCallback, useMemo } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-import useFetchAddressUnstakeRequests from './useFetchAddressUnstakeRequests'
 import useFetchXAlphTokenState from './useFetchXAlphTokenState'
 import usePowfiSDK from './usePowfiSDK'
 import useXAlphTokenId from './useXAlphTokenId'
@@ -16,7 +15,6 @@ const useAlphStaking = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
   const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
-  const { refresh: refreshUnstakeRequests } = useFetchAddressUnstakeRequests()
   const queryClient = useQueryClient()
   const xAlphTokenId = useXAlphTokenId()
   const stakingContractAddress = useMemo(() => {
@@ -47,17 +45,14 @@ const useAlphStaking = () => {
     [dispatch, fromAddress, stakingContractAddress]
   )
 
+  /** Runs after submit; unstake list refreshes on-chain via `usePendingTxPolling` + `useStakingQueriesAfterTxConfirmed`. */
   const refreshAll = useCallback(async () => {
     try {
-      await Promise.all([
-        refetchXAlphTokenState(),
-        refreshUnstakeRequests(),
-        queryClient.invalidateQueries({ queryKey: ['address'] })
-      ])
+      await Promise.all([refetchXAlphTokenState(), queryClient.invalidateQueries({ queryKey: ['address'] })])
     } catch (error) {
       console.error('Failed to refresh staking data', error)
     }
-  }, [queryClient, refetchXAlphTokenState, refreshUnstakeRequests])
+  }, [queryClient, refetchXAlphTokenState])
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {

@@ -2,12 +2,14 @@ import { selectSentTransactionByHash } from '@alephium/shared'
 import { usePendingTxPolling } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { Check } from 'lucide-react-native'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import ListItem, { ListItemProps } from '~/components/ListItem'
+import usePowfiSDK from '~/features/staking/hooks/usePowfiSDK'
+import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
 import TransactionIcon from '~/features/transactionsDisplay/TransactionIcon'
 import TransactionListItemAmounts from '~/features/transactionsDisplay/TransactionListItemAmounts'
 import { useAppSelector } from '~/hooks/redux'
@@ -24,8 +26,24 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
   const { t } = useTranslation()
   const theme = useTheme()
   const sentTransaction = useAppSelector((state) => selectSentTransactionByHash(state, txHash))
+  const { staking } = usePowfiSDK()
+  const onStakingTxConfirmed = useStakingQueriesAfterTxConfirmed()
+  const stakingContractAddress = useMemo(() => {
+    try {
+      return staking.getConfig().xAlphTokenAddress
+    } catch {
+      return ''
+    }
+  }, [staking])
 
-  usePendingTxPolling(txHash)
+  const pendingTxPollingOptions = useMemo(() => {
+    if (!sentTransaction || !stakingContractAddress || sentTransaction.toAddress !== stakingContractAddress) {
+      return undefined
+    }
+    return { onConfirmed: onStakingTxConfirmed }
+  }, [onStakingTxConfirmed, sentTransaction, stakingContractAddress])
+
+  usePendingTxPolling(txHash, pendingTxPollingOptions)
 
   if (!sentTransaction) return null
 

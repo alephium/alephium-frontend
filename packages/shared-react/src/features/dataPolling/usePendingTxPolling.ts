@@ -7,7 +7,7 @@ import {
 } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import { nodeTransactionStatusQuery } from '@/api/queries/transactionQueries'
@@ -18,12 +18,22 @@ import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetwork
 import { useIsExplorerOffline } from '@/network/useIsServerOffline'
 import { useSharedDispatch, useSharedSelector } from '@/redux'
 
-export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
+export type UsePendingTxPollingOptions = {
+  /** Invoked when the tx is observed as confirmed on the explorer or node (after status is dispatched to the store). */
+  onConfirmed?: () => void
+}
+
+export const usePendingTxPolling = (
+  txHash: e.Transaction['hash'],
+  options?: UsePendingTxPollingOptions
+) => {
   const dispatch = useSharedDispatch()
   const networkId = useCurrentlyOnlineNetworkId()
   const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
   const isExplorerOffline = useIsExplorerOffline()
+  const onConfirmedRef = useRef(options?.onConfirmed)
+  onConfirmedRef.current = options?.onConfirmed
 
   const txIsConfirmed = !sentTx || sentTx.status === 'confirmed'
 
@@ -38,6 +48,7 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
 
     if (isConfirmedTx(tx)) {
       dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: 'confirmed' }))
+      onConfirmedRef.current?.()
 
       findTransactionInternalAddresses(allAddressHashes, tx).forEach((addressHash) => {
         queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }] })
@@ -55,6 +66,7 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
       dispatch(sentTransactionStatusChanged({ hash: txHash, status: 'mempooled' }))
     } else if (txStatus === 'Confirmed' && tx && isRichTransaction(tx)) {
       dispatch(sentTransactionStatusChanged({ hash: tx.unsigned.txId, status: 'confirmed' }))
+      onConfirmedRef.current?.()
 
       findTransactionInternalAddresses(allAddressHashes, tx).forEach(invalidateAddressQueries)
     }

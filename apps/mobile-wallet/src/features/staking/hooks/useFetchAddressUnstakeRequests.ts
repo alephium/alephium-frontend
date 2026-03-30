@@ -20,6 +20,9 @@ export interface UnstakeRequest {
   contractAddress: string
 }
 
+/** Prefix for `useQuery` key; use with `queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })`. */
+export const unstakeVaultRequestsQueryKeyRoot = ['unstakeVaultRequests'] as const
+
 const useFetchAddressUnstakeRequests = () => {
   const { staking, network } = usePowfiSDK()
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -29,7 +32,7 @@ const useFetchAddressUnstakeRequests = () => {
   const shouldFetch = !!address
 
   const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
-    queryKey: ['unstakeVaultRequests', networkId, nodeHost, address],
+    queryKey: [...unstakeVaultRequestsQueryKeyRoot, networkId, nodeHost, address],
     queryFn: async () => {
       const userAddress = address!
       // Temporary: fetch-based XAlph views — replace with `staking.getActiveUnstakeVaultIndexes` / `getClaimableAmount`
