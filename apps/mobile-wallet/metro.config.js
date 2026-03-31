@@ -1,7 +1,6 @@
 // See https://github.com/byCedric/expo-monorepo-example/blob/main/apps/mobile/metro.config.js
 const { FileStore } = require('metro-cache')
 // See https://docs.expo.dev/guides/monorepos/#modify-the-metro-config
-const fs = require('fs')
 const path = require('path')
 
 const { getSentryExpoConfig } = require('@sentry/react-native/metro')
@@ -9,6 +8,8 @@ const { resolve } = require('metro-resolver')
 // Find the project and workspace directories
 const projectRoot = __dirname
 const monorepoRoot = path.resolve(projectRoot, '../..')
+/** Metro must resolve Node's `fs` for `@alephium/web3/dist/src/contract/contract.js` (see resolveRequest + extraNodeModules). */
+const fsStubPath = path.join(projectRoot, 'metro-node-stubs/fs.js')
 const config = getSentryExpoConfig(projectRoot)
 
 // 1. Watch all files within the monorepo
@@ -34,6 +35,19 @@ config.transformer.minifierConfig = {
 //    The ESM build still has require("ws") in a fallback; in RN global WebSocket exists so that path isn't used.
 const defaultResolveRequest = config.resolver.resolveRequest
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // Built-in `fs` is not available in RN; `extraNodeModules` alone often does not apply to core modules.
+  if (moduleName === 'fs' || moduleName === 'node:fs') {
+    return { type: 'sourceFile', filePath: path.resolve(fsStubPath) }
+  }
+  // Use non-minified CJS build so pnpm patches to `dist/src/**` apply. The package `exports` default points at
+  // `alephium-web3.min.js`, which would bypass our WebCrypto fix for React Native (see `patches/@alephium__web3@2.0.4.patch`).
+  if (moduleName === '@alephium/web3') {
+    return resolve(
+      { ...context, resolveRequest: resolve },
+      path.join(monorepoRoot, 'node_modules/@alephium/web3/dist/src/index.js'),
+      platform
+    )
+  }
   if (moduleName === '@walletconnect/jsonrpc-ws-connection') {
     return resolve(
       { ...context, resolveRequest: resolve },
@@ -51,11 +65,13 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 }
 
 // Polyfill Node core modules used by other deps (e.g. axios, crypto). Not needed for ws when aliased above.
+// `fs`: also in `resolveRequest`; kept here for tooling that only reads `extraNodeModules`.
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   crypto: require.resolve('react-native-quick-crypto'),
   stream: require.resolve('readable-stream'),
-  events: require.resolve('events')
+  events: require.resolve('events'),
+  fs: fsStubPath
 }
 
 module.exports = config

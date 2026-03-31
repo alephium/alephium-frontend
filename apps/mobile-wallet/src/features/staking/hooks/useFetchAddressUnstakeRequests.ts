@@ -2,10 +2,6 @@ import { selectDefaultAddress } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
-import {
-  fetchActiveUnstakeRequestsViaNode,
-  fetchClaimableAmountViaNode
-} from '~/features/staking/fetchActiveUnstakeRequestsViaNode'
 import { useAppSelector } from '~/hooks/redux'
 
 import usePowfiSDK from './usePowfiSDK'
@@ -35,16 +31,14 @@ const useFetchAddressUnstakeRequests = () => {
     queryKey: [...unstakeVaultRequestsQueryKeyRoot, networkId, nodeHost, address],
     queryFn: async () => {
       const userAddress = address!
-      // Temporary: fetch-based XAlph views — replace with `staking.getActiveUnstakeVaultIndexes` / `getClaimableAmount`
-      // when the RN Buffer/view stack issue is fixed upstream (see `fetchActiveUnstakeRequestsViaNode` JSDoc).
-      const activeIndexes = await fetchActiveUnstakeRequestsViaNode(nodeHost, network.id, userAddress)
+      const activeIndexes = await staking.getActiveUnstakeVaultIndexes(userAddress)
 
       if (!activeIndexes.length) return []
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            fetchClaimableAmountViaNode(nodeHost, network.id, userAddress, index),
+            staking.getClaimableAmount(userAddress, index),
             staking.getAlphUnstakeVaultState(userAddress, index)
           ])
 

@@ -1,0 +1,16 @@
+diff --git a/dist/src/utils/webcrypto.js b/dist/src/utils/webcrypto.js
+index 6133c1a7c9e96a5e6746495ce552a22bd0adf728..cfe1d232b6975b45e7d565a02bc94558730fba36 100644
+--- a/dist/src/utils/webcrypto.js
++++ b/dist/src/utils/webcrypto.js
+@@ -29,7 +29,10 @@
+             throw new TypeError("Failed to execute 'getRandomValues' on 'Crypto': parameter 1 is not of type 'ArrayBufferView'");
+         }
+         const bytes = new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
+-        if (isBrowser) {
++        // Prefer global Web Crypto (e.g. react-native-get-random-values). RN often has `window` but no `document`,
++        // so `isBrowser` is false and the Node branch would use `randomFillSync` from Metro's `crypto` alias,
++        // which can throw Buffer interop errors on Hermes.
++        if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+             globalThis.crypto.getRandomValues(bytes);
+         }
+         else {
