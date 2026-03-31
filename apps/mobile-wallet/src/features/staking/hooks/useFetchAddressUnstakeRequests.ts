@@ -65,8 +65,7 @@ const useFetchAddressUnstakeRequests = () => {
     isError,
     isLoading,
     isRefetching,
-    refetch,
-    refresh: refetch
+    refetch
   }
 }
 

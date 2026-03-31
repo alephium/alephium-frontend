@@ -23,12 +23,13 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
 
+  const now = Date.now()
   const endTime = Number(request.startTime + request.duration)
-  const isFullyUnlocked = Date.now() >= endTime
-  const daysLeft = Math.max(0, Math.ceil((endTime - Date.now()) / (1000 * 60 * 60 * 24)))
+  const isFullyUnlocked = now >= endTime
+  const daysLeft = Math.max(0, Math.ceil((endTime - now) / (1000 * 60 * 60 * 24)))
   const progress =
     request.duration > BigInt(0)
-      ? Math.min(100, Math.max(0, ((Date.now() - Number(request.startTime)) / Number(request.duration)) * 100))
+      ? Math.min(100, Math.max(0, ((now - Number(request.startTime)) / Number(request.duration)) * 100))
       : 0
 
   const handleClaim = async () => {

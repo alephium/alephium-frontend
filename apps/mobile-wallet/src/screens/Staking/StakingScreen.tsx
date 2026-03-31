@@ -42,7 +42,7 @@ const StakingScreen = () => {
       try {
         const newSettings = { ...address, isDefault: true }
 
-        await persistAddressSettings({ ...address, ...newSettings })
+        await persistAddressSettings(newSettings)
         dispatch(addressSettingsSaved({ addressHash: address.hash, settings: newSettings }))
 
         showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })

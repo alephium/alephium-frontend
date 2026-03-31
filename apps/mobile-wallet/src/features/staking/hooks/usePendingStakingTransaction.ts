@@ -4,19 +4,12 @@ import { useMemo } from 'react'
 
 import { useAppSelector } from '~/hooks/redux'
 
-import usePowfiSDK from './usePowfiSDK'
+import useStakingContractConfig from './useStakingContractConfig'
 
 const usePendingStakingTransaction = () => {
-  const { staking } = usePowfiSDK()
+  const { xAlphTokenAddress: stakingContractAddress } = useStakingContractConfig()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const pendingTransactions = useAppSelector(selectAllPendingSentTransactions)
-  const stakingContractAddress = useMemo(() => {
-    try {
-      return staking.getConfig().xAlphTokenAddress
-    } catch {
-      return ''
-    }
-  }, [staking])
 
   return useMemo(() => {
     const accountAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined

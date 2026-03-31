@@ -1,13 +1,13 @@
 import { selectDefaultAddress, transactionSent } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useQueryClient } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 import useFetchXAlphTokenState from './useFetchXAlphTokenState'
 import usePowfiSDK from './usePowfiSDK'
-import useXAlphTokenId from './useXAlphTokenId'
+import useStakingContractConfig from './useStakingContractConfig'
 
 const useAlphStaking = () => {
   const { staking } = usePowfiSDK()
@@ -16,14 +16,7 @@ const useAlphStaking = () => {
   const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
   const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
   const queryClient = useQueryClient()
-  const xAlphTokenId = useXAlphTokenId()
-  const stakingContractAddress = useMemo(() => {
-    try {
-      return staking.getConfig().xAlphTokenAddress
-    } catch {
-      return ''
-    }
-  }, [staking])
+  const { xAlphTokenAddress: stakingContractAddress, xAlphTokenId } = useStakingContractConfig()
 
   const sendStakingTx = useCallback(
     ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {

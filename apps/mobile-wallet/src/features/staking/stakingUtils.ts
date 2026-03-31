@@ -24,9 +24,12 @@ export const previewXAlphForStake = (amountAttoAlph: bigint, alphPerXAlph: Decim
 }
 
 /** ALPH unlocked over time when unstaking `xAlphAmountAtto`, same rate as stake preview. */
-export const previewAlphForUnstake = (xAlphAmountAtto: bigint, alphPerXAlph: Decimal): string =>
-  new Decimal(xAlphAmountAtto.toString())
+export const previewAlphForUnstake = (xAlphAmountAtto: bigint, alphPerXAlph: Decimal): string => {
+  if (alphPerXAlph.lte(0)) return ''
+
+  return new Decimal(xAlphAmountAtto.toString())
     .mul(alphPerXAlph)
     .div(pow10AlphDecimals)
     .toDecimalPlaces(4, Decimal.ROUND_DOWN)
     .toString()
+}
