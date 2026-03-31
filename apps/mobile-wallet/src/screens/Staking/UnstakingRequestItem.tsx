@@ -2,7 +2,7 @@ import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert } from 'react-native'
+import { Alert, Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -32,8 +32,24 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       ? Math.min(100, Math.max(0, ((now - Number(request.startTime)) / Number(request.duration)) * 100))
       : 0
 
-  const handleClaim = async () => {
-    if (!isClaimable(request.claimableAmount)) return
+  const canClaim = isClaimable(request.claimableAmount)
+
+  const onClaimPress = async () => {
+    if (isClaiming) return
+    if (!canClaim) {
+      const claimableAmount = `${formatTokenAmount(request.claimableAmount, ALPH.decimals)} ALPH`
+      Alert.alert(
+        '',
+        t('Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.', {
+          claimableAmount
+        }) as string
+      )
+      return
+    }
+    await submitClaim()
+  }
+
+  const submitClaim = async () => {
     setIsClaiming(true)
     try {
       await claimUnstaked(request.vaultIndex, request.claimableAmount)
@@ -86,25 +102,30 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       </Row>
 
       <Row>
-        <DataColumn>
-          <DataLabel>{t('Claimable now')}</DataLabel>
-          <DataValue>{formatTokenAmount(request.claimableAmount, ALPH.decimals)} ALPH</DataValue>
-        </DataColumn>
-        <ProgressBarContainer>
+        {canClaim ? (
+          <DataColumn>
+            <DataLabel>{t('Claimable now')}</DataLabel>
+            <DataValue>{formatTokenAmount(request.claimableAmount, ALPH.decimals)} ALPH</DataValue>
+          </DataColumn>
+        ) : null}
+        <ProgressBarContainer $fullWidth={!canClaim}>
           <ProgressBar style={{ width: `${progress}%` }} />
         </ProgressBarContainer>
       </Row>
 
       <ButtonRow>
-        <Button
-          title={t('Claim') as string}
-          onPress={handleClaim}
-          disabled={!isClaimable(request.claimableAmount)}
-          loading={isClaiming}
-          variant="accent"
-          short
-          flex
-        />
+        <Pressable style={{ flex: 1 }} onPress={onClaimPress} disabled={isClaiming}>
+          <Button
+            title={t('Claim') as string}
+            onPress={() => undefined}
+            disabled={!canClaim || isClaiming}
+            pointerEvents="none"
+            loading={isClaiming}
+            variant="accent"
+            short
+            flex
+          />
+        </Pressable>
         {!isFullyUnlocked && (
           <Button
             title={t('Cancel') as string}
@@ -155,14 +176,14 @@ const ButtonRow = styled.View`
   gap: 10px;
 `
 
-const ProgressBarContainer = styled.View`
+const ProgressBarContainer = styled.View<{ $fullWidth?: boolean }>`
   height: 4px;
   background-color: ${({ theme }) => theme.border.primary};
   border-radius: 2px;
   flex: 1;
-  align-self: center;
-  margin-left: 12px;
-  max-width: 80px;
+  align-self: ${({ $fullWidth }) => ($fullWidth ? 'stretch' : 'center')};
+  margin-left: ${({ $fullWidth }) => ($fullWidth ? 0 : 12)}px;
+  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '80px')};
 `
 
 const ProgressBar = styled.View`

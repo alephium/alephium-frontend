@@ -12,14 +12,16 @@ const useStakingQueriesAfterTxConfirmed = () => {
   const queryClient = useQueryClient()
   const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
 
-  return useCallback(() => {
-    void Promise.all([
-      refetchXAlphTokenState(),
-      queryClient.invalidateQueries({ queryKey: [...unstakeVaultRequestsQueryKeyRoot] }),
-      queryClient.invalidateQueries({ queryKey: ['address'] })
-    ]).catch((error) => {
+  return useCallback(async () => {
+    try {
+      await Promise.all([
+        refetchXAlphTokenState(),
+        queryClient.invalidateQueries({ queryKey: [...unstakeVaultRequestsQueryKeyRoot] }),
+        queryClient.invalidateQueries({ queryKey: ['address'] })
+      ])
+    } catch (error) {
       console.error('Failed to refresh staking data after tx confirmed', error)
-    })
+    }
   }, [queryClient, refetchXAlphTokenState])
 }
 
