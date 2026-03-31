@@ -39,8 +39,8 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName === 'fs' || moduleName === 'node:fs') {
     return { type: 'sourceFile', filePath: path.resolve(fsStubPath) }
   }
-  // Use non-minified CJS build so pnpm patches to `dist/src/**` apply. The package `exports` default points at
-  // `alephium-web3.min.js`, which would bypass our WebCrypto fix for React Native (see `patches/@alephium__web3@2.0.4.patch`).
+  // Use the non-minified `dist/src` build: package `exports` default points at `alephium-web3.min.js`, which is
+  // harder for Metro/Hermes (WebCrypto, Buffer) than the CJS source build.
   if (moduleName === '@alephium/web3') {
     return resolve(
       { ...context, resolveRequest: resolve },

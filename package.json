@@ -29,8 +29,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch",
-      "@alephium/web3@2.0.4": "patches/@alephium__web3@2.0.4.patch"
+      "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch"
     },
     "overrides": {
       "ip@<=2.0.0": ">=2.0.1",
