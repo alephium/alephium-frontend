@@ -37,6 +37,8 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const theme = useTheme()
   const BottomSheetScrollable = useBottomSheetScrollableCreator()
 
+  const isScrollableContent = isFlashList(props) || !props.notScrollable
+
   useEffect(() => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -65,6 +67,8 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       topInset={safeAreaInsets.top}
       name={modalContext.id}
       backgroundStyle={{ backgroundColor: theme.bg.back1 }}
+      enableDynamicSizing={!isScrollableContent}
+      {...(isScrollableContent ? { snapPoints: SNAP_POINTS } : {})}
       {...props.bottomSheetModalProps}
       onDismiss={modalContext.onDismiss}
     >
@@ -121,6 +125,8 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
 }
 
 export default BottomModal2
+
+const SNAP_POINTS = ['50%', '100%']
 
 const isFlashList = <T,>(
   props: BottomModalWithChildrenProps | BottomModalFlashListProps<T>
