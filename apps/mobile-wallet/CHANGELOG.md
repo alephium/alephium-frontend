@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.4.8
+
+### Patch Changes
+
+- 74fc973: Fix bottom modal scrolling
+
 ## 2.4.7
 
 ### Patch Changes
