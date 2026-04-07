@@ -9,6 +9,7 @@ import {
   addressFromPublicKey,
   groupOfAddress,
   KeyType,
+  publicKeyFromPrivateKey,
   sign,
   TOTAL_NUMBER_OF_GROUPS,
   transactionSign
@@ -26,7 +27,6 @@ import {
   SensitiveAddressData
 } from '@/keyringTypes'
 import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
-import { publicKeyFromPrivateKey } from '@/utils'
 
 export class Keyring {
   private hdWallet: HDKey | null
