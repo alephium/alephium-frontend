@@ -46,5 +46,5 @@ const convertDeprecatedEncryptionResult = (deprecatedEncryptionResult: Deprecate
   }
 })
 
-const hexToBase64 = (hexString: string) =>
+export const hexToBase64 = (hexString: string) =>
   btoa(String.fromCharCode(...hexString.match(/.{2}/g)!.map((b) => parseInt(b, 16))))
