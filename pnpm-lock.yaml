@@ -280,9 +280,6 @@ importers:
       react-is:
         specifier: ^19.0.0
         version: 19.1.0
-      react-player:
-        specifier: ^2.16.0
-        version: 2.16.0(react@19.1.0)
       react-qr-code:
         specifier: ^2.0.15
         version: 2.0.15(react@19.1.0)
@@ -8125,9 +8122,6 @@ packages:
     resolution: {integrity: sha512-LXe8Xlyh3gnxdv4tSjTjscD1vpr/2PRpzq8YIaMJgyKzRG8wdISlWVWnGThJfHnlJ6hmLt2wq1yeeix0TEbuoA==}
     hasBin: true
 
-  load-script@1.0.0:
-    resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
-
   loader-runner@4.3.1:
     resolution: {integrity: sha512-IWqP2SCPhyVFTBtRcgMHdzlf9ul25NwaFx4wCEH/KjAXuuHY4yNjvPXsBokp8jCB936PyWRaPKUNh8NvylLp2Q==}
     engines: {node: '>=6.11.5'}
@@ -9633,11 +9627,6 @@ packages:
   react-page-visibility@7.0.0:
     resolution: {integrity: sha512-d4Kq/8TtJSr8dQc8EJeAZcSKTrGzC5OPTm6UrMur9BnwP0fgTawI9+Nd+ZGB7vwCfn2yZS0qDF9DR3/QYTGazw==}
     engines: {node: '>=10'}
-    peerDependencies:
-      react: ^19.1.0
-
-  react-player@2.16.0:
-    resolution: {integrity: sha512-mAIPHfioD7yxO0GNYVFD1303QFtI3lyyQZLY229UEAp/a10cSW+hPcakg0Keq8uWJxT2OiT/4Gt+Lc9bD6bJmQ==}
     peerDependencies:
       react: ^19.1.0
 
@@ -21422,8 +21411,6 @@ snapshots:
       untun: 0.1.3
       uqr: 0.1.2
 
-  load-script@1.0.0: {}
-
   loader-runner@4.3.1: {}
 
   locate-path@3.0.0:
@@ -23144,15 +23131,6 @@ snapshots:
     dependencies:
       prop-types: 15.8.1
       react: 19.1.0
-
-  react-player@2.16.0(react@19.1.0):
-    dependencies:
-      deepmerge: 4.3.1
-      load-script: 1.0.0
-      memoize-one: 5.2.1
-      prop-types: 15.8.1
-      react: 19.1.0
-      react-fast-compare: 3.2.2
 
   react-qr-code@2.0.15(react@19.1.0):
     dependencies:
