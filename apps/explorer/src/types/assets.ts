@@ -1,6 +1,6 @@
 import { TokenInfo } from '@alephium/token-list'
 import { NFTTokenUriMetaData } from '@alephium/web3'
-import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/dist/src/api/api-explorer'
+import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/api/explorer'
 
 import client from '@/api/client'
 
