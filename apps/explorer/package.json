@@ -85,7 +85,6 @@
     "esbuild": "^0.25.0",
     "eslint": "^8.48.0",
     "happy-dom": "^7.6.6",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "serve": "^14.1.2",
     "typescript": "~5.9.2",
     "vite": "^5.4.20",
