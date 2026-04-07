@@ -1,4 +1,4 @@
-import { RefObject, ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 import { TextInput } from 'react-native-gesture-handler'
 import styled from 'styled-components/native'
 

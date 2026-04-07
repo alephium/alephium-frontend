@@ -23,17 +23,17 @@ export type UsePendingTxPollingOptions = {
   onConfirmed?: () => void
 }
 
-export const usePendingTxPolling = (
-  txHash: e.Transaction['hash'],
-  options?: UsePendingTxPollingOptions
-) => {
+export const usePendingTxPolling = (txHash: e.Transaction['hash'], options?: UsePendingTxPollingOptions) => {
   const dispatch = useSharedDispatch()
   const networkId = useCurrentlyOnlineNetworkId()
   const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
   const isExplorerOffline = useIsExplorerOffline()
   const onConfirmedRef = useRef(options?.onConfirmed)
-  onConfirmedRef.current = options?.onConfirmed
+
+  useEffect(() => {
+    onConfirmedRef.current = options?.onConfirmed
+  }, [options?.onConfirmed])
 
   const txIsConfirmed = !sentTx || sentTx.status === 'confirmed'
 
