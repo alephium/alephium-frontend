@@ -1,4 +1,4 @@
-import { explorer as e } from '@alephium/web3'
+import { explorer as e, stringify } from '@alephium/web3'
 
 import {
   addressHasOnlyNegativeAmountDeltas,
@@ -189,7 +189,7 @@ export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAdd
 
   if (!receivedAlphAndTokens) return false
 
-  const stringifiedReferenceAddressDeltas = JSON.stringify(referenceAddressDeltas)
+  const stringifiedReferenceAddressDeltas = stringify(referenceAddressDeltas)
 
   const inputAddresses = getInputOutputBaseAddresses(tx.inputs ?? [])
   const outputAddresses = getInputOutputBaseAddresses(tx.outputs ?? [])
@@ -200,7 +200,7 @@ export const isAirdrop = (tx: e.Transaction | e.PendingTransaction, referenceAdd
   return (
     outputAddressesWithoutInputAddresses.length >= MIN_AIRDROP_ADDRESS_COUNT &&
     outputAddressesWithoutInputAddresses.every(
-      (address) => stringifiedReferenceAddressDeltas === JSON.stringify(calcTxAmountsDeltaForAddress(tx, address))
+      (address) => stringifiedReferenceAddressDeltas === stringify(calcTxAmountsDeltaForAddress(tx, address))
     )
   )
 }
