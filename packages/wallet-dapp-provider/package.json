@@ -21,8 +21,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "3.0.0-test.6",
-    "@alephium/web3": "3.0.0-test.6",
+    "@alephium/get-extension-wallet": "3.0.0-test.8",
+    "@alephium/web3": "3.0.0-test.8",
     "lodash.isplainobject": "4.0.6"
   },
   "devDependencies": {
