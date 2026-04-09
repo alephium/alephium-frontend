@@ -10,7 +10,7 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
-import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { MempoolTransaction, Token, Transaction } from '@alephium/web3/api/explorer'
 import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'

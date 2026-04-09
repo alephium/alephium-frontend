@@ -10,7 +10,7 @@ import {
 } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
-import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { NFTCollectionMetadata } from '@alephium/web3/api/explorer'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import axios from 'axios'

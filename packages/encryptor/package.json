@@ -18,8 +18,7 @@
     "typecheck": "tsup"
   },
   "dependencies": {
-    "@metamask/browser-passworder": "^4.3.0",
-    "buffer": "^6.0.3"
+    "@metamask/browser-passworder": "^6.0.0"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",

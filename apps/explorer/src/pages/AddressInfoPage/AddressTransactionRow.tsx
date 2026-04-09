@@ -1,6 +1,6 @@
 import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared'
 import { isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
-import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { MempoolTransaction, Transaction } from '@alephium/web3/api/explorer'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
