@@ -1,8 +1,4 @@
 import { decrypt as metamaskDecrypt, encrypt, EncryptionResult } from '@metamask/browser-passworder'
-import { Buffer } from 'buffer'
-
-// Polyfill Buffer if we are in a browser environment
-if (typeof window !== 'undefined') window.Buffer = Buffer
 
 export { encrypt, EncryptionResult }
 
@@ -50,4 +46,5 @@ const convertDeprecatedEncryptionResult = (deprecatedEncryptionResult: Deprecate
   }
 })
 
-const hexToBase64 = (hexString: string) => Buffer.from(hexString, 'hex').toString('base64')
+export const hexToBase64 = (hexString: string) =>
+  btoa(String.fromCharCode(...hexString.match(/.{2}/g)!.map((b) => parseInt(b, 16))))

@@ -1,7 +1,7 @@
 import { isConfirmedTx, MAX_API_RETRIES } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { PerChainHeight } from '@alephium/web3/dist/src/api/api-explorer'
+import { PerChainHeight } from '@alephium/web3/api/explorer'
 import { useQuery } from '@tanstack/react-query'
 import _, { sortBy, uniq } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'

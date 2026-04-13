@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
 
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
@@ -51,14 +51,14 @@ jobs:
 
       - name: Upload notarization-error.log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: notarization-error-log
           path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
 
       - name: Skip signing for rc versions
         if: contains(github.event.ref, '-rc.')
-        uses: jaywcjlove/github-action-package@v2.0.0
+        uses: jaywcjlove/github-action-package@6fb8b5f918c1cb2eb3e0416d5b9f45cd4af6ed16 # v2.0.0
         with:
           path: apps/desktop-wallet/package.json
           unset: build.win.sign
@@ -84,7 +84,7 @@ jobs:
 
       # Linux
       - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v3
+        uses: samuelmeuli/action-snapcraft@fceeb3c308e76f3487e72ef608618de625fb7fe8 # v3.0.1
         if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release Linux Electron app

@@ -1,5 +1,19 @@
 # @alephium/mobile-wallet
 
+## 2.4.8
+
+### Patch Changes
+
+- 74fc973: Fix bottom modal scrolling
+
+## 2.4.7
+
+### Patch Changes
+
+- ee14b88: Fix empty activity screen placeholder
+- 425b172: Improve loading performance of dApp list in Ecosystem screen
+- 425b172: Display only featured dApps for iOS users
+
 ## 2.4.5
 
 ### Patch Changes
