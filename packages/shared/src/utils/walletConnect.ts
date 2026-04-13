@@ -12,9 +12,13 @@ export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSetti
   )
 
 export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) => {
-  const { id, requiredNamespaces, relays } = proposalEvent.params
+  const { id, requiredNamespaces, optionalNamespaces, relays } = proposalEvent.params
   const { metadata } = proposalEvent.params.proposer
-  const requiredNamespace = requiredNamespaces[PROVIDER_NAMESPACE]
+
+  // WalletConnect 2.21.6+ deprecated requiredNamespaces and auto-moves them to optionalNamespaces.
+  // Check optionalNamespaces first, fall back to requiredNamespaces for older dApps.
+  const requiredNamespace =
+    optionalNamespaces?.[PROVIDER_NAMESPACE] ?? requiredNamespaces?.[PROVIDER_NAMESPACE]
   const requiredChains = requiredNamespace ? requiredNamespace.chains : undefined
   const requiredChainInfo = requiredChains ? parseChain(requiredChains[0]) : undefined
 
