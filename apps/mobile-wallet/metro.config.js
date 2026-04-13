@@ -8,8 +8,6 @@ const { resolve } = require('metro-resolver')
 // Find the project and workspace directories
 const projectRoot = __dirname
 const monorepoRoot = path.resolve(projectRoot, '../..')
-/** Metro must resolve Node's `fs` for `@alephium/web3/dist/src/contract/contract.js` (see resolveRequest + extraNodeModules). */
-const fsStubPath = path.join(projectRoot, 'metro-node-stubs/fs.js')
 const config = getSentryExpoConfig(projectRoot)
 
 // 1. Watch all files within the monorepo
@@ -35,10 +33,6 @@ config.transformer.minifierConfig = {
 //    The ESM build still has require("ws") in a fallback; in RN global WebSocket exists so that path isn't used.
 const defaultResolveRequest = config.resolver.resolveRequest
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  // Built-in `fs` is not available in RN; `extraNodeModules` alone often does not apply to core modules.
-  if (moduleName === 'fs' || moduleName === 'node:fs') {
-    return { type: 'sourceFile', filePath: path.resolve(fsStubPath) }
-  }
   // Use the non-minified `dist/src` build: package `exports` default points at `alephium-web3.min.js`, which is
   // harder for Metro/Hermes (WebCrypto, Buffer) than the CJS source build.
   if (moduleName === '@alephium/web3') {
@@ -65,13 +59,11 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 }
 
 // Polyfill Node core modules used by other deps (e.g. axios, crypto). Not needed for ws when aliased above.
-// `fs`: also in `resolveRequest`; kept here for tooling that only reads `extraNodeModules`.
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   crypto: require.resolve('react-native-quick-crypto'),
   stream: require.resolve('readable-stream'),
-  events: require.resolve('events'),
-  fs: fsStubPath
+  events: require.resolve('events')
 }
 
 module.exports = config
