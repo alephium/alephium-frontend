@@ -110,14 +110,14 @@ importers:
         specifier: ^1.2.3
         version: 1.2.4
       '@ledgerhq/devices':
-        specifier: ^8.4.4
-        version: 8.4.4
+        specifier: ^8.13.0
+        version: 8.13.0
       '@ledgerhq/hw-transport-webhid':
-        specifier: ^6.30.5
-        version: 6.30.5
+        specifier: ^6.34.0
+        version: 6.34.0
       '@ledgerhq/hw-transport-webusb':
-        specifier: ^6.29.9
-        version: 6.29.9
+        specifier: ^6.33.0
+        version: 6.33.0
       '@reduxjs/toolkit':
         specifier: ^1.9.1
         version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1))(react@19.1.0)
@@ -2784,38 +2784,17 @@ packages:
   '@ledgerhq/devices@8.13.0':
     resolution: {integrity: sha512-hgGn1kpe/rT0EJ0Qs7rG+1TXA4g6HN2t3dB4DndRTqVqC9aSSbME+ajA0QWLZisxOD3zkwvO4Q0mJ2zARAKyag==}
 
-  '@ledgerhq/devices@8.4.4':
-    resolution: {integrity: sha512-sz/ryhe/R687RHtevIE9RlKaV8kkKykUV4k29e7GAVwzHX1gqG+O75cu1NCJUHLbp3eABV5FdvZejqRUlLis9A==}
-
-  '@ledgerhq/devices@8.5.0':
-    resolution: {integrity: sha512-zDB6Pdk6NYYbYis8cWoLLkL9k/IvjhC3hkuuz2lhpJ2AxIs3/PDMUKoyK4DpjPtRyKk1W1lwsnpc6J1i87r4/Q==}
-
-  '@ledgerhq/errors@6.19.1':
-    resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
-
-  '@ledgerhq/errors@6.24.0':
-    resolution: {integrity: sha512-UMy+nGH4hmlaML7vPiSwGQ/mOoq/rwExYGEZVpb9TPoG0AcSfzpG43LAdAemvCTX/gK0MUO+int4FpNkD1ZrtQ==}
-
   '@ledgerhq/errors@6.32.0':
     resolution: {integrity: sha512-BjjvhLM6UXYUbhllqAduo9PSneLt9FXZ3TBEUFQ3MMSZOCHt0gAgDySLwul99R8fdYWkXBza4DYQjUNckpN2lg==}
 
-  '@ledgerhq/hw-transport-webhid@6.30.5':
-    resolution: {integrity: sha512-dEUrV7afbw1HIAz4NrcstihtiVEZ7osmigjWhHR1kcBvkP9JKFUjplQkCGshfhocgTVasA8RzUF9lgTDMR6VOw==}
+  '@ledgerhq/hw-transport-webhid@6.34.0':
+    resolution: {integrity: sha512-SG+UnZXyUzrJBSkZnRYGaaZV+C8yiu+pF69Mzw4AKOX6TG8RZ1tOvly8hhnRQ2/gXSiTgbc07N4T8ne2eFei3A==}
 
-  '@ledgerhq/hw-transport-webusb@6.29.9':
-    resolution: {integrity: sha512-/VdyLPJPTyGb0+/HyaM/RiirFQh5g2J7G52b7TS3WWNSE8M24SQAyX9vCT+qB4XWesRXJMnXz4oVbQ6lMHDrFA==}
-
-  '@ledgerhq/hw-transport@6.31.9':
-    resolution: {integrity: sha512-HqB2Whl2qbrzyvs9gC/GmLhIy8RO4CWzjqHS4k0bPWDZRqKa8m6H32vjrbXGO//pUL1Mlu87UwvxvLyuICdjwg==}
+  '@ledgerhq/hw-transport-webusb@6.33.0':
+    resolution: {integrity: sha512-/CSDMzBykihqumItyRxmrmqvBHIBRO9eQlHk2Xvrok6X09EF8ENglcITmEiyqvtDQEofD9A0+tdUhWgV9z82fg==}
 
   '@ledgerhq/hw-transport@6.34.1':
     resolution: {integrity: sha512-Bg9Qk2vtm0m0cZn9prZV2Hbvh3b42KBh4uomO00derh+eiwsdg5AXBBptAJiREkew1RVtETRdWxrKchUJfeWvA==}
-
-  '@ledgerhq/logs@6.12.0':
-    resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
-
-  '@ledgerhq/logs@6.13.0':
-    resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
   '@ledgerhq/logs@6.16.0':
     resolution: {integrity: sha512-v/PLfb1dq1En35kkpbfRWp8jLYgbPUXxGhmd4pmvPSIe0nRGkNTomsZASmWQAv6pRonVGqHIBVlte7j1MBbOww==}
@@ -14104,46 +14083,21 @@ snapshots:
       rxjs: 7.8.2
       semver: 7.6.3
 
-  '@ledgerhq/devices@8.4.4':
-    dependencies:
-      '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/logs': 6.12.0
-      rxjs: 7.8.1
-      semver: 7.6.3
-
-  '@ledgerhq/devices@8.5.0':
-    dependencies:
-      '@ledgerhq/errors': 6.24.0
-      '@ledgerhq/logs': 6.13.0
-      rxjs: 7.8.1
-      semver: 7.6.3
-
-  '@ledgerhq/errors@6.19.1': {}
-
-  '@ledgerhq/errors@6.24.0': {}
-
   '@ledgerhq/errors@6.32.0': {}
 
-  '@ledgerhq/hw-transport-webhid@6.30.5':
+  '@ledgerhq/hw-transport-webhid@6.34.0':
     dependencies:
-      '@ledgerhq/devices': 8.5.0
-      '@ledgerhq/errors': 6.24.0
-      '@ledgerhq/hw-transport': 6.31.9
-      '@ledgerhq/logs': 6.13.0
+      '@ledgerhq/devices': 8.13.0
+      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/hw-transport': 6.34.1
+      '@ledgerhq/logs': 6.16.0
 
-  '@ledgerhq/hw-transport-webusb@6.29.9':
+  '@ledgerhq/hw-transport-webusb@6.33.0':
     dependencies:
-      '@ledgerhq/devices': 8.5.0
-      '@ledgerhq/errors': 6.24.0
-      '@ledgerhq/hw-transport': 6.31.9
-      '@ledgerhq/logs': 6.13.0
-
-  '@ledgerhq/hw-transport@6.31.9':
-    dependencies:
-      '@ledgerhq/devices': 8.5.0
-      '@ledgerhq/errors': 6.24.0
-      '@ledgerhq/logs': 6.13.0
-      events: 3.3.0
+      '@ledgerhq/devices': 8.13.0
+      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/hw-transport': 6.34.1
+      '@ledgerhq/logs': 6.16.0
 
   '@ledgerhq/hw-transport@6.34.1':
     dependencies:
@@ -14151,10 +14105,6 @@ snapshots:
       '@ledgerhq/errors': 6.32.0
       '@ledgerhq/logs': 6.16.0
       events: 3.3.0
-
-  '@ledgerhq/logs@6.12.0': {}
-
-  '@ledgerhq/logs@6.13.0': {}
 
   '@ledgerhq/logs@6.16.0': {}
 
