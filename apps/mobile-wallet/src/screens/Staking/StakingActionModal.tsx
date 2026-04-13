@@ -42,7 +42,7 @@ const StakingActionModal = ({
   primaryDisabled,
   isPrimaryLoading
 }: StakingActionModalProps) => (
-  <BottomModal2 title={title}>
+  <BottomModal2 title={title} notScrollable>
     <Content>
       <InfoCard>{info}</InfoCard>
 

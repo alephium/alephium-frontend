@@ -1,23 +1,31 @@
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import { ActivityIndicator } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import useFetchAddressUnstakeRequests from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
 
 import UnstakingRequestItem from './UnstakingRequestItem'
 
 const UnstakingRequestsList = () => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const { data: unstakeRequests, isLoading, isError, error, refetch, isRefetching } = useFetchAddressUnstakeRequests()
+  const pendingTx = usePendingStakingTransaction()
 
+  const showSpinner = isLoading || isRefetching || !!pendingTx
   const errorMessage: string = error instanceof Error ? error.message : String(error ?? '')
 
   return (
     <Container>
-      <SectionTitle color="secondary">
-        {t('Pending unstakings')} ({unstakeRequests.length})
-      </SectionTitle>
+      <TitleRow>
+        <SectionTitle color="secondary">
+          {t('Pending unstakings')} ({unstakeRequests.length})
+        </SectionTitle>
+        {showSpinner && <ActivityIndicator size="small" color={theme.font.tertiary} />}
+      </TitleRow>
       {isError ? (
         <Fragment>
           <EmptyText color="secondary">{errorMessage}</EmptyText>
@@ -42,6 +50,12 @@ export default UnstakingRequestsList
 
 const Container = styled.View`
   gap: 12px;
+`
+
+const TitleRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 `
 
 const SectionTitle = styled(AppText)`
