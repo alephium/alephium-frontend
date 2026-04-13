@@ -6,8 +6,13 @@ import {
   EncryptedMnemonicVersion,
   encryptMnemonic
 } from '@alephium/keyring'
-import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { merge } from 'lodash'
+import {
+  AddressStoredMetadataWithoutHash,
+  Contact,
+  deepMerge,
+  NetworkSettings,
+  networkSettingsPresets
+} from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
 import { defaultSettings } from '@/features/settings/settingsConstants'
@@ -117,7 +122,7 @@ export const _20211220_194004 = () => {
   const migratedGeneralSettings = deprecatedThemeSetting
     ? { ...generalSettings, theme: deprecatedThemeSetting as ThemeSettings }
     : generalSettings
-  const newGeneralSettings = merge({}, defaultSettings.general, migratedGeneralSettings)
+  const newGeneralSettings = deepMerge<GeneralSettings>({} as GeneralSettings, defaultSettings.general, migratedGeneralSettings)
 
   SettingsStorage.store('general', newGeneralSettings)
 }
@@ -195,7 +200,7 @@ const migrateReleaseNetworkSettings = (migrationsMapping: Record<string, string>
     explorerUrl: migrationsMapping[explorerUrl] ?? explorerUrl
   }
 
-  const newNetworkSettings = merge({}, defaultSettings.network, migratedNetworkSettings)
+  const newNetworkSettings = deepMerge<NetworkSettings>({} as NetworkSettings, defaultSettings.network, migratedNetworkSettings)
   SettingsStorage.store('network', newNetworkSettings)
 }
 

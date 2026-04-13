@@ -170,9 +170,6 @@ importers:
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3
-      '@types/lodash':
-        specifier: ^4.14.182
-        version: 4.14.202
       '@types/node':
         specifier: ^20.14.0
         version: 20.17.8
@@ -269,9 +266,6 @@ importers:
       jsdom:
         specifier: ^21.1.1
         version: 21.1.2
-      lodash:
-        specifier: ^4.17.23
-        version: 4.17.23
       lucide-react:
         specifier: ^0.287.0
         version: 0.287.0(react@19.1.0)
@@ -434,9 +428,6 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
-      lodash:
-        specifier: ^4.17.23
-        version: 4.17.23
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@19.1.0)
@@ -498,9 +489,6 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^5.14.1
         version: 5.17.0
-      '@types/lodash':
-        specifier: ^4.14.182
-        version: 4.14.202
       '@types/node':
         specifier: ^20.14.0
         version: 20.17.8
@@ -747,9 +735,6 @@ importers:
       intl-pluralrules:
         specifier: ^2.0.1
         version: 2.0.1
-      lodash:
-        specifier: ^4.17.23
-        version: 4.17.23
       lottie-react-native:
         specifier: ^7.3.6
         version: 7.3.6(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -868,9 +853,6 @@ importers:
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.10
-      '@types/lodash':
-        specifier: ^4.14.182
-        version: 4.14.202
       '@types/react':
         specifier: ^19.0.14
         version: 19.1.17
@@ -1050,9 +1032,6 @@ importers:
       fetch-retry:
         specifier: ^5.0.6
         version: 5.0.6
-      lodash:
-        specifier: ^4.17.23
-        version: 4.17.23
       p-throttle:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1156,9 +1135,6 @@ importers:
       axios:
         specifier: ^1.13.5
         version: 1.13.5
-      lodash:
-        specifier: ^4.17.23
-        version: 4.17.23
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -1192,9 +1168,6 @@ importers:
       '@alephium/web3':
         specifier: 3.0.0-test.9
         version: 3.0.0-test.9
-      lodash.isplainobject:
-        specifier: 4.0.6
-        version: 4.0.6
     devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
@@ -1208,9 +1181,6 @@ importers:
       '@rollup/plugin-node-resolve':
         specifier: ^15.2.3
         version: 15.3.1(rollup@4.36.0)
-      '@types/lodash.isplainobject':
-        specifier: ^4
-        version: 4.0.9
       '@types/node':
         specifier: ^20.14.0
         version: 20.17.8
@@ -3762,12 +3732,6 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
-
-  '@types/lodash.isplainobject@4.0.9':
-    resolution: {integrity: sha512-QC8nKcap5hRrbtIaPRjUMlcXXnLeayqQZPSaWJDx3xeuN17+2PW5wkmEJ4+lZgNnQRlSPzxjTYKCfV1uTnPaEg==}
-
-  '@types/lodash@4.14.202':
-    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
 
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
@@ -15141,12 +15105,6 @@ snapshots:
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.17.8
-
-  '@types/lodash.isplainobject@4.0.9':
-    dependencies:
-      '@types/lodash': 4.14.202
-
-  '@types/lodash@4.14.202': {}
 
   '@types/lodash@4.17.24': {}
 

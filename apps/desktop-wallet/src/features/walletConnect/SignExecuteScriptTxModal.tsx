@@ -10,7 +10,6 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
-import { partition } from 'lodash'
 import { ChevronsDown } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -140,7 +139,8 @@ const calculateAssetAmounts = ({ tokens, attoAlphAmount }: SignExecuteScriptTxMo
 
   if (tokens) {
     const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-    const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
+    const alphAssets = assets.filter((asset) => asset.id === ALPH.id)
+    const tokenAssets = assets.filter((asset) => asset.id !== ALPH.id)
 
     assetAmounts = tokenAssets
     allAlphAssets = [...allAlphAssets, ...alphAssets]

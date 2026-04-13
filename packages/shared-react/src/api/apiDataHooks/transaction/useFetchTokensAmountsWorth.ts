@@ -1,5 +1,4 @@
 import { AssetAmount, calculateTokenAmountWorth } from '@alephium/shared'
-import { isNumber } from 'lodash'
 
 import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
 import { useFetchTokensSeparatedByType } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByType'
@@ -16,7 +15,7 @@ export const useFetchTokensAmountsWorth = (assetAmounts: Array<AssetAmount>) => 
     const tokenPrice = tokenPrices?.find(({ symbol }) => symbol === token.symbol)?.price
     const tokenAmount = assetAmounts.find((asset) => asset.id === token.id)?.amount
     const tokenWorth =
-      isNumber(tokenPrice) && tokenAmount !== undefined
+      typeof tokenPrice === 'number' && tokenAmount !== undefined
         ? calculateTokenAmountWorth(tokenAmount, tokenPrice, token.decimals)
         : 0
 

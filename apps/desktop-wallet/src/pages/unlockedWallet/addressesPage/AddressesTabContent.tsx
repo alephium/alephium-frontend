@@ -1,5 +1,4 @@
 import { useFetchAddressesHashesWithBalance } from '@alephium/shared-react'
-import { intersection } from 'lodash'
 import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,10 +27,12 @@ const AddressesTabContent = memo(() => {
 
   const visibleAddresses = useMemo(() => {
     // Apply text filter
-    const textFiltered = searchInput ? intersection(sortedAddresses, unsortedAddressesFilteredByText) : sortedAddresses
+    const textFilteredSet = new Set(unsortedAddressesFilteredByText)
+    const textFiltered = searchInput ? sortedAddresses?.filter((a) => textFilteredSet.has(a)) : sortedAddresses
 
     // Apply empty addresses filter
-    return hideEmptyAddresses ? intersection(textFiltered, addressesWithBalance) : textFiltered
+    const balanceSet = new Set(addressesWithBalance)
+    return hideEmptyAddresses ? textFiltered?.filter((a) => balanceSet.has(a)) : textFiltered
   }, [addressesWithBalance, hideEmptyAddresses, searchInput, sortedAddresses, unsortedAddressesFilteredByText])
 
   const openNewAddressModal = () =>

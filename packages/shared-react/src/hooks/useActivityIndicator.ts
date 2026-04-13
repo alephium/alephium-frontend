@@ -1,5 +1,4 @@
 import { explorer as e } from '@alephium/web3'
-import { uniqBy } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { useFetchWalletTransactionsInfinite } from '../api/apiDataHooks'
@@ -28,10 +27,8 @@ export const useActivityIndicator = ({ isDisabled }: UseActivityIndicatorProps) 
       return
     }
 
-    const newTxCount = uniqBy(
-      fetchedConfirmedTxs.filter((tx) => !prevLatestTxs.find((prevTx) => prevTx.hash === tx.hash)),
-      'hash'
-    ).length
+    const newTxs = fetchedConfirmedTxs.filter((tx) => !prevLatestTxs.find((prevTx) => prevTx.hash === tx.hash))
+    const newTxCount = new Map(newTxs.map((tx) => [tx.hash, tx])).size
 
     if (newTxCount > 0 && !isDisabled) {
       setNewTxCountIndicator((prev) => prev + newTxCount)

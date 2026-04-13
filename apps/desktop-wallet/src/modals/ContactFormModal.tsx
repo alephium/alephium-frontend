@@ -5,7 +5,6 @@ import {
   contactStoredInPersistentStorage,
   getHumanReadableError
 } from '@alephium/shared'
-import { isEmpty } from 'lodash'
 import { UserMinus } from 'lucide-react'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -44,7 +43,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
   if (!activeWalletId) return null
 
   const errors = formState.errors
-  const isFormValid = isEmpty(errors)
+  const isFormValid = Object.keys(errors).length === 0
 
   const onClose = () => dispatch(closeModal({ id }))
 

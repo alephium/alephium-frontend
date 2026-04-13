@@ -1,6 +1,5 @@
 import { calculateTokenAmountWorth, isFT } from '@alephium/shared'
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
-import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -63,7 +62,7 @@ const FTWorthAmount = ({ symbol, decimals, totalBalance }: FTWorthAmountProps) =
   if (isLoading) return <SkeletonLoader height="20px" width="30%" />
 
   const worth =
-    totalBalance !== undefined && isNumber(tokenPrice)
+    totalBalance !== undefined && typeof tokenPrice === 'number'
       ? calculateTokenAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 

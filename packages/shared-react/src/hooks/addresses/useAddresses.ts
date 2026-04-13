@@ -1,7 +1,6 @@
 import { AddressHash, MAXIMAL_GAS_FEE, selectDefaultAddressHash, TokenId } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { isGrouplessAddress } from '@alephium/web3'
-import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { useFetchLatestTransactionOfEachAddress } from '../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
@@ -30,11 +29,11 @@ export const useFetchAddressesHashesSortedByLastUseWithLatestTx = () => {
   return {
     data: useMemo(
       () =>
-        orderBy(
-          latestTxs,
-          ({ addressHash, latestTx }) => (addressHash === defaultAddressHash ? undefined : latestTx?.timestamp ?? 0),
-          'desc'
-        ),
+        [...latestTxs].sort((a, b) => {
+          const valA = a.addressHash === defaultAddressHash ? Infinity : a.latestTx?.timestamp ?? 0
+          const valB = b.addressHash === defaultAddressHash ? Infinity : b.latestTx?.timestamp ?? 0
+          return valB - valA
+        }),
       [latestTxs, defaultAddressHash]
     ),
     isLoading: isLoadingLatestTxs

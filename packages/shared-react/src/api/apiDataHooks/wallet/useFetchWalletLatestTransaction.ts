@@ -1,4 +1,3 @@
-import { maxBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { useFetchLatestTransactionOfEachAddress } from '../../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
@@ -8,7 +7,11 @@ export const useFetchWalletLatestTransaction = () => {
 
   return {
     data: useMemo(
-      () => maxBy(latestTxsOfEachAddress, (tx) => tx.latestTx?.timestamp)?.latestTx,
+      () =>
+        latestTxsOfEachAddress.reduce(
+          (max, tx) => ((tx.latestTx?.timestamp ?? 0) > (max?.latestTx?.timestamp ?? 0) ? tx : max),
+          latestTxsOfEachAddress[0]
+        )?.latestTx,
       [latestTxsOfEachAddress]
     ),
     isLoading

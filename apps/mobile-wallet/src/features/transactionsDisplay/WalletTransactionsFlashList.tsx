@@ -8,7 +8,6 @@ import {
 import { useFetchWalletTransactionsInfinite, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list'
-import { orderBy, uniqBy } from 'lodash'
 import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
@@ -50,16 +49,16 @@ const WalletTransactionsFlashList = forwardRef(
     } = useFetchWalletTransactionsInfinite()
 
     const displayedConfirmedTransactions = useMemo(() => {
-      const txs = uniqBy(
-        orderBy(
-          forContactAddress
-            ? fetchedConfirmedTxs.filter((tx) => isAddressPresentInInputsOutputs(forContactAddress, tx))
-            : fetchedConfirmedTxs,
-          'timestamp',
-          'desc'
-        ),
-        'hash'
-      )
+      const sorted = [
+        ...(forContactAddress
+          ? fetchedConfirmedTxs.filter((tx) => isAddressPresentInInputsOutputs(forContactAddress, tx))
+          : fetchedConfirmedTxs)
+      ].sort((a, b) => {
+        const aTs = a.timestamp ?? 0
+        const bTs = b.timestamp ?? 0
+        return aTs < bTs ? 1 : aTs > bTs ? -1 : 0
+      })
+      const txs = [...new Map(sorted.map((tx) => [tx.hash, tx])).values()]
 
       return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
     }, [forContactAddress, fetchedConfirmedTxs, hasNextPage, pagesLoaded])

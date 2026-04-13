@@ -1,5 +1,4 @@
-import { defaultNetworkSettings, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { merge } from 'lodash'
+import { deepMerge, defaultNetworkSettings, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 
 import { loadSettings, persistSettings } from '~/features/settings/settingsPersistentStorage'
 
@@ -45,6 +44,10 @@ const migrateReleaseNetworkSettings = async (migrationsMapping: Record<string, s
     explorerUrl: migrationsMapping[explorerUrl] ?? explorerUrl
   }
 
-  const newNetworkSettings = merge({}, defaultNetworkSettings, migratedNetworkSettings)
+  const newNetworkSettings = deepMerge<NetworkSettings>(
+    {} as NetworkSettings,
+    defaultNetworkSettings,
+    migratedNetworkSettings
+  )
   await persistSettings('network', newNetworkSettings)
 }

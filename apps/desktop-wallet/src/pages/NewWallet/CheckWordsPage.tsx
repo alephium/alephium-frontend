@@ -1,5 +1,4 @@
 import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/keyring'
-import { shuffle } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -90,11 +89,22 @@ const CheckWordsPage = () => {
   )
 }
 
+const shuffleArray = <T,>(arr: T[]): T[] => {
+  const shuffled = [...arr]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = shuffled[i]
+    shuffled[i] = shuffled[j]
+    shuffled[j] = temp
+  }
+  return shuffled
+}
+
 const generateOptions = (words: string[], index: number): string[] => {
   const correctWord = words[index]
   const otherWords = words.filter((w, i) => i !== index)
-  const randomWords = shuffle(otherWords).slice(0, 2)
-  return shuffle([correctWord, ...randomWords])
+  const randomWords = shuffleArray(otherWords).slice(0, 2)
+  return shuffleArray([correctWord, ...randomWords])
 }
 
 export default CheckWordsPage

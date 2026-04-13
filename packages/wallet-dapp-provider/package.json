@@ -32,15 +32,13 @@
   },
   "dependencies": {
     "@alephium/get-extension-wallet": "3.0.0-test.9",
-    "@alephium/web3": "3.0.0-test.9",
-    "lodash.isplainobject": "4.0.6"
+    "@alephium/web3": "3.0.0-test.9"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/lodash.isplainobject": "^4",
     "@types/node": "^20.14.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.48.0",

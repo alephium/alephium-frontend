@@ -1,6 +1,5 @@
 import { calculateTokenAmountWorth, CURRENCIES, isFT, TokenId } from '@alephium/shared'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
-import { isNumber } from 'lodash'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -33,7 +32,7 @@ const FtAmountWorth = ({ symbol, decimals, amount, ...props }: AddressFtAmountWo
 
   const worth = useMemo(
     () =>
-      amount !== undefined && isNumber(tokenPrice)
+      amount !== undefined && typeof tokenPrice === 'number'
         ? calculateTokenAmountWorth(amount, tokenPrice, decimals)
         : undefined,
     [amount, tokenPrice, decimals]

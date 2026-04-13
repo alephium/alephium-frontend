@@ -1,5 +1,4 @@
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { capitalize } from 'lodash'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -50,7 +49,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
         {networkNames.map((networkName, index) => (
           <RadioButtonRow
             key={networkName}
-            title={capitalize(networkName)}
+            title={networkName.charAt(0).toUpperCase() + networkName.slice(1).toLowerCase()}
             onPress={() => handleNetworkItemPress(networkName)}
             isActive={networkName === selectedNetworkName}
             isLast={index === networkNames.length - 1}
