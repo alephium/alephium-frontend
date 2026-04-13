@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
-    "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.21",
     "@alephium/web3": "3.0.0-test.9",

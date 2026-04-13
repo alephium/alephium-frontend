@@ -389,9 +389,6 @@ importers:
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@alephium/shared-crypto':
-        specifier: workspace:*
-        version: link:../../packages/shared-crypto
       '@alephium/shared-react':
         specifier: workspace:*
         version: link:../../packages/shared-react
