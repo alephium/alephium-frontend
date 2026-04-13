@@ -1101,19 +1101,6 @@ importers:
         version: 2.1.9(@types/node@20.17.8)(happy-dom@20.1.0)(jsdom@21.1.2)(lightningcss@1.31.1)(msw@2.7.0(@types/node@20.17.8)(typescript@5.9.3))(terser@5.39.0)
 
   packages/shared-crypto:
-    dependencies:
-      base-x:
-        specifier: '>=4.0.1'
-        version: 4.0.1
-      bcfg:
-        specifier: ~0.1.6
-        version: 0.1.8
-      crypto-js:
-        specifier: ^4.1.1
-        version: 4.2.0
-      elliptic:
-        specifier: ^6.6.1
-        version: 6.6.1
     devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
@@ -4790,10 +4777,6 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  bcfg@0.1.8:
-    resolution: {integrity: sha512-1zHJM1/sztv9ldutWyJDZSRYQJEuRBTIzLWZ2J5ncWoWI2T6b4/hahhvQmnzucfeleU5Mx5+bcwCsF2wcWt2vA==}
-    engines: {node: '>=8.0.0'}
-
   better-opn@3.0.2:
     resolution: {integrity: sha512-aVNobHnJqLiUelTaHat9DZ1qM2w0C0Eym4LPI/3JxOnSokGVdsl1T1kN7TFvsEAD8G47A6VKQ0TVHqbBnYMJlQ==}
     engines: {node: '>=12.0.0'}
@@ -4928,10 +4911,6 @@ packages:
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
-
-  bsert@0.0.12:
-    resolution: {integrity: sha512-lUB0EMu4KhIf+VQ6RZJ7J3dFdohYSeta+gNgDi00Hi/t3k/W6xZlwm9PSSG0q7hJ2zW9Rsn5yaMPymETxroTRw==}
-    engines: {node: '>=8.0.0'}
 
   buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
@@ -5455,9 +5434,6 @@ packages:
   crypto-browserify@3.12.1:
     resolution: {integrity: sha512-r4ESw/IlusD17lgQi1O20Fa3qNnsckR126TdUuBgAu7GBYSIPvdNyONd3Zrxh0xCwA4+6w/TDArBPsMvhur+KQ==}
     engines: {node: '>= 0.10'}
-
-  crypto-js@4.2.0:
-    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css-color-keywords@1.0.0:
     resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
@@ -17580,10 +17556,6 @@ snapshots:
 
   baseline-browser-mapping@2.10.0: {}
 
-  bcfg@0.1.8:
-    dependencies:
-      bsert: 0.0.12
-
   better-opn@3.0.2:
     dependencies:
       open: 8.4.2
@@ -17762,8 +17734,6 @@ snapshots:
   bser@2.1.1:
     dependencies:
       node-int64: 0.4.0
-
-  bsert@0.0.12: {}
 
   buffer-crc32@0.2.13: {}
 
@@ -18419,8 +18389,6 @@ snapshots:
       public-encrypt: 4.0.3
       randombytes: 2.1.0
       randomfill: 1.0.4
-
-  crypto-js@4.2.0: {}
 
   css-color-keywords@1.0.0: {}
 
