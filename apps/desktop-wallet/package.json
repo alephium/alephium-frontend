@@ -55,7 +55,7 @@
     "@alephium/encryptor": "workspace:*",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/keyring": "workspace:*",
-    "@alephium/ledger-app": "^0.6.2",
+    "@alephium/ledger-app": "0.6.3-rc.0",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
