@@ -122,7 +122,11 @@ export const _20211220_194004 = () => {
   const migratedGeneralSettings = deprecatedThemeSetting
     ? { ...generalSettings, theme: deprecatedThemeSetting as ThemeSettings }
     : generalSettings
-  const newGeneralSettings = deepMerge<GeneralSettings>({} as GeneralSettings, defaultSettings.general, migratedGeneralSettings)
+  const newGeneralSettings = deepMerge<GeneralSettings>(
+    {} as GeneralSettings,
+    defaultSettings.general,
+    migratedGeneralSettings
+  )
 
   SettingsStorage.store('general', newGeneralSettings)
 }
@@ -200,7 +204,11 @@ const migrateReleaseNetworkSettings = (migrationsMapping: Record<string, string>
     explorerUrl: migrationsMapping[explorerUrl] ?? explorerUrl
   }
 
-  const newNetworkSettings = deepMerge<NetworkSettings>({} as NetworkSettings, defaultSettings.network, migratedNetworkSettings)
+  const newNetworkSettings = deepMerge<NetworkSettings>(
+    {} as NetworkSettings,
+    defaultSettings.network,
+    migratedNetworkSettings
+  )
   SettingsStorage.store('network', newNetworkSettings)
 }
 

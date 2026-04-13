@@ -6,15 +6,17 @@ import axios from 'axios'
 import { dAppsQuery, selectTagsFromDApps } from '~/api/queries/dAppQueries'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
+vi.mock('axios', () => ({
+  default: { get: vi.fn() }
+}))
+const mockedAxios = vi.mocked(axios)
 
 describe('dAppQueries', () => {
   beforeEach(() => {
     // Clear all cache data
     queryClient.removeQueries()
-    jest.clearAllMocks()
-    jest.resetAllMocks()
+    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
 
   afterEach(() => {
