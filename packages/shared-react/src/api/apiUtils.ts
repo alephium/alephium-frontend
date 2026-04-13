@@ -10,8 +10,8 @@ import {
 import { explorer as e, NFTTokenUriMetaData, SignChainedTxParams } from '@alephium/web3'
 import { isArray } from 'lodash'
 
-import { addressBalancesQuery } from '@/api/queries/addressQueries'
-import { queryClient } from '@/api/queryClient'
+import { addressBalancesQuery } from '../api/queries/addressQueries'
+import { queryClient } from '../api/queryClient'
 
 interface GetQueryConfigProps {
   gcTime: number

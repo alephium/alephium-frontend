@@ -17,7 +17,7 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 
-import { SweepTxParams } from '@/types/transactions'
+import { SweepTxParams } from '../types/transactions'
 
 export type ModalOrigin =
   | 'walletconnect'

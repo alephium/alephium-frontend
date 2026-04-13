@@ -1,5 +1,4 @@
-import { NUM_OF_ZEROS_IN_QUINTILLION } from '@/constants'
-
+import { NUM_OF_ZEROS_IN_QUINTILLION } from '../src/constants'
 import {
   aboveExpLimit,
   addApostrophes,

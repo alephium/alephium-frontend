@@ -1,8 +1,8 @@
 import { ApiBalances, ListedFT } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import { useFetchTokenPrices } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
+import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
+import { getTokenWorth } from '../../../api/apiDataHooks/utils/getTokenWorth'
 
 export const useFetchListedFtsWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
   const { data: tokenPrices, isLoading: isLoadingTokenPrices, error } = useFetchTokenPrices()

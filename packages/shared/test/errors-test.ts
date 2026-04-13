@@ -1,4 +1,4 @@
-import { cleanExceptionMessage } from '@/errors'
+import { cleanExceptionMessage } from '../src/errors'
 
 describe('cleanExceptionMessage', () => {
   it('Replaces bip39 words with [...]', () => {

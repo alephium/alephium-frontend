@@ -3,11 +3,11 @@ import { useQueries } from '@tanstack/react-query'
 import { isNumber, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchTokenPrices } from '@/api/apiDataHooks/market'
-import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { SkipProp } from '../../../api/apiDataHooks/apiDataHooksTypes'
+import { combineDefined } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { useFetchTokenPrices } from '../../../api/apiDataHooks/market'
+import { fungibleTokenMetadataQuery } from '../../../api/queries/tokenQueries'
+import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
 
 interface UseSortFTsProps extends SkipProp {
   listedFts: (ListedFT & ApiBalances)[]

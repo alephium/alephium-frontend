@@ -2,8 +2,8 @@ import { ApiBalances, ListedFT } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useFetchTokenPrices } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { getTokenWorth } from '@/api/apiDataHooks/utils/getTokenWorth'
+import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
+import { getTokenWorth } from '../../../api/apiDataHooks/utils/getTokenWorth'
 
 export const useFetchSortListedFtsByWorth = (listedFts: (ListedFT & ApiBalances)[]) => {
   const { data: tokenPrices, isLoading } = useFetchTokenPrices()

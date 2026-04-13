@@ -2,26 +2,20 @@
   "name": "@alephium/shared",
   "version": "0.7.11",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
+    ".": "./src/index.ts"
   },
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "watch-dev": "tsup --watch",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo coverage",
+    "clean": "rm -rf .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
-    "typecheck": "tsup"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.21",
@@ -33,7 +27,6 @@
     "@walletconnect/types": "2.23.6",
     "@walletconnect/utils": "2.23.6",
     "@yornaath/batshit": "^0.10.1",
-    "cross-fetch": "^3.1.5",
     "dayjs": "^1.10.7",
     "fetch-retry": "^5.0.6",
     "lodash": "^4.17.23",

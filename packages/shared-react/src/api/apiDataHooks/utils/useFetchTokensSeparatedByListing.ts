@@ -2,8 +2,8 @@ import { FtListMap, ListedFT, UnlistedToken } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { ftListQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { ftListQuery } from '../../../api/queries/tokenQueries'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 interface TokensByListing<T> {
   data: {

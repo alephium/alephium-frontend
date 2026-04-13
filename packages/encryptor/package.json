@@ -2,27 +2,20 @@
   "name": "@alephium/encryptor",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
+    ".": "./src/index.ts"
   },
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "watch-dev": "tsup --watch",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo coverage",
+    "clean": "rm -rf .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
-    "typecheck": "tsup"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@metamask/browser-passworder": "^6.0.0"

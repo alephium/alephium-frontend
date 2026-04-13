@@ -1,7 +1,7 @@
 import { GroupedKeyType, GrouplessKeyType, KeyType, Optional } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-import { StringAlias } from '@/types/utils'
+import { StringAlias } from '../types/utils'
 
 export type Contact = {
   id: string

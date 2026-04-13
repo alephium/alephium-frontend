@@ -1,4 +1,4 @@
-import { bip39Words } from '@/bip39'
+import { bip39Words } from './bip39'
 
 const bip39WordsString = bip39Words.join('|')
 

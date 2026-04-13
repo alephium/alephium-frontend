@@ -3,10 +3,10 @@ import { KeyType } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 import { partition } from 'lodash'
 
-import { addressesAdapter } from '@/store/addresses/addressesAdapters'
-import { SharedRootState } from '@/store/store'
-import { AddressHash } from '@/types/addresses'
-import { getAddressesInGroup, isGrouplessAddress } from '@/utils/addresses'
+import { addressesAdapter } from '../../store/addresses/addressesAdapters'
+import { SharedRootState } from '../../store/store'
+import { AddressHash } from '../../types/addresses'
+import { getAddressesInGroup, isGrouplessAddress } from '../../utils/addresses'
 
 export const {
   selectById: selectAddressByHash,

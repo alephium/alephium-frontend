@@ -1,6 +1,6 @@
 import { clone } from 'lodash'
 
-import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from '@/types/network'
+import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from './types/network'
 
 export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   [NetworkNames.mainnet]: {

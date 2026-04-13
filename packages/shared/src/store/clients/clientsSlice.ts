@@ -5,8 +5,8 @@ import {
   walletConnectClientInitializeFailed,
   walletConnectClientInitializing,
   walletConnectClientMaxRetriesReached
-} from '@/store/clients/clientsActions'
-import { ClientsState } from '@/types/clients'
+} from '../../store/clients/clientsActions'
+import { ClientsState } from '../../types/clients'
 
 const initialState: ClientsState = {
   walletConnect: {

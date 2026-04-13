@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { WalletConnectErrorMessage } from '@/types/clients'
+import { WalletConnectErrorMessage } from '../../types/clients'
 
 export const walletConnectClientInitialized = createAction('clients/walletConnectClientInitialized')
 export const walletConnectClientInitializing = createAction('clients/walletConnectClientInitializing')

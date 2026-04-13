@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { useWindowResize } from '@/useWindowResize'
+import { useWindowResize } from './useWindowResize'
 
 export const useMiddleEllipsedText = (text: string) => {
   const elementRef = useRef<HTMLDivElement | null>(null)

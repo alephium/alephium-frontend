@@ -1,4 +1,4 @@
-import { AddressStoredMetadataWithHash, AddressStoredMetadataWithoutHash, Contact } from '@/types/addresses'
+import { AddressStoredMetadataWithHash, AddressStoredMetadataWithoutHash, Contact } from '../types/addresses'
 
 export type WalletMetadataMobile = {
   id: string

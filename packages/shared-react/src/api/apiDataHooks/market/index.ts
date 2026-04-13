@@ -1,1 +1,1 @@
-export * from '@/api/apiDataHooks/market/useFetchTokenPrices'
+export * from '../../../api/apiDataHooks/market/useFetchTokenPrices'

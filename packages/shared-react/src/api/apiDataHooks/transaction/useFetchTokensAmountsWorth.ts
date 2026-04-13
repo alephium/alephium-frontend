@@ -1,8 +1,8 @@
 import { AssetAmount, calculateTokenAmountWorth } from '@alephium/shared'
 import { isNumber } from 'lodash'
 
-import { useFetchTokenPrices } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { useFetchTokensSeparatedByType } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
+import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
+import { useFetchTokensSeparatedByType } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 
 export const useFetchTokensAmountsWorth = (assetAmounts: Array<AssetAmount>) => {
   const {

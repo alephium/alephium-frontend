@@ -1,7 +1,7 @@
 import { NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray, orderBy } from 'lodash'
 
-import { Asset } from '@/types'
+import { Asset } from './types'
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(

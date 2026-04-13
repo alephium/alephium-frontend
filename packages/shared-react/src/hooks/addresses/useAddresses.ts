@@ -4,11 +4,11 @@ import { isGrouplessAddress } from '@alephium/web3'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useFetchLatestTransactionOfEachAddress } from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
-import { useFetchWalletBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
-import { useSharedSelector } from '@/redux'
+import { useFetchLatestTransactionOfEachAddress } from '../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
+import { useFetchWalletBalancesByAddress } from '../../api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
+import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
+import { useSharedSelector } from '../../redux'
 
 export const useFetchAddressesHashesSortedByLastUse = () => {
   const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined

@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { AddressBase } from '@/types'
-import { DeprecatedWalletMetadataMobile, WalletMetadataMobile } from '@/types/walletMobile'
+import { AddressBase } from '../../types'
+import { DeprecatedWalletMetadataMobile, WalletMetadataMobile } from '../../types/walletMobile'
 
 export const walletLocked = createAction('wallets/walletLocked')
 

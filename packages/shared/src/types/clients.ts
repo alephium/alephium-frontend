@@ -1,4 +1,4 @@
-import { WalletConnectClientStatus } from '@/types/walletConnect'
+import { WalletConnectClientStatus } from '../types/walletConnect'
 
 export type ClientsState = {
   walletConnect: {

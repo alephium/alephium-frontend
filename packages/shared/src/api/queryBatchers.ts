@@ -1,8 +1,8 @@
 import { explorer as e } from '@alephium/web3'
 import { Batcher, create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
-import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { throttledClient } from '@/api/throttledClient'
+import { TOKENS_QUERY_LIMIT } from '../api/limits'
+import { throttledClient } from '../api/throttledClient'
 
 const tokenIdResolver = <T extends { id: string }>(results: T[], queryTokenId: string) =>
   results.find(({ id }) => id === queryTokenId)

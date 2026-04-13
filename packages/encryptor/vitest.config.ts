@@ -13,10 +13,5 @@ export default defineConfig({
     },
     include: ['src/**/*.{test,spec}.{js,ts}'],
     exclude: ['node_modules', 'dist', 'coverage']
-  },
-  resolve: {
-    alias: {
-      '@': '/src'
-    }
   }
 })

@@ -1,8 +1,8 @@
 import { useIsFetching } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-import { invalidateAddressQueries } from '@/api/queryInvalidation'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
+import { invalidateAddressQueries } from '../../api/queryInvalidation'
+import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
 
 export const useRefreshAddressesBalances = () => {
   const addressHashes = useUnsortedAddressesHashes()

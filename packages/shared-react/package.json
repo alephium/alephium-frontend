@@ -2,21 +2,15 @@
   "name": "@alephium/shared-react",
   "version": "0.0.3",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.tsx",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
+    ".": "./src/index.tsx"
   },
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "typecheck": "tsup",
-    "watch-dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo",
+    "clean": "rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts"
@@ -36,7 +30,6 @@
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "3.0.0-test.9",
     "@types/react": "~19.1.10",
-    "tsup": "^8.4.0",
     "typescript": "~5.9.2"
   }
 }

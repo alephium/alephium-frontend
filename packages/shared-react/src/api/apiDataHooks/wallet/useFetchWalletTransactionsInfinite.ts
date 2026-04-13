@@ -1,10 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useFetchWalletLatestTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
-import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { useFetchWalletLatestTransaction } from '../../../api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
+import { walletTransactionsInfiniteQuery } from '../../../api/queries/transactionQueries'
+import { useUnsortedAddressesHashes } from '../../../hooks/addresses/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
 
 export const useFetchWalletTransactionsInfinite = () => {
   const networkId = useCurrentlyOnlineNetworkId()

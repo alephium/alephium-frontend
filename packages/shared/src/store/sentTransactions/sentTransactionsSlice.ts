@@ -4,11 +4,11 @@ import {
   removeSentTransaction,
   sentTransactionStatusChanged,
   transactionSent
-} from '@/store/sentTransactions/sentTransactionsActions'
-import { sentTransactionsAdapter } from '@/store/sentTransactions/sentTransactionsAdapter'
-import { activeWalletDeleted, walletLocked } from '@/store/wallets/walletActions'
-import { walletSwitchedDesktop, walletUnlockedDesktop } from '@/store/wallets/walletActionsDesktop'
-import { SentTransactionsState } from '@/types/transactions'
+} from '../../store/sentTransactions/sentTransactionsActions'
+import { sentTransactionsAdapter } from '../../store/sentTransactions/sentTransactionsAdapter'
+import { activeWalletDeleted, walletLocked } from '../../store/wallets/walletActions'
+import { walletSwitchedDesktop, walletUnlockedDesktop } from '../../store/wallets/walletActionsDesktop'
+import { SentTransactionsState } from '../../types/transactions'
 
 const initialState: SentTransactionsState = sentTransactionsAdapter.getInitialState()
 

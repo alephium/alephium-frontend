@@ -1,7 +1,7 @@
 import { Account, SignerProviderSimple } from '@alephium/web3'
 
-import { throttledClient } from '@/api/throttledClient'
-import { SweepTxParams } from '@/types/transactions'
+import { throttledClient } from './api/throttledClient'
+import { SweepTxParams } from './types/transactions'
 
 export abstract class AlephiumWalletSigner extends SignerProviderSimple {
   public get nodeProvider() {

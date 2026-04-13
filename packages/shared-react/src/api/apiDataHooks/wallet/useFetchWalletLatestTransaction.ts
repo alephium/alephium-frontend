@@ -1,7 +1,7 @@
 import { maxBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useFetchLatestTransactionOfEachAddress } from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
+import { useFetchLatestTransactionOfEachAddress } from '../../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 
 export const useFetchWalletLatestTransaction = () => {
   const { data: latestTxsOfEachAddress, isLoading } = useFetchLatestTransactionOfEachAddress()
