@@ -1,21 +1,19 @@
 import { selectDefaultAddress, transactionSent } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
-import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-import useFetchXAlphTokenState from './useFetchXAlphTokenState'
 import usePowfiSDK from './usePowfiSDK'
 import useStakingContractConfig from './useStakingContractConfig'
+import useStakingQueriesAfterTxConfirmed from './useStakingQueriesAfterTxConfirmed'
 
 const useAlphStaking = () => {
   const { staking } = usePowfiSDK()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
-  const { refetch: refetchXAlphTokenState } = useFetchXAlphTokenState()
-  const queryClient = useQueryClient()
+  const refreshStakingData = useStakingQueriesAfterTxConfirmed()
   const { xAlphTokenAddress: stakingContractAddress, xAlphTokenId } = useStakingContractConfig()
 
   const sendStakingTx = useCallback(
@@ -38,23 +36,14 @@ const useAlphStaking = () => {
     [dispatch, fromAddress, stakingContractAddress]
   )
 
-  /** Runs after submit; unstake list refreshes on-chain via `usePendingTxPolling` + `useStakingQueriesAfterTxConfirmed`. */
-  const refreshAll = useCallback(async () => {
-    try {
-      await Promise.all([refetchXAlphTokenState(), queryClient.invalidateQueries({ queryKey: ['address'] })])
-    } catch (error) {
-      console.error('Failed to refresh staking data', error)
-    }
-  }, [queryClient, refetchXAlphTokenState])
-
   const stakeAlph = useCallback(
     async (amount: bigint) => {
       const result = await staking.stakeAlph(amount)
       sendStakingTx({ txId: result.txId, amount: amount.toString() })
-      await refreshAll()
+      await refreshStakingData()
       return result
     },
-    [staking, refreshAll, sendStakingTx]
+    [staking, refreshStakingData, sendStakingTx]
   )
 
   const startUnstake = useCallback(
@@ -64,30 +53,30 @@ const useAlphStaking = () => {
         txId: result.txId,
         tokens: xAlphTokenId ? [{ id: xAlphTokenId, amount: amount.toString() }] : undefined
       })
-      await refreshAll()
+      await refreshStakingData()
       return result
     },
-    [staking, refreshAll, sendStakingTx, xAlphTokenId]
+    [staking, refreshStakingData, sendStakingTx, xAlphTokenId]
   )
 
   const claimUnstaked = useCallback(
     async (vaultIndex: bigint, amount: bigint) => {
       const result = await staking.claimUnstaked(vaultIndex, amount)
       sendStakingTx({ txId: result.txId, amount: amount.toString() })
-      await refreshAll()
+      await refreshStakingData()
       return result
     },
-    [staking, refreshAll, sendStakingTx]
+    [staking, refreshStakingData, sendStakingTx]
   )
 
   const cancelUnstake = useCallback(
     async (vaultIndex: bigint) => {
       const result = await staking.cancelUnstake(vaultIndex)
       sendStakingTx({ txId: result.txId })
-      await refreshAll()
+      await refreshStakingData()
       return result
     },
-    [staking, refreshAll, sendStakingTx]
+    [staking, refreshStakingData, sendStakingTx]
   )
 
   return {

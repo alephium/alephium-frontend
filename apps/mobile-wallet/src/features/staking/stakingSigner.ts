@@ -21,7 +21,7 @@ type DefaultAddress = NonNullable<ReturnType<typeof selectDefaultAddress>>
 // Some restored/mobile addresses can have incomplete key type metadata. For staking we still need to build a valid
 // `Account` object for web3/Powfi, so we validate candidate key types against the stored public key and only keep the
 // one that reproduces the selected address.
-export const resolveAccountFromAddress = async (
+const resolveAccountFromAddress = async (
   defaultAddress: DefaultAddress,
   getPublicKey: (address: string) => Promise<string>
 ): Promise<Account> => {

@@ -90,9 +90,7 @@ const StakingScreen = () => {
                 origin="selectAddressModal"
                 rounded
                 style={{ borderWidth: 1, borderColor: theme.border.primary }}
-                onPress={() => {
-                  openDefaultAddressModal()
-                }}
+                onPress={openDefaultAddressModal}
               />
             </DefaultAddressBlock>
           )}

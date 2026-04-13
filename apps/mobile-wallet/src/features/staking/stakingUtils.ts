@@ -1,9 +1,5 @@
 import { ALPH } from '@alephium/token-list'
-import { prettifyTokenAmount } from '@alephium/web3'
 import Decimal from 'decimal.js'
-
-export const formatTokenAmount = (amount: bigint, decimals: number): string =>
-  prettifyTokenAmount(amount, decimals) || '0'
 
 /** 0.001 ALPH in base units (ALPH uses 18 decimals). */
 const MIN_CLAIMABLE_ATTO_ALPH = 10n ** BigInt(ALPH.decimals - 3)

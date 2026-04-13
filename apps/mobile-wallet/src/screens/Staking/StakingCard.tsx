@@ -1,3 +1,4 @@
+import { formatAmountForDisplay } from '@alephium/shared'
 import { usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,6 @@ import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
 import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
 import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
-import { formatTokenAmount } from '~/features/staking/stakingUtils'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const StakingCard = () => {
@@ -20,8 +20,8 @@ const StakingCard = () => {
   const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
   const pendingStakingTransaction = usePendingStakingTransaction()
 
-  const formattedStakedValue = formatTokenAmount(stakedValueAlph, ALPH.decimals)
-  const formattedXAlphBalance = formatTokenAmount(xAlphBalance, ALPH.decimals)
+  const formattedStakedValue = formatAmountForDisplay({ amount: stakedValueAlph, amountDecimals: ALPH.decimals })
+  const formattedXAlphBalance = formatAmountForDisplay({ amount: xAlphBalance, amountDecimals: ALPH.decimals })
   const formattedXAlphRate = xAlphRate.toFixed(4)
   const isLoading = isStakedValueLoading || isXAlphBalanceLoading || isXAlphRateLoading
 

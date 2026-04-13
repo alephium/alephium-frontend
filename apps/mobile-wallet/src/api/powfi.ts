@@ -1,5 +1,5 @@
 import { Powfi, type PowfiLoadParams } from '@alephium/powfi-sdk'
-import type { NetworkSettings } from '@alephium/shared'
+import { getNetworkNameFromNetworkId, type NetworkSettings } from '@alephium/shared'
 
 import { stakingSigner } from '~/features/staking/stakingSigner'
 
@@ -12,7 +12,7 @@ let instanceKey: string | undefined
 
 /**
  * Single Powfi SDK instance per (logical network + node + explorer). Signer is fixed at load time; staking txs use the
- * signer’s selected account from the wallet store, not `powfi.account`.
+ * signer's selected account from the wallet store, not `powfi.account`.
  */
 export const getPowfiSdk = (networkId: PowfiNetworkId, endpoints: Endpoints) => {
   const key = `${networkId}|${endpoints.nodeHost}|${endpoints.explorerApiHost}`
@@ -31,15 +31,5 @@ export const getPowfiSdk = (networkId: PowfiNetworkId, endpoints: Endpoints) => 
   return instance
 }
 
-export const networkIdToSdkNetworkId = (networkId: number): PowfiNetworkId => {
-  switch (networkId) {
-    case 0:
-      return 'mainnet'
-    case 1:
-      return 'testnet'
-    case 4:
-      return 'devnet'
-    default:
-      return 'mainnet'
-  }
-}
+export const networkIdToPowfiNetworkId = (networkId: number): PowfiNetworkId =>
+  getNetworkNameFromNetworkId(networkId) ?? 'mainnet'

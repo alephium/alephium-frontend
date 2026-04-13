@@ -1,3 +1,4 @@
+import { formatAmountForDisplay } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -9,7 +10,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
 import { UnstakeRequest } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
-import { formatTokenAmount, isClaimable } from '~/features/staking/stakingUtils'
+import { isClaimable } from '~/features/staking/stakingUtils'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
@@ -37,7 +38,7 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
   const onClaimPress = async () => {
     if (isClaiming) return
     if (!canClaim) {
-      const claimableAmount = `${formatTokenAmount(request.claimableAmount, ALPH.decimals)} ALPH`
+      const claimableAmount = `${formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH`
       Alert.alert(
         '',
         t('Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.', {
@@ -91,7 +92,9 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       <Row>
         <DataColumn>
           <DataLabel>{t('Amount')}</DataLabel>
-          <DataValue>{formatTokenAmount(request.totalAmount, ALPH.decimals)} ALPH</DataValue>
+          <DataValue>
+            {formatAmountForDisplay({ amount: request.totalAmount, amountDecimals: ALPH.decimals })} ALPH
+          </DataValue>
         </DataColumn>
         <DataColumn style={{ alignItems: 'flex-end' }}>
           <DataLabel>{t('Full unlock')}</DataLabel>
@@ -105,7 +108,9 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
         {canClaim ? (
           <DataColumn>
             <DataLabel>{t('Claimable now')}</DataLabel>
-            <DataValue>{formatTokenAmount(request.claimableAmount, ALPH.decimals)} ALPH</DataValue>
+            <DataValue>
+              {formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH
+            </DataValue>
           </DataColumn>
         ) : null}
         <ProgressBarContainer $fullWidth={!canClaim}>
