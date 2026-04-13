@@ -9,7 +9,7 @@ import { DApp } from '~/features/ecosystem/ecosystemTypes'
 vi.mock('axios', () => ({
   default: { get: vi.fn() }
 }))
-const mockedAxios = vi.mocked(axios)
+const mockedAxiosGet = vi.mocked(axios.get)
 
 describe('dAppQueries', () => {
   beforeEach(() => {
@@ -97,7 +97,7 @@ describe('dAppQueries', () => {
 
     it('returns cached data on API failure if available', async () => {
       // First, populate the cache with data
-      mockedAxios.get.mockResolvedValueOnce({ data: mockDApps })
+      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
       const query = dAppsQuery({ select: (dApps) => dApps })
       await queryClient.fetchQuery(query)
 
@@ -105,7 +105,7 @@ describe('dAppQueries', () => {
       expect(queryClient.getQueryData(['dApps'])).toEqual(mockDApps)
 
       // Now simulate API failure
-      mockedAxios.get.mockRejectedValueOnce(new Error('API Error'))
+      mockedAxiosGet.mockRejectedValueOnce(new Error('API Error'))
 
       // Query should return cached data
       const result = await queryClient.fetchQuery(query)
@@ -114,7 +114,7 @@ describe('dAppQueries', () => {
 
     it('throws an error on API failure if no cached data is available', async () => {
       const apiError = new Error('API Error')
-      mockedAxios.get.mockRejectedValueOnce(apiError)
+      mockedAxiosGet.mockRejectedValueOnce(apiError)
 
       const query = dAppsQuery({ select: (dApps) => dApps })
 
@@ -129,17 +129,17 @@ describe('dAppQueries', () => {
     })
 
     it('fetches data successfully from API', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockDApps })
+      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
 
       const query = dAppsQuery({ select: (dApps) => dApps })
       const result = await queryClient.fetchQuery(query)
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
+      expect(mockedAxiosGet).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
       expect(result).toEqual(mockDApps)
     })
 
     it('applies select function correctly', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockDApps })
+      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
 
       // Use a new query client to avoid caching issues
       const testClient = new QueryClient()
