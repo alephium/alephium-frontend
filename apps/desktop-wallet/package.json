@@ -52,7 +52,6 @@
     "esbuild"
   ],
   "devDependencies": {
-    "@actions/tool-cache": "^2.0.2",
     "@alephium/encryptor": "workspace:*",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/keyring": "workspace:*",
@@ -80,7 +79,7 @@
     "@types/react-dom": "~19.1.6",
     "@types/semver-compare": "^1.0.1",
     "@types/zxcvbn": "^4.4.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.7.0",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/web-worker": "^2.1.2",
     "@walletconnect/core": "2.23.6",
