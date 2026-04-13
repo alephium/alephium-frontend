@@ -42,7 +42,7 @@
     "@types/node": "^20.14.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.48.0",
-    "rollup": "^4.12.1",
+    "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-esbuild": "^6.1.1",
     "tslib": "^2.3.1",
