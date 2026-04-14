@@ -283,19 +283,21 @@ export const addressFtsQuery = ({ addressHash, networkId }: AddressLatestTransac
     }
   })
 
-export const addressNftsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+export const addressNftsQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'level:4', 'tokens', 'nfts', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    queryFn: async () => {
-      const { nftIds } = await queryClient.fetchQuery(addressTokensByTypeQuery({ addressHash, networkId }))
+    queryFn: skip
+      ? skipToken
+      : async () => {
+          const { nftIds } = await queryClient.fetchQuery(addressTokensByTypeQuery({ addressHash, networkId }))
 
-      const nftsPromiseResults = await Promise.allSettled(
-        nftIds.map((id) => queryClient.fetchQuery(nftQuery({ id, networkId })))
-      )
+          const nftsPromiseResults = await Promise.allSettled(
+            nftIds.map((id) => queryClient.fetchQuery(nftQuery({ id, networkId })))
+          )
 
-      const nfts = getFulfilledValues(nftsPromiseResults).filter((nft) => nft !== null)
+          const nfts = getFulfilledValues(nftsPromiseResults).filter((nft) => nft !== null)
 
-      return nfts
-    }
+          return nfts
+        }
   })

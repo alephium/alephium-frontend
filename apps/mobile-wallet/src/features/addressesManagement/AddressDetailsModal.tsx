@@ -35,9 +35,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
   }, [])
 
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
-  const { data: nfts, isLoading: isNftsLoading } = useFetchAddressNfts(
-    hasAccessedNfts ? addressHash : (undefined as unknown as AddressHash)
-  )
+  const { data: nfts, isLoading: isNftsLoading } = useFetchAddressNfts({ addressHash, skip: !hasAccessedNfts })
 
   const { dismissModal } = useModalContext()
 
