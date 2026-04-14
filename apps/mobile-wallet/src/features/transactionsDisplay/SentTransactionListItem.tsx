@@ -1,5 +1,4 @@
 import { selectSentTransactionByHash } from '@alephium/shared'
-import { usePendingTxPolling } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { Check } from 'lucide-react-native'
 import { memo, useMemo } from 'react'
@@ -7,8 +6,9 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
+import { getPowfiSdk } from '~/api/powfi'
 import ListItem, { ListItemProps } from '~/components/ListItem'
-import usePowfiSDK from '~/features/staking/hooks/usePowfiSDK'
+import usePendingStakingTxPolling from '~/features/staking/hooks/usePendingStakingTxPolling'
 import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
 import TransactionIcon from '~/features/transactionsDisplay/TransactionIcon'
 import TransactionListItemAmounts from '~/features/transactionsDisplay/TransactionListItemAmounts'
@@ -26,15 +26,15 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
   const { t } = useTranslation()
   const theme = useTheme()
   const sentTransaction = useAppSelector((state) => selectSentTransactionByHash(state, txHash))
-  const { staking } = usePowfiSDK()
+  const powfi = getPowfiSdk()
   const onStakingTxConfirmed = useStakingQueriesAfterTxConfirmed()
   const stakingContractAddress = useMemo(() => {
     try {
-      return staking.getConfig().xAlphTokenAddress
+      return powfi?.staking.getConfig().xAlphTokenAddress ?? ''
     } catch {
       return ''
     }
-  }, [staking])
+  }, [powfi])
 
   const pendingTxPollingOptions = useMemo(() => {
     if (!sentTransaction || !stakingContractAddress || sentTransaction.toAddress !== stakingContractAddress) {
@@ -43,7 +43,7 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
     return { onConfirmed: onStakingTxConfirmed }
   }, [onStakingTxConfirmed, sentTransaction, stakingContractAddress])
 
-  usePendingTxPolling(txHash, pendingTxPollingOptions)
+  usePendingStakingTxPolling({ txHash, ...pendingTxPollingOptions, enabled: !!pendingTxPollingOptions })
 
   if (!sentTransaction) return null
 

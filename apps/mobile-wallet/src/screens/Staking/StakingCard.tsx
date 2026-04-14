@@ -1,5 +1,4 @@
 import { formatAmountForDisplay } from '@alephium/shared'
-import { usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
@@ -9,6 +8,7 @@ import AppText from '~/components/AppText'
 import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
 import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
+import usePendingStakingTxPolling from '~/features/staking/hooks/usePendingStakingTxPolling'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
 import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -55,7 +55,7 @@ export default StakingCard
 
 const PendingStakingTransactionPoller = ({ txHash }: { txHash: string }) => {
   const onStakingTxConfirmed = useStakingQueriesAfterTxConfirmed()
-  usePendingTxPolling(txHash, { onConfirmed: onStakingTxConfirmed })
+  usePendingStakingTxPolling({ txHash, onConfirmed: onStakingTxConfirmed })
 
   return null
 }

@@ -7,10 +7,12 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
+import Badge from '~/components/Badge'
 import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
+import { STAKING_NETWORK_OVERRIDE } from '~/constants/alephiumNetwork'
 import { openModal } from '~/features/modals/modalActions'
 import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -69,11 +71,28 @@ const StakingScreen = () => {
 
   if (!isStakingEnabled) return null
 
+  const networkOverrideBadge = STAKING_NETWORK_OVERRIDE ? (
+    <Badge compact rounded border color={theme.global.accent}>
+      <AppText size={11} semiBold color={theme.global.accent}>
+        {STAKING_NETWORK_OVERRIDE} override
+      </AppText>
+    </Badge>
+  ) : undefined
+
   return (
     <Screen>
-      <BaseHeader options={{ headerTitle: t('Staking') as string }} scrollY={screenScrollY} />
+      <BaseHeader
+        options={{ headerTitle: t('Staking') as string, headerTitleRight: () => networkOverrideBadge }}
+        scrollY={screenScrollY}
+      />
       <StyledScrollView onScroll={screenScrollHandler} scrollEventThrottle={16}>
-        <ScreenTitle title={t('Staking') as string} scrollY={screenScrollY} sideDefaultMargin paddingTop />
+        <ScreenTitle
+          title={t('Staking') as string}
+          scrollY={screenScrollY}
+          sideDefaultMargin
+          SideComponent={networkOverrideBadge}
+          paddingTop
+        />
 
         <ContentContainer>
           {defaultAddressHash && (

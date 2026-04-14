@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["EXPO_PUBLIC_STAKING_NETWORK_OVERRIDE"],
   "globalDependencies": ["**/.env.*local", "tsconfig.json"],
   "pipeline": {
     "lint": {},

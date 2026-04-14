@@ -2,21 +2,32 @@ import {
   AlephiumWalletSigner,
   getBaseAddressStr,
   GROUPLESS_ADDRESS_KEY_TYPE,
+  networkSettingsPresets,
   selectDefaultAddress
 } from '@alephium/shared'
 import {
   Account,
   addressFromPublicKey,
   addressWithoutExplicitGroupIndex,
+  ExplorerProvider,
   groupOfAddress,
   isGroupedKeyType,
+  NodeProvider,
   transactionSign
 } from '@alephium/web3'
 
+import { STAKING_NETWORK_OVERRIDE } from '~/constants/alephiumNetwork'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 
 type DefaultAddress = NonNullable<ReturnType<typeof selectDefaultAddress>>
+
+const stakingNodeProvider = STAKING_NETWORK_OVERRIDE
+  ? new NodeProvider(networkSettingsPresets[STAKING_NETWORK_OVERRIDE].nodeHost)
+  : undefined
+const stakingExplorerProvider = STAKING_NETWORK_OVERRIDE
+  ? new ExplorerProvider(networkSettingsPresets[STAKING_NETWORK_OVERRIDE].explorerApiHost)
+  : undefined
 
 // Some restored/mobile addresses can have incomplete key type metadata. For staking we still need to build a valid
 // `Account` object for web3/Powfi, so we validate candidate key types against the stored public key and only keep the
@@ -57,6 +68,22 @@ const resolveAccountFromAddress = async (
 }
 
 class PowfiStakingSigner extends AlephiumWalletSigner {
+  public get nodeProvider(): NodeProvider {
+    if (!stakingNodeProvider) {
+      throw new Error('Staking network override is not configured')
+    }
+
+    return stakingNodeProvider
+  }
+
+  public get explorerProvider(): ExplorerProvider {
+    if (!stakingExplorerProvider) {
+      throw new Error('Staking network override is not configured')
+    }
+
+    return stakingExplorerProvider
+  }
+
   public getPublicKey = async (addressStr: string): Promise<string> =>
     getAddressAsymetricKey(getBaseAddressStr(addressStr), 'public')
 

@@ -1,11 +1,5 @@
-import { getNetworkNameFromNetworkId } from '@alephium/shared'
+import { STAKING_NETWORK_OVERRIDE } from '~/constants/alephiumNetwork'
 
-import { useAppSelector } from '~/hooks/redux'
-
-const useIsStakingEnabled = () => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-
-  return getNetworkNameFromNetworkId(networkId) === 'testnet'
-}
+const useIsStakingEnabled = () => !!STAKING_NETWORK_OVERRIDE
 
 export default useIsStakingEnabled

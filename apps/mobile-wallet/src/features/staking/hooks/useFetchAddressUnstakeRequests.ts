@@ -2,9 +2,8 @@ import { selectDefaultAddress } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
+import { getPowfiSdk } from '~/api/powfi'
 import { useAppSelector } from '~/hooks/redux'
-
-import usePowfiSDK from './usePowfiSDK'
 
 export interface UnstakeRequest {
   vaultIndex: bigint
@@ -16,30 +15,27 @@ export interface UnstakeRequest {
   contractAddress: string
 }
 
-/** Prefix for `useQuery` key; use with `queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })`. */
 export const unstakeVaultRequestsQueryKeyRoot = ['unstakeVaultRequests'] as const
 
 const useFetchAddressUnstakeRequests = () => {
-  const { staking, network } = usePowfiSDK()
+  const powfi = getPowfiSdk()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const nodeHost = useAppSelector((s) => s.network.settings.nodeHost)
   const address = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined
-  const networkId = network.id
-  const shouldFetch = !!address
+  const shouldFetch = !!powfi && !!address
 
   const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
-    queryKey: [...unstakeVaultRequestsQueryKeyRoot, networkId, nodeHost, address],
+    queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfi?.network.id, address],
     queryFn: async () => {
       const userAddress = address!
-      const activeIndexes = await staking.getActiveUnstakeVaultIndexes(userAddress)
+      const activeIndexes = await powfi!.staking.getActiveUnstakeVaultIndexes(userAddress)
 
       if (!activeIndexes.length) return []
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            staking.getClaimableAmount(userAddress, index),
-            staking.getAlphUnstakeVaultState(userAddress, index)
+            powfi!.staking.getClaimableAmount(userAddress, index),
+            powfi!.staking.getAlphUnstakeVaultState(userAddress, index)
           ])
 
           return {
