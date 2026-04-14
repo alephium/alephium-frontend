@@ -2,14 +2,14 @@ import { selectDefaultAddress, transactionSent } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useCallback } from 'react'
 
+import { getRequiredPowfiSdk } from '~/api/powfi'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-import usePowfiSDK from './usePowfiSDK'
 import useStakingContractConfig from './useStakingContractConfig'
 import useStakingQueriesAfterTxConfirmed from './useStakingQueriesAfterTxConfirmed'
 
 const useAlphStaking = () => {
-  const { staking } = usePowfiSDK()
+  const { staking } = getRequiredPowfiSdk()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''

@@ -1,21 +1,21 @@
-import { useMemo } from 'react'
-
-import usePowfiSDK from './usePowfiSDK'
+import { getPowfiSdk } from '~/api/powfi'
 
 const useStakingContractConfig = () => {
-  const { staking } = usePowfiSDK()
+  const powfi = getPowfiSdk()
 
-  return useMemo(() => {
-    try {
-      const c = staking.getConfig()
-      return {
-        xAlphTokenAddress: c.xAlphTokenAddress,
-        xAlphTokenId: c.xAlphTokenId
-      }
-    } catch {
-      return { xAlphTokenAddress: '', xAlphTokenId: undefined as string | undefined }
+  if (!powfi) {
+    return { xAlphTokenAddress: '', xAlphTokenId: undefined as string | undefined }
+  }
+
+  try {
+    const c = powfi.staking.getConfig()
+    return {
+      xAlphTokenAddress: c.xAlphTokenAddress,
+      xAlphTokenId: c.xAlphTokenId
     }
-  }, [staking])
+  } catch {
+    return { xAlphTokenAddress: '', xAlphTokenId: undefined as string | undefined }
+  }
 }
 
 export default useStakingContractConfig
