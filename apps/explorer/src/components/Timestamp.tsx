@@ -17,17 +17,17 @@ interface TimestampProps {
 
 const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode } = useSettings()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'high' : 'low')
 
   const date = new Date(timeInMs)
-  const highPrecisionTimestamp = new Intl.DateTimeFormat(undefined, DATE_TIME_OPTIONS).format(date)
+  const highPrecisionTimestamp = new Intl.DateTimeFormat(i18n.language, DATE_TIME_OPTIONS).format(date)
   const lowPrecisionTimestamp =
     timeInMs < Date.now() - ONE_DAY_MS
-      ? new Intl.DateTimeFormat(undefined, SIMPLE_DATE_OPTIONS).format(date)
-      : formatRelativeTime(timeInMs)
-  const customTimestamp = customFormat ? new Intl.DateTimeFormat(undefined, customFormat).format(date) : undefined
+      ? new Intl.DateTimeFormat(i18n.language, SIMPLE_DATE_OPTIONS).format(date)
+      : formatRelativeTime(timeInMs, i18n.language)
+  const customTimestamp = customFormat ? new Intl.DateTimeFormat(i18n.language, customFormat).format(date) : undefined
 
   return (
     <div

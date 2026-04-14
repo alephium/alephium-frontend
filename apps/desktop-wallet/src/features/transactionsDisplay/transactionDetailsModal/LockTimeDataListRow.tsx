@@ -6,14 +6,14 @@ import useTransactionLockTime from '@/features/transactionsDisplay/useTransactio
 import { formatDateForDisplay } from '@/utils/misc'
 
 const LockTimeDataListRow = ({ tx }: Pick<TransactionDetailsModalTxProps, 'tx'>) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const lockTime = useTransactionLockTime(tx)
 
   if (!lockTime) return null
 
   return (
     <DataList.Row label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
-      <span tabIndex={0}>{formatDateForDisplay(lockTime)}</span>
+      <span tabIndex={0}>{formatDateForDisplay(lockTime, i18n.language)}</span>
     </DataList.Row>
   )
 }

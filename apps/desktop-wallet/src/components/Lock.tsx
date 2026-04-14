@@ -9,12 +9,12 @@ interface LockProps {
 }
 
 const Lock = ({ unlockAt, className }: LockProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (!unlockAt) return null
 
   const lockTimeInPast = unlockAt < new Date()
-  const formattedDate = new Intl.DateTimeFormat(undefined, {
+  const formattedDate = new Intl.DateTimeFormat(i18n.language, {
     ...SHORT_DATE_TIME_OPTIONS,
     hour: 'numeric',
     hour12: true

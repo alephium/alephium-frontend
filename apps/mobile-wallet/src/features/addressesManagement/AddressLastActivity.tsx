@@ -10,12 +10,12 @@ interface AddressListRowLastUsedProps {
 }
 
 const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { data } = useFetchAddressLatestTransaction(addressHash)
 
   return (
     <Row title={t('Last activity')} isLast short>
-      <AppText>{data?.latestTx ? formatRelativeTime(data.latestTx.timestamp) : t('Never used')}</AppText>
+      <AppText>{data?.latestTx ? formatRelativeTime(data.latestTx.timestamp, i18n.language) : t('Never used')}</AppText>
     </Row>
   )
 }

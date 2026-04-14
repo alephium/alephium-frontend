@@ -10,9 +10,9 @@ interface LockTimeIconProps {
 }
 
 const LockTimeIcon = ({ timestamp, color, className }: LockTimeIconProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
-  const unlocksOn = new Intl.DateTimeFormat(undefined, DATE_TIME_OPTIONS).format(new Date(timestamp))
+  const unlocksOn = new Intl.DateTimeFormat(i18n.language, DATE_TIME_OPTIONS).format(new Date(timestamp))
 
   return (
     <RiLockLine

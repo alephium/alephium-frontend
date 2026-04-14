@@ -1,5 +1,6 @@
 import { explorer } from '@alephium/web3'
 import Chart from 'react-apexcharts'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
 import { formatXAxis, formatYAxis, XAxisType, YAxisType } from '@/utils/charts'
@@ -31,6 +32,7 @@ const LineAreaChart = ({
   unit
 }: LineAreaChartProps) => {
   const theme = useTheme()
+  const { i18n } = useTranslation()
 
   const options: ApexCharts.ApexOptions = {
     chart: {
@@ -113,8 +115,10 @@ const LineAreaChart = ({
             ">
               ${
                 timeInterval === explorer.IntervalType.Daily
-                  ? new Intl.DateTimeFormat(undefined, SIMPLE_DATE_OPTIONS).format(new Date(categories[dataPointIndex]))
-                  : new Intl.DateTimeFormat(undefined, {
+                  ? new Intl.DateTimeFormat(i18n.language, SIMPLE_DATE_OPTIONS).format(
+                      new Date(categories[dataPointIndex])
+                    )
+                  : new Intl.DateTimeFormat(i18n.language, {
                       weekday: 'short',
                       hour: '2-digit',
                       minute: '2-digit',

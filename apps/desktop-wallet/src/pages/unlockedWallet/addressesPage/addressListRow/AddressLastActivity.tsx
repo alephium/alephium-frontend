@@ -22,9 +22,9 @@ const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
 export default AddressLastActivity
 
 const LastTransactionTimestamp = ({ timestamp }: Pick<e.Transaction, 'timestamp'>) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
-  return `${t('Last activity')} ${formatRelativeTime(timestamp)}`
+  return `${t('Last activity')} ${formatRelativeTime(timestamp, i18n.language)}`
 }
 
 const AddressListRowLastUsedStyled = styled.div`

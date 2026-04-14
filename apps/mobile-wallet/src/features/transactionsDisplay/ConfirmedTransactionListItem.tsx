@@ -1,6 +1,7 @@
 import { findTransactionReferenceAddress } from '@alephium/shared'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -43,11 +44,15 @@ const TransactionLabel = ({ tx, referenceAddress }: ConfirmedTransactionListItem
   return label
 }
 
-const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentProps) => (
-  <AppText color="tertiary" size={12} style={{ marginTop: 5 }}>
-    {new Date(tx.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-  </AppText>
-)
+const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentProps) => {
+  const { i18n } = useTranslation()
+
+  return (
+    <AppText color="tertiary" size={12} style={{ marginTop: 5 }}>
+      {new Date(tx.timestamp).toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' })}
+    </AppText>
+  )
+}
 
 const TransactionIcon = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
   const { iconBgColor, iconColor, Icon } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })

@@ -77,7 +77,7 @@ const TitleStyled = styled.View`
 `
 
 const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   return (
     <SubtitleStyled>
@@ -85,13 +85,13 @@ const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
       <AppTextStyled color="secondary">
         {connection.networkName
           ? t('Connected at {{ datetime }} on {{ network }}', {
-              datetime: new Intl.DateTimeFormat(undefined, SHORT_DATE_TIME_OPTIONS).format(
+              datetime: new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(
                 new Date(connection.dateTime)
               ),
               network: connection.networkName
             })
           : t('Connected at {{ datetime }}', {
-              datetime: new Intl.DateTimeFormat(undefined, SHORT_DATE_TIME_OPTIONS).format(
+              datetime: new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(
                 new Date(connection.dateTime)
               )
             })}

@@ -98,14 +98,14 @@ const TransactionDetailRows = ({ tx, referenceAddress }: TransactionModalSubcomp
 )
 
 const TransactionTimeStamp = ({ tx }: Pick<TransactionModalSubcomponentProps, 'tx'>) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (!isConfirmedTx(tx)) return null
 
   return (
     <Row title={t('Timestamp')} transparent>
       <AppText semiBold>
-        {new Date(tx.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+        {new Date(tx.timestamp).toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' })}
       </AppText>
     </Row>
   )
