@@ -5,7 +5,7 @@ import { Address, AddressesState, AddressHash, AddressSettings } from '../../typ
 
 export const addressSettingsSavedReducer = (
   state: AddressesState,
-  action: PayloadAction<{ addressHash: AddressHash; settings: AddressSettings }>
+  action: PayloadAction<{ addressHash: AddressHash; settings: Partial<AddressSettings> }>
 ) => {
   const { addressHash, settings } = action.payload
 

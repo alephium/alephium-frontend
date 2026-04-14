@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
-import { getPowfiSdk } from '~/api/powfi'
+import { powfiSdk } from '~/api/powfi'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import useStakingQueriesAfterTxConfirmed from '~/features/staking/hooks/useStakingQueriesAfterTxConfirmed'
 import TransactionIcon from '~/features/transactionsDisplay/TransactionIcon'
@@ -26,15 +26,8 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
   const { t } = useTranslation()
   const theme = useTheme()
   const sentTransaction = useAppSelector((state) => selectSentTransactionByHash(state, txHash))
-  const powfi = getPowfiSdk()
   const onStakingTxConfirmed = useStakingQueriesAfterTxConfirmed()
-  const stakingContractAddress = useMemo(() => {
-    try {
-      return powfi?.staking.getConfig().xAlphTokenAddress ?? ''
-    } catch {
-      return ''
-    }
-  }, [powfi])
+  const stakingContractAddress = powfiSdk.staking.getConfig().xAlphTokenAddress
 
   const pendingTxPollingOptions = useMemo(() => {
     if (!sentTransaction || !stakingContractAddress || sentTransaction.toAddress !== stakingContractAddress) {

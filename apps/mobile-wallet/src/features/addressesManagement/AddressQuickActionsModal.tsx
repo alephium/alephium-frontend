@@ -1,7 +1,7 @@
 import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { openBrowserAsync } from 'expo-web-browser'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 
@@ -17,7 +17,6 @@ import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
-import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
@@ -103,33 +102,17 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const persistAddressSettings = usePersistAddressSettings()
-
-  const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
 
   if (!address) return
 
   const isDefaultAddress = address.isDefault
 
-  const handleDefaultPress = async () => {
+  const handleDefaultPress = () => {
     if (!address || address.isDefault) return
 
-    setDefaultAddressIsChanging(true)
-
-    try {
-      const newSettings = { ...address, isDefault: true }
-
-      await persistAddressSettings({ ...address, ...newSettings })
-      dispatch(addressSettingsSaved({ addressHash: address.hash, settings: newSettings }))
-
-      showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
-
-      sendAnalytics({ event: 'Set address as default', props: { origin: 'quickActions' } })
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Could not use address card default toggle' })
-    } finally {
-      setDefaultAddressIsChanging(false)
-    }
+    dispatch(addressSettingsSaved({ addressHash: address.hash, settings: { isDefault: true } }))
+    showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
+    sendAnalytics({ event: 'Set address as default', props: { origin: 'quickActions' } })
   }
 
   return isDefaultAddress ? (
@@ -141,7 +124,6 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
       title={t('Set as default')}
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
-      loading={defaultAddressIsChanging}
       color={address?.isDefault ? address.color : undefined}
       disabled={isDefaultAddress}
     />

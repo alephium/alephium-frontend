@@ -7,7 +7,7 @@ import { useAppSelector } from '~/hooks/redux'
 import useStakingContractConfig from './useStakingContractConfig'
 
 const usePendingStakingTransaction = () => {
-  const { xAlphTokenAddress: stakingContractAddress } = useStakingContractConfig()
+  const { stakingContractAddress } = useStakingContractConfig()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const pendingTransactions = useAppSelector(selectAllPendingSentTransactions)
 

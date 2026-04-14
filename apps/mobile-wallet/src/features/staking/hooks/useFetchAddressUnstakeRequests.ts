@@ -2,7 +2,7 @@ import { selectDefaultAddress } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
-import { getPowfiSdk } from '~/api/powfi'
+import { powfiSdk } from '~/api/powfi'
 import { useAppSelector } from '~/hooks/redux'
 
 export interface UnstakeRequest {
@@ -18,24 +18,23 @@ export interface UnstakeRequest {
 export const unstakeVaultRequestsQueryKeyRoot = ['unstakeVaultRequests'] as const
 
 const useFetchAddressUnstakeRequests = () => {
-  const powfi = getPowfiSdk()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const address = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined
-  const shouldFetch = !!powfi && !!address
+  const shouldFetch = !!address
 
   const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
-    queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfi?.network.id, address],
+    queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfiSdk.network.id, address],
     queryFn: async () => {
       const userAddress = address!
-      const activeIndexes = await powfi!.staking.getActiveUnstakeVaultIndexes(userAddress)
+      const activeIndexes = await powfiSdk.staking.getActiveUnstakeVaultIndexes(userAddress)
 
       if (!activeIndexes.length) return []
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            powfi!.staking.getClaimableAmount(userAddress, index),
-            powfi!.staking.getAlphUnstakeVaultState(userAddress, index)
+            powfiSdk.staking.getClaimableAmount(userAddress, index),
+            powfiSdk.staking.getAlphUnstakeVaultState(userAddress, index)
           ])
 
           return {

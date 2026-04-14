@@ -1,12 +1,7 @@
-import { getNetworkNameFromNetworkId } from '@alephium/shared'
+import { NetworkNames, networkSettingsPresets } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 
-import { getStakingNetworkId } from '~/api/powfi'
-import { useAppSelector } from '~/hooks/redux'
-
-const useIsStakingEnabled = () => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-
-  return getNetworkNameFromNetworkId(networkId) === getStakingNetworkId()
-}
+const useIsStakingEnabled = () =>
+  useCurrentlyOnlineNetworkId() === networkSettingsPresets[NetworkNames.testnet].networkId
 
 export default useIsStakingEnabled
