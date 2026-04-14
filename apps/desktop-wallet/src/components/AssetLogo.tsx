@@ -2,7 +2,6 @@ import { isFT, isListedFT, isNFT, TokenId } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { HelpCircle } from 'lucide-react'
 import { memo } from 'react'
-import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
 interface AssetLogoProps {
@@ -22,7 +21,7 @@ const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
   return (
     <AssetLogoStyled className={className} size={size} isSquare={isNFT(token)}>
       {image?.endsWith('.mp4') ? (
-        <ReactPlayer url={image} muted width={size} height={size} />
+        <LogoVideo src={image} autoPlay muted loop playsInline width={size} height={size} />
       ) : image ? (
         <LogoImage src={image} />
       ) : name ? (
@@ -51,6 +50,10 @@ const AssetLogoStyled = styled.div<Pick<AssetLogoProps, 'size'> & { isSquare: bo
 const LogoImage = styled.img`
   width: 100%;
   height: 100%;
+`
+
+const LogoVideo = styled.video`
+  object-fit: cover;
 `
 
 const Initials = styled.span<{ size: number }>`
