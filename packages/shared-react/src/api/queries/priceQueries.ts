@@ -2,9 +2,9 @@ import { FIVE_MINUTES_MS, is5XXError, PRICES_REFRESH_INTERVAL, throttledClient }
 import { queryOptions, skipToken } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { getQueryConfig } from '@/api/apiUtils'
-import { queryClient } from '@/api/queryClient'
+import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
+import { getQueryConfig } from '../../api/apiUtils'
+import { queryClient } from '../../api/queryClient'
 
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]

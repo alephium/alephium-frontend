@@ -43,14 +43,13 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
-          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
+          echo "Enter desktop wallet dir, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install --frozen-lockfile
           pnpm ci:build
           pnpm electron-builder --mac --universal --publish always
 
       - name: Upload notarization-error.log
-        if: always()
+        if: always() && startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: notarization-error-log
@@ -76,9 +75,8 @@ jobs:
           WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
           WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}
         run: |
-          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
+          echo "Enter desktop wallet dir, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install --frozen-lockfile
           pnpm ci:build
           pnpm electron-builder --windows --publish always
 
@@ -92,9 +90,8 @@ jobs:
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
         run: |
-          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
+          echo "Enter desktop wallet dir, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
-          pnpm install --frozen-lockfile
           pnpm ci:build
 
           # Only publish to Snapcraft for non-rc versions

@@ -2,15 +2,15 @@
   "name": "@alephium/shared-react",
   "version": "0.0.3",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "typecheck": "tsup",
-    "watch-dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo",
+    "clean": "rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts"
@@ -18,19 +18,17 @@
   "dependencies": {
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.21",
-    "@alephium/web3": "3.0.0-test.8",
+    "@alephium/web3": "3.0.0-test.9",
     "@tanstack/react-query": "^5.81.2",
-    "axios": "^1.13.5",
-    "lodash": "^4.17.23",
+    "axios": "1.15.0",
     "react": "^19.1.0",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "3.0.0-test.8",
+    "@alephium/walletconnect-provider": "3.0.0-test.9",
     "@types/react": "~19.1.10",
-    "tsup": "^8.4.0",
     "typescript": "~5.9.2"
   }
 }

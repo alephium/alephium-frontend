@@ -1,6 +1,5 @@
 import { calculateTokenAmountWorth } from '@alephium/shared'
 import { useFetchTokenPrice } from '@alephium/shared-react'
-import { isNumber } from 'lodash'
 
 import Amount, { AmountLoaderProps, FiatAmountProps } from '@/components/Amount'
 
@@ -15,7 +14,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals, ...props }: FTWorthAmou
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
   const worth =
-    totalBalance !== undefined && isNumber(tokenPrice)
+    totalBalance !== undefined && typeof tokenPrice === 'number'
       ? calculateTokenAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 

@@ -1,8 +1,8 @@
 import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import { useFetchAddressBalancesTokens } from '@/api/apiDataHooks/address/useFetchAddressBalancesTokens'
-import { useSharedSelector } from '@/redux'
+import { useFetchAddressBalancesTokens } from '../../../api/apiDataHooks/address/useFetchAddressBalancesTokens'
+import { useSharedSelector } from '../../../redux'
 
 export const useFetchAddressHiddenTokens = (addressHash: AddressHash) => {
   const hiddenTokensIds = useSharedSelector((s) => s.hiddenTokens.hiddenTokensIds)

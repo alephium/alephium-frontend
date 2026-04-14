@@ -2,26 +2,26 @@
   "name": "@alephium/keyring",
   "version": "0.0.1",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "watch-dev": "tsup --watch",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo coverage",
+    "clean": "rm -rf .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
-    "typecheck": "tsup"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@alephium/encryptor": "workspace:*",
     "@alephium/shared": "workspace:*",
-    "@alephium/web3": "3.0.0-test.8",
-    "@alephium/web3-wallet": "3.0.0-test.8",
+    "@alephium/web3": "3.0.0-test.9",
+    "@alephium/web3-wallet": "3.0.0-test.9",
     "@metamask/scure-bip39": "^2.1.1",
     "ethereum-cryptography": "^2.1.3"
   },

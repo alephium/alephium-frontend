@@ -7,7 +7,7 @@ import {
   getInputOutputBaseAddresses,
   hasPositiveAndNegativeAmounts,
   isAlphAmountReduced
-} from '@/transactions/transactionAmounts'
+} from '../transactions/transactionAmounts'
 import {
   getBaseAddressStr,
   getTxAddresses,
@@ -17,10 +17,10 @@ import {
   isExecuteScriptTx,
   isGrouplessAddressIntraTransfer,
   isWalletSelfTransfer
-} from '@/transactions/transactionUtils'
-import { AddressHash } from '@/types/addresses'
-import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
-import { uniq } from '@/utils/utils'
+} from '../transactions/transactionUtils'
+import { AddressHash } from '../types/addresses'
+import { ExecuteScriptTx, SentTransaction } from '../types/transactions'
+import { uniq } from '../utils/utils'
 
 export type TransactionInfoType2 =
   | 'pending'

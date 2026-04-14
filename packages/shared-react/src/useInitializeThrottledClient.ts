@@ -8,8 +8,8 @@ import {
 } from '@alephium/shared'
 import { useCallback, useEffect } from 'react'
 
-import { useSharedDispatch, useSharedSelector } from '@/redux'
-import { useInterval } from '@/useInterval'
+import { useSharedDispatch, useSharedSelector } from './redux'
+import { useInterval } from './useInterval'
 
 const CLIENT_INIT_RETRY_INTERVAL = 2000
 

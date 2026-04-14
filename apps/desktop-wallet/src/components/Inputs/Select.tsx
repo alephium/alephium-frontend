@@ -1,6 +1,5 @@
 import { colord } from 'colord'
 import { useInView } from 'framer-motion'
-import { isEqual } from 'lodash'
 import { SearchIcon } from 'lucide-react'
 import {
   KeyboardEvent as ReactKeyboardEvent,
@@ -95,7 +94,7 @@ function Select<T extends OptionValue>({
 
   const setInputValue = useCallback(
     (option: SelectOption<T>) => {
-      if (!value || !isEqual(option, value) || skipEqualityCheck) {
+      if (!value || JSON.stringify(option) !== JSON.stringify(value) || skipEqualityCheck) {
         onSelect(option.value)
         setValue(option)
 
@@ -124,7 +123,7 @@ function Select<T extends OptionValue>({
 
   useEffect(() => {
     // Controlled component
-    if ((controlledValue && !isEqual(controlledValue, value)) || skipEqualityCheck) {
+    if ((controlledValue && JSON.stringify(controlledValue) !== JSON.stringify(value)) || skipEqualityCheck) {
       setValue(controlledValue)
     }
   }, [controlledValue, setInputValue, skipEqualityCheck, value])

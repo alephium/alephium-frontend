@@ -5,11 +5,11 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "ESNext",
     "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "target": "es6"
+    "target": "ESNext"
   }
 }

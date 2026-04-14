@@ -8,7 +8,6 @@ import {
 import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { groupBy } from 'lodash'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
@@ -211,7 +210,16 @@ export const TransactionAmounts = ({ tx, referenceAddress, isLast, skipCaching }
   const infoType = useTransactionInfoType({ tx, referenceAddress, view: 'wallet' })
 
   const groupedFtAmounts = useMemo(
-    () => groupBy(fungibleTokens, (t) => (t.amount > 0 ? 'in' : 'out')),
+    () =>
+      fungibleTokens.reduce(
+        (groups, t) => {
+          const key = t.amount > 0 ? 'in' : 'out'
+          if (!groups[key]) groups[key] = []
+          groups[key].push(t)
+          return groups
+        },
+        {} as Record<string, typeof fungibleTokens>
+      ),
     [fungibleTokens]
   )
 

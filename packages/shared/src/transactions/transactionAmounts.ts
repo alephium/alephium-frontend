@@ -7,12 +7,12 @@ import {
   getTxAddresses,
   getTxInputsOutputs,
   isSameBaseAddress
-} from '@/transactions/transactionUtils'
-import { AddressHash } from '@/types/addresses'
-import { AssetAmount } from '@/types/assets'
-import { SignTransferTxModalProps } from '@/types/signTxModalTypes'
-import { AmountDeltas, ExecuteScriptTx, TransactionDirection } from '@/types/transactions'
-import { uniq } from '@/utils/utils'
+} from '../transactions/transactionUtils'
+import { AddressHash } from '../types/addresses'
+import { AssetAmount } from '../types/assets'
+import { SignTransferTxModalProps } from '../types/signTxModalTypes'
+import { AmountDeltas, ExecuteScriptTx, TransactionDirection } from '../types/transactions'
+import { uniq } from '../utils/utils'
 
 // TODO: Delete?
 export const getDirection = (

@@ -11,7 +11,6 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { explorer, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/api/explorer'
-import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
@@ -25,7 +24,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
 
   amount = alphAmount
 
-  const assetsMetadata = useAssetsMetadata(map(tokenAmounts, 'id'))
+  const assetsMetadata = useAssetsMetadata(tokenAmounts.map((x) => x.id))
 
   const getDirectionForGrouplessGroupTransfer = () =>
     isGrouplessAddressWithoutGroupIndex(addressHash) ? undefined : getDirection(tx, addressHash) // If at the groupless "level", don't show direction
@@ -100,9 +99,12 @@ type UTXO = {
 export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
 
-  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
-  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) =>
-    reduce(addressUtxos, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+  const utxosGroupedByAddress = Object.groupBy(validUtxos, (utxo) => utxo.address!)
+  const summed = Object.fromEntries(
+    Object.entries(utxosGroupedByAddress).map(([k, v]) => [
+      k,
+      (v ?? []).reduce((sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+    ])
   )
 
   return summed
@@ -111,18 +113,20 @@ export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount>
 export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
 
-  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
-  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) => {
-    const tokenSums: Record<Token['id'], TokenAmount> = {}
+  const utxosGroupedByAddress = Object.groupBy(validUtxos, (utxo) => utxo.address!)
+  const summed = Object.fromEntries(
+    Object.entries(utxosGroupedByAddress).map(([k, addressUtxos]) => {
+      const tokenSums: Record<Token['id'], TokenAmount> = {}
 
-    for (const utxo of addressUtxos) {
-      for (const token of utxo.tokens || []) {
-        tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
+      for (const utxo of addressUtxos ?? []) {
+        for (const token of utxo.tokens || []) {
+          tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
+        }
       }
-    }
 
-    return tokenSums
-  })
+      return [k, tokenSums]
+    })
+  )
 
   return summed
 }
@@ -136,7 +140,7 @@ export const calculateIoAmountsDelta = (
   const summedInputTokens = sumUpTokenAmounts(inputs)
   const summedOutputTokens = sumUpTokenAmounts(outputs)
 
-  const allAddresses = uniq([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])
+  const allAddresses = [...new Set([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])]
 
   const alphDeltas: Record<Address, AttoAlphAmount> = {}
   const tokenDeltas: Record<Address, Record<Token['id'], TokenAmount>> = {}
@@ -150,7 +154,7 @@ export const calculateIoAmountsDelta = (
 
     const inputTokens = summedInputTokens[address] || {}
     const outputTokens = summedOutputTokens[address] || {}
-    const allTokenIds = uniq([...Object.keys(inputTokens), ...Object.keys(outputTokens)])
+    const allTokenIds = [...new Set([...Object.keys(inputTokens), ...Object.keys(outputTokens)])]
 
     allTokenIds.forEach((tokenId) => {
       const deltaToken = (BigInt(outputTokens[tokenId] || 0) - BigInt(inputTokens[tokenId] || 0)).toString()

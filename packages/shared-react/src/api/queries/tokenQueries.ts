@@ -16,10 +16,10 @@ import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { convertTokenDecimalsToNumber, getQueryConfig, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
-import { queryClient } from '@/api/queryClient'
+import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
+import { combineIsLoading } from '../../api/apiDataHooks/apiDataHooksUtils'
+import { convertTokenDecimalsToNumber, getQueryConfig, matchesNFTTokenUriMetaDataSchema } from '../../api/apiUtils'
+import { queryClient } from '../../api/queryClient'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 

@@ -1,15 +1,14 @@
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
-import addressesSlice from '@/store/addresses/addressesSlice'
-import clientsSlice from '@/store/clients/clientsSlice'
-import hiddenTokensSlice from '@/store/hiddenTokens/hiddenTokensSlice'
-import networkSlice from '@/store/network/networkSlice'
-import sentTransactionsSlice from '@/store/sentTransactions/sentTransactionsSlice'
-import { AddressesState, ClientsState, SentTransactionsState } from '@/types'
-import { HiddenTokensState } from '@/types/assets'
-import { NetworkState } from '@/types/network'
-import { SharedSettings } from '@/types/sharedSettings'
-
+import addressesSlice from '../store/addresses/addressesSlice'
+import clientsSlice from '../store/clients/clientsSlice'
+import hiddenTokensSlice from '../store/hiddenTokens/hiddenTokensSlice'
+import networkSlice from '../store/network/networkSlice'
+import sentTransactionsSlice from '../store/sentTransactions/sentTransactionsSlice'
+import { AddressesState, ClientsState, SentTransactionsState } from '../types'
+import { HiddenTokensState } from '../types/assets'
+import { NetworkState } from '../types/network'
+import { SharedSettings } from '../types/sharedSettings'
 import sharedSettingsSlice from './sharedSettings/sharedSettingsSlice'
 
 export const sharedReducer = {

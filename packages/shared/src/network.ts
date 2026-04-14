@@ -1,6 +1,4 @@
-import { clone } from 'lodash'
-
-import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from '@/types/network'
+import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from './types/network'
 
 export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   [NetworkNames.mainnet]: {
@@ -23,7 +21,7 @@ export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   }
 }
 
-export const defaultNetworkSettings = clone(networkSettingsPresets.mainnet) as NetworkSettings
+export const defaultNetworkSettings = { ...networkSettingsPresets.mainnet } as NetworkSettings
 
 export const isEqualNetwork = (a: NetworkSettings, b: NetworkSettings): boolean =>
   a.nodeHost === b.nodeHost && a.explorerUrl === b.explorerUrl && a.explorerApiHost === b.explorerApiHost

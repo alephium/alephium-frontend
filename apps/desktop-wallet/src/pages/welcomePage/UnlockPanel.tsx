@@ -1,4 +1,3 @@
-import { maxBy } from 'lodash'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +33,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
 
   const [selectedWallet, setSelectedWallet] = useState<StoredEncryptedWallet['id']>(
-    maxBy(wallets, 'lastUsed')?.id || wallets[0]?.id
+    wallets.reduce((max, w) => ((w.lastUsed ?? 0) > (max.lastUsed ?? 0) ? w : max), wallets[0])?.id || wallets[0]?.id
   )
   const selectedWalletOption = walletOptions.find((option) => option.value === selectedWallet)
   const [password, setPassword] = useState('')

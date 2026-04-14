@@ -9,10 +9,10 @@ import {
   defaultAddressChanged,
   initializeViewOnlyAddress,
   newAddressesSaved
-} from '@/store/addresses/addressesActions'
-import { addressesAdapter } from '@/store/addresses/addressesAdapters'
-import { addressSettingsSavedReducer, updateOldDefaultAddress } from '@/store/addresses/addressesReducers'
-import { appReset } from '@/store/global'
+} from '../../store/addresses/addressesActions'
+import { addressesAdapter } from '../../store/addresses/addressesAdapters'
+import { addressSettingsSavedReducer, updateOldDefaultAddress } from '../../store/addresses/addressesReducers'
+import { appReset } from '../../store/global'
 import {
   activeWalletDeleted,
   appLaunchedWithLastUsedWallet,
@@ -20,9 +20,9 @@ import {
   passphraseInitialAddressGenerated,
   walletLocked,
   walletUnlockedMobile
-} from '@/store/wallets/walletActions'
-import { Address, AddressBase, AddressesState } from '@/types/addresses'
-import { addressMetadataIncludesHash } from '@/utils/addresses'
+} from '../../store/wallets/walletActions'
+import { Address, AddressBase, AddressesState } from '../../types/addresses'
+import { addressMetadataIncludesHash } from '../../utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState()
 

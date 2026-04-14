@@ -1,12 +1,12 @@
 import { ApiBalances, ListedFT, TokenId, UnlistedToken } from '@alephium/shared'
 import { createContext, ReactNode, useContext, useMemo } from 'react'
 
-import { useFetchTokensSeparatedByType } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
-import { useMergeAllTokensBalances } from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
-import { ApiContextProps } from '@/api/apiTypes'
-import { useSharedSelector } from '@/redux'
+import { useFetchTokensSeparatedByType } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByType'
+import { useMergeAllTokensBalances } from '../../../api/apiDataHooks/utils/useMergeAllTokensBalances'
+import { useFetchWalletBalancesAlph } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensArray } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
+import { ApiContextProps } from '../../../api/apiTypes'
+import { useSharedSelector } from '../../../redux'
 
 type Data = {
   listedFts: Array<ListedFT & ApiBalances & { id: TokenId }>

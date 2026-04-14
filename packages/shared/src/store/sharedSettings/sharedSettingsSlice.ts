@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { fiatCurrencyChanged, storedSharedSettingsLoaded } from '@/store/sharedSettings/sharedSettingsActions'
-import { SharedSettings } from '@/types/sharedSettings'
+import { fiatCurrencyChanged, storedSharedSettingsLoaded } from '../../store/sharedSettings/sharedSettingsActions'
+import { SharedSettings } from '../../types/sharedSettings'
 
 const initialState: SharedSettings = {
   fiatCurrency: 'USD'

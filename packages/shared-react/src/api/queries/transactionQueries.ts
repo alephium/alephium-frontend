@@ -10,10 +10,10 @@ import {
 import { explorer as e, node as n, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { getQueryConfig } from '@/api/apiUtils'
-import { queryClient } from '@/api/queryClient'
-import { invalidateAddressQueries, invalidateWalletQueries } from '@/api/queryInvalidation'
+import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
+import { getQueryConfig } from '../../api/apiUtils'
+import { queryClient } from '../../api/queryClient'
+import { invalidateAddressQueries, invalidateWalletQueries } from '../../api/queryInvalidation'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash

@@ -9,14 +9,14 @@ import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 
-import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
-import { nodeTransactionStatusQuery } from '@/api/queries/transactionQueries'
-import { queryClient } from '@/api/queryClient'
-import { invalidateAddressQueries } from '@/api/queryInvalidation'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
-import { useIsExplorerOffline } from '@/network/useIsServerOffline'
-import { useSharedDispatch, useSharedSelector } from '@/redux'
+import { useFetchPendingTransaction } from '../../api/apiDataHooks/transaction/useFetchPendingTransaction'
+import { nodeTransactionStatusQuery } from '../../api/queries/transactionQueries'
+import { queryClient } from '../../api/queryClient'
+import { invalidateAddressQueries } from '../../api/queryInvalidation'
+import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
+import { useIsExplorerOffline } from '../../network/useIsServerOffline'
+import { useSharedDispatch, useSharedSelector } from '../../redux'
 
 export type UsePendingTxPollingOptions = {
   /** Invoked when the tx is observed as confirmed on the explorer or node (after status is dispatched to the store). */

@@ -1,6 +1,6 @@
-import { upperFirst } from 'lodash'
-
 import regionByKeys from './regions.json'
+
+const upperFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 // See https://github.com/LedgerHQ/ledger-live/blob/3308c61ab3749b293167bb7485360a66187ae9eb/apps/ledger-live-mobile/src/screens/Settings/General/Region.ts
 export const regionOptions = Object.keys(regionByKeys)

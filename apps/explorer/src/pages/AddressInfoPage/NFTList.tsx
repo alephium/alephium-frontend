@@ -2,7 +2,6 @@ import { NFT } from '@alephium/shared'
 import { useFetchAddressNfts } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
-import { groupBy, orderBy } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiGhostLine } from 'react-icons/ri'
@@ -29,7 +28,7 @@ const NFTList = ({ addressStr }: NFTListProps) => {
 
   const consultedNft = nfts?.find((nft) => nft.id === consultedNftId)
 
-  let NFTsGroupedByCollection = groupBy(nfts, 'collectionId')
+  let NFTsGroupedByCollection = Object.groupBy(nfts, (nft) => String(nft.collectionId))
 
   const { undefined: undefinedCollectionNfts, ...rest } = NFTsGroupedByCollection
   NFTsGroupedByCollection = undefinedCollectionNfts ? { ...rest, undefined: undefinedCollectionNfts } : rest // Move undefined collection to the end
@@ -89,7 +88,7 @@ interface NFTListComponentProps {
 }
 
 const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => {
-  const orderedNFTs = orderBy(nfts, (nft) => !nft.collectionId)
+  const orderedNFTs = [...(nfts ?? [])].sort((a, b) => Number(!a.collectionId) - Number(!b.collectionId))
 
   return (
     <NFTListStyled>

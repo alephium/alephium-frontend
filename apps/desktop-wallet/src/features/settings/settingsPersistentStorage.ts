@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { deepMerge } from '@alephium/shared'
 import posthog from 'posthog-js'
 
 import { defaultSettings } from '@/features/settings/settingsConstants'
@@ -18,7 +18,7 @@ class SettingsStorage {
       // Merge default settings with rawSettings in case of new key(s) being added
       const parsedSettings = JSON.parse(rawSettings) as Settings
 
-      return merge({}, defaultSettings, parsedSettings)
+      return deepMerge<Settings>({} as Settings, defaultSettings, parsedSettings)
     } catch (e) {
       console.error(e)
       posthog.capture('Error', { message: 'Parsing stored settings' })

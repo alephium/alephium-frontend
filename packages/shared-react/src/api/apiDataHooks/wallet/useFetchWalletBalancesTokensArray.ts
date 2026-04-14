@@ -1,10 +1,10 @@
 import { ApiBalances, TokenApiBalances, TokenId } from '@alephium/shared'
 import { UseQueryResult } from '@tanstack/react-query'
 
-import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchWalletBalancesTokens } from '@/api/apiDataHooks/utils/useFetchWalletBalancesTokens'
-import { createDataContext } from '@/api/context/createDataContext'
-import { AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { combineError, combineIsFetching, combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { useFetchWalletBalancesTokens } from '../../../api/apiDataHooks/utils/useFetchWalletBalancesTokens'
+import { createDataContext } from '../../../api/context/createDataContext'
+import { AddressTokensBalancesQueryFnData } from '../../../api/queries/addressQueries'
 
 const combineBalancesToArray = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
   const tokenBalancesByToken = results.reduce(

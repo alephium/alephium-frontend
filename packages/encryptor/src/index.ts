@@ -1,6 +1,7 @@
 import { decrypt as metamaskDecrypt, encrypt, EncryptionResult } from '@metamask/browser-passworder'
 
-export { encrypt, EncryptionResult }
+export { encrypt }
+export type { EncryptionResult }
 
 // We used to encrypt data using Node.js modules in @alephium/shared-crypto by copying Metamask's approach (see
 // https://github.com/alephium/js-sdk/pull/133#issuecomment-1328787203).

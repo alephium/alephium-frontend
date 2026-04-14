@@ -1,5 +1,4 @@
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { map } from 'lodash'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -13,7 +12,7 @@ interface GroupSelectModalProps {
   onSelect: (group?: number) => void
 }
 
-const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
+const groupSelectOptions = Array.from({ length: TOTAL_NUMBER_OF_GROUPS + 1 }, (_, i) => ({
   value: i === 0 ? undefined : i - 1,
   label: i === 0 ? i18n.t('Groupless') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
 }))

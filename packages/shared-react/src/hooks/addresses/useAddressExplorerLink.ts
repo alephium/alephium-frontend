@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 
-import { useSharedSelector } from '@/redux'
+import { useSharedSelector } from '../../redux'
 
 export const useAddressExplorerLink = (addressHash: AddressHash) => {
   const explorerUrl = useSharedSelector((s) => s.network.settings.explorerUrl)

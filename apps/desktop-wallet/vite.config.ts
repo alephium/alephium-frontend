@@ -3,6 +3,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron/simple'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
@@ -25,6 +26,9 @@ export default defineConfig({
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
   plugins: [
+    // Polyfill Buffer for the renderer process where Node.js globals are unavailable.
+    // Needed because @ledgerhq/devices/hid-framing uses Buffer at module load time.
+    nodePolyfills({ include: ['buffer'] }),
     react(),
     viteTsconfigPaths(),
     svgrPlugin(),

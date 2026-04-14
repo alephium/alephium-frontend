@@ -1,7 +1,6 @@
 import { bip39Words } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -176,7 +175,14 @@ const getRandomizedOptions = (mnemonicWords: string[], allowedWords: string[]) =
     randomWords = randomWords.filter((word) => word !== firstRandomWord)
     const secondRandomWord = randomWords[Math.floor(Math.random() * randomWords.length)]
 
-    return shuffle([mnemonicWord, firstRandomWord, secondRandomWord])
+    const shuffled = [mnemonicWord, firstRandomWord, secondRandomWord]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = shuffled[i]
+      shuffled[i] = shuffled[j]
+      shuffled[j] = temp
+    }
+    return shuffled
   })
 
 const ModalContent = styled.View`

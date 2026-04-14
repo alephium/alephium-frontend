@@ -6,7 +6,8 @@
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
     "skipLibCheck": true
   }
 }

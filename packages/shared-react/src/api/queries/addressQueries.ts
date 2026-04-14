@@ -14,8 +14,8 @@ import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
-import { getFulfilledValues, getQueryConfig } from '@/api/apiUtils'
+import { separateTokensByListing } from '../../api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { getFulfilledValues, getQueryConfig } from '../../api/apiUtils'
 import {
   combineTokenTypes,
   ftListQuery,
@@ -23,9 +23,9 @@ import {
   nftQuery,
   tokenQuery,
   tokenTypeQuery
-} from '@/api/queries/tokenQueries'
-import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import { queryClient } from '@/api/queryClient'
+} from '../../api/queries/tokenQueries'
+import { AddressLatestTransactionQueryProps } from '../../api/queries/transactionQueries'
+import { queryClient } from '../../api/queryClient'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash

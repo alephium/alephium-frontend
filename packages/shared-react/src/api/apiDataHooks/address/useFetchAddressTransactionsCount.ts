@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { addressTransactionsCountQuery } from '@/api/queries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { addressTransactionsCountQuery } from '../../../api/queries'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 export const useFetchAddressTransactionsCount = (addressStr: string) => {
   const networkId = useCurrentlyOnlineNetworkId()

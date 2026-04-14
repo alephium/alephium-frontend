@@ -1,9 +1,9 @@
 import { TokenId } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { nftQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { SkipProp } from '../../../api/apiDataHooks/apiDataHooksTypes'
+import { nftQuery } from '../../../api/queries/tokenQueries'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 interface UseNFTProps extends SkipProp {
   id: TokenId

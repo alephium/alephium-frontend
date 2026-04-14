@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { capitalize } from 'lodash'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -25,7 +24,7 @@ const NetworkRow = () => {
 
   return (
     <Row title={t('Current network')} onPress={openNetworkModal}>
-      <AppText bold>{capitalize(currentNetworkName)}</AppText>
+      <AppText bold>{currentNetworkName.charAt(0).toUpperCase() + currentNetworkName.slice(1).toLowerCase()}</AppText>
     </Row>
   )
 }

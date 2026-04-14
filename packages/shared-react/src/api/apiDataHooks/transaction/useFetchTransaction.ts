@@ -1,12 +1,12 @@
 import { isRichTransaction, selectSentTransactionByHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
-import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
-import { useFetchPendingTransaction } from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
-import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network'
-import { useSharedSelector } from '@/redux'
+import { UseFetchTransactionProps } from '../../../api/apiDataHooks/transaction/transactionTypes'
+import { useFetchPendingTransaction } from '../../../api/apiDataHooks/transaction/useFetchPendingTransaction'
+import { confirmedTransactionQuery } from '../../../api/queries/transactionQueries'
+import { useUnsortedAddressesHashes } from '../../../hooks/addresses/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useSharedSelector } from '../../../redux'
 
 export const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) => {
   const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))

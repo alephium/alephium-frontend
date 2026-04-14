@@ -1,6 +1,6 @@
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { SentTransaction } from '@/types/transactions'
+import { SentTransaction } from '../../types/transactions'
 
 export const sentTransactionsAdapter = createEntityAdapter<SentTransaction>({
   selectId: (transaction) => transaction.hash,

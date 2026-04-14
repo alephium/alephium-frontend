@@ -1,8 +1,8 @@
-import { useFetchListedFtsWorth } from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
-import { useFetchTokensSeparatedByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
-import { useMergeAllTokensBalances } from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
+import { useFetchListedFtsWorth } from '../../../api/apiDataHooks/utils/useFetchListedFtsWorth'
+import { useFetchTokensSeparatedByListing } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { useMergeAllTokensBalances } from '../../../api/apiDataHooks/utils/useMergeAllTokensBalances'
+import { useFetchWalletBalancesAlph } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensArray } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 export const useFetchWalletWorth = () => {
   const {

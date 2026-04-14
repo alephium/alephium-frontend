@@ -6,10 +6,10 @@ import {
   node as n
 } from '@alephium/web3'
 
-import { AddressHash } from '@/types/addresses'
-import { AssetAmount, TokenApiBalances } from '@/types/assets'
-import { ExecuteScriptTx, SentTransaction } from '@/types/transactions'
-import { uniq } from '@/utils/utils'
+import { AddressHash } from '../types/addresses'
+import { AssetAmount, TokenApiBalances } from '../types/assets'
+import { ExecuteScriptTx, SentTransaction } from '../types/transactions'
+import { uniq } from '../utils/utils'
 
 export const isConfirmedTx = (
   tx: e.Transaction | e.PendingTransaction | e.MempoolTransaction | SentTransaction | ExecuteScriptTx
