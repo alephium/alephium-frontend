@@ -1,12 +1,12 @@
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchSortListedFtsByWorth } from '@/api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
-import { useSortUnlistedFtsAlphabetically } from '@/api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
-import { useFetchWalletTokensByType } from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
-import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { combineDefined } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { useFetchSortListedFtsByWorth } from '../../../api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
+import { useSortUnlistedFtsAlphabetically } from '../../../api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
+import { useFetchWalletTokensByType } from '../../../api/apiDataHooks/wallet/useFetchWalletTokensByType'
+import { fungibleTokenMetadataQuery } from '../../../api/queries/tokenQueries'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 export const useFetchWalletFtsSorted = () => {
   const networkId = useCurrentlyOnlineNetworkId()

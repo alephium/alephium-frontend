@@ -1,6 +1,6 @@
-import { useMergeAllTokensBalances } from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
+import { useMergeAllTokensBalances } from '../../../api/apiDataHooks/utils/useMergeAllTokensBalances'
+import { useFetchWalletBalancesAlph } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensArray } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 interface UseFetchWalletBalancesProps {
   includeAlph?: boolean

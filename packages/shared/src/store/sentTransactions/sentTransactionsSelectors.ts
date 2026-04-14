@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 
-import { sentTransactionsAdapter } from '@/store/sentTransactions/sentTransactionsAdapter'
-import { SharedRootState } from '@/store/store'
+import { sentTransactionsAdapter } from '../../store/sentTransactions/sentTransactionsAdapter'
+import { SharedRootState } from '../../store/store'
 
 export const { selectAll: selectAllSentTransactions, selectById: selectSentTransactionByHash } =
   sentTransactionsAdapter.getSelectors<SharedRootState>((state) => state.sentTransactions)

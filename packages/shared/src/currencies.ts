@@ -1,4 +1,4 @@
-import { Currency } from '@/types/currencies'
+import { Currency } from './types/currencies'
 
 type CurrencyData = {
   name: string

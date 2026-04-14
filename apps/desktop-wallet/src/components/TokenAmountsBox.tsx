@@ -8,7 +8,6 @@ import {
 } from '@alephium/shared'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
 import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -161,7 +160,7 @@ interface FiatAmountProps {
 const FiatAmount = ({ symbol, amount, decimals }: FiatAmountProps) => {
   const { data: tokenPrice, isLoading: isLoadingTokenPrice } = useFetchTokenPrice(symbol)
 
-  const worth = isNumber(tokenPrice) ? calculateTokenAmountWorth(amount, tokenPrice, decimals) : undefined
+  const worth = typeof tokenPrice === 'number' ? calculateTokenAmountWorth(amount, tokenPrice, decimals) : undefined
 
   return <FiatAmountStyled value={worth} isFiat isLoading={isLoadingTokenPrice} />
 }

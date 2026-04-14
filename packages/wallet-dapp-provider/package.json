@@ -6,7 +6,17 @@
   "module": "lib/provider.js",
   "browser": "lib/provider.umd.json",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./lib/provider.js",
+      "require": "./lib/provider.cjs.js",
+      "browser": "./lib/provider.umd.json"
+    },
+    "./lib/provider.umd.json": "./lib/provider.umd.json"
+  },
   "files": [
+    "lib",
     "dist"
   ],
   "type": "module",
@@ -16,33 +26,26 @@
     "lint": "eslint . --ext .ts --max-warnings=0 --ignore-pattern 'dist/**'",
     "lint:fix": "eslint . --fix --ext .ts --ignore-pattern 'dist/**'",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist .turbo coverage",
+    "clean": "rm -rf lib dist .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@alephium/get-extension-wallet": "3.0.0-test.9",
-    "@alephium/web3": "3.0.0-test.9",
-    "lodash.isplainobject": "4.0.6"
+    "@alephium/web3": "3.0.0-test.9"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/events": "^3.0.3",
-    "@types/jest": "^29.4.0",
-    "@types/lodash.isplainobject": "^4",
     "@types/node": "^20.14.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.48.0",
-    "jest": "^29.7.0",
-    "rollup": "^4.12.1",
+    "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-esbuild": "^6.1.1",
-    "ts-jest": "^29.2.5",
     "tslib": "^2.3.1",
-    "tsup": "^8.4.0",
     "typescript": "~5.9.2"
   }
 }

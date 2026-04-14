@@ -8,7 +8,7 @@ import {
   encryptMnemonic,
   Keyring,
   keyring
-} from '@/index'
+} from '../src/index'
 
 const valid24WordMnemonicString =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'

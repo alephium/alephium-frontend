@@ -1,4 +1,3 @@
-import { upperFirst } from 'lodash'
 import { useMemo } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
@@ -27,8 +26,11 @@ const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Loc
   const regionDisplayName = new window.Intl.DisplayNames([languageLocale], {
     type: 'region'
   }).of(region)
-  const labelPrefix = upperFirst(regionDisplayName)
-  const labelSuffix = regionDisplayName ? ` (${upperFirst(languageDisplayName)})` : ''
+  const labelPrefix = regionDisplayName ? regionDisplayName.charAt(0).toUpperCase() + regionDisplayName.slice(1) : ''
+  const labelSuffix =
+    regionDisplayName && languageDisplayName
+      ? ` (${languageDisplayName.charAt(0).toUpperCase() + languageDisplayName.slice(1)})`
+      : ''
   const label = `${labelPrefix}${labelSuffix}`
 
   return {

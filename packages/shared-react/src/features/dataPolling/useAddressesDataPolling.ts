@@ -4,9 +4,9 @@ import {
 } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
-import { useFetchAddressesHashesSplitByUseFrequency } from '@/hooks/addresses/useAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { addressLatestTransactionQuery } from '../../api/queries/transactionQueries'
+import { useFetchAddressesHashesSplitByUseFrequency } from '../../hooks/addresses/useAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
 
 export const useAddressesDataPolling = () => {
   const { data: splitAddressHashes } = useFetchAddressesHashesSplitByUseFrequency()

@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { NetworkName, NetworkPreset, NetworkSettings } from '@/types/network'
+import { NetworkName, NetworkPreset, NetworkSettings } from '../../types/network'
 
 export const networkPresetSwitched = createAction<NetworkPreset>('network/networkPresetSwitched')
 

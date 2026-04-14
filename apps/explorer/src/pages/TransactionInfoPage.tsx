@@ -3,7 +3,6 @@ import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { PerChainHeight } from '@alephium/web3/api/explorer'
 import { useQuery } from '@tanstack/react-query'
-import _, { sortBy, uniq } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
@@ -86,10 +85,9 @@ const TransactionInfoPage = () => {
 
   const { data: chainHeights } = useQuery(queries.infos.all.heights())
 
-  const assetIds = _(confirmedTxInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
-    .uniq()
-    .compact()
-    .value()
+  const assetIds = [...new Set(confirmedTxInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))].filter(
+    (id): id is string => !!id
+  )
 
   const txChain = chainHeights?.find(
     (c: PerChainHeight) => c.chainFrom === txBlock?.chainFrom && c.chainTo === txBlock.chainTo
@@ -103,7 +101,7 @@ const TransactionInfoPage = () => {
   )
 
   const tokenMetadataInvolved = useAssetsMetadata(assetIds)
-  const addressesInvolved = uniq([...Object.keys(alphDeltaAmounts), ...Object.keys(tokenDeltaAmounts)])
+  const addressesInvolved = [...new Set([...Object.keys(alphDeltaAmounts), ...Object.keys(tokenDeltaAmounts)])]
 
   const getSortedTokens = useCallback(
     (tokenIds: string[]) => {
@@ -125,13 +123,19 @@ const TransactionInfoPage = () => {
         return { tokenId }
       })
 
-      return sortBy(unsorted, [
-        (v) => !v.type,
-        (v) => !v.verified,
-        (v) => v.type === 'non-fungible',
-        (v) => v.type === 'fungible',
-        (v) => v.title
-      ])
+      return [...unsorted].sort((a, b) => {
+        const criteria = [
+          Number(!a.type) - Number(!b.type),
+          Number(!a.verified) - Number(!b.verified),
+          Number(a.type === 'non-fungible') - Number(b.type === 'non-fungible'),
+          Number(a.type === 'fungible') - Number(b.type === 'fungible'),
+          (a.title ?? '').localeCompare(b.title ?? '')
+        ]
+        for (const c of criteria) {
+          if (c !== 0) return c
+        }
+        return 0
+      })
     },
     [tokenMetadataInvolved.fungibleTokens, tokenMetadataInvolved.nfts]
   )

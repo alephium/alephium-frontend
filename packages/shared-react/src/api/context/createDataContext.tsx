@@ -1,7 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query'
 import { createContext, ReactNode, useContext, useMemo } from 'react'
 
-import { ApiContextProps } from '@/api/apiTypes'
+import { ApiContextProps } from '../../api/apiTypes'
 
 type CombineFn<TQueryFnData, TData> = (results: UseQueryResult<TQueryFnData>[]) => ApiContextProps<TData>
 

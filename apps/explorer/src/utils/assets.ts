@@ -1,5 +1,4 @@
 import { ALPH } from '@alephium/token-list'
-import { groupBy, map, mapValues } from 'lodash'
 
 import { AssetBase, AssetType, VerifiedFungibleTokenMetadata } from '@/types/assets'
 
@@ -14,10 +13,8 @@ const assetTypeMap: Record<NonNullable<AssetType> | 'unknown', AssetTypeMapValue
 type AssetIdCategories = Record<AssetTypeMapValues, string[]>
 
 export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategories => {
-  const categorizedAssets = mapValues(
-    groupBy(assets, (asset) => assetTypeMap[asset.type || 'unknown']),
-    (assetsGroup) => map(assetsGroup, 'id')
-  )
+  const grouped = Object.groupBy(assets, (asset) => assetTypeMap[asset.type || 'unknown'])
+  const categorizedAssets = Object.fromEntries(Object.entries(grouped).map(([k, v]) => [k, (v ?? []).map((a) => a.id)]))
 
   return {
     fungibleTokenIds: categorizedAssets.fungibleTokenIds || [],

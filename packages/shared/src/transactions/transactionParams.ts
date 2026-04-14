@@ -19,12 +19,12 @@ import {
   SignTransferTxResult
 } from '@alephium/web3'
 
-import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '@/constants'
-import { getTransactionAssetAmounts } from '@/transactions/transactionAmounts'
-import { AddressHash, AddressWithGroup } from '@/types/addresses'
-import { TokenId } from '@/types/assets'
-import { SignChainedTxModalProps, SignChainedTxModalResult } from '@/types/signTxModalTypes'
-import { SendFlowData, SweepTxParams, TransactionParams } from '@/types/transactions'
+import { MAXIMAL_GAS_AMOUNT, MAXIMAL_GAS_FEE } from '../constants'
+import { getTransactionAssetAmounts } from '../transactions/transactionAmounts'
+import { AddressHash, AddressWithGroup } from '../types/addresses'
+import { TokenId } from '../types/assets'
+import { SignChainedTxModalProps, SignChainedTxModalResult } from '../types/signTxModalTypes'
+import { SendFlowData, SweepTxParams, TransactionParams } from '../types/transactions'
 
 export const getChainedTxPropsFromSignChainedTxParams = (
   txParams: Array<SignChainedTxParams>,

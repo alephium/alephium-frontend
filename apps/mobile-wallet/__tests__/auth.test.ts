@@ -4,11 +4,9 @@ import { BiometricAuthenticationStatus, tryLocalAuthenticate } from '~/hooks/use
 
 // Copied from Uniswap
 
-jest.mock('expo-local-authentication')
-
-const mockedHasHardwareAsync = <jest.MockedFunction<typeof hasHardwareAsync>>hasHardwareAsync
-const mockedIsEnrolledAsync = <jest.MockedFunction<typeof isEnrolledAsync>>isEnrolledAsync
-const mockedAuthenticateAsync = <jest.MockedFunction<typeof authenticateAsync>>authenticateAsync
+const mockedHasHardwareAsync = vi.mocked(hasHardwareAsync)
+const mockedIsEnrolledAsync = vi.mocked(isEnrolledAsync)
+const mockedAuthenticateAsync = vi.mocked(authenticateAsync)
 
 describe(tryLocalAuthenticate, () => {
   it('checks hardware compatibility', async () => {

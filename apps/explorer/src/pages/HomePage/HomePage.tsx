@@ -3,7 +3,6 @@ import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
-import { round } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageVisibility } from 'react-page-visibility'
@@ -166,7 +165,7 @@ const HomePage = () => {
             </Card>
             <Card label={t('Avg. block time')} isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
-                primary={avgBlockTime.value ? `${round(avgBlockTime.value / 1000, 1)}s` : '-'}
+                primary={avgBlockTime.value ? `${Math.round((avgBlockTime.value / 1000) * 10) / 10}s` : '-'}
                 secondary={t('of all shards')}
               />
             </Card>

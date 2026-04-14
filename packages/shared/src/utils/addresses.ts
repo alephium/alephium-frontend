@@ -5,7 +5,7 @@ import {
   AddressStoredMetadataWithHash,
   AddressStoredMetadataWithoutHash,
   GrouplessAddress
-} from '@/types/addresses'
+} from '../types/addresses'
 
 export const findNextAvailableAddressIndex = (startIndex?: number, skipIndexes: number[] = []): number => {
   if (startIndex === undefined) return 0

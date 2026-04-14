@@ -3,8 +3,8 @@ import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { getQueryConfig } from '@/api'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { getQueryConfig } from '../../api'
+import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
 
 export const useFetchNftCollection = (collectionId: string) => {
   const networkId = useCurrentlyOnlineNetworkId()

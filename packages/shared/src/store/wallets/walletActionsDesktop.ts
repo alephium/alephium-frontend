@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { ActiveWalletDesktop } from '@/types'
+import { ActiveWalletDesktop } from '../../types'
 
 export const walletUnlockedDesktop = createAction<ActiveWalletDesktop>('wallets/walletUnlockedDesktop')
 

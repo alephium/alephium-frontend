@@ -4,8 +4,8 @@ import { InfiniteData } from '@tanstack/react-query'
 import {
   AddressTransactionsInfiniteQueryPageData,
   WalletTransactionsInfiniteQueryPageParam
-} from '@/api/queries/transactionQueries'
-import { queryClient } from '@/api/queryClient'
+} from '../api/queries/transactionQueries'
+import { queryClient } from '../api/queryClient'
 
 // Queries need to be invalidated in order of dependency
 export const invalidateAddressQueries = async (addressHash: AddressHash) => {

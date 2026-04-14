@@ -1,4 +1,4 @@
-import { AddressHash } from '@/types'
+import { AddressHash } from '../types'
 
 const ALPH_CODE = 'alph_alph'
 const ONRAMPER_CLIENT_UUID = 'pk_prod_01JJSAZY2D3XSZ614FKBC5EXYE'

@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import http, { IncomingMessage } from 'node:http'
 import https from 'node:https'
 
-import { uniq } from 'lodash'
 import path from 'path'
 
 const pathsToUIRelatedCode = [
@@ -50,7 +49,7 @@ it('has all valid links in the UI', async () => {
     .flatMap((x) => x)
     .filter((link) => link !== null)
     .filter((link) => link && link.match(/localhost/) === null)
-  const linksDedup = uniq(links).filter((link) => link !== null) as string[]
+  const linksDedup = [...new Set(links)].filter((link) => link !== null) as string[]
 
   linksDedup.forEach((link) => {
     request(link, ({ statusCode }) =>

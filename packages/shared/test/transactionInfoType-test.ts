@@ -1,13 +1,12 @@
 import { explorer as e } from '@alephium/web3'
 
+import { getTransactionInfoType } from '../src/transactions'
 import {
   getTransactionDestinationAddresses,
   getTransactionOriginAddresses,
   isAirdrop,
   isBidirectionalTransfer
-} from '@/transactions/transactionInfoType'
-
-import { getTransactionInfoType } from '../src/transactions'
+} from '../src/transactions/transactionInfoType'
 import transactions from './fixtures/transactions.json'
 
 const ONE = '1000000000000000000'

@@ -1,9 +1,9 @@
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import SignClient from '@walletconnect/sign-client'
 
-import { networkSettingsPresets } from '@/network'
-import { NetworkPreset, NetworkSettings } from '@/types/network'
-import { SessionProposalEvent } from '@/types/walletConnect'
+import { networkSettingsPresets } from '../network'
+import { NetworkPreset, NetworkSettings } from '../types/network'
+import { SessionProposalEvent } from '../types/walletConnect'
 
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
@@ -17,8 +17,7 @@ export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) =
 
   // WalletConnect 2.21.6+ deprecated requiredNamespaces and auto-moves them to optionalNamespaces.
   // Check optionalNamespaces first, fall back to requiredNamespaces for older dApps.
-  const requiredNamespace =
-    optionalNamespaces?.[PROVIDER_NAMESPACE] ?? requiredNamespaces?.[PROVIDER_NAMESPACE]
+  const requiredNamespace = optionalNamespaces?.[PROVIDER_NAMESPACE] ?? requiredNamespaces?.[PROVIDER_NAMESPACE]
   const requiredChains = requiredNamespace ? requiredNamespace.chains : undefined
   const requiredChainInfo = requiredChains ? parseChain(requiredChains[0]) : undefined
 

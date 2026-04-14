@@ -1,11 +1,11 @@
 import { ApiBalances } from '@alephium/shared'
 import { UseQueryResult } from '@tanstack/react-query'
 
-import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchWalletBalancesAlphBase } from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
-import { ApiContextProps } from '@/api/apiTypes'
-import { createDataContext } from '@/api/context/createDataContext'
-import { AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { combineError, combineIsFetching, combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { useFetchWalletBalancesAlphBase } from '../../../api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
+import { ApiContextProps } from '../../../api/apiTypes'
+import { createDataContext } from '../../../api/context/createDataContext'
+import { AddressAlphBalancesQueryFnData } from '../../../api/queries/addressQueries'
 
 const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): ApiContextProps<ApiBalances> => ({
   data: results.reduce(

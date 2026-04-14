@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 
-import { SharedRootState } from '@/store/store'
-import { TokenId } from '@/types/assets'
+import { SharedRootState } from '../../store/store'
+import { TokenId } from '../../types/assets'
 
 export const selectIsTokenHidden = createSelector(
   (state: SharedRootState) => state.hiddenTokens.hiddenTokensIds,

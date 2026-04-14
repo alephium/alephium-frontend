@@ -1,7 +1,6 @@
 import { TokenId } from '@alephium/shared'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { AnimatePresence, useInView } from 'framer-motion'
-import { map } from 'lodash'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -52,8 +51,8 @@ const ActivityPage = ({ className }: ActivityPageProps) => {
         <AnimatePresence>
           {isInView && (
             <WalletTransactionsList
-              addressHashes={map(selectedAddresses, 'hash')}
-              directions={map(selectedDirections, 'value')}
+              addressHashes={selectedAddresses.map((a) => a.hash)}
+              directions={selectedDirections.map((d) => d.value)}
               assetIds={selectedTokensIds}
             />
           )}

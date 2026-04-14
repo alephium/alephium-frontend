@@ -6,7 +6,7 @@ import {
   Optional
 } from '@alephium/web3'
 
-import { StringAlias } from '@/types/utils'
+import { StringAlias } from '../types/utils'
 
 export type TokenBalances = e.AddressBalance & { id: e.Token['id'] }
 

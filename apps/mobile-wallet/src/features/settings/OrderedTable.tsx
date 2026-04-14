@@ -1,4 +1,3 @@
-import { chunk } from 'lodash'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -11,7 +10,9 @@ interface OrderedTableProps {
 }
 
 const OrderedTable = ({ items, splitWhenAt = 12, style }: OrderedTableProps) => {
-  const columns = chunk(items, splitWhenAt)
+  const columns = Array.from({ length: Math.ceil(items.length / splitWhenAt) }, (_, i) =>
+    items.slice(i * splitWhenAt, i * splitWhenAt + splitWhenAt)
+  )
 
   return (
     <View style={style}>

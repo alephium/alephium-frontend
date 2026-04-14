@@ -10,7 +10,6 @@ import {
   SignTransferChainedTxParams,
   SignTransferChainedTxResult
 } from '@alephium/web3'
-import { capitalize } from 'lodash'
 
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { useAppSelector } from '~/hooks/redux'
@@ -22,7 +21,7 @@ export const useNetwork = (): ConnectedAddressPayload['network'] => {
 
   return {
     id: network.name,
-    name: capitalize(network.name),
+    name: network.name.charAt(0).toUpperCase() + network.name.slice(1).toLowerCase(),
     nodeUrl: network.settings.nodeHost,
     explorerApiUrl: network.settings.explorerApiHost,
     explorerUrl: network.settings.explorerUrl
