@@ -1099,6 +1099,9 @@ importers:
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.5)(happy-dom@20.8.9)(jsdom@21.1.2)(lightningcss@1.31.1)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(terser@5.39.0)
 
   packages/typescript-config: {}
 
