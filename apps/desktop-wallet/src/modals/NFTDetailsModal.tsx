@@ -1,6 +1,5 @@
 import { NFT } from '@alephium/shared'
-import { useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
-import { AxiosError } from 'axios'
+import { FetchError, useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +41,7 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
 
   return (
     <NFTMetadataContainer>
-      {error && error instanceof AxiosError && <NftMetadataError error={error} />}
+      {error && error instanceof FetchError && <NftMetadataError error={error} />}
       <DataList>
         <NftNameDataListRow label={t('Name')}>{nft?.name}</NftNameDataListRow>
         <DataList.Row label={t('Description')}>{nft?.description}</DataList.Row>
@@ -86,7 +85,7 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
 }
 
 interface NftMetadataErrorProps {
-  error: AxiosError
+  error: FetchError
 }
 
 const NftMetadataError = ({ error }: NftMetadataErrorProps) => {
@@ -95,10 +94,10 @@ const NftMetadataError = ({ error }: NftMetadataErrorProps) => {
   return (
     <InfoBox importance="alert" Icon={AlertTriangle}>
       <ErrorContents>
-        {error?.response?.config?.url && (
+        {error?.url && (
           <>
             <ErrorTitle>{t('Could not load NFT metadata')}</ErrorTitle>
-            <span>{error.response.config.url}</span>
+            <span>{error.url}</span>
           </>
         )}
 

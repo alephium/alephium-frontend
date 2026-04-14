@@ -1,18 +1,16 @@
 import { AddressHash, getOnramperSignContent } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+
+import { postJson } from '../fetchUtils'
 
 export const useFetchOnramperSignature = (addressHash: AddressHash) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['onramper-signature', addressHash],
 
-    queryFn: async () => {
-      const { data } = await axios.post('https://onramper.alephium.org/sign', {
+    queryFn: async () =>
+      postJson<string>('https://onramper.alephium.org/sign', {
         data: getOnramperSignContent(addressHash)
       })
-
-      return data
-    }
   })
 
   return {

@@ -14,11 +14,11 @@ import {
 import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
 
 import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '../../api/apiDataHooks/apiDataHooksUtils'
 import { convertTokenDecimalsToNumber, getQueryConfig, matchesNFTTokenUriMetaDataSchema } from '../../api/apiUtils'
+import { fetchContentType, FetchError, fetchJson } from '../../api/fetchUtils'
 import { queryClient } from '../../api/queryClient'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
@@ -63,9 +63,8 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
         : ({ queryKey }) =>
             network === 'devnet'
               ? { [ALPH.id]: ALPH }
-              : axios
-                  .get(getTokensURL(network))
-                  .then(({ data }) => convertTokenListToRecord((data as TokenList)?.tokens || []))
+              : fetchJson<TokenList>(getTokensURL(network))
+                  .then((data) => convertTokenListToRecord(data?.tokens || []))
                   .catch(() => {
                     const cachedTokenList = queryClient.getQueryData(queryKey)
 
@@ -170,19 +169,19 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
               } else if (tokenUri.startsWith('data:application/json;utf8,')) {
                 nftData = JSON.parse(tokenUri.split('data:application/json;utf8,')[1])
               } else {
-                const res = await axios.get(tokenUri)
-                nftData = res.data
+                nftData = await fetchJson(tokenUri)
               }
 
               if (!nftData || !nftData.name) {
                 return errorResponse
               }
 
-              const dataTypeRes = nftData.image ? (await axios.head(nftData.image)).headers['content-type'] || '' : ''
+              const dataTypeRes = nftData.image ? await fetchContentType(nftData.image) : ''
 
               const dataTypeCategory = dataTypeRes.split('/')[0]
 
-              const dataType: NFTDataType = dataTypeCategory in NFTDataTypes ? dataTypeCategory : 'other'
+              const dataType: NFTDataType =
+                dataTypeCategory in NFTDataTypes ? (dataTypeCategory as NFTDataType) : 'other'
 
               return matchesNFTTokenUriMetaDataSchema(nftData)
                 ? { id, dataType, ...nftData }
@@ -197,7 +196,7 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
                   }
             } catch (error) {
               errorResponse.description =
-                error instanceof AxiosError ? `${error.message} - ${tokenUri}` : errorResponse.description
+                error instanceof FetchError ? `${error.message} - ${tokenUri}` : errorResponse.description
               return errorResponse
             }
           }
