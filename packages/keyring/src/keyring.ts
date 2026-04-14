@@ -25,8 +25,8 @@ import {
   NonSensitiveAddressData,
   NullableSensitiveAddressData,
   SensitiveAddressData
-} from '@/keyringTypes'
-import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
+} from './keyringTypes'
+import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from './mnemonic'
 
 export class Keyring {
   private hdWallet: HDKey | null

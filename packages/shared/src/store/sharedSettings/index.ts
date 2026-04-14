@@ -1,1 +1,1 @@
-export * from '@/store/sharedSettings/sharedSettingsActions'
+export * from '../../store/sharedSettings/sharedSettingsActions'

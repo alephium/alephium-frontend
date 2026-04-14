@@ -11,8 +11,8 @@ import {
 } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-import { Address, AddressHash } from '@/types/addresses'
-import { Asset, AssetAmount, TokenId } from '@/types/assets'
+import { Address, AddressHash } from '../types/addresses'
+import { Asset, AssetAmount, TokenId } from '../types/assets'
 
 export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
   Required<AssetAmount>

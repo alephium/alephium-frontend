@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { defaultNetworkSettings, getNetworkName, networkSettingsPresets } from '@/network'
-import { appReset } from '@/store/global/globalActions'
+import { defaultNetworkSettings, getNetworkName, networkSettingsPresets } from '../../network'
+import { appReset } from '../../store/global/globalActions'
 import {
   customNetworkSettingsSaved,
   explorerApiClientInitFailed,
@@ -11,8 +11,8 @@ import {
   networkPresetSwitched,
   nodeApiClientInitFailed,
   nodeApiClientInitSucceeded
-} from '@/store/network/networkActions'
-import { NetworkNames, NetworkSettings, NetworkState, NetworkStatus } from '@/types/network'
+} from '../../store/network/networkActions'
+import { NetworkNames, NetworkSettings, NetworkState, NetworkStatus } from '../../types/network'
 
 const initialState: NetworkState = {
   name: NetworkNames.mainnet,

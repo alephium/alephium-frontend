@@ -1,8 +1,8 @@
 import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
-import { addressTokensByTypeQuery } from '@/api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { addressTokensByTypeQuery } from '../../../api/queries/addressQueries'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 export const useFetchAddressTokensByType = (addressHash: AddressHash) => {
   const networkId = useCurrentlyOnlineNetworkId()

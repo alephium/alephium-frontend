@@ -1,5 +1,4 @@
 import { ActiveWalletDesktop, getHumanReadableError } from '@alephium/shared'
-import { isEmpty } from 'lodash'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +29,7 @@ const EditWalletNameModal = memo(({ id }: ModalBaseProp) => {
   const { sendAnalytics } = useAnalytics()
 
   const errors = formState.errors
-  const isFormValid = isEmpty(errors)
+  const isFormValid = Object.keys(errors).length === 0
 
   const onClose = () => dispatch(closeModal({ id }))
 

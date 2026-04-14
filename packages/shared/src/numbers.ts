@@ -1,4 +1,4 @@
-import { NUM_OF_ZEROS_IN_QUINTILLION } from '@/constants'
+import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
 export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
 

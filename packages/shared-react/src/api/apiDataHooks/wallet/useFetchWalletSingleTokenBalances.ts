@@ -2,9 +2,9 @@ import { TokenId } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
+import { SkipProp } from '../../../api/apiDataHooks/apiDataHooksTypes'
+import { useFetchWalletBalancesAlph } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensArray } from '../../../api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
   tokenId: TokenId

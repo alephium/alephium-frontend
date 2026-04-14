@@ -1,1 +1,1 @@
-export * from '@/store/global/globalActions'
+export * from '../../store/global/globalActions'

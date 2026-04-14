@@ -1,4 +1,4 @@
-import { Currency } from '@/types/currencies'
+import { Currency } from '../types/currencies'
 
 export type SharedSettings = {
   fiatCurrency: Currency

@@ -1,7 +1,6 @@
 import { NFT } from '@alephium/shared'
 import { useFetchNft } from '@alephium/shared-react'
 import { Image } from 'expo-image'
-import { isNumber } from 'lodash'
 import { CameraOff, FileImage } from 'lucide-react-native'
 import { memo, useState } from 'react'
 import { DimensionValue, Platform } from 'react-native'
@@ -66,7 +65,7 @@ const NFTImage = memo(({ nftId, size = '100%', play, sizeLimited = true }: NFTIm
   )
 
   return contentType === 'video' ? (
-    <NftVideoPlayIconOverlay size={isNumber(size) ? size / 2 : undefined}>{image}</NftVideoPlayIconOverlay>
+    <NftVideoPlayIconOverlay size={typeof size === 'number' ? size / 2 : undefined}>{image}</NftVideoPlayIconOverlay>
   ) : (
     image
   )

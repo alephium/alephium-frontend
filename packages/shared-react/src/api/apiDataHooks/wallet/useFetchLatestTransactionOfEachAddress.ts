@@ -1,9 +1,9 @@
 import { useQueries } from '@tanstack/react-query'
 
-import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
-import { useUnsortedAddressesHashes } from '@/hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { flatMapCombine } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { addressLatestTransactionQuery } from '../../../api/queries/transactionQueries'
+import { useUnsortedAddressesHashes } from '../../../hooks/addresses/useUnsortedAddresses'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 export const useFetchLatestTransactionOfEachAddress = () => {
   const networkId = useCurrentlyOnlineNetworkId()

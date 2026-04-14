@@ -15,14 +15,12 @@ import {
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 
-jest.mock('expo-secure-store')
+const mockCallback = vi.fn(() => true)
+const spyAlert = vi.spyOn(Alert, 'alert')
 
-const mockCallback = jest.fn(() => true)
-const spyAlert = jest.spyOn(Alert, 'alert')
-
-const mockedDeleteItemAsync = <jest.MockedFunction<typeof SecureStore.deleteItemAsync>>SecureStore.deleteItemAsync
-const mockedSetItemAsync = <jest.MockedFunction<typeof SecureStore.setItemAsync>>SecureStore.setItemAsync
-const mockedGetItemAsync = <jest.MockedFunction<typeof SecureStore.getItemAsync>>SecureStore.getItemAsync
+const mockedDeleteItemAsync = vi.mocked(SecureStore.deleteItemAsync)
+const mockedSetItemAsync = vi.mocked(SecureStore.setItemAsync)
+const mockedGetItemAsync = vi.mocked(SecureStore.getItemAsync)
 
 const testWalletMnemonicString =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
@@ -88,7 +86,7 @@ afterEach(() => {
 
 describe(getStoredWalletMetadata, () => {
   it('should fail if there are no wallet metadata stored', async () => {
-    expect(getStoredWalletMetadata).rejects.toThrow()
+    await expect(getStoredWalletMetadata).rejects.toThrow()
 
     addTestWalletMetadataInStorage()
     const wallet = await getStoredWalletMetadata()

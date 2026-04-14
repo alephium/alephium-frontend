@@ -14,11 +14,11 @@ import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { tokenQuery } from '@/api/queries/tokenQueries'
-import { useTransactionAmountDeltas } from '@/hooks/transactions/useTransactionAmountDeltas'
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
-import { useIsExplorerOffline } from '@/network/useIsServerOffline'
+import { combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { tokenQuery } from '../../../api/queries/tokenQueries'
+import { useTransactionAmountDeltas } from '../../../hooks/transactions/useTransactionAmountDeltas'
+import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
+import { useIsExplorerOffline } from '../../../network/useIsServerOffline'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT

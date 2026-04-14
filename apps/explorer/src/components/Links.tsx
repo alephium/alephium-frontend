@@ -1,7 +1,6 @@
 import { AssetAmount } from '@alephium/shared'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import dayjs from 'dayjs'
-import { map } from 'lodash'
 import { ReactNode } from 'react'
 import { RiExternalLinkLine } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
@@ -75,7 +74,7 @@ const AddressLinkBase = ({
   const theme = useTheme()
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
-  const assetsMetadata = useAssetsMetadata(map(amounts, 'id'))
+  const assetsMetadata = useAssetsMetadata(amounts?.map((x) => x.id))
 
   const renderAmount = (amount: AssetAmount) => {
     const info = assetsMetadata.fungibleTokens.find((i) => i.id === amount.id)

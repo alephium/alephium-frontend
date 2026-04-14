@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 
-import { addressesAdapter } from '@/store/addresses/addressesAdapters'
-import { Address, AddressesState, AddressHash, AddressSettings } from '@/types/addresses'
+import { addressesAdapter } from '../../store/addresses/addressesAdapters'
+import { Address, AddressesState, AddressHash, AddressSettings } from '../../types/addresses'
 
 export const addressSettingsSavedReducer = (
   state: AddressesState,

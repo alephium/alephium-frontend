@@ -1,7 +1,6 @@
 import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared'
 import { isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/api/explorer'
-import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
@@ -60,14 +59,13 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
       return <AddressLink key={firstAddress} address={firstAddress} maxWidth="250px" />
     }
 
-    const outputs = _(
-      tx.outputs.filter((o) =>
-        isGrouplessAddress ? !isSameBaseAddress(addressHash, o.address) : o.address !== addressHash
+    const outputs = [
+      ...new Set(
+        tx.outputs
+          .filter((o) => (isGrouplessAddress ? !isSameBaseAddress(addressHash, o.address) : o.address !== addressHash))
+          .map((v) => v.address)
       )
-    )
-      .map((v) => v.address)
-      .uniq()
-      .value()
+    ]
 
     return (
       <div>
@@ -79,10 +77,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
 
   const renderInputAccounts = () => {
     if (!tx.inputs) return
-    const inputs = _(tx.inputs.filter((o) => o.address !== addressHash))
-      .map((v) => v.address)
-      .uniq()
-      .value()
+    const inputs = [...new Set(tx.inputs.filter((o) => o.address !== addressHash).map((v) => v.address))]
 
     return inputs.length > 0 ? (
       <div>

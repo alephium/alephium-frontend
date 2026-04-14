@@ -3,11 +3,11 @@ import { ALPH } from '@alephium/token-list'
 import { UseQueryResult } from '@tanstack/react-query'
 import { createContext, ReactNode, useContext, useMemo } from 'react'
 
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchWalletBalancesAlphBase } from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
-import { useFetchWalletBalancesTokens } from '@/api/apiDataHooks/utils/useFetchWalletBalancesTokens'
-import { ApiContextProps } from '@/api/apiTypes'
-import { AddressAlphBalancesQueryFnData, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { useFetchWalletBalancesAlphBase } from '../../../api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
+import { useFetchWalletBalancesTokens } from '../../../api/apiDataHooks/utils/useFetchWalletBalancesTokens'
+import { ApiContextProps } from '../../../api/apiTypes'
+import { AddressAlphBalancesQueryFnData, AddressTokensBalancesQueryFnData } from '../../../api/queries/addressQueries'
 
 const DataContext = createContext<ApiContextProps<Record<AddressHash, Array<TokenApiBalances> | undefined>>>({
   data: {} as Record<AddressHash, Array<TokenApiBalances> | undefined>,

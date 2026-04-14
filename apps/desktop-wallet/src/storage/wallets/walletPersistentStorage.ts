@@ -1,4 +1,3 @@
-import { orderBy } from 'lodash'
 import { nanoid } from 'nanoid'
 import posthog from 'posthog-js'
 
@@ -37,7 +36,7 @@ class WalletStorage {
       }
     }
 
-    return orderBy(wallets, (w) => w.name.toLowerCase())
+    return [...wallets].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
   }
 
   load(id: StoredEncryptedWallet['id']): StoredEncryptedWallet {

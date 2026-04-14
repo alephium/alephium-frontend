@@ -1,6 +1,5 @@
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
-import { flatMap, uniq } from 'lodash'
 import { useMemo } from 'react'
 
 import { queries } from '@/api'
@@ -69,7 +68,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
-    flatMap(unverifiedAssets, ({ id, type }) =>
+    unverifiedAssets.flatMap(({ id, type }) =>
       type === 'fungible'
         ? { ...queries.assets.metadata.unverifiedFungibleToken(id), enabled: !!id && shouldExecuteQueries }
         : []
@@ -77,7 +76,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
-    flatMap(unverifiedAssets, ({ id, type }) =>
+    unverifiedAssets.flatMap(({ id, type }) =>
       type === 'non-fungible'
         ? { ...queries.assets.metadata.unverifiedNFT(id), enabled: !!id && shouldExecuteQueries }
         : []
@@ -85,7 +84,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   )
 
   const { data: NFTFiles } = useQueriesData(
-    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => ({
+    unverifiedNFTsMetadata.flatMap(({ id, tokenUri }) => ({
       ...queries.assets.NFTsData.item(tokenUri, id),
       enabled: !!tokenUri
     }))
@@ -155,7 +154,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 }
 
 export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
-  const tokensToFetch = uniq(assetSymbols).filter((symbol) => !!symbol)
+  const tokensToFetch = [...new Set(assetSymbols)].filter((symbol) => !!symbol)
 
   const { data: prices } = useQueriesData(
     tokensToFetch.map((symbol) => ({

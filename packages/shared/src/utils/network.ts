@@ -1,4 +1,4 @@
-import { NetworkName } from '@/types/network'
+import { NetworkName } from '../types/network'
 
 export const getNetworkIdFromNetworkName = (networkName?: NetworkName) => {
   switch (networkName) {

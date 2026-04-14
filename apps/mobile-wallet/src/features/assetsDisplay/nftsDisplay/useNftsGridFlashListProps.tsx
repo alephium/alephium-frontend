@@ -1,6 +1,5 @@
 import { NFT } from '@alephium/shared'
 import { FlashListProps } from '@shopify/flash-list'
-import { chunk, groupBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
@@ -29,8 +28,23 @@ const useNftsGridFlashListProps = ({
   const { t } = useTranslation()
   const data = useMemo(
     () =>
-      Object.entries(groupBy(nfts, 'collectionId'))
-        .map(([collectionId, nfts]) => [collectionId, ...chunk(nfts, nftsPerRow)])
+      Object.entries(
+        (nfts ?? []).reduce(
+          (groups, item) => {
+            const key = item.collectionId
+            if (!groups[key]) groups[key] = []
+            groups[key].push(item)
+            return groups
+          },
+          {} as Record<string, NFT[]>
+        )
+      )
+        .map(([collectionId, nfts]) => [
+          collectionId,
+          ...Array.from({ length: Math.ceil(nfts.length / nftsPerRow) }, (_, i) =>
+            nfts.slice(i * nftsPerRow, i * nftsPerRow + nftsPerRow)
+          )
+        ])
         .flat(),
     [nfts, nftsPerRow]
   )

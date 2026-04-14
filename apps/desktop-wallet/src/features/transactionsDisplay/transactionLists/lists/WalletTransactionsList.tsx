@@ -13,7 +13,6 @@ import {
 } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
-import { orderBy, uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -53,20 +52,19 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   } = useFetchWalletTransactionsInfinite()
 
   const filteredConfirmedTxs = useMemo(() => {
-    const txs = uniqBy(
-      orderBy(
-        applyFilters({
-          txs: fetchedConfirmedTxs,
-          addressHashes,
-          allAddressHashes,
-          directions,
-          assetIds
-        }),
-        'timestamp',
-        'desc'
-      ),
-      'hash'
-    )
+    const filtered = applyFilters({
+      txs: fetchedConfirmedTxs,
+      addressHashes,
+      allAddressHashes,
+      directions,
+      assetIds
+    })
+    const sorted = [...filtered].sort((a, b) => {
+      if (a.timestamp < b.timestamp) return 1
+      if (a.timestamp > b.timestamp) return -1
+      return 0
+    })
+    const txs = [...new Map(sorted.map((tx) => [tx.hash, tx])).values()]
 
     return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
   }, [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, hasNextPage, pagesLoaded])

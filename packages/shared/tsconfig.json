@@ -4,16 +4,12 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "resolveJsonModule": true,
-    "outDir": "dist",
+    "noEmit": true,
     "module": "ESNext",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "target": "ESNext",
-    "baseUrl": ".",
-    "moduleResolution": "bundler",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "moduleResolution": "bundler"
   }
 }

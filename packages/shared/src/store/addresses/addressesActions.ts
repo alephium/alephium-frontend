@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { Address, AddressBase, AddressHash, AddressSettings, Contact } from '@/types/addresses'
+import { Address, AddressBase, AddressHash, AddressSettings, Contact } from '../../types/addresses'
 
 export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
 

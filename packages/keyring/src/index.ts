@@ -1,3 +1,3 @@
-export * from '@/keyring'
-export * from '@/mnemonic'
-export * from '@/keyringTypes'
+export * from './keyring'
+export * from './mnemonic'
+export * from './keyringTypes'

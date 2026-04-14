@@ -1,8 +1,8 @@
 import { isNetworkValid, NetworkNames, networkPresetSwitched } from '@alephium/shared'
 import { ChainInfo } from '@alephium/walletconnect-provider'
 
-import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
-import { useSharedDispatch } from '@/redux'
+import { useCurrentlyOnlineNetworkId } from '../network/useCurrentlyOnlineNetworkId'
+import { useSharedDispatch } from '../redux'
 
 export const useWalletConnectNetwork = (networkId: ChainInfo['networkId'], onSuccess?: () => Promise<void>) => {
   const currentNetworkId = useCurrentlyOnlineNetworkId()

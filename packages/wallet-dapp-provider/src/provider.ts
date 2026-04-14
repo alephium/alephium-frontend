@@ -1,5 +1,4 @@
 import { AlephiumWindowObject, providerInitializedEvent } from '@alephium/get-extension-wallet'
-import isPlainObject from 'lodash.isplainobject'
 import { MessageType } from 'src/types/messages'
 
 import { alephiumWindowObject } from './alephiumWindowObject'
@@ -39,7 +38,11 @@ export const announceProvider = () => {
 
 export const attachAlephiumProvider = () => {
   window.alephiumProviders =
-    window.alephiumProviders && isPlainObject(window.alephiumProviders) ? window.alephiumProviders : {}
+    window.alephiumProviders &&
+    typeof window.alephiumProviders === 'object' &&
+    Object.getPrototypeOf(window.alephiumProviders) === Object.prototype
+      ? window.alephiumProviders
+      : {}
 
   INJECT_NAMES.forEach((name) => {
     // we need 2 different try catch blocks because we want to execute both even if one of them fails

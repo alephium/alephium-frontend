@@ -14,8 +14,8 @@ import {
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { queryClient } from '@/api/queryClient'
-import { useIsExplorerOffline } from '@/network'
+import { queryClient } from '../api/queryClient'
+import { useIsExplorerOffline } from '../network'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>

@@ -11,7 +11,7 @@ import {
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 
-import { useSharedSelector } from '@/redux'
+import { useSharedSelector } from '../../redux'
 
 export const useTransactionAmountDeltas = (
   tx: e.Transaction | e.PendingTransaction | SentTransaction | ExecuteScriptTx,

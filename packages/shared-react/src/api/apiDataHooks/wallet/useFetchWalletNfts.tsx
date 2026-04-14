@@ -1,9 +1,9 @@
 import { useQueries } from '@tanstack/react-query'
 
-import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { addressNftsQuery } from '@/api/queries/addressQueries'
-import { useUnsortedAddressesHashes } from '@/hooks'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { flatMapCombine } from '../../../api/apiDataHooks/apiDataHooksUtils'
+import { addressNftsQuery } from '../../../api/queries/addressQueries'
+import { useUnsortedAddressesHashes } from '../../../hooks'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 export const useFetchWalletNfts = () => {
   const addressHashes = useUnsortedAddressesHashes()

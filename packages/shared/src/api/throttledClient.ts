@@ -1,9 +1,9 @@
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 import pThrottle from 'p-throttle'
 
-import { defaultNetworkSettings } from '@/network'
-import { AlephiumWalletTxBuilder } from '@/txBuilder'
-import { NetworkSettings } from '@/types/network'
+import { defaultNetworkSettings } from '../network'
+import { AlephiumWalletTxBuilder } from '../txBuilder'
+import { NetworkSettings } from '../types/network'
 
 const throttle = pThrottle({
   limit: 10,

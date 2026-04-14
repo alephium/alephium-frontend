@@ -2,10 +2,10 @@ import { AddressHash } from '@alephium/shared'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 
-import { useFetchAddressLatestTransaction } from '@/api/apiDataHooks/address/useFetchAddressLatestTransaction'
-import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import { queryClient } from '@/api/queryClient'
-import { useCurrentlyOnlineNetworkId } from '@/network'
+import { useFetchAddressLatestTransaction } from '../../../api/apiDataHooks/address/useFetchAddressLatestTransaction'
+import { addressTransactionsInfiniteQuery } from '../../../api/queries/transactionQueries'
+import { queryClient } from '../../../api/queryClient'
+import { useCurrentlyOnlineNetworkId } from '../../../network'
 
 interface UseFetchAddressInfiniteTransactionsProps {
   addressHash: AddressHash

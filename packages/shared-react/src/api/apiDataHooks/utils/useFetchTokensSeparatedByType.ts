@@ -2,9 +2,9 @@ import { ListedFT, TokenId, UnlistedToken } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useFetchTokensSeparatedByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
-import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '@/network'
+import { useFetchTokensSeparatedByListing } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { combineTokenTypeQueryResults, tokenTypeQuery } from '../../../api/queries/tokenQueries'
+import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '../../../network'
 
 interface TokensByType<T> {
   data: {
