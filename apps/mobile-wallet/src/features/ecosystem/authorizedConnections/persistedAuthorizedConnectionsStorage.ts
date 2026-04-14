@@ -1,3 +1,4 @@
+import { ONE_WEEK_MS } from '@alephium/shared'
 import { RequestOptions } from '@alephium/wallet-dapp-provider'
 
 import { AuthorizedConnection } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsTypes'
@@ -7,7 +8,7 @@ import { storage } from '~/persistent-storage/storage'
 export const STORAGE_KEY = 'alephium-dapp-authorized-connections'
 
 // TODO: Share with extension wallet
-const CONNECTION_EXPIRY = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+const CONNECTION_EXPIRY = ONE_WEEK_MS
 
 export const loadAuthorizedConnections = () => {
   const storedConnections = storage.getString(STORAGE_KEY)

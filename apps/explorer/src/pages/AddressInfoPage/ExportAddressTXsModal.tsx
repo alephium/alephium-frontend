@@ -1,4 +1,4 @@
-import { getHumanReadableError, subtractMonths } from '@alephium/shared'
+import { getHumanReadableError, ONE_DAY_MS, ONE_WEEK_MS, subtractMonths } from '@alephium/shared'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
@@ -156,9 +156,9 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
 ]
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
-  '24h': { from: thisMoment - 24 * 60 * 60 * 1000, to: thisMoment },
-  '1w': { from: thisMoment - 7 * 24 * 60 * 60 * 1000, to: thisMoment },
-  '1m': { from: thisMoment - 30 * 24 * 60 * 60 * 1000, to: thisMoment },
+  '24h': { from: thisMoment - ONE_DAY_MS, to: thisMoment },
+  '1w': { from: thisMoment - ONE_WEEK_MS, to: thisMoment },
+  '1m': { from: thisMoment - 30 * ONE_DAY_MS, to: thisMoment },
   '6m': { from: subtractMonths(now, 6).getTime(), to: thisMoment },
   '12m': { from: subtractMonths(now, 12).getTime(), to: thisMoment },
   currentYear: { from: new Date(currentYear, 0, 1).getTime(), to: thisMoment },

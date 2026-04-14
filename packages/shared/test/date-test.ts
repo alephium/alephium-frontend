@@ -1,3 +1,4 @@
+import { ONE_DAY_MS } from '../src/constants'
 import { formatRelativeTime, SHORT_DATE_OPTIONS, SHORT_DATE_TIME_OPTIONS, subtractMonths } from '../src/date'
 
 describe('formatRelativeTime', () => {
@@ -16,13 +17,13 @@ describe('formatRelativeTime', () => {
   })
 
   it('should handle "yesterday" and "tomorrow" with numeric: auto', () => {
-    const yesterday = Date.now() - 24 * 60 * 60 * 1000
+    const yesterday = Date.now() - ONE_DAY_MS
     const result = formatRelativeTime(yesterday)
     expect(result).toMatch(/yesterday|1 day ago/)
   })
 
   it('should accept Date objects', () => {
-    const date = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    const date = new Date(Date.now() - 3 * ONE_DAY_MS)
     const result = formatRelativeTime(date)
     expect(result).toContain('3')
     expect(result).toContain('day')
@@ -35,10 +36,10 @@ describe('formatRelativeTime', () => {
     const ninetyMinutes = Date.now() - 90 * 60 * 1000
     expect(formatRelativeTime(ninetyMinutes)).toContain('hour')
 
-    const fortyFiveDays = Date.now() - 45 * 24 * 60 * 60 * 1000
+    const fortyFiveDays = Date.now() - 45 * ONE_DAY_MS
     expect(formatRelativeTime(fortyFiveDays)).toContain('month')
 
-    const fourHundredDays = Date.now() - 400 * 24 * 60 * 60 * 1000
+    const fourHundredDays = Date.now() - 400 * ONE_DAY_MS
     expect(formatRelativeTime(fourHundredDays)).toContain('year')
   })
 

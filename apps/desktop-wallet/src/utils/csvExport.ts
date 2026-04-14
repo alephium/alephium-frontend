@@ -1,4 +1,4 @@
-import { subtractMonths } from '@alephium/shared'
+import { ONE_DAY_MS, ONE_WEEK_MS, subtractMonths } from '@alephium/shared'
 
 import { CsvExportTimerangeQueryParams, TransactionTimePeriod } from '@/types/transactions'
 
@@ -10,9 +10,9 @@ export const getCsvExportTimeRangeQueryParams = (
   const currentYear = now.getFullYear()
 
   return {
-    '24h': { fromTs: thisMoment - 24 * 60 * 60 * 1000, toTs: thisMoment },
-    '1w': { fromTs: thisMoment - 7 * 24 * 60 * 60 * 1000, toTs: thisMoment },
-    '1m': { fromTs: thisMoment - 30 * 24 * 60 * 60 * 1000, toTs: thisMoment },
+    '24h': { fromTs: thisMoment - ONE_DAY_MS, toTs: thisMoment },
+    '1w': { fromTs: thisMoment - ONE_WEEK_MS, toTs: thisMoment },
+    '1m': { fromTs: thisMoment - 30 * ONE_DAY_MS, toTs: thisMoment },
     '6m': { fromTs: subtractMonths(now, 6).getTime(), toTs: thisMoment },
     '12m': { fromTs: subtractMonths(now, 12).getTime(), toTs: thisMoment },
     previousYear: {
