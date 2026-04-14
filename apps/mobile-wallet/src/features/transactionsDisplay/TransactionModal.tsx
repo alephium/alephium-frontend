@@ -6,7 +6,6 @@ import {
   useUnsortedAddressesHashes
 } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
-import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -106,7 +105,7 @@ const TransactionTimeStamp = ({ tx }: Pick<TransactionModalSubcomponentProps, 't
   return (
     <Row title={t('Timestamp')} transparent>
       <AppText semiBold>
-        {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+        {new Date(tx.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
       </AppText>
     </Row>
   )

@@ -1,12 +1,3 @@
-import 'dayjs/locale/fr'
-import 'dayjs/locale/id'
-import 'dayjs/locale/el'
-import 'dayjs/locale/de'
-import 'dayjs/locale/vi'
-import 'dayjs/locale/zh-cn'
-import 'dayjs/locale/it'
-
-import dayjs from 'dayjs'
 import i18next from 'i18next'
 import { useEffect } from 'react'
 import styled from 'styled-components'
@@ -24,7 +15,6 @@ const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
 
   useEffect(() => {
     i18next.changeLanguage(langValue)
-    dayjs.locale(langValue)
   }, [langValue])
 
   const items = languageOptions.map((lang) => ({

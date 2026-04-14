@@ -1,6 +1,5 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, formatRelativeTime } from '@alephium/shared'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
-import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -16,7 +15,7 @@ const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
 
   return (
     <Row title={t('Last activity')} isLast short>
-      <AppText>{data?.latestTx ? dayjs(data.latestTx.timestamp).fromNow() : t('Never used')}</AppText>
+      <AppText>{data?.latestTx ? formatRelativeTime(data.latestTx.timestamp) : t('Never used')}</AppText>
     </Row>
   )
 }

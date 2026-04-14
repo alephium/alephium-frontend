@@ -1,5 +1,4 @@
-import { SendFlowData } from '@alephium/shared'
-import dayjs from 'dayjs'
+import { formatRelativeTime, SendFlowData } from '@alephium/shared'
 import { LockIcon } from 'lucide-react'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -32,7 +31,7 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
           i18nKey="lockTimeConfirmation"
           values={{
             datetime: formatDateForDisplay(lockTime),
-            inTimeFromNow: dayjs(lockTime).fromNow()
+            inTimeFromNow: formatRelativeTime(lockTime)
           }}
           components={{
             1: <strong />,

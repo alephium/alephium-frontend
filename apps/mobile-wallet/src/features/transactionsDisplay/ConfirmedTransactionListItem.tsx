@@ -1,7 +1,5 @@
 import { findTransactionReferenceAddress } from '@alephium/shared'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
-import dayjs from 'dayjs'
-import localizedFormat from 'dayjs/plugin/localizedFormat' // ES 2015
 import { memo } from 'react'
 import styled from 'styled-components/native'
 
@@ -14,8 +12,6 @@ import {
   ConfirmedTransactionListItemSubcomponentProps
 } from '~/features/transactionsDisplay/transactionListItemTypes'
 import useTransactionIconLabel from '~/features/transactionsDisplay/useTransactionIconLabel'
-
-dayjs.extend(localizedFormat)
 
 type ConfirmedTransactionListItemProps = Partial<ListItemProps> & ConfirmedTransactionListItemBaseProps
 
@@ -49,7 +45,7 @@ const TransactionLabel = ({ tx, referenceAddress }: ConfirmedTransactionListItem
 
 const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentProps) => (
   <AppText color="tertiary" size={12} style={{ marginTop: 5 }}>
-    {dayjs(tx.timestamp).format('lll')}
+    {new Date(tx.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
   </AppText>
 )
 

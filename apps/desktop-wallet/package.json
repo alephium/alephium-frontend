@@ -96,7 +96,6 @@
     "compare-versions": "^5.0.1",
     "concurrently": "^7.4.0",
     "cross-env": "^7.0.3",
-    "dayjs": "^1.10.7",
     "electron": "39.8.7",
     "electron-builder": "^25.1.8",
     "electron-devtools-installer": "^4.0.0",

@@ -27,7 +27,6 @@
     "@walletconnect/types": "2.23.6",
     "@walletconnect/utils": "2.23.6",
     "@yornaath/batshit": "^0.10.1",
-    "dayjs": "^1.10.7",
     "fetch-retry": "^5.0.6",
     "p-throttle": "^6.2.0",
     "posthog-js": "^1.52.0",

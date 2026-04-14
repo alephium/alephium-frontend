@@ -32,5 +32,11 @@ export const formatNumberForDisplay = (
   return [numberInteger, numberDecimal, suffixes[suffixIndex], unit]
 }
 
-export const SIMPLE_DATE_FORMAT = 'DD/MM/YYYY'
-export const DATE_TIME_FORMAT = `${SIMPLE_DATE_FORMAT} HH:mm:ss [UTC]Z`
+export { SHORT_DATE_OPTIONS as SIMPLE_DATE_OPTIONS } from '@alephium/shared'
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
+
+export const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  ...SHORT_DATE_TIME_OPTIONS,
+  second: '2-digit',
+  timeZoneName: 'longOffset'
+}

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -85,11 +85,15 @@ const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
       <AppTextStyled color="secondary">
         {connection.networkName
           ? t('Connected at {{ datetime }} on {{ network }}', {
-              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm'),
+              datetime: new Intl.DateTimeFormat(undefined, SHORT_DATE_TIME_OPTIONS).format(
+                new Date(connection.dateTime)
+              ),
               network: connection.networkName
             })
           : t('Connected at {{ datetime }}', {
-              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm')
+              datetime: new Intl.DateTimeFormat(undefined, SHORT_DATE_TIME_OPTIONS).format(
+                new Date(connection.dateTime)
+              )
             })}
       </AppTextStyled>
     </SubtitleStyled>

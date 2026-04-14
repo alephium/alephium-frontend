@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { formatRelativeTime } from '@alephium/shared'
 import styled from 'styled-components'
 
 interface TimeSinceProps {
@@ -8,7 +8,7 @@ interface TimeSinceProps {
 }
 
 const TimeSince = ({ timestamp, className }: TimeSinceProps) => (
-  <div className={className}>{dayjs(timestamp).fromNow()}</div>
+  <div className={className}>{formatRelativeTime(timestamp)}</div>
 )
 
 export default styled(TimeSince)`

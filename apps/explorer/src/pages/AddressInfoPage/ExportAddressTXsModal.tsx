@@ -1,5 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
-import dayjs from 'dayjs'
+import { getHumanReadableError, subtractMonths } from '@alephium/shared'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
@@ -13,7 +12,7 @@ import Modal, { ModalProps } from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import i18n from '@/features/localization/i18n'
 import { useSnackbar } from '@/hooks/useSnackbar'
-import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
+import { SIMPLE_DATE_OPTIONS } from '@/utils/strings'
 
 type TimePeriodValue =
   | '24h'
@@ -61,8 +60,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       if (!data) throw t('Something wrong happened while fetching the data.')
 
-      const fileDateFrom = dayjs(timePeriods[timePeriodValue].from).format(SIMPLE_DATE_FORMAT)
-      const fileDateTo = dayjs(timePeriods[timePeriodValue].to).format(SIMPLE_DATE_FORMAT)
+      const dateFormatter = new Intl.DateTimeFormat(undefined, SIMPLE_DATE_OPTIONS)
+      const fileDateFrom = dateFormatter.format(new Date(timePeriods[timePeriodValue].from))
+      const fileDateTo = dateFormatter.format(new Date(timePeriods[timePeriodValue].to))
 
       startCSVFileDownload(data, `${addressHash}__${fileDateFrom}-${fileDateTo}`)
 
@@ -108,12 +108,11 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
   )
 }
 
-const now = dayjs()
-const thisMoment = now.valueOf()
-const lastYear = now.subtract(1, 'year')
-const twoYearsAgo = now.subtract(2, 'year')
-const threeYearsAgo = now.subtract(3, 'year')
-const today = now.format(SIMPLE_DATE_FORMAT)
+const now = new Date()
+const thisMoment = now.getTime()
+const currentYear = now.getFullYear()
+const dateFormatter = new Intl.DateTimeFormat(undefined, SIMPLE_DATE_OPTIONS)
+const today = dateFormatter.format(now)
 
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   {
@@ -138,42 +137,42 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   },
   {
     value: 'currentYear',
-    label: `${i18n.t('This year so far')} (01/01/${now.year()} - ${today})`
+    label: `${i18n.t('This year so far')} (01/01/${currentYear} - ${today})`
   },
   {
     value: 'oneYearAgo',
-    label: `${i18n.t('Last year')} (${lastYear.year()})`
+    label: `${i18n.t('Last year')} (${currentYear - 1})`
   },
   {
     value: 'twoYearsAgo',
     label: `${i18n.t('Two years ago')}
-    (${twoYearsAgo.year()})`
+    (${currentYear - 2})`
   },
   {
     value: 'threeYearsAgo',
     label: `${i18n.t('Three years ago')}
-    (${threeYearsAgo.year()})`
+    (${currentYear - 3})`
   }
 ]
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
-  '24h': { from: now.subtract(24, 'hour').valueOf(), to: thisMoment },
-  '1w': { from: now.subtract(7, 'day').valueOf(), to: thisMoment },
-  '1m': { from: now.subtract(30, 'day').valueOf(), to: thisMoment },
-  '6m': { from: now.subtract(6, 'month').valueOf(), to: thisMoment },
-  '12m': { from: now.subtract(12, 'month').valueOf(), to: thisMoment },
-  currentYear: { from: now.startOf('year').valueOf(), to: thisMoment },
+  '24h': { from: thisMoment - 24 * 60 * 60 * 1000, to: thisMoment },
+  '1w': { from: thisMoment - 7 * 24 * 60 * 60 * 1000, to: thisMoment },
+  '1m': { from: thisMoment - 30 * 24 * 60 * 60 * 1000, to: thisMoment },
+  '6m': { from: subtractMonths(now, 6).getTime(), to: thisMoment },
+  '12m': { from: subtractMonths(now, 12).getTime(), to: thisMoment },
+  currentYear: { from: new Date(currentYear, 0, 1).getTime(), to: thisMoment },
   oneYearAgo: {
-    from: lastYear.startOf('year').valueOf(),
-    to: lastYear.endOf('year').valueOf()
+    from: new Date(currentYear - 1, 0, 1).getTime(),
+    to: new Date(currentYear, 0, 0).getTime()
   },
   twoYearsAgo: {
-    from: twoYearsAgo.startOf('year').valueOf(),
-    to: twoYearsAgo.endOf('year').valueOf()
+    from: new Date(currentYear - 2, 0, 1).getTime(),
+    to: new Date(currentYear - 1, 0, 0).getTime()
   },
   threeYearsAgo: {
-    from: threeYearsAgo.startOf('year').valueOf(),
-    to: threeYearsAgo.endOf('year').valueOf()
+    from: new Date(currentYear - 3, 0, 1).getTime(),
+    to: new Date(currentYear - 2, 0, 0).getTime()
   }
 }
 

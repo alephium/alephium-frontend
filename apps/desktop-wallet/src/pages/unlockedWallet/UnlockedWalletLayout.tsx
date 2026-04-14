@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { motion } from 'framer-motion'
 import { Bookmark, Clock, Home } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -20,8 +18,6 @@ interface UnlockedWalletLayoutProps {
   className?: string
   children?: ReactNode
 }
-
-dayjs.extend(relativeTime)
 
 const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayoutProps) => {
   const { t } = useTranslation()

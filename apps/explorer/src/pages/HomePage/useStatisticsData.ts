@@ -1,10 +1,8 @@
+import { ONE_DAY_MS } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
-import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 
 import client from '@/api/client'
-
-const ONE_DAY = 1000 * 60 * 60 * 24
 
 interface Stat<T> {
   value: T
@@ -29,13 +27,17 @@ type StatsVectorData = { [key in StatVectorKeys]: StatVector }
 const statScalarDefault = { value: 0, isLoading: true }
 const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
-const getTimeIntervals = (timeInterval: explorer.IntervalType) => ({
-  from:
-    timeInterval === explorer.IntervalType.Daily
-      ? dayjs().subtract(1, 'month').valueOf()
-      : dayjs().subtract(2, 'day').valueOf(),
-  to: dayjs().valueOf()
-})
+const getTimeIntervals = (timeInterval: explorer.IntervalType) => {
+  const now = Date.now()
+
+  if (timeInterval === explorer.IntervalType.Daily) {
+    const oneMonthAgo = new Date()
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+    return { from: oneMonthAgo.getTime(), to: now }
+  }
+
+  return { from: now - 2 * ONE_DAY_MS, to: now }
+}
 
 const useStatisticsData = (timeInterval: explorer.IntervalType) => {
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
@@ -70,7 +72,7 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
 
     const fetchHashrateData = async () => {
       const now = new Date().getTime()
-      const yesterday = now - ONE_DAY
+      const yesterday = now - ONE_DAY_MS
 
       const data = await client.explorer.charts.getChartsHashrates({
         fromTs: yesterday,
