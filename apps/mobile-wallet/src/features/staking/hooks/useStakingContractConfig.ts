@@ -1,20 +1,11 @@
-import { getPowfiSdk } from '~/api/powfi'
+import { powfiSdk } from '~/api/powfi'
 
 const useStakingContractConfig = () => {
-  const powfi = getPowfiSdk()
+  const { xAlphTokenAddress, xAlphTokenId } = powfiSdk.staking.getConfig()
 
-  if (!powfi) {
-    return { xAlphTokenAddress: '', xAlphTokenId: undefined as string | undefined }
-  }
-
-  try {
-    const c = powfi.staking.getConfig()
-    return {
-      xAlphTokenAddress: c.xAlphTokenAddress,
-      xAlphTokenId: c.xAlphTokenId
-    }
-  } catch {
-    return { xAlphTokenAddress: '', xAlphTokenId: undefined as string | undefined }
+  return {
+    stakingContractAddress: xAlphTokenAddress,
+    xAlphTokenId
   }
 }
 

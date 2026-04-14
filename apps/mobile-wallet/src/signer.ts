@@ -3,7 +3,7 @@ import { transactionSign } from '@alephium/web3'
 
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
-class SecureStoreSigner extends AlephiumWalletSigner {
+export class SecureStoreSigner extends AlephiumWalletSigner {
   public getPublicKey = async (addressStr: string): Promise<string> =>
     getAddressAsymetricKey(getBaseAddressStr(addressStr), 'public')
 

@@ -2,19 +2,20 @@ import { selectDefaultAddress, transactionSent } from '@alephium/shared'
 import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
 import { useCallback } from 'react'
 
-import { getRequiredPowfiSdk } from '~/api/powfi'
+import { powfiSdk } from '~/api/powfi'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 import useStakingContractConfig from './useStakingContractConfig'
 import useStakingQueriesAfterTxConfirmed from './useStakingQueriesAfterTxConfirmed'
 
+const { staking } = powfiSdk
+
 const useAlphStaking = () => {
-  const { staking } = getRequiredPowfiSdk()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
   const refreshStakingData = useStakingQueriesAfterTxConfirmed()
-  const { xAlphTokenAddress: stakingContractAddress, xAlphTokenId } = useStakingContractConfig()
+  const { stakingContractAddress, xAlphTokenId } = useStakingContractConfig()
 
   const sendStakingTx = useCallback(
     ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {
@@ -43,7 +44,7 @@ const useAlphStaking = () => {
       await refreshStakingData()
       return result
     },
-    [staking, refreshStakingData, sendStakingTx]
+    [refreshStakingData, sendStakingTx]
   )
 
   const startUnstake = useCallback(
@@ -56,7 +57,7 @@ const useAlphStaking = () => {
       await refreshStakingData()
       return result
     },
-    [staking, refreshStakingData, sendStakingTx, xAlphTokenId]
+    [refreshStakingData, sendStakingTx, xAlphTokenId]
   )
 
   const claimUnstaked = useCallback(
@@ -66,7 +67,7 @@ const useAlphStaking = () => {
       await refreshStakingData()
       return result
     },
-    [staking, refreshStakingData, sendStakingTx]
+    [refreshStakingData, sendStakingTx]
   )
 
   const cancelUnstake = useCallback(
@@ -76,7 +77,7 @@ const useAlphStaking = () => {
       await refreshStakingData()
       return result
     },
-    [staking, refreshStakingData, sendStakingTx]
+    [refreshStakingData, sendStakingTx]
   )
 
   return {

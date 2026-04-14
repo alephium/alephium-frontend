@@ -24,13 +24,8 @@ const StakingScreen = () => {
 
   if (!isStakingEnabled) return null
 
-  const handleStakePress = () => {
-    dispatch(openModal({ name: 'StakeModal' }))
-  }
-
-  const handleUnstakePress = () => {
-    dispatch(openModal({ name: 'UnstakeModal' }))
-  }
+  const handleStakePress = () => dispatch(openModal({ name: 'StakeModal' }))
+  const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal' }))
 
   return (
     <Screen>
