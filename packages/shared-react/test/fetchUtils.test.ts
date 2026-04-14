@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { FetchError, fetchContentType, fetchJson, postJson } from '../src/api/fetchUtils'
+import { fetchContentType, FetchError, fetchJson, postJson } from '../src/api/fetchUtils'
 
 const mockFetch = vi.fn()
 
