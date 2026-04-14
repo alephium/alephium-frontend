@@ -15,6 +15,7 @@ import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
+import addressSettingsListenerMiddleware from '~/store/addresses/addressSettingsListenerMiddleware'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import appSlice from '~/store/appSlice'
 import walletSlice from '~/store/wallet/walletSlice'
@@ -46,6 +47,7 @@ export const store = configureStore({
       .prepend(favoriteDAppsListenerMiddleware.middleware)
       .prepend(hiddenTokensListenerMiddleware.middleware)
       .prepend(authorizedConnectionsListenerMiddleware.middleware)
+      .prepend(addressSettingsListenerMiddleware.middleware)
     return middlewares
   }
 })
