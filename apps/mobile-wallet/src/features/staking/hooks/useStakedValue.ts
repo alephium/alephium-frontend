@@ -1,12 +1,17 @@
+import { AddressHash } from '@alephium/shared'
 import Decimal from 'decimal.js'
 import { useMemo } from 'react'
 
 import useFetchXAlphBalance from './useFetchXAlphBalance'
 import useFetchXAlphRate from './useFetchXAlphRate'
 
-const useStakedValue = () => {
-  const { data: xAlphBalance, isLoading: isXAlphBalanceLoading } = useFetchXAlphBalance()
-  const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
+const useStakedValue = (addressHash: AddressHash) => {
+  const {
+    data: xAlphBalance,
+    isLoading: isXAlphBalanceLoading,
+    isFetching: isXAlphBalanceFetching
+  } = useFetchXAlphBalance(addressHash)
+  const { data: xAlphRate, isLoading: isXAlphRateLoading, isFetching: isXAlphRateFetching } = useFetchXAlphRate()
 
   const stakedValueAlph = useMemo(() => {
     const stakedValueDecimal = new Decimal(xAlphBalance.toString()).mul(xAlphRate)
@@ -16,7 +21,8 @@ const useStakedValue = () => {
 
   return {
     data: stakedValueAlph,
-    isLoading: isXAlphBalanceLoading || isXAlphRateLoading
+    isLoading: isXAlphBalanceLoading || isXAlphRateLoading,
+    isFetching: isXAlphBalanceFetching || isXAlphRateFetching
   }
 }
 

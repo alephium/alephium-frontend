@@ -38,12 +38,15 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
   const onClaimPress = async () => {
     if (isClaiming) return
     if (!canClaim) {
-      const claimableAmount = `${formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH`
+      const claimableAmount = `${formatAmountForDisplay({
+        amount: request.claimableAmount,
+        amountDecimals: ALPH.decimals
+      })} ALPH`
       Alert.alert(
         '',
         t('Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.', {
           claimableAmount
-        }) as string
+        })
       )
       return
     }
@@ -53,8 +56,8 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
   const submitClaim = async () => {
     setIsClaiming(true)
     try {
+      showToast({ type: 'info', text1: t('Claiming ALPH...') })
       await claimUnstaked(request.vaultIndex, request.claimableAmount)
-      showToast({ type: 'success', text1: t('Transaction sent') })
     } catch (error) {
       showExceptionToast(error, t('Claim'))
     } finally {
@@ -63,28 +66,24 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
   }
 
   const handleCancel = () => {
-    Alert.alert(
-      t('Cancel unstaking') as string,
-      t('Are you sure you want to cancel this unstaking request?') as string,
-      [
-        { text: t('No') as string, style: 'cancel' },
-        {
-          text: t('Yes, cancel') as string,
-          style: 'destructive',
-          onPress: async () => {
-            setIsCancelling(true)
-            try {
-              await cancelUnstake(request.vaultIndex)
-              showToast({ type: 'success', text1: t('Transaction sent') })
-            } catch (error) {
-              showExceptionToast(error, t('Cancel unstaking'))
-            } finally {
-              setIsCancelling(false)
-            }
+    Alert.alert(t('Cancel unstaking'), t('Are you sure you want to cancel this unstaking request?'), [
+      { text: t('No'), style: 'cancel' },
+      {
+        text: t('Yes, cancel'),
+        style: 'destructive',
+        onPress: async () => {
+          setIsCancelling(true)
+          try {
+            showToast({ type: 'info', text1: t('Cancelling unstaking request...') })
+            await cancelUnstake(request.vaultIndex)
+          } catch (error) {
+            showExceptionToast(error, t('Cancel unstaking'))
+          } finally {
+            setIsCancelling(false)
           }
         }
-      ]
-    )
+      }
+    ])
   }
 
   return (
@@ -121,7 +120,7 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       <ButtonRow>
         <Pressable style={{ flex: 1 }} onPress={onClaimPress} disabled={isClaiming}>
           <Button
-            title={t('Claim') as string}
+            title={t('Claim')}
             onPress={() => undefined}
             disabled={!canClaim || isClaiming}
             pointerEvents="none"
@@ -133,7 +132,7 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
         </Pressable>
         {!isFullyUnlocked && (
           <Button
-            title={t('Cancel') as string}
+            title={t('Cancel')}
             onPress={handleCancel}
             loading={isCancelling}
             type="secondary"

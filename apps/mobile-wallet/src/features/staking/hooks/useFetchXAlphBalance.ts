@@ -1,22 +1,20 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { useFetchAddressSingleTokenBalances } from '@alephium/shared-react'
-
-import { useAppSelector } from '~/hooks/redux'
 
 import useXAlphTokenId from './useXAlphTokenId'
 
-const useFetchXAlphBalance = () => {
-  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+const useFetchXAlphBalance = (addressHash: AddressHash) => {
   const xAlphTokenId = useXAlphTokenId()
-  const { data: tokenBalances, isLoading } = useFetchAddressSingleTokenBalances({
-    addressHash: defaultAddressHash ?? '',
-    tokenId: xAlphTokenId ?? '',
-    skip: !defaultAddressHash || !xAlphTokenId
-  })
+  const {
+    data: tokenBalances,
+    isLoading,
+    isFetching
+  } = useFetchAddressSingleTokenBalances({ addressHash, tokenId: xAlphTokenId })
 
   return {
     data: tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : BigInt(0),
-    isLoading
+    isLoading,
+    isFetching
   }
 }
 

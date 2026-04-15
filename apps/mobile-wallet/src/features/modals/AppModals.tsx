@@ -181,9 +181,9 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
     case 'SignChainedTxModal':
       return <SignChainedTxModal {...params.props} />
     case 'StakeModal':
-      return <StakeModal />
+      return <StakeModal {...params.props} />
     case 'UnstakeModal':
-      return <UnstakeModal />
+      return <UnstakeModal {...params.props} />
     default:
       return null
   }

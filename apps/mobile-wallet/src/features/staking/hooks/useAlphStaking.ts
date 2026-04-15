@@ -1,83 +1,101 @@
-import { selectDefaultAddress, transactionSent } from '@alephium/shared'
-import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
+import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared'
+import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import { powfiSdk } from '~/api/powfi'
+import { setIsCanceling, setIsClaiming, setIsStaking, setIsUnstaking } from '~/features/staking/stakingSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 import useStakingContractConfig from './useStakingContractConfig'
-import useStakingQueriesAfterTxConfirmed from './useStakingQueriesAfterTxConfirmed'
 
-const { staking } = powfiSdk
+type RecordTxAndRefreshProps = {
+  result: SignExecuteScriptTxResult
+  alphAmount?: SignExecuteScriptTxParams['attoAlphAmount']
+  xAlphAmount?: Token['amount']
+}
 
 const useAlphStaking = () => {
   const dispatch = useAppDispatch()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-  const fromAddress = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : ''
-  const refreshStakingData = useStakingQueriesAfterTxConfirmed()
-  const { stakingContractAddress, xAlphTokenId } = useStakingContractConfig()
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const { xAlphTokenId } = useStakingContractConfig()
 
-  const sendStakingTx = useCallback(
-    ({ txId, amount, tokens }: { txId: string; amount?: string; tokens?: Array<{ id: string; amount: string }> }) => {
-      if (!fromAddress) return
+  const recordTx = useCallback(
+    async ({ result, alphAmount, xAlphAmount }: RecordTxAndRefreshProps) => {
+      if (!defaultAddressHash) throw Error('Default address hash not found')
 
-      dispatch(
-        transactionSent({
-          hash: txId,
-          fromAddress,
-          toAddress: stakingContractAddress,
-          amount,
-          tokens,
-          timestamp: Date.now(),
-          status: 'sent',
-          type: 'contract'
-        })
-      )
+      const sentTx = signAndSubmitTxResultToSentTx({
+        type: 'EXECUTE_SCRIPT',
+        txParams: {
+          signerAddress: defaultAddressHash,
+          attoAlphAmount: alphAmount,
+          tokens: xAlphAmount ? [{ id: xAlphTokenId, amount: xAlphAmount }] : undefined,
+          bytecode: ''
+        },
+        result
+      })
+      dispatch(transactionSent(sentTx))
     },
-    [dispatch, fromAddress, stakingContractAddress]
+    [dispatch, defaultAddressHash, xAlphTokenId]
   )
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {
-      const result = await staking.stakeAlph(amount)
-      sendStakingTx({ txId: result.txId, amount: amount.toString() })
-      await refreshStakingData()
-      return result
+      dispatch(setIsStaking(true))
+      try {
+        const result = await powfiSdk.staking.stakeAlph(amount)
+        recordTx({ result, alphAmount: amount })
+        return result
+      } catch (error) {
+        dispatch(setIsStaking(false))
+        throw error
+      }
     },
-    [refreshStakingData, sendStakingTx]
+    [dispatch, recordTx]
   )
 
   const startUnstake = useCallback(
     async (amount: bigint) => {
-      const result = await staking.startUnstake(amount)
-      sendStakingTx({
-        txId: result.txId,
-        tokens: xAlphTokenId ? [{ id: xAlphTokenId, amount: amount.toString() }] : undefined
-      })
-      await refreshStakingData()
-      return result
+      dispatch(setIsUnstaking(true))
+      try {
+        const result = await powfiSdk.staking.startUnstake(amount)
+        await recordTx({ result, xAlphAmount: amount })
+        return result
+      } catch (error) {
+        dispatch(setIsUnstaking(false))
+        throw error
+      }
     },
-    [refreshStakingData, sendStakingTx, xAlphTokenId]
+    [dispatch, recordTx]
   )
 
   const claimUnstaked = useCallback(
     async (vaultIndex: bigint, amount: bigint) => {
-      const result = await staking.claimUnstaked(vaultIndex, amount)
-      sendStakingTx({ txId: result.txId, amount: amount.toString() })
-      await refreshStakingData()
-      return result
+      dispatch(setIsClaiming(true))
+      try {
+        const result = await powfiSdk.staking.claimUnstaked(vaultIndex, amount)
+        await recordTx({ result, alphAmount: amount })
+        return result
+      } catch (error) {
+        dispatch(setIsClaiming(false))
+        throw error
+      }
     },
-    [refreshStakingData, sendStakingTx]
+    [dispatch, recordTx]
   )
 
   const cancelUnstake = useCallback(
     async (vaultIndex: bigint) => {
-      const result = await staking.cancelUnstake(vaultIndex)
-      sendStakingTx({ txId: result.txId })
-      await refreshStakingData()
-      return result
+      dispatch(setIsCanceling(true))
+      try {
+        const result = await powfiSdk.staking.cancelUnstake(vaultIndex)
+        await recordTx({ result })
+        return result
+      } catch (error) {
+        dispatch(setIsCanceling(false))
+        throw error
+      }
     },
-    [refreshStakingData, sendStakingTx]
+    [dispatch, recordTx]
   )
 
   return {

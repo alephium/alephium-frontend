@@ -1,3 +1,4 @@
+import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,14 +15,18 @@ import { showExceptionToast, showToast } from '~/utils/layout'
 
 import StakingActionModal from './StakingActionModal'
 
-const UnstakeModal = () => {
+interface UnstakeModalProps {
+  addressHash: AddressHash
+}
+
+const UnstakeModal = ({ addressHash }: UnstakeModalProps) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<TextInput>(null)
   const { startUnstake } = useAlphStaking()
   const { data: xAlphRate } = useFetchXAlphRate()
-  const { data: xAlphBalance } = useFetchXAlphBalance()
+  const { data: xAlphBalance } = useFetchXAlphBalance(addressHash)
 
   const {
     amount,
@@ -47,8 +52,8 @@ const UnstakeModal = () => {
     setIsLoading(true)
 
     try {
+      showToast({ type: 'info', text1: t('Opening ALPH unstake request...') })
       await startUnstake(amountInAttoXAlph)
-      showToast({ type: 'success', text1: t('Transaction sent') })
       dismissModal()
     } catch (err) {
       showExceptionToast(err, t('Unstake xALPH'))
@@ -59,7 +64,7 @@ const UnstakeModal = () => {
 
   return (
     <StakingActionModal
-      title={t('Unstake xALPH') as string}
+      title={t('Unstake xALPH')}
       info={
         <AppText color="secondary" size={13}>
           {t(
@@ -94,7 +99,7 @@ const UnstakeModal = () => {
           </>
         ) : undefined
       }
-      primaryButtonTitle={amount ? `${t('Unstake')} ${amount} xALPH` : (t('Unstake xALPH') as string)}
+      primaryButtonTitle={amount ? `${t('Unstake')} ${amount} xALPH` : t('Unstake xALPH')}
       onPrimaryPress={handleUnstake}
       primaryDisabled={!amountInAttoXAlph || !!error || isLoading}
       isPrimaryLoading={isLoading}

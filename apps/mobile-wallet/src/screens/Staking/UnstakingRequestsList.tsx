@@ -1,22 +1,49 @@
-import { Fragment } from 'react'
+import { AddressHash } from '@alephium/shared'
+import { queryClient } from '@alephium/shared-react'
+import { Fragment, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useFetchAddressUnstakeRequests from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
-import usePendingStakingTransaction from '~/features/staking/hooks/usePendingStakingTransaction'
+import useFetchAddressUnstakeRequests, {
+  unstakeVaultRequestsQueryKeyRoot
+} from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import { setIsCanceling, setIsClaiming, setIsUnstaking } from '~/features/staking/stakingSlice'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import PendingStakingActionPollerIndicator from '~/screens/Staking/PendingStakingActionPollerIndicator'
+import { showToast } from '~/utils/layout'
 
 import UnstakingRequestItem from './UnstakingRequestItem'
 
-const UnstakingRequestsList = () => {
-  const { t } = useTranslation()
-  const theme = useTheme()
-  const { data: unstakeRequests, isLoading, isError, error, refetch, isRefetching } = useFetchAddressUnstakeRequests()
-  const pendingTx = usePendingStakingTransaction()
+interface UnstakingRequestsListProps {
+  addressHash: AddressHash
+}
 
-  const showSpinner = isLoading || isRefetching || !!pendingTx
+const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const { data: unstakeRequests, isLoading, isError, error, refetch, isRefetching } = useFetchAddressUnstakeRequests()
+
   const errorMessage: string = error instanceof Error ? error.message : String(error ?? '')
+
+  const isUnstaking = useAppSelector((s) => s.staking.isUnstaking)
+  const isCanceling = useAppSelector((s) => s.staking.isCanceling)
+  const isClaiming = useAppSelector((s) => s.staking.isClaiming)
+
+  const handleNewTxDetected = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })
+
+    if (isUnstaking) {
+      dispatch(setIsUnstaking(false))
+      showToast({ type: 'success', text1: t('Unstake request opened!') })
+    } else if (isCanceling) {
+      dispatch(setIsCanceling(false))
+      showToast({ type: 'success', text1: t('Unstake request cancelled!') })
+    } else if (isClaiming) {
+      dispatch(setIsClaiming(false))
+      showToast({ type: 'success', text1: t('ALPH claimed!') })
+    }
+  }, [dispatch, isCanceling, isClaiming, isUnstaking, t])
 
   return (
     <Container>
@@ -24,7 +51,9 @@ const UnstakingRequestsList = () => {
         <SectionTitle color="secondary">
           {t('Pending unstakings')} ({unstakeRequests.length})
         </SectionTitle>
-        {showSpinner && <ActivityIndicator size="small" color={theme.font.tertiary} />}
+        {(isUnstaking || isCanceling || isClaiming) && addressHash && (
+          <PendingStakingActionPollerIndicator addressHash={addressHash} onNewTxDetected={handleNewTxDetected} />
+        )}
       </TitleRow>
       {isError ? (
         <Fragment>

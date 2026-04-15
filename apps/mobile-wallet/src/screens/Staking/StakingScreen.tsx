@@ -1,3 +1,4 @@
+import { selectDefaultAddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -8,7 +9,7 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
 import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressSection from '~/screens/Staking/DefaultAddressSection'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -17,46 +18,41 @@ import UnstakingRequestsList from './UnstakingRequestsList'
 
 const StakingScreen = () => {
   const { t } = useTranslation()
+  const addressHash = useAppSelector(selectDefaultAddressHash)
   const dispatch = useAppDispatch()
   const isStakingEnabled = useIsStakingEnabled()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
 
-  if (!isStakingEnabled) return null
+  if (!isStakingEnabled || !addressHash) return null
 
-  const handleStakePress = () => dispatch(openModal({ name: 'StakeModal' }))
-  const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal' }))
+  const handleStakePress = () => dispatch(openModal({ name: 'StakeModal', props: { addressHash } }))
+  const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal', props: { addressHash } }))
 
   return (
     <Screen>
-      <BaseHeader options={{ headerTitle: t('Staking') as string }} scrollY={screenScrollY} />
+      <BaseHeader options={{ headerTitle: t('Staking') }} scrollY={screenScrollY} />
       <StyledScrollView onScroll={screenScrollHandler} scrollEventThrottle={16}>
-        <ScreenTitle title={t('Staking') as string} scrollY={screenScrollY} sideDefaultMargin paddingTop />
+        <ScreenTitle title={t('Staking')} scrollY={screenScrollY} sideDefaultMargin paddingTop />
 
         <ContentContainer>
           <DefaultAddressSection />
 
-          <StakingCard />
+          <StakingCard addressHash={addressHash} />
 
           <ButtonsRow>
             <Button
-              title={t('Stake') as string}
+              title={t('Stake')}
               onPress={handleStakePress}
               flex
               style={{ backgroundColor: theme.global.palette3 }}
             />
-            <Button
-              title={t('Unstake') as string}
-              onPress={handleUnstakePress}
-              type="secondary"
-              variant="default"
-              flex
-            />
+            <Button title={t('Unstake')} onPress={handleUnstakePress} type="secondary" variant="default" flex />
           </ButtonsRow>
 
           <Divider />
 
-          <UnstakingRequestsList />
+          <UnstakingRequestsList addressHash={addressHash} />
         </ContentContainer>
       </StyledScrollView>
     </Screen>
