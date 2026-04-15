@@ -1,7 +1,7 @@
 import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
 
 import AppText from '~/components/AppText'
@@ -79,7 +79,7 @@ const UnstakeModal = ({ addressHash }: UnstakeModalProps) => {
       }
       maxAction={
         <AppText color="accent" size={13} semiBold>
-          {t('Max')}: {formattedMaxBalance} xALPH
+          {t('Max: {{amount}} xALPH', { amount: formattedMaxBalance })}
         </AppText>
       }
       onMax={handleMax}
@@ -89,17 +89,20 @@ const UnstakeModal = ({ addressHash }: UnstakeModalProps) => {
       inputRef={inputRef}
       receivePreview={
         alphToReceive ? (
-          <>
-            <AppText color="secondary" size={13}>
-              {t('You will receive (over 30 days)')}
-            </AppText>
-            <AppText semiBold size={18}>
-              ≈ {alphToReceive} ALPH
-            </AppText>
-          </>
+          <Trans
+            t={t}
+            i18nKey="unstakeXAlphReceivePreview"
+            values={{ amount: alphToReceive }}
+            components={{
+              1: <AppText color="secondary" size={13} />,
+              2: <AppText semiBold size={18} />
+            }}
+          >
+            {'<1>You will receive (over 30 days)</1><2>≈ {{amount}} ALPH</2>'}
+          </Trans>
         ) : undefined
       }
-      primaryButtonTitle={amount ? `${t('Unstake')} ${amount} xALPH` : t('Unstake xALPH')}
+      primaryButtonTitle={amount ? t('Unstake {{amount}} xALPH', { amount }) : t('Unstake xALPH')}
       onPrimaryPress={handleUnstake}
       primaryDisabled={!amountInAttoXAlph || !!error || isLoading}
       isPrimaryLoading={isLoading}

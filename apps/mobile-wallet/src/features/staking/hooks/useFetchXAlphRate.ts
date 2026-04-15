@@ -4,16 +4,7 @@ import { useMemo } from 'react'
 import useFetchXAlphTokenState from './useFetchXAlphTokenState'
 
 const useFetchXAlphRate = () => {
-  const {
-    data: tokenState,
-    error,
-    isError,
-    isFetching,
-    isLoading,
-    isPending,
-    isRefetching,
-    refetch
-  } = useFetchXAlphTokenState()
+  const { data: tokenState, isLoading } = useFetchXAlphTokenState()
 
   const xAlphRate = useMemo(() => {
     const totalXAlphSupply = tokenState?.fields.totalXAlphSupply
@@ -29,13 +20,7 @@ const useFetchXAlphRate = () => {
 
   return {
     data: xAlphRate,
-    error,
-    isError,
-    isFetching,
-    isLoading,
-    isPending,
-    isRefetching,
-    refetch
+    isLoading
   }
 }
 

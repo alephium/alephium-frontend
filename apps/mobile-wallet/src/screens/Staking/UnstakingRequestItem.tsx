@@ -104,14 +104,14 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       </Row>
 
       <Row>
-        {canClaim ? (
+        {canClaim && (
           <DataColumn>
             <DataLabel>{t('Claimable now')}</DataLabel>
             <DataValue>
               {formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH
             </DataValue>
           </DataColumn>
-        ) : null}
+        )}
         <ProgressBarContainer $fullWidth={!canClaim}>
           <ProgressBar style={{ width: `${progress}%` }} />
         </ProgressBarContainer>

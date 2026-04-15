@@ -22,7 +22,14 @@ interface UnstakingRequestsListProps {
 const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { data: unstakeRequests, isLoading, isError, error, refetch, isRefetching } = useFetchAddressUnstakeRequests()
+  const {
+    data: unstakeRequests,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching
+  } = useFetchAddressUnstakeRequests({ addressHash })
 
   const errorMessage: string = error instanceof Error ? error.message : String(error ?? '')
 

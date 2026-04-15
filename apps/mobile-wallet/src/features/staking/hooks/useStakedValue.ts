@@ -6,12 +6,8 @@ import useFetchXAlphBalance from './useFetchXAlphBalance'
 import useFetchXAlphRate from './useFetchXAlphRate'
 
 const useStakedValue = (addressHash: AddressHash) => {
-  const {
-    data: xAlphBalance,
-    isLoading: isXAlphBalanceLoading,
-    isFetching: isXAlphBalanceFetching
-  } = useFetchXAlphBalance(addressHash)
-  const { data: xAlphRate, isLoading: isXAlphRateLoading, isFetching: isXAlphRateFetching } = useFetchXAlphRate()
+  const { data: xAlphBalance, isLoading: isXAlphBalanceLoading } = useFetchXAlphBalance(addressHash)
+  const { data: xAlphRate, isLoading: isXAlphRateLoading } = useFetchXAlphRate()
 
   const stakedValueAlph = useMemo(() => {
     const stakedValueDecimal = new Decimal(xAlphBalance.toString()).mul(xAlphRate)
@@ -21,8 +17,7 @@ const useStakedValue = (addressHash: AddressHash) => {
 
   return {
     data: stakedValueAlph,
-    isLoading: isXAlphBalanceLoading || isXAlphRateLoading,
-    isFetching: isXAlphBalanceFetching || isXAlphRateFetching
+    isLoading: isXAlphBalanceLoading || isXAlphRateLoading
   }
 }
 

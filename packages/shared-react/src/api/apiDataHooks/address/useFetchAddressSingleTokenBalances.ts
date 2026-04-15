@@ -20,27 +20,18 @@ export const useFetchAddressSingleTokenBalances = ({
   const networkId = useCurrentlyOnlineNetworkId()
   const isALPH = tokenId === ALPH.id
 
-  const {
-    data: alphBalances,
-    isLoading: isLoadingAlphBalances,
-    isFetching: isFetchingAlphBalances
-  } = useFetchAddressBalancesAlph({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip
   })
 
-  const {
-    data: addressTokenBalances,
-    isLoading: isLoadingTokenBalances,
-    isFetching: isFetchingTokenBalances
-  } = useQuery({
-    ...addressTokensBalancesQuery({ addressHash, networkId, skip: skip || !addressHash }),
+  const { data: addressTokenBalances, isLoading: isLoadingTokenBalances } = useQuery({
+    ...addressTokensBalancesQuery({ addressHash, networkId }),
     select: (data) => data?.balances.find(({ id }) => id === tokenId)
   })
 
   return {
     data: isALPH ? alphBalances : addressTokenBalances,
-    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances,
-    isFetching: isALPH ? isFetchingAlphBalances : isFetchingTokenBalances
+    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
   }
 }

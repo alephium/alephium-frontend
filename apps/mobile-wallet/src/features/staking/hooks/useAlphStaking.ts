@@ -2,11 +2,9 @@ import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSen
 import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 
-import { powfiSdk } from '~/api/powfi'
+import { powfiSdk, xAlphTokenId } from '~/api/powfi'
 import { setIsCanceling, setIsClaiming, setIsStaking, setIsUnstaking } from '~/features/staking/stakingSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-
-import useStakingContractConfig from './useStakingContractConfig'
 
 type RecordTxAndRefreshProps = {
   result: SignExecuteScriptTxResult
@@ -17,7 +15,6 @@ type RecordTxAndRefreshProps = {
 const useAlphStaking = () => {
   const dispatch = useAppDispatch()
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
-  const { xAlphTokenId } = useStakingContractConfig()
 
   const recordTx = useCallback(
     async ({ result, alphAmount, xAlphAmount }: RecordTxAndRefreshProps) => {
@@ -35,7 +32,7 @@ const useAlphStaking = () => {
       })
       dispatch(transactionSent(sentTx))
     },
-    [dispatch, defaultAddressHash, xAlphTokenId]
+    [dispatch, defaultAddressHash]
   )
 
   const stakeAlph = useCallback(
