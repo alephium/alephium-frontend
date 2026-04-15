@@ -140,10 +140,12 @@ const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepPr
 
 export default SendModalBuildTxStep
 
-const toDateTimeLocalString = (date: Date) => {
-  const pad = (n: number) => n.toString().padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
-}
+const pad = (n: number): string => n.toString().padStart(2, '0')
+
+const toDateTimeLocalString = (date: Date): string =>
+  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
+    date.getMinutes()
+  )}`
 
 const HorizontalDividerStyled = styled.div`
   flex: 1;

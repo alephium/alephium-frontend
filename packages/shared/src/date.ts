@@ -1,3 +1,5 @@
+import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, ONE_WEEK_MS } from './constants'
+
 export const SHORT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   day: '2-digit',
   month: '2-digit',
@@ -10,8 +12,6 @@ export const SHORT_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   minute: '2-digit',
   hour12: false
 }
-
-import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, ONE_WEEK_MS } from './constants'
 
 const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ['year', 365 * ONE_DAY_MS],

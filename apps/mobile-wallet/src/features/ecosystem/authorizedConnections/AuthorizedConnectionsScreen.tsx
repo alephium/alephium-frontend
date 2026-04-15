@@ -79,22 +79,15 @@ const TitleStyled = styled.View`
 const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
   const { t, i18n } = useTranslation()
 
+  const datetime = new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(new Date(connection.dateTime))
+
   return (
     <SubtitleStyled>
       <AddressBadge addressHash={connection.address} />
       <AppTextStyled color="secondary">
         {connection.networkName
-          ? t('Connected at {{ datetime }} on {{ network }}', {
-              datetime: new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(
-                new Date(connection.dateTime)
-              ),
-              network: connection.networkName
-            })
-          : t('Connected at {{ datetime }}', {
-              datetime: new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(
-                new Date(connection.dateTime)
-              )
-            })}
+          ? t('Connected at {{ datetime }} on {{ network }}', { datetime, network: connection.networkName })
+          : t('Connected at {{ datetime }}', { datetime })}
       </AppTextStyled>
     </SubtitleStyled>
   )

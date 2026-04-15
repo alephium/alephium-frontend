@@ -39,8 +39,8 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
     const timeRangeQueryParams = getCsvExportTimeRangeQueryParams(selectedTimePeriod, now)
 
     const csvData = await dispatch(fetchTransactionsCsv({ addressHash, ...timeRangeQueryParams })).unwrap()
-    const pad = (n: number) => n.toString().padStart(2, '0')
-    const fileName = `${addressHash}__${selectedTimePeriod}__${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}`
+    const dateStr = now.toISOString().slice(0, 10)
+    const fileName = `${addressHash}__${selectedTimePeriod}__${dateStr}`
     generateCsvFile(csvData, fileName)
 
     dispatch(csvFileGenerationFinished())
