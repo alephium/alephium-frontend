@@ -1,6 +1,5 @@
 import { SendFlowData, shouldBuildSweepTransactions } from '@alephium/shared'
 import { useFetchAddressBalances } from '@alephium/shared-react'
-import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -52,14 +51,14 @@ const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepPr
   if (!fromAddress || !toAddress) return null
 
   const handleLocktimeChange = (lockTimeInput: string) =>
-    setLockTime(lockTimeInput ? dayjs(lockTimeInput).toDate() : undefined)
+    setLockTime(lockTimeInput ? new Date(lockTimeInput) : undefined)
 
   const clearAdvancedSettings = () => {
     clearGasSettings()
     setLockTime(undefined)
   }
 
-  const lockTimeInPast = lockTime && dayjs(lockTime).toDate() < dayjs().toDate()
+  const lockTimeInPast = lockTime && lockTime < new Date()
   const atLeastOneAssetWithAmountIsSet = assetAmounts.some((asset) => asset?.amount && asset.amount > 0)
 
   const isSubmitButtonActive =
@@ -92,10 +91,10 @@ const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepPr
         <Input
           id="locktime"
           label={t('Lock time')}
-          value={lockTime ? dayjs(lockTime).format('YYYY-MM-DDTHH:mm') : ''}
+          value={lockTime ? toDateTimeLocalString(lockTime) : ''}
           onChange={(e) => handleLocktimeChange(e.target.value)}
           type="datetime-local"
-          min={dayjs().format('YYYY-MM-DDTHH:mm')}
+          min={toDateTimeLocalString(new Date())}
           max="2999-01-01T00:00"
           error={lockTimeInPast && t('Lock time must be in the future.')}
           liftLabel
@@ -140,6 +139,13 @@ const SendModalBuildTxStep = ({ data, onSubmit, onBack }: SendModalBuildTxStepPr
 }
 
 export default SendModalBuildTxStep
+
+const pad = (n: number): string => n.toString().padStart(2, '0')
+
+const toDateTimeLocalString = (date: Date): string =>
+  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
+    date.getMinutes()
+  )}`
 
 const HorizontalDividerStyled = styled.div`
   flex: 1;

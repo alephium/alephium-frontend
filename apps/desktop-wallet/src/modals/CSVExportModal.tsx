@@ -1,5 +1,4 @@
 import { selectAddressByHash } from '@alephium/shared'
-import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -36,11 +35,12 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
   }
 
   const getCSVFile = async () => {
-    const now = dayjs()
+    const now = new Date()
     const timeRangeQueryParams = getCsvExportTimeRangeQueryParams(selectedTimePeriod, now)
 
     const csvData = await dispatch(fetchTransactionsCsv({ addressHash, ...timeRangeQueryParams })).unwrap()
-    const fileName = `${addressHash}__${selectedTimePeriod}__${now.format('DD-MM-YYYY')}`
+    const dateStr = now.toISOString().slice(0, 10)
+    const fileName = `${addressHash}__${selectedTimePeriod}__${dateStr}`
     generateCsvFile(csvData, fileName)
 
     dispatch(csvFileGenerationFinished())

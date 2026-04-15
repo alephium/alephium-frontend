@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -37,7 +36,7 @@ const TransactionsListFooter = ({
           <NoTxsBeforeDate>
             <PlaceholderTextStyled emoji="🔎">
               {t('No transactions before {{ date }}', {
-                date: dayjs(latestTxDate).toDate().toLocaleString(region, { dateStyle: 'medium' })
+                date: new Date(latestTxDate).toLocaleString(region, { dateStyle: 'medium' })
               })}
             </PlaceholderTextStyled>
             <ActionLink onClick={onShowMoreClick}>{t('Show more')}</ActionLink>

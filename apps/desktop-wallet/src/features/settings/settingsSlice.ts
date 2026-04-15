@@ -1,20 +1,5 @@
-import 'dayjs/locale/bg'
-import 'dayjs/locale/de'
-import 'dayjs/locale/es'
-import 'dayjs/locale/fr'
-import 'dayjs/locale/id'
-import 'dayjs/locale/it'
-import 'dayjs/locale/pt'
-import 'dayjs/locale/ru'
-import 'dayjs/locale/tr'
-import 'dayjs/locale/vi'
-import 'dayjs/locale/el'
-import 'dayjs/locale/zh-cn'
-import 'dayjs/locale/th'
-
 import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
-import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
 import i18next from '@/features/localization/i18n'
@@ -137,7 +122,6 @@ settingsListenerMiddleware.startListening({
       dispatch(languageChangeStarted())
 
       try {
-        dayjs.locale(settings.language.slice(0, 2))
         await i18next.changeLanguage(settings.language)
       } catch (e) {
         console.error(e)

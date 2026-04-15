@@ -1,5 +1,4 @@
 import { explorer } from '@alephium/web3'
-import dayjs from 'dayjs'
 
 import { formatNumberForDisplay } from './strings'
 
@@ -22,7 +21,10 @@ export const formatXAxis =
     const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
     if (type === 'datetime') {
       if (typeof _value == 'string' || typeof _value == 'number') {
-        return timeInterval === explorer.IntervalType.Daily ? dayjs(_value).format('D') : dayjs(_value).format('hh')
+        const date = new Date(Number(_value))
+        return timeInterval === explorer.IntervalType.Daily
+          ? date.getDate().toString()
+          : date.getHours().toString().padStart(2, '0')
       }
     }
     return _value

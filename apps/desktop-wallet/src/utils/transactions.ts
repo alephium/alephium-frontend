@@ -1,14 +1,16 @@
-import { TransactionInfoType2 } from '@alephium/shared'
-import dayjs from 'dayjs'
+import { SHORT_DATE_OPTIONS, TransactionInfoType2 } from '@alephium/shared'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/features/localization/i18n'
 import { TranslationKey } from '@/features/localization/i18next'
 import { Direction, TransactionTimePeriod } from '@/types/transactions'
 
-const now = dayjs()
-const currentYear = now.year()
-const today = now.format('DD/MM/YYYY')
+const now = new Date()
+const currentYear = now.getFullYear()
+const dateFormatter = new Intl.DateTimeFormat(undefined, SHORT_DATE_OPTIONS)
+const today = dateFormatter.format(now)
+const oneYearAgo = new Date(now)
+oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
 
 export const timePeriodsOptions: SelectOption<TransactionTimePeriod>[] = [
   {
@@ -30,7 +32,7 @@ export const timePeriodsOptions: SelectOption<TransactionTimePeriod>[] = [
   {
     value: '12m',
     label: `${i18n.t('Last 12 months')}
-    (${now.subtract(1, 'year').format('DD/MM/YYYY')}
+    (${dateFormatter.format(oneYearAgo)}
     - ${today})`
   },
   {

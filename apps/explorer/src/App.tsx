@@ -3,8 +3,6 @@ import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import dayjs from 'dayjs'
-import updateLocale from 'dayjs/plugin/updateLocale'
 import { useEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
@@ -25,27 +23,6 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
-
-/* Customize data format accross the app */
-dayjs.extend(updateLocale)
-
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: 'in %s',
-    past: '%s ago',
-    s: 'A few secs',
-    m: 'A min',
-    mm: '%d mins',
-    h: 'An hour',
-    hh: '%d hours',
-    d: 'A day',
-    dd: '%d days',
-    M: 'A month',
-    MM: '%d months',
-    y: 'A year',
-    yy: '%d years'
-  }
-})
 
 const App = () => {
   const { theme } = useSettings()

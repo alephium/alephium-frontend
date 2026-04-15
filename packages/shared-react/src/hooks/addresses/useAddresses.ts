@@ -1,4 +1,4 @@
-import { AddressHash, MAXIMAL_GAS_FEE, selectDefaultAddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, MAXIMAL_GAS_FEE, ONE_DAY_MS, selectDefaultAddressHash, TokenId } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { isGrouplessAddress } from '@alephium/web3'
 import { useMemo } from 'react'
@@ -78,7 +78,7 @@ export const useFetchAddressesHashesWithBalanceSortedByLastUse = (tokenId: Token
   }
 }
 
-const ONE_MONTH_IN_MS = 30 * 24 * 60 * 60 * 1000
+const ONE_MONTH_IN_MS = 30 * ONE_DAY_MS
 
 export const useFetchAddressesHashesSplitByUseFrequency = () => {
   const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined

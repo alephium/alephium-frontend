@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -77,20 +77,17 @@ const TitleStyled = styled.View`
 `
 
 const Subtitle = ({ connection }: { connection: AuthorizedConnection }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+
+  const datetime = new Intl.DateTimeFormat(i18n.language, SHORT_DATE_TIME_OPTIONS).format(new Date(connection.dateTime))
 
   return (
     <SubtitleStyled>
       <AddressBadge addressHash={connection.address} />
       <AppTextStyled color="secondary">
         {connection.networkName
-          ? t('Connected at {{ datetime }} on {{ network }}', {
-              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm'),
-              network: connection.networkName
-            })
-          : t('Connected at {{ datetime }}', {
-              datetime: dayjs(connection.dateTime).format('YYYY-MM-DD HH:mm')
-            })}
+          ? t('Connected at {{ datetime }} on {{ network }}', { datetime, network: connection.networkName })
+          : t('Connected at {{ datetime }}', { datetime })}
       </AppTextStyled>
     </SubtitleStyled>
   )

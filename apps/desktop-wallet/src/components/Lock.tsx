@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { Lock as LockIcon, Unlock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -9,14 +9,17 @@ interface LockProps {
 }
 
 const Lock = ({ unlockAt, className }: LockProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (!unlockAt) return null
 
   const lockTimeInPast = unlockAt < new Date()
-  const tooltipContent = `${lockTimeInPast ? t`Unlocked at` : t`Unlocks at`} ${dayjs(unlockAt).format(
-    'DD/MM/YYYY hh:mm A'
-  )}`
+  const formattedDate = new Intl.DateTimeFormat(i18n.language, {
+    ...SHORT_DATE_TIME_OPTIONS,
+    hour: 'numeric',
+    hour12: true
+  }).format(unlockAt)
+  const tooltipContent = `${lockTimeInPast ? t`Unlocked at` : t`Unlocks at`} ${formattedDate}`
 
   return (
     <span className={className} data-tooltip-id="default" data-tooltip-content={tooltipContent}>

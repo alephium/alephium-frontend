@@ -1,5 +1,4 @@
-import { SendFlowData } from '@alephium/shared'
-import dayjs from 'dayjs'
+import { formatRelativeTime, SendFlowData } from '@alephium/shared'
 import { LockIcon } from 'lucide-react'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -16,7 +15,7 @@ import { formatDateForDisplay } from '@/utils/misc'
 export type ConfirmLockTimeModalProps = Required<Pick<SendFlowData, 'lockTime'>> & Pick<CheckTxProps, 'onSubmit'>
 
 const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & ConfirmLockTimeModalProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dispatch = useAppDispatch()
 
   const handleConfirmClick = () => {
@@ -31,8 +30,8 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
           t={t}
           i18nKey="lockTimeConfirmation"
           values={{
-            datetime: formatDateForDisplay(lockTime),
-            inTimeFromNow: dayjs(lockTime).fromNow()
+            datetime: formatDateForDisplay(lockTime, i18n.language),
+            inTimeFromNow: formatRelativeTime(lockTime, i18n.language)
           }}
           components={{
             1: <strong />,

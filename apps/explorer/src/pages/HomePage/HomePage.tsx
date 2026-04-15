@@ -1,7 +1,5 @@
-import { addApostrophes } from '@alephium/shared'
+import { addApostrophes, SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,8 +29,6 @@ import { formatNumberForDisplay } from '@/utils/strings'
 
 import useBlockListData from './useBlockListData'
 import useStatisticsData from './useStatisticsData'
-
-dayjs.extend(duration)
 
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
 
@@ -187,7 +183,9 @@ const HomePage = () => {
                       <Timestamp
                         timeInMs={b.timestamp}
                         customFormat={
-                          dayjs(b.timestamp).date() !== dayjs().date() ? 'HH:mm:ss (DD/MM/YYYY)' : 'HH:mm:ss'
+                          new Date(b.timestamp).getDate() !== new Date().getDate()
+                            ? { ...SHORT_DATE_TIME_OPTIONS, second: '2-digit' }
+                            : { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
                         }
                       />
                       <span>{b.txNumber}</span>
