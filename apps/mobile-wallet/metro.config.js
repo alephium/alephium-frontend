@@ -49,7 +49,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   return resolve(context, moduleName, platform)
 }
 
-// Polyfill Node core modules used by other deps (e.g. axios, crypto). Not needed for ws when aliased above.
+// Polyfill Node core modules used by other deps (e.g. crypto). Not needed for ws when aliased above.
 // fs: @alephium/web3's contract.ts has a dynamic import('fs') that Metro resolves statically.
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,

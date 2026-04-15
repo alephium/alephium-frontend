@@ -1,9 +1,9 @@
 import { matchesNFTCollectionUriMetaDataSchema, throttledClient } from '@alephium/shared'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { getQueryConfig } from '../../api'
+import { fetchJson } from '../../api/fetchUtils'
 import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
 
 export const useFetchNftCollection = (collectionId: string) => {
@@ -28,9 +28,9 @@ export const useFetchNftCollection = (collectionId: string) => {
       ? skipToken
       : async () => {
           try {
-            const { data } = await axios.get(collectionUri)
+            const data = await fetchJson<NFTCollectionUriMetaData>(collectionUri)
 
-            return matchesNFTCollectionUriMetaDataSchema(data) ? (data as NFTCollectionUriMetaData) : null
+            return matchesNFTCollectionUriMetaDataSchema(data) ? data : null
           } catch (error) {
             console.error(error)
             return null

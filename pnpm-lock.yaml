@@ -184,9 +184,6 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.18.0
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       classnames:
         specifier: ^2.3.1
         version: 2.5.1
@@ -370,9 +367,6 @@ importers:
       apexcharts:
         specifier: ^3.35.0
         version: 3.45.1
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       colord:
         specifier: ^2.9.3
         version: 2.9.3
@@ -596,9 +590,6 @@ importers:
       '@walletconnect/utils':
         specifier: 2.23.6
         version: 2.23.6(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       colord:
         specifier: ^2.9.3
         version: 2.9.3
@@ -1086,9 +1077,6 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.81.2
         version: 5.81.2(react@19.1.0)
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -1111,6 +1099,9 @@ importers:
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.5)(happy-dom@20.8.9)(jsdom@21.1.2)(lightningcss@1.31.1)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(terser@5.39.0)
 
   packages/typescript-config: {}
 
