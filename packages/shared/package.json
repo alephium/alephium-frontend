@@ -37,10 +37,10 @@
     "@alephium/typescript-config": "workspace:*",
     "@types/node": "^20.14.0",
     "@types/sanitize-html": "^2.11.0",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/coverage-v8": "^3.0.0",
     "eslint": "^8.48.0",
     "tslib": "^2.3.1",
     "typescript": "~5.9.2",
-    "vitest": "^2.1.9"
+    "vitest": "^3.0.0"
   }
 }

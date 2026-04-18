@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
+import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg?react'
 
 const AlephiumLogo = ({ contrasted }: { contrasted?: boolean }) => (
   <AlephiumLogoStyled contrasted={contrasted}>
