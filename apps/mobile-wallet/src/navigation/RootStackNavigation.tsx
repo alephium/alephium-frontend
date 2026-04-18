@@ -36,7 +36,7 @@ import {
   legacyStoredMnemonicV2Exists,
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/legacyWallet'
-import { walletListExists } from '~/persistent-storage/walletList'
+import { getLastUsedWallet, walletListExists } from '~/persistent-storage/walletList'
 import { getStoredWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/walletMetadata'
 import { storedMnemonicExists } from '~/persistent-storage/walletMnemonic'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
@@ -55,6 +55,7 @@ import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
+import WatchOnlyAddressScreen from '~/screens/new-wallet/WatchOnlyAddressScreen'
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import { mnemonicMigrated } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
@@ -126,6 +127,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   component={ImportWalletAddressDiscoveryScreen}
                 />
                 <RootStack.Screen name="AuthorizedConnectionsScreen" component={AuthorizedConnectionsScreen} />
+                <RootStack.Screen name="WatchOnlyAddressScreen" component={WatchOnlyAddressScreen} />
               </RootStack.Navigator>
               <AppModals />
             </Analytics>
@@ -178,6 +180,20 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     if (isWalletUnlocked) return
 
     try {
+      // Watch-only wallets have no mnemonic — skip mnemonic checks and unlock directly
+      const lastUsedWallet = getLastUsedWallet()
+
+      if (lastUsedWallet?.type === 'watch-only') {
+        await triggerBiometricsAuthGuard({
+          settingsToCheck: 'appAccess',
+          successCallback: initializeAppWithStoredWallet,
+          failureCallback: (message: string) =>
+            showToast({ type: 'error', text1: 'Biometrics authentication failed', text2: message })
+        })
+
+        return
+      }
+
       // Post-migration: check wallet-ID-scoped mnemonic first
       const hasWalletList = walletListExists()
       const mnemonicExistsForWallet =

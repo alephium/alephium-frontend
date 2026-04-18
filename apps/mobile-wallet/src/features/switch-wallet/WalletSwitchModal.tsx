@@ -67,6 +67,11 @@ const WalletSwitchModalContent = () => {
     navigation.navigate('LandingScreen', { isAddingWallet: true })
   }, [dismissModal, navigation])
 
+  const handleWatchAddress = useCallback(() => {
+    dismissModal()
+    navigation.navigate('WatchOnlyAddressScreen')
+  }, [dismissModal, navigation])
+
   return (
     <>
       {walletList.map((wallet) => (
@@ -78,6 +83,12 @@ const WalletSwitchModalContent = () => {
         />
       ))}
       <Button title={t('Add wallet')} onPress={handleAddWallet} iconProps={{ name: 'add-outline' }} type="secondary" />
+      <Button
+        title={t('Watch address')}
+        onPress={handleWatchAddress}
+        iconProps={{ name: 'eye-outline' }}
+        type="secondary"
+      />
     </>
   )
 }

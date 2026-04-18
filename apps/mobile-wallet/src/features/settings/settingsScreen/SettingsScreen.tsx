@@ -23,12 +23,14 @@ import SettingsDevSection from '~/features/settings/settingsScreen/SettingsDevSe
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import ThemeRow from '~/features/settings/settingsScreen/ThemeRow'
 import WalletNameRow from '~/features/settings/settingsScreen/WalletNameRow'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
 const SettingsScreen = (props: ScreenProps) => {
   const { t } = useTranslation()
+  const isWatchOnly = useIsWalletWatchOnly()
 
   return (
     <ScrollScreen
@@ -49,17 +51,17 @@ const SettingsScreen = (props: ScreenProps) => {
         <AnalyticsRow />
         <AppCacheRow />
       </ScreenSection>
-      <SettingsSecuritySection />
+      {!isWatchOnly && <SettingsSecuritySection />}
       <SettingsAssetsSection />
-      <SettingsDappsSection />
+      {!isWatchOnly && <SettingsDappsSection />}
       <ScreenSection>
         <ScreenSectionTitle>{t('Wallet')}</ScreenSectionTitle>
         <WalletNameRow />
-        <AddressDiscoveryRow />
-        <PublicKeysRow />
+        {!isWatchOnly && <AddressDiscoveryRow />}
+        {!isWatchOnly && <PublicKeysRow />}
       </ScreenSection>
       <ScreenSection>
-        <RecoveryPhraseRow />
+        {!isWatchOnly && <RecoveryPhraseRow />}
         <DeleteWalletRow />
       </ScreenSection>
 

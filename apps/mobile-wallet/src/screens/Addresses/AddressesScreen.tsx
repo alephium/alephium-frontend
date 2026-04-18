@@ -10,6 +10,7 @@ import FlashListScreen from '~/components/layout/FlashListScreen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -17,6 +18,7 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const bottomBarHeight = useBottomTabBarHeight()
+  const isWatchOnly = useIsWalletWatchOnly()
 
   const { data: addresses } = useFetchAddressesHashesSortedByLastUse()
 
@@ -41,7 +43,8 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
         />
       )}
       ListFooterComponent={() =>
-        addresses.length === 1 && (
+        addresses.length === 1 &&
+        !isWatchOnly && (
           <EmptyPlaceholder>
             <AppText style={{ textAlign: 'center' }} color="secondary" semiBold>
               {t('Did you know?')}

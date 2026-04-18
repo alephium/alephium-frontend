@@ -23,6 +23,8 @@ import { openModal } from '~/features/modals/modalActions'
 import OfflineButton from '~/features/offline/OfflineButton'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
+import WatchOnlyBadge from '~/features/watchOnlyWallet/WatchOnlyBadge'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
@@ -83,6 +85,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
         <RoundedCard>
           <AnimatedBackground />
           <WalletBalanceSummary />
+          <WatchOnlyBadge />
         </RoundedCard>
       </CardContainer>
 
@@ -124,8 +127,9 @@ const WalletWorth = () => {
 
 const WalletSendButton = () => {
   const { data: alphBalances } = useFetchWalletBalancesAlph()
+  const isWatchOnly = useIsWalletWatchOnly()
 
-  if (alphBalances.availableBalance === '0') return null
+  if (alphBalances.availableBalance === '0' || isWatchOnly) return null
 
   return <SendButton origin="dashboard" />
 }

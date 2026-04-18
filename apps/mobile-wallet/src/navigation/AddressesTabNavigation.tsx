@@ -6,6 +6,7 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import TabBarPager from '~/components/layout/TabBarPager'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
@@ -32,6 +33,9 @@ export default AddressesTabNavigation
 const CustomHeaderContent = ({ focusedTabIndex }: { focusedTabIndex: number }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const isWatchOnly = useIsWalletWatchOnly()
+
+  const hideAddButton = focusedTabIndex === 0 && isWatchOnly
 
   const handleButtonPress = () => {
     navigation.navigate(focusedTabIndex === 0 ? 'NewAddressScreen' : 'NewContactScreen')
@@ -42,7 +46,7 @@ const CustomHeaderContent = ({ focusedTabIndex }: { focusedTabIndex: number }) =
       <AppText semiBold size={17} color="secondary">
         {t('Address book')}
       </AppText>
-      <Button iconProps={{ name: 'add' }} squared onPress={handleButtonPress} compact />
+      {!hideAddButton && <Button iconProps={{ name: 'add' }} squared onPress={handleButtonPress} compact />}
     </CustomHeaderContentStyled>
   )
 }

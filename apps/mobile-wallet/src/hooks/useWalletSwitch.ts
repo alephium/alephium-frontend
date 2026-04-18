@@ -1,3 +1,4 @@
+import { keyring } from '@alephium/keyring'
 import { hiddenTokensLoadedFromStorage, WalletMetadataMobile, walletSwitchedMobile } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useCallback } from 'react'
@@ -55,9 +56,11 @@ const useWalletSwitch = () => {
       // 6. Update lastUsed in wallet list
       updateWalletInList(targetWalletId, { lastUsed: Date.now() })
 
-      // 7. Initialize keyring with target wallet's mnemonic
+      // 7. Handle keyring: initialize for seed wallets, clear for watch-only
       if (!metadata.type || metadata.type === 'seed') {
         await initializeKeyringWithStoredWallet(targetWalletId)
+      } else {
+        keyring.clear()
       }
     },
     [clearQueryCache, currentWalletId, dispatch, persistQueryCache, restoreQueryCache]

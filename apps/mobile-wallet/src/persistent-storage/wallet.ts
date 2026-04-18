@@ -63,6 +63,31 @@ export const generateAndStoreWallet = async (
   }
 }
 
+export const createWatchOnlyWallet = (name: string, addressHash: string): WalletMetadataMobile => {
+  const walletId = nanoid()
+
+  const metadata: WalletMetadataMobile = {
+    id: walletId,
+    name,
+    type: 'watch-only',
+    isMnemonicBackedUp: true, // No mnemonic to back up
+    addresses: [
+      {
+        index: 0,
+        hash: addressHash,
+        isDefault: true,
+        color: getRandomLabelColor()
+      } as AddressStoredMetadataWithHash
+    ],
+    contacts: []
+  }
+
+  storeWalletMetadata(walletId, metadata)
+  addWalletToList(createWalletListEntry(walletId, name, 'watch-only'))
+
+  return metadata
+}
+
 export const updateStoredWalletMetadata = (walletId: string, partialMetadata: Partial<WalletMetadataMobile>) => {
   const walletMetadata = getStoredWalletMetadata(
     walletId,
