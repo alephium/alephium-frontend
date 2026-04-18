@@ -1,9 +1,7 @@
-/// <reference types="vitest" />
-
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
@@ -18,9 +16,6 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'build',
-    commonjsOptions: {
-      include: [/node_modules/, /shared-crypto/]
-    }
+    outDir: 'build'
   }
 })

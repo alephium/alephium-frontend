@@ -1,13 +1,9 @@
-/// <reference types="vitest" />
-
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron/simple'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
-
-/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,14 +11,10 @@ export default defineConfig({
     host: true,
     port: 3000
   },
+  define: {
+    global: 'globalThis'
+  },
   optimizeDeps: {
-    esbuildOptions: {
-      target: 'es2020',
-      // Node.js global to browser globalThis
-      define: {
-        global: 'globalThis'
-      }
-    },
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
   plugins: [
@@ -49,10 +41,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     outDir: 'build',
-    assetsInlineLimit: 0, // Prevents small assets from being inlined (was causing some svgs to not load)
-    commonjsOptions: {
-      include: [/node_modules/, /shared-crypto/]
-    }
+    assetsInlineLimit: 0 // Prevents small assets from being inlined (was causing some svgs to not load)
   },
   base: ''
 })
