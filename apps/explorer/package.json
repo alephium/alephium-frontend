@@ -70,7 +70,7 @@
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@testing-library/jest-dom": "^5.14.1",
-    "@types/node": "^20.14.0",
+    "@types/node": "^22.0.0",
     "@types/react": "~19.1.10",
     "@types/react-dom": "~19.1.6",
     "@types/react-page-visibility": "^6.4.1",

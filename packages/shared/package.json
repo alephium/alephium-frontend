@@ -35,7 +35,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@types/node": "^20.14.0",
+    "@types/node": "^22.0.0",
     "@types/sanitize-html": "^2.11.0",
     "@vitest/coverage-v8": "^4.0.0",
     "eslint": "^8.48.0",
