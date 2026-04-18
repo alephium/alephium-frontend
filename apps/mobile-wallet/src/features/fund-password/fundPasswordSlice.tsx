@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
@@ -25,6 +25,7 @@ const appSlice = createSlice({
         state.isActive = payload
       })
       .addCase(activeWalletDeleted, resetState)
+      .addCase(walletSwitchedMobile, resetState)
       .addCase(appReset, resetState)
   }
 })

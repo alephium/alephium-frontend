@@ -4,7 +4,7 @@ import { Alert } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteAddress } from '~/persistent-storage/wallet'
 import { showToast } from '~/utils/layout'
 
@@ -16,6 +16,7 @@ interface UseForgetAddressProps {
 
 const useForgetAddress = ({ addressHash, onConfirm, origin }: UseForgetAddressProps) => {
   const canDeleteAddress = useCanDeleteAddress(addressHash)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -34,7 +35,7 @@ const useForgetAddress = ({ addressHash, onConfirm, origin }: UseForgetAddressPr
           onConfirm?.()
 
           try {
-            await deleteAddress(addressHash)
+            await deleteAddress(walletId, addressHash)
             dispatch(addressDeleted(addressHash))
             showToast({
               type: 'info',

@@ -3,6 +3,7 @@ import {
   appBecameInactive,
   appLaunchedWithLastUsedWallet,
   appReset,
+  walletSwitchedMobile,
   walletUnlockedMobile
 } from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
@@ -15,6 +16,7 @@ const sliceName = 'wallet'
 const initialState: WalletState = {
   id: '',
   name: '',
+  type: 'seed',
   isMnemonicBackedUp: undefined,
   isUnlocked: false,
   metadataRestored: false
@@ -41,6 +43,14 @@ const walletSlice = createSlice({
       .addCase(appBecameInactive, (state) => {
         state.isUnlocked = false
       })
+      .addCase(walletSwitchedMobile, (state, { payload: { name, id, isMnemonicBackedUp, type } }) => ({
+        ...state,
+        id,
+        name,
+        type: type ?? 'seed',
+        isMnemonicBackedUp,
+        isUnlocked: true
+      }))
     builder.addMatcher(isAnyOf(appReset, activeWalletDeleted), resetState)
     builder.addMatcher(
       isAnyOf(walletUnlockedMobile, newWalletGenerated, newWalletImportedWithMetadata, appLaunchedWithLastUsedWallet),

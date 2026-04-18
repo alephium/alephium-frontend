@@ -28,6 +28,7 @@ import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
 import { hasMigratedFromAsyncStorage, migrateFromAsyncStorage } from '~/persistent-storage/storage'
 import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
 import {
@@ -146,7 +147,11 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
   }, [])
 
   const { data: validationStatus } = useAsyncData(
-    useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
+    useCallback(async () => {
+      await runMultiWalletMigrationIfNeeded()
+
+      return validateAndRepareStoredWalletData(onUserConfirm)
+    }, [onUserConfirm])
   )
 
   useEffect(() => {

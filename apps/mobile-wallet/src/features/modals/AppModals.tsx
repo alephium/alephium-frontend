@@ -45,6 +45,7 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import WalletSwitchModal from '~/features/switch-wallet/WalletSwitchModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
@@ -181,6 +182,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <ConnectTipModal />
     case 'SignChainedTxModal':
       return <SignChainedTxModal {...params.props} />
+    case 'WalletSwitchModal':
+      return <WalletSwitchModal />
     default:
       return null
   }

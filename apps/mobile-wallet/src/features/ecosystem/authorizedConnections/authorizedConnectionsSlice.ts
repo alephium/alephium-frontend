@@ -10,10 +10,7 @@ import {
 import { connectionsAdapter } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsAdapter'
 import { selectAllAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSelectors'
 import { getAuthorizedConnectionId } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsUtils'
-import {
-  loadAuthorizedConnections,
-  persistAuthorizedConnections
-} from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
+import { persistAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
 import { RootState } from '~/store/store'
 
 const sliceName = 'authorizedConnections'
@@ -22,7 +19,7 @@ const initialState = connectionsAdapter.getInitialState()
 
 const authorizedConnectionsSlice = createSlice({
   name: sliceName,
-  initialState: connectionsAdapter.setAll(initialState, loadAuthorizedConnections()),
+  initialState,
   reducers: {},
   extraReducers(builder) {
     builder.addCase(connectionAuthorized, (state, action) => {
@@ -54,8 +51,12 @@ export const authorizedConnectionsListenerMiddleware = createListenerMiddleware(
 
 authorizedConnectionsListenerMiddleware.startListening({
   matcher: isAnyOf(connectionAuthorized, connectionRemoved, connectionsCleared, hostConnectionRemoved, appReset),
-  effect: async (_, { getState }) =>
-    persistAuthorizedConnections(selectAllAuthorizedConnections(getState() as RootState))
+  effect: async (_, { getState }) => {
+    const rootState = getState() as RootState
+    const walletId = rootState.wallet.id
+
+    persistAuthorizedConnections(walletId, selectAllAuthorizedConnections(rootState))
+  }
 })
 
 export default authorizedConnectionsSlice

@@ -42,6 +42,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     chainInfo,
     chain
   }) => {
+    const walletId = useAppSelector((s) => s.wallet.id)
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
@@ -107,7 +108,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
           })
         }
 
-        const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+        const publicKey = await getAddressAsymetricKey(walletId, signerAddress.hash, 'public')
 
         const namespaces: SessionTypes.Namespaces = {
           alephium: {

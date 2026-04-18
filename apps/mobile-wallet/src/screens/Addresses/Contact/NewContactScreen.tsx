@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
@@ -12,6 +13,7 @@ import { showExceptionToast } from '~/utils/layout'
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
 const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenProps) => {
+  const walletId = useAppSelector((s) => s.wallet.id)
   const { t } = useTranslation()
 
   const initialValues = {
@@ -22,7 +24,7 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
 
   const handleSavePress = async (formData: ContactFormData) => {
     try {
-      await persistContact(formData)
+      await persistContact(walletId, formData)
 
       sendAnalytics({ event: 'Contact: Created new contact' })
     } catch (error) {

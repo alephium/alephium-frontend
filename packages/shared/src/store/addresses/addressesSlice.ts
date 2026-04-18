@@ -19,6 +19,7 @@ import {
   newWalletInitialAddressGenerated,
   passphraseInitialAddressGenerated,
   walletLocked,
+  walletSwitchedMobile,
   walletUnlockedMobile
 } from '../../store/wallets/walletActions'
 import { Address, AddressBase, AddressesState } from '../../types/addresses'
@@ -59,7 +60,7 @@ const addressesSlice = createSlice({
       })
 
     builder
-      .addMatcher(isAnyOf(walletLocked, activeWalletDeleted, appReset), () => initialState)
+      .addMatcher(isAnyOf(walletLocked, activeWalletDeleted, walletSwitchedMobile, appReset), () => initialState)
       .addMatcher(isAnyOf(newWalletInitialAddressGenerated, passphraseInitialAddressGenerated), (state, action) =>
         addInitialAddress(state, action.payload)
       )
@@ -70,23 +71,26 @@ const addressesSlice = createSlice({
 
         addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
       })
-      .addMatcher(isAnyOf(walletUnlockedMobile, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {
-        const addressesToInitialize = addresses.filter(
-          (address) => addressMetadataIncludesHash(address) && !state.entities[address.hash]
-        )
-
-        if (addressesToInitialize.length > 0) {
-          addressesAdapter.addMany(
-            state,
-            addressesToInitialize.filter(addressMetadataIncludesHash).map((address) =>
-              getDefaultAddressState({
-                ...address,
-                publicKey: '' // TODO: See https://github.com/alephium/alephium-frontend/issues/1317
-              })
-            )
+      .addMatcher(
+        isAnyOf(walletUnlockedMobile, walletSwitchedMobile, appLaunchedWithLastUsedWallet),
+        (state, { payload: { addresses } }) => {
+          const addressesToInitialize = addresses.filter(
+            (address) => addressMetadataIncludesHash(address) && !state.entities[address.hash]
           )
+
+          if (addressesToInitialize.length > 0) {
+            addressesAdapter.addMany(
+              state,
+              addressesToInitialize.filter(addressMetadataIncludesHash).map((address) =>
+                getDefaultAddressState({
+                  ...address,
+                  publicKey: '' // TODO: See https://github.com/alephium/alephium-frontend/issues/1317
+                })
+              )
+            )
+          }
         }
-      })
+      )
   }
 })
 

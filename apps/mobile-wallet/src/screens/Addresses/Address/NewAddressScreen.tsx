@@ -21,6 +21,7 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
+  const walletId = useAppSelector((s) => s.wallet.id)
   const { indexesOfGrouplessAddresses, indexesOfAddressesWithGroup } = useAppSelector(selectAllAddressIndexes)
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
@@ -39,7 +40,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     dispatch(activateAppLoading(t('Generating new address')))
 
     try {
-      await initializeKeyringWithStoredWallet()
+      await initializeKeyringWithStoredWallet(walletId)
 
       const newAddress =
         group === undefined

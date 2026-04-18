@@ -4,21 +4,24 @@ import {
   storeSecurelyWithReportableError
 } from '~/persistent-storage/utils'
 
-const FUND_PASSWORD_KEY = 'fund-password'
+const fundPasswordKey = (walletId: string) => `fund-password-${walletId}`
 
-export const storeFundPassword = (password: string) =>
-  storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, true, '')
+// Legacy key used only by multi-wallet migration
+export const LEGACY_FUND_PASSWORD_KEY = 'fund-password'
 
-export const getFundPassword = () => getSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
+export const storeFundPassword = (walletId: string, password: string) =>
+  storeSecurelyWithReportableError(fundPasswordKey(walletId), password, true, '')
 
-export const hasStoredFundPassword = async () => {
+export const getFundPassword = (walletId: string) => getSecurelyWithReportableError(fundPasswordKey(walletId), true, '')
+
+export const hasStoredFundPassword = async (walletId: string) => {
   try {
-    return !!(await getFundPassword())
+    return !!(await getFundPassword(walletId))
   } catch {
     return false
   }
 }
 
-export const deleteFundPassword = async () => {
-  await deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
+export const deleteFundPassword = async (walletId: string) => {
+  await deleteSecurelyWithReportableError(fundPasswordKey(walletId), true, '')
 }

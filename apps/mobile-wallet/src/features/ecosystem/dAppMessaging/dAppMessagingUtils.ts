@@ -15,6 +15,7 @@ import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dApp
 import { useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { signer } from '~/signer'
+import { store } from '~/store/store'
 
 export const useNetwork = (): ConnectedAddressPayload['network'] => {
   const network = useAppSelector((s) => s.network)
@@ -43,7 +44,8 @@ export const getConnectedAddressPayload = async (
 })
 
 const getSigner = async (address: Address): Promise<ConnectedAddressPayload['signer']> => {
-  const publicKey = await getAddressAsymetricKey(address.hash, 'public')
+  const walletId = store.getState().wallet.id
+  const publicKey = await getAddressAsymetricKey(walletId, address.hash, 'public')
 
   return {
     type: 'local_secret',

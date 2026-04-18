@@ -10,8 +10,9 @@ import i18n from '~/features/localization/i18n'
 import { getStoredWalletMetadata, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 
-export const persistContact = async (contactData: ContactFormData) => {
+export const persistContact = async (walletId: string, contactData: ContactFormData) => {
   const { contacts } = await getStoredWalletMetadata(
+    walletId,
     `${i18n.t('Could not persist contact')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -45,15 +46,16 @@ export const persistContact = async (contactData: ContactFormData) => {
 
   console.log('💽 Storing contact in persistent storage')
 
-  await updateStoredWalletMetadata({ contacts })
+  await updateStoredWalletMetadata(walletId, { contacts })
 
   store.dispatch(contactStoredInPersistentStorage({ ...contactData, id: contactId }))
 
   return contactId
 }
 
-export const deleteContact = async (contactId: Contact['id']) => {
+export const deleteContact = async (walletId: string, contactId: Contact['id']) => {
   const { contacts } = await getStoredWalletMetadata(
+    walletId,
     `${i18n.t('Could not delete contact')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -63,15 +65,15 @@ export const deleteContact = async (contactId: Contact['id']) => {
 
   contacts.splice(storedContactIndex, 1)
 
-  await updateStoredWalletMetadata({ contacts })
+  await updateStoredWalletMetadata(walletId, { contacts })
 
   store.dispatch(contactDeletedFromPersistentStorage(contactId))
 }
 
-export const importContacts = async (contacts: ContactFormData[]) => {
+export const importContacts = async (walletId: string, contacts: ContactFormData[]) => {
   for (const contact of contacts) {
     try {
-      await persistContact(contact)
+      await persistContact(walletId, contact)
     } catch (e) {
       console.warn(e)
     }

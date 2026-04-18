@@ -12,17 +12,19 @@ import Row from '~/components/Row'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
+import { useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 
 const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignMessageTxModalProps) => {
   const { t } = useTranslation()
+  const walletId = useAppSelector((s) => s.wallet.id)
 
   const { handleApprovePress, handleRejectPress } = useSignModal({
     onError,
     type: 'MESSAGE',
     sign: async () => {
       const messageHash = hashMessage(txParams.message, txParams.messageHasher)
-      const signature = sign(messageHash, await getAddressAsymetricKey(txParams.signerAddress, 'private'))
+      const signature = sign(messageHash, await getAddressAsymetricKey(walletId, txParams.signerAddress, 'private'))
 
       sendAnalytics({ event: 'Approved message signing', props: { origin } })
 

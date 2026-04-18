@@ -12,7 +12,7 @@ export const importAddresses = async (
   const addressHashes = []
 
   try {
-    await initializeKeyringWithStoredWallet()
+    await initializeKeyringWithStoredWallet(walletId)
 
     for (const { index, keyType, ...addressMetadata } of addressesMetadata) {
       const newAddressNonSensitiveData = keyring.generateAndCacheAddress({

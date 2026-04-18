@@ -33,6 +33,7 @@ interface VerifyMnemonicScreenProps
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const randomizedOptions = useRef<string[][]>([])
@@ -47,7 +48,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   useEffect(() => {
     try {
-      dangerouslyExportWalletMnemonic().then((mnemonic) => {
+      dangerouslyExportWalletMnemonic(walletId).then((mnemonic) => {
         const words = mnemonic.split(' ')
         setMnemonicWords(words)
         randomizedOptions.current = getRandomizedOptions(words, allowedWords.current)
@@ -56,12 +57,12 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
     } catch (e) {
       if (__DEV__) console.error(e)
     }
-  }, [])
+  }, [walletId])
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
       try {
-        await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
+        await updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
         dispatch(mnemonicBackedUp())
 
         sendAnalytics({ event: 'Backed-up mnemonic' })
@@ -72,7 +73,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         sendAnalytics({ type: 'error', error, message })
       }
     }
-  }, [isMnemonicBackedUp, dispatch, t])
+  }, [isMnemonicBackedUp, dispatch, t, walletId])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.length) {

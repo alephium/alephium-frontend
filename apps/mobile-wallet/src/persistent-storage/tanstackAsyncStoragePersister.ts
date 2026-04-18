@@ -1,21 +1,30 @@
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
 import { MMKV } from 'react-native-mmkv'
 
-export const createTanstackAsyncStoragePersister = (key: string) => {
+const CACHE_KEY = 'REACT_QUERY_OFFLINE_CACHE'
+
+// Custom persister that writes to MMKV synchronously.
+// We don't use createSyncStoragePersister because it wraps persistClient
+// in a throttle (default 1000ms setTimeout), which means the actual MMKV
+// write is deferred. This causes data loss when the app is backgrounded
+// or when switching wallets — the save appears to complete but the write
+// hasn't happened yet, so restore finds nothing.
+export const createTanstackAsyncStoragePersister = (key: string): Persister => {
   const storage = new MMKV({ id: key })
 
-  const clientStorage = {
-    setItem: (key: string, value: string) => {
-      storage.set(key, value)
+  return {
+    persistClient: (persistedClient: PersistedClient) => {
+      storage.set(CACHE_KEY, JSON.stringify(persistedClient))
     },
-    getItem: (key: string) => {
-      const value = storage.getString(key)
-      return value === undefined ? null : value
+    restoreClient: () => {
+      const cacheString = storage.getString(CACHE_KEY)
+
+      if (!cacheString) return
+
+      return JSON.parse(cacheString) as PersistedClient
     },
-    removeItem: (key: string) => {
-      storage.delete(key)
+    removeClient: () => {
+      storage.delete(CACHE_KEY)
     }
   }
-
-  return createSyncStoragePersister({ storage: clientStorage })
 }

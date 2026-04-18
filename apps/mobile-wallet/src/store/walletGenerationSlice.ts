@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset, walletUnlockedMobile } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
@@ -37,7 +37,10 @@ const walletGenerationSlice = createSlice({
     builder.addCase(newWalletImportedWithMetadata, (state) => {
       state.qrCodeImportedEncryptedMnemonic = ''
     })
-    builder.addMatcher(isAnyOf(appReset, walletUnlockedMobile, activeWalletDeleted), () => initialState)
+    builder.addMatcher(
+      isAnyOf(appReset, walletUnlockedMobile, activeWalletDeleted, walletSwitchedMobile),
+      () => initialState
+    )
   }
 })
 

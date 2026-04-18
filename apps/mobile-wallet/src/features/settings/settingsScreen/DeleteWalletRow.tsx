@@ -6,7 +6,8 @@ import { useTheme } from 'styled-components/native'
 
 import Row from '~/components/Row'
 import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useWalletSwitch from '~/hooks/useWalletSwitch'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -15,11 +16,22 @@ const DeleteWalletRow = () => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SettingsScreen', undefined>>()
+  const walletList = useAppSelector((s) => s.wallets.list)
+  const currentWalletId = useAppSelector((s) => s.wallet.id)
+  const { switchWallet } = useWalletSwitch()
 
   const handleDeleteButtonPress = () => {
-    dispatch(
-      openModal({ name: 'WalletDeleteModal', props: { onDelete: () => resetNavigation(navigation, 'LandingScreen') } })
-    )
+    const onDelete = async () => {
+      const remainingWallets = walletList.filter((w) => w.id !== currentWalletId)
+
+      if (remainingWallets.length > 0) {
+        await switchWallet(remainingWallets[0].id)
+      } else {
+        resetNavigation(navigation, 'LandingScreen')
+      }
+    }
+
+    dispatch(openModal({ name: 'WalletDeleteModal', props: { onDelete } }))
   }
 
   return (

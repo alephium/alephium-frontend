@@ -18,8 +18,10 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
+import { createWalletListEntry } from '~/persistent-storage/walletList'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
+import { walletAddedToList } from '~/store/wallet/walletsSlice'
 import { WalletImportData } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
 import { showExceptionToast } from '~/utils/layout'
@@ -78,6 +80,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         await restoreQueryCache(wallet.id)
 
         dispatch(newWalletImportedWithMetadata(wallet))
+        dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
         sendAnalytics({ event: 'Imported wallet', props: { note: 'Scanned desktop wallet QR code' } })
 
@@ -89,6 +92,8 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           showExceptionToast(error, t(message))
           sendAnalytics({ type: 'error', message, isSensitive: true })
         }
+
+        if (contacts.length > 0) await importContacts(wallet.id, contacts)
 
         resetNavigation(
           navigation,
@@ -102,8 +107,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', message })
       }
-
-      if (contacts.length > 0) await importContacts(contacts)
     } catch (e) {
       setError(t('Could not decrypt wallet with the given password.'))
     } finally {

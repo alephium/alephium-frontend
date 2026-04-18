@@ -73,6 +73,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
   const addresses = useUnsortedAddresses()
   const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const network = useNetwork()
   const dispatch = useAppDispatch()
   const isConnectToDappModalOpen = useAppSelector(selectIsConnectToDappModalOpen)
@@ -88,7 +89,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
   const handleIsDappPreauthorized = useCallback(
     (data: RequestOptions, messageId: string) => {
-      const isPreauthorized = isConnectionAuthorized(data)
+      const isPreauthorized = isConnectionAuthorized(walletId, data)
 
       if (!isPreauthorized && !isConnectTipShownOnce()) {
         dispatch(openModal({ name: 'ConnectTipModal' }))
@@ -97,7 +98,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
       replyToDapp({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: isPreauthorized }, messageId)
     },
-    [dispatch, replyToDapp]
+    [dispatch, replyToDapp, walletId]
   )
 
   const handleRejectDappConnection = useCallback(
@@ -126,7 +127,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     async (data: ConnectDappMessageData, messageId: string) => {
       if (isConnectToDappModalOpen) return
 
-      const authorizedConnection = getAuthorizedConnection(data)
+      const authorizedConnection = getAuthorizedConnection(walletId, data)
 
       const isWrongNetwork =
         data.networkId !== undefined &&
@@ -190,7 +191,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       handleApproveDappConnection,
       handleRejectDappConnection,
       isConnectToDappModalOpen,
-      network
+      network,
+      walletId
     ]
   )
 

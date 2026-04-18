@@ -17,12 +17,15 @@ import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordAct
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { loadSettings } from '~/features/settings/settingsPersistentStorage'
 import { storedGeneralSettingsLoaded } from '~/features/settings/settingsSlice'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getWalletList } from '~/persistent-storage/walletList'
+import { walletListLoaded } from '~/store/wallet/walletsSlice'
 import { GeneralSettings } from '~/types/settings'
 import { migrateNetworkSettings } from '~/utils/migration'
 
 const useLoadStoredSettings = () => {
   const dispatch = useAppDispatch()
+  const walletId = useAppSelector((s) => s.wallet.id)
 
   useEffect(() => {
     const loadStoredSettingsIntoState = async () => {
@@ -34,7 +37,7 @@ const useLoadStoredSettings = () => {
       const networkSettings = (await loadSettings('network')) as NetworkSettings
       dispatch(localStorageNetworkSettingsLoaded(networkSettings))
 
-      const isUsingFundPassword = await hasStoredFundPassword()
+      const isUsingFundPassword = await hasStoredFundPassword(walletId)
       dispatch(fundPasswordUseToggled(isUsingFundPassword))
 
       const favoriteDApps = getFavoriteDApps()
@@ -43,12 +46,15 @@ const useLoadStoredSettings = () => {
       const favoriteCustomDApps = getFavoriteCustomDApps()
       dispatch(favoriteCustomDAppsLoadedFromStorage(favoriteCustomDApps))
 
-      const hiddenTokensIds = getHiddenTokensIds()
+      const hiddenTokensIds = getHiddenTokensIds(walletId)
       dispatch(hiddenTokensLoadedFromStorage(hiddenTokensIds))
+
+      const walletList = getWalletList()
+      dispatch(walletListLoaded(walletList))
     }
 
     loadStoredSettingsIntoState()
-  }, [dispatch])
+  }, [dispatch, walletId])
 }
 
 export default useLoadStoredSettings

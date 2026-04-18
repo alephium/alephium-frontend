@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'app'
@@ -22,7 +22,10 @@ const appSlice = createSlice({
     }
   },
   extraReducers(builder) {
-    builder.addCase(activeWalletDeleted, resetState).addCase(appReset, resetState)
+    builder
+      .addCase(activeWalletDeleted, resetState)
+      .addCase(walletSwitchedMobile, resetState)
+      .addCase(appReset, resetState)
   }
 })
 

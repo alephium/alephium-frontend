@@ -18,6 +18,7 @@ import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import appSlice from '~/store/appSlice'
 import walletSlice from '~/store/wallet/walletSlice'
+import walletsSlice from '~/store/wallet/walletsSlice'
 import walletGenerationSlice from '~/store/walletGenerationSlice'
 
 export const store = configureStore({
@@ -26,6 +27,7 @@ export const store = configureStore({
     [walletGenerationSlice.name]: walletGenerationSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
     [walletSlice.name]: walletSlice.reducer,
+    [walletsSlice.name]: walletsSlice.reducer,
     [appSlice.name]: appSlice.reducer,
     [loaderSlice.name]: loaderSlice.reducer,
     [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,

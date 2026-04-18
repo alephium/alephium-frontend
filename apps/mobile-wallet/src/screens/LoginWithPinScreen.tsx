@@ -12,8 +12,8 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
-  getStoredWalletMetadata,
   isStoredWalletMetadataMigrated,
+  legacyGetStoredWalletMetadata,
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/wallet'
 import { mnemonicMigrated } from '~/store/wallet/walletActions'
@@ -44,7 +44,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
           dispatch(allBiometricsEnabled())
         }
 
-        const wallet = await getStoredWalletMetadata()
+        const wallet = await legacyGetStoredWalletMetadata()
 
         if (!isStoredWalletMetadataMigrated(wallet)) throw new Error('Wallet metadata is not migrated')
 
