@@ -1,15 +1,17 @@
 import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia'
 import { colord } from 'colord'
 import { Group } from 'lucide-react-native'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent } from 'react-native'
 import Animated, {
-  SensorType,
-  useAnimatedSensor,
+  cancelAnimation,
+  Easing,
+  interpolate,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
-  withSpring
+  withRepeat,
+  withSpring,
+  withTiming
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -21,28 +23,46 @@ interface AnimatedBackgroundProps {
   shade?: string
 }
 
-const GYRO_MULTIPLIER = 70
-const FPS_30 = 1000 / 30 // ~33.33ms for 30fps
+const BREATH_DURATION = 4000
+const BREATH_SCALE_MIN = 1
+const BREATH_SCALE_MAX = 1.8
+const BREATH_TRANSLATE_Y_MIN = 0
+const BREATH_TRANSLATE_Y_MAX = 10
+
+const RADIAL_GRADIENT_POSITIONS = [0.5, 0.6, 0.7, 0.72, 0.75, 0.95, 1]
+const LINEAR_GRADIENT_POSITIONS = [0, 0, 0.1, 0.2, 0.3, 0.8, 1.4]
+const RADIAL_GRADIENT_MAX_RADIUS = 250
+const RADIAL_GRADIENT_RELATIVE_RADIUS = 0.45
 
 const springConfig = {
   damping: 10,
   stiffness: 100
 }
 
+const breathingEasing = Easing.inOut(Easing.sin)
+
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
   const isFocused = useIsScreenOrModalFocused()
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 })
-  const gyroscope = useAnimatedSensor(SensorType.ROTATION, {
-    interval: isFocused ? FPS_30 : 1000000
-  })
   const opacity = useSharedValue(1)
+  const breath = useSharedValue(0)
 
   useEffect(() => {
     opacity.value = withSpring(isFocused ? 1 : 0, springConfig)
   }, [isFocused, opacity])
 
-  const radialGradientPositions = [0.5, 0.6, 0.7, 0.72, 0.75, 0.95, 1]
+  useEffect(() => {
+    if (isFocused) {
+      breath.value = withRepeat(withTiming(1, { duration: BREATH_DURATION, easing: breathingEasing }), -1, true)
+    } else {
+      cancelAnimation(breath)
+    }
+
+    return () => {
+      cancelAnimation(breath)
+    }
+  }, [isFocused, breath])
 
   const getGradientColors = () => [
     colord('rgb(255, 255, 255)').toHex(),
@@ -61,73 +81,27 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
     setContainerDimensions({ width, height })
   }
 
-  const lastSensorUpdate = useSharedValue(0)
-  const cachedSinRoll = useSharedValue(0)
-  const cachedSinZ = useSharedValue(0)
+  const radialGradientCenter = useMemo(
+    () => vec(containerDimensions.width / 2, containerDimensions.height + 80),
+    [containerDimensions.width, containerDimensions.height]
+  )
 
-  const shouldUpdateSensor = () => {
-    'worklet'
-    const now = Date.now()
-    if (!isFocused || now - lastSensorUpdate.value < FPS_30) {
-      return false
-    }
-    lastSensorUpdate.value = now
-    return true
-  }
+  const radialGradientRadius = useMemo(() => {
+    const relative = containerDimensions.width * RADIAL_GRADIENT_RELATIVE_RADIUS
+    return relative > RADIAL_GRADIENT_MAX_RADIUS ? RADIAL_GRADIENT_MAX_RADIUS : relative
+  }, [containerDimensions.width])
 
-  const sinRoll = useDerivedValue(() => {
-    if (!shouldUpdateSensor()) return cachedSinRoll.value
-    const newValue = Math.sin(gyroscope?.sensor.get().roll)
-    cachedSinRoll.value = newValue
-    return newValue
-  })
-
-  const sinZ = useDerivedValue(() => {
-    if (!shouldUpdateSensor()) return cachedSinZ.value
-    const newValue = Math.sin(gyroscope?.sensor.get().pitch)
-    cachedSinZ.value = newValue
-    return newValue
-  })
-
-  const gradientOffset = useSharedValue(0)
-
-  const linearGradientPositions = useDerivedValue(() => {
-    gradientOffset.value = sinRoll.value
-    return [
-      0,
-      0,
-      0.1 + gradientOffset.value,
-      0.2 + gradientOffset.value,
-      0.3 + gradientOffset.value,
-      0.8 + gradientOffset.value,
-      1.4 + gradientOffset.value
-    ]
-  })
-
-  const radialGradientCenter = useDerivedValue(() => {
-    const x = containerDimensions.width / 2 + sinRoll.value * GYRO_MULTIPLIER
-    const y = containerDimensions.height + 80
-    return vec(x, y)
-  })
-
-  const radialGradientRadius = useDerivedValue(() => {
-    const maxRadius = 250
-    const relativeRadius = containerDimensions.width * 0.45
-
-    return relativeRadius > maxRadius ? maxRadius : relativeRadius
-  })
-
-  const linearGradientEndX = useSharedValue(0)
-  const linearGradientEndY = useSharedValue(0)
-
-  const linearGradientEnd = useDerivedValue(() => {
-    linearGradientEndX.value = containerDimensions.width + sinRoll.value * GYRO_MULTIPLIER * 2
-    linearGradientEndY.value = containerDimensions.height + sinZ.value * GYRO_MULTIPLIER * 2
-    return vec(linearGradientEndX.value, linearGradientEndY.value)
-  })
+  const linearGradientEnd = useMemo(
+    () => vec(containerDimensions.width, containerDimensions.height),
+    [containerDimensions.width, containerDimensions.height]
+  )
 
   const animatedGradientStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value
+    opacity: opacity.value,
+    transform: [
+      { translateY: interpolate(breath.value, [0, 1], [BREATH_TRANSLATE_Y_MIN, BREATH_TRANSLATE_Y_MAX]) },
+      { scale: interpolate(breath.value, [0, 1], [BREATH_SCALE_MIN, BREATH_SCALE_MAX]) }
+    ]
   }))
 
   return (
@@ -145,7 +119,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
           >
             <LinearGradient
               colors={getGradientColors()}
-              positions={linearGradientPositions}
+              positions={LINEAR_GRADIENT_POSITIONS}
               start={vec(0, 0)}
               end={linearGradientEnd}
             />
@@ -174,7 +148,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
                 c={radialGradientCenter}
                 r={radialGradientRadius}
                 colors={getGradientColors()}
-                positions={radialGradientPositions}
+                positions={RADIAL_GRADIENT_POSITIONS}
               />
             </Rect>
             <Blur blur={containerDimensions.width * (theme.name === 'light' ? 0.04 : 0.07)} />
