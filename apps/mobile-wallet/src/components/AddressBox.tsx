@@ -39,7 +39,11 @@ export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
   isLast?: boolean
   rounded?: boolean
   showGroup?: boolean
+  hideAssets?: boolean
+  noBottomMargin?: boolean
   tokenId?: Token['id']
+  /** With `tokenId`, show that token’s on-chain balance instead of fiat worth (top row). */
+  showTokenAmount?: boolean
   onPress?: (address: Address) => void
 }
 
@@ -56,6 +60,9 @@ const AddressBox = ({
   rounded,
   tokenId,
   showGroup,
+  hideAssets,
+  noBottomMargin,
+  showTokenAmount,
   origin,
   ...props
 }: AddressBoxProps) => {
@@ -92,10 +99,13 @@ const AddressBox = ({
   }
 
   const hasLabel = !!address?.label
+  const showGroupLabel = showGroup && !isGrouplessAddress(address)
+  const showTokensRow = !hideAssets || showGroupLabel
 
   return (
     <AddressBoxStyled
       {...props}
+      $noBottomMargin={noBottomMargin}
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={[
@@ -106,7 +116,7 @@ const AddressBox = ({
         }
       ]}
     >
-      <TextualContent>
+      <TextualContent $hideAssets={!!hideAssets}>
         <AddressBoxColumnLeft>
           <TopRow>
             <AddressLabel>
@@ -143,36 +153,45 @@ const AddressBox = ({
             </AddressLabel>
 
             {tokenId ? (
-              <AddressTokenWorth addressHash={addressHash} tokenId={tokenId} />
+              showTokenAmount ? (
+                <AddressTokenBalanceTop addressHash={addressHash} tokenId={tokenId} />
+              ) : (
+                <AddressTokenWorth addressHash={addressHash} tokenId={tokenId} />
+              )
             ) : (
               <AddressTotalWorth addressHash={addressHash} />
             )}
           </TopRow>
-          <BottomRow>
-            {hasLabel && (
-              <AppText
-                truncate
-                ellipsizeMode="middle"
-                style={{ maxWidth: 100 }}
-                color={isSelected ? theme.global.accent : address.label ? theme.font.secondary : theme.font.primary}
-              >
-                {address.hash}
-              </AppText>
-            )}
-
-            <TokensRow>
-              {tokenId ? (
-                <AddressTokenBalances tokenId={tokenId} addressHash={addressHash} />
-              ) : (
-                <AddressTokensBadgesList addressHash={addressHash} />
-              )}
-              {showGroup && !isGrouplessAddress(address) && (
-                <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
-                  {t('Group {{ groupNumber }}', { groupNumber: address.group })}
+          {(hasLabel || showTokensRow) && (
+            <BottomRow>
+              {hasLabel && (
+                <AppText
+                  truncate
+                  ellipsizeMode="middle"
+                  style={{ maxWidth: 100 }}
+                  color={isSelected ? theme.global.accent : address.label ? theme.font.secondary : theme.font.primary}
+                >
+                  {address.hash}
                 </AppText>
               )}
-            </TokensRow>
-          </BottomRow>
+
+              {showTokensRow && (
+                <TokensRow>
+                  {!hideAssets &&
+                    (tokenId ? (
+                      <AddressTokenBalances tokenId={tokenId} addressHash={addressHash} />
+                    ) : (
+                      <AddressTokensBadgesList addressHash={addressHash} />
+                    ))}
+                  {showGroupLabel && (
+                    <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
+                      {t('Group {{ groupNumber }}', { groupNumber: address.group })}
+                    </AppText>
+                  )}
+                </TokensRow>
+              )}
+            </BottomRow>
+          )}
         </AddressBoxColumnLeft>
       </TextualContent>
     </AddressBoxStyled>
@@ -196,6 +215,18 @@ const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxPro
   const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return <FtWorth tokenId={tokenId} amount={balance} semiBold size={17} adjustsFontSizeToFit />
+}
+
+const AddressTokenBalanceTop = ({
+  addressHash,
+  tokenId
+}: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {
+  const { data: tokenBalances } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
+  const balance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
+  if (balance === undefined) return null
+
+  return <AssetAmountWithLogo assetId={tokenId} amount={balance} logoSize={16} />
 }
 
 const AddressTokensBadgesList = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
@@ -248,12 +279,12 @@ const AddressTokenBalances = ({ addressHash, tokenId }: Required<Pick<AddressBox
   )
 }
 
-const AddressBoxStyled = styled(AnimatedPressable)`
+const AddressBoxStyled = styled(AnimatedPressable)<{ $noBottomMargin?: boolean }>`
   flex-direction: row;
   overflow: hidden;
   border-radius: ${BORDER_RADIUS_BIG}px;
   padding: 0 ${DEFAULT_MARGIN}px 0 ${DEFAULT_MARGIN / 2}px;
-  margin-bottom: ${VERTICAL_GAP / 2}px;
+  margin-bottom: ${({ $noBottomMargin }) => ($noBottomMargin ? 0 : `${VERTICAL_GAP / 2}px`)};
 `
 
 const AddressLabel = styled.View`
@@ -290,12 +321,13 @@ const BottomRow = styled.View`
   gap: 10px;
 `
 
-const TextualContent = styled.View`
+const TextualContent = styled.View<{ $hideAssets?: boolean }>`
   flex: 3;
   min-height: 60px;
   flex-direction: row;
   padding: 14px 0;
   margin-left: ${DEFAULT_MARGIN / 2}px;
+  align-items: ${({ $hideAssets }) => ($hideAssets ? 'center' : 'stretch')};
 `
 
 const AddressBoxColumnLeft = styled.View`

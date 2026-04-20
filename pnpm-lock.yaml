@@ -98,14 +98,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@alephium/walletconnect-provider':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
+        specifier: 3.0.1
+        version: 3.0.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@alephium/web3-wallet':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@electron/notarize':
         specifier: ^1.2.3
         version: 1.2.4
@@ -159,7 +159,7 @@ importers:
         version: 4.1.4(vitest@4.1.4)
       '@vitest/web-worker':
         specifier: ^4.0.0
-        version: 4.1.4(vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)))
+        version: 4.1.4(vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)))
       '@walletconnect/core':
         specifier: 2.23.6
         version: 2.23.6(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
@@ -324,7 +324,7 @@ importers:
         version: 4.3.2(typescript@5.9.3)(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
       wait-on:
         specifier: ^7.0.1
         version: 7.2.0
@@ -344,8 +344,8 @@ importers:
         specifier: ^0.0.21
         version: 0.0.21(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@reduxjs/toolkit':
         specifier: ^1.9.1
         version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1))(react@19.1.0)
@@ -463,7 +463,7 @@ importers:
         version: 8.56.0
       happy-dom:
         specifier: ^20.8.9
-        version: 20.8.9
+        version: 20.9.0
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
@@ -478,13 +478,16 @@ importers:
         version: 4.3.2(typescript@5.9.3)(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   apps/mobile-wallet:
     dependencies:
       '@alephium/keyring':
         specifier: workspace:*
         version: link:../../packages/keyring
+      '@alephium/powfi-sdk':
+        specifier: 0.0.1-rc.24
+        version: 0.0.1-rc.24(encoding@0.1.13)
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -501,11 +504,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/wallet-dapp-provider
       '@alephium/walletconnect-provider':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
+        specifier: 3.0.1
+        version: 3.0.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@alphland/dapps':
         specifier: ^2.0.0
         version: 2.0.0
@@ -812,7 +815,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   packages/encryptor:
     dependencies:
@@ -840,7 +843,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   packages/eslint-config:
     devDependencies:
@@ -893,11 +896,11 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@alephium/web3-wallet':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -928,7 +931,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   packages/shared:
     dependencies:
@@ -936,11 +939,11 @@ importers:
         specifier: ^0.0.21
         version: 0.0.21(encoding@0.1.13)
       '@alephium/walletconnect-provider':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
+        specifier: 3.0.1
+        version: 3.0.1(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -998,7 +1001,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   packages/shared-crypto:
     devDependencies:
@@ -1040,7 +1043,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
       webpack:
         specifier: ^5.104.1
         version: 5.106.1(esbuild@0.27.7)(webpack-cli@5.1.4)
@@ -1057,8 +1060,8 @@ importers:
         specifier: ^0.0.21
         version: 0.0.21(encoding@0.1.13)
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@tanstack/react-query':
         specifier: ^5.81.2
         version: 5.81.2(react@19.1.0)
@@ -1076,8 +1079,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@alephium/walletconnect-provider':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
+        specifier: 3.0.1
+        version: 3.0.1(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
       '@types/react':
         specifier: ^19.0.14
         version: 19.1.17
@@ -1086,18 +1089,18 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.0
-        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+        version: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   packages/typescript-config: {}
 
   packages/wallet-dapp-provider:
     dependencies:
       '@alephium/get-extension-wallet':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
       '@alephium/web3':
-        specifier: 3.0.0-test.9
-        version: 3.0.0-test.9
+        specifier: 3.0.1
+        version: 3.0.1
     devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
@@ -1159,27 +1162,39 @@ packages:
   '@adraffy/ens-normalize@1.11.0':
     resolution: {integrity: sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg==}
 
-  '@alephium/get-extension-wallet@3.0.0-test.9':
-    resolution: {integrity: sha512-IlOB9i/xFLWx7IlD6guIfwMESxWnL3nXZLelhwo3b9vWJzTiVeGkmea+eT33BnhjUAMXHZqEvH7UGPrpGfvbkg==}
+  '@alephium/get-extension-wallet@3.0.1':
+    resolution: {integrity: sha512-mChczqg/hl4qy2+OkAL8dFgnCPgkbJq8XHdYG23fNpIt81dpoQUHUGxcPbgKlVARG46sX5Msyo6xzqNj2TMeZg==}
 
   '@alephium/ledger-app@0.6.3-rc.0':
     resolution: {integrity: sha512-PazqV/gajZlN+kzkQ6AydKi50tNbo/8fbfqs2nJj4FW2Mv9E+Oo7kFcs03W8Ev79zEXshLzqp3m6wZBJEHjPOw==}
     engines: {node: '>=18.0.0'}
 
+  '@alephium/powfi-sdk@0.0.1-rc.24':
+    resolution: {integrity: sha512-iqz1J59al/37JP57TbGMdMbhT2FEy9WLjKVWydjcjbKXyb5ogJkzNatmgRhdEwHJN0dGbO165D/k76Gn4oVcXw==}
+    engines: {bun: '>=1.0.0', node: '>=20.0.0'}
+
+  '@alephium/token-list@0.0.20':
+    resolution: {integrity: sha512-0JoFLsdxqp2M0k0ohsCe0F+tdMEJ1LjJQrNm4s+3c8CY2dDnTNbH1zxPPQ9xF2HbTUHbhAN9VCMB1SmWRuMm7g==}
+    engines: {node: '>=16', npm: '>=8'}
+
   '@alephium/token-list@0.0.21':
     resolution: {integrity: sha512-rtH9F0obAL4u/+oSiqs42BlKNtj7euCDxmGAawMvdAlDhljJIGfMO9/GJNdER9FtQfSL0DPakJV3K/YxrCn2BA==}
     engines: {node: '>=16', npm: '>=8'}
 
-  '@alephium/walletconnect-provider@3.0.0-test.9':
-    resolution: {integrity: sha512-byEfG9a9gn4qi0bASlx4wmTeXgr3xAwjpH6IrEJGmzQSBlYiTpgyEKSfKitTSyYldjCkoNTpBk8ldB9l3ErgNQ==}
+  '@alephium/walletconnect-provider@3.0.1':
+    resolution: {integrity: sha512-2bm2oOeo8m/aRReAwaFM+89CqxP999oSovH04atsZw+czR5bNQpOSJSDRl/BhJjn8vUaRCDh8qmv59uQgR2a1w==}
     engines: {node: '>=20.0.0', npm: '>=7.0.0'}
 
-  '@alephium/web3-wallet@3.0.0-test.9':
-    resolution: {integrity: sha512-SDn49FOOZSxC4ZuD/PA38KMnQsAlx52+mvBm6QgTkL0jUNJ2Udk26nUvECOS5bCQcWqCFOIFgLNRUICl+fwLaQ==}
+  '@alephium/web3-wallet@3.0.1':
+    resolution: {integrity: sha512-MMhebblyYghjz0IzZi7vFzcmeFrG237K16Sj0trquURlij3MIyoYujzxW2MA+8FP9irNKCJM90xYhjVosYmxzA==}
     engines: {node: '>=20.0.0', npm: '>=7.0.0'}
 
   '@alephium/web3@3.0.0-test.9':
     resolution: {integrity: sha512-mUznVrDlFhNEOPJxgc/S02392fXbIgJbB1v0IXvy0oI6Twr5Mezya18PJYSMuznHrsBDAczk1gesfjB1iCDRtA==}
+    engines: {node: '>=20.0.0', npm: '>=7.0.0'}
+
+  '@alephium/web3@3.0.1':
+    resolution: {integrity: sha512-o6xBBanw9iO4lMvJrgJz10efjFHIcJP1zxXAEzk+Bu/Qh42myWB5dQ6n4BEhb/3Q78tKevga/Jk2IGaz9Kh65w==}
     engines: {node: '>=20.0.0', npm: '>=7.0.0'}
 
   '@alphland/dapps@2.0.0':
@@ -4955,6 +4970,9 @@ packages:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
 
+  bignumber.js@10.0.2:
+    resolution: {integrity: sha512-E8Wp9O06QA6lneJ4aRUXKYf/1GIomqUEmUMwtIOMtDxf1U52ffJY+y7JBk/8wRafA8qOIqLnXQGqonYXZdBnFQ==}
+
   bignumber.js@9.1.2:
     resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
 
@@ -5461,8 +5479,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  cookie-es@1.2.3:
-    resolution: {integrity: sha512-lXVyvUvrNXblMqzIRrxHb57UUVmqsSWlxqt3XIjCkUP0wDAf6uicO6KMbEgYrMNtEvWgWHwe42CKxPu9MYAnWw==}
+  cookie-es@1.2.2:
+    resolution: {integrity: sha512-+W7VmiVINB+ywl1HGXJXmrqkOhpKrIiVZV6tQuV54ZyQC7MMuBt81Vc336GMLoHBq5hV/F9eXgt5Mnx0Rha5Fg==}
 
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
@@ -5714,6 +5732,9 @@ packages:
   decimal.js@10.4.3:
     resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
 
+  decimal.js@10.6.0:
+    resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
+
   decode-uri-component@0.2.2:
     resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
     engines: {node: '>=0.10'}
@@ -5782,9 +5803,6 @@ packages:
 
   defu@6.1.5:
     resolution: {integrity: sha512-pwdBJxJuJXmqrLO6s0VBmfbRz+G7FUzkjldAsdi9Yrv86mPyzq0ll1o8+8gB4Gsr6GJHbK1Lh3ngllgTInDCjA==}
-
-  defu@6.1.7:
-    resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
 
   delaunator@4.0.1:
     resolution: {integrity: sha512-WNPWi1IRKZfCt/qIDMfERkDp93+iZEmOxN2yy4Jg+Xhv8SLk2UTqqbe1sfiipn0and9QrE914/ihdx82Y/Giag==}
@@ -6753,15 +6771,15 @@ packages:
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
-  fast-xml-builder@1.1.4:
-    resolution: {integrity: sha512-f2jhpN4Eccy0/Uz9csxh3Nu6q4ErKxf0XIsasomfOihuSUa3/xw6w8dnOtCDgEItQFJG8KyXPzQXzcODDrrbOg==}
+  fast-xml-builder@1.0.0:
+    resolution: {integrity: sha512-fpZuDogrAgnyt9oDDz+5DBz0zgPdPZz6D4IR7iESxRXElrlGTRkHJ9eEt+SACRJwT0FNFrt71DFQIUFBJfX/uQ==}
 
   fast-xml-parser@4.5.6:
     resolution: {integrity: sha512-Yd4vkROfJf8AuJrDIVMVmYfULKmIJszVsMv7Vo71aocsKgFxpdlpSHXSaInvyYfgw2PRuObQSW2GFpVMUjxu9A==}
     hasBin: true
 
-  fast-xml-parser@5.5.12:
-    resolution: {integrity: sha512-nUR0q8PPfoA/svPM43Gup7vLOZWppaNrYgGmrVqrAVJa7cOH4hMG6FX9M4mQ8dZA1/ObGZHzES7Ed88hxEBSJg==}
+  fast-xml-parser@5.4.2:
+    resolution: {integrity: sha512-pw/6pIl4k0CSpElPEJhDppLzaixDEuWui2CUQQBH/ECDf7+y6YwA4Gf7Tyb0Rfe4DIMuZipYj4AEL0nACKglvQ==}
     hasBin: true
 
   fastest-levenshtein@1.0.16:
@@ -6844,8 +6862,8 @@ packages:
     resolution: {integrity: sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==}
     hasBin: true
 
-  flatted@3.4.2:
-    resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+  flatted@3.4.1:
+    resolution: {integrity: sha512-IxfVbRFVlV8V/yRaGzk0UVIcsKKHMSfYw66T/u4nTwlWteQePsxe//LjudR1AMX4tZW3WFCh3Zqa/sjlqpbURQ==}
 
   flow-enums-runtime@0.0.6:
     resolution: {integrity: sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==}
@@ -7112,11 +7130,11 @@ packages:
     resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
-  h3@1.15.11:
-    resolution: {integrity: sha512-L3THSe2MPeBwgIZVSH5zLdBBU90TOxarvhK9d04IDY2AmVS8j2Jz2LIWtwsGOU3lu2I5jCN7FNvVfY2+XyF+mg==}
+  h3@1.15.5:
+    resolution: {integrity: sha512-xEyq3rSl+dhGX2Lm0+eFQIAzlDN6Fs0EcC4f7BNUmzaRX/PTzeuM+Tr2lHB8FoXggsQIeXLj8EDVgs5ywxyxmg==}
 
-  happy-dom@20.8.9:
-    resolution: {integrity: sha512-Tz23LR9T9jOGVZm2x1EPdXqwA37G/owYMxRwU0E4miurAtFsPMQ1d2Jc2okUaSjZqAFz2oEn3FLXC5a0a+siyA==}
+  happy-dom@20.9.0:
+    resolution: {integrity: sha512-GZZ9mKe8r646NUAf/zemnGbjYh4Bt8/MqASJY+pSm5ZDtc3YQox+4gsLI7yi1hba6o+eCsGxpHn5+iEVn31/FQ==}
     engines: {node: '>=20.0.0'}
 
   has-bigints@1.0.2:
@@ -8691,8 +8709,8 @@ packages:
       encoding:
         optional: true
 
-  node-forge@1.4.0:
-    resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
+  node-forge@1.3.3:
+    resolution: {integrity: sha512-rLvcdSyRCyouf6jcOIPe/BgwG/d7hKjzMKOas33/pHEr6gbq18IK9zV7DiPvzsz0oBJPme6qr6H6kGZuI9/DZg==}
     engines: {node: '>= 6.13.0'}
 
   node-gyp@9.4.1:
@@ -9038,10 +9056,6 @@ packages:
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
-
-  path-expression-matcher@1.5.0:
-    resolution: {integrity: sha512-cbrerZV+6rvdQrrD+iGMcZFEiiSrbv9Tfdkvnusy6y0x0GKBXREFg/Y65GhIfm0tnLntThhzCnfKwp1WRjeCyQ==}
-    engines: {node: '>=14.0.0'}
 
   path-is-absolute@1.0.1:
     resolution: {integrity: sha512-AVbw3UJ2e9bq64vSaS9Am0fje1Pa8pbGqTTsmXfaIiMpnr5DlDhfJOuLj9Sf95ZPVDAUerDfEk88MPmPe7UCQg==}
@@ -10525,11 +10539,11 @@ packages:
   strnum@1.1.2:
     resolution: {integrity: sha512-vrN+B7DBIoTTZjnPNewwhx6cBA/H+IS7rfW68n7XxC1y7uoiGQBxaKzqucGUgavX15dJgiGztLJ8vxuEzwqBdA==}
 
-  strnum@2.2.3:
-    resolution: {integrity: sha512-oKx6RUCuHfT3oyVjtnrmn19H1SiCqgJSg+54XqURKp5aCMbrXrhLjRN9TjuwMjiYstZ0MzDrHqkGZ5dFTKd+zg==}
+  strnum@2.1.2:
+    resolution: {integrity: sha512-l63NF9y/cLROq/yqKXSLtcMeeyOfnSQlfMSlzFt/K73oIaD8DGaQWd7Z34X9GPiKqP5rbSh84Hl4bOlLcjiSrQ==}
 
-  strtok3@10.3.5:
-    resolution: {integrity: sha512-ki4hZQfh5rX0QDLLkOCj+h+CVNkqmp/CMf8v8kZpkNVK6jGQooMytqzLZYUVYIZcFZ6yDB70EfD8POcFXiF5oA==}
+  strtok3@10.3.4:
+    resolution: {integrity: sha512-KIy5nylvC5le1OdaaoCJ07L+8iQzJHGH6pWDuzS+d07Cu7n1MZ2x26P8ZKIWfbK02+XIL8Mp4RkWeqdUCrDMfg==}
     engines: {node: '>=18'}
 
   structured-headers@0.4.1:
@@ -11003,8 +11017,8 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
-  undici@6.24.1:
-    resolution: {integrity: sha512-sC+b0tB1whOCzbtlx20fx3WgCXwkW627p4EA9uM+/tNNPkSS+eSEld6pAs9nDv7WbY1UUljBMYPtu9BCOrCWKA==}
+  undici@6.25.0:
+    resolution: {integrity: sha512-ZgpWDC5gmNiuY9CnLVXEH8rl50xhRCuLNA97fAUnKi8RRuV4E6KG31pDTsLVUKnohJE0I3XDrTeEydAXRw47xg==}
     engines: {node: '>=18.17'}
 
   unicode-canonical-property-names-ecmascript@2.0.0:
@@ -11828,9 +11842,9 @@ snapshots:
 
   '@adraffy/ens-normalize@1.11.0': {}
 
-  '@alephium/get-extension-wallet@3.0.0-test.9':
+  '@alephium/get-extension-wallet@3.0.1':
     dependencies:
-      '@alephium/web3': 3.0.0-test.9
+      '@alephium/web3': 3.0.1
       bowser: 2.11.0
 
   '@alephium/ledger-app@0.6.3-rc.0':
@@ -11839,16 +11853,31 @@ snapshots:
       '@ledgerhq/hw-transport': 6.34.1
       blakejs: 1.2.1
 
+  '@alephium/powfi-sdk@0.0.1-rc.24(encoding@0.1.13)':
+    dependencies:
+      '@alephium/token-list': 0.0.20(encoding@0.1.13)
+      '@alephium/web3': 3.0.1
+      bignumber.js: 10.0.2
+      decimal.js: 10.6.0
+    transitivePeerDependencies:
+      - encoding
+
+  '@alephium/token-list@0.0.20(encoding@0.1.13)':
+    dependencies:
+      cross-fetch: 3.1.8(encoding@0.1.13)
+    transitivePeerDependencies:
+      - encoding
+
   '@alephium/token-list@0.0.21(encoding@0.1.13)':
     dependencies:
       cross-fetch: 3.1.8(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/walletconnect-provider@3.0.0-test.9(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)':
+  '@alephium/walletconnect-provider@3.0.1(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)':
     dependencies:
-      '@alephium/web3': 3.0.0-test.9
-      '@alephium/web3-wallet': 3.0.0-test.9
+      '@alephium/web3': 3.0.1
+      '@alephium/web3-wallet': 3.0.1
       '@walletconnect/core': 2.21.5(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.23.1)
       '@walletconnect/sign-client': 2.21.5(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)
@@ -11875,10 +11904,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@alephium/walletconnect-provider@3.0.0-test.9(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)':
+  '@alephium/walletconnect-provider@3.0.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)':
     dependencies:
-      '@alephium/web3': 3.0.0-test.9
-      '@alephium/web3-wallet': 3.0.0-test.9
+      '@alephium/web3': 3.0.1
+      '@alephium/web3-wallet': 3.0.1
       '@walletconnect/core': 2.21.5(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))
       '@walletconnect/sign-client': 2.21.5(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
@@ -11905,10 +11934,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@alephium/walletconnect-provider@3.0.0-test.9(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)':
+  '@alephium/walletconnect-provider@3.0.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)':
     dependencies:
-      '@alephium/web3': 3.0.0-test.9
-      '@alephium/web3-wallet': 3.0.0-test.9
+      '@alephium/web3': 3.0.1
+      '@alephium/web3-wallet': 3.0.1
       '@walletconnect/core': 2.21.5(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))
       '@walletconnect/sign-client': 2.21.5(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
@@ -11935,14 +11964,23 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@alephium/web3-wallet@3.0.0-test.9':
+  '@alephium/web3-wallet@3.0.1':
     dependencies:
-      '@alephium/web3': 3.0.0-test.9
+      '@alephium/web3': 3.0.1
       '@noble/secp256k1': 1.7.2
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
 
   '@alephium/web3@3.0.0-test.9':
+    dependencies:
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@noble/secp256k1': 1.7.2
+      base-x: 4.0.1
+      bignumber.js: 9.1.2
+      eventemitter3: 4.0.7
+
+  '@alephium/web3@3.0.1':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
@@ -12074,7 +12112,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.25.7
       '@babel/helper-replace-supers': 7.26.5(@babel/core@7.26.10)
       '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
-      '@babel/traverse': 7.27.0
+      '@babel/traverse': 7.29.0
       semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
@@ -13131,7 +13169,7 @@ snapshots:
     dependencies:
       '@tanstack/react-query': 5.81.2(react@19.1.0)
       expo: 54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      flatted: 3.4.2
+      flatted: 3.4.1
       react: 19.1.0
 
   '@develar/schema-utils@2.6.5':
@@ -13523,7 +13561,7 @@ snapshots:
       glob: 13.0.6
       lan-network: 0.1.7
       minimatch: 9.0.9
-      node-forge: 1.4.0
+      node-forge: 1.3.3
       npm-package-arg: 11.0.3
       ora: 3.4.0
       picomatch: 3.0.2
@@ -13545,7 +13583,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.11
       terminal-link: 2.1.1
-      undici: 6.24.1
+      undici: 6.25.0
       wrap-ansi: 7.0.0
       ws: 8.19.0
     optionalDependencies:
@@ -13558,7 +13596,7 @@ snapshots:
 
   '@expo/code-signing-certificates@0.0.6':
     dependencies:
-      node-forge: 1.4.0
+      node-forge: 1.3.3
 
   '@expo/config-plugins@54.0.4':
     dependencies:
@@ -14132,13 +14170,13 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
       '@jridgewell/set-array': 1.2.1
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/remapping@2.3.5':
@@ -14162,17 +14200,17 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.9':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
-      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@ledgerhq/devices@8.13.0':
     dependencies:
@@ -14600,7 +14638,7 @@ snapshots:
       chalk: 4.1.2
       execa: 5.1.1
       fast-glob: 3.3.2
-      fast-xml-parser: 5.5.12
+      fast-xml-parser: 5.4.2
       logkitty: 0.7.1
     transitivePeerDependencies:
       - encoding
@@ -16045,7 +16083,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+      vitest: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   '@vitest/expect@4.1.4':
     dependencies:
@@ -16098,10 +16136,10 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
-  '@vitest/web-worker@4.1.4(vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)))':
+  '@vitest/web-worker@4.1.4(vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)))':
     dependencies:
       obug: 2.1.1
-      vitest: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
+      vitest: 4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
 
   '@walletconnect/core@2.21.5(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)(zod@3.23.8)':
     dependencies:
@@ -17709,7 +17747,7 @@ snapshots:
 
   babel-plugin-polyfill-corejs2@0.4.11(@babel/core@7.26.10):
     dependencies:
-      '@babel/compat-data': 7.26.8
+      '@babel/compat-data': 7.29.0
       '@babel/core': 7.26.10
       '@babel/helper-define-polyfill-provider': 0.6.4(@babel/core@7.26.10)
       semver: 7.6.3
@@ -17844,6 +17882,8 @@ snapshots:
       is-windows: 1.0.2
 
   big-integer@1.6.52: {}
+
+  bignumber.js@10.0.2: {}
 
   bignumber.js@9.1.2: {}
 
@@ -18467,7 +18507,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cookie-es@1.2.3: {}
+  cookie-es@1.2.2: {}
 
   cookie@0.7.2: {}
 
@@ -18750,6 +18790,8 @@ snapshots:
 
   decimal.js@10.4.3: {}
 
+  decimal.js@10.6.0: {}
+
   decode-uri-component@0.2.2: {}
 
   decompress-response@6.0.0:
@@ -18827,8 +18869,6 @@ snapshots:
       object-keys: 1.1.1
 
   defu@6.1.5: {}
-
-  defu@6.1.7: {}
 
   delaunator@4.0.1: {}
 
@@ -20141,9 +20181,7 @@ snapshots:
 
   fast-uri@3.1.0: {}
 
-  fast-xml-builder@1.1.4:
-    dependencies:
-      path-expression-matcher: 1.5.0
+  fast-xml-builder@1.0.0:
     optional: true
 
   fast-xml-parser@4.5.6:
@@ -20151,11 +20189,10 @@ snapshots:
       strnum: 1.1.2
     optional: true
 
-  fast-xml-parser@5.5.12:
+  fast-xml-parser@5.4.2:
     dependencies:
-      fast-xml-builder: 1.1.4
-      path-expression-matcher: 1.5.0
-      strnum: 2.2.3
+      fast-xml-builder: 1.0.0
+      strnum: 2.1.2
     optional: true
 
   fastest-levenshtein@1.0.16: {}
@@ -20201,7 +20238,7 @@ snapshots:
   file-type@21.3.2:
     dependencies:
       '@tokenizer/inflate': 0.4.1
-      strtok3: 10.3.5
+      strtok3: 10.3.4
       token-types: 6.1.2
       uint8array-extras: 1.5.0
     transitivePeerDependencies:
@@ -20250,13 +20287,13 @@ snapshots:
 
   flat-cache@3.2.0:
     dependencies:
-      flatted: 3.4.2
+      flatted: 3.4.1
       keyv: 4.5.4
       rimraf: 3.0.2
 
   flat@5.0.2: {}
 
-  flatted@3.4.2: {}
+  flatted@3.4.1: {}
 
   flow-enums-runtime@0.0.6: {}
 
@@ -20585,11 +20622,11 @@ snapshots:
 
   graphql@16.10.0: {}
 
-  h3@1.15.11:
+  h3@1.15.5:
     dependencies:
-      cookie-es: 1.2.3
+      cookie-es: 1.2.2
       crossws: 0.3.5
-      defu: 6.1.7
+      defu: 6.1.5
       destr: 2.0.5
       iron-webcrypto: 1.2.1
       node-mock-http: 1.0.4
@@ -20597,7 +20634,7 @@ snapshots:
       ufo: 1.6.3
       uncrypto: 0.1.3
 
-  happy-dom@20.8.9:
+  happy-dom@20.9.0:
     dependencies:
       '@types/node': 22.19.5
       '@types/whatwg-mimetype': 3.0.2
@@ -21863,11 +21900,11 @@ snapshots:
       consola: 3.2.3
       defu: 6.1.5
       get-port-please: 3.1.1
-      h3: 1.15.11
+      h3: 1.15.5
       http-shutdown: 1.2.2
       jiti: 1.21.0
       mlly: 1.4.2
-      node-forge: 1.4.0
+      node-forge: 1.3.3
       pathe: 1.1.2
       std-env: 3.10.0
       ufo: 1.3.2
@@ -22450,7 +22487,7 @@ snapshots:
     optionalDependencies:
       encoding: 0.1.13
 
-  node-forge@1.4.0: {}
+  node-forge@1.3.3: {}
 
   node-gyp@9.4.1:
     dependencies:
@@ -22893,9 +22930,6 @@ snapshots:
   path-exists@3.0.0: {}
 
   path-exists@4.0.0: {}
-
-  path-expression-matcher@1.5.0:
-    optional: true
 
   path-is-absolute@1.0.1: {}
 
@@ -24623,10 +24657,10 @@ snapshots:
   strnum@1.1.2:
     optional: true
 
-  strnum@2.2.3:
+  strnum@2.1.2:
     optional: true
 
-  strtok3@10.3.5:
+  strtok3@10.3.4:
     dependencies:
       '@tokenizer/token': 0.3.0
 
@@ -25105,7 +25139,7 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici@6.24.1: {}
+  undici@6.25.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.0: {}
 
@@ -25146,7 +25180,7 @@ snapshots:
       anymatch: 3.1.3
       chokidar: 3.5.3
       destr: 2.0.2
-      h3: 1.15.11
+      h3: 1.15.5
       ioredis: 5.3.2
       listhen: 1.5.5
       lru-cache: 10.1.0
@@ -25673,7 +25707,7 @@ snapshots:
       terser: 5.39.0
       yaml: 2.8.3
 
-  vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)):
+  vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.4
       '@vitest/mocker': 4.1.4(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.25.1)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
@@ -25698,12 +25732,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.5
       '@vitest/coverage-v8': 4.1.4(vitest@4.1.4)
-      happy-dom: 20.8.9
+      happy-dom: 20.9.0
       jsdom: 21.1.2
     transitivePeerDependencies:
       - msw
 
-  vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.8.9)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)):
+  vitest@4.1.4(@types/node@22.19.5)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(jsdom@21.1.2)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.4
       '@vitest/mocker': 4.1.4(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(vite@8.0.8(@types/node@22.19.5)(esbuild@0.27.7)(jiti@1.21.0)(terser@5.39.0)(yaml@2.8.3))
@@ -25728,7 +25762,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.5
       '@vitest/coverage-v8': 4.1.4(vitest@4.1.4)
-      happy-dom: 20.8.9
+      happy-dom: 20.9.0
       jsdom: 21.1.2
     transitivePeerDependencies:
       - msw

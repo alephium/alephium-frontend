@@ -1,13 +1,13 @@
 import { ReactNode, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
-import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, {
   AnimatedRef,
   interpolate,
   interpolateColor,
   SharedValue,
   useAnimatedStyle,
-  useDerivedValue
+  useSharedValue,
+  withSpring
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -18,8 +18,8 @@ import { ImpactStyle, vibrate } from '~/utils/haptics'
 type TabsLayout = Record<number, LayoutRectangle>
 
 interface TopTabBarProps {
-  tabLabels: string[]
-  pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
+  tabLabels: Array<string | { name: string; count?: string | number }>
+  activeTab: number
   onTabPress: (index: number) => void
   tabBarRef?: AnimatedRef<Reanimated.View>
   customContent?: ReactNode
@@ -27,10 +27,15 @@ interface TopTabBarProps {
 
 const indicatorXPadding = DEFAULT_MARGIN
 
-const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, activeTab, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
-  const position = useDerivedValue(() => pagerScrollEvent.get().position + pagerScrollEvent.get().offset, [])
+  const position = useSharedValue(activeTab)
+
+  // Sync position with activeTab immediately when it changes
+  if (position.value !== activeTab) {
+    position.value = withSpring(activeTab, { damping: 20, stiffness: 200, mass: 0.5 })
+  }
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]
@@ -74,16 +79,19 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
       <HeaderContainer ref={tabBarRef}>
         <TabsContainer>
           <Indicator style={indicatorStyle} />
-          {tabLabels.map((label, i) => (
-            <TabBarItem
-              key={label}
-              index={i}
-              label={label}
-              position={position}
-              onPress={() => handleOnTabPress(i)}
-              onLayout={(e) => handleTabLayoutEvent(i, e)}
-            />
-          ))}
+          {tabLabels.map((label, i) => {
+            const key = typeof label === 'string' ? label : label.name
+            return (
+              <TabBarItem
+                key={key}
+                index={i}
+                label={label}
+                position={position}
+                onPress={() => handleOnTabPress(i)}
+                onLayout={(e) => handleTabLayoutEvent(i, e)}
+              />
+            )
+          })}
         </TabsContainer>
       </HeaderContainer>
     </TopTabBarStyled>
@@ -93,13 +101,15 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
 const AnimatedAppText = Reanimated.createAnimatedComponent(AppText)
 
 interface TabBarItemProps extends PressableProps {
-  label: string
+  label: string | { name: string; count?: string | number }
   index: number
   position: SharedValue<number>
 }
 
 const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const theme = useTheme()
+  const name = typeof label === 'string' ? label : label.name
+  const count = typeof label === 'string' ? undefined : label.count
 
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.get() - index
@@ -111,7 +121,8 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   return (
     <TabBarItemStyled {...props}>
       <AnimatedAppText style={animatedTextStyle} size={16} semiBold>
-        {label}
+        {name}
+        {count !== undefined && count !== '' && <AppText style={{ opacity: 0.3 }}>{`  ${count}`}</AppText>}
       </AnimatedAppText>
     </TabBarItemStyled>
   )

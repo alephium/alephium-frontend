@@ -50,11 +50,9 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 }
 
 // Polyfill Node core modules used by other deps (e.g. crypto). Not needed for ws when aliased above.
-// fs: @alephium/web3's contract.ts has a dynamic import('fs') that Metro resolves statically.
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
-  crypto: require.resolve('react-native-quick-crypto'),
-  fs: path.resolve(__dirname, 'shims/fs.js')
+  crypto: require.resolve('react-native-quick-crypto')
 }
 
 module.exports = config

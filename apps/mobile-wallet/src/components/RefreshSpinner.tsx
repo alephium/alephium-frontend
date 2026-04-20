@@ -7,15 +7,10 @@ const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
   const theme = useTheme()
 
   const { refreshBalances, isFetchingBalances } = useRefreshAddressesBalances()
+  const refreshing = props.refreshing ?? isFetchingBalances
+  const onRefresh = props.onRefresh ?? refreshBalances
 
-  return (
-    <RefreshControl
-      {...props}
-      refreshing={isFetchingBalances}
-      onRefresh={refreshBalances}
-      tintColor={theme.font.primary}
-    />
-  )
+  return <RefreshControl {...props} refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.font.primary} />
 }
 
 export default RefreshSpinner
@@ -27,13 +22,17 @@ const useRefreshAddressesBalances = () => {
   const refreshBalances = useCallback(async () => {
     if (isFetchingBalances) return
 
-    await Promise.all(
-      addressHashes.map((addressHash) =>
-        queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
-      )
-    )
+    setIsFetchingBalances(true)
 
-    setIsFetchingBalances(false)
+    try {
+      await Promise.all(
+        addressHashes.map((addressHash) =>
+          queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
+        )
+      )
+    } finally {
+      setIsFetchingBalances(false)
+    }
   }, [addressHashes, isFetchingBalances])
 
   return {

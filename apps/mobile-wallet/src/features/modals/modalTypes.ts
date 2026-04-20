@@ -4,7 +4,6 @@ import { ComponentProps } from 'react'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
-import AddressNftsGridModal from '~/features/addressesManagement/AddressNftsGridModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import SelectTokenToHideModal from '~/features/assetsDisplay/hideTokens/SelectTokenToHideModal'
@@ -50,6 +49,8 @@ import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsMo
 import DataFetchErrorModal from '~/modals/DataFetchErrorModal'
 import UnknownTokensModal from '~/modals/UnknownTokensModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
+import StakeModal from '~/screens/Staking/StakeModal'
+import UnstakeModal from '~/screens/Staking/UnstakeModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -91,7 +92,6 @@ export const ModalComponents = {
   DAppDetailsModal,
   RegionSelectModal,
   UnknownTokensModal,
-  AddressNftsGridModal,
   ConnectDappModal,
   NetworkSwitchModal,
   SignExecuteScriptTxModal,
@@ -102,7 +102,9 @@ export const ModalComponents = {
   EditDappUrlModal,
   DataFetchErrorModal,
   ConnectTipModal,
-  SignChainedTxModal
+  SignChainedTxModal,
+  StakeModal,
+  UnstakeModal
 }
 
 export type ModalName = keyof typeof ModalComponents

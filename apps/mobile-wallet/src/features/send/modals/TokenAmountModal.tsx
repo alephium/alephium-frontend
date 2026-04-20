@@ -3,16 +3,13 @@ import {
   calculateTokenAmountWorth,
   fromHumanReadableAmount,
   FungibleToken,
-  getNumberOfDecimals,
   isFT,
-  isNFT,
-  toHumanReadableAmount
+  isNFT
 } from '@alephium/shared'
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -22,7 +19,7 @@ import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { isNumericStringValid } from '~/utils/numbers'
+import useFungibleTokenAmountInput from '~/hooks/useFungibleTokenAmountInput'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
@@ -44,49 +41,27 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
 
   const { t } = useTranslation()
 
-  const [amount, setAmount] = useState(initialAmount)
-  const [error, setError] = useState('')
+  const isValidFtContext = !!(token && isFT(token) && tokenBalances)
+  const maxAmount = isValidFtContext ? BigInt(tokenBalances.availableBalance) : BigInt(0)
+  const tokenDecimals = isValidFtContext ? token.decimals : 18
+  const isAlphTransfer = isValidFtContext && token.id === ALPH.id
+
+  const { amount, error, amountParsed, handleAmountChange, handleMax, handleClear } = useFungibleTokenAmountInput({
+    maxBalance: maxAmount,
+    decimals: tokenDecimals,
+    initialAmount,
+    enforceMinAlphTransfer: isAlphTransfer
+  })
 
   if (!token || isNFT(token) || !tokenBalances) return
 
-  const maxAmount = BigInt(tokenBalances.availableBalance)
-  const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
-  const tokenDecimals = isFT(token) ? token.decimals : undefined
   const tokenName = isFT(token) ? token.name : token.id
   const tokenSymbol = isFT(token) ? token.symbol : ''
 
-  const handleAmountChange = (amount: string) => {
-    let cleanedAmount = amount.replace(',', '.')
-    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
-
-    const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, tokenDecimals))
-    const amountValueAsFloat = parseFloat(cleanedAmount)
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (tokenDecimals ?? 0)
-
-    const newError = isAboveMaxAmount
-      ? t('Amount exceeds available balance')
-      : token.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-        ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
-        : tooManyDecimals
-          ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
-              numberOfDecimals: tokenDecimals
-            })
-          : ''
-
-    setError(newError)
-    setAmount(cleanedAmount)
-  }
-
-  const handleUseMaxAmountPress = () => {
-    setAmount(toHumanReadableAmount(maxAmount, tokenDecimals))
-  }
-
   const handleAmountValidate = () => {
-    onAmountValidate(amount ? fromHumanReadableAmount(amount, tokenDecimals) : BigInt(0), tokenName)
+    onAmountValidate(amountParsed ?? BigInt(0), tokenName)
     dismissModal()
   }
-
-  const handleClearAmountPress = () => setAmount('')
 
   const fontSize = getFontSize(`${amount}+${tokenSymbol}`)
   const amountIsSet = amount && amount !== '0'
@@ -124,8 +99,8 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
         {amount && <EnteredAmountWorth tokenId={tokenId} amount={amount} />}
 
         <Buttons>
-          <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-          {amountIsSet && <Button title={t('clear_amount')} onPress={handleClearAmountPress} type="transparent" />}
+          <Button title={t('Use max')} onPress={handleMax} type="transparent" variant="accent" />
+          {amountIsSet && <Button title={t('clear_amount')} onPress={handleClear} type="transparent" />}
         </Buttons>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </ContentWrapper>

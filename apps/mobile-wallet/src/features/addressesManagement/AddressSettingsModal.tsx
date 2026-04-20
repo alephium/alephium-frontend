@@ -10,10 +10,8 @@ import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddr
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
-import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
@@ -23,7 +21,6 @@ interface AddressSettingsModalProps {
 const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onForgetAddress }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
   const canDeleteAddress = useCanDeleteAddress(addressHash)
   const { dismissModal } = useModalContext()
@@ -47,22 +44,14 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
 
   const [settings, setSettings] = useState<AddressFormData | undefined>(initialSettings)
 
-  const handleSavePress = async () => {
+  const handleSavePress = () => {
     if (!settings || !address) return
 
     if (address.isDefault && !settings.isDefault) return
 
-    try {
-      await persistAddressSettings({ ...address, ...settings })
-      dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
+    dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 
-      sendAnalytics({ event: 'Address: Edited address settings' })
-    } catch (error) {
-      const message = 'Could not edit address settings'
-
-      showExceptionToast(error, t(message))
-      sendAnalytics({ type: 'error', message })
-    }
+    sendAnalytics({ event: 'Address: Edited address settings' })
 
     dismissModal()
   }
