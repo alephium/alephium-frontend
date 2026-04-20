@@ -1,28 +1,49 @@
-import { formatAmountForDisplay } from '@alephium/shared'
+import { AddressHash, formatAmountForDisplay, selectSentTransactionByHash } from '@alephium/shared'
+import { queryClient, usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, Pressable } from 'react-native'
+import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
-import { UnstakeRequest } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import {
+  UnstakeRequest,
+  unstakeVaultRequestsQueryKeyRoot
+} from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import { vaultActionCompleted } from '~/features/staking/stakingSlice'
 import { isClaimable } from '~/features/staking/stakingUtils'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 interface UnstakingRequestItemProps {
   request: UnstakeRequest
+  addressHash: AddressHash
 }
 
-const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
+const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProps) => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
   const { claimUnstaked, cancelUnstake } = useAlphStaking()
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
+
+  const vaultIndex = request.vaultIndex.toString()
+  const pendingVaultAction = useAppSelector((s) => s.staking.pendingVaultActions[vaultIndex])
+
+  const handleVaultActionConfirmed = useCallback(async () => {
+    await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
+    await queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })
+    dispatch(vaultActionCompleted(vaultIndex))
+    showToast({
+      type: 'success',
+      text1: pendingVaultAction?.type === 'claim' ? t('ALPH claimed!') : t('Unstake request cancelled!')
+    })
+  }, [addressHash, vaultIndex, pendingVaultAction?.type, dispatch, t])
 
   const now = Date.now()
   const endTime = Number(request.startTime + request.duration)
@@ -88,6 +109,9 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
 
   return (
     <Container>
+      {pendingVaultAction && (
+        <VaultActionConfirmationPoller txHash={pendingVaultAction.txHash} onConfirmed={handleVaultActionConfirmed} />
+      )}
       <Row>
         <DataColumn>
           <DataLabel>{t('Amount')}</DataLabel>
@@ -104,37 +128,36 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
       </Row>
 
       <Row>
-        {canClaim && (
-          <DataColumn>
-            <DataLabel>{t('Claimable now')}</DataLabel>
-            <DataValue>
-              {formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH
-            </DataValue>
-          </DataColumn>
-        )}
-        <ProgressBarContainer $fullWidth={!canClaim}>
+        <DataColumn>
+          <DataLabel>{t('Claimable now')}</DataLabel>
+          <DataValue>
+            {canClaim
+              ? `${formatAmountForDisplay({ amount: request.claimableAmount, amountDecimals: ALPH.decimals })} ALPH`
+              : '-'}
+          </DataValue>
+        </DataColumn>
+
+        <ProgressBarContainer>
           <ProgressBar style={{ width: `${progress}%` }} />
         </ProgressBarContainer>
       </Row>
 
       <ButtonRow>
-        <Pressable style={{ flex: 1 }} onPress={onClaimPress} disabled={isClaiming}>
-          <Button
-            title={t('Claim')}
-            onPress={() => undefined}
-            disabled={!canClaim || isClaiming}
-            pointerEvents="none"
-            loading={isClaiming}
-            variant="accent"
-            short
-            flex
-          />
-        </Pressable>
+        <Button
+          title={t('Claim')}
+          onPress={onClaimPress}
+          disabled={!canClaim || isClaiming || !!pendingVaultAction}
+          loading={isClaiming || pendingVaultAction?.type === 'claim'}
+          variant="accent"
+          short
+          flex
+        />
         {!isFullyUnlocked && (
           <Button
             title={t('Cancel')}
             onPress={handleCancel}
-            loading={isCancelling}
+            disabled={isCancelling || !!pendingVaultAction}
+            loading={isCancelling || pendingVaultAction?.type === 'cancel'}
             type="secondary"
             variant="default"
             short
@@ -147,6 +170,27 @@ const UnstakingRequestItem = ({ request }: UnstakingRequestItemProps) => {
 }
 
 export default UnstakingRequestItem
+
+interface VaultActionConfirmationPollerProps {
+  txHash: string
+  onConfirmed: () => void
+}
+
+const VaultActionConfirmationPoller = ({ txHash, onConfirmed }: VaultActionConfirmationPollerProps) => {
+  const confirmedRef = useRef(false)
+  const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
+
+  usePendingTxPolling(txHash)
+
+  useEffect(() => {
+    if (sentTx?.status === 'confirmed' && !confirmedRef.current) {
+      confirmedRef.current = true
+      onConfirmed()
+    }
+  }, [sentTx?.status, onConfirmed])
+
+  return null
+}
 
 const Container = styled.View`
   background-color: ${({ theme }) => theme.bg.secondary};

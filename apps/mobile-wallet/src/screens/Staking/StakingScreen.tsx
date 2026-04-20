@@ -21,6 +21,7 @@ const StakingScreen = () => {
   const addressHash = useAppSelector(selectDefaultAddressHash)
   const dispatch = useAppDispatch()
   const isStakingEnabled = useIsStakingEnabled()
+  const hasPendingStakeOrUnstake = useAppSelector((s) => !!s.staking.pendingStakeOrUnstake)
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
 
@@ -44,10 +45,18 @@ const StakingScreen = () => {
             <Button
               title={t('Stake')}
               onPress={handleStakePress}
+              disabled={hasPendingStakeOrUnstake}
               flex
               style={{ backgroundColor: theme.global.palette3 }}
             />
-            <Button title={t('Unstake')} onPress={handleUnstakePress} type="secondary" variant="default" flex />
+            <Button
+              title={t('Unstake')}
+              onPress={handleUnstakePress}
+              disabled={hasPendingStakeOrUnstake}
+              type="secondary"
+              variant="default"
+              flex
+            />
           </ButtonsRow>
 
           <Divider />

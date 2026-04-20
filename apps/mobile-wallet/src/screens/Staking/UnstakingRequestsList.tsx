@@ -8,7 +8,7 @@ import AppText from '~/components/AppText'
 import useFetchAddressUnstakeRequests, {
   unstakeVaultRequestsQueryKeyRoot
 } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
-import { setIsCanceling, setIsClaiming, setIsUnstaking } from '~/features/staking/stakingSlice'
+import { stakeOrUnstakeCompleted } from '~/features/staking/stakingSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import PendingStakingActionPollerIndicator from '~/screens/Staking/PendingStakingActionPollerIndicator'
 import { showToast } from '~/utils/layout'
@@ -33,24 +33,14 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
 
   const errorMessage: string = error instanceof Error ? error.message : String(error ?? '')
 
-  const isUnstaking = useAppSelector((s) => s.staking.isUnstaking)
-  const isCanceling = useAppSelector((s) => s.staking.isCanceling)
-  const isClaiming = useAppSelector((s) => s.staking.isClaiming)
+  const pendingStakeOrUnstake = useAppSelector((s) => s.staking.pendingStakeOrUnstake)
 
-  const handleNewTxDetected = useCallback(async () => {
+  const handleUnstakeTxConfirmed = useCallback(async () => {
+    await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
     await queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })
-
-    if (isUnstaking) {
-      dispatch(setIsUnstaking(false))
-      showToast({ type: 'success', text1: t('Unstake request opened!') })
-    } else if (isCanceling) {
-      dispatch(setIsCanceling(false))
-      showToast({ type: 'success', text1: t('Unstake request cancelled!') })
-    } else if (isClaiming) {
-      dispatch(setIsClaiming(false))
-      showToast({ type: 'success', text1: t('ALPH claimed!') })
-    }
-  }, [dispatch, isCanceling, isClaiming, isUnstaking, t])
+    dispatch(stakeOrUnstakeCompleted())
+    showToast({ type: 'success', text1: t('Unstake request opened!') })
+  }, [addressHash, dispatch, t])
 
   return (
     <Container>
@@ -58,8 +48,11 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
         <SectionTitle color="secondary">
           {t('Pending unstakings')} ({unstakeRequests.length})
         </SectionTitle>
-        {(isUnstaking || isCanceling || isClaiming) && addressHash && (
-          <PendingStakingActionPollerIndicator addressHash={addressHash} onNewTxDetected={handleNewTxDetected} />
+        {pendingStakeOrUnstake?.type === 'unstake' && (
+          <PendingStakingActionPollerIndicator
+            txHash={pendingStakeOrUnstake.txHash}
+            onTxConfirmed={handleUnstakeTxConfirmed}
+          />
         )}
       </TitleRow>
       {isError ? (
@@ -72,7 +65,7 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
       ) : unstakeRequests.length > 0 ? (
         <ListContainer>
           {unstakeRequests.map((req) => (
-            <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} />
+            <UnstakingRequestItem key={req.vaultIndex.toString()} request={req} addressHash={addressHash} />
           ))}
         </ListContainer>
       ) : (

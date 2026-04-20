@@ -1,37 +1,27 @@
-import { AddressHash } from '@alephium/shared'
-import { addressLatestTransactionQuery, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { useQuery } from '@tanstack/react-query'
+import { selectSentTransactionByHash } from '@alephium/shared'
+import { usePendingTxPolling } from '@alephium/shared-react'
 import { useEffect, useRef } from 'react'
 import { ActivityIndicator } from 'react-native'
 
+import { useAppSelector } from '~/hooks/redux'
+
 interface PendingStakingActionPollerIndicatorProps {
-  addressHash: AddressHash
-  onNewTxDetected: () => void
+  txHash: string
+  onTxConfirmed: () => void
 }
 
-const PendingStakingActionPollerIndicator = ({
-  addressHash,
-  onNewTxDetected
-}: PendingStakingActionPollerIndicatorProps) => {
-  const networkId = useCurrentlyOnlineNetworkId()
-  const latestTxHashRef = useRef<string>(undefined)
+const PendingStakingActionPollerIndicator = ({ txHash, onTxConfirmed }: PendingStakingActionPollerIndicatorProps) => {
+  const confirmedRef = useRef(false)
+  const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
 
-  const { data: newLatestTransaction } = useQuery({
-    ...addressLatestTransactionQuery({ addressHash, networkId }),
-    refetchInterval: 3000
-  })
+  usePendingTxPolling(txHash)
 
   useEffect(() => {
-    if (latestTxHashRef.current) return
-    latestTxHashRef.current = newLatestTransaction?.latestTx?.hash
-  }, [newLatestTransaction])
-
-  useEffect(() => {
-    if (newLatestTransaction?.latestTx?.hash !== latestTxHashRef.current) {
-      onNewTxDetected()
-      latestTxHashRef.current = newLatestTransaction?.latestTx?.hash
+    if (sentTx?.status === 'confirmed' && !confirmedRef.current) {
+      confirmedRef.current = true
+      onTxConfirmed()
     }
-  }, [newLatestTransaction?.latestTx?.hash, onNewTxDetected])
+  }, [sentTx?.status, onTxConfirmed])
 
   return <ActivityIndicator color="white" size="small" />
 }

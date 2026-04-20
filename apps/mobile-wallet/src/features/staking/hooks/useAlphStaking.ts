@@ -3,7 +3,12 @@ import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@al
 import { useCallback } from 'react'
 
 import { powfiSdk, xAlphTokenId } from '~/api/powfi'
-import { setIsCanceling, setIsClaiming, setIsStaking, setIsUnstaking } from '~/features/staking/stakingSlice'
+import {
+  stakeOrUnstakeCompleted,
+  stakeOrUnstakeStarted,
+  vaultActionCompleted,
+  vaultActionStarted
+} from '~/features/staking/stakingSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 type RecordTxAndRefreshProps = {
@@ -37,13 +42,13 @@ const useAlphStaking = () => {
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {
-      dispatch(setIsStaking(true))
       try {
         const result = await powfiSdk.staking.stakeAlph(amount)
+        dispatch(stakeOrUnstakeStarted({ type: 'stake', txHash: result.txId }))
         recordTx({ result, alphAmount: amount })
         return result
       } catch (error) {
-        dispatch(setIsStaking(false))
+        dispatch(stakeOrUnstakeCompleted())
         throw error
       }
     },
@@ -52,13 +57,13 @@ const useAlphStaking = () => {
 
   const startUnstake = useCallback(
     async (amount: bigint) => {
-      dispatch(setIsUnstaking(true))
       try {
         const result = await powfiSdk.staking.startUnstake(amount)
+        dispatch(stakeOrUnstakeStarted({ type: 'unstake', txHash: result.txId }))
         await recordTx({ result, xAlphAmount: amount })
         return result
       } catch (error) {
-        dispatch(setIsUnstaking(false))
+        dispatch(stakeOrUnstakeCompleted())
         throw error
       }
     },
@@ -67,13 +72,13 @@ const useAlphStaking = () => {
 
   const claimUnstaked = useCallback(
     async (vaultIndex: bigint, amount: bigint) => {
-      dispatch(setIsClaiming(true))
       try {
         const result = await powfiSdk.staking.claimUnstaked(vaultIndex, amount)
+        dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'claim', txHash: result.txId }))
         await recordTx({ result, alphAmount: amount })
         return result
       } catch (error) {
-        dispatch(setIsClaiming(false))
+        dispatch(vaultActionCompleted(vaultIndex.toString()))
         throw error
       }
     },
@@ -82,13 +87,13 @@ const useAlphStaking = () => {
 
   const cancelUnstake = useCallback(
     async (vaultIndex: bigint) => {
-      dispatch(setIsCanceling(true))
       try {
         const result = await powfiSdk.staking.cancelUnstake(vaultIndex)
+        dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'cancel', txHash: result.txId }))
         await recordTx({ result })
         return result
       } catch (error) {
-        dispatch(setIsCanceling(false))
+        dispatch(vaultActionCompleted(vaultIndex.toString()))
         throw error
       }
     },
