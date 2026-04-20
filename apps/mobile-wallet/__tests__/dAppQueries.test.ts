@@ -1,15 +1,18 @@
 import { ONE_HOUR_MS } from '@alephium/shared'
-import { queryClient } from '@alephium/shared-react'
+import { fetchJson, queryClient } from '@alephium/shared-react'
 import { QueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { dAppsQuery, selectTagsFromDApps } from '~/api/queries/dAppQueries'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
-vi.mock('axios', () => ({
-  default: { get: vi.fn() }
-}))
-const mockedAxiosGet = vi.mocked(axios.get)
+vi.mock('@alephium/shared-react', async () => {
+  const actual = await vi.importActual('@alephium/shared-react')
+  return {
+    ...actual,
+    fetchJson: vi.fn()
+  }
+})
+const mockedFetchJson = vi.mocked(fetchJson)
 
 describe('dAppQueries', () => {
   beforeEach(() => {
@@ -97,7 +100,7 @@ describe('dAppQueries', () => {
 
     it('returns cached data on API failure if available', async () => {
       // First, populate the cache with data
-      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
+      mockedFetchJson.mockResolvedValueOnce(mockDApps)
       const query = dAppsQuery({ select: (dApps) => dApps })
       await queryClient.fetchQuery(query)
 
@@ -105,7 +108,7 @@ describe('dAppQueries', () => {
       expect(queryClient.getQueryData(['dApps'])).toEqual(mockDApps)
 
       // Now simulate API failure
-      mockedAxiosGet.mockRejectedValueOnce(new Error('API Error'))
+      mockedFetchJson.mockRejectedValueOnce(new Error('API Error'))
 
       // Query should return cached data
       const result = await queryClient.fetchQuery(query)
@@ -114,7 +117,7 @@ describe('dAppQueries', () => {
 
     it('throws an error on API failure if no cached data is available', async () => {
       const apiError = new Error('API Error')
-      mockedAxiosGet.mockRejectedValueOnce(apiError)
+      mockedFetchJson.mockRejectedValueOnce(apiError)
 
       const query = dAppsQuery({ select: (dApps) => dApps })
 
@@ -129,17 +132,17 @@ describe('dAppQueries', () => {
     })
 
     it('fetches data successfully from API', async () => {
-      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
+      mockedFetchJson.mockResolvedValueOnce(mockDApps)
 
       const query = dAppsQuery({ select: (dApps) => dApps })
       const result = await queryClient.fetchQuery(query)
 
-      expect(mockedAxiosGet).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
+      expect(mockedFetchJson).toHaveBeenCalledWith('https://alph.land/api/dapps-directory')
       expect(result).toEqual(mockDApps)
     })
 
     it('applies select function correctly', async () => {
-      mockedAxiosGet.mockResolvedValueOnce({ data: mockDApps })
+      mockedFetchJson.mockResolvedValueOnce(mockDApps)
 
       // Use a new query client to avoid caching issues
       const testClient = new QueryClient()

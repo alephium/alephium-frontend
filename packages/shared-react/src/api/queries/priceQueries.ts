@@ -1,9 +1,9 @@
 import { FIVE_MINUTES_MS, is5XXError, PRICES_REFRESH_INTERVAL, throttledClient } from '@alephium/shared'
 import { queryOptions, skipToken } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '../../api/apiUtils'
+import { fetchJson } from '../../api/fetchUtils'
 import { queryClient } from '../../api/queryClient'
 
 interface TokensPriceQueryProps extends SkipProp {
@@ -39,7 +39,7 @@ export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensP
                   const price = data[symbolToCoingeckoId(symbol)]
 
                   return {
-                    price: price ? price[currency] : null,
+                    price: price?.[currency] ?? 0,
                     symbol
                   }
                 })
@@ -54,13 +54,10 @@ export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensP
 const coingeckoTokensPriceQuery = ({ ids, currency }: { ids: string[]; currency: string }) =>
   queryOptions({
     queryKey: ['tokenPrices', 'currentPrice', 'coingecko', ids, { currency }],
-    queryFn: async () => {
-      const { data } = await axios.get(
+    queryFn: () =>
+      fetchJson<Record<string, Record<string, number>>>(
         `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=${currency}`
       )
-
-      return data
-    }
   })
 
 // Aligned with list in

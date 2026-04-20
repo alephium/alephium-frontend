@@ -49,7 +49,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   return resolve(context, moduleName, platform)
 }
 
-// Polyfill Node core modules used by other deps (e.g. axios, crypto). Not needed for ws when aliased above.
+// Polyfill Node core modules used by other deps (e.g. crypto). Not needed for ws when aliased above.
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   crypto: require.resolve('react-native-quick-crypto')

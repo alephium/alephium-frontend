@@ -1,5 +1,5 @@
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { createHash } from '@alephium/shared-crypto'
-import dayjs from 'dayjs'
 import { KeyboardEvent } from 'react'
 
 // ===================== //
@@ -37,7 +37,8 @@ export const stringToDoubleSHA256HexString = (data: string): string => {
   return hash.digest('hex')
 }
 
-export const formatDateForDisplay = (date: Date | number): string => dayjs(date).format('YYYY-MM-DD HH:mm')
+export const formatDateForDisplay = (date: Date | number, locale?: string): string =>
+  new Intl.DateTimeFormat(locale, SHORT_DATE_TIME_OPTIONS).format(new Date(date))
 
 export const getInitials = (str: string) => {
   if (!str) return ''

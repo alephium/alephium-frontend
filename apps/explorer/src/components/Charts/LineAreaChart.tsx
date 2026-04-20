@@ -1,9 +1,10 @@
 import { explorer } from '@alephium/web3'
-import dayjs from 'dayjs'
 import Chart from 'react-apexcharts'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
 import { formatXAxis, formatYAxis, XAxisType, YAxisType } from '@/utils/charts'
+import { SIMPLE_DATE_OPTIONS } from '@/utils/strings'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -31,6 +32,7 @@ const LineAreaChart = ({
   unit
 }: LineAreaChartProps) => {
   const theme = useTheme()
+  const { i18n } = useTranslation()
 
   const options: ApexCharts.ApexOptions = {
     chart: {
@@ -113,8 +115,15 @@ const LineAreaChart = ({
             ">
               ${
                 timeInterval === explorer.IntervalType.Daily
-                  ? dayjs(new Date(categories[dataPointIndex])).format('DD/MM/YYYY')
-                  : dayjs(categories[dataPointIndex]).format('ddd, hh:ss')
+                  ? new Intl.DateTimeFormat(i18n.language, SIMPLE_DATE_OPTIONS).format(
+                      new Date(categories[dataPointIndex])
+                    )
+                  : new Intl.DateTimeFormat(i18n.language, {
+                      weekday: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false
+                    }).format(new Date(categories[dataPointIndex]))
               }
             </div>
             <div style="

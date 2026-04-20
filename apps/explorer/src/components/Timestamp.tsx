@@ -1,14 +1,9 @@
-import dayjs from 'dayjs'
-import localizedFormat from 'dayjs/plugin/localizedFormat'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import { formatRelativeTime, ONE_DAY_MS } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
-import { DATE_TIME_FORMAT, SIMPLE_DATE_FORMAT } from '@/utils/strings'
-
-dayjs.extend(localizedFormat)
-dayjs.extend(relativeTime)
+import { DATE_TIME_OPTIONS, SIMPLE_DATE_OPTIONS } from '@/utils/strings'
 
 type Precision = 'high' | 'low'
 
@@ -16,21 +11,23 @@ interface TimestampProps {
   timeInMs: number
   formatToggle?: boolean
   forceFormat?: Precision
-  customFormat?: string
+  customFormat?: Intl.DateTimeFormatOptions
   className?: string
 }
 
 const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode } = useSettings()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'high' : 'low')
 
-  const highPrecisionTimestamp = dayjs(timeInMs).format(DATE_TIME_FORMAT)
-  const lowPrecisionTimestamp = dayjs(timeInMs).isBefore(dayjs().subtract(1, 'day'))
-    ? dayjs(timeInMs).format(SIMPLE_DATE_FORMAT)
-    : dayjs().to(timeInMs)
-  const customTimestamp = dayjs(timeInMs).format(customFormat)
+  const date = new Date(timeInMs)
+  const highPrecisionTimestamp = new Intl.DateTimeFormat(i18n.language, DATE_TIME_OPTIONS).format(date)
+  const lowPrecisionTimestamp =
+    timeInMs < Date.now() - ONE_DAY_MS
+      ? new Intl.DateTimeFormat(i18n.language, SIMPLE_DATE_OPTIONS).format(date)
+      : formatRelativeTime(timeInMs, i18n.language)
+  const customTimestamp = customFormat ? new Intl.DateTimeFormat(i18n.language, customFormat).format(date) : undefined
 
   return (
     <div

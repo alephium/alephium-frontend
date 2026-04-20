@@ -88,7 +88,7 @@ const Summary = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
 }
 
 const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsModalProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const theme = useTheme()
   const allAddressHashes = useUnsortedAddressesHashes()
   const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
@@ -141,7 +141,7 @@ const Details = ({ txHash, referenceAddress: refAddress }: TransactionDetailsMod
 
             {isConfirmedTx(tx) && (
               <DataList.Row label={t('Timestamp')}>
-                <span tabIndex={0}>{formatDateForDisplay(tx.timestamp)}</span>
+                <span tabIndex={0}>{formatDateForDisplay(tx.timestamp, i18n.language)}</span>
               </DataList.Row>
             )}
 

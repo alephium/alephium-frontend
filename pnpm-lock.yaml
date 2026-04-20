@@ -184,9 +184,6 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.18.0
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       classnames:
         specifier: ^2.3.1
         version: 2.5.1
@@ -202,9 +199,6 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
-      dayjs:
-        specifier: ^1.10.7
-        version: 1.11.10
       electron:
         specifier: 39.8.7
         version: 39.8.7
@@ -370,15 +364,9 @@ importers:
       apexcharts:
         specifier: ^3.35.0
         version: 3.45.1
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       colord:
         specifier: ^2.9.3
         version: 2.9.3
-      dayjs:
-        specifier: ^1.10.7
-        version: 1.11.10
       framer-motion:
         specifier: ^12.19.1
         version: 12.19.1(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -599,15 +587,9 @@ importers:
       '@walletconnect/utils':
         specifier: 2.23.6
         version: 2.23.6(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)(zod@3.23.8)
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       colord:
         specifier: ^2.9.3
         version: 2.9.3
-      dayjs:
-        specifier: ^1.10.7
-        version: 1.11.10
       expo:
         specifier: 54.0.33
         version: 54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -692,9 +674,6 @@ importers:
       fast-text-encoding:
         specifier: ^1.0.6
         version: 1.0.6
-      intl-pluralrules:
-        specifier: ^2.0.1
-        version: 2.0.1
       lottie-react-native:
         specifier: ^7.3.6
         version: 7.3.6(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -983,9 +962,6 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.10.1
         version: 0.10.1
-      dayjs:
-        specifier: ^1.10.7
-        version: 1.11.10
       fetch-retry:
         specifier: ^5.0.6
         version: 5.0.6
@@ -1089,9 +1065,6 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.81.2
         version: 5.81.2(react@19.1.0)
-      axios:
-        specifier: 1.15.0
-        version: 1.15.0
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -1114,6 +1087,9 @@ importers:
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.5)(happy-dom@20.9.0)(jsdom@21.1.2)(lightningcss@1.31.1)(msw@2.7.0(@types/node@22.19.5)(typescript@5.9.3))(terser@5.39.0)
 
   packages/typescript-config: {}
 
@@ -7402,9 +7378,6 @@ packages:
   interpret@3.1.1:
     resolution: {integrity: sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==}
     engines: {node: '>=10.13.0'}
-
-  intl-pluralrules@2.0.1:
-    resolution: {integrity: sha512-astxTLzIdXPeN0K9Rumi6LfMpm3rvNO0iJE+h/k8Kr/is+wPbRe4ikyDjlLr6VTh/mEfNv8RjN+gu3KwDiuhqg==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -18300,7 +18273,8 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.6
 
-  dayjs@1.11.10: {}
+  dayjs@1.11.10:
+    optional: true
 
   debug@2.6.9:
     dependencies:
@@ -20468,8 +20442,6 @@ snapshots:
   internmap@2.0.3: {}
 
   interpret@3.1.1: {}
-
-  intl-pluralrules@2.0.1: {}
 
   invariant@2.2.4:
     dependencies:

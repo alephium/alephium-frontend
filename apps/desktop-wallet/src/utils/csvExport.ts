@@ -1,25 +1,25 @@
-import dayjs from 'dayjs'
+import { ONE_DAY_MS, ONE_WEEK_MS, subtractMonths } from '@alephium/shared'
 
 import { CsvExportTimerangeQueryParams, TransactionTimePeriod } from '@/types/transactions'
 
 export const getCsvExportTimeRangeQueryParams = (
   selectedTimePeriod: TransactionTimePeriod,
-  now: dayjs.Dayjs
+  now: Date
 ): CsvExportTimerangeQueryParams => {
-  const thisMoment = now.valueOf()
-  const lastYear = now.subtract(1, 'year')
+  const thisMoment = now.getTime()
+  const currentYear = now.getFullYear()
 
   return {
-    '24h': { fromTs: now.subtract(24, 'hour').valueOf(), toTs: thisMoment },
-    '1w': { fromTs: now.subtract(7, 'day').valueOf(), toTs: thisMoment },
-    '1m': { fromTs: now.subtract(30, 'day').valueOf(), toTs: thisMoment },
-    '6m': { fromTs: now.subtract(6, 'month').valueOf(), toTs: thisMoment },
-    '12m': { fromTs: now.subtract(12, 'month').valueOf(), toTs: thisMoment },
+    '24h': { fromTs: thisMoment - ONE_DAY_MS, toTs: thisMoment },
+    '1w': { fromTs: thisMoment - ONE_WEEK_MS, toTs: thisMoment },
+    '1m': { fromTs: thisMoment - 30 * ONE_DAY_MS, toTs: thisMoment },
+    '6m': { fromTs: subtractMonths(now, 6).getTime(), toTs: thisMoment },
+    '12m': { fromTs: subtractMonths(now, 12).getTime(), toTs: thisMoment },
     previousYear: {
-      fromTs: lastYear.startOf('year').valueOf(),
-      toTs: lastYear.endOf('year').valueOf()
+      fromTs: new Date(currentYear - 1, 0, 1).getTime(),
+      toTs: new Date(currentYear, 0, 0).getTime()
     },
-    thisYear: { fromTs: now.startOf('year').valueOf(), toTs: thisMoment }
+    thisYear: { fromTs: new Date(currentYear, 0, 1).getTime(), toTs: thisMoment }
   }[selectedTimePeriod]
 }
 

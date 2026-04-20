@@ -13,7 +13,6 @@ import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } 
 import { NFTCollectionMetadata } from '@alephium/web3/api/explorer'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
-import axios from 'axios'
 
 import client from '@/api/client'
 import i18n from '@/features/localization/i18n'
@@ -141,7 +140,7 @@ export const assetsQueries = {
         queryKey: ['nftData', dataUri],
         // TODO: Should the image field in NFTTokenUriMetaData be optional?
         queryFn: async (): Promise<NFTTokenUriMetaData & { assetId: string }> => {
-          const nftData = (await axios.get(dataUri)).data as NFTTokenUriMetaData
+          const nftData = (await fetch(dataUri).then((res) => res.json())) as NFTTokenUriMetaData
 
           if (!nftData || !nftData.name) {
             return Promise.reject()

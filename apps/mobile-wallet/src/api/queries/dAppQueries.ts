@@ -1,8 +1,7 @@
 import { ONE_HOUR_MS } from '@alephium/shared'
-import { getQueryConfig, queryClient } from '@alephium/shared-react'
+import { fetchJson, getQueryConfig, queryClient } from '@alephium/shared-react'
 import { dapps } from '@alphland/dapps'
 import { queryOptions } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 
@@ -16,18 +15,15 @@ export const dAppsQuery = <T>({ select, onlyWhitelisted }: DAppsQueryOptions<T>)
     queryKey: ['dApps'],
     ...getQueryConfig({ staleTime: ONE_HOUR_MS, gcTime: Infinity, networkId: 0 }),
     queryFn: ({ queryKey }): Promise<DApp[]> =>
-      axios
-        .get('https://alph.land/api/dapps-directory')
-        .then((res) => res.data)
-        .catch((e) => {
-          const cachedDApps = queryClient.getQueryData(queryKey)
+      fetchJson<DApp[]>('https://alph.land/api/dapps-directory').catch((e) => {
+        const cachedDApps = queryClient.getQueryData<DApp[]>(queryKey)
 
-          if (cachedDApps) {
-            return cachedDApps
-          } else {
-            throw e
-          }
-        }),
+        if (cachedDApps) {
+          return cachedDApps
+        } else {
+          throw e
+        }
+      }),
     placeholderData: dapps,
     select: (data) => {
       const dAppsList = onlyWhitelisted

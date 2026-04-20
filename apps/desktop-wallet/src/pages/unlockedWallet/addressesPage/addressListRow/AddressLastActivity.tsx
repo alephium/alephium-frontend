@@ -1,7 +1,6 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, formatRelativeTime } from '@alephium/shared'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
-import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -23,9 +22,9 @@ const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
 export default AddressLastActivity
 
 const LastTransactionTimestamp = ({ timestamp }: Pick<e.Transaction, 'timestamp'>) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
-  return `${t('Last activity')} ${dayjs(timestamp).fromNow()}`
+  return `${t('Last activity')} ${formatRelativeTime(timestamp, i18n.language)}`
 }
 
 const AddressListRowLastUsedStyled = styled.div`

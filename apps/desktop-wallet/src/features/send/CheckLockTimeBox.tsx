@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { formatRelativeTime } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,14 +12,14 @@ interface CheckLockTimeBoxProps {
 }
 
 const CheckLockTimeBox = ({ lockTime, className }: CheckLockTimeBoxProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   return (
     <Box className={className}>
       <InfoRow label={t('Unlocks at')}>
         <UnlocksAt>
-          {formatDateForDisplay(lockTime)}
-          <FromNow>({dayjs(lockTime).fromNow()})</FromNow>
+          {formatDateForDisplay(lockTime, i18n.language)}
+          <FromNow>({formatRelativeTime(lockTime, i18n.language)})</FromNow>
         </UnlocksAt>
       </InfoRow>
     </Box>
