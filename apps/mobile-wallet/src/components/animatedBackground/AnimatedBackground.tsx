@@ -13,6 +13,7 @@ import Animated, {
   withSpring,
   withTiming
 } from 'react-native-reanimated'
+import { runOnUI } from 'react-native-worklets'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
@@ -23,11 +24,10 @@ interface AnimatedBackgroundProps {
   shade?: string
 }
 
-const BREATH_DURATION = 4000
+const BREATH_HALF_MS = 4000
 const BREATH_SCALE_MIN = 1
 const BREATH_SCALE_MAX = 1.8
-const BREATH_TRANSLATE_Y_MIN = 0
-const BREATH_TRANSLATE_Y_MAX = 10
+const BREATH_TRANSLATE_Y = 10
 
 const RADIAL_GRADIENT_POSITIONS = [0.5, 0.6, 0.7, 0.72, 0.75, 0.95, 1]
 const LINEAR_GRADIENT_POSITIONS = [0, 0, 0.1, 0.2, 0.3, 0.8, 1.4]
@@ -35,11 +35,11 @@ const RADIAL_GRADIENT_MAX_RADIUS = 250
 const RADIAL_GRADIENT_RELATIVE_RADIUS = 0.45
 
 const springConfig = {
-  damping: 10,
+  damping: 20,
   stiffness: 100
 }
 
-const breathingEasing = Easing.inOut(Easing.sin)
+const breathEasing = Easing.inOut(Easing.sin)
 
 const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundProps) => {
   const theme = useTheme()
@@ -50,19 +50,23 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
 
   useEffect(() => {
     opacity.value = withSpring(isFocused ? 1 : 0, springConfig)
-  }, [isFocused, opacity])
 
-  useEffect(() => {
-    if (isFocused) {
-      breath.value = withRepeat(withTiming(1, { duration: BREATH_DURATION, easing: breathingEasing }), -1, true)
-    } else {
+    if (!isFocused) {
       cancelAnimation(breath)
+      return
     }
+
+    runOnUI(() => {
+      'worklet'
+      cancelAnimation(breath)
+      breath.value = 0
+      breath.value = withRepeat(withTiming(1, { duration: BREATH_HALF_MS, easing: breathEasing }), -1, true)
+    })()
 
     return () => {
       cancelAnimation(breath)
     }
-  }, [isFocused, breath])
+  }, [isFocused, opacity, breath])
 
   const getGradientColors = () => [
     colord('rgb(255, 255, 255)').toHex(),
@@ -99,7 +103,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
   const animatedGradientStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [
-      { translateY: interpolate(breath.value, [0, 1], [BREATH_TRANSLATE_Y_MIN, BREATH_TRANSLATE_Y_MAX]) },
+      { translateY: interpolate(breath.value, [0, 1], [0, BREATH_TRANSLATE_Y]) },
       { scale: interpolate(breath.value, [0, 1], [BREATH_SCALE_MIN, BREATH_SCALE_MAX]) }
     ]
   }))
