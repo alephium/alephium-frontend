@@ -1,6 +1,15 @@
-import { Blur, Canvas, Fill, LinearGradient, RadialGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia'
+import {
+  Blur,
+  Canvas,
+  Fill,
+  Group,
+  LinearGradient,
+  RadialGradient,
+  Rect,
+  RoundedRect,
+  vec
+} from '@shopify/react-native-skia'
 import { colord } from 'colord'
-import { Group } from 'lucide-react-native'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent } from 'react-native'
 import Animated, {
@@ -36,7 +45,7 @@ const RADIAL_GRADIENT_RELATIVE_RADIUS = 0.45
 
 const springConfig = {
   damping: 20,
-  stiffness: 100
+  stiffness: 60
 }
 
 const breathEasing = Easing.inOut(Easing.sin)
@@ -68,17 +77,32 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
     }
   }, [isFocused, opacity, breath])
 
-  const getGradientColors = () => [
-    colord('rgb(255, 255, 255)').toHex(),
-    shade ? colord(shade).rotate(30).saturate(1.2).toHex() : colord(theme.global.palette2).toHex(),
-    shade ? colord(shade).rotate(-30).saturate(1.2).toHex() : colord(theme.global.palette5).toHex(),
-    colord(theme.global.palette4).toHex(),
-    colord(theme.global.palette4).toHex(),
-    colord(theme.global.palette3).toHex(),
-    colord(shade || theme.global.accent)
-      .alpha(0)
-      .toHex()
-  ]
+  const gradientColors = useMemo(
+    () => [
+      colord('rgb(255, 255, 255)').toHex(),
+      shade ? colord(shade).rotate(30).saturate(1.2).toHex() : colord(theme.global.palette2).toHex(),
+      shade ? colord(shade).rotate(-30).saturate(1.2).toHex() : colord(theme.global.palette5).toHex(),
+      colord(theme.global.palette4).toHex(),
+      colord(theme.global.palette4).toHex(),
+      colord(theme.global.palette3).toHex(),
+      colord(shade || theme.global.accent)
+        .alpha(0)
+        .toHex()
+    ],
+    [
+      shade,
+      theme.global.accent,
+      theme.global.palette2,
+      theme.global.palette3,
+      theme.global.palette4,
+      theme.global.palette5
+    ]
+  )
+
+  const radialBlurRadius = useMemo(
+    () => containerDimensions.width * (theme.name === 'light' ? 0.04 : 0.07),
+    [containerDimensions.width, theme.name]
+  )
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout
@@ -110,7 +134,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
 
   return (
     <Container onLayout={handleLayout} style={{ top: offsetTop }}>
-      <AnimatedPlaceholderBackground style={[{ backgroundColor: theme.bg.primary }]} />
+      <PlaceholderBackground style={{ backgroundColor: theme.bg.primary }} />
       <AnimatedGradientBackground style={animatedGradientStyle}>
         <Canvas style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
           <Fill color={theme.bg.primary} />
@@ -122,7 +146,7 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
             opacity={theme.name === 'light' ? 0.8 : 0.4}
           >
             <LinearGradient
-              colors={getGradientColors()}
+              colors={gradientColors}
               positions={LINEAR_GRADIENT_POSITIONS}
               start={vec(0, 0)}
               end={linearGradientEnd}
@@ -151,11 +175,11 @@ const AnimatedBackground = memo(({ offsetTop = 0, shade }: AnimatedBackgroundPro
               <RadialGradient
                 c={radialGradientCenter}
                 r={radialGradientRadius}
-                colors={getGradientColors()}
+                colors={gradientColors}
                 positions={RADIAL_GRADIENT_POSITIONS}
               />
             </Rect>
-            <Blur blur={containerDimensions.width * (theme.name === 'light' ? 0.04 : 0.07)} />
+            <Blur blur={radialBlurRadius} />
           </Group>
         </Canvas>
       </AnimatedGradientBackground>
@@ -173,7 +197,7 @@ const Container = styled.View`
   bottom: 0;
 `
 
-const SimpleBackground = styled.View`
+const PlaceholderBackground = styled.View`
   position: absolute;
   top: 0;
   right: 0;
@@ -181,13 +205,4 @@ const SimpleBackground = styled.View`
   bottom: 0;
 `
 
-const GradientBackground = styled.View`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-`
-
-const AnimatedPlaceholderBackground = Animated.createAnimatedComponent(SimpleBackground)
-const AnimatedGradientBackground = Animated.createAnimatedComponent(GradientBackground)
+const AnimatedGradientBackground = Animated.createAnimatedComponent(PlaceholderBackground)
