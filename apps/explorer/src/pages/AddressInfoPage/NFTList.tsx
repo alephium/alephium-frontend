@@ -22,7 +22,7 @@ interface NFTListProps {
 const NFTList = ({ addressStr }: NFTListProps) => {
   const { t } = useTranslation()
   const [consultedNftId, setConsultedNftId] = useState<string>()
-  const { data: _nfts, isLoading: isLoading } = useFetchAddressNfts(addressStr)
+  const { data: _nfts, isLoading: isLoading } = useFetchAddressNfts({ addressHash: addressStr })
 
   const nfts = _nfts || []
 

@@ -7,23 +7,21 @@ import Input from '~/components/inputs/Input'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export type StakingActionModalProps = {
+export interface StakingActionModalProps {
   title: string
   info: ReactNode
   amountLabel: ReactNode
-  /** Typically “Max: … ALPH” with `AppText` + `t('Max')`. */
-  maxAction: ReactNode
+  maxAction: ReactNode // Typically “Max: … ALPH” with `AppText` + `t('Max')`.
   onMax: () => void
   amount: string
   onAmountChange: (value: string) => void
   error: string
   inputRef: RefObject<TextInput | null>
-  /** When set, rendered inside the receive preview card. */
-  receivePreview?: ReactNode
   primaryButtonTitle: string
   onPrimaryPress: () => void
   primaryDisabled: boolean
   isPrimaryLoading: boolean
+  receivePreview?: ReactNode // When set, rendered inside the receive preview card.
 }
 
 const StakingActionModal = ({

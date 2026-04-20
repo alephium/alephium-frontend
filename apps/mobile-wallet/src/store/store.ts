@@ -14,6 +14,7 @@ import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
+import stakingSlice from '~/features/staking/stakingSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import addressSettingsListenerMiddleware from '~/store/addresses/addressSettingsListenerMiddleware'
 import contactsSlice from '~/store/addresses/contactsSlice'
@@ -36,7 +37,8 @@ export const store = configureStore({
     [modalSlice.name]: modalSlice.reducer,
     [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer,
     [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer,
-    [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer
+    [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer,
+    [stakingSlice.name]: stakingSlice.reducer
   },
   devTools: false,
   middleware: (getDefaultMiddleware) => {

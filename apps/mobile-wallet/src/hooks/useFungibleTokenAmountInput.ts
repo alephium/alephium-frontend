@@ -10,10 +10,8 @@ export type UseFungibleTokenAmountInputOptions = {
   maxBalance: bigint
   decimals: number
   initialAmount?: string
-  /** When `tokenId` is ALPH and this is true, block amounts below the minimum UTXO set size (send flow). */
-  enforceMinAlphTransfer?: boolean
-  /** Sync `Input` from react-native-gesture-handler when using Max + defaultValue. */
-  nativeInputRef?: RefObject<TextInput | null>
+  enforceMinAlphTransfer?: boolean // When `tokenId` is ALPH and this is true, block amounts below the minimum UTXO set size (send flow).
+  nativeInputRef?: RefObject<TextInput | null> // Sync `Input` from react-native-gesture-handler when using Max + defaultValue
 }
 
 const useFungibleTokenAmountInput = ({

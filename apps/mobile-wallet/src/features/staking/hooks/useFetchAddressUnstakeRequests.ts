@@ -1,9 +1,7 @@
-import { selectDefaultAddress } from '@alephium/shared'
-import { addressWithoutExplicitGroupIndex } from '@alephium/web3'
+import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { powfiSdk } from '~/api/powfi'
-import { useAppSelector } from '~/hooks/redux'
 
 export interface UnstakeRequest {
   vaultIndex: bigint
@@ -17,24 +15,23 @@ export interface UnstakeRequest {
 
 export const unstakeVaultRequestsQueryKeyRoot = ['unstakeVaultRequests'] as const
 
-const useFetchAddressUnstakeRequests = () => {
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-  const address = defaultAddress ? addressWithoutExplicitGroupIndex(defaultAddress.hash) : undefined
-  const shouldFetch = !!address
+interface UseFetchAddressUnstakeRequestsProps {
+  addressHash: AddressHash
+}
 
+const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeRequestsProps) => {
   const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
-    queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfiSdk.network.id, address],
+    queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfiSdk.network.id, addressHash],
     queryFn: async () => {
-      const userAddress = address!
-      const activeIndexes = await powfiSdk.staking.getActiveUnstakeVaultIndexes(userAddress)
+      const activeIndexes = await powfiSdk.staking.getActiveUnstakeVaultIndexes(addressHash)
 
       if (!activeIndexes.length) return []
 
       return Promise.all(
         activeIndexes.map(async (index) => {
           const [claimableAmount, state] = await Promise.all([
-            powfiSdk.staking.getClaimableAmount(userAddress, index),
-            powfiSdk.staking.getAlphUnstakeVaultState(userAddress, index)
+            powfiSdk.staking.getClaimableAmount(addressHash, index),
+            powfiSdk.staking.getAlphUnstakeVaultState(addressHash, index)
           ])
 
           return {
@@ -49,7 +46,6 @@ const useFetchAddressUnstakeRequests = () => {
         })
       )
     },
-    enabled: shouldFetch,
     staleTime: 60_000,
     refetchInterval: 60_000
   })

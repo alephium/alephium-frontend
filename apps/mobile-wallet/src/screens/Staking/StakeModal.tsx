@@ -1,27 +1,30 @@
+import { AddressHash } from '@alephium/shared'
+import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
 
 import AppText from '~/components/AppText'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
-import useFetchAvailableToStake from '~/features/staking/hooks/useFetchAvailableToStake'
-import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
-import { previewXAlphForStake } from '~/features/staking/stakingUtils'
 import useFungibleTokenAmountInput from '~/hooks/useFungibleTokenAmountInput'
+import StakeModalReceivePreview from '~/screens/Staking/StakeModalReceivePreview'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 import StakingActionModal from './StakingActionModal'
 
-const StakeModal = () => {
+interface StakeModalProps {
+  addressHash: AddressHash
+}
+
+const StakeModal = ({ addressHash }: StakeModalProps) => {
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<TextInput>(null)
   const { stakeAlph } = useAlphStaking()
-  const { data: availableToStake } = useFetchAvailableToStake()
-  const { data: xAlphRate } = useFetchXAlphRate()
+  const { data: alphBalances } = useFetchAddressBalancesAlph({ addressHash })
 
   const {
     amount,
@@ -31,15 +34,10 @@ const StakeModal = () => {
     handleMax,
     formattedMaxBalance
   } = useFungibleTokenAmountInput({
-    maxBalance: availableToStake,
+    maxBalance: BigInt(alphBalances?.availableBalance ?? 0),
     decimals: ALPH.decimals,
     nativeInputRef: inputRef
   })
-
-  const xAlphToReceive = useMemo(
-    () => (amountInAttoAlph ? previewXAlphForStake(amountInAttoAlph, xAlphRate) : ''),
-    [amountInAttoAlph, xAlphRate]
-  )
 
   const handleStake = async () => {
     if (!amountInAttoAlph || !!error) return
@@ -47,8 +45,8 @@ const StakeModal = () => {
     setIsLoading(true)
 
     try {
+      showToast({ type: 'info', text1: t('Staking ALPH...') })
       await stakeAlph(amountInAttoAlph)
-      showToast({ type: 'success', text1: t('Transaction sent') })
       dismissModal()
     } catch (err) {
       showExceptionToast(err, t('Stake ALPH'))
@@ -59,7 +57,7 @@ const StakeModal = () => {
 
   return (
     <StakingActionModal
-      title={t('Stake ALPH') as string}
+      title={t('Stake ALPH')}
       info={
         <AppText color="secondary" size={13}>
           {t(
@@ -74,7 +72,7 @@ const StakeModal = () => {
       }
       maxAction={
         <AppText color="accent" size={13} semiBold>
-          {t('Max')}: {formattedMaxBalance} ALPH
+          {t('Max: {{amount}} ALPH', { amount: formattedMaxBalance })}
         </AppText>
       }
       onMax={handleMax}
@@ -83,18 +81,9 @@ const StakeModal = () => {
       error={error}
       inputRef={inputRef}
       receivePreview={
-        xAlphToReceive ? (
-          <>
-            <AppText color="secondary" size={13}>
-              {t('You will receive')}
-            </AppText>
-            <AppText semiBold size={18}>
-              ≈ {xAlphToReceive} xALPH
-            </AppText>
-          </>
-        ) : undefined
+        amountInAttoAlph !== undefined ? <StakeModalReceivePreview alphAmount={amountInAttoAlph} /> : null
       }
-      primaryButtonTitle={amount ? `${t('Stake')} ${amount} ALPH` : (t('Stake ALPH') as string)}
+      primaryButtonTitle={amount ? t('Stake {{amount}} ALPH', { amount }) : t('Stake ALPH')}
       onPrimaryPress={handleStake}
       primaryDisabled={!amountInAttoAlph || !!error || isLoading}
       isPrimaryLoading={isLoading}
