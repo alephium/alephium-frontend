@@ -3,6 +3,7 @@ import { FlashListProps } from '@shopify/flash-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -17,12 +18,14 @@ export interface UseNftsGridFlashListPropsProps {
   nftsPerRow?: number
   nftSize?: number
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
+  contentContainerPaddingHorizontal?: number
 }
 
 const useNftsGridFlashListProps = ({
   nfts,
   nftsPerRow = 3,
-  isLoading
+  isLoading,
+  contentContainerPaddingHorizontal = DEFAULT_MARGIN
 }: UseNftsGridFlashListPropsProps): FlashListProps<NFT[] | NFT['collectionId']> => {
   const theme = useTheme()
   const { t } = useTranslation()
@@ -56,17 +59,21 @@ const useNftsGridFlashListProps = ({
     getItemType: (item) => (typeof item === 'string' ? 'sectionHeader' : 'row'),
     renderItem: ({ item, index }) =>
       typeof item === 'string' ? (
-        <NftsCollectionTitle collectionId={item} isFirst={index === 0} />
+        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+          <NftsCollectionTitle collectionId={item} isFirst={index === 0} />
+        </Animated.View>
       ) : (
-        <NftsRow nftsPerRow={nftsPerRow}>
-          {item.map((nft) => (
-            <NFTThumbnailContainer key={nft.id}>
-              <NFTThumbnail nftId={nft.id} />
-            </NFTThumbnailContainer>
-          ))}
-        </NftsRow>
+        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+          <NftsRow nftsPerRow={nftsPerRow}>
+            {item.map((nft) => (
+              <NFTThumbnailContainer key={nft.id}>
+                <NFTThumbnail nftId={nft.id} />
+              </NFTThumbnailContainer>
+            ))}
+          </NftsRow>
+        </Animated.View>
       ),
-    contentContainerStyle: { paddingHorizontal: DEFAULT_MARGIN, paddingBottom: 70 },
+    contentContainerStyle: { paddingHorizontal: contentContainerPaddingHorizontal, paddingBottom: 70 },
     ListEmptyComponent: isLoading ? (
       <EmptyPlaceholder>
         <AppText color={theme.font.tertiary}>👀</AppText>

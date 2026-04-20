@@ -6,16 +6,17 @@ import { useTheme } from 'styled-components/native'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
+import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
-import NFTListScreen from '~/screens/NFTs/NFTListScreen'
+import StakingScreen from '~/screens/Staking/StakingScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
-  NFTListScreen: undefined
-  AddressesTabNavigation: undefined
   ActivityScreen: undefined
+  StakingScreen: undefined
+  AddressesTabNavigation: undefined
   EcosystemScreen: undefined
 }
 
@@ -24,6 +25,7 @@ const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 const InWalletTabsNavigation = () => {
   const theme = useTheme()
   const { t } = useTranslation()
+  const isStakingEnabled = useIsStakingEnabled()
 
   return (
     <>
@@ -45,16 +47,6 @@ const InWalletTabsNavigation = () => {
           }}
         />
         <InWalletTabs.Screen
-          name="NFTListScreen"
-          component={NFTListScreen}
-          options={{
-            title: t('NFTs'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'image' : 'image-outline'} color={color} size={size} />
-            )
-          }}
-        />
-        <InWalletTabs.Screen
           name="ActivityScreen"
           component={ActivityScreen}
           options={{
@@ -64,6 +56,18 @@ const InWalletTabsNavigation = () => {
             )
           }}
         />
+        {isStakingEnabled && (
+          <InWalletTabs.Screen
+            name="StakingScreen"
+            component={StakingScreen}
+            options={{
+              title: t('Staking'),
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'layers' : 'layers-outline'} color={color} size={size} />
+              )
+            }}
+          />
+        )}
         <InWalletTabs.Screen
           name="AddressesTabNavigation"
           component={AddressesTabNavigation}

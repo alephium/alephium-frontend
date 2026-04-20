@@ -1,9 +1,9 @@
 import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
-import { useFetchWalletBalancesAlph, useFetchWalletWorth } from '@alephium/shared-react'
+import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Animated from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -17,6 +17,7 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
+import TopTabBar from '~/components/TopTabBar'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
 import OfflineButton from '~/features/offline/OfflineButton'
@@ -28,6 +29,7 @@ import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import CoreDappAnnouncement from '~/screens/Dashboard/CoreDappAnnouncement'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
+import WalletNftsList from '~/screens/Dashboard/WalletNftsList'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
@@ -35,6 +37,16 @@ import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
+
+  const [activeTab, setActiveTab] = useState(0)
+
+  const { data: tokensByType, isLoading: isTokensByTypeLoading } = useFetchWalletTokensByType({ includeHidden: false })
+
+  const tokensCount = isTokensByTypeLoading
+    ? '-'
+    : (tokensByType?.listedFts?.length ?? 0) + (tokensByType?.unlistedFtIds?.length ?? 0)
+  const nftsCount = isTokensByTypeLoading ? '-' : tokensByType?.nftIds?.length ?? 0
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
@@ -79,7 +91,19 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       </ButtonsRowContainer>
 
       <ScreenSection>
-        <WalletTokensList />
+        <TokenTypeTabs>
+          <TopTabBar
+            tabLabels={[
+              { name: t('Tokens'), count: tokensCount !== '-' ? tokensCount : undefined },
+              { name: t('NFTs'), count: nftsCount !== '-' ? nftsCount : undefined }
+            ]}
+            activeTab={activeTab}
+            onTabPress={setActiveTab}
+          />
+        </TokenTypeTabs>
+        <Animated.View key={activeTab} entering={FadeIn.duration(200)} exiting={FadeOut.duration(200)}>
+          {activeTab === 0 ? <WalletTokensList /> : <WalletNftsList />}
+        </Animated.View>
       </ScreenSection>
 
       <WalletEmptyPlaceholder />
@@ -184,6 +208,13 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
   flex: 1;
+`
+
+const TokenTypeTabs = styled.View`
+  margin-top: ${DEFAULT_MARGIN}px;
+  padding-top: ${DEFAULT_MARGIN}px;
+  border-top-width: 1px;
+  border-top-color: ${({ theme }) => theme.border.secondary};
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

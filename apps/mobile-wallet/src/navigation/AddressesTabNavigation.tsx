@@ -18,7 +18,6 @@ const AddressesTabNavigation = () => {
 
   return (
     <TabBarPager
-      initialPage={0}
       headerTitle={t('Addresses')}
       tabLabels={[t('Your addresses'), t('Contacts')]}
       pages={[AddressesScreen, ContactsScreen]}

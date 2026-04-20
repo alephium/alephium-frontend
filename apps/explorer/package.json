@@ -37,7 +37,7 @@
     "@alephium/shared": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.21",
-    "@alephium/web3": "3.0.0-test.9",
+    "@alephium/web3": "3.0.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/query-sync-storage-persister": "^5.81.2",
     "@tanstack/react-query": "^5.81.2",

@@ -7,7 +7,7 @@ import { useCurrentlyOnlineNetworkId } from '../../../network'
 export const useFetchAddressBalancesAlph = ({ addressHash }: UseFetchAddressProps) => {
   const networkId = useCurrentlyOnlineNetworkId()
 
-  const { data, isLoading } = useQuery(addressAlphBalancesQuery({ addressHash, networkId }))
+  const { data, isLoading } = useQuery(addressAlphBalancesQuery({ addressHash, networkId, skip: !addressHash }))
 
   return {
     data: data?.balances,
