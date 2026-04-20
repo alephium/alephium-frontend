@@ -30,6 +30,6 @@
     "@alephium/walletconnect-provider": "3.0.1",
     "@types/react": "~19.1.10",
     "typescript": "~5.9.2",
-    "vitest": "^2.1.9"
+    "vitest": "^4.0.0"
   }
 }

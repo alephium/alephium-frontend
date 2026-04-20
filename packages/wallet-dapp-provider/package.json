@@ -39,7 +39,7 @@
     "@alephium/typescript-config": "workspace:*",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^20.14.0",
+    "@types/node": "^22.0.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.48.0",
     "rollup": "^4.59.0",

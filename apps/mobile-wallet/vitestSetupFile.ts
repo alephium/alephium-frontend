@@ -20,7 +20,7 @@ vi.mock('react-native', () => ({
 }))
 
 vi.mock('react-native-mmkv', () => {
-  const createMmkvMock = () => {
+  function createMmkvMock() {
     const data = new Map()
     return {
       set: (key: string, value: unknown) => data.set(key, value),
@@ -68,14 +68,16 @@ vi.mock('expo-clipboard', () => ({
 }))
 
 vi.mock('posthog-react-native', () => {
-  const PostHog = vi.fn(() => ({
-    capture: vi.fn(),
-    identify: vi.fn(),
-    reset: vi.fn(),
-    flush: vi.fn(),
-    screen: vi.fn(),
-    isFeatureEnabled: vi.fn()
-  }))
+  const PostHog = vi.fn(function () {
+    return {
+      capture: vi.fn(),
+      identify: vi.fn(),
+      reset: vi.fn(),
+      flush: vi.fn(),
+      screen: vi.fn(),
+      isFeatureEnabled: vi.fn()
+    }
+  })
 
   return {
     default: PostHog,

@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('electron', {
     onGetNativeTheme: (callback: (nativeTheme: NativeTheme) => void) => {
       // See: https://www.electronjs.org/docs/latest/tutorial/ipc#2-expose-ipcrendereron-via-preload
       const callbackWithEventArg = (_: IpcRendererEvent, arg2: NativeTheme) => callback(arg2)
-      ipcRenderer.on('theme:getNativeTheme', (_, arg2) => callback(arg2))
+      ipcRenderer.on('theme:getNativeTheme', callbackWithEventArg)
 
       return () => ipcRenderer.removeListener('theme:getNativeTheme', callbackWithEventArg)
     },

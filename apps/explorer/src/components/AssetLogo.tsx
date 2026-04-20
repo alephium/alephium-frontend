@@ -7,7 +7,7 @@ import styled, { css, useTheme } from 'styled-components'
 import { queries } from '@/api'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import NFTThumbnail from '@/components/NFTThumbnail'
-import { ReactComponent as AlephiumLogo } from '@/images/alephium_logo_monochrome.svg'
+import AlephiumLogo from '@/images/alephium_logo_monochrome.svg?react'
 import { NFTMetadataWithFile } from '@/types/assets'
 
 interface AssetLogoProps {
