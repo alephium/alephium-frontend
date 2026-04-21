@@ -389,8 +389,16 @@ export const validateAndRepareStoredWalletData = async (
       }
     }
 
-    // Wallet list exists but no valid wallet found - shouldn't happen
-    return 'valid'
+    // Wallet list exists but no valid wallet found — storage is corrupted
+    showToast({
+      text1: i18n.t('Could not unlock app'),
+      text2: i18n.t('Wallet metadata not found'),
+      type: 'error',
+      autoHide: false
+    })
+    sendAnalytics({ type: 'error', message: 'Wallet list exists but no valid wallet metadata found' })
+
+    return 'invalid'
   }
 
   // Legacy validation (pre-migration or deprecated mnemonic flow)
