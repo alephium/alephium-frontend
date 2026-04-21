@@ -64,8 +64,6 @@
     <string>Allow $(PRODUCT_NAME) to use Face ID</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
-    <key>NSMotionUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your device motion</string>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UIAppFonts</key>
