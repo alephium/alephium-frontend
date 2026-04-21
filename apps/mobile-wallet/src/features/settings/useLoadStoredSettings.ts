@@ -1,7 +1,7 @@
 import {
   hiddenTokensLoadedFromStorage,
   localStorageNetworkSettingsLoaded,
-  NetworkSettings,
+  type NetworkSettings,
   storedSharedSettingsLoaded
 } from '@alephium/shared'
 import { useEffect } from 'react'

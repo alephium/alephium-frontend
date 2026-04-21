@@ -5,6 +5,7 @@ import { fetchContentType, FetchError, fetchJson, postJson } from '../src/api/fe
 const mockFetch = vi.fn()
 
 beforeEach(() => {
+  mockFetch.mockClear()
   vi.stubGlobal('fetch', mockFetch)
 })
 

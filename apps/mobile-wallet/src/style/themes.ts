@@ -53,7 +53,7 @@ export const lightTheme: DefaultTheme = {
     receive: '#61b15b',
     palette1: '#8ee4f9',
     palette2: '#ffd69f',
-    palette3: '#8ec7ff',
+    palette3: '#6797ff',
     palette4: '#ffa7fa',
     palette5: '#ffa2bd',
     palette6: '#ffd691'

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { ReactComponent as DotSvg } from '@/images/dot.svg'
+import DotSvg from '@/images/dot.svg?react'
 
 interface DotIconProps {
   color: string

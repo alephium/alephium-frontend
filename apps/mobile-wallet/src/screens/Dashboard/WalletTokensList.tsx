@@ -15,15 +15,19 @@ const WalletTokensList = () => {
 
   const hasFts = sortedFts.length > 0
 
-  if (isLoading || !hasFts) return <EmptyTokensListPlaceholders isLoading={isLoading} isEmpty={!hasFts} />
-
   return (
     <WalletTokensListStyled>
-      {sortedFts.map(({ id }, index) => (
-        <WalletFtListItem key={id} tokenId={id} hideSeparator={index === sortedFts.length - 1} />
-      ))}
+      {isLoading || !hasFts ? (
+        <EmptyTokensListPlaceholders isLoading={isLoading} isEmpty={!hasFts} />
+      ) : (
+        <>
+          {sortedFts.map(({ id }, index) => (
+            <WalletFtListItem key={id} tokenId={id} hideSeparator={index === sortedFts.length - 1} />
+          ))}
 
-      <WalletTokensListFooter />
+          <WalletTokensListFooter />
+        </>
+      )}
     </WalletTokensListStyled>
   )
 }

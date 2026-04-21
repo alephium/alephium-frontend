@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.21",
-    "@alephium/walletconnect-provider": "3.0.0-test.9",
-    "@alephium/web3": "3.0.0-test.9",
+    "@alephium/walletconnect-provider": "3.0.1",
+    "@alephium/web3": "3.0.1",
     "@metamask/scure-bip39": "^2.1.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@walletconnect/sign-client": "2.23.6",
@@ -35,12 +35,12 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@types/node": "^20.14.0",
+    "@types/node": "^22.0.0",
     "@types/sanitize-html": "^2.11.0",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/coverage-v8": "^4.0.0",
     "eslint": "^8.48.0",
     "tslib": "^2.3.1",
     "typescript": "~5.9.2",
-    "vitest": "^2.1.9"
+    "vitest": "^4.0.0"
   }
 }

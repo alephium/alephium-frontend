@@ -12,8 +12,8 @@ import {
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { ReactComponent as LockBodySVG } from '@/images/lock_body.svg'
-import { ReactComponent as LockHandleSVG } from '@/images/lock_handle.svg'
+import LockBodySVG from '@/images/lock_body.svg?react'
+import LockHandleSVG from '@/images/lock_handle.svg?react'
 
 const CheckWordsIntroPage = () => {
   const { t } = useTranslation()

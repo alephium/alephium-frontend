@@ -2,7 +2,7 @@ import { AddressHash, selectAddressByHash } from '@alephium/shared'
 import styled from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
-import { ReactComponent as IndicatorLogo } from '@/images/main_address_badge.svg'
+import IndicatorLogo from '@/images/main_address_badge.svg?react'
 import { labelColorPalette, useDisplayColor } from '@/utils/colors'
 
 interface AddressColorIndicatorProps {

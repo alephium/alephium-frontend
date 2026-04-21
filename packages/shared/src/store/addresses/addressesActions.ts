@@ -10,7 +10,7 @@ export const contactDeletedFromPersistentStorage = createAction<Contact['id']>(
   'contacts/contactDeletedFromPersistentStorage'
 )
 
-export const addressSettingsSaved = createAction<{ addressHash: AddressHash; settings: AddressSettings }>(
+export const addressSettingsSaved = createAction<{ addressHash: AddressHash; settings: Partial<AddressSettings> }>(
   'addresses/addressSettingsSaved'
 )
 
