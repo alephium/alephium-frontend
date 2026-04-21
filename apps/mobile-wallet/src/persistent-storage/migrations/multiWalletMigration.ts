@@ -123,14 +123,25 @@ export const runMultiWalletMigrationIfNeeded = async (): Promise<void> => {
     storeWalletList([createWalletListEntry(walletId, metadata.name, 'seed')])
 
     // Step 7: Migrate fund password (if exists)
+    let fundPasswordMigrated = true
+
     try {
       const fundPassword = await getSecurelyWithReportableError(LEGACY_FUND_PASSWORD_KEY, true, '')
 
       if (fundPassword) {
         await storeSecurelyWithReportableError(`fund-password-${walletId}`, fundPassword, true, '')
+
+        // Verify fund password was written correctly
+        const verifiedFundPassword = await getSecurelyWithReportableError(`fund-password-${walletId}`, true, '')
+
+        if (verifiedFundPassword !== fundPassword) {
+          sendAnalytics({ type: 'error', message: 'Multi-wallet migration: fund password verification failed' })
+          fundPasswordMigrated = false
+        }
       }
     } catch {
-      // Fund password migration failure is non-critical
+      sendAnalytics({ type: 'error', message: 'Multi-wallet migration: fund password migration failed' })
+      fundPasswordMigrated = false
     }
 
     // Step 8: Migrate hidden tokens (if exists)
@@ -169,10 +180,12 @@ export const runMultiWalletMigrationIfNeeded = async (): Promise<void> => {
       // Non-critical - orphaned old key is harmless
     }
 
-    try {
-      await deleteSecurelyWithReportableError(LEGACY_FUND_PASSWORD_KEY, true, '')
-    } catch {
-      // Non-critical
+    if (fundPasswordMigrated) {
+      try {
+        await deleteSecurelyWithReportableError(LEGACY_FUND_PASSWORD_KEY, true, '')
+      } catch {
+        // Non-critical - orphaned old key is harmless
+      }
     }
 
     console.log(`Multi-wallet migration completed for wallet ${walletId}`)

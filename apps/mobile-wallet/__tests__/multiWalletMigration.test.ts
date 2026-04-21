@@ -169,6 +169,7 @@ describe('Multi-wallet migration', () => {
         if (key === LEGACY_MNEMONIC_KEY) return testMnemonicStored
         if (key === walletMnemonicKey(testWalletId)) return testMnemonicStored
         if (key === 'fund-password') return 'my-secret-fund-pw'
+        if (key === `fund-password-${testWalletId}`) return 'my-secret-fund-pw' // verification read-back
         return null
       })
     })
@@ -181,6 +182,13 @@ describe('Multi-wallet migration', () => {
         'my-secret-fund-pw',
         defaultSecureStoreConfig
       )
+    })
+
+    it('should verify fund password by reading it back after writing', async () => {
+      await runMultiWalletMigrationIfNeeded()
+
+      // Should read back the new key to verify
+      expect(mockedGetItemAsync).toHaveBeenCalledWith(`fund-password-${testWalletId}`, defaultSecureStoreConfig)
     })
 
     it('should migrate hidden tokens to wallet-ID-scoped key', async () => {
@@ -228,6 +236,45 @@ describe('Multi-wallet migration', () => {
       await runMultiWalletMigrationIfNeeded()
 
       expect(mockedDeleteItemAsync).toHaveBeenCalledWith('fund-password', defaultSecureStoreConfig)
+    })
+
+    it('should NOT delete legacy fund password when fund password verification fails', async () => {
+      mockedGetItemAsync.mockImplementation(async (key) => {
+        if (key === LEGACY_MNEMONIC_KEY) return testMnemonicStored
+        if (key === walletMnemonicKey(testWalletId)) return testMnemonicStored
+        if (key === 'fund-password') return 'my-secret-fund-pw'
+        if (key === `fund-password-${testWalletId}`) return 'WRONG_DATA' // verification mismatch
+        return null
+      })
+
+      await runMultiWalletMigrationIfNeeded()
+
+      // Migration should still complete (fund password is non-critical for overall migration)
+      expect(storage.getNumber('multi-wallet-migration-version')).toBe(1)
+
+      // But legacy fund password should NOT be deleted
+      expect(mockedDeleteItemAsync).not.toHaveBeenCalledWith('fund-password', defaultSecureStoreConfig)
+    })
+
+    it('should NOT delete legacy fund password when fund password write fails', async () => {
+      mockedGetItemAsync.mockImplementation(async (key) => {
+        if (key === LEGACY_MNEMONIC_KEY) return testMnemonicStored
+        if (key === walletMnemonicKey(testWalletId)) return testMnemonicStored
+        if (key === 'fund-password') return 'my-secret-fund-pw'
+        return null
+      })
+
+      mockedSetItemAsync.mockImplementation(async (key) => {
+        if (key === `fund-password-${testWalletId}`) throw new Error('SecureStore write failed')
+      })
+
+      await runMultiWalletMigrationIfNeeded()
+
+      // Migration should still complete
+      expect(storage.getNumber('multi-wallet-migration-version')).toBe(1)
+
+      // But legacy fund password should NOT be deleted
+      expect(mockedDeleteItemAsync).not.toHaveBeenCalledWith('fund-password', defaultSecureStoreConfig)
     })
   })
 
