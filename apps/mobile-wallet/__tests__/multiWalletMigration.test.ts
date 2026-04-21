@@ -36,6 +36,7 @@ const testMetadata = {
 }
 
 afterEach(() => {
+  vi.restoreAllMocks()
   storage.clearAll()
   mockedGetItemAsync.mockReset()
   mockedSetItemAsync.mockReset()
