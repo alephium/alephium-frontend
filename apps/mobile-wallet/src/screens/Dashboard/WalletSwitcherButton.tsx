@@ -35,14 +35,14 @@ const getWalletInitials = (name: string): string => {
 }
 
 const AvatarButton = styled(Pressable)`
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
   background-color: ${({ theme }) => theme.global.accent};
   align-items: center;
   justify-content: center;
 `
 
 const AvatarText = styled(AppText)`
-  font-size: 12px;
+  font-size: 14px;
 `

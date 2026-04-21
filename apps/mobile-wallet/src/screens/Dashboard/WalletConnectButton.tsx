@@ -31,7 +31,6 @@ const WalletConnectButton = () => {
       onPress={openWalletConnectErrorModal}
       customIcon={<WalletConnectSVG width={18} color={theme.global.alert} />}
       squared
-      compact
     />
   ) : walletConnectClientStatus === 'initialized' ? (
     <Button
@@ -39,7 +38,6 @@ const WalletConnectButton = () => {
       style={activeSessions.length ? { backgroundColor: '#3B99FC' } : undefined}
       customIcon={<WalletConnectSVG width={18} color={activeSessions.length ? 'white' : theme.font.secondary} />}
       squared
-      compact
     />
   ) : (
     <Button
