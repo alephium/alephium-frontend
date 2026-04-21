@@ -347,6 +347,7 @@
   "Amount of time before app locks": "Amount of time before app locks",
   "Wallet": "Wallet",
   "New wallet": "New wallet",
+  "Add wallet": "Add wallet",
   "Import wallet": "Import wallet",
   "Delete wallet": "Delete wallet",
   "Get public keys": "Get public keys",

@@ -4,7 +4,9 @@ import { Token } from '@alephium/web3'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 
 type RootStackParamList = {
-  LandingScreen: undefined
+  LandingScreen?: {
+    isAddingWallet?: boolean
+  }
   NewWalletIntroScreen: undefined
   NewWalletNameScreen: undefined
   AddBiometricsScreen: undefined

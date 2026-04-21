@@ -15,7 +15,6 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useWalletSwitch from '~/hooks/useWalletSwitch'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { methodSelected } from '~/store/walletGenerationSlice'
 import { showExceptionToast } from '~/utils/layout'
 
 const WalletSwitchModal = memo(() => {
@@ -65,9 +64,8 @@ const WalletSwitchModalContent = () => {
 
   const handleAddWallet = useCallback(() => {
     dismissModal()
-    dispatch(methodSelected('create'))
-    navigation.navigate('NewWalletIntroScreen')
-  }, [dismissModal, dispatch, navigation])
+    navigation.navigate('LandingScreen', { isAddingWallet: true })
+  }, [dismissModal, navigation])
 
   return (
     <>
@@ -79,7 +77,7 @@ const WalletSwitchModalContent = () => {
           onPress={handleWalletPress}
         />
       ))}
-      <Button title={t('New wallet')} onPress={handleAddWallet} iconProps={{ name: 'add-outline' }} type="secondary" />
+      <Button title={t('Add wallet')} onPress={handleAddWallet} iconProps={{ name: 'add-outline' }} type="secondary" />
     </>
   )
 }
