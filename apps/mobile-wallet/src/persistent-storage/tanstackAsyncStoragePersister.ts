@@ -1,3 +1,4 @@
+import { stringify } from '@alephium/web3'
 import { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
 import { MMKV } from 'react-native-mmkv'
 
@@ -14,7 +15,7 @@ export const createTanstackAsyncStoragePersister = (key: string): Persister => {
 
   return {
     persistClient: (persistedClient: PersistedClient) => {
-      storage.set(CACHE_KEY, JSON.stringify(persistedClient))
+      storage.set(CACHE_KEY, stringify(persistedClient))
     },
     restoreClient: () => {
       const cacheString = storage.getString(CACHE_KEY)
