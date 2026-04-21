@@ -1,4 +1,4 @@
-import { appReset, NetworkPreset } from '@alephium/shared'
+import { appReset, NetworkPreset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
@@ -10,7 +10,10 @@ import {
 import { connectionsAdapter } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsAdapter'
 import { selectAllAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSelectors'
 import { getAuthorizedConnectionId } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsUtils'
-import { persistAuthorizedConnections } from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
+import {
+  loadAuthorizedConnections,
+  persistAuthorizedConnections
+} from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
 import { RootState } from '~/store/store'
 
 const sliceName = 'authorizedConnections'
@@ -43,6 +46,9 @@ const authorizedConnectionsSlice = createSlice({
       connectionsAdapter.removeAll(state)
     })
     builder.addCase(appReset, () => initialState)
+    builder.addMatcher(isAnyOf(walletUnlockedMobile, walletSwitchedMobile), (state, action) => {
+      connectionsAdapter.setAll(state, loadAuthorizedConnections(action.payload.id))
+    })
   }
 })
 
