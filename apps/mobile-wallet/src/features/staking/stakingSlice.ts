@@ -2,39 +2,47 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'staking'
 
+type PendingStakeOrUnstake = {
+  type: 'stake' | 'unstake'
+  txHash: string
+}
+
+export type PendingVaultAction = {
+  type: 'claim' | 'cancel'
+  txHash: string
+}
+
 type StakingState = {
-  isStaking: boolean
-  isUnstaking: boolean
-  isClaiming: boolean
-  isCanceling: boolean
+  pendingStakeOrUnstake: PendingStakeOrUnstake | undefined
+  pendingVaultActions: Record<string, PendingVaultAction>
 }
 
 const initialState: StakingState = {
-  isStaking: false,
-  isUnstaking: false,
-  isClaiming: false,
-  isCanceling: false
+  pendingStakeOrUnstake: undefined,
+  pendingVaultActions: {}
 }
 
 const stakingSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    setIsStaking: (state, action: PayloadAction<boolean>) => {
-      state.isStaking = action.payload
+    stakeOrUnstakeStarted: (state, action: PayloadAction<PendingStakeOrUnstake>) => {
+      state.pendingStakeOrUnstake = action.payload
     },
-    setIsUnstaking: (state, action: PayloadAction<boolean>) => {
-      state.isUnstaking = action.payload
+    stakeOrUnstakeCompleted: (state) => {
+      state.pendingStakeOrUnstake = undefined
     },
-    setIsClaiming: (state, action: PayloadAction<boolean>) => {
-      state.isClaiming = action.payload
+    vaultActionStarted: (state, action: PayloadAction<{ vaultIndex: string } & PendingVaultAction>) => {
+      const { vaultIndex, type, txHash } = action.payload
+      state.pendingVaultActions[vaultIndex] = { type, txHash }
     },
-    setIsCanceling: (state, action: PayloadAction<boolean>) => {
-      state.isCanceling = action.payload
+    vaultActionCompleted: (state, action: PayloadAction<string>) => {
+      delete state.pendingVaultActions[action.payload]
     }
   }
 })
 
 export default stakingSlice
 
-export const { setIsStaking, setIsUnstaking, setIsClaiming, setIsCanceling } = stakingSlice.actions
+export const { stakeOrUnstakeStarted, stakeOrUnstakeCompleted, vaultActionStarted, vaultActionCompleted } =
+  stakingSlice.actions

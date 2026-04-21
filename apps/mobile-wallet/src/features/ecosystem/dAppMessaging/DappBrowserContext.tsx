@@ -26,6 +26,7 @@ import {
   SignMessageMessageData,
   SignUnsignedTxMessageData
 } from '@alephium/wallet-dapp-provider'
+import { stringify } from '@alephium/web3'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
@@ -80,7 +81,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const replyToDapp = useCallback(
     (message: MessageType, messageId: string) => {
       console.log('✈️ Replying to dApp with:', message)
-      webViewRef.current?.postMessage(JSON.stringify(message))
+      webViewRef.current?.postMessage(stringify(message))
       dispatch(respondedToDappMessage(messageId))
     },
     [dispatch]

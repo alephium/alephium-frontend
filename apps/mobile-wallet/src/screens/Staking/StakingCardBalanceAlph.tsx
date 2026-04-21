@@ -1,4 +1,5 @@
 import { AddressHash, formatAmountForDisplay } from '@alephium/shared'
+import { queryClient } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +7,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
-import { setIsStaking } from '~/features/staking/stakingSlice'
+import { stakeOrUnstakeCompleted } from '~/features/staking/stakingSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AmountSkeleton from '~/screens/Staking/AmountSkeleton'
 import PendingStakingActionPollerIndicator from '~/screens/Staking/PendingStakingActionPollerIndicator'
@@ -18,24 +19,25 @@ interface StakingCardBalanceAlphProps {
 
 const StakingCardBalanceAlph = ({ addressHash }: StakingCardBalanceAlphProps) => {
   const { t } = useTranslation()
-  const isStaking = useAppSelector((s) => s.staking.isStaking)
+  const pendingStakeOrUnstake = useAppSelector((s) => s.staking.pendingStakeOrUnstake)
   const dispatch = useAppDispatch()
 
   const { data: stakedValueAlph, isLoading: isStakedValueLoading } = useStakedValue(addressHash)
 
   const formattedStakedValue = formatAmountForDisplay({ amount: stakedValueAlph, amountDecimals: ALPH.decimals })
 
-  const handleNewTxDetected = useCallback(() => {
-    dispatch(setIsStaking(false))
+  const handleTxConfirmed = useCallback(async () => {
+    await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
+    dispatch(stakeOrUnstakeCompleted())
     showToast({ type: 'success', text1: t('ALPH staked successfully!') })
-  }, [dispatch, t])
+  }, [addressHash, dispatch, t])
 
   return (
     <ValueRow>
       <Value>{isStakedValueLoading ? <AmountSkeleton height={35} /> : `${formattedStakedValue} ${ALPH.symbol}`}</Value>
 
-      {isStaking && (
-        <PendingStakingActionPollerIndicator addressHash={addressHash} onNewTxDetected={handleNewTxDetected} />
+      {pendingStakeOrUnstake?.type === 'stake' && (
+        <PendingStakingActionPollerIndicator txHash={pendingStakeOrUnstake.txHash} onTxConfirmed={handleTxConfirmed} />
       )}
     </ValueRow>
   )

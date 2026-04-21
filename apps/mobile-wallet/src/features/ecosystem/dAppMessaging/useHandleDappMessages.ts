@@ -1,4 +1,5 @@
 import { MessageType } from '@alephium/wallet-dapp-provider'
+import { stringify } from '@alephium/web3'
 import { useCallback } from 'react'
 import { WebViewMessageEvent } from 'react-native-webview'
 
@@ -19,7 +20,7 @@ const useHandleDappMessages = () => {
         if ('type' in message && familiarDappMessageTypes.includes(message.type)) {
           dispatch(receivedDappMessage(message))
         } else {
-          throw new Error(`❌ Invalid message: ${JSON.stringify(message)}`)
+          throw new Error(`❌ Invalid message: ${stringify(message)}`)
         }
       } catch (error) {
         // console.error('Error parsing data', error)
