@@ -394,7 +394,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
       react-icons:
         specifier: ^4.10.1
         version: 4.12.0(react@19.1.0)
@@ -522,6 +522,15 @@ importers:
       '@expo/vector-icons':
         specifier: ^15.1.1
         version: 15.1.1(expo-font@14.0.11(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@formatjs/intl-locale':
+        specifier: ^5.3.2
+        version: 5.3.2
+      '@formatjs/intl-pluralrules':
+        specifier: ^6.3.2
+        version: 6.3.2
+      '@formatjs/intl-relativetimeformat':
+        specifier: ^12.3.2
+        version: 12.3.2
       '@gorhom/bottom-sheet':
         specifier: ^5.2.8
         version: 5.2.8(@types/react@19.1.17)(react-native-gesture-handler@2.28.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.6(@babel/core@7.26.10)(react-native-worklets@0.7.4(@babel/core@7.26.10)(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -551,7 +560,7 @@ importers:
         version: 7.2.10(eorv3hxuhmjth2t26bsrzetoyy)
       '@reduxjs/toolkit':
         specifier: ^1.9.1
-        version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
+        version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1))(react@19.1.0)
       '@reown/walletkit':
         specifier: ^1.5.3
         version: 1.5.3(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(typescript@5.9.3)(zod@3.23.8)
@@ -770,7 +779,7 @@ importers:
         version: 2.0.15(react@19.1.0)
       react-redux:
         specifier: ^9.2.0
-        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
+        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1)
       styled-components:
         specifier: ^6.1.19
         version: 6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2533,6 +2542,30 @@ packages:
 
   '@floating-ui/utils@0.2.1':
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
+
+  '@formatjs/bigdecimal@0.2.1':
+    resolution: {integrity: sha512-WbdsKlM5RH2boxpIQH5Rd1Ph7cqTP6oG7S+1heE1+voUHBQpzq1NfxBuQ7kTitHGPiK+6OtwKJo0IwhQ2qtPPQ==}
+
+  '@formatjs/fast-memoize@3.1.2':
+    resolution: {integrity: sha512-vPnriihkfK0lzoQGaXq+qXH23VsYyansRTkTgo2aTG0k1NjLFyZimFVdfj4C9JkSE5dm7CEngcQ5TTc1yAyBfQ==}
+
+  '@formatjs/intl-getcanonicallocales@3.2.3':
+    resolution: {integrity: sha512-h6rLO0ny+SVffeAZWrmqwipgGpNFUHdTy09XM5YdXAlzqK/QXbMcuwMcocofXcBhA5Jy46B45qMHVOp3/7CtOA==}
+
+  '@formatjs/intl-locale@5.3.2':
+    resolution: {integrity: sha512-4l2kI4r127dIyXbmUVlJ9ftTPH/ffrM1ms7s3hxWPAExBaZ63OOuivLBXjc0eB/4O7m3zSzC9YVoy+9Jle5NNQ==}
+
+  '@formatjs/intl-localematcher@0.8.3':
+    resolution: {integrity: sha512-pHUjWb9NuhnMs8+PxQdzBtZRFJHlGhrURGAbm6Ltwl82BFajeuiIR3jblSa7ia3r62rXe/0YtVpUG3xWr5bFCA==}
+
+  '@formatjs/intl-pluralrules@6.3.2':
+    resolution: {integrity: sha512-RF+zofaCz4k2hPp2rXsoOglQuNxRy2nADxGegT+bpgeg3Rn8JI6Tf1lBbIj5OJcmBpCgYVSAxq4esXMeor9Hmg==}
+
+  '@formatjs/intl-relativetimeformat@12.3.2':
+    resolution: {integrity: sha512-uCu09UnTnGSbX39sHXBJgiPg02x/7A3tnktW3RczHPoSRMzWLgdtJeXg3Qz0nXCKDOM5Lpgf6wLGhTj5Rw95Jw==}
+
+  '@formatjs/intl-supportedvaluesof@2.3.1':
+    resolution: {integrity: sha512-zSlTDGVHZJFEKRimtEhtsXOMrfjdz/Yvuvt8AfqXuLoUXkMaIH2ThMRbfQuy/VLyMNyRhqDv2V4NWJXushaVNw==}
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -6766,8 +6799,15 @@ packages:
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
+  fast-xml-builder@1.1.5:
+    resolution: {integrity: sha512-4TJn/8FKLeslLAH3dnohXqE3QSoxkhvaMzepOIZytwJXZO69Bfz0HBdDHzOTOon6G59Zrk6VQ2bEiv1t61rfkA==}
+
   fast-xml-parser@4.5.6:
     resolution: {integrity: sha512-Yd4vkROfJf8AuJrDIVMVmYfULKmIJszVsMv7Vo71aocsKgFxpdlpSHXSaInvyYfgw2PRuObQSW2GFpVMUjxu9A==}
+    hasBin: true
+
+  fast-xml-parser@5.5.7:
+    resolution: {integrity: sha512-LteOsISQ2GEiDHZch6L9hB0+MLoYVLToR7xotrzU0opCICBkxOPgHAy1HxAvtxfJNXDJpgAsQN30mkrfpO2Prg==}
     hasBin: true
 
   fastest-levenshtein@1.0.16:
@@ -9045,6 +9085,10 @@ packages:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
 
+  path-expression-matcher@1.5.0:
+    resolution: {integrity: sha512-cbrerZV+6rvdQrrD+iGMcZFEiiSrbv9Tfdkvnusy6y0x0GKBXREFg/Y65GhIfm0tnLntThhzCnfKwp1WRjeCyQ==}
+    engines: {node: '>=14.0.0'}
+
   path-is-absolute@1.0.1:
     resolution: {integrity: sha512-AVbw3UJ2e9bq64vSaS9Am0fje1Pa8pbGqTTsmXfaIiMpnr5DlDhfJOuLj9Sf95ZPVDAUerDfEk88MPmPe7UCQg==}
     engines: {node: '>=0.10.0'}
@@ -10526,6 +10570,9 @@ packages:
 
   strnum@1.1.2:
     resolution: {integrity: sha512-vrN+B7DBIoTTZjnPNewwhx6cBA/H+IS7rfW68n7XxC1y7uoiGQBxaKzqucGUgavX15dJgiGztLJ8vxuEzwqBdA==}
+
+  strnum@2.2.3:
+    resolution: {integrity: sha512-oKx6RUCuHfT3oyVjtnrmn19H1SiCqgJSg+54XqURKp5aCMbrXrhLjRN9TjuwMjiYstZ0MzDrHqkGZ5dFTKd+zg==}
 
   strtok3@10.3.4:
     resolution: {integrity: sha512-KIy5nylvC5le1OdaaoCJ07L+8iQzJHGH6pWDuzS+d07Cu7n1MZ2x26P8ZKIWfbK02+XIL8Mp4RkWeqdUCrDMfg==}
@@ -13799,6 +13846,34 @@ snapshots:
 
   '@floating-ui/utils@0.2.1': {}
 
+  '@formatjs/bigdecimal@0.2.1': {}
+
+  '@formatjs/fast-memoize@3.1.2': {}
+
+  '@formatjs/intl-getcanonicallocales@3.2.3': {}
+
+  '@formatjs/intl-locale@5.3.2':
+    dependencies:
+      '@formatjs/intl-getcanonicallocales': 3.2.3
+      '@formatjs/intl-supportedvaluesof': 2.3.1
+
+  '@formatjs/intl-localematcher@0.8.3':
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.2
+
+  '@formatjs/intl-pluralrules@6.3.2':
+    dependencies:
+      '@formatjs/bigdecimal': 0.2.1
+      '@formatjs/intl-localematcher': 0.8.3
+
+  '@formatjs/intl-relativetimeformat@12.3.2':
+    dependencies:
+      '@formatjs/intl-localematcher': 0.8.3
+
+  '@formatjs/intl-supportedvaluesof@2.3.1':
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.2
+
   '@gar/promisify@1.1.3': {}
 
   '@gorhom/bottom-sheet@5.2.8(@types/react@19.1.17)(react-native-gesture-handler@2.28.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.6(@babel/core@7.26.10)(react-native-worklets@0.7.4(@babel/core@7.26.10)(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
@@ -14623,7 +14698,7 @@ snapshots:
       chalk: 4.1.2
       execa: 5.1.1
       fast-glob: 3.3.2
-      fast-xml-parser: 4.5.6
+      fast-xml-parser: 5.5.7
       logkitty: 0.7.1
     transitivePeerDependencies:
       - encoding
@@ -14960,16 +15035,6 @@ snapshots:
     optionalDependencies:
       react: 19.1.0
       react-redux: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1)
-
-  '@reduxjs/toolkit@1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1))(react@19.1.0)':
-    dependencies:
-      immer: 9.0.21
-      redux: 4.2.1
-      redux-thunk: 2.4.2(redux@4.2.1)
-      reselect: 4.1.8
-    optionalDependencies:
-      react: 19.1.0
-      react-redux: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
 
   '@remix-run/router@1.23.2': {}
 
@@ -20160,9 +20225,21 @@ snapshots:
 
   fast-uri@3.1.0: {}
 
+  fast-xml-builder@1.1.5:
+    dependencies:
+      path-expression-matcher: 1.5.0
+    optional: true
+
   fast-xml-parser@4.5.6:
     dependencies:
       strnum: 1.1.2
+    optional: true
+
+  fast-xml-parser@5.5.7:
+    dependencies:
+      fast-xml-builder: 1.1.5
+      path-expression-matcher: 1.5.0
+      strnum: 2.2.3
     optional: true
 
   fastest-levenshtein@1.0.16: {}
@@ -22901,6 +22978,9 @@ snapshots:
 
   path-exists@4.0.0: {}
 
+  path-expression-matcher@1.5.0:
+    optional: true
+
   path-is-absolute@1.0.1: {}
 
   path-key@3.1.1: {}
@@ -24625,6 +24705,9 @@ snapshots:
   strip-json-comments@3.1.1: {}
 
   strnum@1.1.2:
+    optional: true
+
+  strnum@2.2.3:
     optional: true
 
   strtok3@10.3.4:

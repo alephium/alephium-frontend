@@ -1,9 +1,6 @@
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 
 import isDev from 'electron-is-dev'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const APP_ROOT_PATH = path.join(__dirname, '..')
 
