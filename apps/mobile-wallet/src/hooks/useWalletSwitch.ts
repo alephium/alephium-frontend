@@ -28,7 +28,7 @@ const useWalletSwitch = () => {
       }
 
       // 2. Load target wallet metadata
-      const metadata = await getStoredWalletMetadata(targetWalletId)
+      const metadata = getStoredWalletMetadata(targetWalletId)
 
       if (!isStoredWalletMetadataMigrated(metadata)) {
         throw new Error('Cannot switch to wallet with unmigrated metadata')

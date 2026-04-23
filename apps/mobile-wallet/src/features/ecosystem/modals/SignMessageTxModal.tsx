@@ -13,7 +13,7 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 
 const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignMessageTxModalProps) => {
   const { t } = useTranslation()

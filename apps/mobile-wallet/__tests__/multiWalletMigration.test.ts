@@ -1,14 +1,14 @@
 import * as SecureStore from 'expo-secure-store'
 
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
-import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
-import { storage } from '~/persistent-storage/storage'
 import {
   LEGACY_IS_NEW_WALLET_KEY,
   LEGACY_MNEMONIC_KEY,
-  LEGACY_WALLET_METADATA_KEY,
-  walletMnemonicKey
-} from '~/persistent-storage/wallet'
+  LEGACY_WALLET_METADATA_KEY
+} from '~/persistent-storage/legacyWallet'
+import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
+import { storage } from '~/persistent-storage/storage'
+import { walletMnemonicKey } from '~/persistent-storage/wallet'
 import { getWalletList } from '~/persistent-storage/walletList'
 
 const mockedGetItemAsync = vi.mocked(SecureStore.getItemAsync)

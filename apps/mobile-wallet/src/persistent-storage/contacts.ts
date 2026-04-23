@@ -10,8 +10,8 @@ import i18n from '~/features/localization/i18n'
 import { getStoredWalletMetadata, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 
-export const persistContact = async (walletId: string, contactData: ContactFormData) => {
-  const { contacts } = await getStoredWalletMetadata(
+export const persistContact = (walletId: string, contactData: ContactFormData) => {
+  const { contacts } = getStoredWalletMetadata(
     walletId,
     `${i18n.t('Could not persist contact')}: ${i18n.t('Wallet metadata not found')}`
   )
@@ -46,15 +46,15 @@ export const persistContact = async (walletId: string, contactData: ContactFormD
 
   console.log('💽 Storing contact in persistent storage')
 
-  await updateStoredWalletMetadata(walletId, { contacts })
+  updateStoredWalletMetadata(walletId, { contacts })
 
   store.dispatch(contactStoredInPersistentStorage({ ...contactData, id: contactId }))
 
   return contactId
 }
 
-export const deleteContact = async (walletId: string, contactId: Contact['id']) => {
-  const { contacts } = await getStoredWalletMetadata(
+export const deleteContact = (walletId: string, contactId: Contact['id']) => {
+  const { contacts } = getStoredWalletMetadata(
     walletId,
     `${i18n.t('Could not delete contact')}: ${i18n.t('Wallet metadata not found')}`
   )
@@ -65,15 +65,15 @@ export const deleteContact = async (walletId: string, contactId: Contact['id']) 
 
   contacts.splice(storedContactIndex, 1)
 
-  await updateStoredWalletMetadata(walletId, { contacts })
+  updateStoredWalletMetadata(walletId, { contacts })
 
   store.dispatch(contactDeletedFromPersistentStorage(contactId))
 }
 
-export const importContacts = async (walletId: string, contacts: ContactFormData[]) => {
+export const importContacts = (walletId: string, contacts: ContactFormData[]) => {
   for (const contact of contacts) {
     try {
-      await persistContact(walletId, contact)
+      persistContact(walletId, contact)
     } catch (e) {
       console.warn(e)
     }

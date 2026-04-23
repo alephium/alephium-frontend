@@ -62,7 +62,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
       try {
-        await updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
+        updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
         dispatch(mnemonicBackedUp())
 
         sendAnalytics({ event: 'Backed-up mnemonic' })

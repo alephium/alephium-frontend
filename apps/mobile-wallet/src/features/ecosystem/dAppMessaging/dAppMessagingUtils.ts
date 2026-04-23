@@ -13,7 +13,7 @@ import {
 
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { signer } from '~/signer'
 import { store } from '~/store/store'
 

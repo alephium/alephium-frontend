@@ -15,7 +15,7 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { Spinner } from '~/features/loader/SpinnerModal'
 import i18n from '~/features/localization/i18n'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
-import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/wallet'
+import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/legacyWallet'
 import { ShouldClearPin } from '~/types/misc'
 import { DeprecatedWalletState } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'

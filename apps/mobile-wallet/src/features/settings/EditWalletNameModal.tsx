@@ -42,7 +42,7 @@ const EditWalletNameModalContent = () => {
     dispatch(activateAppLoading(t('Saving')))
 
     try {
-      await updateStoredWalletMetadata(walletId, { name })
+      updateStoredWalletMetadata(walletId, { name })
       updateWalletInList(walletId, { name })
       dispatch(walletNameChanged(name))
       dispatch(walletRenamedInList({ walletId, name }))

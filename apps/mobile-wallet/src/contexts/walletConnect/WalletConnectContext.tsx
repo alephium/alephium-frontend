@@ -65,7 +65,7 @@ import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessagin
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10

@@ -4,6 +4,11 @@ import { sendAnalytics } from '~/analytics'
 import { LEGACY_HIDDEN_TOKENS_KEY } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'
 import { LEGACY_AUTHORIZED_CONNECTIONS_KEY } from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
 import { LEGACY_FUND_PASSWORD_KEY } from '~/features/fund-password/fundPasswordStorage'
+import {
+  LEGACY_IS_NEW_WALLET_KEY,
+  LEGACY_MNEMONIC_KEY,
+  LEGACY_WALLET_METADATA_KEY
+} from '~/persistent-storage/legacyWallet'
 import { storage } from '~/persistent-storage/storage'
 import {
   deleteSecurelyWithReportableError,
@@ -11,12 +16,7 @@ import {
   storeSecurelyWithReportableError,
   storeWithReportableError
 } from '~/persistent-storage/utils'
-import {
-  LEGACY_IS_NEW_WALLET_KEY,
-  LEGACY_MNEMONIC_KEY,
-  LEGACY_WALLET_METADATA_KEY,
-  walletMnemonicKey
-} from '~/persistent-storage/wallet'
+import { walletMnemonicKey } from '~/persistent-storage/wallet'
 import { createWalletListEntry, storeWalletList } from '~/persistent-storage/walletList'
 
 const MIGRATION_VERSION_KEY = 'multi-wallet-migration-version'

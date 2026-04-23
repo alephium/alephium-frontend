@@ -10,7 +10,7 @@ import FlashListScreen from '~/components/layout/FlashListScreen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 

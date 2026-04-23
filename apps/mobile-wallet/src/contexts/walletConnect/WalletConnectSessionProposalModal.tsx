@@ -28,7 +28,7 @@ import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 

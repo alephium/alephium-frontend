@@ -1,7 +1,7 @@
 import { AlephiumWalletSigner, getBaseAddressStr } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { store } from '~/store/store'
 
 export class SecureStoreSigner extends AlephiumWalletSigner {

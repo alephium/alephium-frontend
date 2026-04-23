@@ -32,11 +32,13 @@ import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninsta
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
-  getStoredWalletMetadata,
-  isStoredWalletMetadataMigrated,
   legacyGetWalletMetadata,
   legacyStoredMnemonicV2Exists,
-  migrateDeprecatedMnemonic,
+  migrateDeprecatedMnemonic
+} from '~/persistent-storage/legacyWallet'
+import {
+  getStoredWalletMetadata,
+  isStoredWalletMetadataMigrated,
   storedMnemonicExists
 } from '~/persistent-storage/wallet'
 import { walletListExists } from '~/persistent-storage/walletList'
@@ -150,7 +152,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   const { t } = useTranslation()
 
   const initializeAppWithStoredWallet = useCallback(async () => {
-    const metadata = await getStoredWalletMetadata(lastUsedWalletId)
+    const metadata = getStoredWalletMetadata(lastUsedWalletId)
 
     // Note: metadata should have already been migrated in validateAndRepareStoredWalletData if mnemonic V2 exists or
     // migrateDeprecatedMnemonic if it doesn't

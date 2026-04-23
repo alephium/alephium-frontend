@@ -11,11 +11,8 @@ import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import {
-  isStoredWalletMetadataMigrated,
-  legacyGetStoredWalletMetadata,
-  migrateDeprecatedMnemonic
-} from '~/persistent-storage/wallet'
+import { legacyGetStoredWalletMetadata, migrateDeprecatedMnemonic } from '~/persistent-storage/legacyWallet'
+import { isStoredWalletMetadataMigrated } from '~/persistent-storage/wallet'
 import { mnemonicMigrated } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
