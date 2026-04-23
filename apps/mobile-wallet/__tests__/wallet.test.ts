@@ -9,13 +9,13 @@ import {
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/legacyWallet'
 import { storage } from '~/persistent-storage/storage'
+import { deleteWallet } from '~/persistent-storage/wallet'
+import { addWalletToList, createWalletListEntry } from '~/persistent-storage/walletList'
 import {
-  deleteWallet,
   getStoredWalletMetadata,
   isStoredWalletMetadataMigrated,
   storeWalletMetadata
-} from '~/persistent-storage/wallet'
-import { addWalletToList, createWalletListEntry } from '~/persistent-storage/walletList'
+} from '~/persistent-storage/walletMetadata'
 import { validateAndRepairStoredWalletData } from '~/persistent-storage/walletValidation'
 
 const testWalletId = '0'

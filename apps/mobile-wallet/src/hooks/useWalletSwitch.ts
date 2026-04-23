@@ -6,12 +6,9 @@ import { getHiddenTokensIds } from '~/features/assetsDisplay/hideTokens/hiddenTo
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import {
-  getStoredWalletMetadata,
-  initializeKeyringWithStoredWallet,
-  isStoredWalletMetadataMigrated
-} from '~/persistent-storage/wallet'
 import { updateWalletInList } from '~/persistent-storage/walletList'
+import { getStoredWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/walletMetadata'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 
 const useWalletSwitch = () => {
   const dispatch = useAppDispatch()

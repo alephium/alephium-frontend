@@ -13,8 +13,8 @@ import {
 } from '~/persistent-storage/legacyWallet'
 import { storage } from '~/persistent-storage/storage'
 import { getSecurelyWithReportableError } from '~/persistent-storage/utils'
-import { getWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/wallet'
 import { getLastUsedWallet, walletListExists } from '~/persistent-storage/walletList'
+import { getWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/walletMetadata'
 import { getRandomLabelColor } from '~/utils/colors'
 
 export type WalletValidationResult =

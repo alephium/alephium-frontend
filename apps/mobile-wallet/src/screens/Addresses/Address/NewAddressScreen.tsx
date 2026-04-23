@@ -12,7 +12,7 @@ import { activateAppLoading, deactivateAppLoading } from '~/features/loader/load
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'

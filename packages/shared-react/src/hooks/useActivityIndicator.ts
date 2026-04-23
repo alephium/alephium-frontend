@@ -1,7 +1,7 @@
 import { explorer as e } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 
-import { useFetchWalletTransactionsInfinite } from '../api/apiDataHooks'
+import { useFetchWalletTransactionsInfinite } from '../api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
 
 interface UseActivityIndicatorProps {
   isDisabled: boolean

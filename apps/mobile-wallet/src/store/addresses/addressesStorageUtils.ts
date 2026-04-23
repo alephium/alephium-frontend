@@ -1,7 +1,7 @@
 import { keyring } from '@alephium/keyring'
 import { AddressStoredMetadataWithoutHash, newAddressesSaved, WalletMetadataMobile } from '@alephium/shared'
 
-import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 import { store } from '~/store/store'
 import { persistAddressesSettings } from '~/utils/addresses'
 

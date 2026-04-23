@@ -8,8 +8,8 @@ import {
 } from '~/persistent-storage/legacyWallet'
 import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
 import { storage } from '~/persistent-storage/storage'
-import { walletMnemonicKey } from '~/persistent-storage/wallet'
 import { getWalletList } from '~/persistent-storage/walletList'
+import { walletMnemonicKey } from '~/persistent-storage/walletMnemonic'
 
 const mockedGetItemAsync = vi.mocked(SecureStore.getItemAsync)
 const mockedSetItemAsync = vi.mocked(SecureStore.setItemAsync)

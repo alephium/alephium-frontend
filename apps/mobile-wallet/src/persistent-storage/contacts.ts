@@ -7,7 +7,8 @@ import {
 import { nanoid } from 'nanoid'
 
 import i18n from '~/features/localization/i18n'
-import { getStoredWalletMetadata, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { getStoredWalletMetadata } from '~/persistent-storage/walletMetadata'
 import { store } from '~/store/store'
 
 export const persistContact = (walletId: string, contactData: ContactFormData) => {

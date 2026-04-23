@@ -36,12 +36,9 @@ import {
   legacyStoredMnemonicV2Exists,
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/legacyWallet'
-import {
-  getStoredWalletMetadata,
-  isStoredWalletMetadataMigrated,
-  storedMnemonicExists
-} from '~/persistent-storage/wallet'
 import { walletListExists } from '~/persistent-storage/walletList'
+import { getStoredWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/walletMetadata'
+import { storedMnemonicExists } from '~/persistent-storage/walletMnemonic'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import NewAddressScreen from '~/screens/Addresses/Address/NewAddressScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'

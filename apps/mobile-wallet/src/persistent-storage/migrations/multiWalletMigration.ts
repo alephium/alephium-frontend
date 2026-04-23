@@ -16,8 +16,8 @@ import {
   storeSecurelyWithReportableError,
   storeWithReportableError
 } from '~/persistent-storage/utils'
-import { walletMnemonicKey } from '~/persistent-storage/wallet'
 import { createWalletListEntry, storeWalletList } from '~/persistent-storage/walletList'
+import { walletMnemonicKey } from '~/persistent-storage/walletMnemonic'
 
 const MIGRATION_VERSION_KEY = 'multi-wallet-migration-version'
 const CURRENT_MIGRATION_VERSION = 1

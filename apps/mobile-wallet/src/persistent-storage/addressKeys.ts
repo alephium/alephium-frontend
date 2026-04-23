@@ -8,7 +8,8 @@ import {
   getSecurelyWithReportableError,
   storeSecurelyWithReportableError
 } from '~/persistent-storage/utils'
-import { getStoredWalletMetadata, initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { getStoredWalletMetadata } from '~/persistent-storage/walletMetadata'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 
 const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'

@@ -1,6 +1,7 @@
 export * from '../api/apiDataHooks'
 export * from '../api/queryClient'
 export * from '../api/apiUtils'
+export * from '../api/balanceUtils'
 export * from '../api/persistQueryClientContext'
 export * from '../api/apiTypes'
 export * from '../api/fetchUtils'

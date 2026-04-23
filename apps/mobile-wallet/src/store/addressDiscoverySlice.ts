@@ -23,7 +23,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
-import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { findMaxIndexBeforeFirstGap } from '~/utils/addresses'

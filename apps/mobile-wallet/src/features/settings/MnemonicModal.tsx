@@ -8,7 +8,7 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { useAppSelector } from '~/hooks/redux'
 import usePreventScreenCapture from '~/hooks/usePreventScreenCapture'
-import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
+import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/walletMnemonic'
 
 interface MnemonicModalProps {
   onVerifyPress?: () => void
