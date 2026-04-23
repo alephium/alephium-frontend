@@ -2,7 +2,7 @@ import { matchesNFTCollectionUriMetaDataSchema, throttledClient } from '@alephiu
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 
-import { getQueryConfig } from '../../api'
+import { getQueryConfig } from '../../api/apiUtils'
 import { fetchJson } from '../../api/fetchUtils'
 import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
 
