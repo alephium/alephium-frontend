@@ -5,8 +5,10 @@ import { Trans, useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
 
 import AppText from '~/components/AppText'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import useFetchXAlphBalance from '~/features/staking/hooks/useFetchXAlphBalance'
 import useFetchXAlphRate from '~/features/staking/hooks/useFetchXAlphRate'
 import { previewAlphForUnstake } from '~/features/staking/stakingUtils'
@@ -25,6 +27,8 @@ const UnstakeModal = ({ addressHash }: UnstakeModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<TextInput>(null)
   const { startUnstake } = useAlphStaking()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { data: xAlphRate } = useFetchXAlphRate()
   const { data: xAlphBalance } = useFetchXAlphBalance(addressHash)
 
@@ -46,20 +50,28 @@ const UnstakeModal = ({ addressHash }: UnstakeModalProps) => {
     [amountInAttoXAlph, xAlphRate]
   )
 
-  const handleUnstake = async () => {
+  const handleUnstake = () => {
     if (!amountInAttoXAlph || !!error) return
 
-    setIsLoading(true)
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: () =>
+        triggerFundPasswordAuthGuard({
+          successCallback: async () => {
+            setIsLoading(true)
 
-    try {
-      showToast({ type: 'info', text1: t('Opening ALPH unstake request...') })
-      await startUnstake(amountInAttoXAlph)
-      dismissModal()
-    } catch (err) {
-      showExceptionToast(err, t('Unstake xALPH'))
-    } finally {
-      setIsLoading(false)
-    }
+            try {
+              showToast({ type: 'info', text1: t('Opening ALPH unstake request...') })
+              await startUnstake(amountInAttoXAlph)
+              dismissModal()
+            } catch (err) {
+              showExceptionToast(err, t('Unstake xALPH'))
+            } finally {
+              setIsLoading(false)
+            }
+          }
+        })
+    })
   }
 
   return (
