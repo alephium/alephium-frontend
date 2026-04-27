@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import StakingApr from '~/screens/Staking/StakingApr'
 import StakingCardBalanceAlph from '~/screens/Staking/StakingCardBalanceAlph'
 import StakingCardBalanceXAlph from '~/screens/Staking/StakingCardBalanceXAlph'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -26,7 +27,7 @@ const StakingCard = ({ addressHash }: StakingCardProps) => {
 
       <LabeledDataContainer>
         <Label>{t('APR')}</Label>
-        <AvailableValue>-</AvailableValue>
+        <StakingApr />
       </LabeledDataContainer>
     </CardContainer>
   )
@@ -48,12 +49,6 @@ const LabeledDataContainer = styled.View`
 const Label = styled(AppText)`
   font-size: 13px;
   opacity: 0.7;
-  color: white;
-`
-
-const AvailableValue = styled(AppText)`
-  font-size: 20px;
-  font-weight: 600;
   color: white;
 `
 

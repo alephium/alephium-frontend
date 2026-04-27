@@ -2,7 +2,8 @@
   "extends": ["//"],
   "pipeline": {
     "build:deps": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "env": ["EXPO_PUBLIC_POWFI_BACKEND_HOST"]
     }
   }
 }

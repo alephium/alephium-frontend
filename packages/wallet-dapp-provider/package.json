@@ -31,8 +31,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "3.0.1",
-    "@alephium/web3": "3.0.1"
+    "@alephium/get-extension-wallet": "3.0.3",
+    "@alephium/web3": "3.0.3"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
