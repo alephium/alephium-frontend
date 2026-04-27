@@ -23,7 +23,7 @@
   "dependencies": {
     "@alephium/keyring": "workspace:*",
     "@alephium/powfi-backend": "0.0.1-rc.16",
-    "@alephium/powfi-sdk": "npm:@eyettea/powfi-sdk@0.0.1-rc.32",
+    "@alephium/powfi-sdk": "0.0.1-rc.31",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
@@ -134,6 +134,7 @@
     "@types/react-native-background-timer": "^2.0.2",
     "@walletconnect/types": "2.23.6",
     "babel-plugin-module-resolver": "^5.0.2",
+    "elysia": "1.4.27",
     "eslint": "^8.48.0",
     "ts-node": "^10.9.1",
     "typescript": "~5.9.2",
