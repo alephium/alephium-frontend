@@ -175,12 +175,13 @@ const WalletBalanceSummary = () => {
 const HeaderLeft = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const isWatchOnly = useIsWalletWatchOnly()
 
   return (
     <HeaderButtonsContainer>
       <WalletSwitcherButton />
-      <CameraScanButton />
-      {!isMnemonicBackedUp && (
+      {!isWatchOnly && <CameraScanButton />}
+      {!isWatchOnly && !isMnemonicBackedUp && (
         <Button
           onPress={() => navigation.navigate('BackupMnemonicNavigation')}
           iconProps={{ name: 'alert-outline' }}

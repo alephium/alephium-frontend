@@ -7,6 +7,7 @@ import { useTheme } from 'styled-components/native'
 import FooterMenu from '~/components/footers/FooterMenu'
 import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
@@ -26,6 +27,7 @@ const InWalletTabsNavigation = () => {
   const theme = useTheme()
   const { t } = useTranslation()
   const isStakingEnabled = useIsStakingEnabled()
+  const isWatchOnly = useIsWalletWatchOnly()
 
   return (
     <>
@@ -56,7 +58,7 @@ const InWalletTabsNavigation = () => {
             )
           }}
         />
-        {isStakingEnabled && (
+        {isStakingEnabled && !isWatchOnly && (
           <InWalletTabs.Screen
             name="StakingScreen"
             component={StakingScreen}
@@ -68,26 +70,30 @@ const InWalletTabsNavigation = () => {
             }}
           />
         )}
-        <InWalletTabs.Screen
-          name="AddressesTabNavigation"
-          component={AddressesTabNavigation}
-          options={{
-            title: t('Addresses'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
-            )
-          }}
-        />
-        <InWalletTabs.Screen
-          name="EcosystemScreen"
-          component={EcosystemScreen}
-          options={{
-            title: t('Ecosystem'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
-            )
-          }}
-        />
+        {!isWatchOnly && (
+          <InWalletTabs.Screen
+            name="AddressesTabNavigation"
+            component={AddressesTabNavigation}
+            options={{
+              title: t('Addresses'),
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+              )
+            }}
+          />
+        )}
+        {!isWatchOnly && (
+          <InWalletTabs.Screen
+            name="EcosystemScreen"
+            component={EcosystemScreen}
+            options={{
+              title: t('Ecosystem'),
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
+              )
+            }}
+          />
+        )}
       </InWalletTabs.Navigator>
     </>
   )
