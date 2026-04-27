@@ -62,13 +62,16 @@ const WalletDeleteModalContent = ({ onDelete }: WalletDeleteModalProps) => {
     dispatch(activateAppLoading(t('Deleting')))
 
     try {
-      await deleteWallet()
+      await deleteWallet(walletId)
 
-      onDelete()
-
+      // Reset state and clean up BEFORE switching to next wallet,
+      // otherwise activeWalletDeleted would wipe the new wallet's data
       dispatch(activeWalletDeleted())
       resetWalletConnectStorage()
       deletePersistedCache(walletId)
+
+      await onDelete()
+
       sendAnalytics({ event: 'Deleted wallet' })
     } catch (error) {
       showExceptionToast(error, t('Error while deleting wallet'))

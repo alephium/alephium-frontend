@@ -41,6 +41,7 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import WalletSwitchModal from '~/features/switch-wallet/WalletSwitchModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
@@ -103,6 +104,7 @@ export const ModalComponents = {
   DataFetchErrorModal,
   ConnectTipModal,
   SignChainedTxModal,
+  WalletSwitchModal,
   StakeModal,
   UnstakeModal
 }

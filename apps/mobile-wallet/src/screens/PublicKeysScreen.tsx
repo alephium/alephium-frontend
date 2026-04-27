@@ -8,8 +8,9 @@ import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import Row from '~/components/Row'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
@@ -17,11 +18,12 @@ interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'Pu
 
 const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   const addresses = useUnsortedAddressesHashes()
+  const walletId = useAppSelector((s) => s.wallet.id)
   const { t } = useTranslation()
 
   const handleAddressPress = async (addressHash: AddressHash) => {
     try {
-      const publicKey = await getAddressAsymetricKey(addressHash, 'public')
+      const publicKey = await getAddressAsymetricKey(walletId, addressHash, 'public')
       await Clipboard.setStringAsync(publicKey)
 
       showToast({ text1: t('Public key copied!'), visibilityTime: ToastDuration.SHORT })

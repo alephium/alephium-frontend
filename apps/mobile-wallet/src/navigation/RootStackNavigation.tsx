@@ -32,12 +32,13 @@ import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninsta
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
-  getStoredWalletMetadata,
-  getWalletMetadata,
-  isStoredWalletMetadataMigrated,
-  migrateDeprecatedMnemonic,
-  storedMnemonicV2Exists
-} from '~/persistent-storage/wallet'
+  legacyGetWalletMetadata,
+  legacyStoredMnemonicV2Exists,
+  migrateDeprecatedMnemonic
+} from '~/persistent-storage/legacyWallet'
+import { walletListExists } from '~/persistent-storage/walletList'
+import { getStoredWalletMetadata, isStoredWalletMetadataMigrated } from '~/persistent-storage/walletMetadata'
+import { storedMnemonicExists } from '~/persistent-storage/walletMnemonic'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import NewAddressScreen from '~/screens/Addresses/Address/NewAddressScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
@@ -148,7 +149,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   const { t } = useTranslation()
 
   const initializeAppWithStoredWallet = useCallback(async () => {
-    const metadata = await getStoredWalletMetadata()
+    const metadata = getStoredWalletMetadata(lastUsedWalletId)
 
     // Note: metadata should have already been migrated in validateAndRepareStoredWalletData if mnemonic V2 exists or
     // migrateDeprecatedMnemonic if it doesn't
@@ -171,13 +172,19 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       showExceptionToast(error, message)
       sendAnalytics({ type: 'error', error, message })
     }
-  }, [dispatch, initialRouteName, navigation])
+  }, [dispatch, initialRouteName, lastUsedWalletId, navigation])
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return
 
     try {
-      const mnemonicV2Exists = await storedMnemonicV2Exists()
+      // Post-migration: check wallet-ID-scoped mnemonic first
+      const hasWalletList = walletListExists()
+      const mnemonicExistsForWallet =
+        hasWalletList && lastUsedWalletId ? await storedMnemonicExists(lastUsedWalletId) : false
+
+      // Pre-migration fallback: check legacy V2 key
+      const mnemonicV2Exists = mnemonicExistsForWallet || (await legacyStoredMnemonicV2Exists())
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
       if (mnemonicV2Exists) {
@@ -226,12 +233,12 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       }
 
       try {
-        const metadataExist = !!(await getWalletMetadata())
+        const metadataExist = hasWalletList || !!(await legacyGetWalletMetadata())
 
         if ((await appInstallationTimestampMissing()) || (!metadataExist && !mnemonicV2Exists && !deprecatedWallet)) {
           if (await wasAppUninstalled()) {
             try {
-              await deleteFundPassword()
+              await deleteFundPassword(lastUsedWalletId)
             } catch {
               sendAnalytics({ type: 'error', message: 'Could not delete fund password' })
             }
@@ -252,7 +259,15 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
         showExceptionToast(e, t('Could not unlock app'))
       }
     }
-  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, t, triggerBiometricsAuthGuard])
+  }, [
+    dispatch,
+    initializeAppWithStoredWallet,
+    isWalletUnlocked,
+    lastUsedWalletId,
+    navigation,
+    t,
+    triggerBiometricsAuthGuard
+  ])
 
   useAutoLock(unlockApp)
 

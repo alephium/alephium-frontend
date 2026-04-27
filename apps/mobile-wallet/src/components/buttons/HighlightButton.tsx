@@ -1,4 +1,5 @@
-import { MotiView } from 'moti'
+import { useEffect } from 'react'
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
@@ -10,17 +11,16 @@ interface HighlightButtonProps extends ButtonProps {
 
 const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
   const theme = useTheme()
+  const scale = useSharedValue(1)
+
+  useEffect(() => {
+    scale.set(withRepeat(withTiming(1.02, { duration: 500 }), -1, true))
+  }, [scale])
+
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.get() }] }))
 
   return (
-    <ButtonWrapper
-      from={{ scale: 1 }}
-      animate={{ scale: 1.02 }}
-      transition={{
-        loop: true,
-        type: 'timing',
-        duration: 500
-      }}
-    >
+    <ButtonWrapper style={animatedStyle}>
       <Button
         title={title}
         style={{ backgroundColor: theme.global.accent }}
@@ -35,7 +35,7 @@ const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
 
 export default HighlightButton
 
-const ButtonWrapper = styled(MotiView)`
+const ButtonWrapper = styled(Animated.View)`
   width: 100%;
   align-items: center;
 `

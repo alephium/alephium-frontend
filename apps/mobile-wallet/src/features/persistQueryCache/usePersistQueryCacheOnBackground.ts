@@ -11,7 +11,7 @@ const usePersistQueryCacheOnBackground = () => {
 
   useEffect(() => {
     const changeListenerSubscription = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState.match(/inactive|background/) && appState.current === 'active') {
+      if (nextAppState.match(/inactive|background/) && appState.current === 'active' && walletId) {
         persistQueryCache(walletId)
       }
 
@@ -20,7 +20,7 @@ const usePersistQueryCacheOnBackground = () => {
 
     if (Platform.OS === 'android') {
       const blurListenerSubscription = AppState.addEventListener('blur', () => {
-        persistQueryCache(walletId)
+        if (walletId) persistQueryCache(walletId)
       })
 
       return () => {

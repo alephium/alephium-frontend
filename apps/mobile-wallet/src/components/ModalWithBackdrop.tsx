@@ -14,6 +14,8 @@ export interface ModalWithBackdropProps extends ModalProps {
 const ModalWithBackdrop = ({ children, closeModal, color, showCloseButton, ...props }: ModalWithBackdropProps) => {
   const insets = useSafeAreaInsets()
 
+  if (!props.visible) return null
+
   return (
     <View style={{ width: '100%', height: '100%', position: 'absolute', backgroundColor: 'transparent' }}>
       <Modal transparent={true} animationType="none" onRequestClose={closeModal} {...props}>

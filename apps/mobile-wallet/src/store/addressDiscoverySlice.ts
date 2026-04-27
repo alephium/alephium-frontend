@@ -10,7 +10,8 @@ import {
   GROUPLESS_ADDRESS_KEY_TYPE,
   networkPresetSwitched,
   selectAllAddressIndexes,
-  throttledClient
+  throttledClient,
+  walletSwitchedMobile
 } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -22,7 +23,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
-import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { findMaxIndexBeforeFirstGap } from '~/utils/addresses'
@@ -63,7 +64,8 @@ export const discoverAddresses = createAsyncThunk(
     dispatch(algoDataInitialized())
 
     try {
-      await initializeKeyringWithStoredWallet()
+      const walletId = (getState() as RootState).wallet.id
+      await initializeKeyringWithStoredWallet(walletId)
 
       // Groupless addresses
       let gap = 0
@@ -227,6 +229,7 @@ const addressDiscoverySlice = createSlice({
         newWalletImportedWithMetadata,
         appReset,
         activeWalletDeleted,
+        walletSwitchedMobile,
         networkPresetSwitched,
         addressDeleted,
         customNetworkSettingsSaved

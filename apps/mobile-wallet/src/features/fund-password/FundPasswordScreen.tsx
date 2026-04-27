@@ -30,6 +30,7 @@ interface FundPasswordScreenProps
 
 const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const theme = useTheme()
   const { setHeaderOptions } = useHeaderContext()
   const dispatch = useAppDispatch()
@@ -57,7 +58,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const handleSavePress = () =>
     showConfirmDialog(async () => {
       try {
-        await storeFundPassword(newPassword)
+        await storeFundPassword(walletId, newPassword)
         dispatch(fundPasswordUseToggled(true))
         showToast({
           text1: t('Saved!'),
@@ -97,7 +98,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     triggerFundPasswordAuthGuard({
       successCallback: () => {
         showWarningDialog(t('Delete fund password'), async () => {
-          await deleteFundPassword()
+          await deleteFundPassword(walletId)
           dispatch(fundPasswordUseToggled(false))
           showToast({
             text1: t('Deleted'),

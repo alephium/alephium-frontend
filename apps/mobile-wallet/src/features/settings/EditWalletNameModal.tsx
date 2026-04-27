@@ -10,7 +10,9 @@ import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { updateWalletInList } from '~/persistent-storage/walletList'
 import { walletNameChanged } from '~/store/wallet/walletActions'
+import { walletRenamedInList } from '~/store/wallet/walletsSlice'
 import { showExceptionToast } from '~/utils/layout'
 
 const EditWalletNameModal = memo(() => {
@@ -29,6 +31,7 @@ export default EditWalletNameModal
 
 const EditWalletNameModalContent = () => {
   const walletName = useAppSelector((s) => s.wallet.name)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
@@ -39,8 +42,10 @@ const EditWalletNameModalContent = () => {
     dispatch(activateAppLoading(t('Saving')))
 
     try {
-      await updateStoredWalletMetadata({ name })
+      updateStoredWalletMetadata(walletId, { name })
+      updateWalletInList(walletId, { name })
       dispatch(walletNameChanged(name))
+      dispatch(walletRenamedInList({ walletId, name }))
 
       sendAnalytics({ event: 'Wallet: Edited wallet name' })
     } catch (error) {

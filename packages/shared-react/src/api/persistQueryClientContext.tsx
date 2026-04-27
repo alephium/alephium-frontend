@@ -59,7 +59,8 @@ export const PersistQueryClientContextProvider = ({
     async (walletId: string) => {
       if (isExplorerOffline) return
 
-      console.log('⤵️ saving query client for wallet', walletId)
+      const queriesCount = queryClient.getQueryCache().getAll().length
+      console.log(`⤵️ saving query client for wallet ${walletId} (${queriesCount} queries)`)
 
       try {
         await persistQueryClientSave({

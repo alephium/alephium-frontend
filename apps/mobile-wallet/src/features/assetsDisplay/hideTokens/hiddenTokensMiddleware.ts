@@ -14,8 +14,10 @@ export default hiddenTokensListenerMiddleware
 hiddenTokensListenerMiddleware.startListening({
   matcher: isAnyOf(hideToken, unhideToken, appReset),
   effect: (_, { getState }) => {
-    const state = (getState() as RootState)[sliceName]
+    const rootState = getState() as RootState
+    const state = rootState[sliceName]
+    const walletId = rootState.wallet.id
 
-    if (state.loadedFromStorage) storeHiddenTokensIds(state.hiddenTokensIds)
+    if (state.loadedFromStorage) storeHiddenTokensIds(walletId, state.hiddenTokensIds)
   }
 })

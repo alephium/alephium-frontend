@@ -20,7 +20,8 @@ import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWor
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { dangerouslyExportWalletMnemonic, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/walletMnemonic'
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -33,6 +34,7 @@ interface VerifyMnemonicScreenProps
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const randomizedOptions = useRef<string[][]>([])
@@ -47,7 +49,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   useEffect(() => {
     try {
-      dangerouslyExportWalletMnemonic().then((mnemonic) => {
+      dangerouslyExportWalletMnemonic(walletId).then((mnemonic) => {
         const words = mnemonic.split(' ')
         setMnemonicWords(words)
         randomizedOptions.current = getRandomizedOptions(words, allowedWords.current)
@@ -56,12 +58,12 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
     } catch (e) {
       if (__DEV__) console.error(e)
     }
-  }, [])
+  }, [walletId])
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
       try {
-        await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
+        updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
         dispatch(mnemonicBackedUp())
 
         sendAnalytics({ event: 'Backed-up mnemonic' })
@@ -72,7 +74,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         sendAnalytics({ type: 'error', error, message })
       }
     }
-  }, [isMnemonicBackedUp, dispatch, t])
+  }, [isMnemonicBackedUp, dispatch, t, walletId])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.length) {

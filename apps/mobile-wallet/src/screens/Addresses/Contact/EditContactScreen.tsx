@@ -18,6 +18,7 @@ interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'E
 
 const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
+  const walletId = useAppSelector((s) => s.wallet.id)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
@@ -35,7 +36,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
                 text: t('Delete'),
                 onPress: async () => {
                   try {
-                    await deleteContact(params.contactId)
+                    await deleteContact(walletId, params.contactId)
 
                     sendAnalytics({ event: 'Contact: Deleted contact' })
                   } catch (error) {
@@ -53,13 +54,13 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
         />
       )
     })
-  }, [dispatch, navigation, params.contactId, t])
+  }, [dispatch, navigation, params.contactId, t, walletId])
 
   if (!contact) return null
 
   const handleSavePress = async (formData: ContactFormData) => {
     try {
-      await persistContact(formData)
+      await persistContact(walletId, formData)
 
       sendAnalytics({ event: 'Contact: Editted contact' })
     } catch (error) {

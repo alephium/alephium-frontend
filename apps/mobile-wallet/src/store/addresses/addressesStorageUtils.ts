@@ -1,7 +1,7 @@
 import { keyring } from '@alephium/keyring'
 import { AddressStoredMetadataWithoutHash, newAddressesSaved, WalletMetadataMobile } from '@alephium/shared'
 
-import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/walletMnemonic'
 import { store } from '~/store/store'
 import { persistAddressesSettings } from '~/utils/addresses'
 
@@ -12,7 +12,7 @@ export const importAddresses = async (
   const addressHashes = []
 
   try {
-    await initializeKeyringWithStoredWallet()
+    await initializeKeyringWithStoredWallet(walletId)
 
     for (const { index, keyType, ...addressMetadata } of addressesMetadata) {
       const newAddressNonSensitiveData = keyring.generateAndCacheAddress({

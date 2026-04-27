@@ -21,16 +21,19 @@ import { resetNavigation } from '~/utils/navigation'
 
 interface LandingScreenProps extends NativeStackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
-const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
+const LandingScreen = ({ navigation, route, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const theme = useTheme()
   const isWalletUnlocked = useAppSelector((state) => state.wallet.isUnlocked)
+  const isAddingWallet = route.params?.isAddingWallet ?? false
 
-  const [isScreenContentVisible, setIsScreenContentVisible] = useState(false)
+  const [isScreenContentVisible, setIsScreenContentVisible] = useState(isAddingWallet)
 
   useFocusEffect(
     useCallback(() => {
+      if (isAddingWallet) return
+
       storedWalletExists()
         .then((walletExists) => {
           if (walletExists) {
@@ -51,7 +54,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         .catch((error) => {
           sendAnalytics({ type: 'error', error, message: 'Could not determine if stored wallet exists' })
         })
-    }, [isWalletUnlocked, navigation])
+    }, [isAddingWallet, isWalletUnlocked, navigation])
   )
 
   useEffect(() => {
@@ -75,10 +78,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   return (
-    <Screen safeAreaPadding>
+    <Screen safeAreaPadding headerOptions={isAddingWallet ? { type: 'stack' } : undefined}>
       {isScreenContentVisible && (
         <>
-          <ScreenSection fill verticalGap>
+          <ScreenSection fill verticalGap style={isAddingWallet ? { paddingTop: 50 } : undefined}>
             <WelcomeCard />
           </ScreenSection>
           <ScreenSection>

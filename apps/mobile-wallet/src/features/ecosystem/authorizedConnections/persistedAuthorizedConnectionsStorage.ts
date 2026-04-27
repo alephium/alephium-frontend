@@ -5,13 +5,16 @@ import { AuthorizedConnection } from '~/features/ecosystem/authorizedConnections
 import { matchRequestOptionsToAuthorizedConnection } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsUtils'
 import { storage } from '~/persistent-storage/storage'
 
-export const STORAGE_KEY = 'alephium-dapp-authorized-connections'
+const authorizedConnectionsKey = (walletId: string) => `authorized-connections-${walletId}`
+
+// Legacy key used only by multi-wallet migration
+export const LEGACY_AUTHORIZED_CONNECTIONS_KEY = 'alephium-dapp-authorized-connections'
 
 // TODO: Share with extension wallet
 const CONNECTION_EXPIRY = ONE_WEEK_MS
 
-export const loadAuthorizedConnections = () => {
-  const storedConnections = storage.getString(STORAGE_KEY)
+export const loadAuthorizedConnections = (walletId: string) => {
+  const storedConnections = storage.getString(authorizedConnectionsKey(walletId))
 
   if (!storedConnections) return []
 
@@ -21,7 +24,7 @@ export const loadAuthorizedConnections = () => {
     const validConnections = connections.filter((connection) => connection.dateTime > Date.now() - CONNECTION_EXPIRY)
 
     if (validConnections.length !== connections.length) {
-      persistAuthorizedConnections(validConnections)
+      persistAuthorizedConnections(walletId, validConnections)
     }
 
     return validConnections
@@ -31,12 +34,15 @@ export const loadAuthorizedConnections = () => {
   }
 }
 
-export const persistAuthorizedConnections = (connections: AuthorizedConnection[]) => {
-  storage.set(STORAGE_KEY, JSON.stringify(connections))
+export const persistAuthorizedConnections = (walletId: string, connections: AuthorizedConnection[]) => {
+  storage.set(authorizedConnectionsKey(walletId), JSON.stringify(connections))
 }
 
-export const getAuthorizedConnection = (requestOptions: RequestOptions): AuthorizedConnection | undefined =>
-  loadAuthorizedConnections().find(matchRequestOptionsToAuthorizedConnection(requestOptions))
+export const getAuthorizedConnection = (
+  walletId: string,
+  requestOptions: RequestOptions
+): AuthorizedConnection | undefined =>
+  loadAuthorizedConnections(walletId).find(matchRequestOptionsToAuthorizedConnection(requestOptions))
 
-export const isConnectionAuthorized = (requestOptions: RequestOptions): boolean =>
-  !!getAuthorizedConnection(requestOptions)
+export const isConnectionAuthorized = (walletId: string, requestOptions: RequestOptions): boolean =>
+  !!getAuthorizedConnection(walletId, requestOptions)

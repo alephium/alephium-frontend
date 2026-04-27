@@ -31,6 +31,7 @@ import CoreDappAnnouncement from '~/screens/Dashboard/CoreDappAnnouncement'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletNftsList from '~/screens/Dashboard/WalletNftsList'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
+import WalletSwitcherButton from '~/screens/Dashboard/WalletSwitcherButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
@@ -50,16 +51,17 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
+  const walletId = useAppSelector((s) => s.wallet.id)
 
   useEffect(() => {
-    const isNewWallet = getIsNewWallet()
+    const isNewWallet = getIsNewWallet(walletId)
 
     if (needsBackupReminder && !isMnemonicBackedUp && isNewWallet !== undefined) {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
 
-    storeIsNewWallet(false)
-  }, [dispatch, isMnemonicBackedUp, needsBackupReminder])
+    storeIsNewWallet(walletId, false)
+  }, [dispatch, isMnemonicBackedUp, needsBackupReminder, walletId])
 
   return (
     <DashboardScreenStyled
@@ -172,6 +174,7 @@ const HeaderLeft = () => {
 
   return (
     <HeaderButtonsContainer>
+      <WalletSwitcherButton />
       <CameraScanButton />
       {!isMnemonicBackedUp && (
         <Button

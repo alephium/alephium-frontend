@@ -13,6 +13,8 @@ export const newWalletInitialAddressGenerated = createAction<AddressBase>('walle
 
 export const walletUnlockedMobile = createAction<WalletMetadataMobile>('wallets/walletUnlockedMobile')
 
+export const walletSwitchedMobile = createAction<WalletMetadataMobile>('wallets/walletSwitchedMobile')
+
 export const appLaunchedWithLastUsedWallet = createAction<WalletMetadataMobile | DeprecatedWalletMetadataMobile>(
   'wallets/appLaunchedWithLastUsedWallet'
 )

@@ -22,16 +22,17 @@ interface NewWalletSuccessScreenProps
 const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const wasWalletMetadataRestored = useAppSelector((s) => s.wallet.metadataRestored)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const theme = useTheme()
   const { t } = useTranslation()
 
   useEffect(() => {
     try {
-      storeIsNewWallet(method === 'create')
+      storeIsNewWallet(walletId, method === 'create')
     } catch (e) {
       console.error(e)
     }
-  }, [method])
+  }, [method, walletId])
 
   return (
     <Screen safeAreaPadding {...props}>

@@ -1,4 +1,4 @@
-import { appReset, NetworkPreset } from '@alephium/shared'
+import { appReset, NetworkPreset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
@@ -22,7 +22,7 @@ const initialState = connectionsAdapter.getInitialState()
 
 const authorizedConnectionsSlice = createSlice({
   name: sliceName,
-  initialState: connectionsAdapter.setAll(initialState, loadAuthorizedConnections()),
+  initialState,
   reducers: {},
   extraReducers(builder) {
     builder.addCase(connectionAuthorized, (state, action) => {
@@ -46,6 +46,9 @@ const authorizedConnectionsSlice = createSlice({
       connectionsAdapter.removeAll(state)
     })
     builder.addCase(appReset, () => initialState)
+    builder.addMatcher(isAnyOf(walletUnlockedMobile, walletSwitchedMobile), (state, action) => {
+      connectionsAdapter.setAll(state, loadAuthorizedConnections(action.payload.id))
+    })
   }
 })
 
@@ -54,8 +57,12 @@ export const authorizedConnectionsListenerMiddleware = createListenerMiddleware(
 
 authorizedConnectionsListenerMiddleware.startListening({
   matcher: isAnyOf(connectionAuthorized, connectionRemoved, connectionsCleared, hostConnectionRemoved, appReset),
-  effect: async (_, { getState }) =>
-    persistAuthorizedConnections(selectAllAuthorizedConnections(getState() as RootState))
+  effect: async (_, { getState }) => {
+    const rootState = getState() as RootState
+    const walletId = rootState.wallet.id
+
+    persistAuthorizedConnections(walletId, selectAllAuthorizedConnections(rootState))
+  }
 })
 
 export default authorizedConnectionsSlice

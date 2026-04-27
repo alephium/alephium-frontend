@@ -65,7 +65,7 @@ import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessagin
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
+import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 const MaxRequestNumToKeep = 10
@@ -113,6 +113,7 @@ const core = new Core({
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const url = useURL()
   const wcDeepLink = useRef<string>('')
   const dispatch = useAppDispatch()
@@ -502,7 +503,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(activateAppLoading('Loading'))
               const unsignedBuiltTx = await throttledClient.txBuilder.buildTransferTx(
                 txParams,
-                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+                await getAddressAsymetricKey(walletId, txParams.signerAddress, 'public')
               )
               dispatch(deactivateAppLoading())
 
@@ -537,7 +538,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(activateAppLoading(t('Processing WalletConnect request')))
               const unsignedData = await throttledClient.txBuilder.buildDeployContractTx(
                 txParams,
-                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+                await getAddressAsymetricKey(walletId, txParams.signerAddress, 'public')
               )
 
               dispatch(
@@ -571,7 +572,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(activateAppLoading('Loading'))
               const unsignedBuiltTx = await throttledClient.txBuilder.buildExecuteScriptTx(
                 txParams,
-                await getAddressAsymetricKey(txParams.signerAddress, 'public')
+                await getAddressAsymetricKey(walletId, txParams.signerAddress, 'public')
               )
 
               dispatch(
@@ -788,7 +789,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       respondToWalletConnect,
       respondToWalletConnectWithError,
       t,
-      walletConnectClient
+      walletConnectClient,
+      walletId
     ]
   )
 

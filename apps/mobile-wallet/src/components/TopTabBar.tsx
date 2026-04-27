@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import Reanimated, {
   AnimatedRef,
@@ -32,10 +32,10 @@ const TopTabBar = ({ tabLabels, activeTab, onTabPress, tabBarRef, customContent 
 
   const position = useSharedValue(activeTab)
 
-  // Sync position with activeTab immediately when it changes
-  if (position.value !== activeTab) {
-    position.value = withSpring(activeTab, { damping: 20, stiffness: 200, mass: 0.5 })
-  }
+  // Sync position with activeTab when it changes
+  useEffect(() => {
+    position.set(withSpring(activeTab, { damping: 20, stiffness: 200, mass: 0.5 }))
+  }, [activeTab, position])
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]

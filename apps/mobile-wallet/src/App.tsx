@@ -11,7 +11,8 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, InteractionManager, Platform, View, ViewProps } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { ActivityIndicator, Alert, InteractionManager, Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
@@ -28,15 +29,15 @@ import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
 import { hasMigratedFromAsyncStorage, migrateFromAsyncStorage } from '~/persistent-storage/storage'
 import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
-import {
-  getStoredWalletMetadataWithoutThrowingError,
-  validateAndRepareStoredWalletData
-} from '~/persistent-storage/wallet'
+import { getStoredWalletMetadataWithoutThrowingError } from '~/persistent-storage/wallet'
+import { validateAndRepairStoredWalletData } from '~/persistent-storage/walletValidation'
 import { store } from '~/store/store'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
+import { showToast } from '~/utils/layout'
 
 // TODO: Delete after everyone has migrated to MMKV
 const App = () => {
@@ -139,19 +140,79 @@ const Routes = ({ initialRouteName }: { initialRouteName: keyof RootStackParamLi
 
 const useShowAppContentAfterValidatingStoredWalletData = () => {
   const [state, setState] = useState({ showAppContent: false, wasMetadataRestored: false })
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
-  const onUserConfirm = useCallback((userChoseYes: boolean) => {
-    setState({ showAppContent: true, wasMetadataRestored: userChoseYes })
-    store.dispatch(metadataRestored())
-  }, [])
+  const { data: validationResult } = useAsyncData(
+    useCallback(async () => {
+      await runMultiWalletMigrationIfNeeded()
 
-  const { data: validationStatus } = useAsyncData(
-    useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
+      return validateAndRepairStoredWalletData()
+    }, [])
   )
 
   useEffect(() => {
-    if (validationStatus === 'valid') setState({ showAppContent: true, wasMetadataRestored: false })
-  }, [validationStatus])
+    if (!validationResult) return
+
+    if (validationResult.status === 'valid') {
+      if (validationResult.warning) {
+        sendAnalytics({ type: 'error', message: validationResult.warning })
+      }
+      setState({ showAppContent: true, wasMetadataRestored: false })
+    } else if (validationResult.status === 'invalid') {
+      showToast({
+        text1: t('Could not unlock app'),
+        text2: t(
+          validationResult.error === 'Could not find mnemonic for existing wallet metadata'
+            ? 'Missing encrypted mnemonic'
+            : 'Wallet metadata not found'
+        ),
+        type: 'error',
+        autoHide: false
+      })
+      sendAnalytics({ type: 'error', message: validationResult.error })
+    } else if (validationResult.status === 'needs-restore') {
+      Alert.alert(
+        t('Restore data'),
+        t(
+          validationResult.appWasUninstalled
+            ? 'We noticed that you deleted the app, would you like to restore your last wallet?'
+            : "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe."
+        ),
+        [
+          {
+            text: t('No'),
+            onPress: () => setState({ showAppContent: true, wasMetadataRestored: false })
+          },
+          {
+            text: t('Yes'),
+            onPress: async () => {
+              const success = await validationResult.restoreWallet()
+
+              if (success) {
+                showToast({ text1: t('App data were reset'), type: 'success' })
+                sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
+              } else {
+                showToast({
+                  text1: t('Could not unlock app'),
+                  text2: t('Wallet metadata not found'),
+                  type: 'error',
+                  autoHide: false
+                })
+                sendAnalytics({
+                  type: 'error',
+                  message: 'Could not recreate missing wallet metadata for existing wallet'
+                })
+              }
+
+              setState({ showAppContent: true, wasMetadataRestored: success })
+              dispatch(metadataRestored())
+            }
+          }
+        ]
+      )
+    }
+  }, [dispatch, t, validationResult])
 
   return state
 }
