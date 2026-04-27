@@ -17,7 +17,7 @@ const StakingApr = () => {
 
   if (isLoading) return <AmountSkeleton height={25} />
 
-  return <StakingAprStyled>{data?.apr ? percentFormatter.format(Number(data.apr) / 100) : '0.00%'}</StakingAprStyled>
+  return <StakingAprStyled>{data?.apr ? percentFormatter.format(Number(data.apr) / 100) : '-'}</StakingAprStyled>
 }
 
 export default StakingApr
