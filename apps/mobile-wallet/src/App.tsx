@@ -2,12 +2,11 @@ import { appLaunchedWithLastUsedWallet } from '@alephium/shared'
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
-  queryClient,
   useAddressesDataPolling,
   useInitializeThrottledClient,
   usePersistQueryClientContext
 } from '@alephium/shared-react'
-import { useReactQueryDevTools } from '@dev-plugins/react-query'
+import { FloatingDevTools } from '@buoy-gg/core'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useState } from 'react'
@@ -89,8 +88,6 @@ const AppContent = () => {
     []
   )
 
-  useReactQueryDevTools(queryClient)
-
   return (
     <Provider store={store}>
       <PersistQueryClientContextProvider createPersister={createTanstackAsyncStoragePersister}>
@@ -103,6 +100,7 @@ const AppContent = () => {
             <ToastAnchor />
             <LoadingManager />
           </ThemeProvider>
+          {__DEV__ && <FloatingDevTools />}
         </Main>
       </PersistQueryClientContextProvider>
     </Provider>

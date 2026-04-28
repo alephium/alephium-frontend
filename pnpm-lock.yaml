@@ -394,7 +394,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
       react-icons:
         specifier: ^4.10.1
         version: 4.12.0(react@19.1.0)
@@ -519,9 +519,6 @@ importers:
       '@alphland/dapps':
         specifier: ^2.0.0
         version: 2.0.0
-      '@dev-plugins/react-query':
-        specifier: ^0.4.0
-        version: 0.4.0(@tanstack/react-query@5.81.2(react@19.1.0))(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@elysiajs/eden':
         specifier: 1.4.6
         version: 1.4.6(elysia@1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@21.3.2)(openapi-types@12.1.3)(typescript@5.9.3))
@@ -566,7 +563,7 @@ importers:
         version: 7.2.10(eorv3hxuhmjth2t26bsrzetoyy)
       '@reduxjs/toolkit':
         specifier: ^1.9.1
-        version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
+        version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1))(react@19.1.0)
       '@reown/walletkit':
         specifier: ^1.5.3
         version: 1.5.3(@react-native-async-storage/async-storage@2.2.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(typescript@5.9.3)(zod@3.25.76)
@@ -785,7 +782,7 @@ importers:
         version: 2.0.15(react@19.1.0)
       react-redux:
         specifier: ^9.2.0
-        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
+        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1)
       styled-components:
         specifier: ^6.1.19
         version: 6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -808,6 +805,12 @@ importers:
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.10
+      '@buoy-gg/core':
+        specifier: ^2.1.12
+        version: 2.1.12(2huxnk4nojk4o6xlarrrvg6x2y)
+      '@buoy-gg/react-query':
+        specifier: ^2.1.12
+        version: 2.1.12(ico3xv2bxmf35sogzagvfgq2oy)
       '@types/react':
         specifier: ^19.0.14
         version: 19.1.17
@@ -1959,6 +1962,59 @@ packages:
   '@bundled-es-modules/tough-cookie@0.1.6':
     resolution: {integrity: sha512-dvMHbL464C0zI+Yqxbz6kZ5TOEp7GLW+pry/RWndAR8MJQAXZ2rPmIs8tziTZjeIyhSNZgZbCePtfSbdWqStJw==}
 
+  '@buoy-gg/core@2.1.12':
+    resolution: {integrity: sha512-BDkVjTBp72JR9vMCxgBMxQ9jsD3YREvGflG3EBUToWgccIz3LqonPXQ+855g2m8ArIcc11F4PBgbP6pkAUiMvA==}
+    peerDependencies:
+      react: ^19.1.0
+      react-native: '*'
+
+  '@buoy-gg/floating-tools-core@2.1.12':
+    resolution: {integrity: sha512-rIvvzvcHO7LAHZ83xS365A30fJ3tqHiAOE3mfRB06shnBXUb1V5wQLxcK/nZDZwnULJQR2JOqzImS12liJXEWQ==}
+    peerDependencies:
+      react: ^19.1.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+
+  '@buoy-gg/floating-tools-react@2.1.12':
+    resolution: {integrity: sha512-XneNu64lsB6q4BAa+j1+vHgmNrTWtPcLx6DAUzlGI8vzKCR7YEyY8tMDDRrD7vQtnITvn2N2ELaNfYaPQUTr7w==}
+    peerDependencies:
+      react: ^19.1.0
+
+  '@buoy-gg/license@2.1.12':
+    resolution: {integrity: sha512-Fqb+l7/d6jujs1z8eyTpQGEmmYZNeOVXfLQvuRWg9jwgUUxHH2kMKa2wYSacgCfjmA7BCY63ZVzqe/Uo/THs1w==}
+    peerDependencies:
+      react: ^19.1.0
+      react-native: '*'
+
+  '@buoy-gg/react-query@2.1.12':
+    resolution: {integrity: sha512-mMD6otTmo42pwTcKGnJuWqaL0Aa0wd8HqEMo0TUIrsyotHJDNZbpZgjMsd3CrkWrljuCdVpxxEuI/U5G+EyjZg==}
+    peerDependencies:
+      '@tanstack/react-query': '>=5.0.0'
+      react: ^19.1.0
+      react-native: '*'
+
+  '@buoy-gg/shared-ui@2.1.12':
+    resolution: {integrity: sha512-pmDAxADCYhD4qk5azKdUXJqogBexqKHIlRXUvzgsUDPLmKxDRbh7CWBzgqnSHUzVRtHJPz7867f8LTa+MY3deg==}
+    peerDependencies:
+      '@buoy-gg/license': 2.1.12
+      '@react-native-clipboard/clipboard': '*'
+      expo-clipboard: '*'
+      expo-file-system: '*'
+      react: ^19.1.0
+      react-native: '*'
+      react-native-safe-area-context: '*'
+    peerDependenciesMeta:
+      '@react-native-clipboard/clipboard':
+        optional: true
+      expo-clipboard:
+        optional: true
+      expo-file-system:
+        optional: true
+      react-native-safe-area-context:
+        optional: true
+
   '@changesets/apply-release-plan@7.0.12':
     resolution: {integrity: sha512-EaET7As5CeuhTzvXTQCRZeBUcisoYPDDcXvgTE/2jmmypKp0RC7LxKj/yzqeh/1qFTZI7oDGFcL1PHRuQuketQ==}
 
@@ -2020,13 +2076,6 @@ packages:
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
-
-  '@dev-plugins/react-query@0.4.0':
-    resolution: {integrity: sha512-/8M2a7DlVTjcdhb4D/E+aHUCOqSS6s53y3fFrOoCyLPxhhhkMujS91pARH6XbF/GRr6p6RBNBJQpWasI6uj7GA==}
-    peerDependencies:
-      '@tanstack/react-query': '*'
-      expo: '>=53.0.5'
-      react: ^19.1.0
 
   '@develar/schema-utils@2.6.5':
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -5813,9 +5862,6 @@ packages:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
 
-  decimal.js@10.4.3:
-    resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
-
   decimal.js@10.6.0:
     resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
 
@@ -6995,10 +7041,6 @@ packages:
   foreground-child@3.3.1:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
-
-  form-data@4.0.4:
-    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
-    engines: {node: '>= 6'}
 
   form-data@4.0.5:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
@@ -10955,10 +10997,6 @@ packages:
     resolution: {integrity: sha512-dRXchy+C0IgK8WPC6xvCHFRIWYUbqqdEIKPaKo/AcTUNzwLTK6AH7RjdLWsEZcAN/TBdtfUw3PYEgPr5VPr6ww==}
     engines: {node: '>=14.16'}
 
-  tough-cookie@4.1.3:
-    resolution: {integrity: sha512-aX/y5pVRkfRnfmuX+OdbSdXvPe6ieKX/G2s7e98f4poJHnqH3281gDPm/metm6E/WRamfx7WC4HUqkWHfQHprw==}
-    engines: {node: '>=6'}
-
   tough-cookie@4.1.4:
     resolution: {integrity: sha512-Loo5UUvLD9ScZ6jh8beX1T6sO1w2/MpCRpEP7V280GKMVUQ0Jzar2U3UJPsrdbziLEMMhu3Ujnq//rhiFuIeag==}
     engines: {node: '>=6'}
@@ -11855,18 +11893,6 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
-  ws@8.17.1:
-    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
     peerDependenciesMeta:
       bufferutil:
         optional: true
@@ -13209,6 +13235,63 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
+  '@buoy-gg/core@2.1.12(2huxnk4nojk4o6xlarrrvg6x2y)':
+    dependencies:
+      '@buoy-gg/floating-tools-core': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@buoy-gg/floating-tools-react': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@buoy-gg/license': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@buoy-gg/shared-ui': 2.1.12(ixtca2jhgkddkrrueumjf4vpgq)
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)
+    transitivePeerDependencies:
+      - '@react-native-clipboard/clipboard'
+      - expo-clipboard
+      - expo-file-system
+      - react-native-safe-area-context
+
+  '@buoy-gg/floating-tools-core@2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+    optionalDependencies:
+      react-native: 0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)
+
+  '@buoy-gg/floating-tools-react@2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@buoy-gg/floating-tools-core': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+    transitivePeerDependencies:
+      - react-native
+
+  '@buoy-gg/license@2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)
+
+  '@buoy-gg/react-query@2.1.12(ico3xv2bxmf35sogzagvfgq2oy)':
+    dependencies:
+      '@buoy-gg/floating-tools-core': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@buoy-gg/shared-ui': 2.1.12(ixtca2jhgkddkrrueumjf4vpgq)
+      '@tanstack/react-query': 5.81.2(react@19.1.0)
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)
+    transitivePeerDependencies:
+      - '@buoy-gg/license'
+      - '@react-native-clipboard/clipboard'
+      - expo-clipboard
+      - expo-file-system
+      - react-native-safe-area-context
+
+  '@buoy-gg/shared-ui@2.1.12(ixtca2jhgkddkrrueumjf4vpgq)':
+    dependencies:
+      '@buoy-gg/floating-tools-core': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@buoy-gg/license': 2.1.12(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)
+    optionalDependencies:
+      expo-clipboard: 8.0.8(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      expo-file-system: 19.0.21(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))
+      react-native-safe-area-context: 5.6.2(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+
   '@changesets/apply-release-plan@7.0.12':
     dependencies:
       '@changesets/config': 3.1.1
@@ -13364,13 +13447,6 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
-
-  '@dev-plugins/react-query@0.4.0(@tanstack/react-query@5.81.2(react@19.1.0))(expo@54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@tanstack/react-query': 5.81.2(react@19.1.0)
-      expo: 54.0.33(@babel/core@7.26.10)(graphql@16.10.0)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.26.10)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      flatted: 3.4.2
-      react: 19.1.0
 
   '@develar/schema-utils@2.6.5':
     dependencies:
@@ -15220,16 +15296,6 @@ snapshots:
     optionalDependencies:
       react: 19.1.0
       react-redux: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1)
-
-  '@reduxjs/toolkit@1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1))(react@19.1.0)':
-    dependencies:
-      immer: 9.0.21
-      redux: 4.2.1
-      redux-thunk: 2.4.2(redux@4.2.1)
-      reselect: 4.1.8
-    optionalDependencies:
-      react: 19.1.0
-      react-redux: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
 
   '@remix-run/router@1.23.2': {}
 
@@ -17496,7 +17562,7 @@ snapshots:
 
   acorn-globals@7.0.1:
     dependencies:
-      acorn: 8.11.2
+      acorn: 8.16.0
       acorn-walk: 8.3.1
 
   acorn-import-phases@1.0.4(acorn@8.16.0):
@@ -19039,8 +19105,6 @@ snapshots:
   decamelize@1.2.0:
     optional: true
 
-  decimal.js@10.4.3: {}
-
   decimal.js@10.6.0: {}
 
   decode-uri-component@0.2.2: {}
@@ -20576,14 +20640,6 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  form-data@4.0.4:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
-      mime-types: 2.1.35
-
   form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
@@ -21930,14 +21986,14 @@ snapshots:
   jsdom@21.1.2:
     dependencies:
       abab: 2.0.6
-      acorn: 8.11.2
+      acorn: 8.16.0
       acorn-globals: 7.0.1
       cssstyle: 3.0.0
       data-urls: 4.0.0
-      decimal.js: 10.4.3
+      decimal.js: 10.6.0
       domexception: 4.0.0
       escodegen: 2.1.0
-      form-data: 4.0.4
+      form-data: 4.0.5
       html-encoding-sniffer: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
@@ -21947,13 +22003,13 @@ snapshots:
       rrweb-cssom: 0.6.0
       saxes: 6.0.0
       symbol-tree: 3.2.4
-      tough-cookie: 4.1.3
+      tough-cookie: 4.1.4
       w3c-xmlserializer: 4.0.0
       webidl-conversions: 7.0.0
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 12.0.1
-      ws: 8.17.1
+      ws: 8.19.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -25225,13 +25281,6 @@ snapshots:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
 
-  tough-cookie@4.1.3:
-    dependencies:
-      psl: 1.9.0
-      punycode: 2.3.1
-      universalify: 0.2.0
-      url-parse: 1.5.10
-
   tough-cookie@4.1.4:
     dependencies:
       psl: 1.9.0
@@ -26346,8 +26395,6 @@ snapshots:
       async-limiter: 1.0.1
 
   ws@7.5.10: {}
-
-  ws@8.17.1: {}
 
   ws@8.18.2: {}
 
