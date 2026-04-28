@@ -11,7 +11,6 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
-import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import {
   UnstakeRequest,
   unstakeVaultRequestsQueryKeyRoot
@@ -19,6 +18,7 @@ import {
 import { vaultActionCompleted } from '~/features/staking/stakingSlice'
 import { isClaimable } from '~/features/staking/stakingUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
