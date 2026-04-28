@@ -137,7 +137,6 @@
     "vite-plugin-svgr": "^5.0.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^4.0.0",
-    "wait-on": "^7.0.1",
     "zxcvbn": "^4.4.2"
   },
   "build": {
