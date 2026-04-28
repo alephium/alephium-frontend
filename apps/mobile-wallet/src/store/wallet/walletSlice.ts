@@ -54,10 +54,11 @@ const walletSlice = createSlice({
     builder.addMatcher(isAnyOf(appReset, activeWalletDeleted), resetState)
     builder.addMatcher(
       isAnyOf(walletUnlockedMobile, newWalletGenerated, newWalletImportedWithMetadata, appLaunchedWithLastUsedWallet),
-      (state, { payload: { name, id, isMnemonicBackedUp } }) => ({
+      (state, { payload: { name, id, isMnemonicBackedUp, type } }) => ({
         ...state,
         id,
         name,
+        type: type ?? 'seed',
         isMnemonicBackedUp
       })
     )

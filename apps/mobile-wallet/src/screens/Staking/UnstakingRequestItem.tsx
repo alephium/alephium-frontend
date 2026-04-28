@@ -9,6 +9,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
 import {
   UnstakeRequest,
@@ -17,6 +18,7 @@ import {
 import { vaultActionCompleted } from '~/features/staking/stakingSlice'
 import { isClaimable } from '~/features/staking/stakingUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
@@ -29,6 +31,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { claimUnstaked, cancelUnstake } = useAlphStaking()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
 
@@ -74,16 +78,24 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
     await submitClaim()
   }
 
-  const submitClaim = async () => {
-    setIsClaiming(true)
-    try {
-      showToast({ type: 'info', text1: t('Claiming ALPH...') })
-      await claimUnstaked(request.vaultIndex, request.claimableAmount)
-    } catch (error) {
-      showExceptionToast(error, t('Claim'))
-    } finally {
-      setIsClaiming(false)
-    }
+  const submitClaim = () => {
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: () =>
+        triggerFundPasswordAuthGuard({
+          successCallback: async () => {
+            setIsClaiming(true)
+            try {
+              showToast({ type: 'info', text1: t('Claiming ALPH...') })
+              await claimUnstaked(request.vaultIndex, request.claimableAmount)
+            } catch (error) {
+              showExceptionToast(error, t('Claim'))
+            } finally {
+              setIsClaiming(false)
+            }
+          }
+        })
+    })
   }
 
   const handleCancel = () => {
@@ -92,16 +104,24 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
       {
         text: t('Yes, cancel'),
         style: 'destructive',
-        onPress: async () => {
-          setIsCancelling(true)
-          try {
-            showToast({ type: 'info', text1: t('Cancelling unstaking request...') })
-            await cancelUnstake(request.vaultIndex)
-          } catch (error) {
-            showExceptionToast(error, t('Cancel unstaking'))
-          } finally {
-            setIsCancelling(false)
-          }
+        onPress: () => {
+          triggerBiometricsAuthGuard({
+            settingsToCheck: 'transactions',
+            successCallback: () =>
+              triggerFundPasswordAuthGuard({
+                successCallback: async () => {
+                  setIsCancelling(true)
+                  try {
+                    showToast({ type: 'info', text1: t('Cancelling unstaking request...') })
+                    await cancelUnstake(request.vaultIndex)
+                  } catch (error) {
+                    showExceptionToast(error, t('Cancel unstaking'))
+                  } finally {
+                    setIsCancelling(false)
+                  }
+                }
+              })
+          })
         }
       }
     ])

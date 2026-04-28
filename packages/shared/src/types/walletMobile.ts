@@ -22,6 +22,7 @@ export type WalletMetadataMobile = {
 export type DeprecatedWalletMetadataMobile = {
   id: string
   name: string
+  type?: WalletType
   isMnemonicBackedUp: boolean
   addresses: AddressStoredMetadataWithoutHash[]
   contacts: Contact[]

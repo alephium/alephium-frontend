@@ -67,6 +67,11 @@ const WalletSwitchModalContent = () => {
     navigation.navigate('LandingScreen', { isAddingWallet: true })
   }, [dismissModal, navigation])
 
+  const handleWatchAddress = useCallback(() => {
+    dismissModal()
+    navigation.navigate('WatchOnlyAddressScreen')
+  }, [dismissModal, navigation])
+
   return (
     <>
       {walletList.map((wallet) => (
@@ -78,6 +83,12 @@ const WalletSwitchModalContent = () => {
         />
       ))}
       <Button title={t('Add wallet')} onPress={handleAddWallet} iconProps={{ name: 'add-outline' }} type="secondary" />
+      <Button
+        title={t('Watch address')}
+        onPress={handleWatchAddress}
+        iconProps={{ name: 'eye-outline' }}
+        type="secondary"
+      />
     </>
   )
 }
@@ -97,7 +108,7 @@ const WalletListItem = ({ wallet, isActive, onPress }: WalletListItemProps) => {
         <WalletName semiBold color={isActive ? theme.global.accent : undefined}>
           {wallet.name}
         </WalletName>
-        {wallet.type === 'watch-only' && <WalletTypeBadge color={theme.font.tertiary}>view-only</WalletTypeBadge>}
+        {wallet.type === 'watch-only' && <WalletTypeBadge color={theme.font.tertiary}>watch-only</WalletTypeBadge>}
       </WalletInfo>
       {isActive && <ActiveIndicator color={theme.global.accent}>&#10003;</ActiveIndicator>}
     </WalletListItemStyled>

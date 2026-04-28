@@ -55,6 +55,7 @@ type RootStackParamList = {
   }
   HiddenTokensScreen: undefined
   AuthorizedConnectionsScreen: undefined
+  WatchOnlyAddressScreen: undefined
 }
 
 export default RootStackParamList

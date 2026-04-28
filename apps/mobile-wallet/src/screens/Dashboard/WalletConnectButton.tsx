@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { openModal } from '~/features/modals/modalActions'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import { cameraToggled } from '~/store/appSlice'
@@ -13,6 +14,9 @@ const WalletConnectButton = () => {
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { activeSessions } = useWalletConnectContext()
   const dispatch = useAppDispatch()
+  const isWatchOnly = useIsWalletWatchOnly()
+
+  if (isWatchOnly) return null
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const openWalletConnectErrorModal = () => dispatch(openModal({ name: 'WalletConnectErrorModal' }))

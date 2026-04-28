@@ -9,6 +9,7 @@ import { sentTransactionsAdapter } from '../../store/sentTransactions/sentTransa
 import { activeWalletDeleted, walletLocked, walletSwitchedMobile } from '../../store/wallets/walletActions'
 import { walletSwitchedDesktop, walletUnlockedDesktop } from '../../store/wallets/walletActionsDesktop'
 import { SentTransactionsState } from '../../types/transactions'
+import { networkPresetSwitched } from '../network'
 
 const initialState: SentTransactionsState = sentTransactionsAdapter.getInitialState()
 
@@ -27,7 +28,14 @@ const sentTransactionsSlice = createSlice({
       })
 
     builder.addMatcher(
-      isAnyOf(walletLocked, walletUnlockedDesktop, walletSwitchedDesktop, activeWalletDeleted, walletSwitchedMobile),
+      isAnyOf(
+        walletLocked,
+        walletUnlockedDesktop,
+        walletSwitchedDesktop,
+        activeWalletDeleted,
+        walletSwitchedMobile,
+        networkPresetSwitched
+      ),
       () => initialState
     )
   }

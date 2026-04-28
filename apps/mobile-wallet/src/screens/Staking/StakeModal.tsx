@@ -6,8 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
 
 import AppText from '~/components/AppText'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useAlphStaking from '~/features/staking/hooks/useAlphStaking'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import useFungibleTokenAmountInput from '~/hooks/useFungibleTokenAmountInput'
 import StakeModalReceivePreview from '~/screens/Staking/StakeModalReceivePreview'
 import { showExceptionToast, showToast } from '~/utils/layout'
@@ -24,6 +26,8 @@ const StakeModal = ({ addressHash }: StakeModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<TextInput>(null)
   const { stakeAlph } = useAlphStaking()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { data: alphBalances } = useFetchAddressBalancesAlph({ addressHash })
 
   const {
@@ -39,20 +43,28 @@ const StakeModal = ({ addressHash }: StakeModalProps) => {
     nativeInputRef: inputRef
   })
 
-  const handleStake = async () => {
+  const handleStake = () => {
     if (!amountInAttoAlph || !!error) return
 
-    setIsLoading(true)
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: () =>
+        triggerFundPasswordAuthGuard({
+          successCallback: async () => {
+            setIsLoading(true)
 
-    try {
-      showToast({ type: 'info', text1: t('Staking ALPH...') })
-      await stakeAlph(amountInAttoAlph)
-      dismissModal()
-    } catch (err) {
-      showExceptionToast(err, t('Stake ALPH'))
-    } finally {
-      setIsLoading(false)
-    }
+            try {
+              showToast({ type: 'info', text1: t('Staking ALPH...') })
+              await stakeAlph(amountInAttoAlph)
+              dismissModal()
+            } catch (err) {
+              showExceptionToast(err, t('Stake ALPH'))
+            } finally {
+              setIsLoading(false)
+            }
+          }
+        })
+    })
   }
 
   return (
