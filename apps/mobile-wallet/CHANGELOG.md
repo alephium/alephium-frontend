@@ -1,5 +1,17 @@
 # @alephium/mobile-wallet
 
+## 2.5.0
+
+### Minor Changes
+
+- c1669ca: Integrate Powfi staking
+- acc279a: Support watch-only wallets
+- d2c8ede: Add support for multiple wallets
+
+### Patch Changes
+
+- f78ad5d: Remove gyroscope and replace with breathing animation
+
 ## 2.4.8
 
 ### Patch Changes
