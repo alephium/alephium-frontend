@@ -11,7 +11,8 @@
       "extends": "baseConfig",
       "autoIncrement": true,
       "env": {
-        "EAS_NO_FROZEN_LOCKFILE": "0"
+        "EAS_NO_FROZEN_LOCKFILE": "0",
+        "EXPO_PUBLIC_POWFI_BACKEND_HOST": "https://api.zeta-48a84c4b.alephium.org"
       }
     },
     "internal": {
