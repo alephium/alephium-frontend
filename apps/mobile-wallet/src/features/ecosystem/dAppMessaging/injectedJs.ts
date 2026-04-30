@@ -24,7 +24,8 @@ ${windowMessagePolyfill}
 
 ${alephiumProvider.code}
 
-if (typeof AlephiumWalletProvider !== 'undefined') {
+if (typeof AlephiumWalletProvider !== 'undefined' && !window.__alephiumProviderAttached) {
+  window.__alephiumProviderAttached = true;
   AlephiumWalletProvider.attach();
 }
 
