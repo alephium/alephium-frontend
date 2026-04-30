@@ -11,7 +11,12 @@ interface NftGridModalProps {
 const NftGridModal = memo<NftGridModalProps>(({ nftsData }) => {
   const flashListProps = useNftsGridFlashListProps({ nfts: nftsData })
 
-  return <BottomModal2 flashListProps={flashListProps} />
+  return (
+    <BottomModal2
+      flashListProps={flashListProps}
+      bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: ['50%', '100%'] }}
+    />
+  )
 })
 
 export default NftGridModal

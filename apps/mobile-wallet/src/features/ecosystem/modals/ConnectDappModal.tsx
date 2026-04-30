@@ -42,6 +42,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
     <BottomModal2
       title={t('Connect to dApp')}
       contentVerticalGap={allAddressesStrInGroup.length > 1}
+      bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: ['50%', '100%'] }}
       flashListProps={{
         data: allAddressesStrInGroup,
         renderItem: ({ item: addressHash, index }) => (

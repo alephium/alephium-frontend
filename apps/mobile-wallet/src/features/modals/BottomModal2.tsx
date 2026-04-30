@@ -37,8 +37,6 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   const theme = useTheme()
   const BottomSheetScrollable = useBottomSheetScrollableCreator()
 
-  const isScrollableContent = isFlashList(props) || !props.notScrollable
-
   useEffect(() => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -67,8 +65,6 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       topInset={safeAreaInsets.top}
       name={modalContext.id}
       backgroundStyle={{ backgroundColor: theme.bg.back1 }}
-      enableDynamicSizing={!isScrollableContent}
-      {...(isScrollableContent ? { snapPoints: SNAP_POINTS } : {})}
       {...props.bottomSheetModalProps}
       onDismiss={modalContext.onDismiss}
     >
@@ -79,6 +75,16 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
       <ModalContextProvider {...modalContext}>
         {isFlashList(props) && props.flashListProps ? (
           <FlashList
+            // A layout regression in v5.1.5+ changed BottomSheetView from flex: 1 to position: 'absolute'. This causes
+            // React Native's Yoga layout engine to calculate the ScrollView's layout height equal to its content
+            // height. When layout height = content height, there's nothing to scroll.
+            // Multiple users confirmed that setting style={{ height: 0 }} on the scrollable forces Yoga to not expand
+            // the layout to content height, while dynamic sizing still works.
+            // Related issues:
+            // - https://github.com/gorhom/react-native-bottom-sheet/issues/2311
+            // - https://github.com/gorhom/react-native-bottom-sheet/issues/2539
+            // - https://github.com/gorhom/react-native-bottom-sheet/issues/2591
+            style={{ height: 0 }}
             contentContainerStyle={styles}
             {...props.flashListProps}
             renderScrollComponent={BottomSheetScrollable}
@@ -104,7 +110,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
           !isFlashList(props) &&
           BottomSheetComponent && (
             <BottomSheetComponent
-              style={props.notScrollable ? stylesWithGap : undefined}
+              style={props.notScrollable ? stylesWithGap : { height: 0 }} // See above why height: 0 is needed
               contentContainerStyle={props.notScrollable ? undefined : stylesWithGap}
               // stickyHeaderIndices={props.title ? [0] : undefined} // Could be combined with HeaderGradient
             >
@@ -125,8 +131,6 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
 }
 
 export default BottomModal2
-
-const SNAP_POINTS = ['50%', '100%']
 
 const isFlashList = <T,>(
   props: BottomModalWithChildrenProps | BottomModalFlashListProps<T>
