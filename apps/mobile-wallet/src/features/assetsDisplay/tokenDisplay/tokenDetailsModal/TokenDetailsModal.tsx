@@ -24,7 +24,7 @@ import {
   TokenDetailsModalProps
 } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
@@ -40,7 +40,7 @@ const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, 
   }
 
   return (
-    <BottomModal2 notScrollable title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
+    <BottomModal notScrollable title={<TokenDetailsModalHeader tokenId={tokenId} />} titleAlign="left">
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
@@ -50,7 +50,7 @@ const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, 
         </ActionButtons>
         <TokenDetailsModalDescription tokenId={tokenId} />
       </Content>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

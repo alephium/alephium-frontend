@@ -10,7 +10,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useWalletSwitch from '~/hooks/useWalletSwitch'
@@ -21,11 +21,11 @@ const WalletSwitchModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 title={t('Switch wallet')}>
+    <BottomModal title={t('Switch wallet')}>
       <ScreenSection verticalGap>
         <WalletSwitchModalContent />
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

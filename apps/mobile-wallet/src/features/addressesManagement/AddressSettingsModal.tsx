@@ -8,7 +8,7 @@ import Button from '~/components/buttons/Button'
 import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
@@ -57,7 +57,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Address settings')}>
+    <BottomModal notScrollable title={t('Address settings')}>
       <AddressForm
         initialValues={initialSettings}
         onValuesChange={setSettings}
@@ -81,7 +81,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
       <BottomButtons fullWidth backgroundColor="back1">
         <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
       </BottomButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

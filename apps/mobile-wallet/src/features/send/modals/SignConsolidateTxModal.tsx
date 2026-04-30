@@ -12,7 +12,7 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 
 const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees, onSuccess }) => {
   const { t } = useTranslation()
@@ -29,7 +29,7 @@ const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees
   })
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
@@ -52,7 +52,7 @@ const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees
           <Button title={t('Consolidate')} onPress={handleApprovePress} variant="highlight" flex short />
         </ButtonsRow>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

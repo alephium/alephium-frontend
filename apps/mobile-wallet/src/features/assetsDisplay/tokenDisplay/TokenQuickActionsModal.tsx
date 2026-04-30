@@ -12,7 +12,7 @@ import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
@@ -40,7 +40,7 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) =
   }
 
   return (
-    <BottomModal2
+    <BottomModal
       notScrollable
       title={
         <Title>
@@ -67,7 +67,7 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) =
           iconProps={{ name: 'ellipsis-horizontal' }}
         />
       </QuickActionButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

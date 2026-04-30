@@ -6,7 +6,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
@@ -19,11 +19,11 @@ const EditWalletNameModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable title={t('Wallet name')}>
+    <BottomModal notScrollable title={t('Wallet name')}>
       <ScreenSection verticalGap>
         <EditWalletNameModalContent />
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

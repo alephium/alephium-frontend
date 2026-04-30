@@ -8,7 +8,7 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
@@ -17,7 +17,7 @@ const WalletConnectPasteUrlModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2
+    <BottomModal
       title={t('Connect to dApp')}
       notScrollable
       contentVerticalGap
@@ -29,7 +29,7 @@ const WalletConnectPasteUrlModal = memo(() => {
         </AppText>
       </ScreenSection>
       <WalletConnectPasteUrlModalContent />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

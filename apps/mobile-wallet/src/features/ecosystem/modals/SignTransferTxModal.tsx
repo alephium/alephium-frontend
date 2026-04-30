@@ -13,7 +13,7 @@ import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAss
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 
 const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
   const { handleApprovePress, handleRejectPress } = useSignModal({
@@ -35,13 +35,13 @@ const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onS
   const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal contentVerticalGap>
       <ScreenSection>
         <SignTransferTxModalContent txParams={txParams} fees={fees} />
       </ScreenSection>
 
       <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

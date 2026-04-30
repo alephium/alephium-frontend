@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import ReceiveQRCodeSection from '~/features/receive/ReceiveQRCodeSection'
 
 interface ReceiveQRCodeModalProps {
@@ -12,9 +12,9 @@ const ReceiveQRCodeModal = memo<ReceiveQRCodeModalProps>(({ addressHash }) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable title={t('Receive')}>
+    <BottomModal notScrollable title={t('Receive')}>
       <ReceiveQRCodeSection addressHash={addressHash} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

@@ -5,7 +5,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -22,7 +22,7 @@ const AutoLockOptionsModal = memo(() => {
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Auto-lock')}>
+    <BottomModal notScrollable title={t('Auto-lock')}>
       <ScreenSection>
         <Surface>
           {autoLockSecondsOptions.map((autoLockOption, index) => (
@@ -36,7 +36,7 @@ const AutoLockOptionsModal = memo(() => {
           ))}
         </Surface>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

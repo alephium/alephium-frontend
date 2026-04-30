@@ -1,7 +1,7 @@
 import { Contact } from '@alephium/shared'
 import { memo } from 'react'
 
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 
@@ -22,9 +22,9 @@ const SelectContactModal = memo<SelectContactModalProps>(({ onContactPress }) =>
   }
 
   return (
-    <BottomModal2>
+    <BottomModal>
       <ContactListScreenBase isInModal onContactPress={handleContactPress} onNewContactPress={handleNewContactPress} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

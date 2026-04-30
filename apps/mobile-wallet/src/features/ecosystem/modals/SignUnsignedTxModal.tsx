@@ -16,7 +16,7 @@ import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCo
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import {
   TransactionDestinationAddressesList,
   TransactionOriginAddressesList
@@ -40,7 +40,7 @@ const SignUnsignedTxModal = memo(
     })
 
     return (
-      <BottomModal2 contentVerticalGap>
+      <BottomModal contentVerticalGap>
         <ScreenSection>
           <Surface>
             <Row title={t('Signing with')} titleColor="secondary">
@@ -59,7 +59,7 @@ const SignUnsignedTxModal = memo(
           onApprove={handleApprovePress}
           approveButtonTitle={!submitAfterSign ? t('Sign') : undefined}
         />
-      </BottomModal2>
+      </BottomModal>
     )
   }
 )

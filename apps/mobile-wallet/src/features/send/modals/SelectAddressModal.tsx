@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
 interface SelectAddressModalProps {
@@ -22,7 +22,7 @@ const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress }) =>
   }
 
   return (
-    <BottomModal2
+    <BottomModal
       title={t('Addresses')}
       flashListProps={{
         data,

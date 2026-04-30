@@ -9,7 +9,7 @@ import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import useToggleFavoriteDApp from '~/features/ecosystem/favoriteDApps/useToggleFavoriteDApp'
 import VisitDAppButton from '~/features/ecosystem/VisitDAppButton'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
@@ -30,7 +30,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) =>
   }
 
   return (
-    <BottomModal2 notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+    <BottomModal notScrollable title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
       <QuickActionButtons>
         <QuickActionButton
           title={t('Show details')}
@@ -40,7 +40,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) =>
         <VisitDAppButton dAppName={dAppName} onVisitDappButtonPress={dismissModal} buttonType="quickAction" />
         <AddToFavoritesButton dAppName={dAppName} />
       </QuickActionButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

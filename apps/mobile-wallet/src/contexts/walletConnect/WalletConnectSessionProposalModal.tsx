@@ -24,7 +24,7 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -158,7 +158,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
     }
 
     return (
-      <BottomModal2 title={t('Connect to dApp')} contentVerticalGap>
+      <BottomModal title={t('Connect to dApp')} contentVerticalGap>
         <ConnectDappModalHeader
           dAppName={metadata?.description}
           dAppUrl={metadata?.url}
@@ -228,7 +228,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
             </BottomButtons>
           </>
         ) : null}
-      </BottomModal2>
+      </BottomModal>
     )
   }
 )

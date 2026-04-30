@@ -8,7 +8,7 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
@@ -19,7 +19,7 @@ const WalletConnectErrorModal = memo(() => {
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   return (
-    <BottomModal2 notScrollable contentVerticalGap>
+    <BottomModal notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
       </ScreenSection>
@@ -44,7 +44,7 @@ const WalletConnectErrorModal = memo(() => {
           />
         </ButtonsRow>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch } from '~/hooks/redux'
@@ -42,7 +42,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   }
 
   return (
-    <BottomModal2 title={t('Switch network')} contentVerticalGap notScrollable>
+    <BottomModal title={t('Switch network')} contentVerticalGap notScrollable>
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
       <NetworkSwitchModalContent
@@ -51,7 +51,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
         onSwitchNetworkPress={handleSwitchToRequiredNetwork}
         onDeclinePress={handleDeclinePress}
       />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

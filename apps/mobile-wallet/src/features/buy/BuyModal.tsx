@@ -10,7 +10,7 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import useOnramperUrl from '~/features/buy/useOnramperUrl'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
@@ -48,7 +48,7 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Disclaimer')} contentVerticalGap>
+    <BottomModal notScrollable title={t('Disclaimer')} contentVerticalGap>
       <AppText>
         <Trans
           t={t}
@@ -71,7 +71,7 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
           loading={!providerUrl}
         />
       </BottomButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 
