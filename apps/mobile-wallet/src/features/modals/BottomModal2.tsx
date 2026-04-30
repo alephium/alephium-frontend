@@ -20,6 +20,8 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
 
+export const DEFAULT_SNAP_POINTS = ['50%', '100%']
+
 interface BottomModalWithChildrenProps extends BottomModalBaseProps {
   notScrollable?: boolean
   bottomSheetModalProps?: Omit<BottomSheetModalProps, 'children'>
