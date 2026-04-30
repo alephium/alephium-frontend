@@ -7,28 +7,37 @@ export function sendMessage(msg: MessageType): void {
 export function waitForMessage<K extends MessageType['type'], T extends { type: K } & MessageType>(
   type: K,
   timeout: number,
-  predicate: (x: T) => boolean = () => true
+  predicate: (x: T) => boolean = () => true,
+  signal?: AbortSignal
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return new Promise((resolve, reject) => {
     const pid = setTimeout(() => {
-      window.removeEventListener('message', handler)
+      cleanup()
       reject(new Error('Timeout'))
     }, timeout)
 
+    const cleanup = () => {
+      clearTimeout(pid)
+      window.removeEventListener('message', onMessage)
+      signal?.removeEventListener('abort', onAbort)
+    }
+
     // React Native WebView sends messages as strings so we can't use WindowMessageType
-    const handler = (event: MessageEvent<string>) => {
+    const onMessage = (event: MessageEvent<string>) => {
       const data = JSON.parse(event.data)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (data.type === type && predicate(data as any)) {
-        clearTimeout(pid)
-        window.removeEventListener('message', handler)
+        cleanup()
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return resolve('data' in data ? (data.data as any) : undefined)
       }
     }
 
-    window.addEventListener('message', handler)
+    const onAbort = () => cleanup()
+
+    signal?.addEventListener('abort', onAbort, { once: true })
+    window.addEventListener('message', onMessage)
   })
 }
 
