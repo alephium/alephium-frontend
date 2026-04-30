@@ -21,7 +21,7 @@ const WalletSwitchModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable title={t('Switch wallet')}>
+    <BottomModal2 title={t('Switch wallet')}>
       <ScreenSection verticalGap>
         <WalletSwitchModalContent />
       </ScreenSection>

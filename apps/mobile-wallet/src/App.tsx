@@ -7,11 +7,10 @@ import {
   usePersistQueryClientContext
 } from '@alephium/shared-react'
 import { FloatingDevTools } from '@buoy-gg/core'
-import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, Alert, InteractionManager, Platform, View, ViewProps } from 'react-native'
+import { ActivityIndicator, Alert, InteractionManager, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
@@ -79,11 +78,6 @@ const AppContent = () => {
       store.subscribe(() => {
         const currentTheme = themes[store.getState().settings.theme]
         setTheme(currentTheme)
-        if (Platform.OS === 'android') {
-          NavigationBar.setBackgroundColorAsync(
-            currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
-          )
-        }
       }),
     []
   )

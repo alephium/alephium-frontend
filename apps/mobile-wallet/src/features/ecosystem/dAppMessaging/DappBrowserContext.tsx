@@ -128,61 +128,66 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     async (data: ConnectDappMessageData, messageId: string) => {
       if (isConnectToDappModalOpen) return
 
-      const authorizedConnection = getAuthorizedConnection(walletId, data)
+      try {
+        const authorizedConnection = getAuthorizedConnection(walletId, data)
 
-      const isWrongNetwork =
-        data.networkId !== undefined &&
-        currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
+        const isWrongNetwork =
+          data.networkId !== undefined &&
+          currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
 
-      if (isWrongNetwork) {
-        dispatch(
-          openModal({
-            name: 'NetworkSwitchModal',
-            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
-            props: { ...data, dAppName }
-          })
-        )
+        if (isWrongNetwork) {
+          dispatch(
+            openModal({
+              name: 'NetworkSwitchModal',
+              onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
+              props: { ...data, dAppName }
+            })
+          )
 
-        return
-      }
-
-      if (authorizedConnection) {
-        const address = addresses.find((a) => a.hash === authorizedConnection.address)
-        if (!address) {
-          dispatch(connectionRemoved(authorizedConnection))
-        } else {
-          const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
-          handleApproveDappConnection(connectedAddressPayload, messageId)
           return
         }
-      }
 
-      const addressesInGroup = getAddressesInGroup(addresses, data.group)
-
-      // Select address automatically if there is only one address in the group
-      if (addressesInGroup.length === 1) {
-        const connectedAddressPayload = await getConnectedAddressPayload(
-          network,
-          addressesInGroup[0],
-          data.host,
-          data.icon
-        )
-        handleApproveDappConnection(connectedAddressPayload, messageId)
-
-        return
-      }
-
-      dispatch(
-        openModal({
-          name: 'ConnectDappModal',
-          onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
-          props: {
-            ...data,
-            dAppName,
-            onApprove: (data) => handleApproveDappConnection(data, messageId)
+        if (authorizedConnection) {
+          const address = addresses.find((a) => a.hash === authorizedConnection.address)
+          if (!address) {
+            dispatch(connectionRemoved(authorizedConnection))
+          } else {
+            const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
+            handleApproveDappConnection(connectedAddressPayload, messageId)
+            return
           }
-        })
-      )
+        }
+
+        const addressesInGroup = getAddressesInGroup(addresses, data.group)
+
+        // Select address automatically if there is only one address in the group
+        if (addressesInGroup.length === 1) {
+          const connectedAddressPayload = await getConnectedAddressPayload(
+            network,
+            addressesInGroup[0],
+            data.host,
+            data.icon
+          )
+          handleApproveDappConnection(connectedAddressPayload, messageId)
+
+          return
+        }
+
+        dispatch(
+          openModal({
+            name: 'ConnectDappModal',
+            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
+            props: {
+              ...data,
+              dAppName,
+              onApprove: (data) => handleApproveDappConnection(data, messageId)
+            }
+          })
+        )
+      } catch (error) {
+        console.error('Error handling ALPH_CONNECT_DAPP:', error)
+        handleRejectDappConnection(data.host, messageId)
+      }
     },
     [
       addresses,
@@ -436,33 +441,39 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_RES', data: { actionHash } }, messageId)
 
       dispatch(activateAppLoading('Loading'))
-      const decodedTx = await queryClient.fetchQuery(
-        nodeTransactionDecodeUnsignedTxQuery({ unsignedTx, networkId: currentlyOnlineNetworkId })
-      )
-      dispatch(deactivateAppLoading())
 
-      dispatch(
-        openModal({
-          name: 'SignUnsignedTxModal',
-          onUserDismiss: () =>
-            replyToDapp(
-              { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
-              messageId
-            ),
-          props: {
-            dAppUrl: host ?? dAppUrl,
-            dAppIcon: icon,
-            txParams: data,
-            unsignedData: decodedTx,
-            submitAfterSign: false,
-            origin: 'in-app-browser',
-            onError: (error) =>
-              replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
-            onSuccess: (result) =>
-              replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS', data: { result, actionHash } }, messageId)
-          }
-        })
-      )
+      try {
+        const decodedTx = await queryClient.fetchQuery(
+          nodeTransactionDecodeUnsignedTxQuery({ unsignedTx, networkId: currentlyOnlineNetworkId })
+        )
+
+        dispatch(
+          openModal({
+            name: 'SignUnsignedTxModal',
+            onUserDismiss: () =>
+              replyToDapp(
+                { type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: 'User rejected' } },
+                messageId
+              ),
+            props: {
+              dAppUrl: host ?? dAppUrl,
+              dAppIcon: icon,
+              txParams: data,
+              unsignedData: decodedTx,
+              submitAfterSign: false,
+              origin: 'in-app-browser',
+              onError: (error) =>
+                replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
+              onSuccess: (result) =>
+                replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS', data: { result, actionHash } }, messageId)
+            }
+          })
+        )
+      } catch (error) {
+        replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error: `${error}` } }, messageId)
+      } finally {
+        dispatch(deactivateAppLoading())
+      }
     },
     [dAppUrl, dispatch, replyToDapp, currentlyOnlineNetworkId]
   )

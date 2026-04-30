@@ -8,7 +8,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
 import BottomModal2 from '~/features/modals/BottomModal2'
 import { useModalContext } from '~/features/modals/ModalContext'
-import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
 export interface FundPasswordModalProps {
@@ -16,14 +15,10 @@ export interface FundPasswordModalProps {
 }
 
 const FundPasswordModal = memo<FundPasswordModalProps>((props) => {
-  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
-  const fundPassword = useFundPassword()
   const { t } = useTranslation()
 
-  if (!isUsingFundPassword || !fundPassword) return null
-
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal2 contentVerticalGap notScrollable>
       <ScreenSection>
         <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>
@@ -40,7 +35,6 @@ const FundPasswordModal = memo<FundPasswordModalProps>((props) => {
 export default FundPasswordModal
 
 const FundPasswordModalContent = ({ successCallback }: FundPasswordModalProps) => {
-  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const fundPassword = useFundPassword()
   const { t } = useTranslation()
   const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword({
@@ -50,8 +44,6 @@ const FundPasswordModalContent = ({ successCallback }: FundPasswordModalProps) =
   const { dismissModal } = useModalContext()
 
   const [displayedError, setDisplayedError] = useState<string | undefined>()
-
-  if (!isUsingFundPassword || !fundPassword) return null
 
   const handleFundPasswordChange = (text: string) => {
     handlePasswordChange(text)

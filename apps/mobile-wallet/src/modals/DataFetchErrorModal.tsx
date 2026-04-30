@@ -14,7 +14,7 @@ const DataFetchErrorModal = memo<DataFetchErrorModalProps>(({ message }) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 title={t('Temporarily unavailable data')} contentVerticalGap>
+    <BottomModal2 title={t('Temporarily unavailable data')} contentVerticalGap notScrollable>
       <AppText>{t('We are working on addressing this issue. Please try again later.')}</AppText>
 
       {message && (

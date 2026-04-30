@@ -1,14 +1,21 @@
 import alephiumProvider from '@alephium/wallet-dapp-provider/lib/provider.umd.json'
 import { Platform } from 'react-native'
 
+// This polyfill exists because of a platform difference in React Native WebView.
+// When the native side sends a message to the WebView via webViewRef.current.postMessage(data):
+// - iOS: The message event fires on window
+// - Android: The message event fires on document instead
+// The wallet-dapp-provider's waitForMessage() listens on window.addEventListener('message', ...).
+// Without the polyfill, it would never receive native responses on Android.
 const windowMessagePolyfill =
   Platform.OS === 'android'
     ? `
-if (window.originalPostMessage) return;
-window.originalPostMessage = window.postMessage;
-document.addEventListener('message', function(event) {
-  window.dispatchEvent(new MessageEvent('message', { data: event.data }));
-});
+if (!window.originalPostMessage) {
+  window.originalPostMessage = window.postMessage;
+  document.addEventListener('message', function(event) {
+    window.dispatchEvent(new MessageEvent('message', { data: event.data }));
+  });
+}
 `
     : ''
 
@@ -17,7 +24,8 @@ ${windowMessagePolyfill}
 
 ${alephiumProvider.code}
 
-if (typeof AlephiumWalletProvider !== 'undefined') {
+if (typeof AlephiumWalletProvider !== 'undefined' && !window.__alephiumProviderAttached) {
+  window.__alephiumProviderAttached = true;
   AlephiumWalletProvider.attach();
 }
 

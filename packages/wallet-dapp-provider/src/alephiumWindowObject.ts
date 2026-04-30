@@ -78,10 +78,14 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   unsafeEnable = async (options?: EnableOptions) => this.#unsafeEnable(options)
 
   #unsafeEnable = async (options?: EnableOptions) => {
+    const controller = new AbortController()
+
     const walletAccountP = Promise.race([
-      waitForMessage('ALPH_CONNECT_DAPP_RES', USER_ACTION_TIMEOUT),
-      waitForMessage('ALPH_REJECT_PREAUTHORIZATION', USER_ACTION_TIMEOUT).then(() => 'USER_ABORTED' as const)
-    ])
+      waitForMessage('ALPH_CONNECT_DAPP_RES', USER_ACTION_TIMEOUT, undefined, controller.signal),
+      waitForMessage('ALPH_REJECT_PREAUTHORIZATION', USER_ACTION_TIMEOUT, undefined, controller.signal).then(
+        () => 'USER_ABORTED' as const
+      )
+    ]).finally(() => controller.abort())
 
     sendMessage({
       type: 'ALPH_CONNECT_DAPP',
@@ -187,9 +191,21 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', USER_ACTION_TIMEOUT)
 
+    const controller = new AbortController()
+
     const txMessage = await Promise.race([
-      waitForMessage('ALPH_TRANSACTION_SUBMITTED', USER_ACTION_TIMEOUT_LONGER, (x) => x.data.actionHash === actionHash),
-      waitForMessage('ALPH_TRANSACTION_FAILED', USER_ACTION_TIMEOUT, (x) => x.data.actionHash === actionHash)
+      waitForMessage(
+        'ALPH_TRANSACTION_SUBMITTED',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
+      waitForMessage(
+        'ALPH_TRANSACTION_FAILED',
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      )
         .then((res) => res)
         .catch(() => {
           const error = 'User action time out'
@@ -199,7 +215,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
           })
           return { error }
         })
-    ])
+    ]).finally(() => controller.abort())
 
     if ('error' in txMessage) {
       throw Error(txMessage.error)
@@ -225,9 +241,16 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     })
     const { actionHash } = await waitForMessage('ALPH_SIGN_UNSIGNED_TX_RES', USER_ACTION_TIMEOUT)
 
+    const controller = new AbortController()
+
     const result = await Promise.race([
-      waitForMessage('ALPH_SIGN_UNSIGNED_TX_SUCCESS', USER_ACTION_TIMEOUT_LONGER),
-      waitForMessage('ALPH_SIGN_UNSIGNED_TX_FAILURE', USER_ACTION_TIMEOUT, (x) => x.data.actionHash === actionHash)
+      waitForMessage('ALPH_SIGN_UNSIGNED_TX_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_UNSIGNED_TX_FAILURE',
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      )
         .then((res) => res)
         .catch(() => {
           const error = 'User action timed out'
@@ -237,7 +260,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
           })
           return { error }
         })
-    ])
+    ]).finally(() => controller.abort())
 
     if ('error' in result) {
       throw Error(result.error)
@@ -266,9 +289,16 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     })
     const { actionHash } = await waitForMessage('ALPH_SIGN_MESSAGE_RES', USER_ACTION_TIMEOUT)
 
-    const resultP = Promise.race([
-      waitForMessage('ALPH_SIGN_MESSAGE_SUCCESS', USER_ACTION_TIMEOUT_LONGER),
-      waitForMessage('ALPH_SIGN_MESSAGE_FAILURE', USER_ACTION_TIMEOUT, (x) => x.data.actionHash === actionHash)
+    const controller = new AbortController()
+
+    const result = await Promise.race([
+      waitForMessage('ALPH_SIGN_MESSAGE_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_MESSAGE_FAILURE',
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      )
         .then((res) => res)
         .catch(() => {
           const error = 'User action timed out'
@@ -278,9 +308,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
           })
           return { error }
         })
-    ])
-
-    const result = await resultP
+    ]).finally(() => controller.abort())
 
     if ('error' in result) {
       throw Error(result.error)
@@ -332,9 +360,21 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data: { txParams: [data], icon: getDappIcon() } })
     const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', USER_ACTION_TIMEOUT)
 
+    const controller = new AbortController()
+
     const result = await Promise.race([
-      waitForMessage('ALPH_TRANSACTION_SUBMITTED', USER_ACTION_TIMEOUT_LONGER, (x) => x.data.actionHash === actionHash),
-      waitForMessage('ALPH_TRANSACTION_FAILED', USER_ACTION_TIMEOUT, (x) => x.data.actionHash === actionHash)
+      waitForMessage(
+        'ALPH_TRANSACTION_SUBMITTED',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
+      waitForMessage(
+        'ALPH_TRANSACTION_FAILED',
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      )
         .then((res) => res)
         .catch(() => {
           const error = 'User action time out'
@@ -344,7 +384,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
           })
           return { error }
         })
-    ])
+    ]).finally(() => controller.abort())
 
     if ('error' in result) {
       throw Error(result.error)

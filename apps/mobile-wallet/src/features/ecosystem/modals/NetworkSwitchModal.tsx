@@ -42,7 +42,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   }
 
   return (
-    <BottomModal2 title={t('Switch network')} contentVerticalGap>
+    <BottomModal2 title={t('Switch network')} contentVerticalGap notScrollable>
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
 
       <NetworkSwitchModalContent
