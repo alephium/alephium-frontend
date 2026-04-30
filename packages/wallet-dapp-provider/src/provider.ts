@@ -1,5 +1,4 @@
 import { AlephiumWindowObject, providerInitializedEvent } from '@alephium/get-extension-wallet'
-import { MessageType } from 'src/types/messages'
 
 import { alephiumWindowObject } from './alephiumWindowObject'
 
@@ -30,10 +29,6 @@ export const announceProvider = () => {
   handler()
 
   window.addEventListener('requestAlephiumProvider', handler)
-
-  window.addEventListener('message', ({ data }: MessageEvent<MessageType>) => {
-    if (data.type === 'ALPH_DISCONNECT_ACCOUNT') alephiumWindowObject.disconnect()
-  })
 }
 
 export const attachAlephiumProvider = () => {
