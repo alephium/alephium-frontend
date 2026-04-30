@@ -17,11 +17,9 @@ ${windowMessagePolyfill}
 
 ${alephiumProvider.code}
 
-window.addEventListener("load", () => {
-  if (typeof AlephiumWalletProvider !== 'undefined') {
-    AlephiumWalletProvider.attach();
-  }
-});
+if (typeof AlephiumWalletProvider !== 'undefined') {
+  AlephiumWalletProvider.attach();
+}
 
 // window.onerror = function(message, source, lineno, colno, error) {
 //   window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -36,7 +34,13 @@ window.addEventListener("load", () => {
 //     type: 'CONSOLE_LOG',
 //     data: args
 //   }));
-//   return true;
+// };
+
+// window.console.error = function(...args) {
+//   window.ReactNativeWebView.postMessage(JSON.stringify({
+//     type: 'CONSOLE_ERROR',
+//     data: args.map(a => a instanceof Error ? a.message : a)
+//   }));
 // };
 
 true; // note: this is required, or you'll sometimes get silent failures

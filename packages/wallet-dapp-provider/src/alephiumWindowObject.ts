@@ -78,8 +78,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   unsafeEnable = async (options?: EnableOptions) => this.#unsafeEnable(options)
 
   #unsafeEnable = async (options?: EnableOptions) => {
-    this.#checkTabFocused()
-
     const walletAccountP = Promise.race([
       waitForMessage('ALPH_CONNECT_DAPP_RES', USER_ACTION_TIMEOUT),
       waitForMessage('ALPH_REJECT_PREAUTHORIZATION', USER_ACTION_TIMEOUT).then(() => 'USER_ABORTED' as const)
