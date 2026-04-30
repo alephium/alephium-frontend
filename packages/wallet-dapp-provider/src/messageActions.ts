@@ -1,7 +1,9 @@
+import { stringify } from '@alephium/web3'
+
 import { MessageType, RequestOptions } from './types/messages'
 
 export function sendMessage(msg: MessageType): void {
-  return window.ReactNativeWebView.postMessage(JSON.stringify(msg))
+  return window.ReactNativeWebView.postMessage(stringify(msg))
 }
 
 export function waitForMessage<K extends MessageType['type'], T extends { type: K } & MessageType>(
