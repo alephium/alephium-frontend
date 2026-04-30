@@ -10,7 +10,10 @@ export function waitForMessage<K extends MessageType['type'], T extends { type: 
   predicate: (x: T) => boolean = () => true
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return new Promise((resolve, reject) => {
-    const pid = setTimeout(() => reject(new Error('Timeout')), timeout)
+    const pid = setTimeout(() => {
+      window.removeEventListener('message', handler)
+      reject(new Error('Timeout'))
+    }, timeout)
 
     // React Native WebView sends messages as strings so we can't use WindowMessageType
     const handler = (event: MessageEvent<string>) => {
