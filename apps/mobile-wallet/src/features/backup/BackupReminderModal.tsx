@@ -25,7 +25,7 @@ const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet }) => 
   }
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal2 contentVerticalGap notScrollable>
       <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       {isNewWallet ? (
         <AppText color="secondary" size={18}>
