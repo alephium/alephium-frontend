@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface StakingActionModalProps {
@@ -40,7 +40,7 @@ const StakingActionModal = ({
   primaryDisabled,
   isPrimaryLoading
 }: StakingActionModalProps) => (
-  <BottomModal2 title={title} notScrollable>
+  <BottomModal title={title} notScrollable>
     <Content>
       <InfoCard>{info}</InfoCard>
 
@@ -71,7 +71,7 @@ const StakingActionModal = ({
         wide
       />
     </Content>
-  </BottomModal2>
+  </BottomModal>
 )
 
 export default StakingActionModal

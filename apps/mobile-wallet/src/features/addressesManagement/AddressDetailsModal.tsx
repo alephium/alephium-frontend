@@ -17,7 +17,7 @@ import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDet
 import AddressFtListItem from '~/features/addressesManagement/AddressFtListItem'
 import AddressTokensListFooter from '~/features/addressesManagement/AddressTokensListFooter'
 import useNftsGridFlashListProps from '~/features/assetsDisplay/nftsDisplay/useNftsGridFlashListProps'
-import BottomModal2, { DEFAULT_SNAP_POINTS } from '~/features/modals/BottomModal2'
+import BottomModal, { DEFAULT_SNAP_POINTS } from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
 export interface AddressDetailsModalProps {
@@ -93,7 +93,7 @@ const AddressDetailsModal = memo<AddressDetailsModalProps>(({ addressHash }) => 
   )
 
   return (
-    <BottomModal2
+    <BottomModal
       title={<AddressBadge addressHash={addressHash} fontSize={17} />}
       titleButton={<AddressExplorerButton addressHash={addressHash} />}
       bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: DEFAULT_SNAP_POINTS }}

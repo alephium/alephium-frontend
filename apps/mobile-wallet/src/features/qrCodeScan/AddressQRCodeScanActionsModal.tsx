@@ -7,7 +7,7 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import SendButton from '~/features/send/SendButton'
 import { useAppSelector } from '~/hooks/redux'
@@ -24,7 +24,7 @@ const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps>((
   const { dismissModal } = useModalContext()
 
   return (
-    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <SendButton
@@ -36,7 +36,7 @@ const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps>((
           {!contact && <AddContactButton addressHash={addressHash} onPress={dismissModal} />}
         </ActionButtons>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

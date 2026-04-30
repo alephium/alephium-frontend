@@ -14,7 +14,7 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -29,7 +29,7 @@ const AddressQuickActionsModal = memo<AddressQuickActionsModalProps>(({ addressH
   const { dismissModal } = useModalContext()
 
   return (
-    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />
@@ -39,7 +39,7 @@ const AddressQuickActionsModal = memo<AddressQuickActionsModalProps>(({ addressH
           <DeleteAddressButton addressHash={addressHash} onActionCompleted={dismissModal} />
         </QuickActionButtons>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

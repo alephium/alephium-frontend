@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
 import useHideToken from '~/features/assetsDisplay/hideTokens/useHideToken'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
 const SelectTokenToHideModal = memo(() => {
@@ -16,7 +16,7 @@ const SelectTokenToHideModal = memo(() => {
   const handleTokenSelection = useHideToken('app_settings', dismissModal)
 
   return (
-    <BottomModal2
+    <BottomModal
       title={t('Asset to hide')}
       flashListProps={{
         data: knownFungibleTokens.filter(({ id }) => id !== ALPH.id),

@@ -7,7 +7,7 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -32,7 +32,7 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps>
   }
 
   return (
-    <BottomModal2 notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal notScrollable noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
           <QuickActionButton
@@ -47,7 +47,7 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps>
           />
         </ActionButtons>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
 interface GroupSelectModalProps {
@@ -27,7 +27,7 @@ const GroupSelectModal = memo<GroupSelectModalProps>(({ onSelect, selectedGroup 
   }
 
   return (
-    <BottomModal2 notScrollable title={t('Address group')}>
+    <BottomModal notScrollable title={t('Address group')}>
       {groupSelectOptions.map((groupOption, index) => (
         <RadioButtonRow
           key={groupOption.label}
@@ -37,7 +37,7 @@ const GroupSelectModal = memo<GroupSelectModalProps>(({ onSelect, selectedGroup 
           isLast={index === groupSelectOptions.length - 1}
         />
       ))}
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

@@ -5,7 +5,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
@@ -24,7 +24,7 @@ const SafePlaceWarningModal = memo(() => {
   }
 
   return (
-    <BottomModal2 notScrollable contentVerticalGap>
+    <BottomModal notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
       </ScreenSection>
@@ -61,7 +61,7 @@ const SafePlaceWarningModal = memo(() => {
           }}
         />
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

@@ -10,7 +10,7 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
@@ -25,7 +25,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>((props) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 contentVerticalGap notScrollable>
+    <BottomModal contentVerticalGap notScrollable>
       <ScreenSection>
         <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
       </ScreenSection>
@@ -41,7 +41,7 @@ const WalletDeleteModal = memo<WalletDeleteModalProps>((props) => {
         </AppText>
       </ScreenSection>
       <WalletDeleteModalContent {...props} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

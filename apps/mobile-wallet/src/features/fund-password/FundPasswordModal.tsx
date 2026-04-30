@@ -6,7 +6,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import usePassword from '~/hooks/usePassword'
 
@@ -18,7 +18,7 @@ const FundPasswordModal = memo<FundPasswordModalProps>((props) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 contentVerticalGap notScrollable>
+    <BottomModal contentVerticalGap notScrollable>
       <ScreenSection>
         <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>
@@ -28,7 +28,7 @@ const FundPasswordModal = memo<FundPasswordModalProps>((props) => {
         </AppText>
       </ScreenSection>
       <FundPasswordModalContent {...props} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

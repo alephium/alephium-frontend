@@ -15,7 +15,7 @@ import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDe
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useAppDispatch } from '~/hooks/redux'
 import { signer } from '~/signer'
 
@@ -41,12 +41,12 @@ const SignDeployContractTxModal = memo(
     const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
     return (
-      <BottomModal2 contentVerticalGap>
+      <BottomModal contentVerticalGap>
         <ScreenSection>
           <SignDeployContractTxModalContent txParams={txParams} fees={fees} dAppUrl={dAppUrl} dAppIcon={dAppIcon} />
         </ScreenSection>
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-      </BottomModal2>
+      </BottomModal>
     )
   }
 )

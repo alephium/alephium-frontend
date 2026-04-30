@@ -13,7 +13,7 @@ import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch } from '~/hooks/redux'
@@ -37,7 +37,7 @@ const AddressesWithTokenModal = memo<AddressesWithTokenModalProps>(({ tokenId })
   }
 
   return (
-    <BottomModal2 title={<Header tokenId={tokenId} />}>
+    <BottomModal title={<Header tokenId={tokenId} />}>
       <IntroText tokenId={tokenId} />
       <Content>
         {addresses.map((addressHash, i) => (
@@ -51,7 +51,7 @@ const AddressesWithTokenModal = memo<AddressesWithTokenModalProps>(({ tokenId })
           />
         ))}
       </Content>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

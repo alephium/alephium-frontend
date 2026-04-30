@@ -17,7 +17,7 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import useFungibleTokenAmountInput from '~/hooks/useFungibleTokenAmountInput'
 
@@ -67,7 +67,7 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
   const amountIsSet = amount && amount !== '0'
 
   return (
-    <BottomModal2
+    <BottomModal
       titleAlign="left"
       notScrollable
       title={
@@ -105,7 +105,7 @@ const TokenAmountModal = memo<TokenAmountModalProps>(({ tokenId, onAmountValidat
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </ContentWrapper>
       <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

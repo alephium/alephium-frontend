@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -44,7 +44,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal2 notScrollable title={t('Current network')}>
+    <BottomModal notScrollable title={t('Current network')}>
       <Surface>
         {networkNames.map((networkName, index) => (
           <RadioButtonRow
@@ -56,7 +56,7 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
           />
         ))}
       </Surface>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

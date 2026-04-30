@@ -20,7 +20,7 @@ import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import {
   TransactionDestinationAddressesList,
@@ -39,7 +39,7 @@ const TransactionModal = memo<TransactionModalProps>(({ txHash }) => {
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${txHash}`
 
   return (
-    <BottomModal2 title={t('Transaction')}>
+    <BottomModal title={t('Transaction')}>
       <TransactionModalContent txHash={txHash} />
 
       <BottomButtons backgroundColor="back1" fullWidth>
@@ -49,7 +49,7 @@ const TransactionModal = memo<TransactionModalProps>(({ txHash }) => {
           title={t('Explorer')}
         />
       </BottomButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

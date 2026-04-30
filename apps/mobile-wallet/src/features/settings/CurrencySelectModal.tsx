@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -24,7 +24,7 @@ const CurrencySelectModal = memo(() => {
   }
 
   return (
-    <BottomModal2 title={t('Currency')}>
+    <BottomModal title={t('Currency')}>
       {currencyOptions.map((currencyOption, index) => (
         <RadioButtonRow
           key={currencyOption.label}
@@ -34,7 +34,7 @@ const CurrencySelectModal = memo(() => {
           isLast={index === currencyOptions.length - 1}
         />
       ))}
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

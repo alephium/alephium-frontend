@@ -8,7 +8,7 @@ import AddressBox from '~/components/AddressBox'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import { getConnectedAddressPayload, useNetwork } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
-import BottomModal2, { DEFAULT_SNAP_POINTS } from '~/features/modals/BottomModal2'
+import BottomModal, { DEFAULT_SNAP_POINTS } from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
@@ -39,7 +39,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
   )
 
   return (
-    <BottomModal2
+    <BottomModal
       title={t('Connect to dApp')}
       contentVerticalGap={allAddressesStrInGroup.length > 1}
       bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: DEFAULT_SNAP_POINTS }}
@@ -58,7 +58,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
       }}
     >
       <ConnectDappModalHeader dAppName={dAppName} dAppUrl={host} dAppIcon={icon} />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

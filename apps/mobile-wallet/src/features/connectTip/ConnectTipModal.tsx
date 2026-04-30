@@ -3,13 +3,13 @@ import { Trans, useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 
 const ConnectTipModal = memo(() => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable contentVerticalGap>
+    <BottomModal notScrollable contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Useful tip')} 💡</ModalScreenTitle>
       </ScreenSection>
@@ -28,7 +28,7 @@ const ConnectTipModal = memo(() => {
           </Trans>
         </AppText>
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

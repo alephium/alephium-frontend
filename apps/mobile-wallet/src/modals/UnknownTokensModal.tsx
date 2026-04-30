@@ -7,7 +7,7 @@ import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import ListItem from '~/components/ListItem'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { showToast } from '~/utils/layout'
 
 const UnknownTokensModal = memo(() => {
@@ -24,7 +24,7 @@ const UnknownTokensModal = memo(() => {
   }
 
   return (
-    <BottomModal2
+    <BottomModal
       title={t('unknownTokensKey', { count: nstIds.length })}
       flashListProps={{
         data: nstIds,

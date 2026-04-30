@@ -18,7 +18,7 @@ import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import ModalContextProvider, { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type BottomModal2Props<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
+export type BottomModalProps<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
 
 export const DEFAULT_SNAP_POINTS = ['50%', '100%']
 
@@ -32,7 +32,7 @@ interface BottomModalFlashListProps<T> extends Omit<BottomModalBaseProps, 'child
   bottomSheetModalProps?: Omit<BottomSheetModalProps, 'children'>
 }
 
-const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
+const BottomModal = <T,>(props: BottomModalProps<T>) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const safeAreaInsets = useSafeAreaInsets()
   const modalContext = useModalContext()
@@ -132,7 +132,7 @@ const BottomModal2 = <T,>(props: BottomModal2Props<T>) => {
   )
 }
 
-export default BottomModal2
+export default BottomModal
 
 const isFlashList = <T,>(
   props: BottomModalWithChildrenProps | BottomModalFlashListProps<T>

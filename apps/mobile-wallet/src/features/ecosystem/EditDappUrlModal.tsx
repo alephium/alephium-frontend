@@ -5,7 +5,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import { getValidUrl } from '~/features/ecosystem/ecosystemUtils'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
 export interface EditDappUrlModalProps {
@@ -17,11 +17,11 @@ const EditDappUrlModal = memo<EditDappUrlModalProps>((props) => {
   const { t } = useTranslation()
 
   return (
-    <BottomModal2 notScrollable title={t('DApp URL')}>
+    <BottomModal notScrollable title={t('DApp URL')}>
       <ScreenSection verticalGap>
         <EditDappUrlModalContent {...props} />
       </ScreenSection>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

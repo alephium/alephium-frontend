@@ -4,7 +4,7 @@ import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -20,7 +20,7 @@ const LanguageSelectModal = memo(() => {
   }
 
   return (
-    <BottomModal2 title="Language">
+    <BottomModal title="Language">
       <Surface>
         {languageOptions.map((languageOption, index) => (
           <RadioButtonRow
@@ -32,7 +32,7 @@ const LanguageSelectModal = memo(() => {
           />
         ))}
       </Surface>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

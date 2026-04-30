@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { useAppSelector } from '~/hooks/redux'
@@ -37,7 +37,7 @@ const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
   }
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal contentVerticalGap>
       <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
 
       {onVerifyPress && (
@@ -45,7 +45,7 @@ const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
           <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
         </ScreenSection>
       )}
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

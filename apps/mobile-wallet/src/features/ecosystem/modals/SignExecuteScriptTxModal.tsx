@@ -23,7 +23,7 @@ import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import TransactionSeparator from '~/features/ecosystem/modals/TransactionSeparator'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import {
   TransactionDestinationAddressesList,
   TransactionOriginAddressesList
@@ -55,7 +55,7 @@ const SignExecuteScriptTxModal = memo(
     const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
     return (
-      <BottomModal2 contentVerticalGap>
+      <BottomModal contentVerticalGap>
         <ScreenSection>
           <SignExecuteScriptTxModalContent
             txParams={txParams}
@@ -66,7 +66,7 @@ const SignExecuteScriptTxModal = memo(
           />
         </ScreenSection>
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-      </BottomModal2>
+      </BottomModal>
     )
   }
 )

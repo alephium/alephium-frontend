@@ -12,7 +12,7 @@ import { SignTransferTxModalContent } from '~/features/ecosystem/modals/SignTran
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import TransactionSeparator from '~/features/ecosystem/modals/TransactionSeparator'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 
 const SignChainedTxModal = memo(
   ({ txParams, props, origin, onError, onSuccess, dAppUrl, dAppIcon }: SignChainedTxModalProps) => {
@@ -28,10 +28,10 @@ const SignChainedTxModal = memo(
     })
 
     return (
-      <BottomModal2 contentVerticalGap>
+      <BottomModal contentVerticalGap>
         <SignChainedTxModalContent props={props} dAppUrl={dAppUrl} dAppIcon={dAppIcon} />
         <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-      </BottomModal2>
+      </BottomModal>
     )
   }
 )

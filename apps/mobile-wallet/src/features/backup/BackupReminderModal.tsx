@@ -6,7 +6,7 @@ import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle } from '~/components/layout/Screen'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -25,7 +25,7 @@ const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet }) => 
   }
 
   return (
-    <BottomModal2 contentVerticalGap notScrollable>
+    <BottomModal contentVerticalGap notScrollable>
       <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
       {isNewWallet ? (
         <AppText color="secondary" size={18}>
@@ -57,7 +57,7 @@ const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet }) => 
       <BottomButtons fullWidth>
         <Button title={t("Let's do that!")} onPress={handleValidatePress} variant="highlight" />
       </BottomButtons>
-    </BottomModal2>
+    </BottomModal>
   )
 })
 

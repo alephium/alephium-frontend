@@ -11,7 +11,7 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
-import BottomModal2 from '~/features/modals/BottomModal2'
+import BottomModal from '~/features/modals/BottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 
@@ -33,7 +33,7 @@ const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSu
   })
 
   return (
-    <BottomModal2 contentVerticalGap>
+    <BottomModal contentVerticalGap>
       <ScreenSection>
         <Surface>
           <Row title={t('Signing with')} titleColor="secondary">
@@ -51,7 +51,7 @@ const SignMessageTxModal = memo(({ txParams, unsignedData, origin, onError, onSu
         onApprove={handleApprovePress}
         approveButtonTitle={t('Sign')}
       />
-    </BottomModal2>
+    </BottomModal>
   )
 })
 
