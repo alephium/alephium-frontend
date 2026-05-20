@@ -11,6 +11,10 @@
 ### Patch Changes
 
 - f78ad5d: Remove gyroscope and replace with breathing animation
+- 545b1f5: Add basic swap support for testnet
+- 71e0bf0: Fix buy feature (Onramper signature)
+- 814d89b: Improve bottom modals dynamic height
+- ae1f19e: Fix in-app browser auto-connect
 
 ## 2.4.8
 
