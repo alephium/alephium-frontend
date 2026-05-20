@@ -1,0 +1,38 @@
+import { AddressHash, NetworkNames, networkSettingsPresets } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useTranslation } from 'react-i18next'
+
+import { sendAnalytics } from '~/analytics'
+import ActionCardButton from '~/components/buttons/ActionCardButton'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+
+interface ActionCardSwapButtonProps {
+  origin: 'dashboard' | 'tokenDetails'
+  receiveAddressHash: AddressHash
+  onPress?: () => void
+}
+
+const ActionCardSwapButton = ({ receiveAddressHash, origin, onPress }: ActionCardSwapButtonProps) => {
+  const { t } = useTranslation()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const network = useCurrentlyOnlineNetworkId()
+
+  if (network !== networkSettingsPresets[NetworkNames.testnet].networkId) return null
+
+  const handleSwapPress = () => {
+    sendAnalytics({ event: 'Action card: Pressed btn to swap', props: { origin } })
+
+    navigation.navigate('DAppWebViewScreen', {
+      dAppUrl: 'https://powfi.alephium.org/swap',
+      dAppName: 'Powfi'
+    })
+
+    onPress?.()
+  }
+
+  return <ActionCardButton title={t('Swap')} onPress={handleSwapPress} iconProps={{ name: 'swap-horizontal' }} />
+}
+
+export default ActionCardSwapButton

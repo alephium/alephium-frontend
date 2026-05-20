@@ -23,6 +23,7 @@ import { openModal } from '~/features/modals/modalActions'
 import OfflineButton from '~/features/offline/OfflineButton'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
+import ActionCardSwapButton from '~/features/swap/ActionCardSwapButton'
 import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import WatchOnlyBadge from '~/features/watchOnlyWallet/WatchOnlyBadge'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -93,6 +94,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
         <WalletSendButton />
         <ActionCardReceiveButton origin="dashboard" />
         <WalletBuyButton />
+        <WalletSwapButton />
       </ButtonsRowContainer>
 
       <ScreenSection>
@@ -140,6 +142,15 @@ const WalletBuyButton = () => {
   if (!defaultAddressHash) return null
 
   return <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
+}
+
+const WalletSwapButton = () => {
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const isWatchOnly = useIsWalletWatchOnly()
+
+  if (!defaultAddressHash || isWatchOnly) return null
+
+  return <ActionCardSwapButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
 }
 
 const WalletEmptyPlaceholder = () => {

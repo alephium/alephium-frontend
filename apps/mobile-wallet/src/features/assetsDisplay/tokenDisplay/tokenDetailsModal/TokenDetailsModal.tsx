@@ -28,6 +28,8 @@ import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
+import ActionCardSwapButton from '~/features/swap/ActionCardSwapButton'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -47,6 +49,7 @@ const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, 
           <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
+          <TokenSwapButton tokenId={tokenId} addressHash={addressHash} />
         </ActionButtons>
         <TokenDetailsModalDescription tokenId={tokenId} />
       </Content>
@@ -60,6 +63,22 @@ const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) 
   if (!defaultAddressHash || tokenId !== ALPH.id) return null
 
   return <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />
+}
+
+const TokenSwapButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const isWatchOnly = useIsWalletWatchOnly()
+  const { dismissModal } = useModalContext()
+
+  if (!defaultAddressHash || isWatchOnly) return null
+
+  return (
+    <ActionCardSwapButton
+      origin="tokenDetails"
+      receiveAddressHash={addressHash || defaultAddressHash}
+      onPress={dismissModal}
+    />
+  )
 }
 
 interface TokenAnimatedBackgroundProps {

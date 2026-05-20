@@ -561,5 +561,6 @@
   "Unstake request cancelled!": "Unstake request cancelled!",
   "ALPH claimed!": "ALPH claimed!",
   "Cancelling unstaking request...": "Cancelling unstaking request...",
-  "Claiming ALPH...": "Claiming ALPH..."
+  "Claiming ALPH...": "Claiming ALPH...",
+  "Swap": "Swap"
 }
