@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 const childProcess = require('child_process')
 
 // Some constants from https://github.com/SSLcom/esigner-codesign/blob/develop/src/constants.ts
@@ -17,8 +18,17 @@ const TEMP_DIR = path.join(__dirname, 'release', 'temp')
 const CODESIGN_DIR = path.resolve(process.cwd(), 'codesign')
 let ARCHIVE_PATH = process.env['CODESIGNTOOL_PATH'] ?? path.join(CODESIGN_DIR, CODESIGNTOOL_BASEPATH)
 
+const dirsToCheck = [TEMP_DIR, CODESIGN_DIR]
+dirsToCheck.forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    console.log('\n❓ Could not find dir', dir)
+    fs.mkdirSync(dir, { recursive: true })
+    console.log('✅ Created dir', dir)
+  }
+})
+
 async function downloadTool(url) {
-  const dest = path.join(CODESIGN_DIR, `codesign-tool-${Date.now()}.zip`)
+  const dest = path.join(os.tmpdir(), `codesign-tool-${Date.now()}.zip`)
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Failed to download CodeSignTool (${response.status} ${response.statusText})`)
@@ -36,14 +46,21 @@ function extractZip(zipPath, destDir) {
   )
 }
 
-const dirsToCheck = [TEMP_DIR, CODESIGN_DIR]
-dirsToCheck.forEach((dir) => {
-  if (!fs.existsSync(dir)) {
-    console.log('\n❓ Could not find dir', dir)
-    fs.mkdirSync(dir, { recursive: true })
-    console.log('✅ Created dir', dir)
+function resolveCodeSignToolPath() {
+  const expectedPath = path.join(CODESIGN_DIR, CODESIGNTOOL_BASEPATH)
+  if (fs.existsSync(expectedPath)) {
+    return expectedPath
   }
-})
+
+  const extractedDir = fs
+    .readdirSync(CODESIGN_DIR, { withFileTypes: true })
+    .find((entry) => entry.isDirectory() && entry.name.startsWith('CodeSignTool-'))
+  if (extractedDir) {
+    return path.join(CODESIGN_DIR, extractedDir.name)
+  }
+
+  throw new Error(`Could not find CodeSignTool directory in ${CODESIGN_DIR}`)
+}
 
 async function sign(configuration) {
   console.log('\nSigning starts with following configuration: ', configuration)
@@ -71,10 +88,10 @@ async function sign(configuration) {
 
       console.log(`📦 Extracting CodeSignTool from download path ${downloadedFile} to ${CODESIGN_DIR}...`)
       extractZip(downloadedFile, CODESIGN_DIR)
+      fs.unlinkSync(downloadedFile)
       console.log('✅ Extracted!')
 
-      const archiveName = fs.readdirSync(CODESIGN_DIR)[0]
-      ARCHIVE_PATH = path.join(CODESIGN_DIR, archiveName)
+      ARCHIVE_PATH = resolveCodeSignToolPath()
     }
 
     console.log('\nPath of CodeSignTool:', ARCHIVE_PATH)
