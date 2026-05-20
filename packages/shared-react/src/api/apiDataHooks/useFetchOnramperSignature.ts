@@ -8,13 +8,13 @@ export const useFetchOnramperSignature = (addressHash: AddressHash) => {
     queryKey: ['onramper-signature', addressHash],
 
     queryFn: async () =>
-      postJson<string>('https://onramper.alephium.org/sign', {
+      postJson<{ signature: string }>('https://onramper.alephium.org/sign', {
         data: getOnramperSignContent(addressHash)
       })
   })
 
   return {
-    data,
+    data: data?.signature,
     isLoading,
     error
   }
