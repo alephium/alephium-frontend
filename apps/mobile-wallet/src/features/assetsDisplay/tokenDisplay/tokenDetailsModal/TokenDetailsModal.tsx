@@ -29,6 +29,7 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import SendButton from '~/features/send/SendButton'
 import ActionCardSwapButton from '~/features/swap/ActionCardSwapButton'
+import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -66,9 +67,10 @@ const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) 
 
 const TokenSwapButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const isWatchOnly = useIsWalletWatchOnly()
   const { dismissModal } = useModalContext()
 
-  if (!defaultAddressHash) return null
+  if (!defaultAddressHash || isWatchOnly) return null
 
   return (
     <ActionCardSwapButton

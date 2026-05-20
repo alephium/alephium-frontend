@@ -146,8 +146,9 @@ const WalletBuyButton = () => {
 
 const WalletSwapButton = () => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const isWatchOnly = useIsWalletWatchOnly()
 
-  if (!defaultAddressHash) return null
+  if (!defaultAddressHash || isWatchOnly) return null
 
   return <ActionCardSwapButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
 }
