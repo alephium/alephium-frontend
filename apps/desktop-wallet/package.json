@@ -52,7 +52,6 @@
     "esbuild"
   ],
   "devDependencies": {
-    "@actions/tool-cache": "^4.0.0",
     "@alephium/encryptor": "workspace:*",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/keyring": "workspace:*",

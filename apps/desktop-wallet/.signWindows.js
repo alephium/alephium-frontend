@@ -1,7 +1,6 @@
 const path = require('path')
 const fs = require('fs')
 const childProcess = require('child_process')
-const tc = require('@actions/tool-cache')
 
 // Some constants from https://github.com/SSLcom/esigner-codesign/blob/develop/src/constants.ts
 const CODESIGNTOOL_VERSION = 'v1.2.7'
@@ -17,6 +16,25 @@ const CODESIGNTOOL_PROPERTIES =
 const TEMP_DIR = path.join(__dirname, 'release', 'temp')
 const CODESIGN_DIR = path.resolve(process.cwd(), 'codesign')
 let ARCHIVE_PATH = process.env['CODESIGNTOOL_PATH'] ?? path.join(CODESIGN_DIR, CODESIGNTOOL_BASEPATH)
+
+async function downloadTool(url) {
+  const dest = path.join(CODESIGN_DIR, `codesign-tool-${Date.now()}.zip`)
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to download CodeSignTool (${response.status} ${response.statusText})`)
+  }
+  fs.writeFileSync(dest, Buffer.from(await response.arrayBuffer()))
+  return dest
+}
+
+function extractZip(zipPath, destDir) {
+  const escapedZip = zipPath.replace(/'/g, "''")
+  const escapedDest = destDir.replace(/'/g, "''")
+  childProcess.execSync(
+    `powershell -NoProfile -Command "Expand-Archive -LiteralPath '${escapedZip}' -DestinationPath '${escapedDest}' -Force"`,
+    { stdio: 'inherit' }
+  )
+}
 
 const dirsToCheck = [TEMP_DIR, CODESIGN_DIR]
 dirsToCheck.forEach((dir) => {
@@ -48,11 +66,11 @@ async function sign(configuration) {
 
     if (!fs.existsSync(ARCHIVE_PATH)) {
       console.log(`⬇️ Downloading CodeSignTool from ${CODESIGNTOOL_WINDOWS_SETUP_URL}...`)
-      const downloadedFile = await tc.downloadTool(CODESIGNTOOL_WINDOWS_SETUP_URL)
+      const downloadedFile = await downloadTool(CODESIGNTOOL_WINDOWS_SETUP_URL)
       console.log('✅ File downloaded!')
 
       console.log(`📦 Extracting CodeSignTool from download path ${downloadedFile} to ${CODESIGN_DIR}...`)
-      await tc.extractZip(downloadedFile, CODESIGN_DIR)
+      extractZip(downloadedFile, CODESIGN_DIR)
       console.log('✅ Extracted!')
 
       const archiveName = fs.readdirSync(CODESIGN_DIR)[0]
