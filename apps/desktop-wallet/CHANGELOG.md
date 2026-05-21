@@ -1,5 +1,11 @@
 # alephium-desktop-wallet
 
+## 3.2.2
+
+### Patch Changes
+
+- 03cddb12a: Fix WalletConnect integration with web3@v3
+
 ## 3.2.1
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 const childProcess = require('child_process')
-const tc = require('@actions/tool-cache')
 
 // Some constants from https://github.com/SSLcom/esigner-codesign/blob/develop/src/constants.ts
 const CODESIGNTOOL_VERSION = 'v1.2.7'
@@ -27,6 +27,41 @@ dirsToCheck.forEach((dir) => {
   }
 })
 
+async function downloadTool(url) {
+  const dest = path.join(os.tmpdir(), `codesign-tool-${Date.now()}.zip`)
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to download CodeSignTool (${response.status} ${response.statusText})`)
+  }
+  fs.writeFileSync(dest, Buffer.from(await response.arrayBuffer()))
+  return dest
+}
+
+function extractZip(zipPath, destDir) {
+  const escapedZip = zipPath.replace(/'/g, "''")
+  const escapedDest = destDir.replace(/'/g, "''")
+  childProcess.execSync(
+    `powershell -NoProfile -Command "Expand-Archive -LiteralPath '${escapedZip}' -DestinationPath '${escapedDest}' -Force"`,
+    { stdio: 'inherit' }
+  )
+}
+
+function resolveCodeSignToolPath() {
+  const expectedPath = path.join(CODESIGN_DIR, CODESIGNTOOL_BASEPATH)
+  if (fs.existsSync(expectedPath)) {
+    return expectedPath
+  }
+
+  const extractedDir = fs
+    .readdirSync(CODESIGN_DIR, { withFileTypes: true })
+    .find((entry) => entry.isDirectory() && entry.name.startsWith('CodeSignTool-'))
+  if (extractedDir) {
+    return path.join(CODESIGN_DIR, extractedDir.name)
+  }
+
+  throw new Error(`Could not find CodeSignTool directory in ${CODESIGN_DIR}`)
+}
+
 async function sign(configuration) {
   console.log('\nSigning starts with following configuration: ', configuration)
 
@@ -48,15 +83,15 @@ async function sign(configuration) {
 
     if (!fs.existsSync(ARCHIVE_PATH)) {
       console.log(`⬇️ Downloading CodeSignTool from ${CODESIGNTOOL_WINDOWS_SETUP_URL}...`)
-      const downloadedFile = await tc.downloadTool(CODESIGNTOOL_WINDOWS_SETUP_URL)
+      const downloadedFile = await downloadTool(CODESIGNTOOL_WINDOWS_SETUP_URL)
       console.log('✅ File downloaded!')
 
       console.log(`📦 Extracting CodeSignTool from download path ${downloadedFile} to ${CODESIGN_DIR}...`)
-      await tc.extractZip(downloadedFile, CODESIGN_DIR)
+      extractZip(downloadedFile, CODESIGN_DIR)
+      fs.unlinkSync(downloadedFile)
       console.log('✅ Extracted!')
 
-      const archiveName = fs.readdirSync(CODESIGN_DIR)[0]
-      ARCHIVE_PATH = path.join(CODESIGN_DIR, archiveName)
+      ARCHIVE_PATH = resolveCodeSignToolPath()
     }
 
     console.log('\nPath of CodeSignTool:', ARCHIVE_PATH)
