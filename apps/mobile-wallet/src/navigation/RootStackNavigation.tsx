@@ -10,7 +10,7 @@ import { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
-import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
+import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContextProvider'
 import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import AuthorizedConnectionsScreen from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsScreen'

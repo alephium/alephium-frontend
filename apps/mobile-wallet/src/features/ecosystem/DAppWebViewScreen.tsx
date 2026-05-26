@@ -4,18 +4,19 @@ import { useCallback, useState } from 'react'
 import { WebViewNavigation } from 'react-native-webview'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
-import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import DappBrowserFooter from '~/features/ecosystem/dAppBrowser/DappBrowserFooter'
 import DappBrowserHeader from '~/features/ecosystem/dAppBrowser/DappBrowserHeader'
+import { setIsInEcosystemInAppBrowser } from '~/features/ecosystem/dAppBrowser/dAppBrowserSlice'
 import DappBrowserWebView from '~/features/ecosystem/dAppBrowser/DappBrowserWebView'
 import { DappBrowserContextProvider } from '~/features/ecosystem/dAppMessaging/DappBrowserContext'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
   const { dAppUrl: dAppUrlFromParams, dAppName: dAppNameFromParams } = route.params
-  const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
+  const dispatch = useAppDispatch()
 
   const [currentUrl, setCurrentUrl] = useState(dAppUrlFromParams)
   const [currentDappName, setCurrentDappName] = useState<string | undefined>(dAppNameFromParams)
@@ -24,10 +25,10 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
 
   useFocusEffect(
     useCallback(() => {
-      setIsInEcosystemInAppBrowser(true)
+      dispatch(setIsInEcosystemInAppBrowser(true))
 
-      return () => setIsInEcosystemInAppBrowser(false)
-    }, [setIsInEcosystemInAppBrowser])
+      return () => dispatch(setIsInEcosystemInAppBrowser(false))
+    }, [dispatch])
   )
 
   const handleUrlChange = useCallback((url: string) => {

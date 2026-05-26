@@ -54,7 +54,7 @@ import StakeModal from '~/screens/Staking/StakeModal'
 import UnstakeModal from '~/screens/Staking/UnstakeModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
-export const ModalComponents = {
+const ModalComponents = {
   BuyModal,
   BackupReminderModal,
   SwitchNetworkModal,

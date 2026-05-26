@@ -6,6 +6,7 @@ import backupSlice from '~/features/backup/backupSlice'
 import authorizedConnectionsSlice, {
   authorizedConnectionsListenerMiddleware
 } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsSlice'
+import dAppBrowserSlice from '~/features/ecosystem/dAppBrowser/dAppBrowserSlice'
 import dAppMessagesQueueSlice from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSlice'
 import favoriteDAppsSlice, {
   favoriteDAppsListenerMiddleware
@@ -40,7 +41,8 @@ export const store = configureStore({
     [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer,
     [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer,
     [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer,
-    [stakingSlice.name]: stakingSlice.reducer
+    [stakingSlice.name]: stakingSlice.reducer,
+    [dAppBrowserSlice.name]: dAppBrowserSlice.reducer
   },
   devTools: false,
   middleware: (getDefaultMiddleware) => {
