@@ -6,9 +6,8 @@ import {
   useInitializeThrottledClient,
   usePersistQueryClientContext
 } from '@alephium/shared-react'
-import { FloatingDevTools } from '@buoy-gg/core'
 import { StatusBar } from 'expo-status-bar'
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Alert, InteractionManager, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -70,6 +69,8 @@ const App = () => {
   return <AppContent />
 }
 
+const Devtools = lazy(() => import('~/Devtools'))
+
 const AppContent = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
@@ -94,7 +95,7 @@ const AppContent = () => {
             <ToastAnchor />
             <LoadingManager />
           </ThemeProvider>
-          {__DEV__ && <FloatingDevTools />}
+          {__DEV__ && <Devtools />}
         </Main>
       </PersistQueryClientContextProvider>
     </Provider>

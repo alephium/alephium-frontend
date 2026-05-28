@@ -1,10 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/success.json'
+import SuccessLottieAnimation from '~/animations/lottie/SuccessLottieAnimation'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
@@ -38,7 +37,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
     <Screen safeAreaPadding {...props}>
       <AnimationContainer style={{ marginTop: 100 }}>
         <StyledAlephiumLogo color={theme.font.primary} />
-        <StyledAnimation source={animationSrc} autoPlay />
+        <SuccessLottieAnimation />
       </AnimationContainer>
       <CenteredInstructions
         instructions={[
@@ -74,9 +73,4 @@ const StyledAlephiumLogo = styled(AlephiumLogo)`
   width: 70%;
   height: 60%;
   max-height: 140px;
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 80%;
-  height: 100%;
 `

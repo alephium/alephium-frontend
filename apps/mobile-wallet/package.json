@@ -122,7 +122,6 @@
     "react-qr-code": "^2.0.15",
     "react-redux": "^9.2.0",
     "styled-components": "^6.1.19",
-    "victory-native": "^36.6.10",
     "web3-validator": "^2.0.6"
   },
   "devDependencies": {
@@ -135,6 +134,7 @@
     "@types/react-native-background-timer": "^2.0.2",
     "@walletconnect/types": "2.23.6",
     "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "elysia": "1.4.27",
     "eslint": "^8.48.0",
     "ts-node": "^10.9.1",
