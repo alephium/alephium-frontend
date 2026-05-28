@@ -2,7 +2,7 @@ import WebView, { WebViewProps } from 'react-native-webview'
 import styled from 'styled-components/native'
 
 import { useDappBrowserContext } from '~/features/ecosystem/dAppMessaging/DappBrowserContext'
-import { INJECTED_JAVASCRIPT } from '~/features/ecosystem/dAppMessaging/injectedJs'
+import { getInjectedJavaScript } from '~/features/ecosystem/dAppMessaging/injectedJs'
 import useHandleDappMessages from '~/features/ecosystem/dAppMessaging/useHandleDappMessages'
 
 interface DappBrowserWebViewProps extends WebViewProps {
@@ -19,7 +19,7 @@ const DappBrowserWebView = ({ dAppUrl, ...props }: DappBrowserWebViewProps) => {
       source={{ uri: dAppUrl }}
       allowsBackForwardNavigationGestures
       pullToRefreshEnabled
-      injectedJavaScriptBeforeContentLoaded={INJECTED_JAVASCRIPT}
+      injectedJavaScriptBeforeContentLoaded={getInjectedJavaScript()}
       onMessage={handleDappMessage}
       {...props}
     />

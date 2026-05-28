@@ -19,7 +19,7 @@ if (!window.originalPostMessage) {
 `
     : ''
 
-export const INJECTED_JAVASCRIPT = `
+export const getInjectedJavaScript = (): string => `
 ${windowMessagePolyfill}
 
 ${alephiumProvider.code}
@@ -29,6 +29,10 @@ if (typeof AlephiumWalletProvider !== 'undefined' && !window.__alephiumProviderA
   AlephiumWalletProvider.attach();
 }
 
+true; // note: this is required, or you'll sometimes get silent failures
+`
+
+// Useful for debugging, simply move them inside getInjectedJavaScript
 // window.onerror = function(message, source, lineno, colno, error) {
 //   window.ReactNativeWebView.postMessage(JSON.stringify({
 //     type: 'CONSOLE_ERROR',
@@ -50,6 +54,3 @@ if (typeof AlephiumWalletProvider !== 'undefined' && !window.__alephiumProviderA
 //     data: args.map(a => a instanceof Error ? a.message : a)
 //   }));
 // };
-
-true; // note: this is required, or you'll sometimes get silent failures
-`
