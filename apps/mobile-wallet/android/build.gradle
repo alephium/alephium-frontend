@@ -22,3 +22,11 @@ allprojects {
 
 apply plugin: "expo-root-project"
 apply plugin: "com.facebook.react.rootproject"
+
+// Automatically bypass Sentry source map uploads for local builds (Android Studio / local CLI)
+// This ensures local profile/release testing passes, while EAS Build/CI still uploads safely.
+allprojects {
+    tasks.matching { it.name.contains("SentryUpload") }.all {
+        onlyIf { System.getenv("CI") != null || System.getenv("EAS_BUILD") != null }
+    }
+}
