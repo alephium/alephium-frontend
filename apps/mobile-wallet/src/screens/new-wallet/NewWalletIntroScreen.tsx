@@ -1,9 +1,8 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import LottieView from 'lottie-react-native'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
+import WalletLottieAnimation from '~/animations/lottie/WalletLottieAnimation'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
@@ -37,7 +36,7 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
   return (
     <ScrollScreen fill contentPaddingTop headerOptions={{ type: 'stack' }} {...props}>
       <AnimationContainer>
-        <StyledAnimation source={animationSrc} autoPlay />
+        <WalletLottieAnimation />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions[method]} />
       <BottomButtonsStyled>
@@ -59,11 +58,6 @@ const AnimationContainer = styled.View`
   flex: 2;
   justify-content: center;
   align-items: center;
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 40%;
-  height: 100%;
 `
 
 const BottomButtonsStyled = styled(BottomButtons)`

@@ -1,10 +1,8 @@
 import LottieView, { LottieViewProps } from 'lottie-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/success.json'
-
 const SuccessLottieAnimation = (props: Omit<LottieViewProps, 'source'>) => (
-  <SuccessLottieAnimationStyled  autoPlay {...props} source={animationSrc}/>
+  <SuccessLottieAnimationStyled {...props} autoPlay source={require('./success.json')}/>
 )
 
 export default SuccessLottieAnimation
