@@ -117,7 +117,8 @@ export default {
         }
       ],
       ['expo-web-browser'],
-      'react-native-capture-protection'
+      'react-native-capture-protection',
+      '@react-native-vector-icons/lucide'
     ],
     extra: {
       eas: {

@@ -1870,6 +1870,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-vector-icons-lucide (13.1.2)
   - react-native-webview (13.15.0):
     - hermes-engine
     - RCTRequired
@@ -2699,6 +2700,7 @@ DEPENDENCIES:
   - react-native-quick-base64 (from `../../../node_modules/react-native-quick-base64`)
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../../../node_modules/@shopify/react-native-skia`)"
+  - "react-native-vector-icons-lucide (from `../../../node_modules/@react-native-vector-icons/lucide`)"
   - react-native-webview (from `../../../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../../../node_modules/react-native/ReactCommon/oscompat`)
@@ -2927,6 +2929,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-safe-area-context"
   react-native-skia:
     :path: "../../../node_modules/@shopify/react-native-skia"
+  react-native-vector-icons-lucide:
+    :path: "../../../node_modules/@react-native-vector-icons/lucide"
   react-native-webview:
     :path: "../../../node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -3101,6 +3105,7 @@ SPEC CHECKSUMS:
   react-native-quick-base64: 6568199bb2ac8e72ecdfdc73a230fbc5c1d3aac4
   react-native-safe-area-context: 37e680fc4cace3c0030ee46e8987d24f5d3bdab2
   react-native-skia: 05327e7acee05e7c27b68a5da0bc80d65f5d790c
+  react-native-vector-icons-lucide: f7314c9a2e22b67be66dabc5c5460c11465699d2
   react-native-webview: b29007f4723bca10872028067b07abacfa1cb35a
   React-NativeModulesApple: 8969913947d5b576de4ed371a939455a8daf28aa
   React-oscompat: ce47230ed20185e91de62d8c6d139ae61763d09c
@@ -3153,6 +3158,6 @@ SPEC CHECKSUMS:
   YttriumWrapper: e99db26ea3ca6b4580933320e11e046f9607525a
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: 8842429657c12962245381ac1c34142dfb9425bb
+PODFILE CHECKSUM: 04d1fc91994686f45f773e3ce7969fe74c773f05
 
 COCOAPODS: 1.16.2

@@ -1,4 +1,3 @@
-import { AlertOctagon } from 'lucide-react-native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -18,7 +17,7 @@ const DataFetchErrorModal = memo<DataFetchErrorModalProps>(({ message }) => {
       <AppText>{t('We are working on addressing this issue. Please try again later.')}</AppText>
 
       {message && (
-        <InfoBox title="Error details" Icon={AlertOctagon}>
+        <InfoBox title="Error details" iconName="alert-octagon">
           <AppText>{message}</AppText>
         </InfoBox>
       )}

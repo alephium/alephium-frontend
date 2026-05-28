@@ -1,6 +1,5 @@
 import { isValidAddress } from '@alephium/web3'
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera'
-import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -107,7 +106,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
 
         {permission?.granted === false && (
           <ScreenSection fill verticallyCentered>
-            <InfoBox title={t('Camera permissions required')} Icon={CameraIcon}>
+            <InfoBox title={t('Camera permissions required')} iconName="camera">
               <AppText>{t('Please, enable access to camera through the settings of your device.')}</AppText>
               {permission.canAskAgain && (
                 <Button title={t('Continue')} onPress={requestPermission} style={{ marginTop: VERTICAL_GAP }} />

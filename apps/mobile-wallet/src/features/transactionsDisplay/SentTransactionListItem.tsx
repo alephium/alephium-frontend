@@ -1,7 +1,7 @@
 import { selectSentTransactionByHash } from '@alephium/shared'
 import { usePendingTxPolling } from '@alephium/shared-react'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { colord } from 'colord'
-import { Check } from 'lucide-react-native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
@@ -40,7 +40,7 @@ const SentTransactionListItem = memo(({ txHash, ...props }: SentTransactionListI
       icon={
         <TransactionIcon color={iconBgColor}>
           {sentTransaction.status === 'confirmed' ? (
-            <Check size={16} color={iconColor} />
+            <Lucide name="check" size={16} color={iconColor} />
           ) : (
             <ActivityIndicator size={16} color={iconColor} />
           )}

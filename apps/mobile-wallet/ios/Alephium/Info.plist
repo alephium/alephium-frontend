@@ -68,6 +68,7 @@
     <true/>
     <key>UIAppFonts</key>
     <array>
+      <string>Lucide.ttf</string>
       <string>Geist-Medium.ttf</string>
       <string>Geist-SemiBold.ttf</string>
       <string>Geist-Bold.ttf</string>

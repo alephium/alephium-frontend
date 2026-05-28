@@ -6,7 +6,7 @@ import {
   useFetchAddressWorth
 } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
-import { Check, Lock } from 'lucide-react-native'
+import { Lucide } from '@react-native-vector-icons/lucide/static'
 import { useTranslation } from 'react-i18next'
 import { PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
@@ -122,7 +122,7 @@ const AddressBox = ({
             <AddressLabel>
               {isSelected ? (
                 <SelectedBadge>
-                  <Check color="white" size={14} />
+                  <Lucide name="check" color="white" size={14} />
                 </SelectedBadge>
               ) : (
                 <Animated.View>
@@ -271,7 +271,7 @@ const AddressTokenBalances = ({ addressHash, tokenId }: Required<Pick<AddressBox
 
       {!!lockedBalance && (
         <LockedAmount>
-          <Lock size={16} />
+          <Lucide name="lock" size={16} />
           <AssetAmountWithLogo assetId={tokenId} amount={lockedBalance} />
         </LockedAmount>
       )}

@@ -1,7 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { colord } from 'colord'
-import { AlertCircle } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -26,7 +25,7 @@ const UnknownAddressWarning = ({ addressHash }: UnknownAddressWarningProps) => {
     <InfoBoxStyled
       narrow
       title={t('Unknown address')}
-      Icon={AlertCircle}
+      iconName="alert-circle"
       bgColor={colord(theme.global.warning).alpha(0.15).toHex()}
       iconColor={theme.global.warning}
     >

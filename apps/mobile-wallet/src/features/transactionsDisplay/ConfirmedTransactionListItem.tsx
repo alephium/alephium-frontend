@@ -1,5 +1,6 @@
 import { findTransactionReferenceAddress } from '@alephium/shared'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -55,11 +56,11 @@ const TransactionTimestamp = ({ tx }: ConfirmedTransactionListItemSubcomponentPr
 }
 
 const TransactionIcon = ({ tx, referenceAddress }: ConfirmedTransactionListItemSubcomponentProps) => {
-  const { iconBgColor, iconColor, Icon } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
+  const { iconBgColor, iconColor, iconName } = useTransactionIconLabel({ tx, referenceAddress, view: 'wallet' })
 
   return (
     <TransactionIconStyled color={iconBgColor}>
-      <Icon size={16} strokeWidth={3} color={iconColor} />
+      <Lucide name={iconName} size={16} color={iconColor} />
 
       {!tx.scriptExecutionOk && (
         <FailedTXBubble>

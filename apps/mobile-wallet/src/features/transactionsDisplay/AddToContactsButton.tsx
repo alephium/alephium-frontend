@@ -1,6 +1,6 @@
 import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { PlusIcon } from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -31,7 +31,7 @@ const AddToContactsButton = ({ addressHash }: AddToContactsButtonProps) => {
 
   return (
     <AddToContactsButtonStyled>
-      <PlusIcon size={12} color={theme.global.accent} />
+      <Lucide name="plus" size={12} color={theme.global.accent} />
       <AppText onPress={handleLinkPress} color="accent" size={12}>
         {t('Add to contacts')}
       </AppText>

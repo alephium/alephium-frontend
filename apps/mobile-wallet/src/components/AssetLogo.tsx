@@ -1,8 +1,8 @@
 import { isFT, isListedFT, isNFT } from '@alephium/shared'
 import { useFetchToken } from '@alephium/shared-react'
 import { TokenInfo } from '@alephium/token-list'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { Image } from 'expo-image'
-import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -32,7 +32,7 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
       ) : isFT(token) ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
       ) : (
-        <HelpCircle size={size * 0.7} color={theme.font.secondary} />
+        <Lucide name="help-circle" size={size * 0.7} color={theme.font.secondary} />
       )}
     </AssetLogoStyled>
   )

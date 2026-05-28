@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react-native'
+import Lucide, { LucideIconName } from '@react-native-vector-icons/lucide/static'
 import { DimensionValue } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -7,16 +7,16 @@ import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface NFTPlaceholderProps {
   size?: DimensionValue
-  Icon?: LucideIcon
+  iconName?: LucideIconName
   text?: string
 }
 
-const NFTPlaceholder = ({ size = '100%', Icon, text }: NFTPlaceholderProps) => {
+const NFTPlaceholder = ({ size = '100%', iconName, text }: NFTPlaceholderProps) => {
   const theme = useTheme()
 
   return (
     <NoImage style={{ width: size, height: size }}>
-      {Icon && <Icon color={theme.global.gray} size="30%" strokeWidth={1} />}
+      {iconName && <Lucide name={iconName} color={theme.global.gray} size={30} />}
       {text && (
         <AppText color={theme.global.gray} size={10}>
           {text}

@@ -1,15 +1,7 @@
 import { UseTransactionProps } from '@alephium/shared'
 import { useTransactionInfoType } from '@alephium/shared-react'
+import { LucideIconName } from '@react-native-vector-icons/lucide/static'
 import { colord } from 'colord'
-import {
-  ArrowBigDownDash,
-  ArrowDown,
-  ArrowLeftRight,
-  ArrowUp,
-  CircleEllipsis,
-  RefreshCcw,
-  Repeat
-} from 'lucide-react-native'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
@@ -32,18 +24,18 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       'address-group-transfer': t('Group transfer'),
       simulated: ''
     }[infoType],
-    Icon: {
-      incoming: ArrowDown,
-      outgoing: ArrowUp,
-      pending: CircleEllipsis,
-      dApp: Repeat,
-      airdrop: ArrowBigDownDash,
-      'dApp-failed': Repeat,
-      'bidirectional-transfer': Repeat,
-      'wallet-self-transfer': ArrowLeftRight,
-      'address-self-transfer': RefreshCcw,
-      'address-group-transfer': RefreshCcw,
-      simulated: Repeat
+    iconName: {
+      incoming: 'arrow-down' as LucideIconName,
+      outgoing: 'arrow-up' as LucideIconName,
+      pending: 'circle-ellipsis' as LucideIconName,
+      dApp: 'repeat' as LucideIconName,
+      airdrop: 'arrow-big-down-dash' as LucideIconName,
+      'dApp-failed': 'repeat' as LucideIconName,
+      'bidirectional-transfer': 'repeat' as LucideIconName,
+      'wallet-self-transfer': 'arrow-left-right' as LucideIconName,
+      'address-self-transfer': 'refresh-ccw' as LucideIconName,
+      'address-group-transfer': 'refresh-ccw' as LucideIconName,
+      simulated: 'repeat' as LucideIconName
     }[infoType],
     iconColor: {
       incoming: theme.global.receive,
