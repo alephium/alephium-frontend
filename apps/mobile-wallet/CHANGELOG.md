@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.5.1
+
+### Patch Changes
+
+- bbb178f: Improve cold start performance
+
 ## 2.5.0
 
 ### Minor Changes
