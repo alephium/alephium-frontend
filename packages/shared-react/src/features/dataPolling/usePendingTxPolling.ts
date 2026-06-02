@@ -14,13 +14,13 @@ import { nodeTransactionStatusQuery } from '../../api/queries/transactionQueries
 import { queryClient } from '../../api/queryClient'
 import { invalidateAddressQueries } from '../../api/queryInvalidation'
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
-import { useIsExplorerOffline } from '../../network/useIsServerOffline'
+import { useIsExplorerOffline, useIsNodeOnline, useNetworkId } from '../../network/networkHooks'
 import { useSharedDispatch, useSharedSelector } from '../../redux'
 
 export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
   const dispatch = useSharedDispatch()
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
   const isExplorerOffline = useIsExplorerOffline()
@@ -29,7 +29,7 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
 
   const { data: tx } = useFetchPendingTransaction({ txHash, skip: txIsConfirmed })
   const { data: txStatus } = useQuery(
-    nodeTransactionStatusQuery({ txHash, networkId, skip: txIsConfirmed || !isExplorerOffline })
+    nodeTransactionStatusQuery({ txHash, networkId, isNodeOnline, skip: txIsConfirmed || !isExplorerOffline })
   )
 
   // When EB is up, we use the EB to get the tx status

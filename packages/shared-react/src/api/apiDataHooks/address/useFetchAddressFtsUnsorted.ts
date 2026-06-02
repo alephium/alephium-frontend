@@ -3,12 +3,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { addressFtsQuery } from '../../../api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchAddressFtsUnsorted = (addressHash: AddressHash) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
-  const { data, isLoading } = useQuery(addressFtsQuery({ addressHash, networkId }))
+  const { data, isLoading } = useQuery(addressFtsQuery({ addressHash, networkId, isNodeOnline }))
 
   return {
     data: useMemo(() => (data ? [...data.listedFts, ...data.unlistedFts] : []), [data]),

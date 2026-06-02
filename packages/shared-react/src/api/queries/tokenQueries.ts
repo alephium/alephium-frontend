@@ -20,6 +20,7 @@ import { combineIsLoading } from '../../api/apiDataHooks/apiDataHooksUtils'
 import { convertTokenDecimalsToNumber, getQueryConfig, matchesNFTTokenUriMetaDataSchema } from '../../api/apiUtils'
 import { fetchContentType, FetchError, fetchJson } from '../../api/fetchUtils'
 import { queryClient } from '../../api/queryClient'
+import { shouldSkip } from './queriesUtils'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 
@@ -27,12 +28,13 @@ export const StdInterfaceIds = Object.values(e.TokenStdInterfaceId)
 
 interface TokenQueryProps extends SkipProp {
   id: TokenId
-  networkId?: number
+  networkId: number
+  isExplorerOnline: boolean
   skipCaching?: boolean
   isExplorerOffline?: boolean
 }
 
-interface NFTQueryProps extends TokenQueryProps {
+interface NFTQueryProps extends Omit<TokenQueryProps, 'isExplorerOnline'> {
   tokenUri?: NFTMetaData['tokenUri']
 }
 
@@ -49,7 +51,7 @@ const convertTokenListToRecord = (tokenList: TokenList['tokens']): FtListMap => 
 const mainnetTokens = convertTokenListToRecord(mainnet.tokens)
 const testnetTokens = convertTokenListToRecord(testnet.tokens)
 
-export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
+export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id' | 'isExplorerOnline'>) => {
   const network = getNetworkNameFromNetworkId(networkId) ?? 'mainnet'
 
   return queryOptions({
@@ -57,43 +59,41 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) =>
     // The token list is essential for the whole app so we don't want to ever delete it. Even if we set a lower gcTime,
     // it will never become inactive (since it's always used by a mount component).
     ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
-    queryFn:
-      networkId === undefined || skip
-        ? skipToken
-        : ({ queryKey }) =>
-            network === 'devnet'
-              ? { [ALPH.id]: ALPH }
-              : fetchJson<TokenList>(getTokensURL(network))
-                  .then((data) => convertTokenListToRecord(data?.tokens || []))
-                  .catch(() => {
-                    const cachedTokenList = queryClient.getQueryData(queryKey)
+    queryFn: skip
+      ? skipToken
+      : ({ queryKey }) =>
+          network === 'devnet'
+            ? { [ALPH.id]: ALPH }
+            : fetchJson<TokenList>(getTokensURL(network))
+                .then((data) => convertTokenListToRecord(data?.tokens || []))
+                .catch(() => {
+                  const cachedTokenList = queryClient.getQueryData(queryKey)
 
-                    if (cachedTokenList) {
-                      return cachedTokenList as FtListMap
-                    } else if (network === 'mainnet') {
-                      return mainnetTokens
-                    } else {
-                      return testnetTokens
-                    }
-                  }),
+                  if (cachedTokenList) {
+                    return cachedTokenList as FtListMap
+                  } else if (network === 'mainnet') {
+                    return mainnetTokens
+                  } else {
+                    return testnetTokens
+                  }
+                }),
     placeholderData: network === 'mainnet' ? mainnetTokens : network === 'testnet' ? testnetTokens : undefined
   })
 }
 
-export const tokenTypeQuery = ({ id, networkId, skip, skipCaching }: TokenQueryProps) =>
+export const tokenTypeQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'type', getId(id, skipCaching)],
     // We always want to remember the type of a token, even when user navigates for too long from components that use
     // tokens.
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
-    queryFn:
-      !skip && networkId !== undefined
-        ? async () => {
-            const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
+    queryFn: shouldSkip(isExplorerOnline, skip)
+      ? skipToken
+      : async () => {
+          const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
 
-            return { token: id, stdInterfaceId: tokenInfo?.stdInterfaceId } as e.TokenInfo
-          }
-        : skipToken
+          return { token: id, stdInterfaceId: tokenInfo?.stdInterfaceId } as e.TokenInfo
+        }
   })
 
 export const combineTokenTypeQueryResults = (results: UseQueryResult<e.TokenInfo | null>[]) => ({
@@ -125,34 +125,37 @@ export const combineTokenTypes = (tokenTypes: (e.TokenInfo | { data: e.TokenInfo
     } as Record<e.TokenStdInterfaceId, TokenId[]>
   )
 
-export const fungibleTokenMetadataQuery = ({ id, networkId, skip, skipCaching }: TokenQueryProps) =>
+export const fungibleTokenMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'fungible', 'metadata', getId(id, skipCaching)],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
-    queryFn: !skip
-      ? async () => {
+    queryFn: shouldSkip(isExplorerOnline, skip)
+      ? skipToken
+      : async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
 
           return tokenMetadata ? convertTokenDecimalsToNumber(tokenMetadata) : null
         }
-      : skipToken
   })
 
-export const nftMetadataQuery = ({ id, networkId, skip, skipCaching }: TokenQueryProps) =>
+const nftMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'metadata', getId(id, skipCaching)],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
-    queryFn: !skip ? async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null : skipToken
+    queryFn: shouldSkip(isExplorerOnline, skip)
+      ? skipToken
+      : async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null
   })
 
-export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFTQueryProps) =>
+const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFTQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'data', getId(id, skipCaching)],
     // We don't want to delete the NFT data when the user navigates away from NFT components.
     ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId, skipCaching }),
     queryFn:
-      !skip && !!tokenUri
-        ? async () => {
+      skip || !tokenUri
+        ? skipToken
+        : async () => {
             const errorNftMetadata: NFTTokenUriMetaData = { name: 'Unknown NFT', image: '' }
             const errorResponse = {
               id,
@@ -200,7 +203,6 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFT
               return errorResponse
             }
           }
-        : skipToken
   })
 
 export const NOCACHE_PREFIX = 'nocache-'
@@ -208,9 +210,9 @@ export const NOCACHE_PREFIX = 'nocache-'
 export const tokenQuery = ({
   id: dirtyId,
   networkId,
+  isExplorerOnline,
   skip,
-  skipCaching: skipCachingProp,
-  isExplorerOffline
+  skipCaching: skipCachingProp
 }: TokenQueryProps) => {
   const isDirtyId = dirtyId.startsWith(NOCACHE_PREFIX)
   const id = isDirtyId ? dirtyId.split(NOCACHE_PREFIX)[1] : dirtyId
@@ -224,71 +226,79 @@ export const tokenQuery = ({
       networkId,
       skipCaching
     }),
-    queryFn: async (): Promise<Token> => {
-      if (id === ALPH.id) return ALPH as ListedFT
+    queryFn: skip
+      ? skipToken
+      : async (): Promise<Token> => {
+          if (id === ALPH.id) return ALPH as ListedFT
 
-      // 1. First check if the token is in the token list
-      let ftList: FtListMap
-      try {
-        ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      } catch {
-        ftList = networkId === 0 ? mainnetTokens : testnetTokens
-      }
+          // 1. First check if the token is in the token list
+          let ftList: FtListMap
+          try {
+            ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+          } catch {
+            ftList = networkId === 0 ? mainnetTokens : testnetTokens
+          }
 
-      const listedFT = ftList[id]
+          const listedFT = ftList[id]
 
-      if (listedFT) return listedFT
+          if (listedFT) return listedFT
 
-      const nst = { id } as NonStandardToken
+          const nst = { id } as NonStandardToken
 
-      try {
-        // 2. If not, find the type of the token
-        const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId, skipCaching }))
+          try {
+            // 2. If not, find the type of the token
+            const tokenInfo = await queryClient.fetchQuery(
+              tokenTypeQuery({ id, networkId, isExplorerOnline, skipCaching })
+            )
 
-        // 3. If it is a fungible token, fetch the fungible token metadata
-        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
-          const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId, skipCaching }))
+            // 3. If it is a fungible token, fetch the fungible token metadata
+            if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+              const ftMetadata = await queryClient.fetchQuery(
+                fungibleTokenMetadataQuery({ id, networkId, isExplorerOnline, skipCaching })
+              )
 
-          return ftMetadata ?? nst
+              return ftMetadata ?? nst
+            }
+
+            // 4. If it is an NFT, fetch the NFT metadata and data
+            if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+              const nft = await queryClient.fetchQuery(nftQuery({ id, networkId, isExplorerOnline, skipCaching }))
+
+              return nft ?? nst
+            }
+          } catch (error) {
+            if (!isExplorerOnline) return nst
+
+            throw error
+          }
+
+          // 5. If the type of the token cannot be determined, return the non-standard token
+          return nst
         }
-
-        // 4. If it is an NFT, fetch the NFT metadata and data
-        if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
-          const nft = await queryClient.fetchQuery(nftQuery({ id, networkId, skipCaching }))
-
-          return nft ?? nst
-        }
-      } catch (error) {
-        if (isExplorerOffline) return nst
-
-        throw error
-      }
-
-      // 5. If the type of the token cannot be determined, return the non-standard token
-      return nst
-    },
-    enabled: !skip && networkId !== undefined
   })
 }
 
-export const nftQuery = ({ id, networkId, skip, skipCaching }: TokenQueryProps) =>
+export const nftQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
-    queryFn: async (): Promise<NFT | null> => {
-      const nftMetadata = await queryClient.fetchQuery(nftMetadataQuery({ id, networkId, skipCaching }))
+    queryFn: shouldSkip(isExplorerOnline, skip)
+      ? skipToken
+      : async (): Promise<NFT | null> => {
+          const nftMetadata = await queryClient.fetchQuery(
+            nftMetadataQuery({ id, networkId, isExplorerOnline, skipCaching })
+          )
 
-      if (!nftMetadata) return null
+          if (!nftMetadata) return null
 
-      const nftData = await queryClient.fetchQuery(
-        nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId, skipCaching })
-      )
+          const nftData = await queryClient.fetchQuery(
+            nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId, skipCaching })
+          )
 
-      if (!nftData) return null
+          if (!nftData) return null
 
-      return { ...nftData, ...nftMetadata }
-    },
-    enabled: !skip
+          return { ...nftData, ...nftMetadata }
+        }
   })
 
 const getId = (id: string, skipCaching?: boolean) => `${skipCaching ? NOCACHE_PREFIX : ''}${id}`

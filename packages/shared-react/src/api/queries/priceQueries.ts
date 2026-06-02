@@ -9,7 +9,7 @@ import { queryClient } from '../../api/queryClient'
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]
   currency: string
-  networkId?: number
+  networkId: number
 }
 
 export type TokenPrice = {
@@ -23,32 +23,31 @@ export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensP
     refetchInterval: PRICES_REFRESH_INTERVAL,
     // When the user changes currency settings we don't want to keep the previous cache for too long.
     ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
-    queryFn:
-      !skip && networkId !== undefined
-        ? async () => {
-            try {
-              const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
+    queryFn: skip
+      ? skipToken
+      : async () => {
+          try {
+            const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
 
-              return prices.map((price, i) => ({ price, symbol: symbols[i] }))
-            } catch (e) {
-              if (is5XXError(e)) {
-                const coingeckoIds = symbols.map(symbolToCoingeckoId).filter((id) => id !== '')
-                const data = await queryClient.fetchQuery(coingeckoTokensPriceQuery({ ids: coingeckoIds, currency }))
+            return prices.map((price, i) => ({ price, symbol: symbols[i] }))
+          } catch (e) {
+            if (is5XXError(e)) {
+              const coingeckoIds = symbols.map(symbolToCoingeckoId).filter((id) => id !== '')
+              const data = await queryClient.fetchQuery(coingeckoTokensPriceQuery({ ids: coingeckoIds, currency }))
 
-                return symbols.map((symbol) => {
-                  const price = data[symbolToCoingeckoId(symbol)]
+              return symbols.map((symbol) => {
+                const price = data[symbolToCoingeckoId(symbol)]
 
-                  return {
-                    price: price?.[currency] ?? 0,
-                    symbol
-                  }
-                })
-              } else {
-                throw e
-              }
+                return {
+                  price: price?.[currency] ?? 0,
+                  symbol
+                }
+              })
+            } else {
+              throw e
             }
           }
-        : skipToken
+        }
   })
 
 const coingeckoTokensPriceQuery = ({ ids, currency }: { ids: string[]; currency: string }) =>

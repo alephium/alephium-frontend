@@ -1,6 +1,7 @@
 import {
   addressSearchStringQuery,
-  useCurrentlyOnlineNetworkId,
+  useIsNodeOnline,
+  useNetworkId,
   useUnsortedAddressesHashes
 } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
@@ -10,11 +11,12 @@ import { useQueries } from '@tanstack/react-query'
 // See: https://tanstack.com/query/latest/docs/framework/react/guides/prefetching#prefetch-in-components
 const usePrefetchQueries = () => {
   const addressHashes = useUnsortedAddressesHashes()
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
   useQueries({
     queries: addressHashes.map((hash) => ({
-      ...addressSearchStringQuery({ addressHash: hash, networkId }),
+      ...addressSearchStringQuery({ addressHash: hash, networkId, isNodeOnline }),
       notifyOnChangeProps: []
     }))
   })

@@ -5,18 +5,19 @@ import { useCallback, useMemo } from 'react'
 import { useFetchAddressLatestTransaction } from '../../../api/apiDataHooks/address/useFetchAddressLatestTransaction'
 import { addressTransactionsInfiniteQuery } from '../../../api/queries/transactionQueries'
 import { queryClient } from '../../../api/queryClient'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface UseFetchAddressInfiniteTransactionsProps {
   addressHash: AddressHash
 }
 
 export const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAddressInfiniteTransactionsProps) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
 
   const { data: addressLatestTx, isLoading: isLoadingLatestTx } = useFetchAddressLatestTransaction(addressHash)
 
-  const query = addressTransactionsInfiniteQuery({ addressHash, networkId, skip: isLoadingLatestTx })
+  const query = addressTransactionsInfiniteQuery({ addressHash, networkId, isExplorerOnline, skip: isLoadingLatestTx })
 
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(query)
 

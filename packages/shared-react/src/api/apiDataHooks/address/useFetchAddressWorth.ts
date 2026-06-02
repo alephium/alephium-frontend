@@ -3,12 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useFetchListedFtsWorth } from '../../../api/apiDataHooks/utils/useFetchListedFtsWorth'
 import { addressBalancesByListingQuery } from '../../../api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
-  const { data, isLoading: isLoadingBalances } = useQuery(addressBalancesByListingQuery({ addressHash, networkId }))
+  const { data, isLoading: isLoadingBalances } = useQuery(
+    addressBalancesByListingQuery({ addressHash, networkId, isNodeOnline })
+  )
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth(data?.listedFts ?? [])
 
   return {

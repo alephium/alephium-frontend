@@ -18,8 +18,9 @@ import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,
   queryClient,
-  useCurrentlyOnlineNetworkId,
-  useInterval
+  useInterval,
+  useIsNodeOnline,
+  useNetworkId
 } from '@alephium/shared-react'
 import {
   ApiRequestArguments,
@@ -61,7 +62,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { t } = useTranslation()
-  const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -578,7 +580,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               const decodedTx = await queryClient.fetchQuery(
                 nodeTransactionDecodeUnsignedTxQuery({
                   unsignedTx: txParams.unsignedTx,
-                  networkId: currentlyOnlineNetworkId
+                  networkId,
+                  isNodeOnline
                 })
               )
 
@@ -680,7 +683,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
               transactionParams,
               addressesWithGroup,
-              networkId: currentlyOnlineNetworkId
+              networkId,
+              isNodeOnline
             })
 
             if (chainedTxParams) {
@@ -738,10 +742,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     },
     [
       addressesWithGroup,
-      currentlyOnlineNetworkId,
       dispatch,
       getDappIcon,
       handleApiResponse,
+      isNodeOnline,
+      networkId,
       respondToWalletConnect,
       respondToWalletConnectWithError,
       t,

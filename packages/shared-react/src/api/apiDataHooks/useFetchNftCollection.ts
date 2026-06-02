@@ -4,10 +4,10 @@ import { skipToken, useQuery } from '@tanstack/react-query'
 
 import { getQueryConfig } from '../../api/apiUtils'
 import { fetchJson } from '../../api/fetchUtils'
-import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
+import { useNetworkId } from '../../network/networkHooks'
 
 export const useFetchNftCollection = (collectionId: string) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
 
   const { data: nftCollectionMetadata, isLoading: isNftCollectionMetadataLoading } = useQuery({
     queryKey: ['nfts', 'nftCollection', 'nftCollectionMetadata', collectionId],

@@ -2,7 +2,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '../../../api/queries/addressQueries'
 import { useUnsortedAddressesHashes } from '../../../hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchWalletBalancesTokens = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
@@ -12,11 +12,14 @@ export const useFetchWalletBalancesTokens = <T>(
     error?: boolean
   }
 ) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const allAddressHashes = useUnsortedAddressesHashes()
 
   const { data, isLoading, isFetching, error } = useQueries({
-    queries: allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId })),
+    queries: allAddressHashes.map((addressHash) =>
+      addressTokensBalancesQuery({ addressHash, networkId, isNodeOnline })
+    ),
     combine
   })
 

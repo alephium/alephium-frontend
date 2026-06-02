@@ -2,17 +2,19 @@ import { Address, AddressHash } from '@alephium/shared'
 import {
   addressSearchStringQuery,
   AddressSearchStringQueryFnData,
-  useCurrentlyOnlineNetworkId,
+  useIsNodeOnline,
+  useNetworkId,
   useUnsortedAddresses
 } from '@alephium/shared-react'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 const useFetchAddressesSearchStrings = (addressHashes: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
   const { data } = useQueries({
-    queries: addressHashes.map((hash) => addressSearchStringQuery({ addressHash: hash, networkId })),
+    queries: addressHashes.map((hash) => addressSearchStringQuery({ addressHash: hash, networkId, isNodeOnline })),
     combine: (results) => combineAddressesSearchStrings(results, addresses)
   })
 

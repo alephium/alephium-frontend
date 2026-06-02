@@ -4,15 +4,16 @@ import { useMemo } from 'react'
 import { useFetchWalletLatestTransaction } from '../../../api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
 import { walletTransactionsInfiniteQuery } from '../../../api/queries/transactionQueries'
 import { useUnsortedAddressesHashes } from '../../../hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchWalletTransactionsInfinite = () => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
   const addressHashes = useUnsortedAddressesHashes()
 
   const { isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()
 
-  const query = walletTransactionsInfiniteQuery({ addressHashes, networkId, skip: isLoadingLatestTx })
+  const query = walletTransactionsInfiniteQuery({ addressHashes, networkId, isExplorerOnline, skip: isLoadingLatestTx })
 
   const { data, fetchNextPage, isLoading, isFetching, hasNextPage, isFetchingNextPage } = useInfiniteQuery(query)
 

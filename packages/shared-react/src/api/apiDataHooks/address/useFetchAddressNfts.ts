@@ -2,7 +2,7 @@ import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { addressNftsQuery } from '../../../api/queries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface UseFetchAddressNftsProps {
   addressHash: AddressHash
@@ -10,9 +10,10 @@ interface UseFetchAddressNftsProps {
 }
 
 export const useFetchAddressNfts = ({ addressHash, skip }: UseFetchAddressNftsProps) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
-  const { data, isLoading } = useQuery(addressNftsQuery({ addressHash, networkId, skip }))
+  const { data, isLoading } = useQuery(addressNftsQuery({ addressHash, networkId, isNodeOnline, skip }))
 
   return { data, isLoading }
 }

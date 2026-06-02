@@ -3,12 +3,12 @@ import { useMemo } from 'react'
 
 import { useFetchWalletTokensByType } from '../../../api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '../../../api/queries/priceQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useNetworkId } from '../../../network/networkHooks'
 import { useSharedSelector } from '../../../redux'
 
 export const useFetchTokenPrices = () => {
   const fiatCurrency = useSharedSelector((s) => s.sharedSettings.fiatCurrency)
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
@@ -30,7 +30,7 @@ export const useFetchTokenPrices = () => {
 
 export const useFetchTokenPrice = (symbol: string) => {
   const fiatCurrency = useSharedSelector((s) => s.sharedSettings.fiatCurrency)
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
 
   const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSortedSymbols()
 
