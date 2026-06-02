@@ -1,7 +1,7 @@
 import { useIsFetching } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-import { invalidateAddressQueries } from '../../api/queryInvalidation'
+import { invalidateAddressQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
 
 export const useRefreshAddressesBalances = () => {
@@ -21,6 +21,7 @@ export const useRefreshAddressesBalances = () => {
     if (isFetchingBalances) return
 
     addressHashes.forEach(invalidateAddressQueries)
+    invalidateTokenPrices()
   }, [addressHashes, isFetchingBalances])
 
   return {

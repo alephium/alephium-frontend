@@ -19,7 +19,7 @@ export type TokenPrice = {
 
 export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensPriceQueryProps) =>
   queryOptions<TokenPrice[]>({
-    queryKey: ['tokenPrices', 'currentPrice', symbols, { currency, networkId }],
+    queryKey: ['tokenPrices', 'currentPrice', { currency, networkId }],
     refetchInterval: PRICES_REFRESH_INTERVAL,
     // When the user changes currency settings we don't want to keep the previous cache for too long.
     ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),

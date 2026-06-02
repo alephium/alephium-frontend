@@ -10,11 +10,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
 import { useFetchPendingTransaction } from '../../api/apiDataHooks/transaction/useFetchPendingTransaction'
-import { nodeTransactionStatusQuery } from '../../api/queries/transactionQueries'
+import { addressLatestTransactionQuery, nodeTransactionStatusQuery } from '../../api/queries/transactionQueries'
 import { queryClient } from '../../api/queryClient'
-import { invalidateAddressQueries } from '../../api/queryInvalidation'
+import { invalidateAddressQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
-import { useIsExplorerOffline, useIsNodeOnline, useNetworkId } from '../../network/networkHooks'
+import { useIsExplorerOffline, useIsExplorerOnline, useIsNodeOnline, useNetworkId } from '../../network/networkHooks'
 import { useSharedDispatch, useSharedSelector } from '../../redux'
 
 export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
@@ -24,6 +24,7 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
   const sentTx = useSharedSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
   const isExplorerOffline = useIsExplorerOffline()
+  const isExplorerOnline = useIsExplorerOnline()
 
   const txIsConfirmed = !sentTx || sentTx.status === 'confirmed'
 
@@ -40,12 +41,14 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
       dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: 'confirmed' }))
 
       findTransactionInternalAddresses(allAddressHashes, tx).forEach((addressHash) => {
-        queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }] })
+        queryClient.refetchQueries({
+          queryKey: addressLatestTransactionQuery({ addressHash, networkId, isExplorerOnline }).queryKey
+        })
       })
     } else {
       dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: 'mempooled' }))
     }
-  }, [allAddressHashes, dispatch, networkId, tx])
+  }, [allAddressHashes, dispatch, isExplorerOnline, networkId, tx])
 
   // When EB is down, we use the node to get the tx status
   useEffect(() => {
@@ -57,6 +60,7 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
       dispatch(sentTransactionStatusChanged({ hash: tx.unsigned.txId, status: 'confirmed' }))
 
       findTransactionInternalAddresses(allAddressHashes, tx).forEach(invalidateAddressQueries)
+      invalidateTokenPrices()
     }
   }, [allAddressHashes, dispatch, isExplorerOffline, tx, txHash, txStatus])
 }
