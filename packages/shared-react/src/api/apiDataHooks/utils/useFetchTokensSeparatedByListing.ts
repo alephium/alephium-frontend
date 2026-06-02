@@ -1,6 +1,6 @@
 import { FtListMap, ListedFT, UnlistedToken } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { ftListQuery } from '../../../api/queries/tokenQueries'
 import { useNetworkId } from '../../../network/networkHooks'
