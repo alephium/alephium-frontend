@@ -68,7 +68,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={<RefreshSpinner progressViewOffset={100} />}
+      refreshControl={<RefreshSpinner progressViewOffset={35} />}
       hasBottomBar
       verticalGap
       contentPaddingTop={60 + HEADER_OFFSET_TOP}
