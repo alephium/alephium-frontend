@@ -59,26 +59,9 @@ export const addressLatestTransactionQuery = ({
           // The following block invalidates queries that need to refetch data if a new transaction hash has been
           // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-            // This is required because the backend returns incomplete confirmed tx data.
-            // See https://github.com/alephium/alephium-frontend/issues/1367
-            const fullDataLatestTx = await throttledClient.explorer.transactions.getTransactionsTransactionHash(
-              latestTx.hash
-            )
-
-            if (isConfirmedTx(fullDataLatestTx)) {
-              latestTx.hash = fullDataLatestTx.hash
-              latestTx.timestamp = fullDataLatestTx.timestamp
-
-              // The backend needs some time to update the results of the following queries
-              // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
-              await sleep(2000)
-
-              await invalidateAddressQueries(addressHash)
-              await invalidateWalletQueries()
-              await invalidateTokenPrices()
-            } else {
-              latestTx = cachedLatestTx
-            }
+            await invalidateAddressQueries(addressHash)
+            await invalidateWalletQueries()
+            await invalidateTokenPrices()
           }
 
           return {
