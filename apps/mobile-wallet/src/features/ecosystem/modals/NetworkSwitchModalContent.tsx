@@ -1,5 +1,4 @@
 import { NetworkName } from '@alephium/shared'
-import { AlertTriangle } from 'lucide-react-native'
 import { Trans, useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -26,7 +25,7 @@ const NetworkSwitchModalContent = ({
   return (
     <>
       <ScreenSection>
-        <InfoBox title={t('Switch network')} Icon={AlertTriangle}>
+        <InfoBox title={t('Switch network')} iconName="alert-triangle">
           <AppText>
             <Trans
               t={t}

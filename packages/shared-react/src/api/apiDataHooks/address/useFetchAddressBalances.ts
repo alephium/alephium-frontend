@@ -2,12 +2,13 @@ import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { addressBalancesQuery } from '../../../api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchAddressBalances = (addressHash: AddressHash) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
-  const { data, isLoading } = useQuery(addressBalancesQuery({ addressHash, networkId }))
+  const { data, isLoading } = useQuery(addressBalancesQuery({ addressHash, networkId, isNodeOnline }))
 
   return {
     data: data?.balances,

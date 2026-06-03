@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { addressTransactionsCountQuery } from '../../../api/queries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchAddressTransactionsCount = (addressStr: string) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
 
-  const { data, isLoading } = useQuery(addressTransactionsCountQuery({ addressHash: addressStr, networkId }))
+  const { data, isLoading } = useQuery(
+    addressTransactionsCountQuery({ addressHash: addressStr, networkId, isExplorerOnline })
+  )
 
   return {
     data,

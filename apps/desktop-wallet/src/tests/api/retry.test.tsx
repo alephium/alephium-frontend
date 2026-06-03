@@ -84,7 +84,12 @@ const renderBalancesHookWithQueryClient = () => {
   const { result } = renderHook(
     () =>
       useQuery(
-        addressAlphBalancesQuery({ addressHash: '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH', networkId: 0 })
+        addressAlphBalancesQuery({
+          addressHash: '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH',
+          networkId: 0,
+          isNodeOnline: true,
+          skip: false
+        })
       ),
     { wrapper }
   )

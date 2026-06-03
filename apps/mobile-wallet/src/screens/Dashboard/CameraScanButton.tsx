@@ -9,7 +9,6 @@ import CameraScanButtonBase from '~/features/qrCodeScan/CameraScanButtonBase'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
-import { showToast } from '~/utils/layout'
 
 const CameraScanButton = () => {
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
@@ -34,13 +33,6 @@ const CameraScanButton = () => {
 
     if (walletConnectClientStatus === 'initialized') {
       pairWithDapp(uri)
-    } else {
-      showToast({
-        text1: t('Experimental feature'),
-        text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
-        type: 'info',
-        onPress: () => navigation.navigate('SettingsScreen')
-      })
     }
   }
 

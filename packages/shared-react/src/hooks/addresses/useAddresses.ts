@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { useFetchLatestTransactionOfEachAddress } from '../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import { useFetchWalletBalancesByAddress } from '../../api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
-import { useCurrentlyOnlineNetworkId } from '../../network/useCurrentlyOnlineNetworkId'
+import { useCurrentlyOnlineNetworkId } from '../../network/networkHooks'
 import { useSharedSelector } from '../../redux'
 
 export const useFetchAddressesHashesSortedByLastUse = () => {

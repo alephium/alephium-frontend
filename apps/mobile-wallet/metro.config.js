@@ -28,6 +28,15 @@ config.transformer.minifierConfig = {
   }
 }
 
+// Enable automatic inline require optimization for production bundles
+// See: https://reactnative.dev/docs/optimizing-javascript-loading#advanced-call-require-inline
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: true,
+  },
+});
+
 // 1) Use WalletConnect's ESM build so it prefers global WebSocket.
 // 2) Resolve 'ws' to its browser stub so the Node ws (and its http/https/net/tls/url deps) are never loaded.
 //    The ESM build still has require("ws") in a fallback; in RN global WebSocket exists so that path isn't used.

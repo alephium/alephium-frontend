@@ -2,13 +2,13 @@ import { TokenId } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { tokenQuery } from '../../../api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '../../../network'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchToken = (id: TokenId, skipCaching?: boolean) => {
-  const networkId = useCurrentlyOnlineNetworkId()
-  const isExplorerOffline = useIsExplorerOffline()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
 
-  const { data, isLoading } = useQuery(tokenQuery({ id, networkId, skipCaching, isExplorerOffline }))
+  const { data, isLoading } = useQuery(tokenQuery({ id, networkId, skipCaching, isExplorerOnline }))
 
   return {
     data,

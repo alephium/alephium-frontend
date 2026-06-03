@@ -1,5 +1,3 @@
-import '@walletconnect/react-native-compat'
-
 import {
   getChainedTxPropsFromSignChainedTxParams,
   getHumanReadableError,
@@ -20,10 +18,10 @@ import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,
   queryClient,
-  useCurrentlyOnlineNetworkId,
-  useInterval
+  useInterval,
+  useIsNodeOnline,
+  useNetworkId
 } from '@alephium/shared-react'
-import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignChainedTxParams,
@@ -33,34 +31,20 @@ import {
   SignTransferTxParams,
   SignUnsignedTxParams
 } from '@alephium/web3'
-import { IWalletKit, WalletKit } from '@reown/walletkit'
-import {
-  Core,
-  CORE_STORAGE_OPTIONS,
-  CORE_STORAGE_PREFIX,
-  Expirer,
-  HISTORY_CONTEXT,
-  HISTORY_STORAGE_VERSION,
-  MESSAGES_CONTEXT,
-  MESSAGES_STORAGE_VERSION,
-  STORE_STORAGE_VERSION
-} from '@walletconnect/core'
-import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
-import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
-import {
-  EngineTypes,
-  JsonRpcRecord,
-  MessageRecord,
-  PendingRequestTypes,
-  SessionTypes,
-  SignClientTypes
-} from '@walletconnect/types'
-import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
-import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { InteractionManager } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
+import { WalletConnectContext, WalletConnectContextValue } from '~/contexts/walletConnect/WalletConnectContext'
+import type {
+  EngineTypes,
+  ErrorResponse,
+  RelayMethod,
+  SessionTypes,
+  SignClientTypes
+} from '~/contexts/walletConnect/walletConnectService'
 import { getChainedTxSignersPublicKeys } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
@@ -68,48 +52,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
-const MaxRequestNumToKeep = 10
-
-interface WalletConnectContextValue {
-  walletConnectClient?: IWalletKit
-  pairWithDapp: (uri: string) => Promise<void>
-  unpairFromDapp: (pairingTopic: string) => Promise<void>
-  activeSessions: SessionTypes.Struct[]
-  refreshActiveSessions: () => void
-  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
-  respondToWalletConnectWithError: (
-    sessionRequestEvent: SessionRequestEvent,
-    error: ReturnType<typeof getSdkError>
-  ) => Promise<void>
-
-  resetWalletConnectClientInitializationAttempts: () => void
-  resetWalletConnectStorage: () => void
-  isInEcosystemInAppBrowser: boolean
-  setIsInEcosystemInAppBrowser: (value: boolean) => void
-}
-
-const initialValues: WalletConnectContextValue = {
-  walletConnectClient: undefined,
-  pairWithDapp: () => Promise.resolve(),
-  unpairFromDapp: () => Promise.resolve(),
-  activeSessions: [],
-  refreshActiveSessions: () => null,
-  respondToWalletConnectWithError: () => Promise.resolve(),
-  respondToWalletConnect: () => Promise.resolve(),
-
-  resetWalletConnectClientInitializationAttempts: () => null,
-  resetWalletConnectStorage: () => null,
-  isInEcosystemInAppBrowser: false,
-  setIsInEcosystemInAppBrowser: () => null
-}
-
-const WalletConnectContext = createContext(initialValues)
-
 const MAX_WALLETCONNECT_RETRIES = 5
-
-const core = new Core({
-  projectId: '2a084aa1d7e09af2b9044a524f39afbe'
-})
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -119,13 +62,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { t } = useTranslation()
-  const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
-  const [isInEcosystemInAppBrowser, setIsInEcosystemInAppBrowser] = useState(false)
 
   const isWalletConnectClientReady = walletConnectClient && walletConnectClientStatus === 'initialized'
 
@@ -136,7 +79,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   // Since WalletConnect doesn't give us an event to listen to when a session gets dropped, we implement a polling
   // mechamism.
   useInterval(
-    () => {
+    async () => {
       if (
         walletConnectClient &&
         Object.keys(walletConnectClient.getActiveSessions()).length !== activeSessions.length
@@ -146,10 +89,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         )
 
         // Inform the dApp that the session has been dropped.
+        const WCService = await import('~/contexts/walletConnect/walletConnectService')
         droppedSessions.forEach((session) => {
           walletConnectClient.disconnectSession({
             topic: session.topic,
-            reason: getSdkError('SESSION_SETTLEMENT_FAILED') // There's no error called "WC_SUCKS", so using the next best thing
+            reason: WCService.getSdkError('SESSION_SETTLEMENT_FAILED') // There's no error called "WC_SUCKS", so using the next best thing
           })
           showToast({
             text1: t('WalletConnect connection unexpectedly dropped.'),
@@ -168,34 +112,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   )
 
   const initializeWalletConnectClient = useCallback(async () => {
-    let client
-
-    try {
-      console.log('CLEANING STORAGE')
-      await cleanBeforeInit()
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Could not clean before initializing WalletConnect client' })
-    }
-
-    console.log('⏳ INITIALIZING WC CLIENT...')
     dispatch(walletConnectClientInitializing())
     setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
     try {
-      client = await WalletKit.init({
-        core,
-        metadata: {
-          name: 'Alephium mobile wallet',
-          description: 'Alephium mobile wallet',
-          url: 'https://github.com/alephium/alephium-frontend',
-          icons: ['https://alephium.org/favicon-32x32.png'],
-          redirect: {
-            native: 'alephium://'
-          }
-        }
-      })
+      const WCService = await import('~/contexts/walletConnect/walletConnectService')
+      const client = await WCService.initWalletConnectClient()
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
+
+      if (client) {
+        setWalletConnectClient(client)
+        dispatch(walletConnectClientInitialized())
+        setActiveSessions(Object.values(client.getActiveSessions()))
+      }
     } catch (error) {
       dispatch(walletConnectClientInitializeFailed(getHumanReadableError(error, '')))
       sendAnalytics({
@@ -205,14 +135,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           walletConnectClientInitializationAttempts + 1
         } (IWalletKit.init failed)`
       })
-    }
-
-    if (client) {
-      cleanHistory(client, false)
-
-      setWalletConnectClient(client)
-      dispatch(walletConnectClientInitialized())
-      setActiveSessions(Object.values(client.getActiveSessions()))
     }
   }, [dispatch, walletConnectClientInitializationAttempts])
 
@@ -225,8 +147,15 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const shouldInitializeImmediately =
     walletConnectClientInitializationAttempts === 0 &&
     (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
+
   useEffect(() => {
-    if (shouldInitializeImmediately) initializeWalletConnectClient()
+    if (!shouldInitializeImmediately) return
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      initializeWalletConnectClient()
+    })
+
+    return () => task.cancel()
   }, [initializeWalletConnectClient, shouldInitializeImmediately])
 
   const shouldRetryInitializationAfterWaiting =
@@ -246,10 +175,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
       if (!walletConnectClient) return
+      const WCService = await import('~/contexts/walletConnect/walletConnectService')
       if (event.params.request.method.startsWith('alph_request')) {
-        cleanHistory(walletConnectClient, true)
+        WCService.cleanHistory(walletConnectClient, true)
       }
-      await cleanMessages(walletConnectClient, event.topic)
+      await WCService.cleanMessages(walletConnectClient, event.topic)
     },
     [walletConnectClient]
   )
@@ -267,7 +197,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   )
 
   const respondToWalletConnectWithError = useCallback(
-    async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>) =>
+    async (event: SessionRequestEvent, error: ErrorResponse) =>
       await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error }),
     [respondToWalletConnect]
   )
@@ -281,7 +211,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         if (walletConnectClient.getActiveSessions()[requestEvent.topic]) {
           await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
         } else {
-          await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
+          const WCService = await import('~/contexts/walletConnect/walletConnectService')
+          await respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_DISCONNECTED'))
         }
       } catch (e: unknown) {
         if (getHumanReadableError(e, '').includes('No matching key')) {
@@ -320,7 +251,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         console.log('⏳ DISCONNECTING FROM:', topic)
 
         if (walletConnectClient.getActiveSessions()[topic]) {
-          await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
+          const WCService = await import('~/contexts/walletConnect/walletConnectService')
+          await walletConnectClient.disconnectSession({ topic, reason: WCService.getSdkError('USER_DISCONNECTED') })
         }
 
         console.log('✅ DISCONNECTING: DONE!')
@@ -382,7 +314,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           })
         }
 
-        const chain = formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)
+        const WCService = await import('~/contexts/walletConnect/walletConnectService')
+        const chain = WCService.formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)
 
         dispatch(
           openModal({
@@ -510,7 +443,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignTransferTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
@@ -544,7 +480,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignDeployContractTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
@@ -578,7 +517,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignExecuteScriptTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
@@ -605,7 +547,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignMessageTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
@@ -635,14 +580,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               const decodedTx = await queryClient.fetchQuery(
                 nodeTransactionDecodeUnsignedTxQuery({
                   unsignedTx: txParams.unsignedTx,
-                  networkId: currentlyOnlineNetworkId
+                  networkId,
+                  isNodeOnline
                 })
               )
 
               dispatch(
                 openModal({
                   name: 'SignUnsignedTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
@@ -676,7 +625,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignChainedTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     props: getChainedTxPropsFromSignChainedTxParams(txParams, unsignedData),
                     txParams,
@@ -698,7 +650,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               break
             }
             case 'alph_requestNodeApi': {
-              walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+              const WCService = await import('~/contexts/walletConnect/walletConnectService')
+              walletConnectClient.core.expirer.set(requestEvent.id, WCService.calcExpiry(5))
               const p = requestEvent.params.request.params as ApiRequestArguments
               const result = await throttledClient.node.request(p)
 
@@ -709,7 +662,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               break
             }
             case 'alph_requestExplorerApi': {
-              walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+              const WCService = await import('~/contexts/walletConnect/walletConnectService')
+              walletConnectClient.core.expirer.set(requestEvent.id, WCService.calcExpiry(5))
               const p = requestEvent.params.request.params as ApiRequestArguments
               const result = await throttledClient.explorer.request(p)
 
@@ -719,15 +673,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
               break
             }
-            default:
-              respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
+            default: {
+              const WCService = await import('~/contexts/walletConnect/walletConnectService')
+              respondToWalletConnectWithError(requestEvent, WCService.getSdkError('WC_METHOD_UNSUPPORTED'))
+            }
           }
         } catch (e: unknown) {
           if (isInsufficientFundsError(e) && transactionParams) {
             const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
               transactionParams,
               addressesWithGroup,
-              networkId: currentlyOnlineNetworkId
+              networkId,
+              isNodeOnline
             })
 
             if (chainedTxParams) {
@@ -737,7 +694,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               dispatch(
                 openModal({
                   name: 'SignChainedTxModal',
-                  onUserDismiss: () => respondToWalletConnectWithError(requestEvent, getSdkError('USER_REJECTED')),
+                  onUserDismiss: async () => {
+                    const WCService = await import('~/contexts/walletConnect/walletConnectService')
+                    respondToWalletConnectWithError(requestEvent, WCService.getSdkError('USER_REJECTED'))
+                  },
                   props: {
                     props: getChainedTxPropsFromSignChainedTxParams(chainedTxParams, unsignedData),
                     txParams: chainedTxParams,
@@ -782,10 +742,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     },
     [
       addressesWithGroup,
-      currentlyOnlineNetworkId,
       dispatch,
       getDappIcon,
       handleApiResponse,
+      isNodeOnline,
+      networkId,
       respondToWalletConnect,
       respondToWalletConnectWithError,
       t,
@@ -836,7 +797,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const resetWalletConnectStorage = useCallback(async () => {
     if (walletConnectClient === undefined) {
       console.log('Clear walletconnect storage')
-      await clearWCStorage()
+      const WCService = await import('~/contexts/walletConnect/walletConnectService')
+      await WCService.clearWCStorage()
       return
     }
 
@@ -846,7 +808,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       dispatch(activateAppLoading(t('Disconnecting')))
 
       const topics = Object.keys(walletConnectClient.getActiveSessions())
-      const reason = getSdkError('USER_DISCONNECTED')
+      const WCService = await import('~/contexts/walletConnect/walletConnectService')
+      const reason = WCService.getSdkError('USER_DISCONNECTED')
 
       for (const topic of topics) {
         try {
@@ -858,16 +821,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       refreshActiveSessions()
 
       console.log('Clear walletconnect cache')
-      const expirer = walletConnectClient.core.expirer as Expirer
-      expirer.expirations.clear()
-      walletConnectClient.core.history.records.clear()
-      walletConnectClient.core.crypto.keychain.keychain.clear()
-      walletConnectClient.core.relayer.messages.messages.clear()
-      walletConnectClient.core.pairing.pairings.map.clear()
-      walletConnectClient.core.relayer.subscriber.subscriptions.clear()
+      WCService.clearWalletConnectRuntimeCache(walletConnectClient)
 
       console.log('Clear walletconnect storage')
-      await clearWCStorage(walletConnectClient)
+      await WCService.clearWCStorage(walletConnectClient)
 
       showToast({
         text1: t('WalletConnect cache cleared'),
@@ -889,194 +846,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         activeSessions,
         refreshActiveSessions,
         resetWalletConnectClientInitializationAttempts,
-        resetWalletConnectStorage,
-        respondToWalletConnectWithError,
-        respondToWalletConnect,
-        isInEcosystemInAppBrowser,
-        setIsInEcosystemInAppBrowser
+        resetWalletConnectStorage
       }}
     >
       {children}
     </WalletConnectContext.Provider>
   )
 }
-
-function getWCStorageKey(prefix: string, version: string, name: string): string {
-  return prefix + version + '//' + name
-}
-
-function isApiRequest(record: JsonRpcRecord): boolean {
-  const request = record.request
-  if (request.method !== 'wc_sessionRequest') {
-    return false
-  }
-  const alphRequestMethod = request.params?.request?.method
-  return alphRequestMethod === 'alph_requestNodeApi' || alphRequestMethod === 'alph_requestExplorerApi'
-}
-
-async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
-  const sessionKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, SESSION_CONTEXT)
-  const sessions = await storage.getItem<SessionTypes.Struct[]>(sessionKey)
-  return sessions === undefined ? [] : sessions.map((session) => session.topic)
-}
-
-// clean the `history` and `messages` storage before `SignClient` init
-async function cleanBeforeInit() {
-  console.log('Clean storage before SignClient init')
-
-  let storage: KeyValueStorage | undefined
-
-  try {
-    storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Error at creating storage object' })
-  }
-
-  if (!storage) return
-
-  const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
-
-  let historyRecords: JsonRpcRecord[] | undefined
-
-  try {
-    historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Error at getting history records from storage' })
-  }
-
-  if (historyRecords !== undefined) {
-    const remainRecords: JsonRpcRecord[] = []
-
-    try {
-      let alphSignRequestNum = 0
-      let unresponsiveRequestNum = 0
-      const now = Date.now()
-
-      for (const record of historyRecords.reverse()) {
-        const msToExpiry = (record.expiry || 0) * 1000 - now
-
-        if (msToExpiry <= 0) continue
-
-        const requestMethod = record.request.params?.request?.method as string | undefined
-
-        if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
-          remainRecords.push(record)
-          alphSignRequestNum += 1
-        } else if (
-          record.response === undefined &&
-          !isApiRequest(record) &&
-          unresponsiveRequestNum < MaxRequestNumToKeep
-        ) {
-          remainRecords.push(record)
-          unresponsiveRequestNum += 1
-        }
-      }
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Error at building remainingRecords array' })
-    }
-
-    try {
-      await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Error at setting history records to storage' })
-    }
-  }
-
-  try {
-    await cleanPendingRequest(storage)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Error at cleanPendingRequest' })
-  }
-
-  let topics: string[] = []
-
-  try {
-    topics = await getSessionTopics(storage)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Error at getSessionTopics' })
-  }
-
-  if (topics.length > 0) {
-    const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
-
-    let messages: Record<string, MessageRecord> | undefined
-
-    try {
-      messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Error at getting messages from storage' })
-    }
-
-    if (messages === undefined) {
-      return
-    }
-
-    try {
-      const messagesMap = objToMap(messages)
-      topics.forEach((topic) => messagesMap.delete(topic))
-      await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
-      console.log(`Clean topics from messages storage: ${topics.join(',')}`)
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Error at setting messages to storage' })
-    }
-  }
-}
-
-function cleanHistory(client: IWalletKit, checkResponse: boolean) {
-  try {
-    const records = client.core.history.records
-    for (const [id, record] of records) {
-      if (checkResponse && record.response === undefined) {
-        continue
-      }
-      if (isApiRequest(record)) {
-        client.core.history.delete(record.topic, id)
-      }
-    }
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Could not clean WalletConnect client history' })
-  }
-}
-
-async function cleanMessages(client: IWalletKit, topic: string) {
-  try {
-    await client.core.relayer.messages.del(topic)
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Could not clean WalletConnect client messages' })
-  }
-}
-
-async function cleanPendingRequest(storage: KeyValueStorage) {
-  const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
-  const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
-  if (pendingRequests !== undefined) {
-    const remainPendingRequests = pendingRequests.filter((request) => {
-      const method = request.params.request.method
-      return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
-    })
-    await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
-  }
-}
-
-async function clearWCStorage(walletConnectClient?: IWalletKit) {
-  if (walletConnectClient) {
-    try {
-      const keys = (await walletConnectClient.core.storage.getKeys()).filter((key) => key.startsWith('wc@'))
-
-      for (const key of keys) await walletConnectClient.core.storage.removeItem(key)
-    } catch (e) {
-      console.error('❌ COULD NOT CLEAR WALLETCONNECT STORAGE using walletConnectClient:', e)
-    }
-  }
-
-  try {
-    const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-    const keys = (await storage.getKeys()).filter((key) => key.startsWith('wc@'))
-
-    for (const key of keys) await storage.removeItem(key)
-  } catch (e) {
-    console.error('❌ COULD NOT CLEAR WALLETCONNECT STORAGE:', e)
-  }
-}
-
-export const useWalletConnectContext = () => useContext(WalletConnectContext)

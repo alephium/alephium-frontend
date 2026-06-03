@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react-native'
+import Lucide, { LucideIconName } from '@react-native-vector-icons/lucide/static'
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -8,7 +8,7 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface InfoBoxProps {
   title: string
-  Icon: LucideIcon
+  iconName: LucideIconName
   children: ReactNode
   iconColor?: string
   bgColor?: string
@@ -16,21 +16,21 @@ interface InfoBoxProps {
   narrow?: boolean
 }
 
-const InfoBox = ({ title, Icon, iconColor, children, style, narrow = false }: InfoBoxProps) => {
+const InfoBox = ({ title, iconName, iconColor, children, style, narrow = false }: InfoBoxProps) => {
   const theme = useTheme()
 
   return (
     <View style={style}>
       {!narrow && (
         <IconColumn>
-          <Icon size={64} color={iconColor ?? theme.font.primary} />
+          <Lucide name={iconName} size={64} color={iconColor ?? theme.font.primary} />
         </IconColumn>
       )}
       <ContentColumn>
         <TitleRow>
           {narrow ? (
             <>
-              <Icon size={24} color={iconColor ?? theme.font.primary} />
+              <Lucide name={iconName} size={24} color={iconColor ?? theme.font.primary} />
               <Title>{title}</Title>
             </>
           ) : (

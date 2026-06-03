@@ -21,6 +21,10 @@ export const invalidateWalletQueries = async () => {
   await invalidateWalletTransactionsQuery()
 }
 
+export const invalidateTokenPrices = async () => {
+  await queryClient.invalidateQueries({ queryKey: ['tokenPrices', 'currentPrice'] })
+}
+
 type WalletTransactionsQueryData = InfiniteData<
   AddressTransactionsInfiniteQueryPageData,
   WalletTransactionsInfiniteQueryPageParam

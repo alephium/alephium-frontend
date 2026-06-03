@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 2.5.1
+
+### Patch Changes
+
+- bbb178f: Improve cold start performance
+- 9b89c16: Improve perceived transaction confirmation speed
+- 5271fac: Fix position of spinner animation when refreshing data
+
 ## 2.5.0
 
 ### Minor Changes

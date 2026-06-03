@@ -1,5 +1,10 @@
 import { SignUnsignedTxModalProps } from '@alephium/shared'
-import { nodeTransactionReconstructDecodedUnsignedTxQuery, useTransactionAmountDeltas } from '@alephium/shared-react'
+import {
+  nodeTransactionReconstructDecodedUnsignedTxQuery,
+  useIsNodeOnline,
+  useNetworkId,
+  useTransactionAmountDeltas
+} from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
@@ -70,7 +75,12 @@ const ReconstructedTransactionDetails = ({
   unsignedData,
   txParams
 }: Pick<SignUnsignedTxModalProps, 'unsignedData' | 'txParams'>) => {
-  const { data: tx } = useQuery(nodeTransactionReconstructDecodedUnsignedTxQuery({ decodedUnsignedTx: unsignedData }))
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
+
+  const { data: tx } = useQuery(
+    nodeTransactionReconstructDecodedUnsignedTxQuery({ decodedUnsignedTx: unsignedData, networkId, isNodeOnline })
+  )
 
   if (!tx) return null
 

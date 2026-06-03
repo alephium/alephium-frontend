@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from 'lucide-react-native'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -10,7 +10,7 @@ const NftVideoPlayIconOverlay = ({ children, size = 30, ...props }: NftVideoPlay
   <View {...props}>
     {children}
     <PlayIconWrapper>
-      <PlayCircleIcon color="white" size={size} />
+      <Lucide name="play-circle" color="white" size={size} />
     </PlayIconWrapper>
   </View>
 )

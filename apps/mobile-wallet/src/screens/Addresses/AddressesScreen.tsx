@@ -29,7 +29,7 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   return (
     <FlashListScreen
       data={addresses}
-      refreshControl={<RefreshSpinner progressViewOffset={150} />}
+      refreshControl={<RefreshSpinner progressViewOffset={35} />}
       contentPaddingTop={165}
       onScroll={onScroll}
       contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN, paddingBottom: bottomBarHeight }}

@@ -7,11 +7,12 @@ import {
 } from '@alephium/shared'
 import {
   addressTokensSearchStringsQuery,
-  useCurrentlyOnlineNetworkId,
   useFetchAddressBalances,
   useFetchAddressFtsSorted,
   useFetchAddressFtsUnsorted,
   useFetchAddressTokensByType,
+  useIsNodeOnline,
+  useNetworkId,
   useSortedTokenIds
 } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -287,14 +288,17 @@ const TokensAmountInputs = ({
 export default TokensAmountInputs
 
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const { data: sortedFts } = useFetchAddressFtsSorted(addressHash)
   const {
     data: { nftIds, nstIds }
   } = useFetchAddressTokensByType(addressHash)
   const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
 
-  const { data: tokensSearchStrings } = useQuery(addressTokensSearchStringsQuery({ addressHash, networkId }))
+  const { data: tokensSearchStrings } = useQuery(
+    addressTokensSearchStringsQuery({ addressHash, networkId, isNodeOnline })
+  )
 
   const allTokensOptions = useMemo(
     () =>

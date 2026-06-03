@@ -1,7 +1,6 @@
 import { NFT } from '@alephium/shared'
 import { useFetchNft } from '@alephium/shared-react'
 import { Image } from 'expo-image'
-import { CameraOff, FileImage } from 'lucide-react-native'
 import { memo, useState } from 'react'
 import { DimensionValue, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -37,14 +36,14 @@ const NFTImage = memo(({ nftId, size = '100%', play, sizeLimited = true }: NFTIm
   if (!contentType) return <NFTPlaceholder size={size} />
 
   if (sizeLimited && !isCached && isLargeFile)
-    return <NFTPlaceholder size={size} Icon={FileImage} text={`>${maxFileSizeInMB}MB`} />
+    return <NFTPlaceholder size={size} iconName="file-image" text={`>${maxFileSizeInMB}MB`} />
 
   // Loading many videos at once is too heavy on Android.
   // Using the image component for NFT lists on Android is sufficient.
   if (contentType === 'video' && (Platform.OS !== 'android' || play))
     return <NftVideo size={size} videoSource={nft.image} play={play} />
 
-  if (contentType === 'other' || hasError) return <NFTPlaceholder size={size} Icon={CameraOff} />
+  if (contentType === 'other' || hasError) return <NFTPlaceholder size={size} iconName="camera-off" />
 
   const isDataUri = nft.image.startsWith('data:image/')
 

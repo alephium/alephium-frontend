@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { useFetchTokensSeparatedByListing } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '../../../api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId, useIsExplorerOffline } from '../../../network'
+import { useIsExplorerOffline, useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface TokensByType<T> {
   data: {
@@ -18,8 +18,9 @@ interface TokensByType<T> {
 }
 
 export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
   const isExplorerOffline = useIsExplorerOffline()
+  const isExplorerOnline = useIsExplorerOnline()
 
   const {
     data: { listedFts, unlistedTokens },
@@ -30,7 +31,7 @@ export const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T
     data: { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds },
     isLoading: isLoadingTokensByType
   } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id, networkId })),
+    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id, networkId, isExplorerOnline })),
     combine: combineTokenTypeQueryResults
   })
 

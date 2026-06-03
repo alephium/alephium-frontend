@@ -5,11 +5,14 @@ import { useMemo } from 'react'
 import { useFetchSortListedFtsByWorth } from '../../../api/apiDataHooks/utils/useFetchSortListedFtsByWorth'
 import { useSortUnlistedFtsAlphabetically } from '../../../api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
 import { addressFtsQuery } from '../../../api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchAddressFtsSorted = (addressHash: AddressHash) => {
-  const networkId = useCurrentlyOnlineNetworkId()
-  const { data: addressFts, isLoading: isLoadingAddressFts } = useQuery(addressFtsQuery({ addressHash, networkId }))
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
+  const { data: addressFts, isLoading: isLoadingAddressFts } = useQuery(
+    addressFtsQuery({ addressHash, networkId, isNodeOnline })
+  )
   const { data: sortedListedFts, isLoading: isLoadingSortFts } = useFetchSortListedFtsByWorth(
     addressFts?.listedFts ?? []
   )

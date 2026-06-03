@@ -1,5 +1,5 @@
+import Lucide, { LucideIconName } from '@react-native-vector-icons/lucide/static'
 import { colord } from 'colord'
-import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -14,22 +14,20 @@ const Toast = ({
 }: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
 
-  const Icons: Record<ToastType, { color: string; Icon: LucideIcon }> = {
+  const Icons: Record<ToastType, { color: string; iconName: LucideIconName }> = {
     success: {
-      Icon: CheckCircle,
+      iconName: 'check-circle',
       color: theme.global.valid
     },
     error: {
-      Icon: AlertCircle,
+      iconName: 'alert-circle',
       color: theme.global.alert
     },
     info: {
-      Icon: InfoIcon,
+      iconName: 'info',
       color: theme.global.accent
     }
   }
-
-  const Icon = Icons[type].Icon
   const color = Icons[type].color
 
   return (
@@ -42,7 +40,7 @@ const Toast = ({
         }}
       >
         <IconContainer>
-          <Icon color={color} />
+          <Lucide name={Icons[type].iconName} color={color} />
         </IconContainer>
         <TextContainer>
           <Title>{text1}</Title>

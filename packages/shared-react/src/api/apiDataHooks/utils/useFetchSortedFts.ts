@@ -6,7 +6,7 @@ import { SkipProp } from '../../../api/apiDataHooks/apiDataHooksTypes'
 import { combineDefined } from '../../../api/apiDataHooks/apiDataHooksUtils'
 import { useFetchTokenPrices } from '../../../api/apiDataHooks/market'
 import { fungibleTokenMetadataQuery } from '../../../api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface UseSortFTsProps extends SkipProp {
   listedFts: (ListedFT & ApiBalances)[]
@@ -21,10 +21,11 @@ const compareByNameThenId = (a: { name?: string; id: string }, b: { name?: strin
 }
 
 const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId })),
+    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId, isExplorerOnline })),
     combine: combineDefined
   })
 

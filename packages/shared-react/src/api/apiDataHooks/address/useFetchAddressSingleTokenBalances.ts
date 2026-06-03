@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useFetchAddressBalancesAlph } from '../../../api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import { SkipProp } from '../../../api/apiDataHooks/apiDataHooksTypes'
 import { addressTokensBalancesQuery } from '../../../api/queries/addressQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsNodeOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface UseFetchAddressSingleTokenBalancesProps extends SkipProp {
   addressHash: AddressHash
@@ -17,7 +17,8 @@ export const useFetchAddressSingleTokenBalances = ({
   tokenId,
   skip
 }: UseFetchAddressSingleTokenBalancesProps) => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
@@ -26,7 +27,7 @@ export const useFetchAddressSingleTokenBalances = ({
   })
 
   const { data: addressTokenBalances, isLoading: isLoadingTokenBalances } = useQuery({
-    ...addressTokensBalancesQuery({ addressHash, networkId }),
+    ...addressTokensBalancesQuery({ addressHash, networkId, isNodeOnline }),
     select: (data) => data?.balances.find(({ id }) => id === tokenId)
   })
 

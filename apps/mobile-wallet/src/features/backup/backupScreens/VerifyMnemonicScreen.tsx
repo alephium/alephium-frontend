@@ -1,7 +1,6 @@
 import { bip39Words } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -10,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import animationSrc from '~/animations/lottie/success.json'
+import SuccessLottieAnimation from '~/animations/lottie/SuccessLottieAnimation'
 import AppText from '~/components/AppText'
 import { BackButton } from '~/components/buttons/Button'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -137,7 +136,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         {showSuccess && (
           <ModalWithBackdrop animationType="fade" visible closeModal={() => setShowSuccess(false)}>
             <ModalContent>
-              <StyledAnimation source={animationSrc} autoPlay loop={false} />
+              <SuccessLottieAnimation loop={false} />
             </ModalContent>
           </ModalWithBackdrop>
         )}
@@ -193,11 +192,6 @@ const ModalContent = styled.View`
   justify-content: center;
   width: 100%;
   background-color: ${({ theme }) => theme.bg.back2};
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 80%;
-  height: 100%;
 `
 
 const ChoicesBox = styled(Animated.View)`

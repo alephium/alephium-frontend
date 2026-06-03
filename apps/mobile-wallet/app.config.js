@@ -1,9 +1,45 @@
+const { withProjectBuildGradle, withAndroidManifest } = require('@expo/config-plugins');
+
+// Detect if this is a final production release build on EAS
+const isEasProduction = process.env.EAS_BUILD_PROFILE === 'production';
+
+const withProjectGradleModifiers = (config) => {
+  return withProjectBuildGradle(config, (modConfig) => {
+    const sentryBypassBlock = `
+// Automatically bypass Sentry source map uploads for local builds (Android Studio / local CLI)
+// This ensures local profile/release testing passes, while EAS Build/CI still uploads safely.
+allprojects {
+    tasks.matching { it.name.contains("SentryUpload") }.all {
+        onlyIf { System.getenv("CI") != null || System.getenv("EAS_BUILD") != null }
+    }
+}
+`;
+    if (!modConfig.modResults.contents.includes('SentryUpload')) {
+      modConfig.modResults.contents += sentryBypassBlock;
+    }
+    return modConfig;
+  });
+};
+
+// 2. NEW: Injects the <profileable android:shell="true" /> tag into your production manifest
+const withProfileableManifest = (config) => {
+  return withAndroidManifest(config, (modConfig) => {
+    const mainApplication = modConfig.modResults.manifest.application[0];
+    if (!mainApplication['profileable']) {
+      mainApplication['profileable'] = [{
+        $: { 'android:shell': 'true' }
+      }];
+    }
+    return modConfig;
+  });
+};
+
 export default {
   expo: {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '2.5.0',
+    version: '2.5.1',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -74,6 +110,8 @@ export default {
     },
     newArchEnabled: true,
     plugins: [
+      withProjectGradleModifiers,
+      (!isEasProduction ? withProfileableManifest : null),
       [
         'expo-build-properties',
         {
@@ -82,6 +120,7 @@ export default {
             flipper: false // https://docs.expo.dev/guides/using-flipper/
           },
           android: {
+            javaVersion: 17,
             compileSdkVersion: 35,
             targetSdkVersion: 35,
             buildToolsVersion: '35.0.0'
@@ -117,8 +156,9 @@ export default {
         }
       ],
       ['expo-web-browser'],
-      'react-native-capture-protection'
-    ],
+      'react-native-capture-protection',
+      '@react-native-vector-icons/lucide'
+    ].filter(Boolean),
     extra: {
       eas: {
         projectId: '877a64af-ee97-4b79-8dfb-eddd78ebe065'

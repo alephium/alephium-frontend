@@ -1,16 +1,14 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/success.json'
+import SuccessLottieAnimation from '~/animations/lottie/SuccessLottieAnimation'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
-import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storeIsNewWallet } from '~/persistent-storage/wallet'
 import { resetNavigation } from '~/utils/navigation'
@@ -23,7 +21,6 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
   const method = useAppSelector((s) => s.walletGeneration.method)
   const wasWalletMetadataRestored = useAppSelector((s) => s.wallet.metadataRestored)
   const walletId = useAppSelector((s) => s.wallet.id)
-  const theme = useTheme()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -37,13 +34,12 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
   return (
     <Screen safeAreaPadding {...props}>
       <AnimationContainer style={{ marginTop: 100 }}>
-        <StyledAlephiumLogo color={theme.font.primary} />
-        <StyledAnimation source={animationSrc} autoPlay />
+        <SuccessLottieAnimation loop={false} />
       </AnimationContainer>
       <CenteredInstructions
         instructions={[
           {
-            text: `${t(wasWalletMetadataRestored ? 'Welcome back to Alephium!' : 'Welcome to Alephium')} 🎉`,
+            text: `${t(wasWalletMetadataRestored ? 'Welcome back to Alephium!' : 'Welcome to Alephium')}`,
             type: 'primary'
           },
           {
@@ -67,16 +63,4 @@ const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`
-
-const StyledAlephiumLogo = styled(AlephiumLogo)`
-  position: absolute;
-  width: 70%;
-  height: 60%;
-  max-height: 140px;
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 80%;
-  height: 100%;
 `

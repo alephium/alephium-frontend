@@ -20,7 +20,8 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   const { t } = useTranslation()
   const { dismissModal, onUserDismiss } = useModalContext()
   const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
-  const currentNetworkName = getNetworkNameFromNetworkId(currentlyOnlineNetworkId)
+  const currentNetworkName =
+    currentlyOnlineNetworkId !== undefined ? getNetworkNameFromNetworkId(currentlyOnlineNetworkId) : undefined
   const requiredNetworkName = networkName as NetworkPreset
   const { handleSwitchNetworkPress } = useWalletConnectNetwork(requiredNetworkName, () =>
     persistSettings('network', networkSettingsPresets[requiredNetworkName])

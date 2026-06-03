@@ -6,10 +6,12 @@ import { useFetchSortListedFtsByWorth } from '../../../api/apiDataHooks/utils/us
 import { useSortUnlistedFtsAlphabetically } from '../../../api/apiDataHooks/utils/useSortUnlistedFtsAlphabetically'
 import { useFetchWalletTokensByType } from '../../../api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { fungibleTokenMetadataQuery } from '../../../api/queries/tokenQueries'
-import { useCurrentlyOnlineNetworkId } from '../../../network'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 export const useFetchWalletFtsSorted = () => {
-  const networkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
+
   const {
     data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
@@ -18,7 +20,7 @@ export const useFetchWalletFtsSorted = () => {
   const { data: sortedListedFts, isLoading: isLoadingSortFts } = useFetchSortListedFtsByWorth(listedFts)
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId })),
+    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId, isExplorerOnline })),
     combine: combineDefined
   })
 

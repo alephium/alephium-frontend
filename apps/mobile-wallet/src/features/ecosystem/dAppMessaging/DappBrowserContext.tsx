@@ -15,7 +15,8 @@ import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,
   queryClient,
-  useCurrentlyOnlineNetworkId,
+  useIsNodeOnline,
+  useNetworkId,
   useUnsortedAddresses
 } from '@alephium/shared-react'
 import {
@@ -71,7 +72,8 @@ interface DappBrowserContextProviderProps {
 export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: DappBrowserContextProviderProps) => {
   const webViewRef = useRef<WebView>(null)
   const dAppMessage = useAppSelector(selectCurrentlyProcessingDappMessage)
-  const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
   const addresses = useUnsortedAddresses()
   const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
   const walletId = useAppSelector((s) => s.wallet.id)
@@ -132,8 +134,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         const authorizedConnection = getAuthorizedConnection(walletId, data)
 
         const isWrongNetwork =
-          data.networkId !== undefined &&
-          currentlyOnlineNetworkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
+          data.networkId !== undefined && networkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
 
         if (isWrongNetwork) {
           dispatch(
@@ -191,13 +192,13 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     },
     [
       addresses,
-      currentlyOnlineNetworkId,
       dAppName,
       dispatch,
       handleApproveDappConnection,
       handleRejectDappConnection,
       isConnectToDappModalOpen,
       network,
+      networkId,
       walletId
     ]
   )
@@ -323,7 +324,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 const decodedTx = await queryClient.fetchQuery(
                   nodeTransactionDecodeUnsignedTxQuery({
                     unsignedTx: params.unsignedTx,
-                    networkId: currentlyOnlineNetworkId
+                    networkId,
+                    isNodeOnline
                   })
                 )
 
@@ -356,7 +358,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
               const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
                 transactionParams: txParams[0],
                 addressesWithGroup,
-                networkId: currentlyOnlineNetworkId
+                networkId,
+                isNodeOnline
               })
 
               if (chainedTxParams) {
@@ -430,7 +433,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(deactivateAppLoading())
       }
     },
-    [addressesWithGroup, currentlyOnlineNetworkId, dAppUrl, dispatch, replyToDapp]
+    [addressesWithGroup, dAppUrl, dispatch, isNodeOnline, networkId, replyToDapp]
   )
 
   const handleSignUnsignedTx = useCallback(
@@ -444,7 +447,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
 
       try {
         const decodedTx = await queryClient.fetchQuery(
-          nodeTransactionDecodeUnsignedTxQuery({ unsignedTx, networkId: currentlyOnlineNetworkId })
+          nodeTransactionDecodeUnsignedTxQuery({ unsignedTx, networkId, isNodeOnline })
         )
 
         dispatch(
@@ -475,7 +478,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(deactivateAppLoading())
       }
     },
-    [dAppUrl, dispatch, replyToDapp, currentlyOnlineNetworkId]
+    [replyToDapp, dispatch, networkId, isNodeOnline, dAppUrl]
   )
 
   const handleSignMessage = useCallback(
@@ -507,7 +510,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   useEffect(() => {
-    if (!dAppMessage || currentlyOnlineNetworkId === undefined) return
+    if (!dAppMessage || !isNodeOnline) return
 
     switch (dAppMessage.type) {
       case 'ALPH_IS_PREAUTHORIZED':
@@ -533,7 +536,6 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         break
     }
   }, [
-    currentlyOnlineNetworkId,
     dAppMessage,
     handleConnectDapp,
     handleExecuteTransaction,
@@ -541,7 +543,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
     handleRejectDappConnection,
     handleRemovePreAuthorization,
     handleSignMessage,
-    handleSignUnsignedTx
+    handleSignUnsignedTx,
+    isNodeOnline
   ])
 
   return <DappBrowserContext.Provider value={webViewRef}>{children}</DappBrowserContext.Provider>

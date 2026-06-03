@@ -17,8 +17,7 @@ import { useMemo } from 'react'
 import { combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'
 import { tokenQuery } from '../../../api/queries/tokenQueries'
 import { useTransactionAmountDeltas } from '../../../hooks/transactions/useTransactionAmountDeltas'
-import { useCurrentlyOnlineNetworkId } from '../../../network/useCurrentlyOnlineNetworkId'
-import { useIsExplorerOffline } from '../../../network/useIsServerOffline'
+import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT
@@ -41,12 +40,12 @@ export const useFetchTransactionTokens = (
   addressHash: AddressHash,
   skipCaching: boolean = false
 ): TransactionTokens => {
-  const networkId = useCurrentlyOnlineNetworkId()
-  const isExplorerOffline = useIsExplorerOffline()
+  const networkId = useNetworkId()
+  const isExplorerOnline = useIsExplorerOnline()
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const { data: tokens, isLoading } = useQueries({
-    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId, skipCaching, isExplorerOffline })),
+    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId, skipCaching, isExplorerOnline })),
     combine: (results) => combineTokens(results, tokenAmounts)
   })
 

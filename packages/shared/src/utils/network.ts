@@ -13,7 +13,7 @@ export const getNetworkIdFromNetworkName = (networkName?: NetworkName) => {
   }
 }
 
-export const getNetworkNameFromNetworkId = (networkId?: number) => {
+export const getNetworkNameFromNetworkId = (networkId: number) => {
   switch (networkId) {
     case 0:
       return 'mainnet'

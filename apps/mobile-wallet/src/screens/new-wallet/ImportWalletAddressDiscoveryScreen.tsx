@@ -1,10 +1,9 @@
 import { useIsExplorerOffline } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import LottieView from 'lottie-react-native'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
+import WalletLottieAnimation from '~/animations/lottie/WalletLottieAnimation'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
@@ -31,7 +30,7 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
       {...props}
     >
       <AnimationContainer>
-        <StyledAnimation source={animationSrc} autoPlay speed={1.2} style={{ width: '45%' }} />
+        <WalletLottieAnimation />
       </AnimationContainer>
       <ScreenContent onContinuePress={handleContinuePress} onScanPress={handleScanPress} />
     </ScrollScreen>
@@ -96,9 +95,4 @@ const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`
-
-const StyledAnimation = styled(LottieView)`
-  width: 60%;
-  height: 100%;
 `

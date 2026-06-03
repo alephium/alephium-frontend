@@ -1,8 +1,11 @@
 module.exports = function (api) {
-  api.cache(true)
+  const isProduction = api.env('production')
+  api.cache.using(() => process.env.NODE_ENV)
+  
   return {
     presets: ['babel-preset-expo'],
     plugins: [
+      ...(isProduction ? ['transform-remove-console'] : []),
       [
         'module-resolver',
         {
@@ -10,7 +13,7 @@ module.exports = function (api) {
           alias: {
             '~': './src'
           }
-        }
+        },
       ]
     ]
   }

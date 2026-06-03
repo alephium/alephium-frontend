@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
 
-import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { useAppSelector } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
 const useWalletConnectToasts = () => {
-  const { isInEcosystemInAppBrowser } = useWalletConnectContext()
+  const isInEcosystemInAppBrowser = useAppSelector((s) => s.dAppBrowser.isInEcosystemInAppBrowser)
   const { t } = useTranslation()
 
   const text2 = !isInEcosystemInAppBrowser ? t('You can go back to your browser.') : undefined

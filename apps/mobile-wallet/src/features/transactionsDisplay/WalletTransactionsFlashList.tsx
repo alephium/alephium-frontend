@@ -90,7 +90,7 @@ const WalletTransactionsFlashList = forwardRef(
         )}
         keyExtractor={(tx) => tx.hash}
         onEndReached={fetchNextPage}
-        refreshControl={<RefreshSpinner />}
+        refreshControl={<RefreshSpinner progressViewOffset={50} />}
         refreshing={isFetching}
         extraData={displayedConfirmedTransactions.length > 0 ? displayedConfirmedTransactions[0].hash : ''}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}

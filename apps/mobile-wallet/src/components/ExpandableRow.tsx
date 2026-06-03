@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react-native'
+import Lucide from '@react-native-vector-icons/lucide/static'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Keyboard, StyleProp, View, ViewStyle } from 'react-native'
@@ -39,7 +39,7 @@ const ExpandableRow = ({ children, title, titleComponent, style }: ExpandableRow
       <Header onPress={toggleExpanded}>
         {titleComponent ?? <Title>{title ?? t('Advanced options')}</Title>}
         <Animated.View style={chevronStyle}>
-          <ChevronDownStyled size={20} color={theme.font.primary} />
+          <LucideStyled name="chevron-down" size={20} color={theme.font.primary} />
         </Animated.View>
       </Header>
       <Animated.View style={collapsableSectionStyle}>{children}</Animated.View>
@@ -60,7 +60,7 @@ const Title = styled(AppText)`
   margin-right: 20px;
 `
 
-const ChevronDownStyled = styled(ChevronDown)`
+const LucideStyled = styled(Lucide)`
   position: relative;
   top: 2px;
 `

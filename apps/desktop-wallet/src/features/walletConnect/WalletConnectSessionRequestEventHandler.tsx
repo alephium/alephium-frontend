@@ -14,8 +14,9 @@ import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,
   queryClient,
-  useCurrentlyOnlineNetworkId,
   useFetchWalletBalancesByAddress,
+  useIsNodeOnline,
+  useNetworkId,
   useUnsortedAddresses
 } from '@alephium/shared-react'
 import { parseChain, RelayMethod } from '@alephium/walletconnect-provider'
@@ -60,7 +61,8 @@ const WalletConnectSessionRequestEventHandler = memo(
     const { sendAnalytics } = useAnalytics()
     const { t } = useTranslation()
     const { addressesWithGroup } = useAppSelector(selectAllAddressByType)
-    const currentlyOnlineNetworkId = useCurrentlyOnlineNetworkId()
+    const settingsNetworkId = useNetworkId()
+    const isNodeOnline = useIsNodeOnline()
 
     const cleanStorage = useCallback(
       async (event: SessionRequestEvent) => {
@@ -92,10 +94,7 @@ const WalletConnectSessionRequestEventHandler = memo(
 
         try {
           const { networkId } = parseChain(chainId)
-          const showNetworkWarning =
-            !!networkId &&
-            currentlyOnlineNetworkId !== undefined &&
-            !isNetworkValid(networkId, currentlyOnlineNetworkId)
+          const showNetworkWarning = !!networkId && !isNetworkValid(networkId, settingsNetworkId)
 
           if (showNetworkWarning) {
             dispatch(
@@ -278,7 +277,8 @@ const WalletConnectSessionRequestEventHandler = memo(
                 const decodedTx = await queryClient.fetchQuery(
                   nodeTransactionDecodeUnsignedTxQuery({
                     unsignedTx: txParams.unsignedTx,
-                    networkId: currentlyOnlineNetworkId
+                    networkId: settingsNetworkId,
+                    isNodeOnline
                   })
                 )
                 dispatch(toggleAppLoading(false))
@@ -375,7 +375,8 @@ const WalletConnectSessionRequestEventHandler = memo(
               const chainedTxParams = await getRefillMissingBalancesChainedTxParams({
                 transactionParams,
                 addressesWithGroup,
-                networkId: currentlyOnlineNetworkId
+                networkId: settingsNetworkId,
+                isNodeOnline
               })
 
               if (chainedTxParams) {
@@ -435,12 +436,13 @@ const WalletConnectSessionRequestEventHandler = memo(
         addresses,
         addressesWithGroup,
         cleanStorage,
-        currentlyOnlineNetworkId,
         dispatch,
         getDappIcon,
+        isNodeOnline,
         respondToWalletConnect,
         respondToWalletConnectWithError,
         sendAnalytics,
+        settingsNetworkId,
         t,
         walletConnectClient
       ]
