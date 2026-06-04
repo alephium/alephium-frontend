@@ -27,6 +27,7 @@ import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScr
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
 import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
 import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
+import UnverifiedDappModal from '~/features/ecosystem/unverifiedDapps/UnverifiedDappModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import ModalContextProvider from '~/features/modals/ModalContext'
@@ -161,6 +162,8 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <UnknownTokensModal />
     case 'ConnectDappModal':
       return <ConnectDappModal {...params.props} />
+    case 'UnverifiedDappModal':
+      return <UnverifiedDappModal {...params.props} />
     case 'NetworkSwitchModal':
       return <NetworkSwitchModal {...params.props} />
     case 'SignExecuteScriptTxModal':

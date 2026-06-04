@@ -25,6 +25,7 @@ const SignDeployContractTxModal = memo(
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
+      dAppUrl,
       type: 'DEPLOY_CONTRACT',
       sign: async () => {
         const data = await signer.signAndSubmitDeployContractTx(txParams)

@@ -15,35 +15,38 @@ import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxM
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal from '~/features/modals/BottomModal'
 
-const SignTransferTxModal = memo(({ txParams, unsignedData, origin, onError, onSuccess }: SignTransferTxModalProps) => {
-  const { handleApprovePress, handleRejectPress } = useSignModal({
-    onError,
-    type: 'TRANSFER',
-    sign: async () => {
-      // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
-      // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
-      // That would make sense only if we have a single destination otherwise what should the sweep destination
-      // address be?
+const SignTransferTxModal = memo(
+  ({ txParams, unsignedData, origin, onError, onSuccess, dAppUrl }: SignTransferTxModalProps) => {
+    const { handleApprovePress, handleRejectPress } = useSignModal({
+      onError,
+      dAppUrl,
+      type: 'TRANSFER',
+      sign: async () => {
+        // Note: We might need to build sweep txs here by checking that the requested balances to be transfered
+        // are exactly the same as the total balances of the signer address, like we do in the normal send flow.
+        // That would make sense only if we have a single destination otherwise what should the sweep destination
+        // address be?
 
-      const result = await sendTransferTransactions(txParams)
+        const result = await sendTransferTransactions(txParams)
 
-      onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
-      sendAnalytics({ event: 'Approved transfer', props: { origin } })
-    }
-  })
+        onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
+        sendAnalytics({ event: 'Approved transfer', props: { origin } })
+      }
+    })
 
-  const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
+    const fees = BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice)
 
-  return (
-    <BottomModal contentVerticalGap>
-      <ScreenSection>
-        <SignTransferTxModalContent txParams={txParams} fees={fees} />
-      </ScreenSection>
+    return (
+      <BottomModal contentVerticalGap>
+        <ScreenSection>
+          <SignTransferTxModalContent txParams={txParams} fees={fees} />
+        </ScreenSection>
 
-      <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
-    </BottomModal>
-  )
-})
+        <SignTxModalFooterButtonsSection onReject={handleRejectPress} onApprove={handleApprovePress} />
+      </BottomModal>
+    )
+  }
+)
 
 export default SignTransferTxModal
 

@@ -2,6 +2,8 @@ import { getHumanReadableError, SignTxModalType } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
+import { getHostFromUrl } from '~/features/ecosystem/ecosystemUtils'
+import useUnverifiedDappGuard from '~/features/ecosystem/unverifiedDapps/useUnverifiedDappGuard'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useModalContext } from '~/features/modals/ModalContext'
@@ -13,16 +15,18 @@ interface UseSignModalProps {
   sign: () => Promise<void>
   onError: (message: string) => void
   type: SignTxModalType
+  dAppUrl?: string
 }
 
-const useSignModal = ({ sign, onError, type }: UseSignModalProps) => {
+const useSignModal = ({ sign, onError, type, dAppUrl }: UseSignModalProps) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { dismissModal, onUserDismiss } = useModalContext()
+  const { triggerUnverifiedDappGuard } = useUnverifiedDappGuard()
 
-  const handleApprovePress = () => {
+  const approveAfterDappVerification = () => {
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
       successCallback: () =>
@@ -51,6 +55,18 @@ const useSignModal = ({ sign, onError, type }: UseSignModalProps) => {
             }
           }
         })
+    })
+  }
+
+  const handleApprovePress = () => {
+    if (!dAppUrl) return approveAfterDappVerification()
+
+    triggerUnverifiedDappGuard({
+      dAppHost: getHostFromUrl(dAppUrl) ?? dAppUrl,
+      orReject: () => handleRejectPress(),
+      onConfirm: () => {
+        approveAfterDappVerification()
+      }
     })
   }
 
