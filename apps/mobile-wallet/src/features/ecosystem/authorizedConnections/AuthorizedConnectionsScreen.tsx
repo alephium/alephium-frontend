@@ -65,8 +65,10 @@ const ListItemStyled = styled(ListItem)`
 
 const Title = ({ connection }: { connection: AuthorizedConnection }) => (
   <TitleStyled>
-    {connection.icon ? <DappIcon source={{ uri: connection.icon }} /> : undefined}
-    <AppText bold>{connection.host}</AppText>
+    {connection.icon ? <DappIcon source={{ uri: connection.icon }} /> : null}
+    <AppText bold truncate style={{ flexShrink: 1 }}>
+      {connection.host}
+    </AppText>
   </TitleStyled>
 )
 
