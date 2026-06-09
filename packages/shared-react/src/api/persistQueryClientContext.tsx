@@ -90,6 +90,8 @@ export const PersistQueryClientContextProvider = ({
           maxAge: Infinity,
           persister: createPersister(getPersisterKey(walletId)),
           dehydrateOptions: undefined
+          // TODO: Add buster: CACHE_SCHEMA_VERSION (global variable) for when I want to force a cache refresh to
+          // everyone who updates. Useful for when the API schema or the cached query shapes change.
         }
 
         await persistQueryClientRestore(options)
