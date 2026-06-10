@@ -39,6 +39,7 @@ const SignExecuteScriptTxModal = memo(
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
+      dAppUrl,
       type: 'EXECUTE_SCRIPT',
       sign: async () => {
         const data = await signer.signAndSubmitExecuteScriptTx(txParams)

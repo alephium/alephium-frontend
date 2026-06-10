@@ -27,6 +27,7 @@ import SignExecuteScriptTxModal from '~/features/ecosystem/modals/SignExecuteScr
 import SignMessageTxModal from '~/features/ecosystem/modals/SignMessageTxModal'
 import SignTransferTxModal from '~/features/ecosystem/modals/SignTransferTxModal'
 import SignUnsignedTxModal from '~/features/ecosystem/modals/SignUnsignedTxModal'
+import UnverifiedDappModal from '~/features/ecosystem/unverifiedDapps/UnverifiedDappModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -94,6 +95,7 @@ const ModalComponents = {
   RegionSelectModal,
   UnknownTokensModal,
   ConnectDappModal,
+  UnverifiedDappModal,
   NetworkSwitchModal,
   SignExecuteScriptTxModal,
   SignDeployContractTxModal,

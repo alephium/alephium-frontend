@@ -18,6 +18,7 @@ const SignChainedTxModal = memo(
   ({ txParams, props, origin, onError, onSuccess, dAppUrl, dAppIcon }: SignChainedTxModalProps) => {
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
+      dAppUrl,
       type: 'CHAINED',
       sign: async () => {
         const results = await sendChainedTransactions(txParams)

@@ -18,6 +18,7 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SignModalAssetsAmountsRows from '~/features/ecosystem/modals/SignModalAssetsAmountsRows'
 import SignModalCopyEncodedTextRow from '~/features/ecosystem/modals/SignModalCopyEncodedTextRow'
+import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDestinationDappRow'
 import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
@@ -29,11 +30,21 @@ import {
 import { signer } from '~/signer'
 
 const SignUnsignedTxModal = memo(
-  ({ txParams, unsignedData, origin, onError, onSuccess, submitAfterSign }: SignUnsignedTxModalProps) => {
+  ({
+    txParams,
+    unsignedData,
+    dAppUrl,
+    dAppIcon,
+    origin,
+    onError,
+    onSuccess,
+    submitAfterSign
+  }: SignUnsignedTxModalProps) => {
     const { t } = useTranslation()
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
+      dAppUrl,
       type: 'UNSIGNED_TX',
       sign: async () => {
         onSuccess(
@@ -51,6 +62,8 @@ const SignUnsignedTxModal = memo(
             <Row title={t('Signing with')} titleColor="secondary">
               <AddressBadge addressHash={txParams.signerAddress} />
             </Row>
+
+            {dAppUrl && <SignModalDestinationDappRow dAppUrl={dAppUrl} dAppIcon={dAppIcon} />}
 
             <ReconstructedTransactionDetails unsignedData={unsignedData} txParams={txParams} />
 

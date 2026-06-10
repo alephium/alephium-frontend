@@ -44,7 +44,7 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
   }
 
   return (
-    <DappBrowserContextProvider dAppUrl={currentUrl} dAppName={currentDappName}>
+    <DappBrowserContextProvider dAppName={currentDappName}>
       <Screen {...props}>
         <DappBrowserHeader dAppName={currentDappName} currentUrl={currentUrl} onUrlChange={handleUrlChange} />
         <DappBrowserWebView

@@ -3,7 +3,7 @@ import { fetchJson, getQueryConfig, queryClient } from '@alephium/shared-react'
 import { dapps } from '@alphland/dapps'
 import { queryOptions } from '@tanstack/react-query'
 
-import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import type { DApp } from '~/features/ecosystem/ecosystemTypes'
 
 interface DAppsQueryOptions<T> {
   select: (dApps: DApp[]) => T

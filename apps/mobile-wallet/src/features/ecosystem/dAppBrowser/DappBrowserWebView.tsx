@@ -20,6 +20,14 @@ const DappBrowserWebView = ({ dAppUrl, ...props }: DappBrowserWebViewProps) => {
       allowsBackForwardNavigationGestures
       pullToRefreshEnabled
       injectedJavaScriptBeforeContentLoaded={getInjectedJavaScript()}
+      injectedJavaScriptBeforeContentLoadedForMainFrameOnly
+      onShouldStartLoadWithRequest={(request) => {
+        // Only constrain top-frame navigations (the provider is injected there): keep the user on real https
+        // origins, blocking http downgrades and exotic schemes (javascript:, data:, file:). Sub-frames are allowed.
+        if (!request.isTopFrame) return true
+
+        return request.url.startsWith('https://') || request.url === 'about:blank'
+      }}
       onMessage={handleDappMessage}
       {...props}
     />

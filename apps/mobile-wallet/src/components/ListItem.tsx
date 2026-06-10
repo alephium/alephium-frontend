@@ -1,7 +1,7 @@
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode } from 'react'
-import { PressableProps, StyleProp, ViewStyle } from 'react-native'
+import { PressableProps, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -62,9 +62,18 @@ const ListItem = ({
           <Icon>{icon}</Icon>
           <RowContent showSeparator={!isLast && !hideSeparator}>
             <LeftSideContent>
-              <Title semiBold size={16} truncate>
-                {title}
-              </Title>
+              {typeof title === 'string' ? (
+                <Title semiBold size={16} truncate>
+                  {title}
+                </Title>
+              ) : (
+                <View style={{ maxWidth: '80%' }}>
+                  <AppText semiBold size={16}>
+                    {title}
+                  </AppText>
+                </View>
+              )}
+
               {typeof subtitle === 'string' ? (
                 <Subtitle color="tertiary" ellipsizeMode="middle" truncate={!expandedSubtitle}>
                   {subtitle}

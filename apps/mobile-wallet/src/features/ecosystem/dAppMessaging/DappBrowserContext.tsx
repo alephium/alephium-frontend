@@ -1,5 +1,4 @@
 import {
-  getAddressesInGroup,
   getChainedTxPropsFromSignChainedTxParams,
   getNetworkIdFromNetworkName,
   isInsufficientFundsError,
@@ -43,6 +42,7 @@ import {
 } from '~/features/ecosystem/authorizedConnections/persistedAuthorizedConnectionsStorage'
 import { respondedToDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueActions'
 import { selectCurrentlyProcessingDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueSelectors'
+import { DappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueTypes'
 import { ConnectedAddressPayload } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
 import {
   getChainedTxPropsFromTransactionParams,
@@ -52,6 +52,8 @@ import {
   useNetwork,
   validateChainedTxsNetwork
 } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
+import { getHostFromUrl } from '~/features/ecosystem/ecosystemUtils'
+import useUnverifiedDappGuard from '~/features/ecosystem/unverifiedDapps/useUnverifiedDappGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { selectIsConnectToDappModalOpen } from '~/features/modals/modalSelectors'
@@ -65,11 +67,10 @@ const DappBrowserContext = createContext<DappBrowserContextValue | null>(null)
 
 interface DappBrowserContextProviderProps {
   children: ReactNode
-  dAppUrl: string
   dAppName?: string
 }
 
-export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: DappBrowserContextProviderProps) => {
+export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserContextProviderProps) => {
   const webViewRef = useRef<WebView>(null)
   const dAppMessage = useAppSelector(selectCurrentlyProcessingDappMessage)
   const networkId = useNetworkId()
@@ -80,6 +81,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   const network = useNetwork()
   const dispatch = useAppDispatch()
   const isConnectToDappModalOpen = useAppSelector(selectIsConnectToDappModalOpen)
+  const { triggerUnverifiedDappGuard } = useUnverifiedDappGuard()
 
   const replyToDapp = useCallback(
     (message: MessageType, messageId: string) => {
@@ -91,8 +93,8 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   const handleIsDappPreauthorized = useCallback(
-    (data: RequestOptions, messageId: string) => {
-      const isPreauthorized = isConnectionAuthorized(walletId, data)
+    (data: RequestOptions, messageId: string, senderHost: string) => {
+      const isPreauthorized = isConnectionAuthorized(walletId, { ...data, host: senderHost })
 
       if (!isPreauthorized && !isConnectTipShownOnce()) {
         dispatch(openModal({ name: 'ConnectTipModal' }))
@@ -127,68 +129,66 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
   )
 
   const handleConnectDapp = useCallback(
-    async (data: ConnectDappMessageData, messageId: string) => {
+    (data: ConnectDappMessageData, messageId: string, senderHost: string) => {
       if (isConnectToDappModalOpen) return
 
-      try {
-        const authorizedConnection = getAuthorizedConnection(walletId, data)
+      // Always bind the connection to the real origin, never to the host the page claims in the message body.
+      const requestOptions = { ...data, host: senderHost }
 
-        const isWrongNetwork =
-          data.networkId !== undefined && networkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
+      const connectToDapp = async () => {
+        try {
+          const authorizedConnection = getAuthorizedConnection(walletId, requestOptions)
 
-        if (isWrongNetwork) {
-          dispatch(
-            openModal({
-              name: 'NetworkSwitchModal',
-              onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
-              props: { ...data, dAppName }
-            })
-          )
+          const isWrongNetwork =
+            data.networkId !== undefined && networkId !== getNetworkIdFromNetworkName(data.networkId as NetworkName)
 
-          return
-        }
+          if (isWrongNetwork) {
+            dispatch(
+              openModal({
+                name: 'NetworkSwitchModal',
+                onUserDismiss: () => handleRejectDappConnection(senderHost, messageId),
+                props: { ...requestOptions, dAppName }
+              })
+            )
 
-        if (authorizedConnection) {
-          const address = addresses.find((a) => a.hash === authorizedConnection.address)
-          if (!address) {
-            dispatch(connectionRemoved(authorizedConnection))
-          } else {
-            const connectedAddressPayload = await getConnectedAddressPayload(network, address, data.host, data.icon)
-            handleApproveDappConnection(connectedAddressPayload, messageId)
             return
           }
-        }
 
-        const addressesInGroup = getAddressesInGroup(addresses, data.group)
-
-        // Select address automatically if there is only one address in the group
-        if (addressesInGroup.length === 1) {
-          const connectedAddressPayload = await getConnectedAddressPayload(
-            network,
-            addressesInGroup[0],
-            data.host,
-            data.icon
-          )
-          handleApproveDappConnection(connectedAddressPayload, messageId)
-
-          return
-        }
-
-        dispatch(
-          openModal({
-            name: 'ConnectDappModal',
-            onUserDismiss: () => handleRejectDappConnection(data.host, messageId),
-            props: {
-              ...data,
-              dAppName,
-              onApprove: (data) => handleApproveDappConnection(data, messageId)
+          if (authorizedConnection) {
+            const address = addresses.find((a) => a.hash === authorizedConnection.address)
+            if (!address) {
+              dispatch(connectionRemoved(authorizedConnection))
+            } else {
+              const connectedAddressPayload = await getConnectedAddressPayload(network, address, senderHost, data.icon)
+              handleApproveDappConnection(connectedAddressPayload, messageId)
+              return
             }
-          })
-        )
-      } catch (error) {
-        console.error('Error handling ALPH_CONNECT_DAPP:', error)
-        handleRejectDappConnection(data.host, messageId)
+          }
+
+          dispatch(
+            openModal({
+              name: 'ConnectDappModal',
+              onUserDismiss: () => handleRejectDappConnection(senderHost, messageId),
+              props: {
+                ...requestOptions,
+                dAppName,
+                onApprove: (data) => handleApproveDappConnection(data, messageId)
+              }
+            })
+          )
+        } catch (error) {
+          console.error('Error handling ALPH_CONNECT_DAPP:', error)
+          handleRejectDappConnection(senderHost, messageId)
+        }
       }
+
+      triggerUnverifiedDappGuard({
+        dAppHost: getHostFromUrl(senderHost) ?? senderHost,
+        orReject: () => handleRejectDappConnection(senderHost, messageId),
+        onConfirm: () => {
+          connectToDapp()
+        }
+      })
     },
     [
       addresses,
@@ -199,12 +199,13 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
       isConnectToDappModalOpen,
       network,
       networkId,
+      triggerUnverifiedDappGuard,
       walletId
     ]
   )
 
   const handleExecuteTransaction = useCallback(
-    async ({ txParams, icon: dAppIcon }: ExecuteTransactionMessageData, messageId: string) => {
+    async ({ txParams, icon: dAppIcon }: ExecuteTransactionMessageData, messageId: string, senderHost: string) => {
       const actionHash = messageId
       replyToDapp({ type: 'ALPH_EXECUTE_TRANSACTION_RES', data: { actionHash } }, messageId)
 
@@ -224,7 +225,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           const { type, params } = txParams[0]
 
           const commonModalProps: SignTxModalCommonProps = {
-            dAppUrl: params.host ?? dAppUrl,
+            dAppUrl: senderHost,
             dAppIcon,
             origin: 'in-app-browser',
             onError: (error) => replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
@@ -379,7 +380,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                       txParams: chainedTxParams,
                       onSuccess: (result) =>
                         replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
-                      dAppUrl,
+                      dAppUrl: senderHost,
                       dAppIcon,
                       origin: 'in-app-browser:insufficient-funds',
                       onError: (error) =>
@@ -410,7 +411,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 txParams: chainedTxParams,
                 onSuccess: (result) =>
                   replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
-                dAppUrl,
+                dAppUrl: senderHost,
                 dAppIcon,
                 origin: 'in-app-browser',
                 onError: (error) =>
@@ -433,12 +434,12 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(deactivateAppLoading())
       }
     },
-    [addressesWithGroup, dAppUrl, dispatch, isNodeOnline, networkId, replyToDapp]
+    [addressesWithGroup, dispatch, isNodeOnline, networkId, replyToDapp]
   )
 
   const handleSignUnsignedTx = useCallback(
-    async (data: SignUnsignedTxMessageData, messageId: string) => {
-      const { unsignedTx, host, icon } = data
+    async (data: SignUnsignedTxMessageData, messageId: string, senderHost: string) => {
+      const { unsignedTx, icon } = data
       const actionHash = messageId
 
       replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_RES', data: { actionHash } }, messageId)
@@ -459,7 +460,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
                 messageId
               ),
             props: {
-              dAppUrl: host ?? dAppUrl,
+              dAppUrl: senderHost,
               dAppIcon: icon,
               txParams: data,
               unsignedData: decodedTx,
@@ -478,11 +479,11 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         dispatch(deactivateAppLoading())
       }
     },
-    [replyToDapp, dispatch, networkId, isNodeOnline, dAppUrl]
+    [replyToDapp, dispatch, networkId, isNodeOnline]
   )
 
   const handleSignMessage = useCallback(
-    async (data: SignMessageMessageData, messageId: string) => {
+    async (data: SignMessageMessageData, messageId: string, senderHost: string) => {
       const actionHash = messageId
 
       replyToDapp({ type: 'ALPH_SIGN_MESSAGE_RES', data: { actionHash } }, messageId)
@@ -493,7 +494,7 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
           onUserDismiss: () =>
             replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error: 'User rejected' } }, messageId),
           props: {
-            dAppUrl: data.host ?? dAppUrl,
+            dAppUrl: senderHost,
             dAppIcon: data.icon,
             txParams: data,
             unsignedData: data.message,
@@ -506,46 +507,98 @@ export const DappBrowserContextProvider = ({ children, dAppUrl, dAppName }: Dapp
         })
       )
     },
-    [dAppUrl, dispatch, replyToDapp]
+    [dispatch, replyToDapp]
+  )
+
+  const replyToDappWithVerifiedOrigin = useCallback(
+    (message: DappMessage, senderHost: string) => {
+      switch (message.type) {
+        case 'ALPH_IS_PREAUTHORIZED':
+          handleIsDappPreauthorized(message.data, message.id, senderHost)
+          break
+        case 'ALPH_REMOVE_PREAUTHORIZATION':
+          handleRemovePreAuthorization(senderHost, message.id)
+          break
+        case 'ALPH_REJECT_PREAUTHORIZATION':
+          handleRejectDappConnection(senderHost, message.id)
+          break
+        case 'ALPH_CONNECT_DAPP':
+          handleConnectDapp(message.data, message.id, senderHost)
+          break
+        case 'ALPH_EXECUTE_TRANSACTION':
+          handleExecuteTransaction(message.data, message.id, senderHost)
+          break
+        case 'ALPH_SIGN_UNSIGNED_TX':
+          handleSignUnsignedTx(message.data, message.id, senderHost)
+          break
+        case 'ALPH_SIGN_MESSAGE':
+          handleSignMessage(message.data, message.id, senderHost)
+          break
+        default:
+          dispatch(respondedToDappMessage(message.id))
+      }
+    },
+    [
+      dispatch,
+      handleConnectDapp,
+      handleExecuteTransaction,
+      handleIsDappPreauthorized,
+      handleRejectDappConnection,
+      handleRemovePreAuthorization,
+      handleSignMessage,
+      handleSignUnsignedTx
+    ]
+  )
+
+  const replyToDappWithUnverifiableOriginError = useCallback(
+    (message: DappMessage) => {
+      const actionHash = message.id
+      const error = 'Could not verify the origin of the request'
+
+      switch (message.type) {
+        case 'ALPH_IS_PREAUTHORIZED':
+          replyToDapp({ type: 'ALPH_IS_PREAUTHORIZED_RES', data: false }, message.id)
+          break
+        case 'ALPH_REMOVE_PREAUTHORIZATION':
+          replyToDapp({ type: 'ALPH_REMOVE_PREAUTHORIZATION_RES' }, message.id)
+          break
+        case 'ALPH_REJECT_PREAUTHORIZATION':
+          replyToDapp({ type: 'ALPH_REJECT_PREAUTHORIZATION', data: { host: '', actionHash } }, message.id)
+          break
+        case 'ALPH_CONNECT_DAPP':
+          replyToDapp({ type: 'ALPH_REJECT_PREAUTHORIZATION', data: { host: '', actionHash } }, message.id)
+          break
+        case 'ALPH_EXECUTE_TRANSACTION':
+          replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, message.id)
+          break
+        case 'ALPH_SIGN_UNSIGNED_TX':
+          replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, message.id)
+          break
+        case 'ALPH_SIGN_MESSAGE':
+          replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error } }, message.id)
+          break
+        default:
+          dispatch(respondedToDappMessage(message.id))
+      }
+    },
+    [dispatch, replyToDapp]
   )
 
   useEffect(() => {
     if (!dAppMessage || !isNodeOnline) return
 
-    switch (dAppMessage.type) {
-      case 'ALPH_IS_PREAUTHORIZED':
-        handleIsDappPreauthorized(dAppMessage.data, dAppMessage.id)
-        break
-      case 'ALPH_REMOVE_PREAUTHORIZATION':
-        handleRemovePreAuthorization(dAppMessage.data, dAppMessage.id)
-        break
-      case 'ALPH_REJECT_PREAUTHORIZATION':
-        handleRejectDappConnection(dAppMessage.data.host, dAppMessage.id)
-        break
-      case 'ALPH_CONNECT_DAPP':
-        handleConnectDapp(dAppMessage.data, dAppMessage.id)
-        break
-      case 'ALPH_EXECUTE_TRANSACTION':
-        handleExecuteTransaction(dAppMessage.data, dAppMessage.id)
-        break
-      case 'ALPH_SIGN_UNSIGNED_TX':
-        handleSignUnsignedTx(dAppMessage.data, dAppMessage.id)
-        break
-      case 'ALPH_SIGN_MESSAGE':
-        handleSignMessage(dAppMessage.data, dAppMessage.id)
-        break
+    const { senderHost } = dAppMessage
+
+    if (senderHost) {
+      return replyToDappWithVerifiedOrigin(dAppMessage, senderHost)
     }
-  }, [
-    dAppMessage,
-    handleConnectDapp,
-    handleExecuteTransaction,
-    handleIsDappPreauthorized,
-    handleRejectDappConnection,
-    handleRemovePreAuthorization,
-    handleSignMessage,
-    handleSignUnsignedTx,
-    isNodeOnline
-  ])
+
+    // If we cannot establish the real origin of the request (e.g. about:blank / blocked non-https scheme), refuse
+    // it: reply with an error so the dApp doesn't hang, and drop it from the queue. This should not happen during
+    // normal https dApp use.
+    console.warn('Dropping dApp message with unverifiable origin:', dAppMessage.type)
+    replyToDappWithUnverifiableOriginError(dAppMessage)
+  }, [dAppMessage, isNodeOnline, replyToDappWithUnverifiableOriginError, replyToDappWithVerifiedOrigin])
 
   return <DappBrowserContext.Provider value={webViewRef}>{children}</DappBrowserContext.Provider>
 }

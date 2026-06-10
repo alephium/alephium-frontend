@@ -40,7 +40,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
 
   return (
     <BottomModal
-      title={t('Connect to dApp')}
+      title={t('Connect to {{ dAppUrl }}', { dAppUrl: host })}
       contentVerticalGap={allAddressesStrInGroup.length > 1}
       bottomSheetModalProps={{ enableDynamicSizing: false, snapPoints: DEFAULT_SNAP_POINTS }}
       flashListProps={{

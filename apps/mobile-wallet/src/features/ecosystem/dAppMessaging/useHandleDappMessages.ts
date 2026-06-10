@@ -1,10 +1,9 @@
-import { MessageType } from '@alephium/wallet-dapp-provider'
-import { stringify } from '@alephium/web3'
 import { useCallback } from 'react'
-import { WebViewMessageEvent } from 'react-native-webview'
+import type { WebViewMessageEvent } from 'react-native-webview'
 
+import { sendAnalytics } from '~/analytics'
 import { receivedDappMessage } from '~/features/ecosystem/dAppMessagesQueue/dAppMessagesQueueActions'
-import { familiarDappMessageTypes } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
+import { parseIncomingWebViewDappMessageEvent } from '~/features/ecosystem/dAppMessaging/incomingDappMessage'
 import { useAppDispatch } from '~/hooks/redux'
 
 const useHandleDappMessages = () => {
@@ -13,18 +12,16 @@ const useHandleDappMessages = () => {
   const handleDappMessage = useCallback(
     (event: WebViewMessageEvent) => {
       // console.log('🆕 RECEIVED EVENT FROM DAPP:', event.nativeEvent.data)
+      const parsed = parseIncomingWebViewDappMessageEvent(event)
 
-      try {
-        const message = JSON.parse(event.nativeEvent.data) as MessageType
+      if (!parsed) return
 
-        if ('type' in message && familiarDappMessageTypes.includes(message.type)) {
-          dispatch(receivedDappMessage(message))
-        } else {
-          throw new Error(`❌ Invalid message: ${stringify(message)}`)
-        }
-      } catch (error) {
-        // console.error('Error parsing data', error)
+      if (parsed.claimedHost && parsed.senderHost && parsed.claimedHost !== parsed.senderHost) {
+        console.warn(`dApp host mismatch — claimed "${parsed.claimedHost}", real origin "${parsed.senderHost}"`)
+        sendAnalytics({ event: 'dApp host mismatch detected', props: { claimedHost: parsed.claimedHost } })
       }
+
+      dispatch(receivedDappMessage({ message: parsed.message, senderHost: parsed.senderHost }))
     },
     [dispatch]
   )
