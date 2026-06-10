@@ -129,5 +129,6 @@
   "It appears that this block is not part of the main chain.": "Il semble que ce bloc ne fait pas partie de la chaîne principale.",
   "confirmationsKey_one": "{{ count }} confirmation",
   "confirmationsKey_other": "{{ count }} confirmations",
+  "No media": "Aucun média disponible",
   "Address worth": "Valeur de l'adresse"
 }
