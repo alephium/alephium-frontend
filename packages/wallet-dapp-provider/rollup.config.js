@@ -49,7 +49,10 @@ export default [
       },
       {
         name: 'AlephiumWalletProvider',
-        file: pkg.browser,
+        // This UMD bundle is wrapped as JSON for in-app WebView injection in the mobile wallet. It is not a browser
+        // build, so it is intentionally not exposed via package.json's "browser" field/condition. The mobile wallet
+        // imports it through the explicit "./lib/provider.umd.json" export subpath instead.
+        file: 'lib/provider.umd.json',
         format: 'umd'
       }
     ]
