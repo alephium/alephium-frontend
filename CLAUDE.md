@@ -51,7 +51,7 @@ pnpm --filter @alephium/mobile-wallet start
 # Vitest-based packages (explorer, desktop-wallet, shared, shared-react, keyring)
 pnpm --filter @alephium/shared exec vitest run path/to/file.test.ts
 
-# Jest-based packages (mobile-wallet, shared-crypto, encryptor)
+# Jest-based packages (mobile-wallet, encryptor)
 pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
 ```
 
@@ -67,7 +67,6 @@ pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
 
 - **`packages/shared`** — Core utilities, Redux store slices, types, constants, API clients. Ships raw TypeScript source (no build step). Most packages depend on this
 - **`packages/shared-react`** — React hooks and components shared between apps. Ships raw TypeScript source (no build step)
-- **`packages/shared-crypto`** — Legacy password encryption/hashing (AES-256-GCM + PBKDF2). Built with webpack into a single minified bundle (`dist/alephium.min.js`). Being phased out in favor of `encryptor` + native crypto
 - **`packages/keyring`** — Wallet key management. Ships raw TypeScript source (no build step)
 - **`packages/encryptor`** — Encryption utilities (`@metamask/browser-passworder` wrapper). Ships raw TypeScript source (no build step)
 - **`packages/wallet-dapp-provider`** — Provider injected into the in-app dApp browser WebView. Built with Rollup (emits a UMD-wrapped-in-JSON bundle for WebView injection)
@@ -79,9 +78,9 @@ pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
 
 ### Build Strategy & Order
 
-Shared packages follow one rule: **ship raw TypeScript source** and let each consuming app's bundler (Vite for explorer/desktop, Metro for mobile) compile them — no build step, no `dist`. The only exceptions are packages that must emit a non-source runtime artifact, which are the only ones with a `build` script: `wallet-dapp-provider` (Rollup → a UMD-wrapped-in-JSON bundle injected into the in-app dApp browser WebView) and `shared-crypto` (webpack; legacy, slated for removal).
+Shared packages follow one rule: **ship raw TypeScript source** and let each consuming app's bundler (Vite for explorer/desktop, Metro for mobile) compile them — no build step, no `dist`. The only exception is the package that must emit a non-source runtime artifact, which is the only one with a `build` script: `wallet-dapp-provider` (Rollup → a UMD-wrapped-in-JSON bundle injected into the in-app dApp browser WebView).
 
-Turbo handles ordering: those two built packages must build before apps (`^build`). The `typecheck` task also depends on `^build` because it needs their generated `.d.ts`.
+Turbo handles ordering: that built package must build before apps (`^build`). The `typecheck` task also depends on `^build` because it needs its generated `.d.ts`.
 
 ## Key Technical Decisions
 
@@ -89,7 +88,7 @@ Turbo handles ordering: those two built packages must build before apps (`^build
 - **Styling**: Styled Components throughout all apps
 - **Internationalization**: i18next with Crowdin sync for translations
 - **Wallet connectivity**: WalletConnect v2 protocol via `@walletconnect/sign-client`
-- **Crypto**: Custom `shared-crypto` package wrapping elliptic curve operations, Blake2b hashing, BIP39 mnemonics
+- **Crypto**: Wallet key management (BIP39 mnemonics, elliptic curve operations) via `@alephium/keyring` and `@alephium/web3`; password-based encryption (AES-256-GCM + PBKDF2) via `@alephium/encryptor`
 
 ## Code Style
 

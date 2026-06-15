@@ -1,5 +1,4 @@
 import { DeprecatedEncryptedMnemonicStoredAsString } from '@alephium/keyring'
-import { decrypt } from '@alephium/shared-crypto'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -18,7 +17,7 @@ import { loadBiometricsSettings } from '~/features/settings/settingsPersistentSt
 import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/legacyWallet'
 import { ShouldClearPin } from '~/types/misc'
 import { DeprecatedWalletState } from '~/types/wallet'
-import { pbkdf2 } from '~/utils/crypto'
+import { decrypt } from '~/utils/crypto'
 
 interface DeprecatedAuthenticationModalProps extends ModalWithBackdropProps, GetDeprecatedStoredWalletProps {
   onConfirm: (deprecatedMnemonic?: string) => void
@@ -84,7 +83,7 @@ const DeprecatedAuthenticationModal = ({
     if (!pin || !deprecatedEncryptedWallet) return false
 
     try {
-      const data = decrypt(pin, deprecatedEncryptedWallet.mnemonic, pbkdf2)
+      const data = decrypt(pin, deprecatedEncryptedWallet.mnemonic)
       const { mnemonic } = JSON.parse(data) as DeprecatedEncryptedMnemonicStoredAsString
 
       onConfirm(mnemonic)

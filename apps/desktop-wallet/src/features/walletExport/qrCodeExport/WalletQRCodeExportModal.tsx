@@ -1,6 +1,5 @@
 import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
 import { resetArray } from '@alephium/shared/utils'
-import { encrypt } from '@alephium/shared-crypto'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
@@ -11,6 +10,7 @@ import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { encryptWalletExport } from '@/features/walletExport/qrCodeExport/encryptWalletExport'
 import QRCodeLoop, { QRCodeLoopProps } from '@/features/walletExport/qrCodeExport/QRCodeLoop'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
@@ -30,7 +30,7 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   const handleCorrectPasswordEntered = async (password: string) => {
     try {
       const { decryptedMnemonic } = await decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password)
-      const encryptedData = encrypt(
+      const encryptedData = await encryptWalletExport(
         password,
         JSON.stringify({
           mnemonic: dangerouslyConvertUint8ArrayMnemonicToString(decryptedMnemonic),
@@ -42,8 +42,7 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
             isDefault
           })),
           contacts: contacts.map(({ name, address }) => ({ name, address }))
-        }),
-        'sha512'
+        })
       )
 
       resetArray(decryptedMnemonic)

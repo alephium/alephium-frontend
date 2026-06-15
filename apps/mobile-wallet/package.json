@@ -26,7 +26,6 @@
     "@alephium/powfi-backend": "0.0.1-rc.16",
     "@alephium/powfi-sdk": "0.0.1-rc.31",
     "@alephium/shared": "workspace:*",
-    "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.21",
     "@alephium/wallet-dapp-provider": "workspace:*",

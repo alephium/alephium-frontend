@@ -1,4 +1,3 @@
-import { decrypt } from '@alephium/shared-crypto'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -23,7 +22,7 @@ import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { walletAddedToList } from '~/store/wallet/walletsSlice'
 import { WalletImportData } from '~/types/wallet'
-import { pbkdf2 } from '~/utils/crypto'
+import { decrypt } from '~/utils/crypto'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -70,7 +69,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     try {
       dispatch(activateAppLoading(t('Importing wallet')))
 
-      const decryptedData = decrypt(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
+      const decryptedData = decrypt(password, qrCodeImportedEncryptedMnemonic)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData // TODO: Verify JSON data
 
       try {
