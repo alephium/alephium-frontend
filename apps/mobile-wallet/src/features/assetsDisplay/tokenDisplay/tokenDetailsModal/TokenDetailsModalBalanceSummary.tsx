@@ -1,4 +1,4 @@
-import { isFT } from '@alephium/shared'
+import { isFT } from '@alephium/shared/types'
 import { useFetchAddressesHashesWithBalance, useFetchToken, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'

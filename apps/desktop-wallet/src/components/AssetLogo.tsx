@@ -1,4 +1,4 @@
-import { isFT, isListedFT, isNFT, TokenId } from '@alephium/shared'
+import { isFT, isListedFT, isNFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { HelpCircle } from 'lucide-react'
 import { memo } from 'react'

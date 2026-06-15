@@ -1,9 +1,5 @@
-import {
-  Contact,
-  contactDeletedFromPersistentStorage,
-  ContactFormData,
-  contactStoredInPersistentStorage
-} from '@alephium/shared'
+import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared/store'
+import { Contact, ContactFormData } from '@alephium/shared/types'
 import { nanoid } from 'nanoid'
 
 import i18n from '~/features/localization/i18n'

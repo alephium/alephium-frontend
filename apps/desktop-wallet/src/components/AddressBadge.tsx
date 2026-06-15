@@ -1,4 +1,6 @@
-import { AddressHash, getBaseAddressStr, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
+import { AddressHash } from '@alephium/shared/types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'

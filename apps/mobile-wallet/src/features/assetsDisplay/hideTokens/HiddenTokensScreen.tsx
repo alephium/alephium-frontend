@@ -1,4 +1,5 @@
-import { isFT, unhideToken } from '@alephium/shared'
+import { unhideToken } from '@alephium/shared/store'
+import { isFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'

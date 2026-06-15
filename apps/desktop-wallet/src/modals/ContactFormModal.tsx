@@ -1,10 +1,6 @@
-import {
-  Contact,
-  contactDeletedFromPersistentStorage,
-  ContactFormData,
-  contactStoredInPersistentStorage,
-  getHumanReadableError
-} from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared/store'
+import { Contact, ContactFormData } from '@alephium/shared/types'
 import { UserMinus } from 'lucide-react'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'

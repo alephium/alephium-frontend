@@ -1,4 +1,5 @@
-import { formatRelativeTime, SendFlowData } from '@alephium/shared'
+import { formatRelativeTime } from '@alephium/shared'
+import { SendFlowData } from '@alephium/shared/types'
 import { LockIcon } from 'lucide-react'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'

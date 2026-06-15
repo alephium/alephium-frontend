@@ -1,5 +1,6 @@
 import * as encryptor from '@alephium/encryptor'
-import { bip39Words, resetArray } from '@alephium/shared'
+import { bip39Words } from '@alephium/shared'
+import { resetArray } from '@alephium/shared/utils'
 import * as metamaskBip39 from '@metamask/scure-bip39'
 
 export type MnemonicLength = 12 | 24

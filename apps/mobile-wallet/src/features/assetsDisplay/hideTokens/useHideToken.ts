@@ -1,4 +1,4 @@
-import { hideToken } from '@alephium/shared'
+import { hideToken } from '@alephium/shared/store'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'

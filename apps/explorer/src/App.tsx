@@ -1,4 +1,6 @@
-import { MAX_API_RETRIES, networkPresetSwitched, ONE_DAY_MS } from '@alephium/shared'
+import { ONE_DAY_MS } from '@alephium/shared'
+import { MAX_API_RETRIES } from '@alephium/shared/api'
+import { networkPresetSwitched } from '@alephium/shared/store'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'

@@ -1,4 +1,4 @@
-import { initializeViewOnlyAddress } from '@alephium/shared'
+import { initializeViewOnlyAddress } from '@alephium/shared/store'
 import { ApiContextProvider } from '@alephium/shared-react'
 import QRCode from 'qrcode.react'
 import { useEffect } from 'react'

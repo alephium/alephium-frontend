@@ -1,4 +1,4 @@
-import { getBaseAddressStr } from '@alephium/shared'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
 import { SignChainedTxParams } from '@alephium/web3'
 import {
   CORE_STORAGE_OPTIONS,

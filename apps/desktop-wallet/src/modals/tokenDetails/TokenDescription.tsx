@@ -1,4 +1,4 @@
-import { isListedFT } from '@alephium/shared'
+import { isListedFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components'
 

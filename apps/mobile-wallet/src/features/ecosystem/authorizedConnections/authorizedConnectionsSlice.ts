@@ -1,4 +1,5 @@
-import { appReset, NetworkPreset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared'
+import { appReset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared/store'
+import { NetworkPreset } from '@alephium/shared/types'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {

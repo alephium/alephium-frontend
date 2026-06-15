@@ -1,4 +1,5 @@
-import { ApiBalances, calculateTokenAmountWorth, ListedFT } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { ApiBalances, ListedFT } from '@alephium/shared/types'
 
 import { TokenPrice } from '../../../api/queries/priceQueries'
 

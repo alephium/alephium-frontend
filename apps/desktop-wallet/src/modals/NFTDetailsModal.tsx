@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { FetchError, useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'

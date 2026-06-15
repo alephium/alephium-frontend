@@ -1,4 +1,5 @@
-import { CURRENCIES, Currency, defaultNetworkSettings } from '@alephium/shared'
+import { CURRENCIES, defaultNetworkSettings } from '@alephium/shared'
+import { Currency } from '@alephium/shared/types'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import { Settings } from '@/features/settings/settingsTypes'

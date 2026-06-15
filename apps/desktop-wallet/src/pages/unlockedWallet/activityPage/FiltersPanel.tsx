@@ -1,4 +1,4 @@
-import { Address, TokenId } from '@alephium/shared'
+import { Address, TokenId } from '@alephium/shared/types'
 import {
   useFetchWalletFtsSorted,
   useFetchWalletTokensByType,

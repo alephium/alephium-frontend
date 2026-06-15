@@ -1,4 +1,4 @@
-import { ProxySettings } from '@alephium/shared'
+import { ProxySettings } from '@alephium/shared/types'
 import { IpcRendererEvent, NativeTheme } from 'electron/main'
 import { ProgressInfo, UpdateDownloadedEvent } from 'electron-updater'
 

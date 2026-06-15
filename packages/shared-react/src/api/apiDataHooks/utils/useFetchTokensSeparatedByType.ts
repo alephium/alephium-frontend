@@ -1,4 +1,4 @@
-import { ListedFT, TokenId, UnlistedToken } from '@alephium/shared'
+import { ListedFT, TokenId, UnlistedToken } from '@alephium/shared/types'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 

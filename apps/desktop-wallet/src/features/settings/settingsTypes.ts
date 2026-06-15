@@ -1,4 +1,4 @@
-import { Currency, NetworkSettings } from '@alephium/shared'
+import { Currency, NetworkSettings } from '@alephium/shared/types'
 
 import { Language } from '@/features/localization/languages'
 import { AddressOrder } from '@/features/settings/settingsConstants'

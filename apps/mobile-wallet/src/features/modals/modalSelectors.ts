@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { modalAdapter } from '~/features/modals/modalAdapters'

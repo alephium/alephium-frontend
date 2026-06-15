@@ -1,4 +1,4 @@
-import { AddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances } from '@alephium/shared-react'
 import { View } from 'react-native'
 

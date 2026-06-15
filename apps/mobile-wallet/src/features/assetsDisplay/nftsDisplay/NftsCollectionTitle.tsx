@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { useFetchNftCollection } from '@alephium/shared-react'
 import { ActivityIndicator } from 'react-native'
 import styled, { css } from 'styled-components/native'

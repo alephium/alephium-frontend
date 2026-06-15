@@ -1,4 +1,5 @@
-import { AddressHash, isFT, isNFT, toHumanReadableAmount, TokenId } from '@alephium/shared'
+import { toHumanReadableAmount } from '@alephium/shared/numbers'
+import { AddressHash, isFT, isNFT, TokenId } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'

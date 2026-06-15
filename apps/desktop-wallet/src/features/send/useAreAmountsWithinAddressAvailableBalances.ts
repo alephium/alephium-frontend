@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressBalances } from '@alephium/shared-react'
 
 import { AssetAmountInputType } from '@/types/assets'

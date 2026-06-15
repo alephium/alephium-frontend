@@ -1,4 +1,4 @@
-import { appReset, hideToken, unhideToken } from '@alephium/shared'
+import { appReset, hideToken, unhideToken } from '@alephium/shared/store'
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
 import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'

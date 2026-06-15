@@ -1,10 +1,6 @@
-import {
-  AddressHash,
-  exponentialBackoffFetchRetry,
-  SentTransaction,
-  throttledClient,
-  transactionSent
-} from '@alephium/shared'
+import { exponentialBackoffFetchRetry, throttledClient } from '@alephium/shared/api'
+import { transactionSent } from '@alephium/shared/store'
+import { AddressHash, SentTransaction } from '@alephium/shared/types'
 import { transactionSign } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 

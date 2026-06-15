@@ -1,4 +1,4 @@
-import { SignChainedTxModalProps } from '@alephium/shared'
+import { SignChainedTxModalProps } from '@alephium/shared/types'
 import { Fragment, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 

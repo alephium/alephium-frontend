@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile, walletUnlockedMobile } from '@alephium/shared/store'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'

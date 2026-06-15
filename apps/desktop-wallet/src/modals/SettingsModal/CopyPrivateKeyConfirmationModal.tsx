@@ -1,5 +1,6 @@
 import { keyring } from '@alephium/keyring'
-import { getHumanReadableError, selectAddressByHash } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,4 @@
-import { appReset } from '@alephium/shared'
+import { appReset } from '@alephium/shared/store'
 import { createSlice } from '@reduxjs/toolkit'
 
 import {

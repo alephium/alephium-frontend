@@ -1,4 +1,4 @@
-import { AddressHash, isFT, isUnlistedFT, TokenId } from '@alephium/shared'
+import { AddressHash, isFT, isUnlistedFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'

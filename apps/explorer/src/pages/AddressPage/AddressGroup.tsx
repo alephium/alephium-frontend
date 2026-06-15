@@ -1,4 +1,5 @@
-import { getBaseAddressStr, selectAddressGroup } from '@alephium/shared'
+import { selectAddressGroup } from '@alephium/shared/store'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { isGrouplessAddress, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'

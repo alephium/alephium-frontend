@@ -1,4 +1,5 @@
-import { ONE_MINUTE_MS, UnlistedFT } from '@alephium/shared'
+import { ONE_MINUTE_MS } from '@alephium/shared'
+import { UnlistedFT } from '@alephium/shared/types'
 import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 
 interface GetQueryConfigProps {

@@ -1,12 +1,12 @@
+import { getHumanReadableError } from '@alephium/shared'
 import {
-  getHumanReadableError,
   SignDeployContractTxModalProps,
   SignExecuteScriptTxModalProps,
   SignMessageTxModalProps,
   SignTransferTxModalProps,
   SignTxModalType,
   SignUnsignedTxModalProps
-} from '@alephium/shared'
+} from '@alephium/shared/types'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

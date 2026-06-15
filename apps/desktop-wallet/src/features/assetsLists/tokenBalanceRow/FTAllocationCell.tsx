@@ -1,4 +1,5 @@
-import { calculateTokenAmountWorth, isListedFT, ListedFT } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { isListedFT, ListedFT } from '@alephium/shared/types'
 import {
   useFetchToken,
   useFetchTokenPrice,

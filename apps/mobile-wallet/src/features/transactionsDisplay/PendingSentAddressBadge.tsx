@@ -1,4 +1,4 @@
-import { selectPendingSentTransactionByHash } from '@alephium/shared'
+import { selectPendingSentTransactionByHash } from '@alephium/shared/store'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '~/components/AddressBadge'

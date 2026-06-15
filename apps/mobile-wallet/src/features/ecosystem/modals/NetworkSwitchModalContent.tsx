@@ -1,4 +1,4 @@
-import { NetworkName } from '@alephium/shared'
+import { NetworkName } from '@alephium/shared/types'
 import { Trans, useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'

@@ -1,4 +1,5 @@
-import { addApostrophes, getBaseAddressStr } from '@alephium/shared'
+import { addApostrophes } from '@alephium/shared/numbers'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'

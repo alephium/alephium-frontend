@@ -1,4 +1,4 @@
-import { isFT } from '@alephium/shared'
+import { isFT } from '@alephium/shared/types'
 import {
   useFetchAddressSingleTokenBalances,
   useFetchToken,

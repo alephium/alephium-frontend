@@ -1,4 +1,4 @@
-import { FtListMap, ListedFT, UnlistedToken } from '@alephium/shared'
+import { FtListMap, ListedFT, UnlistedToken } from '@alephium/shared/types'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 

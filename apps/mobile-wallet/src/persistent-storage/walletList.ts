@@ -1,4 +1,4 @@
-import { WalletListEntry, WalletType } from '@alephium/shared'
+import { WalletListEntry, WalletType } from '@alephium/shared/types'
 
 import { sendAnalytics } from '~/analytics'
 import { storage } from '~/persistent-storage/storage'

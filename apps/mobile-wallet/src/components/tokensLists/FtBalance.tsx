@@ -1,4 +1,4 @@
-import { isFT, TokenId } from '@alephium/shared'
+import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 

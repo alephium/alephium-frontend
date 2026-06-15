@@ -6,7 +6,7 @@ import {
   nodeApiClientInitFailed,
   nodeApiClientInitSucceeded,
   walletLocked
-} from '@alephium/shared'
+} from '@alephium/shared/store'
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { languageChangeFinished, languageChangeStarted } from '@/features/localization/localizationActions'

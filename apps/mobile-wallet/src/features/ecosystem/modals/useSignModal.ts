@@ -1,4 +1,5 @@
-import { getHumanReadableError, SignTxModalType } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { SignTxModalType } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'

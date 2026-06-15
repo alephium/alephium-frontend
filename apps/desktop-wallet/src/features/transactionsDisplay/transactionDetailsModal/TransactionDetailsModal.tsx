@@ -1,4 +1,5 @@
-import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
+import { findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared/transactions'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchTransaction, useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'

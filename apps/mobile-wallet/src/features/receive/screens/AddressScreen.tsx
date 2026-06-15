@@ -1,4 +1,4 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'

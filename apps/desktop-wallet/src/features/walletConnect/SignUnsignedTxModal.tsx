@@ -1,4 +1,6 @@
-import { isGrouplessAddress, selectAddressByHash, SignUnsignedTxModalProps, transactionSent } from '@alephium/shared'
+import { selectAddressByHash, transactionSent } from '@alephium/shared/store'
+import { SignUnsignedTxModalProps } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import {
   nodeTransactionReconstructDecodedUnsignedTxQuery,
   useIsNodeOnline,

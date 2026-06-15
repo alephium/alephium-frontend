@@ -1,4 +1,5 @@
-import { AddressStoredMetadataWithHash, selectDefaultAddress } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
+import { AddressStoredMetadataWithHash } from '@alephium/shared/types'
 
 import { useAppSelector } from '~/hooks/redux'
 import { persistAddressesSettings } from '~/utils/addresses'

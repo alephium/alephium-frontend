@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 

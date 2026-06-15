@@ -1,4 +1,4 @@
-import { selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
 import { motion } from 'framer-motion'
 import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'

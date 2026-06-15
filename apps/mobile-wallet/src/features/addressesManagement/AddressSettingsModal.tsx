@@ -1,4 +1,5 @@
-import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
+import { addressSettingsSaved, selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

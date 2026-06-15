@@ -1,4 +1,5 @@
-import { AddressHash, formatRelativeTime } from '@alephium/shared'
+import { formatRelativeTime } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'

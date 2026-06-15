@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useQuery } from '@tanstack/react-query'
 
 import { addressTokensByTypeQuery } from '../../../api/queries/addressQueries'

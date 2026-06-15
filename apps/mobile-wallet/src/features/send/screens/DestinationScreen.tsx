@@ -1,4 +1,4 @@
-import { AddressHash, Contact } from '@alephium/shared'
+import { AddressHash, Contact } from '@alephium/shared/types'
 import { isValidAddress } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'

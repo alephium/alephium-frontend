@@ -1,4 +1,5 @@
-import { bip39Words, newWalletInitialAddressGenerated } from '@alephium/shared'
+import { bip39Words } from '@alephium/shared'
+import { newWalletInitialAddressGenerated } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'

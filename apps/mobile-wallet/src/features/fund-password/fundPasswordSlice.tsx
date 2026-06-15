@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared/store'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'

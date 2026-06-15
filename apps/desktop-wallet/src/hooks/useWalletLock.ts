@@ -1,14 +1,14 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import {
-  GROUPLESS_ADDRESS_KEY_TYPE,
   hiddenTokensLoadedFromStorage,
   newAddressesSaved,
   passphraseInitialAddressGenerated,
-  throttledClient,
   walletLocked,
   walletSwitchedDesktop,
   walletUnlockedDesktop
-} from '@alephium/shared'
+} from '@alephium/shared/store'
 import { getPersisterKey, useCurrentlyOnlineNetworkId, usePersistQueryClientContext } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'

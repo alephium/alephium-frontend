@@ -1,4 +1,5 @@
-import { ConsolidationTxModalProps, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { ConsolidationTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { Codesandbox } from 'lucide-react'
 import { memo, useCallback } from 'react'

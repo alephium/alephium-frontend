@@ -1,4 +1,5 @@
-import { Address, AddressHash, selectAllAddresses, selectAllAddressHashes } from '@alephium/shared'
+import { selectAllAddresses, selectAllAddressHashes } from '@alephium/shared/store'
+import { Address, AddressHash } from '@alephium/shared/types'
 
 import { useSharedSelector } from '../../redux'
 

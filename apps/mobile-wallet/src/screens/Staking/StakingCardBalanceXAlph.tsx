@@ -1,4 +1,5 @@
-import { AddressHash, formatAmountForDisplay } from '@alephium/shared'
+import { formatAmountForDisplay } from '@alephium/shared/numbers'
+import { AddressHash } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'

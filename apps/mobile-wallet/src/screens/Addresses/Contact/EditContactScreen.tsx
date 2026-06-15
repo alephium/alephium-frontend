@@ -1,4 +1,4 @@
-import { ContactFormData } from '@alephium/shared'
+import { ContactFormData } from '@alephium/shared/types'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'

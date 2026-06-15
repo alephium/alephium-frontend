@@ -1,4 +1,4 @@
-import { NetworkPreset } from '@alephium/shared'
+import { NetworkPreset } from '@alephium/shared/types'
 import styled from 'styled-components'
 
 interface NetworkLogoProps {

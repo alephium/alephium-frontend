@@ -1,4 +1,5 @@
-import { addressesImported, AddressHash } from '@alephium/shared'
+import { addressesImported } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'

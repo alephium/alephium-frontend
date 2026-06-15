@@ -1,4 +1,4 @@
-import { formatAmountForDisplay } from '@alephium/shared'
+import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 

@@ -1,5 +1,6 @@
 import { keyring } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE, newAddressesSaved, selectAllAddressIndexes } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { newAddressesSaved, selectAllAddressIndexes } from '@alephium/shared/store'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,5 @@
-import { AddressHash, selectDefaultAddress } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'

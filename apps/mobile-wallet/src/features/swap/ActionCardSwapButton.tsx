@@ -1,4 +1,5 @@
-import { AddressHash, NetworkNames, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { AddressHash, NetworkNames } from '@alephium/shared/types'
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'

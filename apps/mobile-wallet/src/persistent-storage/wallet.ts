@@ -1,11 +1,7 @@
 import { keyring } from '@alephium/keyring'
-import {
-  AddressHash,
-  addressMetadataIncludesHash,
-  AddressStoredMetadataWithHash,
-  GROUPLESS_ADDRESS_KEY_TYPE,
-  WalletMetadataMobile
-} from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { AddressHash, AddressStoredMetadataWithHash, WalletMetadataMobile } from '@alephium/shared/types'
+import { addressMetadataIncludesHash } from '@alephium/shared/utils'
 import { nanoid } from 'nanoid'
 
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'

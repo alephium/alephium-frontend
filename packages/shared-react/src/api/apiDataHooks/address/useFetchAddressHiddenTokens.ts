@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useMemo } from 'react'
 
 import { useFetchAddressBalancesTokens } from '../../../api/apiDataHooks/address/useFetchAddressBalancesTokens'

@@ -1,4 +1,5 @@
-import { CURRENCIES, selectDefaultAddressHash } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'

@@ -1,4 +1,5 @@
-import { AddressHash, selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
 import useConfirmDeleteAddresses from '@/features/addressDeletion/useConfirmDeleteAddresses'

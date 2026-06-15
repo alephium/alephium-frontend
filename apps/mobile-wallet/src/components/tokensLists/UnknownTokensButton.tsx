@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { getAddressExplorerLink } from '@alephium/shared-react'
 import { openBrowserAsync } from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'

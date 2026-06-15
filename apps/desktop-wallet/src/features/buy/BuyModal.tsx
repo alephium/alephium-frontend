@@ -1,4 +1,5 @@
-import { AddressHash, ONRAMP_TARGET_LOCATION } from '@alephium/shared'
+import { ONRAMP_TARGET_LOCATION } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'

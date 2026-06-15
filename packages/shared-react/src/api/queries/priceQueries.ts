@@ -1,4 +1,5 @@
-import { FIVE_MINUTES_MS, is5XXError, PRICES_REFRESH_INTERVAL, throttledClient } from '@alephium/shared'
+import { FIVE_MINUTES_MS, is5XXError, PRICES_REFRESH_INTERVAL } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'

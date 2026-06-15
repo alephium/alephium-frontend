@@ -1,4 +1,4 @@
-import { selectDefaultAddress } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { memo, useState } from 'react'

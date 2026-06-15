@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 

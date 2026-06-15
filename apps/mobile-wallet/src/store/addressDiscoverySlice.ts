@@ -1,18 +1,18 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import {
   activeWalletDeleted,
   addressDeleted,
   addressesImported,
-  AddressIndex,
   appReset,
   customNetworkSettingsSaved,
-  findNextAvailableAddressIndex,
-  GROUPLESS_ADDRESS_KEY_TYPE,
   networkPresetSwitched,
   selectAllAddressIndexes,
-  throttledClient,
   walletSwitchedMobile
-} from '@alephium/shared'
+} from '@alephium/shared/store'
+import { AddressIndex } from '@alephium/shared/types'
+import { findNextAvailableAddressIndex } from '@alephium/shared/utils'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,

@@ -1,10 +1,7 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import {
-  AddressBase,
-  AddressStoredMetadataWithoutHash,
-  GROUPLESS_ADDRESS_KEY_TYPE,
-  selectAllAddressIndexes
-} from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { selectAllAddressIndexes } from '@alephium/shared/store'
+import { AddressBase, AddressStoredMetadataWithoutHash } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback } from 'react'

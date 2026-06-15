@@ -1,5 +1,6 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE, throttledClient } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { deriveAddresses, getGapFromLastActiveAddress, splitResultsArrayIntoOneArrayPerGroup } from '@/utils/addresses'

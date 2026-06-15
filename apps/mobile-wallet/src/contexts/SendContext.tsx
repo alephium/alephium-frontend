@@ -1,16 +1,13 @@
+import { throttledClient } from '@alephium/shared/api'
+import { selectAddressByHash } from '@alephium/shared/store'
 import {
-  AddressHash,
-  AssetAmount,
   getChainedTxPropsFromSignChainedTxParams,
   getGasRefillChainedTxParams,
   getSweepTxParams,
-  getTransferTxParams,
-  isConsolidationError,
-  isInsufficientFundsError,
-  selectAddressByHash,
-  SignChainedTxModalProps,
-  throttledClient
-} from '@alephium/shared'
+  getTransferTxParams
+} from '@alephium/shared/transactions'
+import { AddressHash, AssetAmount, SignChainedTxModalProps } from '@alephium/shared/types'
+import { isConsolidationError, isInsufficientFundsError } from '@alephium/shared/utils'
 import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-react'
 import { Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'

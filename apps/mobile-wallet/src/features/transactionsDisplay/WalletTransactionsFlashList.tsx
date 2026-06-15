@@ -1,10 +1,7 @@
-import {
-  AddressHash,
-  isAddressPresentInInputsOutputs,
-  selectAllPendingSentTransactions,
-  selectAllSentTransactions,
-  TRANSACTIONS_PAGE_DEFAULT_LIMIT
-} from '@alephium/shared'
+import { TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
+import { selectAllPendingSentTransactions, selectAllSentTransactions } from '@alephium/shared/store'
+import { isAddressPresentInInputsOutputs } from '@alephium/shared/transactions'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchWalletTransactionsInfinite, useIsExplorerOffline } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list'

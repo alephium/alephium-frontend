@@ -1,5 +1,5 @@
 import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
-import { resetArray } from '@alephium/shared'
+import { resetArray } from '@alephium/shared/utils'
 import { encrypt } from '@alephium/shared-crypto'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { ScanLine } from 'lucide-react'

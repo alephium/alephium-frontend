@@ -1,4 +1,5 @@
-import { AssetAmount, calculateTokenAmountWorth } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { AssetAmount } from '@alephium/shared/types'
 
 import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
 import { useFetchTokensSeparatedByType } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByType'

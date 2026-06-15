@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared'
+import { activeWalletDeleted, appReset, walletSwitchedMobile } from '@alephium/shared/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'app'

@@ -1,4 +1,5 @@
-import { isGrouplessAddress, selectDefaultAddress } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { Account } from '@alephium/web3'
 
 import { SecureStoreSigner } from '~/signer'

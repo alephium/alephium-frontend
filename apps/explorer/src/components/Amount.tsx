@@ -3,7 +3,7 @@ import {
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
   MAGNITUDE_SYMBOL
-} from '@alephium/shared'
+} from '@alephium/shared/numbers'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'

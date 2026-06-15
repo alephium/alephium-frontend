@@ -1,4 +1,4 @@
-import { selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
 import * as Brightness from 'expo-brightness'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,5 +1,6 @@
 import { NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
-import { findNextAvailableAddressIndex, throttledClient } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { findNextAvailableAddressIndex } from '@alephium/shared/utils'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 const minGap = 5

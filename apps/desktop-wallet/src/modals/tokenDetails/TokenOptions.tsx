@@ -1,4 +1,4 @@
-import { hideToken, selectIsTokenHidden, unhideToken } from '@alephium/shared'
+import { hideToken, selectIsTokenHidden, unhideToken } from '@alephium/shared/store'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { addressFromTokenId } from '@alephium/web3'
 import { MoreVertical } from 'lucide-react'

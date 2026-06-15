@@ -1,4 +1,5 @@
-import { selectAddressByHash, SignTransferTxModalProps } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { SignTransferTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { Fragment, memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

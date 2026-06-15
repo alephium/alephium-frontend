@@ -1,4 +1,4 @@
-import { selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
 import { useFetchAddressBalances, useFetchAddressTokensByType, useFetchAddressWorth } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'

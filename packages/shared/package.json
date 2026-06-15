@@ -4,7 +4,13 @@
   "private": true,
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./api": "./src/api/index.ts",
+    "./numbers": "./src/numbers.ts",
+    "./store": "./src/store/index.ts",
+    "./transactions": "./src/transactions/index.ts",
+    "./types": "./src/types/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "type": "module",
   "sideEffects": false,

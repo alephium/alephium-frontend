@@ -1,4 +1,4 @@
-import { findTransactionReferenceAddress } from '@alephium/shared'
+import { findTransactionReferenceAddress } from '@alephium/shared/transactions'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import Lucide from '@react-native-vector-icons/lucide/static'
 import { memo } from 'react'

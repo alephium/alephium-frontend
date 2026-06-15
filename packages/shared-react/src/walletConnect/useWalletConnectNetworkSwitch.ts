@@ -1,4 +1,6 @@
-import { isNetworkValid, NetworkNames, networkPresetSwitched } from '@alephium/shared'
+import { networkPresetSwitched } from '@alephium/shared/store'
+import { NetworkNames } from '@alephium/shared/types'
+import { isNetworkValid } from '@alephium/shared/utils'
 import { ChainInfo } from '@alephium/walletconnect-provider'
 
 import { useCurrentlyOnlineNetworkId } from '../network/networkHooks'

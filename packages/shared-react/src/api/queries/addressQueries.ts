@@ -1,15 +1,6 @@
-import {
-  AddressHash,
-  ApiBalances,
-  FIVE_MINUTES_MS,
-  is5XXError,
-  isFT,
-  isNFT,
-  PAGINATION_PAGE_LIMIT,
-  throttledClient,
-  TokenApiBalances,
-  TokenId
-} from '@alephium/shared'
+import { FIVE_MINUTES_MS, is5XXError } from '@alephium/shared'
+import { PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared/api'
+import { AddressHash, ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'

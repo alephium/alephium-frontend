@@ -1,10 +1,6 @@
-import {
-  AddressHash,
-  bip39Words,
-  findNextAvailableAddressIndex,
-  isAddressIndexValid,
-  resetArray
-} from '@alephium/shared'
+import { bip39Words } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
+import { findNextAvailableAddressIndex, isAddressIndexValid, resetArray } from '@alephium/shared/utils'
 import {
   addressFromPublicKey,
   groupOfAddress,

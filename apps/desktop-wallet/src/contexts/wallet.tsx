@@ -1,4 +1,4 @@
-import { resetArray } from '@alephium/shared'
+import { resetArray } from '@alephium/shared/utils'
 import { createContext, useContext, useState } from 'react'
 
 import { CenteredSection } from '@/components/PageComponents/PageContainers'

@@ -1,4 +1,4 @@
-import { TransactionDirection, TransactionInfoType } from '@alephium/shared'
+import { TransactionDirection, TransactionInfoType } from '@alephium/shared/types'
 import { colord } from 'colord'
 import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRefreshLine, RiRepeat2Line } from 'react-icons/ri'
 import { DefaultTheme } from 'styled-components'

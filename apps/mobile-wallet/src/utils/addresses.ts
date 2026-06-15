@@ -1,4 +1,4 @@
-import { Address, AddressHash, AddressSettings, AddressStoredMetadataWithHash } from '@alephium/shared'
+import { Address, AddressHash, AddressSettings, AddressStoredMetadataWithHash } from '@alephium/shared/types'
 import * as Clipboard from 'expo-clipboard'
 
 import i18n from '~/features/localization/i18n'

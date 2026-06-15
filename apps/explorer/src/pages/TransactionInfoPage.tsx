@@ -1,4 +1,5 @@
-import { isConfirmedTx, MAX_API_RETRIES } from '@alephium/shared'
+import { MAX_API_RETRIES } from '@alephium/shared/api'
+import { isConfirmedTx } from '@alephium/shared/transactions'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { PerChainHeight } from '@alephium/web3/api/explorer'

@@ -8,7 +8,7 @@ import {
   NonStandardToken,
   SentTransaction,
   UnlistedFT
-} from '@alephium/shared'
+} from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'

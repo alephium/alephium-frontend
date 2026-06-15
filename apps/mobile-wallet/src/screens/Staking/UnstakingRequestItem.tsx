@@ -1,4 +1,6 @@
-import { AddressHash, formatAmountForDisplay, selectSentTransactionByHash } from '@alephium/shared'
+import { formatAmountForDisplay } from '@alephium/shared/numbers'
+import { selectSentTransactionByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { queryClient, usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'

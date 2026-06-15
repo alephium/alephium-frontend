@@ -1,15 +1,9 @@
-import {
-  getChainedTxPropsFromSignChainedTxParams,
-  getHumanReadableError,
-  isConsolidationError,
-  isInsufficientFundsError,
-  isNetworkValid,
-  selectAllAddressByType,
-  SessionRequestEvent,
-  throttledClient,
-  TransactionParams,
-  WALLETCONNECT_ERRORS
-} from '@alephium/shared'
+import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { selectAllAddressByType } from '@alephium/shared/store'
+import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
+import { SessionRequestEvent, TransactionParams } from '@alephium/shared/types'
+import { isConsolidationError, isInsufficientFundsError, isNetworkValid } from '@alephium/shared/utils'
 import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,

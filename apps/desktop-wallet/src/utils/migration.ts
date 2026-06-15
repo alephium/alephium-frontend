@@ -6,13 +6,9 @@ import {
   EncryptedMnemonicVersion,
   encryptMnemonic
 } from '@alephium/keyring'
-import {
-  AddressStoredMetadataWithoutHash,
-  Contact,
-  deepMerge,
-  NetworkSettings,
-  networkSettingsPresets
-} from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings } from '@alephium/shared/types'
+import { deepMerge } from '@alephium/shared/utils'
 import { nanoid } from 'nanoid'
 
 import { defaultSettings } from '@/features/settings/settingsConstants'

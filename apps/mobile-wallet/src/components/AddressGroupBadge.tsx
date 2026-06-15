@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressGroup } from '@alephium/shared'
+import { selectAddressGroup } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
 import Badge, { BadgeProps } from '~/components/Badge'

@@ -1,4 +1,5 @@
-import { addApostrophes, SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
+import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
+import { addApostrophes } from '@alephium/shared/numbers'
 import { explorer } from '@alephium/web3'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'

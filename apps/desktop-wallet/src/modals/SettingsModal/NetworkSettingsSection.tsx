@@ -1,13 +1,7 @@
-import {
-  customNetworkSettingsSaved,
-  getNetworkName,
-  NetworkName,
-  NetworkNames,
-  networkPresetSwitched,
-  NetworkSettings,
-  networkSettingsPresets,
-  throttledClient
-} from '@alephium/shared'
+import { getNetworkName, networkSettingsPresets } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared/store'
+import { NetworkName, NetworkNames, NetworkSettings } from '@alephium/shared/types'
 import { AlertOctagon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

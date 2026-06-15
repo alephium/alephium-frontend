@@ -1,9 +1,6 @@
-import {
-  signAndSubmitTxResultToSentTx,
-  SignChainedTxModalProps,
-  signChainedTxResultsToTxSubmittedResults,
-  transactionSent
-} from '@alephium/shared'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { signChainedTxResultsToTxSubmittedResults } from '@alephium/shared/transactions'
+import { SignChainedTxModalProps } from '@alephium/shared/types'
 import { Link2Icon } from 'lucide-react'
 import { useCallback } from 'react'
 import { Fragment } from 'react/jsx-runtime'

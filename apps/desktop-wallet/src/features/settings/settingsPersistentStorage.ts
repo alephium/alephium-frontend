@@ -1,4 +1,4 @@
-import { deepMerge } from '@alephium/shared'
+import { deepMerge } from '@alephium/shared/utils'
 import posthog from 'posthog-js'
 
 import { defaultSettings } from '@/features/settings/settingsConstants'

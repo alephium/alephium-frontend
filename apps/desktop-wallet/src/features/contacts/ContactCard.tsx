@@ -1,4 +1,5 @@
-import { AddressHash, Contact, selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash, Contact } from '@alephium/shared/types'
 import { colord } from 'colord'
 import { Pencil, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'

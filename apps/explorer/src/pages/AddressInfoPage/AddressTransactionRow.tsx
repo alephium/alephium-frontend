@@ -1,4 +1,4 @@
-import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared'
+import { isConfirmedTx, isSameBaseAddress } from '@alephium/shared/transactions'
 import { isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/api/explorer'
 import { useTranslation } from 'react-i18next'

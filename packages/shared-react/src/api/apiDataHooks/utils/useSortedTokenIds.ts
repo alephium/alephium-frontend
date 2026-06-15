@@ -1,4 +1,4 @@
-import { ListedFT, TokenId, UnlistedFT } from '@alephium/shared'
+import { ListedFT, TokenId, UnlistedFT } from '@alephium/shared/types'
 import { useMemo } from 'react'
 
 interface UseSortedTokenIdsProps {

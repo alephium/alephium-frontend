@@ -1,4 +1,7 @@
-import { Address, AddressHash, CURRENCIES, isGrouplessAddress, selectAddressByHash } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { Address, AddressHash } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import {
   useFetchAddressFtsSorted,
   useFetchAddressSingleTokenBalances,

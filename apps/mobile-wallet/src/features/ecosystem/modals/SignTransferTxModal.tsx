@@ -1,4 +1,4 @@
-import { SignTransferTxModalProps } from '@alephium/shared'
+import { SignTransferTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

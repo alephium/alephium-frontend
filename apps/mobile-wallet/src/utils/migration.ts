@@ -1,4 +1,6 @@
-import { deepMerge, defaultNetworkSettings, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { defaultNetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { NetworkSettings } from '@alephium/shared/types'
+import { deepMerge } from '@alephium/shared/utils'
 
 import { loadSettings, persistSettings } from '~/features/settings/settingsPersistentStorage'
 

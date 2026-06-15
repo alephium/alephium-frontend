@@ -1,12 +1,7 @@
-import {
-  AddressHash,
-  FIVE_MINUTES_MS,
-  is5XXError,
-  isConfirmedTx,
-  ONE_MINUTE_MS,
-  throttledClient,
-  TRANSACTIONS_PAGE_DEFAULT_LIMIT
-} from '@alephium/shared'
+import { FIVE_MINUTES_MS, is5XXError, ONE_MINUTE_MS, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { isConfirmedTx } from '@alephium/shared/transactions'
+import { AddressHash } from '@alephium/shared/types'
 import { explorer as e, node as n, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 

@@ -1,4 +1,4 @@
-import { AddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 

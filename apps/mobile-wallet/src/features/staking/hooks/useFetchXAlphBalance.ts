@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances } from '@alephium/shared-react'
 
 import { xAlphTokenId } from '~/api/powfi'

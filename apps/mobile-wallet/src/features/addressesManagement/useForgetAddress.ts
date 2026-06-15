@@ -1,4 +1,6 @@
-import { addressDeleted, AddressHash, getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { addressDeleted } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 

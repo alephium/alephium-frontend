@@ -2,7 +2,8 @@
 vi.mock('@alephium/web3-wallet', () => ({}))
 
 import { keyring } from '@alephium/keyring'
-import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings } from '@alephium/shared/types'
 import { encrypt } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 

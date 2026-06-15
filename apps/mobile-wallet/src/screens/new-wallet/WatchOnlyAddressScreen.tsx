@@ -1,4 +1,4 @@
-import { walletSwitchedMobile } from '@alephium/shared'
+import { walletSwitchedMobile } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { isValidAddress } from '@alephium/web3'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'

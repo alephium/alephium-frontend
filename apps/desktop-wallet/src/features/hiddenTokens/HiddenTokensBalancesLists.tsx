@@ -1,4 +1,4 @@
-import { isFT, isNFT } from '@alephium/shared'
+import { isFT, isNFT } from '@alephium/shared/types'
 import { useFetchAddressHiddenTokens, useFetchToken } from '@alephium/shared-react'
 import { ChevronUp, EyeOff } from 'lucide-react'
 import { ReactNode, useState } from 'react'

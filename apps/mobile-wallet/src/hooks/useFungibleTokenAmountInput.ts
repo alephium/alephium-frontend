@@ -1,4 +1,4 @@
-import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared/numbers'
 import { MIN_UTXO_SET_AMOUNT, prettifyTokenAmount } from '@alephium/web3'
 import { RefObject, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

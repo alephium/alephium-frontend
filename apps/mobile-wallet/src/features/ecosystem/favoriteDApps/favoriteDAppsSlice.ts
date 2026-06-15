@@ -1,4 +1,4 @@
-import { activeWalletDeleted, appReset } from '@alephium/shared'
+import { activeWalletDeleted, appReset } from '@alephium/shared/store'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {

@@ -1,4 +1,4 @@
-import { isNumber } from '@alephium/shared'
+import { isNumber } from '@alephium/shared/numbers'
 
 export const isNumericStringValid = (str: string, allowFloat = true) =>
   isNumber(str) &&

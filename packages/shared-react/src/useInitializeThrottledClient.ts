@@ -1,11 +1,10 @@
+import { batchers, throttledClient } from '@alephium/shared/api'
 import {
-  batchers,
   explorerApiClientInitFailed,
   explorerApiClientInitSucceeded,
   nodeApiClientInitFailed,
-  nodeApiClientInitSucceeded,
-  throttledClient
-} from '@alephium/shared'
+  nodeApiClientInitSucceeded
+} from '@alephium/shared/store'
 import { useCallback, useEffect } from 'react'
 
 import { useSharedDispatch, useSharedSelector } from './redux'

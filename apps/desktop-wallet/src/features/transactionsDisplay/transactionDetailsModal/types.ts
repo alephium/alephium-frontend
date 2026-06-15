@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { explorer as e } from '@alephium/web3'
 
 export interface TransactionDetailsModalTxProps {

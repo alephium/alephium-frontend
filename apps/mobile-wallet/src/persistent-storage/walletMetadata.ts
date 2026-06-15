@@ -1,4 +1,5 @@
-import { addressMetadataIncludesHash, DeprecatedWalletMetadataMobile, WalletMetadataMobile } from '@alephium/shared'
+import { DeprecatedWalletMetadataMobile, WalletMetadataMobile } from '@alephium/shared/types'
+import { addressMetadataIncludesHash } from '@alephium/shared/utils'
 
 import { sendAnalytics } from '~/analytics'
 import i18n from '~/features/localization/i18n'

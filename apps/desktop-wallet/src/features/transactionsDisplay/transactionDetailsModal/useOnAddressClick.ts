@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { getAddressExplorerLink, useUnsortedAddressesHashes } from '@alephium/shared-react'
 
 import { openModal } from '@/features/modals/modalActions'

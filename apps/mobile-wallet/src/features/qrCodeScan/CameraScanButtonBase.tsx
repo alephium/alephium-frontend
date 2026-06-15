@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { isValidAddress } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import { Linking } from 'react-native'

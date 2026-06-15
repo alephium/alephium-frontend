@@ -1,4 +1,4 @@
-import { newWalletInitialAddressGenerated } from '@alephium/shared'
+import { newWalletInitialAddressGenerated } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'

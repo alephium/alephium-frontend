@@ -1,4 +1,4 @@
-import { AddressHash, ApiBalances, TokenApiBalances } from '@alephium/shared'
+import { AddressHash, ApiBalances, TokenApiBalances } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { UseQueryResult } from '@tanstack/react-query'
 import { createContext, ReactNode, useContext, useMemo } from 'react'

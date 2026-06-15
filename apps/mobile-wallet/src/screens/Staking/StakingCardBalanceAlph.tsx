@@ -1,4 +1,5 @@
-import { AddressHash, formatAmountForDisplay } from '@alephium/shared'
+import { formatAmountForDisplay } from '@alephium/shared/numbers'
+import { AddressHash } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useCallback } from 'react'

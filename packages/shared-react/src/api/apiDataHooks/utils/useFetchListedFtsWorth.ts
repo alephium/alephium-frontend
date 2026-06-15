@@ -1,4 +1,4 @@
-import { ApiBalances, ListedFT } from '@alephium/shared'
+import { ApiBalances, ListedFT } from '@alephium/shared/types'
 import { useMemo } from 'react'
 
 import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'

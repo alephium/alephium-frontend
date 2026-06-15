@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { NetworkNames, NetworkPreset } from '@alephium/shared'
+import { NetworkNames, NetworkPreset } from '@alephium/shared/types'
 
 export const getNetworkSettings = () => {
   let explorerUrl: string | null | undefined = (window as any).VITE_BACKEND_URL

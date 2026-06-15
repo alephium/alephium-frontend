@@ -1,4 +1,4 @@
-import { isDefined } from '@alephium/shared'
+import { isDefined } from '@alephium/shared/utils'
 import { UseQueryResult } from '@tanstack/react-query'
 
 export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({

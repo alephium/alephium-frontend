@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressByHash, TokenId } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import {
   useCurrentlyOnlineNetworkId,
   useFetchAddressBalances,

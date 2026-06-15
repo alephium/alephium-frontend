@@ -1,4 +1,4 @@
-import { ActiveWalletDesktop, AddressBase } from '@alephium/shared'
+import { ActiveWalletDesktop, AddressBase } from '@alephium/shared/types'
 
 import { TimeInMs } from '@/types/numbers'
 

@@ -8,7 +8,7 @@ import {
   SignTransferTxModalProps,
   SignUnsignedTxModalProps,
   WalletConnectSessionProposalModalProps
-} from '@alephium/shared'
+} from '@alephium/shared/types'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
 import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'

@@ -1,5 +1,6 @@
 import { keyring } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE, newWalletInitialAddressGenerated } from '@alephium/shared'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { newWalletInitialAddressGenerated } from '@alephium/shared/store'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'

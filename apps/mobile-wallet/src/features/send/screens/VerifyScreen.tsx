@@ -1,4 +1,5 @@
-import { formatAmountForDisplay, MAXIMAL_GAS_FEE } from '@alephium/shared'
+import { MAXIMAL_GAS_FEE } from '@alephium/shared'
+import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { ALPH } from '@alephium/token-list'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'

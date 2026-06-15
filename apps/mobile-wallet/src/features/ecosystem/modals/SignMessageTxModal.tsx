@@ -1,4 +1,4 @@
-import { SignMessageTxModalProps } from '@alephium/shared'
+import { SignMessageTxModalProps } from '@alephium/shared/types'
 import { hashMessage, sign } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

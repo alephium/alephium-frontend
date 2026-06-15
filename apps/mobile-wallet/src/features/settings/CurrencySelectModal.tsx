@@ -1,4 +1,6 @@
-import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
+import { fiatCurrencyChanged } from '@alephium/shared/store'
+import { Currency } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 

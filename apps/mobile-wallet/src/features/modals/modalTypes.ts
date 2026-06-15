@@ -1,4 +1,4 @@
-import { HasOptionalProps, HasRequiredProps } from '@alephium/shared'
+import { HasOptionalProps, HasRequiredProps } from '@alephium/shared/utils'
 import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'

@@ -5,7 +5,7 @@ import {
   appReset,
   walletSwitchedMobile,
   walletUnlockedMobile
-} from '@alephium/shared'
+} from '@alephium/shared/store'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { newWalletGenerated, newWalletImportedWithMetadata, walletNameChanged } from '~/store/wallet/walletActions'

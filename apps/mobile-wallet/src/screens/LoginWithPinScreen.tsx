@@ -1,4 +1,4 @@
-import { walletUnlockedMobile } from '@alephium/shared'
+import { walletUnlockedMobile } from '@alephium/shared/store'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'

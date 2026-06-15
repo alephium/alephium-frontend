@@ -1,4 +1,4 @@
-import { SignUnsignedTxModalProps } from '@alephium/shared'
+import { SignUnsignedTxModalProps } from '@alephium/shared/types'
 import {
   nodeTransactionReconstructDecodedUnsignedTxQuery,
   useIsNodeOnline,

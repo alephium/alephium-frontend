@@ -1,11 +1,7 @@
-import {
-  signAndSubmitTxResultToSentTx,
-  SignChainedTxModalResult,
-  signChainedTxResultsToTxSubmittedResults,
-  SweepTxParams,
-  throttledClient,
-  transactionSent
-} from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { signChainedTxResultsToTxSubmittedResults } from '@alephium/shared/transactions'
+import { SignChainedTxModalResult, SweepTxParams } from '@alephium/shared/types'
 import { SignChainedTxParams, SignTransferTxParams, SignTransferTxResult, SubmissionResult } from '@alephium/web3'
 
 import { signer } from '~/signer'

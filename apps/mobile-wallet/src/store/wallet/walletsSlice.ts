@@ -1,4 +1,5 @@
-import { appReset, WalletListEntry } from '@alephium/shared'
+import { appReset } from '@alephium/shared/store'
+import { WalletListEntry } from '@alephium/shared/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'wallets'

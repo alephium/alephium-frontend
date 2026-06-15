@@ -1,4 +1,4 @@
-import { matchesNFTCollectionUriMetaDataSchema, throttledClient } from '@alephium/shared'
+import { matchesNFTCollectionUriMetaDataSchema, throttledClient } from '@alephium/shared/api'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 

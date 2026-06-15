@@ -1,4 +1,4 @@
-import { isFT, isListedFT, Token } from '@alephium/shared'
+import { isFT, isListedFT, Token } from '@alephium/shared/types'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { addressFromTokenId } from '@alephium/web3'

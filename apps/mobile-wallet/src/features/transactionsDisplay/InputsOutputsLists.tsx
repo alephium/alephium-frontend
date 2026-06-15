@@ -1,13 +1,12 @@
+import { GENESIS_TIMESTAMP } from '@alephium/shared'
+import { selectPendingSentTransactionByHash } from '@alephium/shared/store'
 import {
-  ExecuteScriptTx,
-  GENESIS_TIMESTAMP,
   getTransactionDestinationAddresses,
   getTransactionOriginAddresses,
   isConfirmedTx,
-  isExecuteScriptTx,
-  selectPendingSentTransactionByHash,
-  UseTransactionProps
-} from '@alephium/shared'
+  isExecuteScriptTx
+} from '@alephium/shared/transactions'
+import { ExecuteScriptTx, UseTransactionProps } from '@alephium/shared/types'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

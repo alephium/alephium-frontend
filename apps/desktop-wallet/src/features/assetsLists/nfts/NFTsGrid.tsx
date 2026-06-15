@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 import { useFetchAddressTokensByType, useFetchWalletTokensByType, useIsExplorerOffline } from '@alephium/shared-react'
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef } from 'react'

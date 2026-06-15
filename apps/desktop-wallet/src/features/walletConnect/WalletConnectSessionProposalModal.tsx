@@ -1,4 +1,5 @@
-import { isNetworkValid, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import { WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
+import { isNetworkValid } from '@alephium/shared/utils'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'

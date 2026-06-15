@@ -1,4 +1,5 @@
-import { AddressHash, addressSettingsSaved, selectDefaultAddressHash } from '@alephium/shared'
+import { addressSettingsSaved, selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'

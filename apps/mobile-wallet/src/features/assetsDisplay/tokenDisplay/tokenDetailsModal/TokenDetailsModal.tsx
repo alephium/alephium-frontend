@@ -1,4 +1,5 @@
-import { AddressHash, isListedFT, selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash, isListedFT } from '@alephium/shared/types'
 import {
   useFetchAddressSingleTokenBalances,
   useFetchToken,

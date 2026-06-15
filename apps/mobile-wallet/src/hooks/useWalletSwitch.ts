@@ -1,5 +1,6 @@
 import { keyring } from '@alephium/keyring'
-import { hiddenTokensLoadedFromStorage, WalletMetadataMobile, walletSwitchedMobile } from '@alephium/shared'
+import { hiddenTokensLoadedFromStorage, walletSwitchedMobile } from '@alephium/shared/store'
+import { WalletMetadataMobile } from '@alephium/shared/types'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useCallback } from 'react'
 

@@ -1,4 +1,4 @@
-import { SharedDispatch, SharedRootState } from '@alephium/shared'
+import { SharedDispatch, SharedRootState } from '@alephium/shared/store'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`.

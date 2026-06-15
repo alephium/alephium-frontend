@@ -1,4 +1,4 @@
-import { fiatCurrencyChanged } from '@alephium/shared'
+import { fiatCurrencyChanged } from '@alephium/shared/store'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import posthog from 'posthog-js'
 

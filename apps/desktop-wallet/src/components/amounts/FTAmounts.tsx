@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 

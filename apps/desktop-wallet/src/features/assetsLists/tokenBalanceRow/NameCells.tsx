@@ -1,4 +1,4 @@
-import { isFT, isUnlistedFT } from '@alephium/shared'
+import { isFT, isUnlistedFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'

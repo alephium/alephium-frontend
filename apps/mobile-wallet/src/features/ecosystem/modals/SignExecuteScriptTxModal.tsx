@@ -1,11 +1,6 @@
-import {
-  AssetAmount,
-  getBaseAddressStr,
-  getTxAddresses,
-  signAndSubmitTxResultToSentTx,
-  SignExecuteScriptTxModalProps,
-  transactionSent
-} from '@alephium/shared'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
+import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

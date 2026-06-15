@@ -1,4 +1,5 @@
-import { Address, selectDappConnectEligibleAddresses } from '@alephium/shared'
+import { selectDappConnectEligibleAddresses } from '@alephium/shared/store'
+import { Address } from '@alephium/shared/types'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { memo, useCallback, useMemo } from 'react'
