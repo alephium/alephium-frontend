@@ -65,21 +65,23 @@ pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
 
 ### Shared Packages
 
-- **`packages/shared`** — Core utilities, Redux store slices, types, constants, API clients. Built with tsup (ESM). Most packages depend on this
-- **`packages/shared-react`** — React hooks and components shared between apps. Built with tsup
-- **`packages/shared-crypto`** — Cryptographic utilities (BIP39, key derivation). Built with webpack into a single bundle (`dist/alephium.min.js`)
-- **`packages/keyring`** — Wallet key management. Built with tsup
-- **`packages/encryptor`** — Encryption utilities. Built with tsup
-- **`packages/wallet-dapp-provider`** — WalletConnect dApp provider. Built with Rollup
+- **`packages/shared`** — Core utilities, Redux store slices, types, constants, API clients. Ships raw TypeScript source (no build step). Most packages depend on this
+- **`packages/shared-react`** — React hooks and components shared between apps. Ships raw TypeScript source (no build step)
+- **`packages/shared-crypto`** — Legacy password encryption/hashing (AES-256-GCM + PBKDF2). Built with webpack into a single minified bundle (`dist/alephium.min.js`). Being phased out in favor of `encryptor` + native crypto
+- **`packages/keyring`** — Wallet key management. Ships raw TypeScript source (no build step)
+- **`packages/encryptor`** — Encryption utilities (`@metamask/browser-passworder` wrapper). Ships raw TypeScript source (no build step)
+- **`packages/wallet-dapp-provider`** — Provider injected into the in-app dApp browser WebView. Built with Rollup (emits a UMD-wrapped-in-JSON bundle for WebView injection)
 
 ### Config Packages
 
 - **`packages/eslint-config`** — Shared ESLint config (`base.js` for libraries, `react.js` for React apps)
 - **`packages/typescript-config`** — Shared base TypeScript config
 
-### Build Order
+### Build Strategy & Order
 
-Turbo handles dependency ordering. Shared packages must build before apps (`^build` dependency). The `typecheck` task also depends on `^build` because it needs generated type declarations.
+Shared packages follow one rule: **ship raw TypeScript source** and let each consuming app's bundler (Vite for explorer/desktop, Metro for mobile) compile them — no build step, no `dist`. The only exceptions are packages that must emit a non-source runtime artifact, which are the only ones with a `build` script: `wallet-dapp-provider` (Rollup → a UMD-wrapped-in-JSON bundle injected into the in-app dApp browser WebView) and `shared-crypto` (webpack; legacy, slated for removal).
+
+Turbo handles ordering: those two built packages must build before apps (`^build`). The `typecheck` task also depends on `^build` because it needs their generated `.d.ts`.
 
 ## Key Technical Decisions
 
