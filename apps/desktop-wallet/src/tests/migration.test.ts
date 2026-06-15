@@ -12,7 +12,7 @@ import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'
-import { stringToDoubleSHA256HexString } from '@/utils/misc'
+import { stringToDoubleSHA512HexString } from '@/utils/misc'
 
 const testWalletMnemonic =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
@@ -83,7 +83,7 @@ describe('_20230228_155100', () => {
     })
 
     it('when the address metadata are stored using the wallet name double-hashed', () => {
-      _migrateEncryptedAddressesMetadata(`addresses-metadata-${stringToDoubleSHA256HexString(activeWallet.name)}`)
+      _migrateEncryptedAddressesMetadata(`addresses-metadata-${stringToDoubleSHA512HexString(activeWallet.name)}`)
     })
   })
 

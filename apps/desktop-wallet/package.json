@@ -67,6 +67,7 @@
     "@ledgerhq/devices": "^8.13.0",
     "@ledgerhq/hw-transport-webhid": "^6.34.0",
     "@ledgerhq/hw-transport-webusb": "^6.33.0",
+    "@noble/hashes": "^1.8.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/react-query-persist-client": "^5.81.2",
     "@testing-library/jest-dom": "^5.14.1",
