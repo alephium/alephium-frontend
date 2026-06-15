@@ -1060,15 +1060,6 @@ importers:
       '@alephium/web3':
         specifier: 3.0.3
         version: 3.0.3
-      '@tanstack/react-query':
-        specifier: ^5.81.2
-        version: 5.81.2(react@19.1.0)
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-redux:
-        specifier: ^9.2.0
-        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
     devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
@@ -1079,9 +1070,18 @@ importers:
       '@alephium/walletconnect-provider':
         specifier: 3.0.3
         version: 3.0.3(@react-native-async-storage/async-storage@1.23.1)(typescript@5.9.3)
+      '@tanstack/react-query':
+        specifier: ^5.81.2
+        version: 5.81.2(react@19.1.0)
       '@types/react':
         specifier: ^19.0.14
         version: 19.1.17
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-redux:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1)
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
