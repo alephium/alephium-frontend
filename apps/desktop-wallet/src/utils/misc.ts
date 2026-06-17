@@ -16,13 +16,28 @@ export const isElectron = () => {
 // ===== LINKS ===== //
 // ================= //
 
+// Only open vetted schemes. This is a second layer behind the Electron main-process
+// setWindowOpenHandler allowlist: untrusted strings (e.g. on-chain NFT/token metadata) must never
+// reach shell.openExternal with a dangerous scheme (file:, smb:, custom protocol handlers, ...).
+const SAFE_URL_PROTOCOLS = ['https:', 'http:', 'mailto:']
+
 export const openInWebBrowser = (url: string) => {
-  if (url) {
-    const newWindow = window.open(`${url.replace(/([^:]\/)\/+/g, '$1')}`, '_blank', 'noopener,noreferrer')
-    if (newWindow) {
-      newWindow.opener = null
-      newWindow.focus()
-    }
+  if (!url) return
+
+  const sanitizedUrl = url.replace(/([^:]\/)\/+/g, '$1')
+
+  let isSafeProtocol = false
+  try {
+    isSafeProtocol = SAFE_URL_PROTOCOLS.includes(new URL(sanitizedUrl).protocol)
+  } catch {
+    isSafeProtocol = false
+  }
+  if (!isSafeProtocol) return
+
+  const newWindow = window.open(sanitizedUrl, '_blank', 'noopener,noreferrer')
+  if (newWindow) {
+    newWindow.opener = null
+    newWindow.focus()
   }
 }
 
