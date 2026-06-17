@@ -22,7 +22,8 @@ export const isElectron = () => {
 // http only for loopback/private hosts (devnet + LAN); everything else (file:, smb:, custom
 // protocols, public http) is rejected.
 const isLoopbackOrPrivateHost = (hostname: string) => {
-  if (hostname === 'localhost' || hostname === '::1') return true
+  // new URL() reports IPv6 hosts bracketed (e.g. '[::1]'); accept both forms.
+  if (hostname === 'localhost' || hostname === '[::1]' || hostname === '::1') return true
 
   const ipv4 = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/.exec(hostname)
   if (!ipv4) return false
@@ -39,7 +40,7 @@ const isLoopbackOrPrivateHost = (hostname: string) => {
   )
 }
 
-const isAllowedExternalUrl = (url: string) => {
+export const isAllowedExternalUrl = (url: string) => {
   try {
     const { protocol, hostname } = new URL(url)
 

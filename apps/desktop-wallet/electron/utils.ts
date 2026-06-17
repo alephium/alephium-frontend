@@ -28,7 +28,8 @@ export const isIpcSenderValid = (frame: WebFrameMain | null) => {
 // ranges, so devnet (http://localhost:23000) and self-hosted LAN nodes keep working. Public http is
 // rejected.
 const isLoopbackOrPrivateHost = (hostname: string) => {
-  if (hostname === 'localhost' || hostname === '::1') return true
+  // new URL() reports IPv6 hosts bracketed (e.g. '[::1]'); accept both forms.
+  if (hostname === 'localhost' || hostname === '[::1]' || hostname === '::1') return true
 
   const ipv4 = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/.exec(hostname)
   if (!ipv4) return false
