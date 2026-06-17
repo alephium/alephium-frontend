@@ -28,6 +28,7 @@ import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/Dis
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used only via `typeof` to derive types
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
   CSVExportModal: 'CSVExportModal',
