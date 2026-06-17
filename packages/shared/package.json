@@ -36,7 +36,7 @@
     "@yornaath/batshit": "^0.10.1",
     "fetch-retry": "^5.0.6",
     "p-throttle": "^6.2.0",
-    "posthog-js": "^1.52.0",
+    "posthog-js": "^1.387.0",
     "sanitize-html": "^2.17.4"
   },
   "devDependencies": {
