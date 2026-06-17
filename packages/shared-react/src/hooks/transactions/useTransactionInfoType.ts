@@ -1,4 +1,5 @@
-import { getTransactionInfoType, TransactionInfoType2, UseTransactionProps } from '@alephium/shared'
+import { getTransactionInfoType, TransactionInfoType2 } from '@alephium/shared/transactions'
+import { UseTransactionProps } from '@alephium/shared/types'
 import { useMemo } from 'react'
 
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'

@@ -1,4 +1,4 @@
-import { exponentialBackoffFetchRetry } from '@alephium/shared'
+import { exponentialBackoffFetchRetry } from '@alephium/shared/api'
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Megaphone } from 'lucide-react'

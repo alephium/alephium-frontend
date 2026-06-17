@@ -1,4 +1,4 @@
-import { Address, AddressBase, Contact } from '@alephium/shared'
+import { Address, AddressBase, Contact } from '@alephium/shared/types'
 import { createAction } from '@reduxjs/toolkit'
 
 import { Message } from '@/features/toastMessages/toastMessagesTypes'

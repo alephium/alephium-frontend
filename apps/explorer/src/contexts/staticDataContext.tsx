@@ -1,4 +1,4 @@
-import { Asset } from '@alephium/shared'
+import { Asset } from '@alephium/shared/types'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 

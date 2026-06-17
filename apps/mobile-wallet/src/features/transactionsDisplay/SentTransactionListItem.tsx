@@ -1,4 +1,4 @@
-import { selectSentTransactionByHash } from '@alephium/shared'
+import { selectSentTransactionByHash } from '@alephium/shared/store'
 import { usePendingTxPolling } from '@alephium/shared-react'
 import Lucide from '@react-native-vector-icons/lucide/static'
 import { colord } from 'colord'

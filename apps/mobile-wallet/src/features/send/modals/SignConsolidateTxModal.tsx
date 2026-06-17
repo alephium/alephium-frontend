@@ -1,4 +1,4 @@
-import { ConsolidationTxModalProps } from '@alephium/shared'
+import { ConsolidationTxModalProps } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'

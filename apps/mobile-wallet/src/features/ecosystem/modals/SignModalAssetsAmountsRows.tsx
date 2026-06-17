@@ -1,4 +1,4 @@
-import { AssetAmount } from '@alephium/shared'
+import { AssetAmount } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'

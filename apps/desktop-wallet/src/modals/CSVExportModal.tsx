@@ -1,4 +1,4 @@
-import { selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

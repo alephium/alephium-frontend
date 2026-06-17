@@ -1,4 +1,4 @@
-import { AddressHash, isNFT } from '@alephium/shared'
+import { AddressHash, isNFT } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'

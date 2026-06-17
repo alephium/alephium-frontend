@@ -1,11 +1,5 @@
-import {
-  AddressHash,
-  calculateTokenAmountWorth,
-  fromHumanReadableAmount,
-  FungibleToken,
-  isFT,
-  isNFT
-} from '@alephium/shared'
+import { calculateTokenAmountWorth, fromHumanReadableAmount } from '@alephium/shared/numbers'
+import { AddressHash, FungibleToken, isFT, isNFT } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'

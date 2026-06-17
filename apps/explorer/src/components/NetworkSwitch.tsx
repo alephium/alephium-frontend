@@ -1,4 +1,5 @@
-import { NetworkPreset, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { NetworkPreset } from '@alephium/shared/types'
 import { ComponentPropsWithoutRef } from 'react'
 import styled from 'styled-components'
 

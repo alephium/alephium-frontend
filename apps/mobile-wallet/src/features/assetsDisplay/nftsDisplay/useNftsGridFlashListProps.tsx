@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { FlashListProps } from '@shopify/flash-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

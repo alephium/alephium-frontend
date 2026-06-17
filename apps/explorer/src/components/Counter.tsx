@@ -1,4 +1,4 @@
-import { addApostrophes } from '@alephium/shared'
+import { addApostrophes } from '@alephium/shared/numbers'
 import { animate } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 

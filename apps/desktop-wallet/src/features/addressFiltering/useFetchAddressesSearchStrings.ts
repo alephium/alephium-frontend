@@ -1,4 +1,4 @@
-import { Address, AddressHash } from '@alephium/shared'
+import { Address, AddressHash } from '@alephium/shared/types'
 import {
   addressSearchStringQuery,
   AddressSearchStringQueryFnData,

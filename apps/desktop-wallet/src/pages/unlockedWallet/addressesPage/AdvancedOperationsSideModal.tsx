@@ -1,4 +1,4 @@
-import { selectAllAddressIndexes, selectDefaultAddressHash } from '@alephium/shared'
+import { selectAllAddressIndexes, selectDefaultAddressHash } from '@alephium/shared/store'
 import { Codesandbox, HardHat, Lightbulb, Search, Trash2 } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

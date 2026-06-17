@@ -1,4 +1,4 @@
-import { findTransactionReferenceAddress } from '@alephium/shared'
+import { findTransactionReferenceAddress } from '@alephium/shared/transactions'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'

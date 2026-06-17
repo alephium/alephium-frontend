@@ -1,12 +1,8 @@
-import {
-  getChainedTxPropsFromSignChainedTxParams,
-  getNetworkIdFromNetworkName,
-  isInsufficientFundsError,
-  NetworkName,
-  selectAllAddressByType,
-  SignTxModalCommonProps,
-  throttledClient
-} from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { selectAllAddressByType } from '@alephium/shared/store'
+import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
+import { NetworkName, SignTxModalCommonProps } from '@alephium/shared/types'
+import { getNetworkIdFromNetworkName, isInsufficientFundsError } from '@alephium/shared/utils'
 import {
   buildDeployContractTxQuery,
   buildExecuteScriptTxQuery,

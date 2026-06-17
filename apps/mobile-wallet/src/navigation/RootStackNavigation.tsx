@@ -1,4 +1,4 @@
-import { walletUnlockedMobile } from '@alephium/shared'
+import { walletUnlockedMobile } from '@alephium/shared/store'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'

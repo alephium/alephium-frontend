@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useURL } from 'expo-linking'
 import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
 import { memo, useEffect } from 'react'

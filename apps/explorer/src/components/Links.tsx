@@ -1,4 +1,4 @@
-import { AssetAmount } from '@alephium/shared'
+import { AssetAmount } from '@alephium/shared/types'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { ReactNode } from 'react'
 import { RiExternalLinkLine } from 'react-icons/ri'

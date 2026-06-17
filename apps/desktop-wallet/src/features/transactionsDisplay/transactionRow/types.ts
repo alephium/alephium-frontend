@@ -1,4 +1,4 @@
-import { AddressHash, TransactionView } from '@alephium/shared'
+import { AddressHash, TransactionView } from '@alephium/shared/types'
 import { explorer as e } from '@alephium/web3'
 
 import { TableRowProps } from '@/components/Table'

@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent } from 'react-native'

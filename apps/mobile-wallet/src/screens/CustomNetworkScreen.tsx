@@ -1,4 +1,5 @@
-import { customNetworkSettingsSaved, NetworkSettings } from '@alephium/shared'
+import { customNetworkSettingsSaved } from '@alephium/shared/store'
+import { NetworkSettings } from '@alephium/shared/types'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

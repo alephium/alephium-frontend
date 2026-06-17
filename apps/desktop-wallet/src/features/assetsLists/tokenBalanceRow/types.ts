@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { ReactNode } from 'react'
 
 export interface TokenBalancesRowBaseProps {

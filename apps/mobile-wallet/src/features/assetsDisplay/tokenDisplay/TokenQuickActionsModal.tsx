@@ -1,4 +1,4 @@
-import { isFT } from '@alephium/shared'
+import { isFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'

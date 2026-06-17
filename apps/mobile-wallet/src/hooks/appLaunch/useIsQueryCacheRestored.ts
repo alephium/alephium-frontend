@@ -1,4 +1,4 @@
-import { appLaunchedWithLastUsedWallet } from '@alephium/shared'
+import { appLaunchedWithLastUsedWallet } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useEffect, useState } from 'react'
 

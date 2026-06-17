@@ -1,4 +1,7 @@
-import { capitalize, NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { networkPresetSwitched } from '@alephium/shared/store'
+import { NetworkName, NetworkNames } from '@alephium/shared/types'
+import { capitalize } from '@alephium/shared/utils'
 import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
 import { ArrowRight } from 'lucide-react'
 import { useCallback } from 'react'

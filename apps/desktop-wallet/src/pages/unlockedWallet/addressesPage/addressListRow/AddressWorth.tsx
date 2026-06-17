@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressWorth } from '@alephium/shared-react'
 
 import Amount from '@/components/Amount'

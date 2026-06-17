@@ -1,4 +1,4 @@
-import { AddressHash, AddressIndex } from '@alephium/shared'
+import { AddressHash, AddressIndex } from '@alephium/shared/types'
 import { explorer } from '@alephium/web3'
 
 export type AddressDiscoveryGroupData = {

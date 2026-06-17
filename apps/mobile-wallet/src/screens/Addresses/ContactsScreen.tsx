@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { Contact } from '@alephium/shared/types'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'

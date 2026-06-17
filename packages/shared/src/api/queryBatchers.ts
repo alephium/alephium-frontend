@@ -43,4 +43,29 @@ class Batchers {
   }
 }
 
-export const batchers = new Batchers()
+let batchersInstance: Batchers | undefined
+
+const getBatchers = (): Batchers => {
+  if (!batchersInstance) {
+    batchersInstance = new Batchers()
+  }
+
+  return batchersInstance
+}
+
+// Lazy facade: Batchers (which reads throttledClient.explorer when constructed) is built only on first access, so
+// importing this module has no side effects. Consumers still use batchers.{tokenTypeBatcher,...,init} unchanged.
+export const batchers = {
+  get tokenTypeBatcher() {
+    return getBatchers().tokenTypeBatcher
+  },
+  get ftMetadataBatcher() {
+    return getBatchers().ftMetadataBatcher
+  },
+  get nftMetadataBatcher() {
+    return getBatchers().nftMetadataBatcher
+  },
+  init() {
+    getBatchers().init()
+  }
+}

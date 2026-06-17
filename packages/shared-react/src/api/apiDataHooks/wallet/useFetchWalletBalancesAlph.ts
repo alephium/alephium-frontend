@@ -1,4 +1,4 @@
-import { ApiBalances } from '@alephium/shared'
+import { ApiBalances } from '@alephium/shared/types'
 import { UseQueryResult } from '@tanstack/react-query'
 
 import { combineError, combineIsFetching, combineIsLoading } from '../../../api/apiDataHooks/apiDataHooksUtils'

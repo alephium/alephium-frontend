@@ -1,4 +1,4 @@
-import { sharedReducer } from '@alephium/shared'
+import { sharedReducer } from '@alephium/shared/store'
 import { configureStore } from '@reduxjs/toolkit'
 
 import hiddenTokensListenerMiddleware from '~/features/assetsDisplay/hideTokens/hiddenTokensMiddleware'

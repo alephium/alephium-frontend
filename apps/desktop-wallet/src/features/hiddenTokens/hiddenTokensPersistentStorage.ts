@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
 

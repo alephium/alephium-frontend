@@ -1,9 +1,11 @@
 // Mock @alephium/web3-wallet to prevent @noble/secp256k1 loading issues
 vi.mock('@alephium/web3-wallet', () => ({}))
 
+import { createCipheriv, pbkdf2Sync, randomBytes } from 'node:crypto'
+
 import { keyring } from '@alephium/keyring'
-import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt } from '@alephium/shared-crypto'
+import { networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings } from '@alephium/shared/types'
 import { nanoid } from 'nanoid'
 
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
@@ -12,7 +14,25 @@ import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'
-import { stringToDoubleSHA256HexString } from '@/utils/misc'
+import { stringToDoubleSHA512HexString } from '@/utils/misc'
+
+// Reproduces the legacy @alephium/shared-crypto AES-256-GCM + PBKDF2 (sha256) "version: 1" format, so these migration
+// tests keep exercising the deprecated encrypted-data path that the wallet must still be able to decrypt.
+const encrypt = (password: string, dataRaw: string): string => {
+  const salt = randomBytes(64)
+  const iv = randomBytes(64)
+  const derivedKey = pbkdf2Sync(password, salt, 10000, 32, 'sha256')
+  const cipher = createCipheriv('aes-256-gcm', derivedKey, iv)
+  const encrypted = Buffer.concat([cipher.update(Buffer.from(dataRaw, 'utf8')), cipher.final()])
+  const authTag = cipher.getAuthTag()
+
+  return JSON.stringify({
+    iv: iv.toString('hex'),
+    encrypted: Buffer.concat([encrypted, authTag]).toString('hex'),
+    salt: salt.toString('hex'),
+    version: 1
+  })
+}
 
 const testWalletMnemonic =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
@@ -83,7 +103,7 @@ describe('_20230228_155100', () => {
     })
 
     it('when the address metadata are stored using the wallet name double-hashed', () => {
-      _migrateEncryptedAddressesMetadata(`addresses-metadata-${stringToDoubleSHA256HexString(activeWallet.name)}`)
+      _migrateEncryptedAddressesMetadata(`addresses-metadata-${stringToDoubleSHA512HexString(activeWallet.name)}`)
     })
   })
 

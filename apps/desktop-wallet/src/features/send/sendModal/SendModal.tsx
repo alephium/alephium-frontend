@@ -1,15 +1,13 @@
+import { getHumanReadableError } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import {
   getChainedTxPropsFromSignChainedTxParams,
   getGasRefillChainedTxParams,
-  getHumanReadableError,
   getSweepTxParams,
-  getTransferTxParams,
-  isConsolidationError,
-  isInsufficientFundsError,
-  SendFlowData,
-  SignChainedTxModalProps,
-  throttledClient
-} from '@alephium/shared'
+  getTransferTxParams
+} from '@alephium/shared/transactions'
+import { SendFlowData, SignChainedTxModalProps } from '@alephium/shared/types'
+import { isConsolidationError, isInsufficientFundsError } from '@alephium/shared/utils'
 import { useFetchGroupedAddressesWithEnoughAlphForGas } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'

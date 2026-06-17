@@ -1,4 +1,5 @@
-import { AddressHash, addressSettingsSaved, selectAddressByHash } from '@alephium/shared'
+import { addressSettingsSaved, selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { openBrowserAsync } from 'expo-web-browser'
 import { memo } from 'react'

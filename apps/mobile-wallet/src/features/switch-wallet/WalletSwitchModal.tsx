@@ -1,4 +1,4 @@
-import { WalletListEntry } from '@alephium/shared'
+import { WalletListEntry } from '@alephium/shared/types'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { memo, useCallback } from 'react'

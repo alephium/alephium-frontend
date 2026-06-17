@@ -1,4 +1,5 @@
-import { signAndSubmitTxResultToSentTx, SignDeployContractTxModalProps, transactionSent } from '@alephium/shared'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { SignDeployContractTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,5 @@
-import { AddressHash, ExecuteScriptTx, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
+import { findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared/transactions'
+import { AddressHash, ExecuteScriptTx } from '@alephium/shared/types'
 import {
   useFetchTransaction,
   useFetchTransactionTokens,

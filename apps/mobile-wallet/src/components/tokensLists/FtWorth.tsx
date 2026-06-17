@@ -1,4 +1,6 @@
-import { calculateTokenAmountWorth, CURRENCIES, isFT, TokenId } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import styled from 'styled-components'

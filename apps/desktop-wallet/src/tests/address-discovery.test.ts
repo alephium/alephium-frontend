@@ -3,7 +3,7 @@
  */
 
 import { keyring } from '@alephium/keyring'
-import { throttledClient } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 
 import { discoverGroupedAddresses } from '@/api/addresses'
 

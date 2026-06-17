@@ -1,10 +1,5 @@
-import {
-  Address,
-  AddressHash,
-  fromHumanReadableAmount,
-  getNumberOfDecimals,
-  toHumanReadableAmount
-} from '@alephium/shared'
+import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared/numbers'
+import { Address, AddressHash } from '@alephium/shared/types'
 import {
   addressTokensSearchStringsQuery,
   useFetchAddressBalances,

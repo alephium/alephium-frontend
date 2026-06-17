@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 

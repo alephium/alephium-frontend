@@ -1,13 +1,6 @@
-import {
-  AddressHash,
-  AmountDeltas,
-  calcTxAmountsDeltaForAddress,
-  ExecuteScriptTx,
-  isExecuteScriptTx,
-  isSentTx,
-  selectPendingSentTransactionByHash,
-  SentTransaction
-} from '@alephium/shared'
+import { selectPendingSentTransactionByHash } from '@alephium/shared/store'
+import { calcTxAmountsDeltaForAddress, isExecuteScriptTx, isSentTx } from '@alephium/shared/transactions'
+import { AddressHash, AmountDeltas, ExecuteScriptTx, SentTransaction } from '@alephium/shared/types'
 import { explorer as e } from '@alephium/web3'
 import { useMemo } from 'react'
 

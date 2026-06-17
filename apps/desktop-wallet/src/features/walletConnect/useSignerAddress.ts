@@ -1,4 +1,4 @@
-import { selectAddressByHash, selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared'
+import { selectAddressByHash, selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared/store'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { useState } from 'react'
 

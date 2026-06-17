@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressTokensByType } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import styled from 'styled-components'

@@ -1,4 +1,5 @@
-import { isGrouplessAddress, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { NetworkPreset, throttledFetch } from '@alephium/shared'
+import { throttledFetch } from '@alephium/shared/api'
+import { NetworkPreset } from '@alephium/shared/types'
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 
 import { getNetworkSettings } from '@/api/getNetworkSettings'

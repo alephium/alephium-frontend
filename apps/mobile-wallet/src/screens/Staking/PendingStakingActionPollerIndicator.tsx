@@ -1,4 +1,4 @@
-import { selectSentTransactionByHash } from '@alephium/shared'
+import { selectSentTransactionByHash } from '@alephium/shared/store'
 import { usePendingTxPolling } from '@alephium/shared-react'
 import { useEffect, useRef } from 'react'
 import { ActivityIndicator } from 'react-native'

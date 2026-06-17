@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressGroup } from '@alephium/shared'
+import { selectAddressGroup } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useInView } from 'framer-motion'
 import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,5 @@
-import { CURRENCIES, isFT } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
+import { isFT } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 

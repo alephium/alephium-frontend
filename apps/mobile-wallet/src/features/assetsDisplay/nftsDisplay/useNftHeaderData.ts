@@ -1,4 +1,4 @@
-import { NFT, NFTDataType, NFTDataTypes } from '@alephium/shared'
+import { NFT, NFTDataType, NFTDataTypes } from '@alephium/shared/types'
 import { useFetchNft } from '@alephium/shared-react'
 import { useEffect, useState } from 'react'
 import { DimensionValue } from 'react-native'

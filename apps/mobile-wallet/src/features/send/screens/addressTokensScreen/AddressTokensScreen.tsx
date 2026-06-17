@@ -1,4 +1,6 @@
-import { AddressHash, selectAddressByHash, shouldBuildSweepTransactions, TokenId } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { shouldBuildSweepTransactions } from '@alephium/shared/transactions'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import {
   useFetchAddressBalances,
   useFetchAddressFtsSorted,

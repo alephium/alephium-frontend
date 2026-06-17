@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressByHash, selectDefaultAddressHash, TokenId } from '@alephium/shared'
+import { selectAddressByHash, selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'

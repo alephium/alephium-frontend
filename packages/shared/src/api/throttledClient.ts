@@ -47,4 +47,29 @@ class Client {
   }
 }
 
-export const throttledClient = new Client()
+let client: Client | undefined
+
+const getClient = (): Client => {
+  if (!client) {
+    client = new Client()
+  }
+
+  return client
+}
+
+// Lazy facade: the Client (and the web3 providers it builds) is constructed only on first access, so importing this
+// module has no side effects. Consumers still use throttledClient.{explorer,node,txBuilder,init} unchanged.
+export const throttledClient = {
+  get explorer() {
+    return getClient().explorer
+  },
+  get node() {
+    return getClient().node
+  },
+  get txBuilder() {
+    return getClient().txBuilder
+  },
+  init(nodeHost: NetworkSettings['nodeHost'], explorerApiHost: NetworkSettings['explorerApiHost']) {
+    getClient().init(nodeHost, explorerApiHost)
+  }
+}

@@ -1,11 +1,10 @@
+import { TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
 import {
-  AddressHash,
-  Asset,
   calcTxAmountsDeltaForAddress,
   findTransactionReferenceAddress,
-  getTransactionInfoType,
-  TRANSACTIONS_PAGE_DEFAULT_LIMIT
-} from '@alephium/shared'
+  getTransactionInfoType
+} from '@alephium/shared/transactions'
+import { AddressHash, Asset } from '@alephium/shared/types'
 import {
   useFetchWalletTransactionsInfinite,
   useIsExplorerOffline,

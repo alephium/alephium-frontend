@@ -1,4 +1,4 @@
-import { isValidRemoteHttpUrl } from '@alephium/shared'
+import { isValidRemoteHttpUrl } from '@alephium/shared/utils'
 
 import type { DApp } from '~/features/ecosystem/ecosystemTypes'
 

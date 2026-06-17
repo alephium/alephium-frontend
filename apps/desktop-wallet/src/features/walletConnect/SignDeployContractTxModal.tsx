@@ -1,10 +1,6 @@
-import {
-  isGrouplessAddress,
-  selectAddressByHash,
-  signAndSubmitTxResultToSentTx,
-  SignDeployContractTxModalProps,
-  transactionSent
-} from '@alephium/shared'
+import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { SignDeployContractTxModalProps } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { ALPH } from '@alephium/token-list'
 import { SignDeployContractTxResult } from '@alephium/web3'
 import { memo, useCallback, useMemo } from 'react'

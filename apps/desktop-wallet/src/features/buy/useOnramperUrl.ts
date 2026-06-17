@@ -1,4 +1,5 @@
-import { AddressHash, getOnramperUrl } from '@alephium/shared'
+import { getOnramperUrl } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchOnramperSignature } from '@alephium/shared-react'
 import { useTheme } from 'styled-components'
 

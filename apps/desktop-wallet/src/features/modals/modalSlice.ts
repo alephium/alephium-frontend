@@ -1,4 +1,5 @@
-import { activeWalletDeleted, addressDeleted, AddressHash, walletLocked, walletSwitchedDesktop } from '@alephium/shared'
+import { activeWalletDeleted, addressDeleted, walletLocked, walletSwitchedDesktop } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'

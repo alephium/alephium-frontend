@@ -1,4 +1,4 @@
-import { isNFT, NFT } from '@alephium/shared'
+import { isNFT, NFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { motion, useInView } from 'framer-motion'

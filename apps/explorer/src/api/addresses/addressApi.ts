@@ -1,4 +1,4 @@
-import { PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { PAGINATION_PAGE_LIMIT } from '@alephium/shared/api'
 import { queryOptions } from '@tanstack/react-query'
 
 import client from '@/api/client'

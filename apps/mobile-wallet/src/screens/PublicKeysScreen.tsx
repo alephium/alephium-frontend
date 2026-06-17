@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'

@@ -1,4 +1,4 @@
-import { Address, AddressSettings, AddressStoredMetadataWithoutHash } from '@alephium/shared'
+import { Address, AddressSettings, AddressStoredMetadataWithoutHash } from '@alephium/shared/types'
 import { KeyType } from '@alephium/web3'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'

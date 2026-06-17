@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 

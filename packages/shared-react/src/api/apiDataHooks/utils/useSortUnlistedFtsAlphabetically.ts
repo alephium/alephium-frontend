@@ -1,4 +1,4 @@
-import { UnlistedFT } from '@alephium/shared'
+import { UnlistedFT } from '@alephium/shared/types'
 import { useMemo } from 'react'
 
 const compareByNameThenId = (a: { name?: string; id: string }, b: { name?: string; id: string }) => {

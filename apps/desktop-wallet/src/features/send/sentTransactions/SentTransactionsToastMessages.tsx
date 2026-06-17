@@ -1,4 +1,4 @@
-import { selectAllSentTransactions } from '@alephium/shared'
+import { selectAllSentTransactions } from '@alephium/shared/store'
 import styled from 'styled-components'
 
 import SentTransactionToastBox from '@/features/send/sentTransactions/SentTransactionToastBox'

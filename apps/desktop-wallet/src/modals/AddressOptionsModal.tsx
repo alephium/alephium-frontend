@@ -1,4 +1,4 @@
-import { selectAddressByHash, selectDefaultAddress } from '@alephium/shared'
+import { selectAddressByHash, selectDefaultAddress } from '@alephium/shared/store'
 import { useFetchAddressBalancesAlph, useUnsortedAddresses } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Sparkles } from 'lucide-react'

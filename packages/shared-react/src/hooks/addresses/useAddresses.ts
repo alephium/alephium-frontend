@@ -1,4 +1,6 @@
-import { AddressHash, MAXIMAL_GAS_FEE, ONE_DAY_MS, selectDefaultAddressHash, TokenId } from '@alephium/shared'
+import { MAXIMAL_GAS_FEE, ONE_DAY_MS } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { isGrouplessAddress } from '@alephium/web3'
 import { useMemo } from 'react'

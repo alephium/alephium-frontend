@@ -1,5 +1,5 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { walletUnlockedDesktop } from '@alephium/shared'
+import { walletUnlockedDesktop } from '@alephium/shared/store'
 import { getPersisterKey, usePersistQueryClientContext } from '@alephium/shared-react'
 import { useNavigate } from 'react-router-dom'
 

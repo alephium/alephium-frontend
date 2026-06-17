@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useTranslation } from 'react-i18next'

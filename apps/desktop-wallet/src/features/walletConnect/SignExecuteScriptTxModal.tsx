@@ -1,13 +1,7 @@
-import {
-  AssetAmount,
-  getBaseAddressStr,
-  getTxAddresses,
-  isGrouplessAddress,
-  selectAddressByHash,
-  signAndSubmitTxResultToSentTx,
-  SignExecuteScriptTxModalProps,
-  transactionSent
-} from '@alephium/shared'
+import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
+import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { ALPH } from '@alephium/token-list'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { ChevronsDown } from 'lucide-react'

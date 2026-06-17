@@ -1,4 +1,4 @@
-import { exponentialBackoffFetchRetry } from '@alephium/shared'
+import { exponentialBackoffFetchRetry } from '@alephium/shared/api'
 import { compareVersions } from 'compare-versions'
 import { useState } from 'react'
 

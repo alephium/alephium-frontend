@@ -1,4 +1,4 @@
-import { SentTransaction } from '@alephium/shared'
+import { SentTransaction } from '@alephium/shared/types'
 import { useFetchTransactionTokens, useTransactionInfoType } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'

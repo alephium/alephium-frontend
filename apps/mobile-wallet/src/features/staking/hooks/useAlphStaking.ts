@@ -1,4 +1,4 @@
-import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared'
+import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 

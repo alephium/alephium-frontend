@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import Decimal from 'decimal.js'
 import { useMemo } from 'react'
 

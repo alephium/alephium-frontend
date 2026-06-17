@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { activeWalletDeleted } from '@alephium/shared'
+import { activeWalletDeleted } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'

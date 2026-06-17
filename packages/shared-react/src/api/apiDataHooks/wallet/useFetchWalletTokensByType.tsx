@@ -1,4 +1,4 @@
-import { ApiBalances, ListedFT, TokenId, UnlistedToken } from '@alephium/shared'
+import { ApiBalances, ListedFT, TokenId, UnlistedToken } from '@alephium/shared/types'
 import { createContext, ReactNode, useContext, useMemo } from 'react'
 
 import { useFetchTokensSeparatedByType } from '../../../api/apiDataHooks/utils/useFetchTokensSeparatedByType'

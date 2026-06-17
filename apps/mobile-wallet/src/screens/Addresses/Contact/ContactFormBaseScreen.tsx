@@ -1,4 +1,4 @@
-import { AddressHash, ContactFormData } from '@alephium/shared'
+import { AddressHash, ContactFormData } from '@alephium/shared/types'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 

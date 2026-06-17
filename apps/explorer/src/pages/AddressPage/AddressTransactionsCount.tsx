@@ -1,4 +1,4 @@
-import { addApostrophes } from '@alephium/shared'
+import { addApostrophes } from '@alephium/shared/numbers'
 import { useFetchAddressTransactionsCount } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 

@@ -1,4 +1,4 @@
-import { calculateTokenAmountWorth } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
 import { useFetchTokenPrice } from '@alephium/shared-react'
 
 import Amount, { AmountLoaderProps, FiatAmountProps } from '@/components/Amount'

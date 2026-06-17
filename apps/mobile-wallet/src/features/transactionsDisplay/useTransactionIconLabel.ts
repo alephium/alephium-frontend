@@ -1,4 +1,4 @@
-import { UseTransactionProps } from '@alephium/shared'
+import { UseTransactionProps } from '@alephium/shared/types'
 import { useTransactionInfoType } from '@alephium/shared-react'
 import { LucideIconName } from '@react-native-vector-icons/lucide/static'
 import { colord } from 'colord'

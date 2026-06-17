@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'

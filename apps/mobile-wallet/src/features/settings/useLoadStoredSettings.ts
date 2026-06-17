@@ -1,9 +1,9 @@
 import {
   hiddenTokensLoadedFromStorage,
   localStorageNetworkSettingsLoaded,
-  type NetworkSettings,
   storedSharedSettingsLoaded
-} from '@alephium/shared'
+} from '@alephium/shared/store'
+import type { NetworkSettings } from '@alephium/shared/types'
 import { useEffect } from 'react'
 
 import { getHiddenTokensIds } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'

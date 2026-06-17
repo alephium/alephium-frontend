@@ -1,4 +1,4 @@
-import { sharedReducer } from '@alephium/shared'
+import { sharedReducer } from '@alephium/shared/store'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 

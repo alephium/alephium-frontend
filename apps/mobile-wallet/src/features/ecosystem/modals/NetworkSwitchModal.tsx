@@ -1,4 +1,6 @@
-import { getNetworkNameFromNetworkId, NetworkPreset, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { NetworkPreset } from '@alephium/shared/types'
+import { getNetworkNameFromNetworkId } from '@alephium/shared/utils'
 import { useCurrentlyOnlineNetworkId, useWalletConnectNetwork } from '@alephium/shared-react'
 import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { memo } from 'react'

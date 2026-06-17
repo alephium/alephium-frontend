@@ -3,7 +3,7 @@ import {
   explorerApiClientInitSucceeded,
   networkPresetSwitched,
   nodeApiClientInitSucceeded
-} from '@alephium/shared'
+} from '@alephium/shared/store'
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'

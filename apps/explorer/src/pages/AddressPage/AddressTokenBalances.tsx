@@ -1,4 +1,5 @@
-import { calculateTokenAmountWorth, isFT } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { isFT } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'

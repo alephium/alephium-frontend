@@ -1,11 +1,7 @@
 import { canHaveTargetGroup, GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
-import {
-  AddressBase,
-  AddressHash,
-  AddressStoredMetadataWithoutHash,
-  findNextAvailableAddressIndex
-} from '@alephium/shared'
+import { AddressBase, AddressHash, AddressStoredMetadataWithoutHash } from '@alephium/shared/types'
+import { findNextAvailableAddressIndex } from '@alephium/shared/utils'
 import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'

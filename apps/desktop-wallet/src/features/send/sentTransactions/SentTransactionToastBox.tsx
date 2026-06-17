@@ -1,4 +1,5 @@
-import { removeSentTransaction, selectSentTransactionByHash, SentTransaction } from '@alephium/shared'
+import { removeSentTransaction, selectSentTransactionByHash } from '@alephium/shared/store'
+import { SentTransaction } from '@alephium/shared/types'
 import { useInterval, useIsExplorerOffline, usePendingTxPolling } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { t } from 'i18next'

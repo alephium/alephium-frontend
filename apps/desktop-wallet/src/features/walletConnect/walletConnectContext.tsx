@@ -1,11 +1,6 @@
-import {
-  getActiveWalletConnectSessions,
-  getHumanReadableError,
-  parseSessionProposalEvent,
-  SessionProposalEvent,
-  SessionRequestEvent,
-  WalletConnectClientStatus
-} from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { SessionProposalEvent, SessionRequestEvent, WalletConnectClientStatus } from '@alephium/shared/types'
+import { getActiveWalletConnectSessions, parseSessionProposalEvent } from '@alephium/shared/utils'
 import { useInterval } from '@alephium/shared-react'
 import { formatChain } from '@alephium/walletconnect-provider'
 import { Expirer } from '@walletconnect/core'

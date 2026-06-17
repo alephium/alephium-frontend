@@ -1,9 +1,5 @@
-import {
-  formatAmountForDisplay,
-  fromHumanReadableAmount,
-  MINIMAL_GAS_AMOUNT,
-  MINIMAL_GAS_PRICE
-} from '@alephium/shared'
+import { MINIMAL_GAS_AMOUNT, MINIMAL_GAS_PRICE } from '@alephium/shared'
+import { formatAmountForDisplay, fromHumanReadableAmount } from '@alephium/shared/numbers'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

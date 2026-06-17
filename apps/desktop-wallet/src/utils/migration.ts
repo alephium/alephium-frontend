@@ -6,13 +6,9 @@ import {
   EncryptedMnemonicVersion,
   encryptMnemonic
 } from '@alephium/keyring'
-import {
-  AddressStoredMetadataWithoutHash,
-  Contact,
-  deepMerge,
-  NetworkSettings,
-  networkSettingsPresets
-} from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, Contact, NetworkSettings } from '@alephium/shared/types'
+import { deepMerge } from '@alephium/shared/utils'
 import { nanoid } from 'nanoid'
 
 import { defaultSettings } from '@/features/settings/settingsConstants'
@@ -25,7 +21,7 @@ import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'
-import { stringToDoubleSHA256HexString } from '@/utils/misc'
+import { stringToDoubleSHA512HexString } from '@/utils/misc'
 
 //
 // ANY CHANGES TO THIS FILE MUST BE REVIEWED BY AT LEAST ONE CORE CONTRIBUTOR
@@ -258,7 +254,7 @@ export const _20230228_155100 = () => {
 
         const addressMetadataOldKeys = [
           `${addressesMetadataPrefix}${name}`,
-          `${addressesMetadataPrefix}${stringToDoubleSHA256HexString(name)}`
+          `${addressesMetadataPrefix}${stringToDoubleSHA512HexString(name)}`
         ]
 
         addressMetadataOldKeys.forEach((oldKey) => {

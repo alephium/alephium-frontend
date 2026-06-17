@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'

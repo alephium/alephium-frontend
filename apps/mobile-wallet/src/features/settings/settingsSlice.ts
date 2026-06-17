@@ -1,4 +1,4 @@
-import { appReset, fiatCurrencyChanged } from '@alephium/shared'
+import { appReset, fiatCurrencyChanged } from '@alephium/shared/store'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import {

@@ -1,4 +1,4 @@
-import { addressSettingsSaved, selectAddressByHash, selectDefaultAddress } from '@alephium/shared'
+import { addressSettingsSaved, selectAddressByHash, selectDefaultAddress } from '@alephium/shared/store'
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 
 import { RootState } from '~/store/store'

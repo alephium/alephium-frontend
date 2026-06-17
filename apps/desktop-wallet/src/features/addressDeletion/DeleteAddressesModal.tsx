@@ -1,4 +1,5 @@
-import { AddressHash, selectDefaultAddressHash, selectInitialAddress } from '@alephium/shared'
+import { selectDefaultAddressHash, selectInitialAddress } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@alephium/shared-react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

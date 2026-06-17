@@ -1,13 +1,6 @@
-import {
-  matchesNFTTokenUriMetaDataSchema,
-  NetworkPreset,
-  NFTDataType,
-  NFTDataTypes,
-  ONE_DAY_MS,
-  ONE_HOUR_MS,
-  ONE_MINUTE_MS,
-  TOKENS_QUERY_LIMIT
-} from '@alephium/shared'
+import { matchesNFTTokenUriMetaDataSchema, ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@alephium/shared'
+import { TOKENS_QUERY_LIMIT } from '@alephium/shared/api'
+import { NetworkPreset, NFTDataType, NFTDataTypes } from '@alephium/shared/types'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/api/explorer'

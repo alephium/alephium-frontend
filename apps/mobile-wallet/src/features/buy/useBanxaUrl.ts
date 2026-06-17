@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useTheme } from 'styled-components/native'
 
 const useBanxaUrl = (receiveAddressHash: AddressHash) => {

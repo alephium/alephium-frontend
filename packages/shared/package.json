@@ -4,9 +4,16 @@
   "private": true,
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./api": "./src/api/index.ts",
+    "./numbers": "./src/numbers.ts",
+    "./store": "./src/store/index.ts",
+    "./transactions": "./src/transactions/index.ts",
+    "./types": "./src/types/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
@@ -37,7 +44,7 @@
     "@alephium/typescript-config": "workspace:*",
     "@types/node": "^22.0.0",
     "@types/sanitize-html": "^2.11.0",
-    "@vitest/coverage-v8": "^4.0.0",
+    "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^8.48.0",
     "tslib": "^2.3.1",
     "typescript": "~5.9.2",

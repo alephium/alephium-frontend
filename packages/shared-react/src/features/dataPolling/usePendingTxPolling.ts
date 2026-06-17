@@ -1,10 +1,5 @@
-import {
-  findTransactionInternalAddresses,
-  isConfirmedTx,
-  isRichTransaction,
-  selectSentTransactionByHash,
-  sentTransactionStatusChanged
-} from '@alephium/shared'
+import { selectSentTransactionByHash, sentTransactionStatusChanged } from '@alephium/shared/store'
+import { findTransactionInternalAddresses, isConfirmedTx, isRichTransaction } from '@alephium/shared/transactions'
 import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'

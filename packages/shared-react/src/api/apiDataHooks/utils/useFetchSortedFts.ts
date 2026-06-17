@@ -1,4 +1,5 @@
-import { ApiBalances, calculateTokenAmountWorth, ListedFT, TokenId } from '@alephium/shared'
+import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
+import { ApiBalances, ListedFT, TokenId } from '@alephium/shared/types'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 

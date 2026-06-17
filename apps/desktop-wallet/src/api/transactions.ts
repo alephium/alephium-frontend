@@ -1,13 +1,7 @@
-import {
-  Address,
-  AddressHash,
-  signAndSubmitTxResultToSentTx,
-  SignChainedTxModalResult,
-  signChainedTxResultsToTxSubmittedResults,
-  SweepTxParams,
-  throttledClient,
-  transactionSent
-} from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { signChainedTxResultsToTxSubmittedResults } from '@alephium/shared/transactions'
+import { Address, AddressHash, SignChainedTxModalResult, SweepTxParams } from '@alephium/shared/types'
 import { isGrouplessKeyType, SignChainedTxParams, SignTransferTxParams, SignTransferTxResult } from '@alephium/web3'
 
 import { LedgerTxParams, signer } from '@/signer'

@@ -1,4 +1,4 @@
-import { appBecameInactive } from '@alephium/shared'
+import { appBecameInactive } from '@alephium/shared/store'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import BackgroundTimer from 'react-native-background-timer'

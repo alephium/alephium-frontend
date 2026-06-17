@@ -1,5 +1,8 @@
 import { keyring } from '@alephium/keyring'
-import { AlephiumWalletSigner, getBaseAddressStr, SweepTxParams, throttledClient } from '@alephium/shared'
+import { AlephiumWalletSigner } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
+import { SweepTxParams } from '@alephium/shared/types'
 import {
   GroupedKeyType,
   SignDeployContractTxParams,

@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'

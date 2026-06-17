@@ -1,4 +1,4 @@
-import { selectDefaultAddress } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'

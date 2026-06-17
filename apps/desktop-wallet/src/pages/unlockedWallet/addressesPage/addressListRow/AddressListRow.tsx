@@ -1,4 +1,4 @@
-import { AddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { AnimatePresence, motion, useInView } from 'framer-motion'
 import { memo, useRef } from 'react'
 import styled, { css } from 'styled-components'

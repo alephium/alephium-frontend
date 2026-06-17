@@ -4,14 +4,12 @@
   "private": true,
   "main": "lib/provider.cjs.js",
   "module": "lib/provider.js",
-  "browser": "lib/provider.umd.json",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./lib/provider.js",
-      "require": "./lib/provider.cjs.js",
-      "browser": "./lib/provider.umd.json"
+      "require": "./lib/provider.cjs.js"
     },
     "./lib/provider.umd.json": "./lib/provider.umd.json"
   },
@@ -40,7 +38,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/node": "^22.0.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "eslint": "^8.48.0",
     "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.1.0",

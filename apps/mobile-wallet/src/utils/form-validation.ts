@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { Contact } from '@alephium/shared/types'
 import { isValidAddress, Optional } from '@alephium/web3'
 
 import i18n from '~/features/localization/i18n'

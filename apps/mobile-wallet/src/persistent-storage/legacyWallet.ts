@@ -1,11 +1,11 @@
 import { keyring, mnemonicJsonStringifiedObjectToUint8Array } from '@alephium/keyring'
+import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
 import {
   AddressStoredMetadataWithHash,
   DeprecatedWalletMetadataMobile,
-  GROUPLESS_ADDRESS_KEY_TYPE,
-  resetArray,
   WalletMetadataMobile
-} from '@alephium/shared'
+} from '@alephium/shared/types'
+import { resetArray } from '@alephium/shared/utils'
 import * as SecureStore from 'expo-secure-store'
 
 import { sendAnalytics } from '~/analytics'

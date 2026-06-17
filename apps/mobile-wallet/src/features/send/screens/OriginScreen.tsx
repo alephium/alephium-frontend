@@ -1,4 +1,4 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useFetchAddressesHashesWithBalanceSortedByLastUse } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'

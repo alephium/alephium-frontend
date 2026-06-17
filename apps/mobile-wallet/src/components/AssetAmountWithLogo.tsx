@@ -1,4 +1,4 @@
-import { Asset, isFT, isNFT } from '@alephium/shared'
+import { Asset, isFT, isNFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 

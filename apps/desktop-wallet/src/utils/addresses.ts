@@ -1,5 +1,5 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { Address, AddressSettings } from '@alephium/shared'
+import { Address, AddressSettings } from '@alephium/shared/types'
 import { KeyType } from '@alephium/web3'
 
 import { getRandomLabelColor } from '@/utils/colors'

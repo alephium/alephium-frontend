@@ -1,4 +1,5 @@
-import { SendFlowData, shouldBuildSweepTransactions } from '@alephium/shared'
+import { shouldBuildSweepTransactions } from '@alephium/shared/transactions'
+import { SendFlowData } from '@alephium/shared/types'
 import { useFetchAddressBalances } from '@alephium/shared-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

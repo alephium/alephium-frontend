@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

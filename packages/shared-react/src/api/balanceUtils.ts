@@ -1,10 +1,5 @@
-import {
-  AddressWithGroup,
-  getMissingBalancesChainedTxParams,
-  getTransactionExpectedBalances,
-  TokenId,
-  TransactionParams
-} from '@alephium/shared'
+import { getMissingBalancesChainedTxParams, getTransactionExpectedBalances } from '@alephium/shared/transactions'
+import { AddressWithGroup, TokenId, TransactionParams } from '@alephium/shared/types'
 import { SignChainedTxParams } from '@alephium/web3'
 
 import { addressBalancesQuery } from '../api/queries/addressQueries'

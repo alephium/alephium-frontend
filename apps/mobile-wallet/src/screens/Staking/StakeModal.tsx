@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useRef, useState } from 'react'

@@ -1,4 +1,4 @@
-import { ApiBalances, TokenApiBalances } from '@alephium/shared'
+import { ApiBalances, TokenApiBalances } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 

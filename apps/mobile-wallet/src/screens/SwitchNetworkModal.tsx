@@ -1,4 +1,6 @@
-import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { networkPresetSwitched } from '@alephium/shared/store'
+import { NetworkNames, NetworkPreset } from '@alephium/shared/types'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

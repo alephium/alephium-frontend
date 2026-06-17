@@ -1,4 +1,6 @@
-import { Address, AddressHash, getHumanReadableError, selectDefaultAddress } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { selectDefaultAddress } from '@alephium/shared/store'
+import { Address, AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import { AlertOctagon, Download } from 'lucide-react'

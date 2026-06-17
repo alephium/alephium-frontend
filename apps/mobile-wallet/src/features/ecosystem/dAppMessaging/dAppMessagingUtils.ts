@@ -1,4 +1,5 @@
-import { Address, isGrouplessAddress } from '@alephium/shared'
+import { Address } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { TransactionParams } from '@alephium/wallet-dapp-provider'
 import {
   SignChainedTxParams,

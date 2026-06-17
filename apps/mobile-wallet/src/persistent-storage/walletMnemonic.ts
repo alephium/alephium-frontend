@@ -3,7 +3,7 @@ import {
   keyring,
   mnemonicJsonStringifiedObjectToUint8Array
 } from '@alephium/keyring'
-import { resetArray } from '@alephium/shared'
+import { resetArray } from '@alephium/shared/utils'
 
 import i18n from '~/features/localization/i18n'
 import { getSecurelyWithReportableError } from '~/persistent-storage/utils'

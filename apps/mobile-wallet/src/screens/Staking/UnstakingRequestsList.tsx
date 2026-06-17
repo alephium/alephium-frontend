@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
 import { Fragment, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'

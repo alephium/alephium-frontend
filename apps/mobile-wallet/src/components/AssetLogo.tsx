@@ -1,4 +1,4 @@
-import { isFT, isListedFT, isNFT } from '@alephium/shared'
+import { isFT, isListedFT, isNFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { TokenInfo } from '@alephium/token-list'
 import Lucide from '@react-native-vector-icons/lucide/static'

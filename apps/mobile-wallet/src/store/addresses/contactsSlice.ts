@@ -1,12 +1,12 @@
 import {
   activeWalletDeleted,
-  Contact,
   contactDeletedFromPersistentStorage,
   contactsAdapter,
   contactStoredInPersistentStorage,
   walletSwitchedMobile,
   walletUnlockedMobile
-} from '@alephium/shared'
+} from '@alephium/shared/store'
+import { Contact } from '@alephium/shared/types'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 type ContactsState = EntityState<Contact>

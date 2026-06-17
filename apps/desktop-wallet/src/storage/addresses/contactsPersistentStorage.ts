@@ -1,4 +1,4 @@
-import { Contact, ContactFormData } from '@alephium/shared'
+import { Contact, ContactFormData } from '@alephium/shared/types'
 import { nanoid } from 'nanoid'
 
 import i18n from '@/features/localization/i18n'

@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'

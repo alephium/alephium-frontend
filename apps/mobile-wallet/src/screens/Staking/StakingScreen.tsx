@@ -1,4 +1,4 @@
-import { selectDefaultAddressHash } from '@alephium/shared'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 

@@ -1,11 +1,7 @@
-import {
-  Address,
-  isNetworkValid,
-  networkSettingsPresets,
-  selectAddressesInGroup,
-  selectDefaultAddressHash,
-  WalletConnectSessionProposalModalProps
-} from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared/store'
+import { Address, WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
+import { isNetworkValid } from '@alephium/shared/utils'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'

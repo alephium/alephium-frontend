@@ -1,4 +1,5 @@
-import { AddressHash, contactsAdapter } from '@alephium/shared'
+import { contactsAdapter } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { RootState } from '~/store/store'

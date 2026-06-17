@@ -1,4 +1,5 @@
-import { SHORT_DATE_OPTIONS, TransactionInfoType2 } from '@alephium/shared'
+import { SHORT_DATE_OPTIONS } from '@alephium/shared'
+import { TransactionInfoType2 } from '@alephium/shared/transactions'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/features/localization/i18n'

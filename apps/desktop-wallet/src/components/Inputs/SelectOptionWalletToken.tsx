@@ -1,4 +1,4 @@
-import { isNFT } from '@alephium/shared'
+import { isNFT } from '@alephium/shared/types'
 import { useFetchToken, useFetchWalletSingleTokenBalances } from '@alephium/shared-react'
 
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'

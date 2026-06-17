@@ -1,4 +1,4 @@
-import { AddressHash, isFT } from '@alephium/shared'
+import { AddressHash, isFT } from '@alephium/shared/types'
 import {
   useFetchAddressesHashesWithBalanceSortedByLastUse,
   useFetchToken,

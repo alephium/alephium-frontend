@@ -1,4 +1,5 @@
-import { isRichTransaction, selectSentTransactionByHash } from '@alephium/shared'
+import { selectSentTransactionByHash } from '@alephium/shared/store'
+import { isRichTransaction } from '@alephium/shared/transactions'
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchTransactionProps } from '../../../api/apiDataHooks/transaction/transactionTypes'

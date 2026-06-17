@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { Contact } from '@alephium/shared/types'
 
 import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'

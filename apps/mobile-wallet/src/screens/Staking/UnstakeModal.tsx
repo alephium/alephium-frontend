@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useMemo, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'

@@ -1,4 +1,5 @@
-import { convertToPositive, formatAmountForDisplay, isFT, TokenId } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay } from '@alephium/shared/numbers'
+import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
 import { MouseEvent, useEffect, useRef, useState } from 'react'

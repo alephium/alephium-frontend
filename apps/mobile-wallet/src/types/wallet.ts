@@ -1,5 +1,5 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressStoredMetadataWithoutHash, ContactFormData, WalletType } from '@alephium/shared'
+import { AddressStoredMetadataWithoutHash, ContactFormData, WalletType } from '@alephium/shared/types'
 
 export type DeprecatedMnemonic = string
 

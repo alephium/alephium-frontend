@@ -1,4 +1,4 @@
-import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay } from '@alephium/shared/numbers'
 import { useState } from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 

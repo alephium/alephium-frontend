@@ -1,4 +1,4 @@
-import { activeWalletDeleted } from '@alephium/shared'
+import { activeWalletDeleted } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

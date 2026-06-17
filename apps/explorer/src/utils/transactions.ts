@@ -4,10 +4,9 @@ import {
   hasPositiveAndNegativeAmounts,
   isConfirmedTx,
   isConsolidationTx,
-  isGrouplessAddressIntraTransfer,
-  TransactionDirection,
-  TransactionInfoType
-} from '@alephium/shared'
+  isGrouplessAddressIntraTransfer
+} from '@alephium/shared/transactions'
+import { TransactionDirection, TransactionInfoType } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { explorer, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/api/explorer'

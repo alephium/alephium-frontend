@@ -1,4 +1,4 @@
-import { TokenId } from '@alephium/shared'
+import { TokenId } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { AnimatePresence, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'

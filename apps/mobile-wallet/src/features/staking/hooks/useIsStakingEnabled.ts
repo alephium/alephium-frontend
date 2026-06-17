@@ -1,4 +1,5 @@
-import { NetworkNames, networkSettingsPresets } from '@alephium/shared'
+import { networkSettingsPresets } from '@alephium/shared'
+import { NetworkNames } from '@alephium/shared/types'
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 
 const useIsStakingEnabled = () =>

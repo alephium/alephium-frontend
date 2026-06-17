@@ -1,4 +1,4 @@
-import { NFT } from '@alephium/shared'
+import { NFT } from '@alephium/shared/types'
 import { useFetchNft } from '@alephium/shared-react'
 import { Image } from 'expo-image'
 import { memo, useState } from 'react'

@@ -4,7 +4,7 @@ import {
   customNetworkSettingsSaved,
   explorerApiClientInitFailed,
   nodeApiClientInitFailed
-} from '@alephium/shared'
+} from '@alephium/shared/store'
 import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import i18n from '@/features/localization/i18n'

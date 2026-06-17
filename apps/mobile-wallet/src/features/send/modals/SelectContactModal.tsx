@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { Contact } from '@alephium/shared/types'
 import { memo } from 'react'
 
 import BottomModal from '~/features/modals/BottomModal'

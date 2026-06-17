@@ -1,16 +1,16 @@
+import { ONE_DAY_MS } from '@alephium/shared'
+import { batchers } from '@alephium/shared/api'
 import {
-  batchers,
   FtListMap,
-  getNetworkNameFromNetworkId,
   ListedFT,
   NFT,
   NFTDataType,
   NFTDataTypes,
   NonStandardToken,
-  ONE_DAY_MS,
   Token,
   TokenId
-} from '@alephium/shared'
+} from '@alephium/shared/types'
+import { getNetworkNameFromNetworkId } from '@alephium/shared/utils'
 import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'

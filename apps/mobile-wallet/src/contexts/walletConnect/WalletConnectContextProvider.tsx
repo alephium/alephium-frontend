@@ -1,19 +1,15 @@
+import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import {
-  getChainedTxPropsFromSignChainedTxParams,
-  getHumanReadableError,
-  isInsufficientFundsError,
-  parseSessionProposalEvent,
   selectAllAddressByType,
-  SessionProposalEvent,
-  SessionRequestEvent,
-  throttledClient,
-  TransactionParams,
-  WALLETCONNECT_ERRORS,
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
   walletConnectClientInitializing,
   walletConnectClientMaxRetriesReached
-} from '@alephium/shared'
+} from '@alephium/shared/store'
+import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
+import { SessionProposalEvent, SessionRequestEvent, TransactionParams } from '@alephium/shared/types'
+import { isInsufficientFundsError, parseSessionProposalEvent } from '@alephium/shared/utils'
 import {
   getRefillMissingBalancesChainedTxParams,
   nodeTransactionDecodeUnsignedTxQuery,

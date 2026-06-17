@@ -1,4 +1,4 @@
-import { SharedRootState } from '@alephium/shared'
+import { SharedRootState } from '@alephium/shared/store'
 import { createSelector } from '@reduxjs/toolkit'
 
 export const selectCurrentlyOnlineNetworkId = createSelector(

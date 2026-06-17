@@ -1,10 +1,5 @@
-import {
-  activeWalletDeleted,
-  ActiveWalletDesktop,
-  walletLocked,
-  walletSwitchedDesktop,
-  walletUnlockedDesktop
-} from '@alephium/shared'
+import { activeWalletDeleted, walletLocked, walletSwitchedDesktop, walletUnlockedDesktop } from '@alephium/shared/store'
+import { ActiveWalletDesktop } from '@alephium/shared/types'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { newWalletNameStored, walletSaved } from '@/storage/wallets/walletActions'

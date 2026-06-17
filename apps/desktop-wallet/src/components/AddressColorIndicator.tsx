@@ -1,4 +1,5 @@
-import { AddressHash, selectAddressByHash } from '@alephium/shared'
+import { selectAddressByHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import styled from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'

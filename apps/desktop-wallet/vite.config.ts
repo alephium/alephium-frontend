@@ -14,9 +14,6 @@ export default defineConfig({
   define: {
     global: 'globalThis'
   },
-  optimizeDeps: {
-    include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
-  },
   plugins: [
     // Polyfill Buffer for the renderer process where Node.js globals are unavailable.
     // Needed because @ledgerhq/devices/hid-framing uses Buffer at module load time.

@@ -1,4 +1,4 @@
-import { throttledClient } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared/api'
 import { SignDeployContractTxParams, SignExecuteScriptTxParams, SignTransferTxParams } from '@alephium/web3'
 import { queryOptions } from '@tanstack/react-query'
 

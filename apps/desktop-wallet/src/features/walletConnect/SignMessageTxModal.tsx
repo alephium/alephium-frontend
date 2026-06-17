@@ -1,4 +1,4 @@
-import { SignMessageTxModalProps } from '@alephium/shared'
+import { SignMessageTxModalProps } from '@alephium/shared/types'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

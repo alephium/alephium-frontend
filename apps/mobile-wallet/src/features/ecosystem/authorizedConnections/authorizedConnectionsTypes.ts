@@ -1,4 +1,4 @@
-import { NetworkPreset } from '@alephium/shared'
+import { NetworkPreset } from '@alephium/shared/types'
 
 export type AuthorizedConnection = {
   dateTime: number

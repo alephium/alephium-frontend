@@ -1,4 +1,5 @@
-import { AddressHash, getOnramperSignContent } from '@alephium/shared'
+import { getOnramperSignContent } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { useQuery } from '@tanstack/react-query'
 
 import { postJson } from '../fetchUtils'

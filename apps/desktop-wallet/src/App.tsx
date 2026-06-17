@@ -1,4 +1,4 @@
-import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared'
+import { localStorageNetworkSettingsMigrated, storedSharedSettingsLoaded } from '@alephium/shared/store'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { clear as clearIndexedDB } from 'idb-keyval'
 import { memo, ReactNode, useCallback, useEffect, useState } from 'react'

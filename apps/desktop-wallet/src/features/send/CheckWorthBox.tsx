@@ -1,4 +1,4 @@
-import { AssetAmount } from '@alephium/shared'
+import { AssetAmount } from '@alephium/shared/types'
 import { useFetchFeeWorth, useFetchTokensAmountsWorth } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'

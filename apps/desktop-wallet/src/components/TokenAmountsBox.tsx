@@ -1,11 +1,6 @@
-import {
-  AssetAmount,
-  calculateTokenAmountWorth,
-  getTransactionAssetAmounts,
-  isFT,
-  isNFT,
-  toHumanReadableAmount
-} from '@alephium/shared'
+import { calculateTokenAmountWorth, toHumanReadableAmount } from '@alephium/shared/numbers'
+import { getTransactionAssetAmounts } from '@alephium/shared/transactions'
+import { AssetAmount, isFT, isNFT } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { Info } from 'lucide-react'

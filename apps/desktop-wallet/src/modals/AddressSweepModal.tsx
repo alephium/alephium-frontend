@@ -1,10 +1,6 @@
-import {
-  Address,
-  AddressHash,
-  getHumanReadableError,
-  selectAddressByHash,
-  selectDefaultAddress
-} from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { selectAddressByHash, selectDefaultAddress } from '@alephium/shared/store'
+import { Address, AddressHash } from '@alephium/shared/types'
 import {
   useFetchAddressesHashesSortedByLastUse,
   useFetchAddressesHashesWithBalance,

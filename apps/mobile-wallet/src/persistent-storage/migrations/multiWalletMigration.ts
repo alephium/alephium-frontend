@@ -1,4 +1,4 @@
-import { WalletMetadataMobile } from '@alephium/shared'
+import { WalletMetadataMobile } from '@alephium/shared/types'
 
 import { sendAnalytics } from '~/analytics'
 import { LEGACY_HIDDEN_TOKENS_KEY } from '~/features/assetsDisplay/hideTokens/hiddenTokensStorage'

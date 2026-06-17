@@ -1,4 +1,4 @@
-import { AddressHash, TokenId } from '@alephium/shared'
+import { AddressHash, TokenId } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchWalletSingleTokenBalances } from '@alephium/shared-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'

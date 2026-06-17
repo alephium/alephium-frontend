@@ -7,6 +7,7 @@
     ".": "./src/index.tsx"
   },
   "type": "module",
+  "sideEffects": ["./src/api/queryClient.ts"],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
@@ -19,7 +20,9 @@
   "dependencies": {
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.21",
-    "@alephium/web3": "3.0.3",
+    "@alephium/web3": "3.0.3"
+  },
+  "peerDependencies": {
     "@tanstack/react-query": "^5.81.2",
     "react": "^19.1.0",
     "react-redux": "^9.2.0"
@@ -28,7 +31,10 @@
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "3.0.3",
+    "@tanstack/react-query": "^5.81.2",
     "@types/react": "~19.1.10",
+    "react": "^19.1.0",
+    "react-redux": "^9.2.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.0"
   }

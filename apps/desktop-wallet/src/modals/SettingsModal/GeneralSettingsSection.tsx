@@ -1,4 +1,5 @@
-import { Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { fiatCurrencyChanged } from '@alephium/shared/store'
+import { Currency } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'

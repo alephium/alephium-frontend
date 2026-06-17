@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
 import { GroupedKeyType, GrouplessKeyType, KeyType } from '@alephium/web3'
 
 export type NonSensitiveAddressData = {

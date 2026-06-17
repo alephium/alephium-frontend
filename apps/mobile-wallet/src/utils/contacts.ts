@@ -1,4 +1,4 @@
-import { Contact } from '@alephium/shared'
+import { Contact } from '@alephium/shared/types'
 
 // Same as in desktop wallet
 export const filterContacts = (contacts: Contact[], text: string) =>

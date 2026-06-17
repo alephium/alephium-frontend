@@ -1,4 +1,4 @@
-import { SendFlowData, SignChainedTxModalProps } from '@alephium/shared'
+import { SendFlowData, SignChainedTxModalProps } from '@alephium/shared/types'
 
 export type TransferTxModalData = PartialTxData<SendFlowData, 'fromAddress'>
 

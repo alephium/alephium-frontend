@@ -1,5 +1,6 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressHash, addressMetadataIncludesHash } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared/types'
+import { addressMetadataIncludesHash } from '@alephium/shared/utils'
 import { KeyType } from '@alephium/web3'
 
 import i18n from '~/features/localization/i18n'

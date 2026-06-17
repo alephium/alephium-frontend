@@ -1,4 +1,4 @@
-import { isFT, isNFT, TokenId } from '@alephium/shared'
+import { isFT, isNFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { colord } from 'colord'
 import { memo } from 'react'

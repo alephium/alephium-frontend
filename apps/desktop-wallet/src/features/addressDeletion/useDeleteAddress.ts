@@ -1,4 +1,5 @@
-import { addressDeleted, AddressHash } from '@alephium/shared'
+import { addressDeleted } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'

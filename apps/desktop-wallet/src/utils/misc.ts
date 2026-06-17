@@ -1,5 +1,6 @@
 import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
-import { createHash } from '@alephium/shared-crypto'
+import { sha512 } from '@noble/hashes/sha2'
+import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils'
 import { KeyboardEvent } from 'react'
 
 // ===================== //
@@ -25,17 +26,8 @@ export const openInWebBrowser = (url: string) => {
   }
 }
 
-export const stringToDoubleSHA256HexString = (data: string): string => {
-  let hash
-
-  hash = createHash('sha512')
-  hash.update(data)
-  const first = hash.digest()
-
-  hash = createHash('sha512')
-  hash.update(first)
-  return hash.digest('hex')
-}
+// Output is used as a stable localStorage key during legacy data migrations — do not change the hashing algorithm.
+export const stringToDoubleSHA512HexString = (data: string): string => bytesToHex(sha512(sha512(utf8ToBytes(data))))
 
 export const formatDateForDisplay = (date: Date | number, locale?: string): string =>
   new Intl.DateTimeFormat(locale, SHORT_DATE_TIME_OPTIONS).format(new Date(date))
