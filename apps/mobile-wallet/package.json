@@ -126,7 +126,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.29.6",
     "@buoy-gg/core": "^2.1.12",
     "@buoy-gg/react-query": "^2.1.12",
     "@types/react": "~19.1.10",
