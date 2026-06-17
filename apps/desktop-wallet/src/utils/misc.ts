@@ -16,23 +16,48 @@ export const isElectron = () => {
 // ===== LINKS ===== //
 // ================= //
 
-// Only open vetted schemes. This is a second layer behind the Electron main-process
-// setWindowOpenHandler allowlist: untrusted strings (e.g. on-chain NFT/token metadata) must never
-// reach shell.openExternal with a dangerous scheme (file:, smb:, custom protocol handlers, ...).
-const SAFE_URL_PROTOCOLS = ['https:', 'http:', 'mailto:']
+// Renderer-side mirror of electron/utils.ts#isAllowedExternalUrl (keep in sync) — a second layer
+// behind the main-process setWindowOpenHandler allowlist so untrusted strings (e.g. on-chain
+// NFT/token metadata) never reach shell.openExternal with a dangerous scheme. https/mailto always;
+// http only for loopback/private hosts (devnet + LAN); everything else (file:, smb:, custom
+// protocols, public http) is rejected.
+const isLoopbackOrPrivateHost = (hostname: string) => {
+  if (hostname === 'localhost' || hostname === '::1') return true
+
+  const ipv4 = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/.exec(hostname)
+  if (!ipv4) return false
+
+  const a = Number(ipv4[1])
+  const b = Number(ipv4[2])
+
+  return (
+    a === 127 || // loopback 127.0.0.0/8
+    a === 10 || // private 10.0.0.0/8
+    (a === 172 && b >= 16 && b <= 31) || // private 172.16.0.0/12
+    (a === 192 && b === 168) || // private 192.168.0.0/16
+    (a === 169 && b === 254) // link-local 169.254.0.0/16
+  )
+}
+
+const isAllowedExternalUrl = (url: string) => {
+  try {
+    const { protocol, hostname } = new URL(url)
+
+    if (protocol === 'https:' || protocol === 'mailto:') return true
+    if (protocol === 'http:') return isLoopbackOrPrivateHost(hostname)
+
+    return false
+  } catch {
+    return false
+  }
+}
 
 export const openInWebBrowser = (url: string) => {
   if (!url) return
 
   const sanitizedUrl = url.replace(/([^:]\/)\/+/g, '$1')
 
-  let isSafeProtocol = false
-  try {
-    isSafeProtocol = SAFE_URL_PROTOCOLS.includes(new URL(sanitizedUrl).protocol)
-  } catch {
-    isSafeProtocol = false
-  }
-  if (!isSafeProtocol) return
+  if (!isAllowedExternalUrl(sanitizedUrl)) return
 
   const newWindow = window.open(sanitizedUrl, '_blank', 'noopener,noreferrer')
   if (newWindow) {
