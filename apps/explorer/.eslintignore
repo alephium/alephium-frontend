@@ -1,5 +1,0 @@
-node_modules
-build
-coverage
-src/serviceWorker.js
-src/setupTests.js

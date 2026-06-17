@@ -55,6 +55,7 @@ import StakeModal from '~/screens/Staking/StakeModal'
 import UnstakeModal from '~/screens/Staking/UnstakeModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used only via `typeof` to derive types
 const ModalComponents = {
   BuyModal,
   BackupReminderModal,

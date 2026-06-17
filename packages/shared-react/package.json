@@ -7,14 +7,16 @@
     ".": "./src/index.tsx"
   },
   "type": "module",
-  "sideEffects": ["./src/api/queryClient.ts"],
+  "sideEffects": [
+    "./src/api/queryClient.ts"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean": "rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules",
-    "lint": "eslint . --ext .ts --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
     "test": "vitest run"
   },
   "dependencies": {
