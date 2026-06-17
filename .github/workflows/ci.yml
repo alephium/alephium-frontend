@@ -82,7 +82,7 @@ jobs:
         uses: jaywcjlove/github-action-package@6fb8b5f918c1cb2eb3e0416d5b9f45cd4af6ed16 # v2.0.0
         with:
           path: apps/desktop-wallet/package.json
-          unset: build.win.sign
+          unset: build.win.signtoolOptions.sign
 
       - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
         run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ steps.get-os.outputs.os }}
