@@ -92,7 +92,8 @@
     "concurrently": "^7.4.0",
     "cross-env": "^7.0.3",
     "electron": "39.8.7",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "26.15.3",
+    "electron-builder-squirrel-windows": "26.15.3",
     "electron-devtools-installer": "^4.0.0",
     "eslint": "^8.48.0",
     "events": "^3.3.0",
@@ -149,27 +150,24 @@
       ],
       "mimeTypes": [
         "x-scheme-handler/alephium"
-      ],
-      "desktop": {
-        "exec": "alephium %U"
-      }
+      ]
     },
     "win": {
       "artifactName": "${productName}-${version}.${ext}",
-      "sign": ".signWindows.js",
-      "signingHashAlgorithms": [
-        "sha256"
-      ],
-      "publisherName": [
-        "Panda Software SA"
-      ]
+      "signtoolOptions": {
+        "sign": ".signWindows.js",
+        "signingHashAlgorithms": [
+          "sha256"
+        ],
+        "publisherName": [
+          "Panda Software SA"
+        ]
+      }
     },
     "mac": {
       "hardenedRuntime": true,
       "defaultArch": "universal",
-      "notarize": {
-        "teamId": "Z3J8P4JW24"
-      }
+      "notarize": true
     },
     "directories": {
       "buildResources": "assets"
