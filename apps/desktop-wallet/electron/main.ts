@@ -11,7 +11,7 @@ import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
 import { handleOnRampWindows } from './onRamp'
 import { ICON_PATH } from './paths'
-import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
+import { IS_RC, isAllowedExternalUrl, isIpcSenderValid, isMac, isWindows } from './utils'
 import {
   handleWalletConnectDeepLink,
   handleWindowsWalletConnectDeepLink,
@@ -73,11 +73,15 @@ function createWindow() {
     mainWindow?.webContents.openDevTools()
   }
 
-  // Set default window open handler (open new windows in the web browser by default)
+  // Set default window open handler (open new windows in the web browser by default).
+  // Only hand vetted schemes (https/http/mailto) to the OS shell so attacker-influenced URLs
+  // (e.g. on-chain NFT/token metadata rendered as links) cannot reach shell.openExternal with a
+  // dangerous scheme (file:, smb:, custom protocol handlers, ...).
+  // See https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-shellopenexternal-with-untrusted-content
   mainWindow?.webContents.setWindowOpenHandler(({ url }) => {
-    // TODO: Review use of openExternal.
-    // See https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-shellopenexternal-with-untrusted-content
-    shell.openExternal(url)
+    if (isAllowedExternalUrl(url)) {
+      shell.openExternal(url)
+    }
     return { action: 'deny' }
   })
 
