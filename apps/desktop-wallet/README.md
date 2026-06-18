@@ -29,6 +29,12 @@ pnpm ci:build:electron:linux
 pnpm ci:build:electron:linux:arm64
 ```
 
+## Code signing
+
+The Windows `.exe` is signed via SSL.com eSigner. If users hit "Windows protected your PC" /
+SmartScreen warnings, see [WINDOWS_SIGNING.md](./WINDOWS_SIGNING.md) — the binary is signed
+correctly; the warning is an OV-vs-EV certificate issue, not a build bug.
+
 ## Releasing
 
 ### Releasing a release candidate version
