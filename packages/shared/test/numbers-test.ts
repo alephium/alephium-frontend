@@ -6,6 +6,7 @@ import {
   exponentialToLiteral,
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
+  formatLocalizedFiatAmount,
   formatWithSubscript,
   fromHumanReadableAmount,
   isNumber,
@@ -297,6 +298,14 @@ it('Should format fiat amount for display', () => {
     expect(() => formatFiatAmountForDisplay(-1.01)).toThrow(
       'Invalid fiat amount: -1.01. Fiat amount cannot be negative.'
     )
+})
+
+it('Should format localized fiat amount for display', () => {
+  expect(formatLocalizedFiatAmount(0, 'en-US', 'USD')).toEqual('$0.00'),
+    expect(formatLocalizedFiatAmount(1.23, 'en-US', 'USD')).toEqual('$1.23'),
+    expect(formatLocalizedFiatAmount(0.005, 'en-US', 'USD')).toEqual('$0.0050'),
+    expect(formatLocalizedFiatAmount(0.0005, 'en-US', 'USD')).toEqual('<$0.01'),
+    expect(formatLocalizedFiatAmount(-0.5, 'en-US', 'USD')).toEqual('-$0.50')
 })
 
 it('should convert amount to human readable amount', () => {

@@ -260,6 +260,23 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
   return appendMagnitudeSymbol(tier, amount)
 }
 
+export const formatLocalizedFiatAmount = (amount: number, region: string | undefined, currency: string): string => {
+  const currencyFormatter = new Intl.NumberFormat(region, { style: 'currency', currency })
+
+  if (amount > 0 && amount < 0.001) {
+    return `<${currencyFormatter.format(0.01)}`
+  }
+
+  const fractionDigits = amount > 0 && amount < 0.01 ? 4 : 2
+
+  return new Intl.NumberFormat(region, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
+  }).format(amount)
+}
+
 export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_IN_QUINTILLION): bigint => {
   if (!isNumber(amount) || Number(amount) < 0) throw 'Invalid displayed amount'
   if (!isPositiveInt(decimals)) throw 'Invalid decimals number'

@@ -1,4 +1,4 @@
-import { convertToPositive, formatAmountForDisplay } from '@alephium/shared/numbers'
+import { convertToPositive, formatAmountForDisplay, formatLocalizedFiatAmount } from '@alephium/shared/numbers'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
@@ -197,7 +197,7 @@ const FiatAmount = ({ value }: FiatAmountProps) => {
 
   if (value === null) return null
 
-  return new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
+  return formatLocalizedFiatAmount(value, region, fiatCurrency)
 }
 
 const CustomAmount = ({

@@ -1,4 +1,4 @@
-import { convertToPositive, formatAmountForDisplay } from '@alephium/shared/numbers'
+import { convertToPositive, formatAmountForDisplay, formatLocalizedFiatAmount } from '@alephium/shared/numbers'
 import { useState } from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 
@@ -62,7 +62,7 @@ const Amount = ({
     isNegative = value < 0
 
     if (isFiat) {
-      amount = new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
+      amount = formatLocalizedFiatAmount(value as number, region, fiatCurrency)
 
       return (
         <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
