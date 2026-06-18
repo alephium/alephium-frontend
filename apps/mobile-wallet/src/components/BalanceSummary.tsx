@@ -1,4 +1,3 @@
-import { CURRENCIES } from '@alephium/shared'
 import { colord } from 'colord'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -8,7 +7,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { openModal } from '~/features/modals/modalActions'
 import { discreetModeToggled } from '~/features/settings/settingsSlice'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
@@ -21,7 +20,6 @@ interface BalanceSummaryProps {
 
 const BalanceSummary = ({ worth, isLoading, label, error, showDiscreetModeToggle }: BalanceSummaryProps) => {
   const theme = useTheme()
-  const currency = useAppSelector((s) => s.settings.currency)
 
   const labelElement = <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{label}</AppText>
 
@@ -36,7 +34,7 @@ const BalanceSummary = ({ worth, isLoading, label, error, showDiscreetModeToggle
         {isLoading ? (
           <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
-          <Amount value={worth} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={44} adjustsFontSizeToFit />
+          <Amount value={worth} isFiat semiBold size={44} adjustsFontSizeToFit />
         )}
       </TextContainer>
     </BalanceSummaryBox>

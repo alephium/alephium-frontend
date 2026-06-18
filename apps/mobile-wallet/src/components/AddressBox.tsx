@@ -1,4 +1,3 @@
-import { CURRENCIES } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { Address, AddressHash } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -204,11 +203,10 @@ const AddressBox = ({
 export default AddressBox
 
 const AddressTotalWorth = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
-  const currency = useAppSelector((s) => s.settings.currency)
   const { data: addressWorth } = useFetchAddressWorth(addressHash)
 
   return (
-    <Amount isFiat value={addressWorth} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
+    <Amount isFiat value={addressWorth} semiBold size={17} adjustsFontSizeToFit />
   )
 }
 

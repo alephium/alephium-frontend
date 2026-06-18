@@ -1,4 +1,3 @@
-import { CURRENCIES } from '@alephium/shared'
 import { isFT } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import styled from 'styled-components/native'
@@ -8,7 +7,6 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
-import { useAppSelector } from '~/hooks/redux'
 
 const TokenDetailsModalHeader = ({ tokenId }: TokenDetailsModalCommonProps) => {
   const { data: token } = useFetchToken(tokenId)
@@ -29,14 +27,13 @@ const TokenDetailsModalHeader = ({ tokenId }: TokenDetailsModalCommonProps) => {
 export default TokenDetailsModalHeader
 
 const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
-  const currency = useAppSelector((s) => s.settings.currency)
   const { data: price } = useFetchTokenPrice(tokenSymbol)
 
   if (price === undefined) return null
 
   return (
     <Badge>
-      <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix size={13} />
+      <Amount semiBold isFiat value={price} size={13} />
       <AppText size={13}> / {tokenSymbol}</AppText>
     </Badge>
   )
