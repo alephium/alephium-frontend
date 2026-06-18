@@ -56,7 +56,7 @@ const HeaderContainer = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  padding: 14px;
+  padding: 14px 0;
 `
 
 const HeaderSideContainer = styled.View<{ align: 'right' | 'left' }>`
