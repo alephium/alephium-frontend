@@ -4,6 +4,9 @@ How the Windows `.exe` is code-signed, why users may still see SmartScreen warni
 and what to do about it. Read this before touching anything signing-related — the setup
 is subtle and easy to misdiagnose.
 
+> **Tracking issue:** [alephium/alephium-frontend#965 — Microsoft Defender SmartScreen warning on
+> desktop wallet install](https://github.com/alephium/alephium-frontend/issues/965)
+
 ## TL;DR
 
 - The released `.exe` **is** correctly signed (valid Authenticode signature, properly timestamped).
@@ -72,15 +75,21 @@ actively harmful — the warning is indistinguishable from a malware/phishing al
 ## The fix: move to an EV certificate
 
 EV code signing is the only reliable way to remove the warning on day one. SSL.com sells EV code
-signing certs that work through the **same eSigner / CodeSignTool flow** we already use, so:
+signing certs that work through the **same eSigner / CodeSignTool flow** we already use, so the
+migration is mostly procurement + validation, not engineering:
 
-1. Buy (or upgrade the existing OV cert to) an **SSL.com EV code signing certificate**.
-2. Rotate the four `WINDOWS_SIGN_*` GitHub secrets to the EV cert's eSigner credentials.
+1. Buy a **new** SSL.com **EV Code Signing** certificate. There is no in-place OV→EV upgrade — it's
+   a separate order with stricter validation. The existing OV cert keeps signing meanwhile, so
+   there's no downtime.
+2. Rotate **two** GitHub secrets to the EV cert's eSigner credentials: `WINDOWS_SIGN_CREDENTIAL_ID`
+   and `WINDOWS_SIGN_TOTP_SECRET`. `WINDOWS_SIGN_USER_NAME` / `WINDOWS_SIGN_PASSWORD` stay the same
+   (same account).
 3. Confirm `build.win.signtoolOptions.publisherName` in `package.json` still matches the EV cert's
    organization name (`Panda Software SA` unless the legal entity changed).
 4. **No code changes** — `.signWindows.js` and the workflow are untouched.
 
-Cut a non-rc release and verify (below). The warning should be gone immediately.
+Cut a non-rc release and verify (below). The warning should be gone immediately. Click-by-click
+steps are in the [EV migration runbook](#ev-migration-runbook-sslcom).
 
 ### Alternative: Microsoft Trusted Signing
 
@@ -89,6 +98,55 @@ electron-builder 26 via `azureSignOptions`. It's cheaper but is a **different in
 you'd replace `.signWindows.js` with Azure config and complete Microsoft's org identity
 validation (typically needs 3+ years of verifiable legal existence). Only worth it if the EV cert
 cost is a blocker.
+
+## EV migration runbook (SSL.com)
+
+Step-by-step for moving the existing OV cert to EV. Tracked in
+[#965](https://github.com/alephium/alephium-frontend/issues/965).
+
+### Before you start
+
+- **No OV→EV upgrade button exists** — it's a new EV order with its own, stricter validation. The
+  current OV cert keeps signing the whole time; don't cancel it until EV is live and tested.
+- **CI architecture does not change.** We already sign through eSigner cloud (not a USB token), so
+  EV's hardware-key requirement is met by SSL.com's cloud HSM. `.signWindows.js` and the workflow
+  stay as-is.
+- **Budget funds.** A 1-year EV cert lists higher than the OV one (multi-year is cheaper per year);
+  the account's prepaid funds may not cover it — be ready to deposit or pay by card at checkout.
+
+### In the SSL.com dashboard
+
+1. **Buy** → choose **EV Code Signing Certificate** (1-year, or multi-year for a lower per-year
+   price).
+2. ⚠️ **Choose cloud signing, not a token.** When asked how the private key is stored, pick
+   **eSigner / cloud signing (cloud HSM)** — *not* "ship USB token." A physical token would break
+   headless CI signing. This is the single most important click.
+3. **Complete EV validation** under the `Validations` tab — start this immediately, it's the slow
+   part (a few days to ~2 weeks). Beyond the OV checks, EV vetting needs:
+   - Legal-entity verification of Panda Software SA via the Swiss commercial register (Zefix).
+   - Verified physical address / operational existence.
+   - A **verification phone call** to a number SSL.com independently finds in a **public
+     directory** — ensure Panda Software SA has a matching publicly-listed phone number (this is
+     the usual blocker).
+   - A designated **authorized signer** who accepts the EV subscriber agreement.
+4. **Enroll the issued EV order in eSigner** (it shows under "esigner enrolled orders" like the OV
+   one) and enable **automated signing**:
+   - Save the **TOTP seed** — the base64 string, *not* the rotating 6-digit code →
+     `WINDOWS_SIGN_TOTP_SECRET`.
+   - Get the **credential_id** from the eSigner order page, or run
+     `CodeSignTool.bat get_credential_ids -username=<account>` → `WINDOWS_SIGN_CREDENTIAL_ID`.
+
+### Confirm with SSL.com support (live-chat bubble, bottom-right)
+
+- That **EV automated / headless signing via eSigner** is enabled for the account.
+- Whether any in-progress identity verification must finish before EV org-validation can start.
+
+### Then in this repo
+
+1. Rotate `WINDOWS_SIGN_CREDENTIAL_ID` and `WINDOWS_SIGN_TOTP_SECRET` (repo → Settings → Secrets and
+   variables → Actions). Leave username/password.
+2. Cut a **non-rc** release.
+3. Verify it flipped to EV with the commands below — the leaf policy OID must now be `2.23.140.1.3`.
 
 ## Verifying a signed binary
 
