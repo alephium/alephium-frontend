@@ -1,4 +1,3 @@
-import { CURRENCIES } from '@alephium/shared'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
@@ -122,10 +121,9 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
 export default DashboardScreen
 
 const WalletWorth = () => {
-  const currency = useAppSelector((s) => s.settings.currency)
   const { data: worth } = useFetchWalletWorth()
 
-  return <Amount value={worth} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
+  return <Amount value={worth} isFiat semiBold />
 }
 
 const WalletSendButton = () => {

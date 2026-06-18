@@ -2,12 +2,12 @@ import { Asset, isFT, isNFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import styled from 'styled-components/native'
 
-import Amount, { AmountProps } from '~/components/Amount'
+import Amount, { AmountBaseProps } from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import NFTThumbnail from '~/components/NFTThumbnail'
 
 interface AssetAmountWithLogoProps
-  extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus' | 'bold'> {
+  extends Pick<AmountBaseProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus' | 'bold'> {
   assetId: Asset['id']
   amount: bigint
   logoSize?: number

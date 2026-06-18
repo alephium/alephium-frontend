@@ -1,14 +1,12 @@
-import { CURRENCIES } from '@alephium/shared'
 import { calculateTokenAmountWorth } from '@alephium/shared/numbers'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
-import Amount, { AmountProps } from '~/components/Amount'
-import { useAppSelector } from '~/hooks/redux'
+import Amount, { AmountBaseProps } from '~/components/Amount'
 
-interface FtWorthProps extends AmountProps {
+interface FtWorthProps extends AmountBaseProps {
   tokenId: TokenId
   amount?: bigint
 }
@@ -29,7 +27,6 @@ interface AddressFtAmountWorthProps extends FtWorthProps {
 }
 
 const FtAmountWorth = ({ symbol, decimals, amount, ...props }: AddressFtAmountWorthProps) => {
-  const currency = useAppSelector((s) => s.settings.currency)
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
   const worth = useMemo(
@@ -42,7 +39,7 @@ const FtAmountWorth = ({ symbol, decimals, amount, ...props }: AddressFtAmountWo
 
   if (worth === undefined) return null
 
-  return <AmountStyled isFiat value={worth} suffix={CURRENCIES[currency].symbol} {...props} />
+  return <AmountStyled isFiat value={worth} {...props} />
 }
 
 const AmountStyled = styled(Amount)`
