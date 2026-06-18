@@ -2,7 +2,8 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "env": ["DEV", "VITE_USE_LOCAL_ANNOUNCEMENT_FILE", "VITE_VERSION", "VITE_DEV_SERVER_URL", "NODE_ENV"]
+      "env": ["DEV", "VITE_USE_LOCAL_ANNOUNCEMENT_FILE", "VITE_VERSION", "VITE_DEV_SERVER_URL", "NODE_ENV"],
+      "passThroughEnv": ["APPIMAGE", "APPDIR"]
     },
     "start:electron": {
       "dependsOn": ["^build"],
