@@ -205,9 +205,7 @@ export default AddressBox
 const AddressTotalWorth = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
   const { data: addressWorth } = useFetchAddressWorth(addressHash)
 
-  return (
-    <Amount isFiat value={addressWorth} semiBold size={17} adjustsFontSizeToFit />
-  )
+  return <Amount isFiat value={addressWorth} semiBold size={17} adjustsFontSizeToFit />
 }
 
 const AddressTokenWorth = ({ addressHash, tokenId }: Required<Pick<AddressBoxProps, 'addressHash' | 'tokenId'>>) => {

@@ -70,7 +70,8 @@ const Amount = (inputProps: AmountPropsWithOptionalAmount) => {
     ? () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
     : undefined
 
-  const textColor = color ?? (highlight && value !== undefined && value < 0 ? 'send' : highlight ? 'receive' : 'primary')
+  const textColor =
+    color ?? (highlight && value !== undefined && value < 0 ? 'send' : highlight ? 'receive' : 'primary')
 
   if (value === undefined) {
     return (

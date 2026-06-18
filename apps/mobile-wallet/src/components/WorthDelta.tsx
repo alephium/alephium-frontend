@@ -16,14 +16,7 @@ const WorthDelta = ({ delta, style }: WorthDeltaProps) => {
 
   return (
     <WorthDeltaStyled style={style}>
-      <Amount
-        color={textColor}
-        semiBold
-        size={18}
-        value={delta}
-        isFiat
-        showPlusMinus
-      />
+      <Amount color={textColor} semiBold size={18} value={delta} isFiat showPlusMinus />
     </WorthDeltaStyled>
   )
 }
