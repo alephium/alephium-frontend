@@ -1,4 +1,4 @@
-import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { getHumanReadableError, isDappMessageHasherAllowed, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import {
   selectAllAddressByType,
@@ -539,6 +539,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             }
             case 'alph_signMessage': {
               const signParams = requestEvent.params.request.params as SignMessageParams
+
+              if (!isDappMessageHasherAllowed(signParams.messageHasher)) {
+                respondToWalletConnectWithError(requestEvent, {
+                  message: `Unsupported message hasher '${signParams.messageHasher}'. Only the 'alephium' message hasher is accepted.`,
+                  code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                })
+                break
+              }
 
               dispatch(
                 openModal({

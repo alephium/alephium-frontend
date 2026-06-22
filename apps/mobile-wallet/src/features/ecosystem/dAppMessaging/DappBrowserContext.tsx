@@ -1,3 +1,4 @@
+import { isDappMessageHasherAllowed } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { selectAllAddressByType } from '@alephium/shared/store'
 import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
@@ -481,6 +482,20 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
   const handleSignMessage = useCallback(
     async (data: SignMessageMessageData, messageId: string, senderHost: string) => {
       const actionHash = messageId
+
+      if (!isDappMessageHasherAllowed(data.messageHasher)) {
+        replyToDapp(
+          {
+            type: 'ALPH_SIGN_MESSAGE_FAILURE',
+            data: {
+              actionHash,
+              error: `Unsupported message hasher '${data.messageHasher}'. Only the 'alephium' message hasher is accepted.`
+            }
+          },
+          messageId
+        )
+        return
+      }
 
       replyToDapp({ type: 'ALPH_SIGN_MESSAGE_RES', data: { actionHash } }, messageId)
 
