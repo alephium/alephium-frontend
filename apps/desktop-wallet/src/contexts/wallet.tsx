@@ -9,13 +9,13 @@ export interface WalletContextType {
   resetCachedMnemonic: () => void
 }
 
-export const initialWalletContext: WalletContextType = {
+const initialWalletContext: WalletContextType = {
   mnemonic: null,
   setMnemonic: () => null,
   resetCachedMnemonic: () => null
 }
 
-export const WalletContext = createContext<WalletContextType>(initialWalletContext)
+const WalletContext = createContext<WalletContextType>(initialWalletContext)
 
 export const WalletContextProvider: FC = ({ children }) => {
   const [mnemonic, setMnemonic] = useState<WalletContextType['mnemonic']>(null)

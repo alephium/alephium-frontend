@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import CheckMark from '@/components/CheckMark'
-import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel } from '@/components/Inputs'
+import { inputDefaultStyle, InputHeight, InputProps, SelectLabel } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
 import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
@@ -366,16 +366,6 @@ const Option = <T extends OptionValue>({
 const InputContainer = styled(InputArea)`
   padding: 0;
   outline: none;
-`
-
-export const MoreIcon = styled.div`
-  position: absolute;
-  right: ${inputStyling.paddingLeftRight};
-  height: 100%;
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.font.secondary};
-  z-index: 1;
 `
 
 const SelectContainer = styled.div<InputProps>`

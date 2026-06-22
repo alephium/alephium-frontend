@@ -57,7 +57,7 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
 
 export default ThemeSwitcher
 
-export const StyledThemeSwitcher = styled.div`
+const StyledThemeSwitcher = styled.div`
   position: relative;
   width: ${toggleWidth}px;
   height: ${toggleHeight}px;

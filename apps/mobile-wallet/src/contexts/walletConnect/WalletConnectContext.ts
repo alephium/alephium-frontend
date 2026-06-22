@@ -13,7 +13,7 @@ export interface WalletConnectContextValue {
   resetWalletConnectStorage: () => void
 }
 
-export const walletConnectContextStubValue: WalletConnectContextValue = {
+const walletConnectContextStubValue: WalletConnectContextValue = {
   walletConnectClient: undefined,
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),

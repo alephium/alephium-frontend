@@ -27,12 +27,12 @@ export enum BiometricAuthenticationStatus {
   MissingEnrollment = 'MISSING_ENROLLMENT',
   Rejected = 'REJECTED',
   Authenticated = 'AUTHENTICATED',
-  Canceled = 'CANCELED',
-  Authenticating = 'AUTHENTICATING',
+  // Canceled = 'CANCELED',
+  // Authenticating = 'AUTHENTICATING',
   Lockout = 'LOCKOUT',
   UserCancel = 'USER_CANCEL',
-  SystemCancel = 'SYSTEM_CANCEL',
-  Invalid = 'INVALID'
+  SystemCancel = 'SYSTEM_CANCEL'
+  // Invalid = 'INVALID'
 }
 
 type TriggerArgs<T> = {
@@ -71,7 +71,7 @@ type TriggerArgs<T> = {
  *
  * @returns trigger Trigger the OS biometric flow and invokes successCallback on success.
  */
-export function useBiometricPrompt<T = undefined>(
+function useBiometricPrompt<T = undefined>(
   successCallback?: (params?: T) => void,
   failureCallback?: (message: string) => void
 ): {

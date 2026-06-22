@@ -64,7 +64,7 @@ function MultiSelect<T>({ selectedOptions, label, renderSelectedValue, className
   )
 }
 
-export function MultiSelectOptionsModal<T>({
+function MultiSelectOptionsModal<T>({
   options,
   selectedOptions,
   renderOption,

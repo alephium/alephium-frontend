@@ -9,7 +9,7 @@ import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
 
 import { AccountDiscovery } from '@/features/ledger/discovery'
 
-export const getLedgerTransport = async () => {
+const getLedgerTransport = async () => {
   try {
     return TransportWebHID.create()
   } catch (e) {

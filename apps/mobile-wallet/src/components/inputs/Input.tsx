@@ -11,7 +11,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { INPUTS_HEIGHT } from '~/style/globalStyle'
 
-export interface InputProps extends Omit<TextInputProps, 'style' | 'value'> {
+interface InputProps extends Omit<TextInputProps, 'style' | 'value'> {
   label: string
   onPress?: () => void
   resetDisabledColor?: boolean

@@ -18,7 +18,7 @@ const currentSystemTheme = () => (systemThemeQuery.matches ? 'dark' : 'light')
 
 const initialSystemTheme: ThemeType = currentSystemTheme()
 
-export const SettingsContext = createContext<SettingsContextValue>({
+const SettingsContext = createContext<SettingsContextValue>({
   theme: initialSystemTheme,
   switchTheme: () => null,
   timestampPrecisionMode: 'off',

@@ -12,7 +12,7 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-export interface SwitchNetworkModalProps {
+interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 

@@ -4,7 +4,7 @@ import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
 import Toast, { ToastShowParams } from 'react-native-toast-message'
 
-export const checkIfScrollView = (view: ScrollView | FlatList | FlashListRef<unknown>): view is ScrollView =>
+const checkIfScrollView = (view: ScrollView | FlatList | FlashListRef<unknown>): view is ScrollView =>
   'scrollTo' in view
 
 export const scrollScreenTo = (

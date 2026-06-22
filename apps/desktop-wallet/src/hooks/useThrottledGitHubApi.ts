@@ -45,7 +45,7 @@ const getLastTimeGitHubApiWasCalled = (
   return isRcVersion || !lastTimeGitHubApiWasCalled ? new Date(0) : lastTimeGitHubApiWasCalled
 }
 
-export const getAppMetadata = (): AppMetaData => {
+const getAppMetadata = (): AppMetaData => {
   const appMetadata = localStorage.getItem(KEY_APPMETADATA)
 
   try {
@@ -57,7 +57,7 @@ export const getAppMetadata = (): AppMetaData => {
   return initialAppMetadataValues
 }
 
-export const storeAppMetadata = (data: Partial<AppMetaData>): AppMetaData => {
+const storeAppMetadata = (data: Partial<AppMetaData>): AppMetaData => {
   const updatedAppMetadata = { ...getAppMetadata(), ...data }
 
   localStorage.setItem(KEY_APPMETADATA, JSON.stringify(updatedAppMetadata))

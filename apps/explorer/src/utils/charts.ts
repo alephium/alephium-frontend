@@ -29,10 +29,3 @@ export const formatXAxis =
     }
     return _value
   }
-
-export const formatSeriesNumber = (type: YAxisType, value: number): string => {
-  if (type === 'formatted') {
-    return value.toString()
-  }
-  return value.toString()
-}

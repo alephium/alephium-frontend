@@ -19,11 +19,6 @@ interface SelectImportMethodScreenProps
   extends StackScreenProps<RootStackParamList, 'SelectImportMethodScreen'>,
     ScrollScreenProps {}
 
-export type SelectedWord = {
-  word: string
-  timestamp: Date
-}
-
 const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodScreenProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()

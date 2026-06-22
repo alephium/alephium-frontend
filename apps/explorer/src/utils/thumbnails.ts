@@ -55,7 +55,7 @@ export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null
 
 const videoBlobCache: Record<string, Promise<Blob>> = {}
 
-export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
+const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   if (!videoBlobCache[videoUrl]) {
     videoBlobCache[videoUrl] = fetch(videoUrl)
       .then((response) => {
@@ -73,7 +73,7 @@ export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   return videoBlobCache[videoUrl]
 }
 
-export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
+const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
   new Promise((resolve, reject) => {
     const video = document.createElement('video')
     const url = URL.createObjectURL(blob)

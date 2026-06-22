@@ -112,7 +112,7 @@ const ModalComponents = {
   UnstakeModal
 }
 
-export type ModalName = keyof typeof ModalComponents
+type ModalName = keyof typeof ModalComponents
 
 type ModalParams<K extends ModalName> =
   HasRequiredProps<ModalPropsMap[K]> extends true

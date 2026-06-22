@@ -1,4 +1,4 @@
-export type DeprecatedAddressSettings = {
+type DeprecatedAddressSettings = {
   isMain: boolean
   label?: string
   color?: string

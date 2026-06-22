@@ -150,7 +150,7 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
     `}
 `
 
-export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
+const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
@@ -192,7 +192,7 @@ const BackButton = styled(Button)`
   margin-right: 10px;
 `
 
-export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
+const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;

@@ -6,12 +6,27 @@
     // which knip detects automatically, so no config is needed.
     "apps/explorer": {
       // src/index.tsx is auto-detected; index.html is the Vite entry.
-      "entry": ["index.html"]
+      // public/analytics.js is loaded from index.html, not via an import.
+      "entry": ["index.html", "public/analytics.js"]
     },
     "apps/desktop-wallet": {
       // src/index.tsx (renderer) is auto-detected. Add the Electron main/preload
       // and the electron-builder lifecycle hooks referenced from the "build" config.
-      "entry": ["electron/main.ts", "electron/preload.ts", ".afterPack.js", ".afterAllArtifactBuild.js", ".signWindows.js"]
+      // electron-env.ts is ambient types (tsconfig "include", not imported).
+      // syncTranslationFiles.js is invoked from the syncTranslationFiles npm script.
+      "entry": [
+        "electron/main.ts",
+        "electron/preload.ts",
+        "electron/electron-env.ts",
+        "scripts/syncTranslationFiles.js",
+        ".afterPack.js",
+        ".afterAllArtifactBuild.js",
+        ".signWindows.js"
+      ]
+    },
+    "packages/shared-react": {
+      // eslint.config.cjs is the ESLint flat config; no eslint devDependency here so the plugin won't pick it up.
+      "entry": ["eslint.config.cjs"]
     },
     "apps/mobile-wallet": {
       // index.ts (package.json "main") is auto-detected as the entry.

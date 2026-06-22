@@ -178,34 +178,6 @@ export const CloseButton = (props: ButtonProps) => (
   <Button onPress={props.onPress} iconProps={{ name: 'close' }} compact squared {...props} />
 )
 
-export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
-  const theme = useTheme()
-
-  return (
-    <Button
-      onPress={props.onPress}
-      iconProps={{ name: 'arrow-forward' }}
-      type="primary"
-      style={[
-        style,
-        { height: 32, flexDirection: 'row', alignItems: 'center', gap: 10 },
-        !!props.title && { minWidth: 75 },
-        !props.disabled
-          ? {
-              backgroundColor: theme.global.accent
-            }
-          : undefined
-      ]}
-      color={!props.disabled ? 'white' : color}
-      title={props.title || !props.disabled ? 'Next' : undefined}
-      compact
-      animated
-      haptics
-      {...props}
-    />
-  )
-}
-
 export const BackButton = (props: ButtonProps) => (
   <Button onPress={props.onPress} iconProps={{ name: 'arrow-back' }} squared compact {...props} />
 )

@@ -153,7 +153,7 @@ export const getIsNewWallet = (walletId: string): boolean | undefined => storage
 export const storeIsNewWallet = (walletId: string, isNew: boolean) =>
   storeWithReportableError(isNewWalletKey(walletId), isNew)
 
-export const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
+const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(walletMnemonicKey(walletId), JSON.stringify(mnemonic), true, '')
 
 // Used by App.tsx to get metadata before wallet ID is known (pre-unlock).

@@ -9,7 +9,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface UnverifiedDappModalProps {
+interface UnverifiedDappModalProps {
   dAppHost: string
   onConfirm: () => void
 }

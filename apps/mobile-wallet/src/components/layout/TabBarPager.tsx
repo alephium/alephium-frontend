@@ -9,7 +9,7 @@ import Screen from '~/components/layout/Screen'
 import TabBarHeader from '~/components/TopTabBar'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 
-export interface TabBarPageProps {
+interface TabBarPageProps {
   contentStyle?: AnimatedProps<ScrollViewProps>['style']
   onScroll?: Required<ScrollViewProps>['onScroll']
 }

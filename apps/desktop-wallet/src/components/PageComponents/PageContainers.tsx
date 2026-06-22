@@ -1,7 +1,6 @@
 import { HTMLProps, ReactNode } from 'react'
 import styled from 'styled-components'
 
-import Box from '@/components/Box'
 import { appHeaderHeightPx, deviceBreakPoints } from '@/style/globalStyles'
 
 interface MainPanelProps extends HTMLProps<'div'> {
@@ -31,11 +30,6 @@ export const Section = ({ children, inList, align = 'center', className }: Secti
   </SectionContainer>
 )
 
-export const BoxContainer = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
 const FloatingPanelStyled = styled.div<MainPanelProps>`
   width: 100%;
   margin: ${({ noMargin }) => (noMargin ? 0 : `${appHeaderHeightPx}px auto`)};
@@ -60,7 +54,7 @@ export const PanelContentContainer = styled.div`
   width: 100%;
 `
 
-export const SectionContainer = styled.div<{ align: SectionContentAlignment; inList?: boolean }>`
+const SectionContainer = styled.div<{ align: SectionContentAlignment; inList?: boolean }>`
   display: flex;
   align-items: ${({ align }) => align};
   flex-direction: column;
@@ -73,13 +67,6 @@ export const FooterActionsContainer = styled(Section)`
   flex: 0;
   margin-top: var(--spacing-2);
   width: 100%;
-`
-
-export const PageTitleRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-3);
 `
 
 export const CenteredSection = styled.div`

@@ -1,14 +1,8 @@
 import { Contact } from '@alephium/shared/types'
-import { isValidAddress, Optional } from '@alephium/web3'
+import { Optional } from '@alephium/web3'
 
 import i18n from '~/features/localization/i18n'
 import { store } from '~/store/store'
-
-// Same as in desktop wallet
-export const requiredErrorMessage = 'This field is required'
-
-// Same as in desktop wallet
-export const isAddressValid = (value: string) => isValidAddress(value) || i18n.t('This address is not valid')
 
 // Same as in desktop wallet
 export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'name'>, 'id'>) => {

@@ -3,15 +3,6 @@ import { sha512 } from '@noble/hashes/sha2'
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils'
 import { KeyboardEvent } from 'react'
 
-// ===================== //
-// ==== RUNNING ENV ==== //
-// ===================== //
-
-export const isElectron = () => {
-  const userAgent = navigator.userAgent.toLowerCase()
-  return userAgent.indexOf(' electron/') > -1
-}
-
 // ================= //
 // ===== LINKS ===== //
 // ================= //
@@ -89,13 +80,6 @@ export const onEnterOrSpace = (event: KeyboardEvent, callback: () => void) => {
   callback()
 }
 
-export const onTabPress = (event: KeyboardEvent, callback: () => void) => {
-  if (event.key !== 'Tab') return
-
-  event.stopPropagation()
-  callback()
-}
-
 export function removeItemFromArray<T>(array: T[], index: number) {
   const newArray = [...array]
   newArray.splice(index, 1)
@@ -103,7 +87,3 @@ export function removeItemFromArray<T>(array: T[], index: number) {
 }
 
 export const cleanUrl = (url: string) => url.replace('https://', '')
-
-export const restartElectron = () => {
-  window.electron?.app.restart()
-}

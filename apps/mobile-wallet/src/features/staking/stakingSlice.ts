@@ -7,7 +7,7 @@ type PendingStakeOrUnstake = {
   txHash: string
 }
 
-export type PendingVaultAction = {
+type PendingVaultAction = {
   type: 'claim' | 'cancel'
   txHash: string
 }
