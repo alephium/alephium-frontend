@@ -13,6 +13,7 @@
     "check": "turbo typecheck lint format",
     "check:deps": "manypkg check",
     "check:deps:fix": "manypkg fix",
+    "knip": "knip",
     "clean": "turbo clean && rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules",
     "postinstall": "pnpm check:deps"
@@ -37,6 +38,7 @@
     "@alephium/typescript-config": "workspace:*",
     "@changesets/cli": "^2.29.6",
     "@manypkg/cli": "latest",
+    "knip": "^6.16.1",
     "prettier": "^3.0.3",
     "turbo": "1.13.4"
   }

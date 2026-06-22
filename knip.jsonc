@@ -1,0 +1,27 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  // Ignore build outputs / caches (some are gitignored but present on disk).
+  "ignore": ["**/dist/**", "**/build/**", "**/lib/**", "**/.expo/**", "**/coverage/**"],
+  "workspaces": {
+    // Library packages expose their entry via package.json "main"/"exports",
+    // which knip detects automatically — no config needed.
+    "apps/explorer": {
+      // src/index.tsx is auto-detected; index.html is the Vite entry.
+      "entry": ["index.html"]
+    },
+    "apps/desktop-wallet": {
+      // src/index.tsx (renderer) is auto-detected. Add the Electron main/preload
+      // and the electron-builder lifecycle hooks referenced from the "build" config.
+      "entry": ["electron/main.ts", "electron/preload.ts", ".afterPack.js", ".afterAllArtifactBuild.js", ".signWindows.js"]
+    },
+    "apps/mobile-wallet": {
+      // index.ts (package.json "main") is auto-detected as the entry.
+      // Disable knip's expo plugin: its loader can't execute app.config.js (the
+      // dynamic Expo config pulls in @expo/config-plugins) — a known knip issue.
+      // With the plugin off, app.config.js is no longer recognized as an entry,
+      // so ignore it (it's consumed by Expo at build time, not imported).
+      "expo": false,
+      "ignore": ["app.config.js"]
+    }
+  }
+}
