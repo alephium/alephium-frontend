@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "tsconfig.json"],
-  "pipeline": {
+  "tasks": {
     "lint": {},
     "lint:fix": { "cache": false },
     "format": {},
