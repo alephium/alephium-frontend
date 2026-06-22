@@ -2,6 +2,11 @@ packages:
   - 'apps/*'
   - 'packages/*'
 
+# hoisted: the mobile wallet (React Native / Expo + Metro) needs a flat
+# node_modules (Metro doesn't reliably resolve pnpm's default symlinked
+# (isolated) layout). Trade-off: undeclared "phantom" deps can resolve from the
+# hoisted root, so import-x/no-extraneous-dependencies (in @alephium/eslint-config)
+# guards against that at lint time.
 nodeLinker: hoisted
 autoInstallPeers: true
 frozenLockfile: true
@@ -53,3 +58,4 @@ allowBuilds:
   '@buoy-gg/shared-ui': false
   core-js: false
   msw: false
+  unrs-resolver: true # native resolver used by eslint-plugin-import-x
