@@ -58,6 +58,21 @@ jobs:
       - name: Audit NPM dependencies
         run: pnpm audit --prod
 
+  mobile-provider:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+
+      - name: 🏗 Setup monorepo
+        uses: ./.github/actions/setup-monorepo
+
+      - name: Build mobile dApp provider and verify UMD artifact
+        working-directory: apps/mobile-wallet
+        run: |
+          pnpm exec turbo build:deps
+          node -e "require.resolve('@alephium/wallet-dapp-provider/lib/provider.umd.json')"
+
   build-desktop-wallet:
     needs: [typecheck]
     runs-on: ${{ matrix.os }}
