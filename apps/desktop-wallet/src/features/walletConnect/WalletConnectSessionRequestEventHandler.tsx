@@ -1,4 +1,4 @@
-import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { getHumanReadableError, isDappMessageHasherAllowed, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { selectAllAddressByType } from '@alephium/shared/store'
 import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
@@ -234,6 +234,14 @@ const WalletConnectSessionRequestEventHandler = memo(
               }
               case 'alph_signMessage': {
                 const signParams = event.params.request.params as SignMessageParams
+
+                if (!isDappMessageHasherAllowed(signParams.messageHasher)) {
+                  respondToWalletConnectWithError(event, {
+                    message: `Unsupported message hasher '${signParams.messageHasher}'. Only the 'alephium' message hasher is accepted.`,
+                    code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+                  })
+                  break
+                }
 
                 dispatch(
                   openModal({
