@@ -332,6 +332,9 @@ importers:
       '@alephium/web3':
         specifier: 3.0.3
         version: 3.0.3
+      '@emotion/is-prop-valid':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@reduxjs/toolkit':
         specifier: ^1.9.1
         version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@4.2.1))(react@19.1.0)
@@ -362,6 +365,9 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
+      lucide-react:
+        specifier: ^0.287.0
+        version: 0.287.0(react@19.1.0)
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@19.1.0)
@@ -1021,6 +1027,9 @@ importers:
       '@alephium/web3':
         specifier: 3.0.3
         version: 3.0.3
+      '@tanstack/query-persist-client-core':
+        specifier: ^5.81.2
+        version: 5.81.2
     devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
@@ -1031,9 +1040,15 @@ importers:
       '@alephium/walletconnect-provider':
         specifier: 3.0.3
         version: 3.0.3(@react-native-async-storage/async-storage@1.23.1(react-native@0.81.5(@babel/core@7.29.7)(@react-native-community/cli@13.6.9(encoding@0.1.13))(@types/react@19.1.17)(react@19.1.0)))(typescript@5.9.3)
+      '@reduxjs/toolkit':
+        specifier: ^1.9.1
+        version: 1.9.7(react-redux@9.2.0(@types/react@19.1.17)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
       '@tanstack/react-query':
         specifier: ^5.81.2
         version: 5.81.2(react@19.1.0)
+      '@tanstack/react-query-persist-client':
+        specifier: ^5.81.2
+        version: 5.81.2(@tanstack/react-query@5.81.2(react@19.1.0))(react@19.1.0)
       '@types/react':
         specifier: ~19.1.10
         version: 19.1.17
