@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 3.2.3
+
+### Patch Changes
+
+- bc36d52: Reduce bundle size (by replacing @alephium/shared-crypto)
+- bc36d52: Harden desktop shell.openExternal with a URL scheme allowlist
+- bc36d52: Fix AppImage launch through WalletConnect
+
 ## 3.2.2
 
 ### Patch Changes

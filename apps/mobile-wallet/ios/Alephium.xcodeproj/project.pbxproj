@@ -7,35 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1104590C085041A998DE317B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 546EE88DAF944D548D45C5DF /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		703D96E8A27B489C85258FB6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 49A7426ABBCF4CBC9820123A /* PrivacyInfo.xcprivacy */; };
-		79692299D0EDD66C6E02669D /* libPods-Alephium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 338B284630D442A1B9235704 /* libPods-Alephium.a */; };
-		7BA7581BA37B4EB69BAF2106 /* Geist-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01B292863F9845F089F328BB /* Geist-SemiBold.ttf */; };
-		81D715F498F1423287DC2F0F /* Geist-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D0396096CA04176A09567BD /* Geist-Bold.ttf */; };
-		8298E6BB2897FEDE42094B64 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1355D3F0373BFF792ED2C2A3 /* ExpoModulesProvider.swift */; };
+		94EB74D47AC98B0033A17876 /* libPods-Alephium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFB14C172425DA25D8A018A2 /* libPods-Alephium.a */; };
+		986FF1ECED764051B4B76FE2 /* Geist-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DECF08578F704EBF8713F761 /* Geist-SemiBold.ttf */; };
+		AE775E0C40784873B9A240CB /* Geist-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04309E6A437C467A9623542C /* Geist-Bold.ttf */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C510002974A645559DF41327 /* Geist-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C52D1B8978D245CF94B02ABA /* Geist-Medium.ttf */; };
+		DBD86B0BDA0E5A7FA92788D0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E79047F947137A7D1B397A7 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F5D28108AC9F4281B6E9F25F /* Geist-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93AF452D9A044E5AB5558EFB /* Geist-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01B292863F9845F089F328BB /* Geist-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-SemiBold.ttf"; path = "../assets/fonts/Geist-SemiBold.ttf"; sourceTree = "<group>"; };
-		1355D3F0373BFF792ED2C2A3 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Alephium/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		04309E6A437C467A9623542C /* Geist-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Bold.ttf"; path = "../assets/fonts/Geist-Bold.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Alephium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Alephium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Alephium/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Alephium/Info.plist; sourceTree = "<group>"; };
-		2D0396096CA04176A09567BD /* Geist-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Bold.ttf"; path = "../assets/fonts/Geist-Bold.ttf"; sourceTree = "<group>"; };
-		338B284630D442A1B9235704 /* libPods-Alephium.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Alephium.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		49A7426ABBCF4CBC9820123A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = Alephium/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		4FEC602AFBB9C4AAC4173BD3 /* Pods-Alephium.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.debug.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.debug.xcconfig"; sourceTree = "<group>"; };
+		1B1DC81ACAADD0E09A5E31FD /* Pods-Alephium.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.debug.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.debug.xcconfig"; sourceTree = "<group>"; };
+		546EE88DAF944D548D45C5DF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = Alephium/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		936EE295D8BA32AD10108805 /* Pods-Alephium.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.release.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.release.xcconfig"; sourceTree = "<group>"; };
+		93AF452D9A044E5AB5558EFB /* Geist-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Medium.ttf"; path = "../assets/fonts/Geist-Medium.ttf"; sourceTree = "<group>"; };
+		9E79047F947137A7D1B397A7 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Alephium/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Alephium/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C52D1B8978D245CF94B02ABA /* Geist-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-Medium.ttf"; path = "../assets/fonts/Geist-Medium.ttf"; sourceTree = "<group>"; };
+		BFB14C172425DA25D8A018A2 /* libPods-Alephium.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Alephium.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DECF08578F704EBF8713F761 /* Geist-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Geist-SemiBold.ttf"; path = "../assets/fonts/Geist-SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Alephium/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Alephium-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Alephium-Bridging-Header.h"; path = "Alephium/Alephium-Bridging-Header.h"; sourceTree = "<group>"; };
-		FBC8909282511578A7E1D302 /* Pods-Alephium.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alephium.release.xcconfig"; path = "Target Support Files/Pods-Alephium/Pods-Alephium.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79692299D0EDD66C6E02669D /* libPods-Alephium.a in Frameworks */,
+				94EB74D47AC98B0033A17876 /* libPods-Alephium.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				49A7426ABBCF4CBC9820123A /* PrivacyInfo.xcprivacy */,
+				546EE88DAF944D548D45C5DF /* PrivacyInfo.xcprivacy */,
 			);
 			name = Alephium;
 			sourceTree = "<group>";
@@ -68,17 +68,34 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				338B284630D442A1B9235704 /* libPods-Alephium.a */,
+				BFB14C172425DA25D8A018A2 /* libPods-Alephium.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		54FC165137BA09D162686A71 /* Pods */ = {
+		2E9E4FB4E99DC9843D242C67 /* Alephium */ = {
 			isa = PBXGroup;
 			children = (
-				4FEC602AFBB9C4AAC4173BD3 /* Pods-Alephium.debug.xcconfig */,
-				FBC8909282511578A7E1D302 /* Pods-Alephium.release.xcconfig */,
+				9E79047F947137A7D1B397A7 /* ExpoModulesProvider.swift */,
 			);
+			name = Alephium;
+			sourceTree = "<group>";
+		};
+		5EF267BFFD5F25EBD6E8B682 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				2E9E4FB4E99DC9843D242C67 /* Alephium */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		6C99F399ACB1DB01E0CAE992 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1B1DC81ACAADD0E09A5E31FD /* Pods-Alephium.debug.xcconfig */,
+				936EE295D8BA32AD10108805 /* Pods-Alephium.release.xcconfig */,
+			);
+			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -96,9 +113,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				FD5D644F28884318B16CDD27 /* Resources */,
-				54FC165137BA09D162686A71 /* Pods */,
-				E3D084704B6149C3C86B8334 /* ExpoModulesProviders */,
+				AACA9D12A5F6492CB0056079 /* Resources */,
+				6C99F399ACB1DB01E0CAE992 /* Pods */,
+				5EF267BFFD5F25EBD6E8B682 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -113,12 +130,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		84D97BE4159A557D2D5D9642 /* Alephium */ = {
+		AACA9D12A5F6492CB0056079 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				1355D3F0373BFF792ED2C2A3 /* ExpoModulesProvider.swift */,
+				93AF452D9A044E5AB5558EFB /* Geist-Medium.ttf */,
+				DECF08578F704EBF8713F761 /* Geist-SemiBold.ttf */,
+				04309E6A437C467A9623542C /* Geist-Bold.ttf */,
 			);
-			name = Alephium;
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -130,24 +150,6 @@
 			path = Alephium/Supporting;
 			sourceTree = "<group>";
 		};
-		E3D084704B6149C3C86B8334 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				84D97BE4159A557D2D5D9642 /* Alephium */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		FD5D644F28884318B16CDD27 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				C52D1B8978D245CF94B02ABA /* Geist-Medium.ttf */,
-				01B292863F9845F089F328BB /* Geist-SemiBold.ttf */,
-				2D0396096CA04176A09567BD /* Geist-Bold.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -156,14 +158,15 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Alephium" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				CBDDCE6A4808C97E16982865 /* [Expo] Configure project */,
+				CAFA87332FDE119A86D836F2 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				A5A58F1666CB4BB898EF2213 /* Upload Debug Symbols to Sentry */,
-				8EEF2C118CED1E375E60BB3E /* [CP] Embed Pods Frameworks */,
+				6235F1FCC5874CA5AB24C6D9 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
+				87511A59D2BA431BBC74FC3B /* Upload Debug Symbols to Sentry */,
+				FAEF61F7277DDE7D50F85AB8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -183,7 +186,9 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = Z3J8P4JW24;
 						LastSwiftMigration = 1250;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -213,10 +218,10 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				703D96E8A27B489C85258FB6 /* PrivacyInfo.xcprivacy in Resources */,
-				C510002974A645559DF41327 /* Geist-Medium.ttf in Resources */,
-				7BA7581BA37B4EB69BAF2106 /* Geist-SemiBold.ttf in Resources */,
-				81D715F498F1423287DC2F0F /* Geist-Bold.ttf in Resources */,
+				1104590C085041A998DE317B /* PrivacyInfo.xcprivacy in Resources */,
+				F5D28108AC9F4281B6E9F25F /* Geist-Medium.ttf in Resources */,
+				986FF1ECED764051B4B76FE2 /* Geist-SemiBold.ttf in Resources */,
+				AE775E0C40784873B9A240CB /* Geist-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +266,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		6235F1FCC5874CA5AB24C6D9 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo Dev Launcher] Strip Local Network Keys for Release";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Strip dev-launcher-specific local network permission keys from non-Debug builds\n# This only removes _expo._tcp Bonjour services and the dev-launcher usage description.\n# Other Bonjour services and custom descriptions are preserved for production use.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n  PLIST_PATH=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  if [ -f \"$PLIST_PATH\" ]; then\n    # Check if NSBonjourServices exists\n    if /usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" >/dev/null 2>&1; then\n      # Get the count of services\n      COUNT=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n\n      # Remove _expo._tcp\n      for ((i=COUNT-1; i>=0; i--)); do\n        SERVICE=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n        if echo \"$SERVICE\" | grep -q \"_expo._tcp\"; then\n          /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || true\n        fi\n      done\n\n      # If the array is now empty, remove it entirely\n      REMAINING=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n      if [ \"$REMAINING\" -eq \"0\" ]; then\n        /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null || true\n      fi\n    fi\n\n    # Only delete the description if it matches the dev-launcher default text\n    DESC=$(/usr/libexec/PlistBuddy -c \"Print :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n    if echo \"$DESC\" | grep -q \"Expo Dev Launcher\"; then\n      /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || true\n    fi\n  fi\nfi\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -316,31 +335,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Alephium/Pods-Alephium-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8EEF2C118CED1E375E60BB3E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Alephium/Pods-Alephium-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/QuickCrypto/OpenSSL.framework/OpenSSL",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Alephium/Pods-Alephium-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A5A58F1666CB4BB898EF2213 /* Upload Debug Symbols to Sentry */ = {
+		87511A59D2BA431BBC74FC3B /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -354,7 +349,7 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh `${NODE_BINARY:-node} --print \"require('path').dirname(require.resolve('@sentry/react-native/package.json')) + '/scripts/sentry-xcode-debug-files.sh'\"`";
 		};
-		CBDDCE6A4808C97E16982865 /* [Expo] Configure project */ = {
+		CAFA87332FDE119A86D836F2 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -378,6 +373,30 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Alephium/expo-configure-project.sh\"\n";
 		};
+		FAEF61F7277DDE7D50F85AB8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Alephium/Pods-Alephium-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/QuickCrypto/OpenSSL.framework/OpenSSL",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Alephium/Pods-Alephium-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -386,7 +405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				8298E6BB2897FEDE42094B64 /* ExpoModulesProvider.swift in Sources */,
+				DBD86B0BDA0E5A7FA92788D0 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,11 +414,13 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4FEC602AFBB9C4AAC4173BD3 /* Pods-Alephium.debug.xcconfig */;
+			baseConfigurationReference = 1B1DC81ACAADD0E09A5E31FD /* Pods-Alephium.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Alephium/Alephium.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z3J8P4JW24;
 				ENABLE_BITCODE = NO;
@@ -432,11 +453,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FBC8909282511578A7E1D302 /* Pods-Alephium.release.xcconfig */;
+			baseConfigurationReference = 936EE295D8BA32AD10108805 /* Pods-Alephium.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Alephium/Alephium.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z3J8P4JW24;
 				INFOPLIST_FILE = Alephium/Info.plist;
@@ -516,6 +539,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -571,6 +596,8 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
