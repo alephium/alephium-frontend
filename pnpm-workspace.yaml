@@ -42,3 +42,4 @@ allowBuilds:
   core-js: false
   msw: false
   unrs-resolver: true # native resolver used by eslint-plugin-import-x
+  '@shopify/react-native-skia': true # downloads native Skia binaries in postinstall (install-skia.mjs)
