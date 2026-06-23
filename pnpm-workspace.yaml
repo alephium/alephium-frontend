@@ -27,7 +27,7 @@ minimumReleaseAgeExclude:
 patchedDependencies:
   '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch # TODO: remove after bumping @expo/cli past 55.0.32 (fixes `expo run:ios --device` "Cannot convert object to primitive value"; fixed upstream, see expo/expo#46114)
   '@metamask/scure-bip39@2.1.1': patches/@metamask__scure-bip39@2.1.1.patch
-  js-yaml@4.2.0: patches/js-yaml@4.2.0.patch
+  js-yaml@4.2.0: patches/js-yaml@4.2.0.patch # re-adds safeLoad/safeLoadAll/safeDump as aliases to load/loadAll/dump so read-yaml-file@1.1.0 (via @manypkg/get-packages@1.1.3, pinned by @changesets/cli@2.31.0) survives the js-yaml>=4 audit override. TODO: remove after upgrading to @changesets/cli@3 (its @manypkg/get-packages@3 drops read-yaml-file); see changesets#1762 / #1772
 
 overrides:
   'ws@>=8.0.0 <8.21.0': '=8.21.0'
