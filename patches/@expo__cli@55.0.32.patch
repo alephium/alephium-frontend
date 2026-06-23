@@ -1,0 +1,13 @@
+diff --git a/build/src/run/ios/appleDevice/client/LockdowndClient.js b/build/src/run/ios/appleDevice/client/LockdowndClient.js
+index 4005594a4c6a1e8d10cb2028e784d7866c0dbdaf..9f23642638c814ba63790ac9fb8099aece15da5d 100644
+--- a/build/src/run/ios/appleDevice/client/LockdowndClient.js
++++ b/build/src/run/ios/appleDevice/client/LockdowndClient.js
+@@ -112,7 +112,7 @@ class LockdowndClient extends _ServiceClient.ServiceClient {
+         }
+     }
+     async startSession(pairRecord) {
+-        debug(`startSession: ${pairRecord}`);
++        debug('startSession: %o', pairRecord);
+         const resp = await this.protocolClient.sendMessage({
+             Request: 'StartSession',
+             HostID: pairRecord.HostID,
