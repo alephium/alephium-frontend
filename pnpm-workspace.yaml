@@ -18,7 +18,7 @@ minimumReleaseAgeExclude:
   - dompurify@3.4.11 # TODO: Remove after updating posthog-js once it is old enough
 
 patchedDependencies:
-  '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch
+  '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch # TODO: remove after bumping @expo/cli past 55.0.32 (fixes `expo run:ios --device` "Cannot convert object to primitive value"; fixed upstream, see expo/expo#46114)
   '@metamask/scure-bip39@2.1.1': patches/@metamask__scure-bip39@2.1.1.patch
 
 overrides:
@@ -27,7 +27,8 @@ overrides:
   'postcss@<8.5.10': '=8.5.10'
   'fast-xml-parser@<5.7.0': '=5.7.0'
   'uuid@<14.0.0': '>=14.0.0'
-  'js-yaml@<4.2.0': '=4.2.0'
+  'js-yaml@>=4.0.0 <4.2.0': '=4.2.0' # scoped to 4.x: read-yaml-file@1.1.0 needs 3.x's safeLoad API
+  'js-yaml@<3.14.1': '=3.14.1'
   'on-headers@<1.1.0': '=1.1.0'
   'undici@<6.27.0': '=6.27.0'
   'qs@>=6.11.1 <=6.15.1': '=6.15.2'
