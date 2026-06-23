@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'app'
 
-export interface AppMetadataState {
+interface AppMetadataState {
   isCameraOpen: boolean
 }
 

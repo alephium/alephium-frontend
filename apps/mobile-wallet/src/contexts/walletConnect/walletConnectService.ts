@@ -32,7 +32,7 @@ import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/util
 
 import { sendAnalytics } from '~/analytics'
 
-export type { EngineTypes, Expirer, IWalletKit, RelayMethod, SessionTypes, SignClientTypes, ErrorResponse }
+export type { EngineTypes, IWalletKit, RelayMethod, SessionTypes, SignClientTypes, ErrorResponse }
 export { calcExpiry, formatChain, getSdkError }
 
 const WALLETCONNECT_PROJECT_ID = '2a084aa1d7e09af2b9044a524f39afbe'
@@ -80,11 +80,11 @@ export async function initWalletConnectClient(): Promise<IWalletKit | undefined>
   return client
 }
 
-export function getWCStorageKey(prefix: string, version: string, name: string): string {
+function getWCStorageKey(prefix: string, version: string, name: string): string {
   return prefix + version + '//' + name
 }
 
-export function isApiRequest(record: JsonRpcRecord): boolean {
+function isApiRequest(record: JsonRpcRecord): boolean {
   const request = record.request
   if (request.method !== 'wc_sessionRequest') {
     return false
@@ -93,13 +93,13 @@ export function isApiRequest(record: JsonRpcRecord): boolean {
   return alphRequestMethod === 'alph_requestNodeApi' || alphRequestMethod === 'alph_requestExplorerApi'
 }
 
-export async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
+async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
   const sessionKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, SESSION_CONTEXT)
   const sessions = await storage.getItem<SessionTypes.Struct[]>(sessionKey)
   return sessions === undefined ? [] : sessions.map((session) => session.topic)
 }
 
-export async function cleanBeforeInit() {
+async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
 
   let storage: KeyValueStorage | undefined
@@ -224,7 +224,7 @@ export async function cleanMessages(client: IWalletKit, topic: string) {
   }
 }
 
-export async function cleanPendingRequest(storage: KeyValueStorage) {
+async function cleanPendingRequest(storage: KeyValueStorage) {
   const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
   const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
   if (pendingRequests !== undefined) {

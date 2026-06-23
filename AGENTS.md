@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Monorepo for Alephium frontend applications and shared packages, managed with **pnpm** (v9.4.0) and **Turbo** (v1.13.4). Requires Node >= 22.
+Monorepo for Alephium frontend applications and shared packages, managed with **pnpm** (v11.8.0) and **Turbo** (v2.9.18). Requires Node >= 22.13.
 
 ## Common Commands
 

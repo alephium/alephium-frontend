@@ -26,13 +26,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   showPointer?: boolean
 }
 
-export interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
-  error?: string
-  isValid?: boolean
-  disabled?: boolean
-}
-
-export const inputPlaceHolderVariants: Variants = {
+const inputPlaceHolderVariants: Variants = {
   up: { y: '-8px', scale: 0.75 },
   down: { y: 0, scale: 1 }
 }

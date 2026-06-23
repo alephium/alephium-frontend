@@ -13,7 +13,7 @@ const DataList = ({ children, title }: DataListProps) => (
   </DataListStyled>
 )
 
-export interface DataListRowProps {
+interface DataListRowProps {
   label: string
   children?: ReactNode
 }

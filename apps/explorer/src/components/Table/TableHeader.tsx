@@ -10,7 +10,7 @@ interface TableHeaderProps {
   className?: string
 }
 
-export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }: TableHeaderProps) => (
+const TableHeader = ({ headerTitles, columnWidths, textAlign, className }: TableHeaderProps) => (
   <thead className={className}>
     <tr>
       {headerTitles.map((v, i) => (

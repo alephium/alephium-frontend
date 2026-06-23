@@ -12,7 +12,7 @@ export interface StaticDataValue {
   verifiedTokens?: VerifiedTokenMap
 }
 
-export const StaticDataContext = createContext<StaticDataValue>({
+const StaticDataContext = createContext<StaticDataValue>({
   verifiedTokens: new Map()
 })
 

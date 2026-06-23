@@ -1,6 +1,5 @@
 import { sendAnalytics } from '~/analytics'
 import { storage } from '~/persistent-storage/storage'
-import { storeWithReportableError } from '~/persistent-storage/utils'
 
 const FAVORITE_DAPPS_KEY = 'alephium_favorite_custom_dapps'
 
@@ -17,6 +16,3 @@ export const getFavoriteCustomDApps = (): Array<string> => {
 
   return favoriteDApps
 }
-
-export const storeFavoriteCustomDApps = (favoriteDApps: string[]) =>
-  storeWithReportableError(FAVORITE_DAPPS_KEY, JSON.stringify(favoriteDApps))

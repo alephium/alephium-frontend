@@ -1,6 +1,6 @@
 {
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["VITE_NETWORK_TYPE", "VITE_BACKEND_URL", "VITE_NODE_URL", "BASE_URL"],
       "outputs": ["build/**"]

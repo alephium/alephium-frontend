@@ -1,14 +1,6 @@
 import { NFT, NFTDataType, NFTDataTypes } from '@alephium/shared/types'
 import { useFetchNft } from '@alephium/shared-react'
 import { useEffect, useState } from 'react'
-import { DimensionValue } from 'react-native'
-
-export interface NFTImageProps {
-  nftId: NFT['id']
-  size?: DimensionValue
-  play?: boolean
-  sizeLimited?: boolean
-}
 
 interface UseNftHeaderDataProps {
   nftId: NFT['id']

@@ -87,7 +87,7 @@ const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleCol
 
 export default Toggle
 
-export const StyledToggle = styled(motion.div)<Omit<ToggleProps, 'onToggle'>>`
+const StyledToggle = styled(motion.div)<Omit<ToggleProps, 'onToggle'>>`
   position: relative;
   display: flex;
   align-items: center;

@@ -70,8 +70,6 @@ const ModalNames = {
   NetworkSwitchModal: 'NetworkSwitchModal'
 } as const
 
-export type ModalName = keyof typeof ModalNames
-
 export type OpenModalParams = {
   onUserDismiss?: () => void
 } & (

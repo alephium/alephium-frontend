@@ -15,7 +15,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { useAppSelector } from '~/hooks/redux'
 
-export interface BuyModalProps {
+interface BuyModalProps {
   receiveAddressHash: AddressHash
 }
 

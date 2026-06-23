@@ -35,7 +35,7 @@ const RadioButton = styled.View`
   justify-content: center;
 `
 
-export const RadioButtonChecked = styled.View`
+const RadioButtonChecked = styled.View`
   width: 8px;
   height: 8px;
   border-radius: 10px;

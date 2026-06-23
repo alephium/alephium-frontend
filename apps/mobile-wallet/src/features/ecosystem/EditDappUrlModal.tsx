@@ -8,7 +8,7 @@ import { getValidUrl } from '~/features/ecosystem/ecosystemUtils'
 import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
-export interface EditDappUrlModalProps {
+interface EditDappUrlModalProps {
   url: string
   onUrlChange: (url: string) => void
 }

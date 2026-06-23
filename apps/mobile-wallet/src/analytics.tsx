@@ -11,7 +11,7 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
-export const posthog = new PostHog(PUBLIC_POSTHOG_KEY, {
+const posthog = new PostHog(PUBLIC_POSTHOG_KEY, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
   customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),

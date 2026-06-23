@@ -18,7 +18,7 @@ import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import ModalContextProvider, { useModalContext } from '~/features/modals/ModalContext'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type BottomModalProps<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
+type BottomModalProps<T> = BottomModalWithChildrenProps | BottomModalFlashListProps<T>
 
 export const DEFAULT_SNAP_POINTS = ['50%', '100%']
 

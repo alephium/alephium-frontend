@@ -95,7 +95,7 @@ type UTXO = {
   tokens?: Token[]
 }
 
-export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
+const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
 
   const utxosGroupedByAddress = Object.groupBy(validUtxos, (utxo) => utxo.address!)
@@ -109,7 +109,7 @@ export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount>
   return summed
 }
 
-export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
+const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
 
   const utxosGroupedByAddress = Object.groupBy(validUtxos, (utxo) => utxo.address!)

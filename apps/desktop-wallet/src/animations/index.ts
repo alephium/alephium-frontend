@@ -24,28 +24,14 @@ export const fadeInBottom = {
   transition
 }
 
-export const fadeOutBottom = {
-  exit: { opacity: 0, y: 5 },
-  transition
-}
-
 export const fadeInTop = {
   initial: { opacity: 0, y: -5 },
   animate: { opacity: 1, y: 0 },
   transition
 }
 
-export const fadeOutTop = {
-  exit: { opacity: 0, y: -5 },
-  transition
-}
-
-export const slowTransition = {
+const slowTransition = {
   transition: { duration: 0.8 }
-}
-
-export const normalTransition = {
-  transition: { type: 'spring' as AnimationGeneratorType, damping: 50, stiffness: 600 }
 }
 
 export const fastTransition = {
@@ -55,11 +41,6 @@ export const fastTransition = {
 export const fadeInSlowly = {
   ...fadeIn,
   ...slowTransition
-}
-
-export const fadeOutFast = {
-  ...fadeOut,
-  ...fastTransition
 }
 
 export const fadeInOutFast = {

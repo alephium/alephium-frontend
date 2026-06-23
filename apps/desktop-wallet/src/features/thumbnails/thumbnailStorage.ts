@@ -19,7 +19,7 @@ const openDB = (): Promise<IDBDatabase> =>
     }
   })
 
-export const saveThumbnailToDB = async (videoUrl: string, blob: Blob): Promise<void> => {
+const saveThumbnailToDB = async (videoUrl: string, blob: Blob): Promise<void> => {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, 'readwrite')
@@ -36,7 +36,7 @@ export const saveThumbnailToDB = async (videoUrl: string, blob: Blob): Promise<v
   })
 }
 
-export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null> => {
+const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null> => {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, 'readonly')
@@ -55,7 +55,7 @@ export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null
 
 const videoBlobCache: Record<string, Promise<Blob>> = {}
 
-export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
+const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   if (!videoBlobCache[videoUrl]) {
     videoBlobCache[videoUrl] = fetch(videoUrl)
       .then((response) => {
@@ -73,7 +73,7 @@ export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   return videoBlobCache[videoUrl]
 }
 
-export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
+const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
   new Promise((resolve, reject) => {
     const video = document.createElement('video')
     const url = URL.createObjectURL(blob)
@@ -135,13 +135,13 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.play() // Force video play in case autoplay is blocked
   })
 
-export const isValidThumbnail = (blob: Blob): boolean => blob.size > 17000 // Basic test. Approx size of blank thumbnail.
+const isValidThumbnail = (blob: Blob): boolean => blob.size > 17000 // Basic test. Approx size of blank thumbnail.
 
 // We cache the thumbnails generation promises to avoid starting to generate new thumbnails when they are already being processed.
 const thumbnailGenerationPromises: Record<string, Promise<Blob>> = {}
 const thumbnailBlobCache: Record<string, Blob> = {}
 
-export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
+const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   const blob = thumbnailBlobCache[videoUrl]
 
   if (blob && isValidThumbnail(blob)) {

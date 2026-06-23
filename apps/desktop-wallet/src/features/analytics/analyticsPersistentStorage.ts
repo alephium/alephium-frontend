@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 
-export type AnalyticsId = string
+type AnalyticsId = string
 
 class AnalyticsStorage {
   private static localStorageKey = 'analytics'

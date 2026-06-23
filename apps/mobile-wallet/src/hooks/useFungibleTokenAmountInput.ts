@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-gesture-handler'
 
 import { isNumericStringValid } from '~/utils/numbers'
 
-export type UseFungibleTokenAmountInputOptions = {
+type UseFungibleTokenAmountInputOptions = {
   maxBalance: bigint
   decimals: number
   initialAmount?: string

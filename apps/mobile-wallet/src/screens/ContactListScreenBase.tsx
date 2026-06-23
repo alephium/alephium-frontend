@@ -22,7 +22,7 @@ import { themes } from '~/style/themes'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-export interface ContactListScreenBaseProps {
+interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress: () => void
   style?: AnimatedProps<ViewProps>['style']

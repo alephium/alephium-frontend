@@ -72,8 +72,3 @@ type ActionMessage =
   | { type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS'; data: { result: SignUnsignedTxResult; actionHash: string } }
 
 type AccountMessage = { type: 'ALPH_DISCONNECT_ACCOUNT' }
-
-export type WindowMessageType = MessageType & {
-  forwarded?: boolean
-  extensionId: string
-}

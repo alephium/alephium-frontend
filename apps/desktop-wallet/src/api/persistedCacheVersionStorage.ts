@@ -1,4 +1,4 @@
-export type PersistedQueryCacheVersion = string
+type PersistedQueryCacheVersion = string
 
 class PersistedQueryCacheVersionStorage {
   private static localStorageKey = 'persisted-query-cache-version'

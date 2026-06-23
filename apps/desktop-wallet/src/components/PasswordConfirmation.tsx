@@ -9,7 +9,7 @@ import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
-export interface PasswordConfirmationProps {
+interface PasswordConfirmationProps {
   onCorrectPasswordEntered: (password: string) => void
   isSubmitDisabled?: boolean
   text?: string

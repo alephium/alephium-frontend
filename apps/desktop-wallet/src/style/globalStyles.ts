@@ -5,7 +5,6 @@ import resets from '@/style/resets'
 
 export const appHeaderHeightPx = 40
 export const walletSidebarWidthPx = 69
-export const messagesLeftMarginPx = 70
 export const sidebarExpandThresholdPx = 1100
 export const maxPopupHeightPx = 660
 
@@ -85,7 +84,7 @@ export const GlobalStyle = createGlobalStyle`
 
 // Breakpoints
 
-export const deviceSizes = {
+const deviceSizes = {
   mobile: 800,
   tablet: 1000,
   desktop: 1600

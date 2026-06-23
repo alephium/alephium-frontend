@@ -16,7 +16,7 @@ interface OptionalBuiltTransaction {
   host?: string
 }
 
-export type TransactionPayload<T> = T & OptionalBuiltTransaction
+type TransactionPayload<T> = T & OptionalBuiltTransaction
 
 export type TransactionParams = (
   | {

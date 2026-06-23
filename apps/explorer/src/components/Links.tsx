@@ -8,7 +8,6 @@ import styled, { css, useTheme } from 'styled-components'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
-import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
 import HashEllipsed from './HashEllipsed'
@@ -39,14 +38,6 @@ export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, isHash, ...props
       }}
     >
       {isHash ? <HashEllipsed hash={text} /> : <Ellipsed text={text} />}
-    </StyledLink>
-  </div>
-)
-
-export const TightLinkStrict: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => (
-  <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-    <StyledLink {...props} data-tooltip-id="default" data-tooltip-content={text}>
-      {smartHash(text)}
     </StyledLink>
   </div>
 )

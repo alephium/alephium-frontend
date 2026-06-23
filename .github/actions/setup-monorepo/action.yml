@@ -8,7 +8,7 @@ inputs:
 
   pnpm-version:
     description: Version of pnpm to use
-    default: 9.4.0
+    default: 11.8.0
 
   eas-version:
     description: Version of EAS CLI to use
@@ -39,11 +39,7 @@ runs:
         eas-version: ${{ inputs.eas-version }}
         token: ${{ inputs.expo-token }}
 
-    - name: 📦 Install dependencies
-      run: pnpm install --frozen-lockfile
-      shell: bash
-
-    - name: ♻️ Restore cache
+    - name: ♻️ Restore turbo cache
       uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
       with:
         key: turbo-${{ runner.os }}-${{ github.sha }}
@@ -53,3 +49,7 @@ runs:
           node_modules/.cache/turbo
           apps/*/.turbo
           packages/*/.turbo
+
+    - name: 📦 Install dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash

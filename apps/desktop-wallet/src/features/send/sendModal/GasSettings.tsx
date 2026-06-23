@@ -7,7 +7,7 @@ import Input from '@/components/Inputs/Input'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import AlphAmountInfoBox from '@/features/send/sendModal/AlphAmountInfoBox'
 
-export interface GasSettingsProps {
+interface GasSettingsProps {
   gasAmount?: string
   gasAmountError: string
   gasPrice?: string
