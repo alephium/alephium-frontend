@@ -23,7 +23,6 @@ import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/n
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { validateIsAddressValid } from '~/utils/forms'
 import { showToast } from '~/utils/layout'
 
 interface DestinationScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'>, ScreenProps {}
@@ -156,7 +155,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           )}
           rules={{
             required: true,
-            validate: validateIsAddressValid
+            validate: (value) => isValidAddress(value) || t('This address is not valid')
           }}
           control={control}
         />
