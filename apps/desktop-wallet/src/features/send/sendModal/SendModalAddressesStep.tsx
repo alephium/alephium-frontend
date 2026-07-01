@@ -1,5 +1,6 @@
 import { selectAddressByHash } from '@alephium/shared/store'
 import { useFetchAddressesHashesWithBalance } from '@alephium/shared-react'
+import { isValidAddress } from '@alephium/web3'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,7 +9,7 @@ import AddressInputs from '@/features/send/sendModal/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
+import { requiredErrorMessage } from '@/utils/form-validation'
 
 interface SendModalAddressesStepProps {
   data: TransferTxModalData
@@ -36,7 +37,7 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
 
   const handleToAddressChange = useCallback(
     (value: string) => {
-      setToAddress(value, !value ? requiredErrorMessage : isAddressValid(value) ? '' : t('This address is not valid'))
+      setToAddress(value, !value ? requiredErrorMessage : isValidAddress(value) ? '' : t('This address is not valid'))
     },
     [setToAddress, t]
   )

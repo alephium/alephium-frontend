@@ -1,6 +1,7 @@
 import { getHumanReadableError } from '@alephium/shared'
 import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared/store'
 import { Contact, ContactFormData } from '@alephium/shared/types'
+import { isValidAddress } from '@alephium/web3'
 import { UserMinus } from 'lucide-react'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -15,12 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
-import {
-  isAddressValid,
-  isContactAddressValid,
-  isContactNameValid,
-  requiredErrorMessage
-} from '@/utils/form-validation'
+import { isContactAddressValid, isContactNameValid, requiredErrorMessage } from '@/utils/form-validation'
 
 export interface ContactFormModalProps {
   contact?: Contact
@@ -126,7 +122,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
           rules={{
             required: true,
             validate: {
-              isAddressValid,
+              isAddressValid: (address) => isValidAddress(address) || t('This address is not valid'),
               isContactAddressValid: (address) => isContactAddressValid({ address, id: contact?.id })
             }
           }}

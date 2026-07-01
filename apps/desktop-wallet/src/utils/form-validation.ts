@@ -1,12 +1,10 @@
 import { Contact } from '@alephium/shared/types'
-import { isValidAddress, Optional } from '@alephium/web3'
+import { Optional } from '@alephium/web3'
 
 import i18n from '@/features/localization/i18n'
 import { store } from '@/storage/store'
 
 export const requiredErrorMessage = i18n.t('This field is required')
-
-export const isAddressValid = (value: string) => isValidAddress(value) || i18n.t('This address is not valid')
 
 export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'name'>, 'id'>) => {
   const state = store.getState()
