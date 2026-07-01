@@ -1,4 +1,5 @@
 import { AddressHash, ContactFormData } from '@alephium/shared/types'
+import { isValidAddress } from '@alephium/web3'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -9,7 +10,6 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import i18n from '~/features/localization/i18n'
 import NewContactCameraScanButton from '~/features/qrCodeScan/NewContactCameraScanButton'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
-import { validateIsAddressValid } from '~/utils/forms'
 
 interface ContactFormBaseScreenProps extends ScrollScreenProps {
   initialValues: ContactFormData
@@ -83,7 +83,7 @@ const ContactFormBaseScreen = ({
           rules={{
             required: true,
             validate: {
-              isAddressValid: validateIsAddressValid,
+              isAddressValid: (address) => isValidAddress(address) || t('This address is not valid'),
               isContactAddressValid: (address) => isContactAddressValid({ address, id: initialValues?.id })
             }
           }}
