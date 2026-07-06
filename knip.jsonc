@@ -1,0 +1,45 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  "ignore": ["**/dist/**", "**/build/**", "**/lib/**", "**/.expo/**", "**/coverage/**"],
+  "workspaces": {
+    // Library packages expose their entry via package.json "main"/"exports",
+    // which knip detects automatically, so no config is needed.
+    "apps/explorer": {
+      // src/index.tsx is auto-detected; index.html is the Vite entry.
+      // public/analytics.js is loaded from index.html, not via an import.
+      "entry": ["index.html", "public/analytics.js"]
+    },
+    "apps/desktop-wallet": {
+      // src/index.tsx (renderer) is auto-detected. Add the Electron main/preload
+      // and the electron-builder lifecycle hooks referenced from the "build" config.
+      // electron-env.ts is ambient types (tsconfig "include", not imported).
+      // syncTranslationFiles.js is invoked from the syncTranslationFiles npm script.
+      "entry": [
+        "electron/main.ts",
+        "electron/preload.ts",
+        "electron/electron-env.ts",
+        "scripts/syncTranslationFiles.js",
+        ".afterPack.js",
+        ".afterAllArtifactBuild.js",
+        ".signWindows.js"
+      ]
+    },
+    "packages/shared-react": {
+      // eslint.config.cjs is the ESLint flat config; no eslint devDependency here so the plugin won't pick it up.
+      "entry": ["eslint.config.cjs"]
+    },
+    "apps/mobile-wallet": {
+      // index.ts (package.json "main") is auto-detected as the entry.
+      //
+      // Disable knip's expo plugin: knip executes app.config.js to read the Expo
+      // config, but its loader cannot evaluate ours (it require()s
+      // @expo/config-plugins) and aborts with:
+      //   "Error loading app.config.js (specifier.charCodeAt is not a function)".
+      // With the plugin off, app.config.js is no longer treated as an entry, so we
+      // ignore it (Expo consumes it at build time; it isn't imported). index.ts
+      // remains the entry and the Expo deps are still found via their source imports.
+      "expo": false,
+      "ignore": ["app.config.js"]
+    }
+  }
+}

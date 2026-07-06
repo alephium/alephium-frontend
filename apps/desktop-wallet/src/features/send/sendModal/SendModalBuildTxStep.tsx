@@ -16,7 +16,7 @@ import useGasSettings from '@/hooks/useGasSettings'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AssetAmountInputType } from '@/types/assets'
 
-export interface SendModalBuildTxStepProps {
+interface SendModalBuildTxStepProps {
   data: TransferTxModalData
   onSubmit: (data: SendFlowData, shouldSweep: boolean) => void
   onBack: () => void

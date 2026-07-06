@@ -22,7 +22,7 @@ is subtle and easy to misdiagnose.
 Signing is done through **SSL.com's eSigner cloud signing** via their `CodeSignTool` CLI — there is
 no certificate file on disk and no hardware token in CI. The flow:
 
-1. `package.json` → `build.win.signtoolOptions.sign` points electron-builder at
+1. `package.json` → `build.win.sign` points electron-builder at
    [`.signWindows.js`](./.signWindows.js).
 2. electron-builder calls that script once per artifact it needs to sign (the inner app `.exe`
    and the final installer).
@@ -34,7 +34,7 @@ no certificate file on disk and no hardware token in CI. The flow:
 `elevate.exe` is deliberately **skipped** — eSigner rejects it with a false-positive
 "code object is a malware" error. See the comment in `.signWindows.js`.
 
-`build.win.signtoolOptions.publisherName` is set to `Panda Software SA`; this must match the
+`build.win.publisherName` is set to `Panda Software SA`; this must match the
 **O**/`CN` of whatever cert you sign with, or electron-builder's post-sign verification fails.
 
 ### Required GitHub secrets
@@ -55,7 +55,7 @@ release means signing **did** run.
 
 ### Release candidates are unsigned on purpose
 
-For `-rc.*` tags the workflow unsets `build.win.signtoolOptions.sign` (the "Skip signing for rc
+For `-rc.*` tags the workflow unsets `build.win.sign` (the "Skip signing for rc
 versions" step), so RC builds are intentionally unsigned and **will** warn. That's expected; don't
 "fix" it.
 
@@ -84,7 +84,7 @@ migration is mostly procurement + validation, not engineering:
 2. Rotate **two** GitHub secrets to the EV cert's eSigner credentials: `WINDOWS_SIGN_CREDENTIAL_ID`
    and `WINDOWS_SIGN_TOTP_SECRET`. `WINDOWS_SIGN_USER_NAME` / `WINDOWS_SIGN_PASSWORD` stay the same
    (same account).
-3. Confirm `build.win.signtoolOptions.publisherName` in `package.json` still matches the EV cert's
+3. Confirm `build.win.publisherName` in `package.json` still matches the EV cert's
    organization name (`Panda Software SA` unless the legal entity changed).
 4. **No code changes** — `.signWindows.js` and the workflow are untouched.
 
@@ -94,7 +94,9 @@ steps are in the [EV migration runbook](#ev-migration-runbook-sslcom).
 ### Alternative: Microsoft Trusted Signing
 
 Microsoft's own service (~$10/month) also earns SmartScreen trust and is supported natively by
-electron-builder 26 via `azureSignOptions`. It's cheaper but is a **different integration** —
+electron-builder **26+** via `azureSignOptions` (the desktop app is currently pinned to
+electron-builder 25.x, so this path would first require upgrading back to 26, see
+[ELECTRON_BUILDER.md](./ELECTRON_BUILDER.md)). It's cheaper but is a **different integration** —
 you'd replace `.signWindows.js` with Azure config and complete Microsoft's org identity
 validation (typically needs 3+ years of verifiable legal existence). Only worth it if the EV cert
 cost is a blocker.

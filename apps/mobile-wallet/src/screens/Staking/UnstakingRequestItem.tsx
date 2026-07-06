@@ -3,7 +3,6 @@ import { selectSentTransactionByHash } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { queryClient, usePendingTxPolling } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import dayjs from 'dayjs'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -30,7 +29,7 @@ interface UnstakingRequestItemProps {
 }
 
 const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dispatch = useAppDispatch()
   const { claimUnstaked, cancelUnstake } = useAlphStaking()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
@@ -144,7 +143,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
         <DataColumn style={{ alignItems: 'flex-end' }}>
           <DataLabel>{t('Full unlock')}</DataLabel>
           <DataValue>
-            {dayjs(endTime).format('MMM D, YYYY')} ({daysLeft}d)
+            {new Date(endTime).toLocaleDateString(i18n.language, { dateStyle: 'medium' })} ({daysLeft}d)
           </DataValue>
         </DataColumn>
       </Row>

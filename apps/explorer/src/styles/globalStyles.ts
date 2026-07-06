@@ -1,5 +1,5 @@
 import { colord } from 'colord'
-import { createGlobalStyle, css } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 import normalize from 'styled-normalize'
 
 // Breakpoints
@@ -106,14 +106,5 @@ export default createGlobalStyle`
     box-shadow: ${({ theme }) => theme.shadow.primary} !important;
     border-radius: 8px !important;
     border: 1px solid ${({ theme }) => theme.border.primary};
-  }
-`
-
-export const blurredBackground = (color: string) => css`
-  background-color: ${colord(color).alpha(0.96).toRgbString()};
-
-  @supports (backdrop-filter: blur(20px)) {
-    backdrop-filter: blur(20px);
-    background-color: ${colord(color).alpha(0.7).toRgbString()};
   }
 `

@@ -18,27 +18,27 @@ export interface AmountBaseProps extends AppTextProps {
   nbOfDecimalsToShow?: number
 }
 
-export interface TokenAmountProps extends AmountBaseProps {
+interface TokenAmountProps extends AmountBaseProps {
   value: bigint
   decimals?: number
   isUnknownToken?: boolean
 }
 
-export interface FiatAmountProps extends AmountBaseProps {
+interface FiatAmountProps extends AmountBaseProps {
   isFiat: true
   value: number
   fiatPrefix?: string
 }
 
-export interface CustomAmountProps extends AmountBaseProps {
+interface CustomAmountProps extends AmountBaseProps {
   value: bigint
   suffix: string
   decimals?: number
 }
 
-export type AmountProps = TokenAmountProps | FiatAmountProps | CustomAmountProps
+type AmountProps = TokenAmountProps | FiatAmountProps | CustomAmountProps
 
-export type AmountPropsWithOptionalAmount =
+type AmountPropsWithOptionalAmount =
   | Optional<TokenAmountProps, 'value'>
   | Optional<FiatAmountProps, 'value'>
   | Optional<CustomAmountProps, 'value'>

@@ -31,7 +31,7 @@ import { sleep } from '~/utils/misc'
 
 const sliceName = 'addressDiscovery'
 
-export type DiscoveredAddress = NonSensitiveAddressData & { balance: explorer.AddressInfo['balance'] }
+type DiscoveredAddress = NonSensitiveAddressData & { balance: explorer.AddressInfo['balance'] }
 
 interface AddressDiscoveryState extends EntityState<DiscoveredAddress> {
   loading: boolean
@@ -239,13 +239,11 @@ const addressDiscoverySlice = createSlice({
   }
 })
 
-export const {
-  selectById: selectDiscoveredAddressByHash,
-  selectAll: selectAllDiscoveredAddresses,
-  selectIds: selectDiscoveredAddressIds
-} = addressDiscoveryAdapter.getSelectors<RootState>((state) => state[sliceName])
+export const { selectAll: selectAllDiscoveredAddresses } = addressDiscoveryAdapter.getSelectors<RootState>(
+  (state) => state[sliceName]
+)
 
-export const {
+const {
   addressDiscoveryStarted,
   addressDiscoveryStopped,
   addressDiscoveryFinished,
@@ -254,5 +252,7 @@ export const {
   finishedWithGroup,
   finishedWithGroupless
 } = addressDiscoverySlice.actions
+
+export { addressDiscoveryStopped }
 
 export default addressDiscoverySlice

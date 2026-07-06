@@ -18,11 +18,11 @@ import { signer } from '@/signer'
 
 const MaxRequestNumToKeep = 10
 
-export function getWCStorageKey(prefix: string, version: string, name: string): string {
+function getWCStorageKey(prefix: string, version: string, name: string): string {
   return prefix + version + '//' + name
 }
 
-export function isApiRequest(record: JsonRpcRecord): boolean {
+function isApiRequest(record: JsonRpcRecord): boolean {
   const request = record.request
   if (request.method !== 'wc_sessionRequest') {
     return false
@@ -31,7 +31,7 @@ export function isApiRequest(record: JsonRpcRecord): boolean {
   return alphRequestMethod === 'alph_requestNodeApi' || alphRequestMethod === 'alph_requestExplorerApi'
 }
 
-export async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
+async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
   const sessionKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, SESSION_CONTEXT)
   const sessions = await storage.getItem<SessionTypes.Struct[]>(sessionKey)
   return sessions === undefined ? [] : sessions.map((session) => session.topic)
@@ -109,7 +109,7 @@ export async function cleanMessages(client: SignClient, topic: string) {
   }
 }
 
-export async function cleanPendingRequest(storage: KeyValueStorage) {
+async function cleanPendingRequest(storage: KeyValueStorage) {
   const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
   const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
   if (pendingRequests !== undefined) {

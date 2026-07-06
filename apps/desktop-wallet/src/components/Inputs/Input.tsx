@@ -99,13 +99,13 @@ const Input = ({
 
 export default Input
 
-export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
+const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
   position: relative;
   width: 100%;
   margin: ${({ noMargin }) => (noMargin ? 0 : '10px 0')};
 `
 
-export const InputBase = styled.input<InputProps>`
+const InputBase = styled.input<InputProps>`
   ${({ isValid, value, label, Icon, heightSize, largeText }) =>
     inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, largeText)};
   color-scheme: ${({ theme }) => theme.name};

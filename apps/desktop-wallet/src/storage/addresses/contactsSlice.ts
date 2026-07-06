@@ -16,7 +16,7 @@ type ContactsState = EntityState<Contact>
 const initialState: ContactsState = contactsAdapter.getInitialState()
 
 // TODO: Move to shared
-export const contactsSlice = createSlice({
+const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {},

@@ -9,7 +9,7 @@ export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRE
   value: currency.ticker
 }))
 
-export const LockTimes = {
+const LockTimes = {
   ONE_MIN: 0,
   TWO_MIN: 2,
   FIVE_MIN: 5,

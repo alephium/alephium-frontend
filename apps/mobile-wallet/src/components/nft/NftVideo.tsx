@@ -6,7 +6,7 @@ import NftVideoPlayIconOverlay from '~/components/nft/NftVideoPlayIconOverlay'
 import { NFTImageProps } from '~/components/NFTImage'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
-export interface NftVideoProps extends Pick<NFTImageProps, 'play' | 'size'> {
+interface NftVideoProps extends Pick<NFTImageProps, 'play' | 'size'> {
   videoSource: string
 }
 

@@ -6,7 +6,7 @@ import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 
 import { getNetworkSettings } from '@/api/getNetworkSettings'
 
-export class Client {
+class Client {
   explorer: ExplorerProvider
   node: NodeProvider
   networkType: NetworkPreset

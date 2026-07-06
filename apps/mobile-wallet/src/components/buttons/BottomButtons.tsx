@@ -7,7 +7,7 @@ import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface BottomButtonsProps {
+interface BottomButtonsProps {
   children: ReactNode
   bottomInset?: boolean
   float?: boolean

@@ -152,21 +152,3 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     return returnedVerifiedTokensMetadata
   } else return returnedCompleteMetadata
 }
-
-export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
-  const tokensToFetch = [...new Set(assetSymbols)].filter((symbol) => !!symbol)
-
-  const { data: prices } = useQueriesData(
-    tokensToFetch.map((symbol) => ({
-      ...queries.assets.market.tokenPrice(symbol)
-    }))
-  )
-
-  return tokensToFetch.reduce(
-    (acc, symbol, i) => {
-      acc[symbol] = prices[i]
-      return acc
-    },
-    {} as Record<T, number>
-  )
-}

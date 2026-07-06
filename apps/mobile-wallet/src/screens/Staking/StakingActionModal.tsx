@@ -7,7 +7,7 @@ import Input from '~/components/inputs/Input'
 import BottomModal from '~/features/modals/BottomModal'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface StakingActionModalProps {
+interface StakingActionModalProps {
   title: string
   info: ReactNode
   amountLabel: ReactNode

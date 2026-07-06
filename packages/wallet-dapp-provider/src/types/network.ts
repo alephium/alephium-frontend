@@ -7,8 +7,3 @@ export interface Network {
   nodeApiKey?: string
   readonly?: boolean
 }
-
-export interface NetworkStatus {
-  id: Network['id']
-  healthy: boolean
-}

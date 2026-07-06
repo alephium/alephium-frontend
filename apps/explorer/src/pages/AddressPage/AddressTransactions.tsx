@@ -14,7 +14,7 @@ import usePageNumber from '@/hooks/usePageNumber'
 import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
 import useIsContract from '@/pages/AddressPage/useIsContract'
 
-export const numberOfTxsPerPage = 10
+const numberOfTxsPerPage = 10
 
 interface AddressTransactionsProps {
   addressStr: string

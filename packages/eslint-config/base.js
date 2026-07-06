@@ -1,5 +1,6 @@
 const js = require('@eslint/js')
 const stylistic = require('@stylistic/eslint-plugin')
+const importX = require('eslint-plugin-import-x')
 const prettierRecommended = require('eslint-plugin-prettier/recommended')
 const simpleImportSort = require('eslint-plugin-simple-import-sort')
 const turbo = require('eslint-plugin-turbo')
@@ -17,6 +18,7 @@ module.exports = tseslint.config({
   extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierRecommended],
   plugins: {
     '@stylistic': stylistic,
+    'import-x': importX,
     'simple-import-sort': simpleImportSort,
     turbo,
     'unused-imports': unusedImports
@@ -48,6 +50,11 @@ module.exports = tseslint.config({
     'unused-imports/no-unused-imports': 'warn',
     'simple-import-sort/imports': 'warn',
     'no-duplicate-imports': 'warn',
+    // Catch "phantom" dependencies: modules imported but not declared in the
+    // package's own package.json. They resolve only because nodeLinker is
+    // hoisted (see pnpm-workspace.yaml), so without this the dependency lists
+    // silently rot. peerDependencies are allowed (shared libs import them).
+    'import-x/no-extraneous-dependencies': ['error', { peerDependencies: true }],
     quotes: [1, 'single', { avoidEscape: true }],
     '@stylistic/member-delimiter-style': [
       'error',

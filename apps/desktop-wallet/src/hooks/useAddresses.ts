@@ -46,7 +46,7 @@ export const useFetchAddressesHashesSortedByPreference = () => {
   }
 }
 
-export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => {
+const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => {
   const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
@@ -78,7 +78,7 @@ export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => 
   }
 }
 
-export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
+const useAddressesHashesSortedByLabel = (): AddressHash[] => {
   const allAddressHashes = useUnsortedAddressesHashes()
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const addressEntities = useAppSelector((s) => s.addresses.entities)
@@ -105,7 +105,7 @@ export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
   )
 }
 
-export const useAddressesHashesSortedByIndex = (): AddressHash[] => {
+const useAddressesHashesSortedByIndex = (): AddressHash[] => {
   const allAddressHashes = useUnsortedAddressesHashes()
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const addressEntities = useAppSelector((s) => s.addresses.entities)

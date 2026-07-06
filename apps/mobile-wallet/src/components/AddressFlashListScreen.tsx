@@ -6,7 +6,7 @@ import AddressBox, { AddressBoxProps } from '~/components/AddressBox'
 import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface AddressFlashListScreenProps extends Partial<FlashListScreenProps<AddressHash>> {
+interface AddressFlashListScreenProps extends Partial<FlashListScreenProps<AddressHash>> {
   onAddressPress: (addressHash: AddressHash) => void
   origin: AddressBoxProps['origin']
   selectedAddress?: AddressHash

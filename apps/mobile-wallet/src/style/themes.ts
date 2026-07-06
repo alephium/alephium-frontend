@@ -3,7 +3,7 @@ import { DefaultTheme } from 'styled-components/native'
 
 export type ThemeType = 'light' | 'dark'
 
-export const lightTheme: DefaultTheme = {
+const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     highlight: 'rgba(0, 0, 0, 0.065)',
@@ -67,7 +67,7 @@ export const lightTheme: DefaultTheme = {
   }
 }
 
-export const darkTheme: DefaultTheme = {
+const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
     highlight: '#353539',

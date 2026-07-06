@@ -27,7 +27,7 @@ const AppText = forwardRef<Text, AppTextProps>(({ children, truncate, ...props }
 
 export default AppText
 
-export const TextStyled = styled(Text)<AppTextProps>`
+const TextStyled = styled(Text)<AppTextProps>`
   color: ${({ color, theme, colorTheme }) => {
     const th = colorTheme ? themes[colorTheme] : theme
 

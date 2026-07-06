@@ -8,9 +8,9 @@ import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNa
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-export type ProgressWorkflow = 'send' | 'receive' | 'backup'
+type ProgressWorkflow = 'send' | 'receive' | 'backup'
 
-export interface ProgressHeaderProps extends BaseHeaderProps {
+interface ProgressHeaderProps extends BaseHeaderProps {
   workflow: ProgressWorkflow
 }
 

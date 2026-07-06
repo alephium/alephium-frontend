@@ -6,7 +6,7 @@ import styled, { useTheme } from 'styled-components'
 import { fastTransition } from '@/animations'
 import Toggle from '@/components/Inputs/Toggle'
 
-export interface ToggleSectionProps {
+interface ToggleSectionProps {
   title: string
   children: ReactNode
   subtitle?: string

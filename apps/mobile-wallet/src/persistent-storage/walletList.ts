@@ -60,7 +60,7 @@ export const getLastUsedWallet = (): WalletListEntry | undefined => {
   return list.reduce((latest, entry) => (entry.lastUsed > latest.lastUsed ? entry : latest))
 }
 
-export const getNextWalletOrder = (): number => {
+const getNextWalletOrder = (): number => {
   const list = getWalletList()
 
   if (list.length === 0) return 0

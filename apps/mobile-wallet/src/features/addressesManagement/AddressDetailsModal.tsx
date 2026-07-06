@@ -20,7 +20,7 @@ import useNftsGridFlashListProps from '~/features/assetsDisplay/nftsDisplay/useN
 import BottomModal, { DEFAULT_SNAP_POINTS } from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
-export interface AddressDetailsModalProps {
+interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 

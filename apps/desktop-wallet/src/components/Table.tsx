@@ -1,13 +1,10 @@
 import { motion } from 'framer-motion'
-import { ChevronsUpDown } from 'lucide-react'
 import { HTMLProps } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
-import Button from '@/components/Button'
 
-export interface TableProps {
+interface TableProps {
   minWidth?: string
   className?: string
 }
@@ -123,8 +120,6 @@ export const TableRow = styled(TableColumns)<TableRowProps>`
   }
 `
 
-export const TableFooter = styled(TableColumns)``
-
 export const TableCellPlaceholder = styled(TableCell)`
   color: ${({ theme }) => theme.font.tertiary};
   align-self: center;
@@ -158,40 +153,4 @@ const TableHeaderRow = styled(TableRow)`
 const TableTitle = styled.div`
   font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
-`
-
-export const ExpandRow = ({ onClick }: { onClick: () => void }) => {
-  const { t } = useTranslation()
-
-  return (
-    <ExpandRowStyled>
-      <Button role="secondary" onClick={onClick} Icon={ChevronsUpDown} short>
-        {t('Expand')}
-      </Button>
-    </ExpandRowStyled>
-  )
-}
-
-const ExpandRowStyled = styled.div`
-  position: absolute;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  bottom: 0;
-  height: 70px;
-  display: flex;
-  align-items: flex-end;
-
-  opacity: 0.8;
-  transition: opacity 0.15s ease-out;
-
-  pointer-events: none;
-
-  ${({ theme }) => {
-    const gradientMaxOpacity = theme.name === 'light' ? 0.02 : 0.25
-
-    return css`
-      background: linear-gradient(0deg, rgba(0, 0, 0, ${gradientMaxOpacity}) 0%, rgba(0, 0, 0, 0) 100%);
-    `
-  }}
 `

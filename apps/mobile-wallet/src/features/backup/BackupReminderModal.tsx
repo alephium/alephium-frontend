@@ -10,7 +10,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-export interface BackupReminderModalProps {
+interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 

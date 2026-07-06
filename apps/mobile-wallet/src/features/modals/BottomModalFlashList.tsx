@@ -6,7 +6,7 @@ import { useModalContext } from '~/features/modals/ModalContext'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
+interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
   flashListRender: (flashListProps: FlashListRenderProps) => ReactNode
 }
 

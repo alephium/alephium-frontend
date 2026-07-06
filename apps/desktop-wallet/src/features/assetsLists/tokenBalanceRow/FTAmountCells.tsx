@@ -1,6 +1,5 @@
 import { AddressHash, TokenId } from '@alephium/shared/types'
 import { useFetchAddressSingleTokenBalances, useFetchWalletSingleTokenBalances } from '@alephium/shared-react'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
@@ -56,17 +55,6 @@ const FTAmountCell = (props: FTAmountsBaseProp) => (
     )}
   </TableCell>
 )
-
-export const RawAmountSubtitle = () => {
-  const { t } = useTranslation()
-
-  return <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>
-}
-
-const AmountSubtitle = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 10px;
-`
 
 const AmountsContainer = styled.div`
   display: flex;

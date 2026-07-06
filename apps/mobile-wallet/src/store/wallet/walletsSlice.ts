@@ -31,9 +31,6 @@ const walletsSlice = createSlice({
         state.list.push(payload)
       }
     },
-    walletRemovedFromList: (state, { payload: walletId }: PayloadAction<string>) => {
-      state.list = state.list.filter((w) => w.id !== walletId)
-    },
     walletRenamedInList: (state, { payload }: PayloadAction<{ walletId: string; name: string }>) => {
       const wallet = state.list.find((w) => w.id === payload.walletId)
 
@@ -54,12 +51,6 @@ const walletsSlice = createSlice({
   }
 })
 
-export const {
-  walletListLoaded,
-  walletAddedToList,
-  walletRemovedFromList,
-  walletRenamedInList,
-  walletLastUsedUpdated
-} = walletsSlice.actions
+export const { walletListLoaded, walletAddedToList, walletRenamedInList } = walletsSlice.actions
 
 export default walletsSlice

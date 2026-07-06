@@ -16,7 +16,7 @@ import { RootState } from '~/store/store'
 
 const sliceName = 'favoriteDApps'
 
-export interface FavoriteDAppsState {
+interface FavoriteDAppsState {
   dAppNames: string[]
   customDappUrls: string[]
   loadedFromStorage: boolean

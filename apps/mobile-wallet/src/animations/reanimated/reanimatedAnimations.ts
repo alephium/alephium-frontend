@@ -1,17 +1,6 @@
 import { StyleProp, ViewStyle } from 'react-native'
 import { EntryAnimationsValues, withSpring, WithSpringConfig } from 'react-native-reanimated'
 
-export const defaultSpringConfiguration: WithSpringConfig = {
-  stiffness: 100,
-  damping: 50
-}
-
-export const fastSpringConfiguration: WithSpringConfig = {
-  stiffness: 260,
-  damping: 30,
-  overshootClamping: true
-}
-
 export const fastestSpringConfiguration: WithSpringConfig = {
   stiffness: 500,
   damping: 30,
