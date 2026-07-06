@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -56,7 +57,7 @@ const WalletConnectPasteUrlModalContent = () => {
       await pairWithDapp(inputWcUrl)
 
       dispatch(deactivateAppLoading())
-      sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
+      sendAnalytics({ event: AnalyticsEvent.WC_CONNECTED_BY_MANUALLY_PASTING_URI })
       dismissModal()
     } else {
       showToast({

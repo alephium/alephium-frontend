@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { SignMessageTxModalProps } from '@alephium/shared/types'
 import { hashMessage, sign } from '@alephium/web3'
 import { memo } from 'react'
@@ -33,7 +34,7 @@ const SignMessageTxModal = memo(
         const messageHash = hashMessage(txParams.message, txParams.messageHasher)
         const signature = sign(messageHash, await getAddressAsymetricKey(walletId, txParams.signerAddress, 'private'))
 
-        sendAnalytics({ event: 'Approved message signing', props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_MESSAGE_SIGNING, props: { origin } })
 
         onSuccess({ signature })
       }

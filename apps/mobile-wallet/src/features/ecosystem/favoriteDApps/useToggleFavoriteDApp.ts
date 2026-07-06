@@ -1,3 +1,5 @@
+import { AnalyticsEvent } from '@alephium/shared'
+
 import { sendAnalytics } from '~/analytics'
 import { addFavoriteDApp, removeFavoriteDApp } from '~/features/ecosystem/favoriteDApps/favoriteDAppsActions'
 import { selectIsDAppFavorite } from '~/features/ecosystem/favoriteDApps/favoriteDAppsSelectors'
@@ -10,10 +12,10 @@ const useToggleFavoriteDApp = (dAppName: string) => {
   const toggleFavorite = () => {
     if (isFavorite) {
       dispatch(removeFavoriteDApp(dAppName))
-      sendAnalytics({ event: 'Removed dApp to favorites', props: { dAppName } })
+      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dAppName } })
     } else {
       dispatch(addFavoriteDApp(dAppName))
-      sendAnalytics({ event: 'Added dApp to favorites', props: { dAppName } })
+      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dAppName } })
     }
   }
 

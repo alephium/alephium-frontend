@@ -1,4 +1,4 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared/store'
 import { Address, WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
 import { isNetworkValid } from '@alephium/shared/utils'
@@ -124,7 +124,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         console.log('✅ APPROVING: DONE!')
         console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', approvalResponse.acknowledged)
 
-        sendAnalytics({ event: 'WC: Approved connection' })
+        sendAnalytics({ event: AnalyticsEvent.WC_APPROVED_CONNECTION })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -187,7 +187,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                       onPress={() => {
                         setSignerAddress(address)
                         setShowAlternativeSignerAddresses(false)
-                        sendAnalytics({ event: 'WC: Switched signer address' })
+                        sendAnalytics({ event: AnalyticsEvent.WC_SWITCHED_SIGNER_ADDRESS })
                       }}
                       isLast={i === addressesInGroup.length - 1}
                       origin="walletConnectPairing"

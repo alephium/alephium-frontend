@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -69,7 +70,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
         navigation.goBack()
 
         sendAnalytics({
-          event: newPassword ? t('Updated fund password') : t('Created fund password')
+          event: newPassword ? AnalyticsEvent.UPDATED_FUND_PASSWORD : AnalyticsEvent.CREATED_FUND_PASSWORD
         })
       } catch (error) {
         showExceptionToast(error, t('Could not save fund password.'))
@@ -106,7 +107,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
             type: 'info'
           })
           navigation.goBack()
-          sendAnalytics({ event: 'Deleted fund password' })
+          sendAnalytics({ event: AnalyticsEvent.DELETED_FUND_PASSWORD })
         })
       }
     })

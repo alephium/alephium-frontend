@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { Address, AddressHash } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -97,7 +98,7 @@ const AddressBox = ({
         })
       )
     }
-    sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_ADDRESS_QUICK_ACTIONS_MODAL, props: { origin } })
   }
 
   const hasLabel = !!address?.label

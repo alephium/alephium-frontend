@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import * as Brightness from 'expo-brightness'
 import { useEffect } from 'react'
@@ -37,7 +38,7 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
   }, [permissionResponse?.status])
 
   const handleCopyAddressPress = () => {
-    sendAnalytics({ event: 'Copied address', props: { note: 'Receive screen' } })
+    sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS, props: { note: 'Receive screen' } })
 
     copyAddressToClipboard(addressHash)
   }

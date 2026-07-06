@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { walletSwitchedMobile } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { isValidAddress } from '@alephium/web3'
@@ -58,7 +59,7 @@ const WatchOnlyAddressScreen = ({ navigation, ...props }: WatchOnlyAddressScreen
       dispatch(walletSwitchedMobile(metadata))
       dispatch(walletAddedToList({ id: metadata.id, name, type: 'watch-only', lastUsed: Date.now(), order: 0 }))
 
-      sendAnalytics({ event: 'Created watch-only wallet' })
+      sendAnalytics({ event: AnalyticsEvent.CREATED_WATCH_ONLY_WALLET })
       resetNavigation(navigation, 'InWalletTabsNavigation')
     } catch (error) {
       showExceptionToast(error, t('Could not create watch-only wallet'))

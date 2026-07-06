@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
@@ -28,10 +29,10 @@ const NewContactCameraScanButton = ({ onNewContactHashDetected }: NewContactCame
         text1: t('You already have a contact with this address'),
         type: 'info'
       })
-      sendAnalytics({ event: 'Contact: Tried to add an existing contact by scanning QR code' })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_TRIED_TO_ADD_AN_EXISTING_CONTACT_BY_SCANNING_QR_CODE })
     } else {
       onNewContactHashDetected(text)
-      sendAnalytics({ event: 'Contact: Captured new contact address by scanning QR code' })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_CAPTURED_NEW_CONTACT_ADDRESS_BY_SCANNING_QR_CODE })
     }
   }
 

@@ -1,4 +1,5 @@
 import { keyring } from '@alephium/keyring'
+import { AnalyticsEvent } from '@alephium/shared'
 import { activeWalletDeleted } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
@@ -44,7 +45,7 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
     dispatch(walletId === activeWalletId ? activeWalletDeleted() : walletDeleted(walletId))
     dispatch(closeModal({ id }))
 
-    sendAnalytics({ event: 'Deleted wallet' })
+    sendAnalytics({ event: AnalyticsEvent.DELETED_WALLET })
   }
 
   return (

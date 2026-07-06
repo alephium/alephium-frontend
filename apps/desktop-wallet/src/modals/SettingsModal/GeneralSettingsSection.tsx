@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { fiatCurrencyChanged } from '@alephium/shared/store'
 import { Currency } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
@@ -69,20 +70,20 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     } else {
       dispatch(passwordRequirementToggled())
 
-      sendAnalytics({ event: 'Enabled password requirement' })
+      sendAnalytics({ event: AnalyticsEvent.ENABLED_PASSWORD_REQUIREMENT })
     }
   }, [dispatch, passwordRequirement, sendAnalytics])
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
 
-    sendAnalytics({ event: 'Changed language', props: { language } })
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_LANGUAGE, props: { language } })
   }
 
   const handleFiatCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
 
-    sendAnalytics({ event: 'Changed fiat currency', props: { currency } })
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_FIAT_CURRENCY, props: { currency } })
   }
 
   const handleDiscreetModeToggle = () => dispatch(discreetModeToggled())
@@ -92,13 +93,13 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
     dispatch(walletLockTimeChanged(time))
 
-    sendAnalytics({ event: 'Changed wallet lock time', props: { time } })
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_WALLET_LOCK_TIME, props: { time } })
   }
 
   const handleThemeSelect = (theme: ThemeSettings) => {
     switchTheme(theme)
 
-    sendAnalytics({ event: 'Changed theme', props: { theme } })
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_THEME, props: { theme } })
   }
 
   const handleAnalyticsToggle = (toggle: boolean) => {
@@ -109,9 +110,9 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         const id = AnalyticsStorage.load()
         posthog.identify(id)
         posthog.opt_in_capturing()
-        posthog.capture('Enabled analytics')
+        posthog.capture(AnalyticsEvent.ENABLED_ANALYTICS)
       } else {
-        posthog.capture('Disabled analytics')
+        posthog.capture(AnalyticsEvent.DISABLED_ANALYTICS)
         posthog.opt_out_capturing()
       }
   }

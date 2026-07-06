@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import {
   getChainedTxPropsFromSignChainedTxParams,
@@ -79,7 +79,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
         const txParams = getSweepTxParams(sendFlowData)
         await sendSweepTransactions(txParams, isLedger, ledgerTxParams)
 
-        sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
+        sendAnalytics({ event: AnalyticsEvent.SWEPT_ADDRESS_ASSETS, props: { from: 'maxAmount' } })
       } else if (shouldChainTxsForGasRefill) {
         const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, sendFlowData)
         await sendChainedTransactions(txParams, isLedger)
@@ -87,7 +87,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
         const txParams = getTransferTxParams(sendFlowData)
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
-        sendAnalytics({ event: 'Sent transaction', props: { origin: 'send-modal' } })
+        sendAnalytics({ event: AnalyticsEvent.SENT_TRANSACTION, props: { origin: 'send-modal' } })
       }
 
       setStep('tx-sent')
@@ -161,7 +161,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
                 props: { fees, txParams, onSuccess: () => setStep('tx-sent') }
               })
             )
-            sendAnalytics({ event: 'Could not build tx, consolidation required' })
+            sendAnalytics({ event: AnalyticsEvent.COULD_NOT_BUILD_TX_CONSOLIDATION_REQUIRED })
             setChainedTxProps(undefined)
           } else if (isInsufficientFundsError(e) && !isLedger && gasRefillGroupedAddress) {
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, data)

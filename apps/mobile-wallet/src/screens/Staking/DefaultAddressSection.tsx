@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { addressSettingsSaved, selectDefaultAddressHash } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -24,7 +25,7 @@ const DefaultAddressSection = () => {
 
     dispatch(addressSettingsSaved({ addressHash, settings: { isDefault: true } }))
     showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
-    sendAnalytics({ event: 'Set address as default', props: { origin: 'staking' } })
+    sendAnalytics({ event: AnalyticsEvent.SET_ADDRESS_AS_DEFAULT, props: { origin: 'staking' } })
   }
 
   const openDefaultAddressModal = () =>

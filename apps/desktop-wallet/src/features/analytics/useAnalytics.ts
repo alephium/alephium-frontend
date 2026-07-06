@@ -1,4 +1,6 @@
 import {
+  AnalyticsEvent,
+  AnalyticsEventName,
   AnalyticsProps,
   cleanExceptionMessage,
   getHumanReadableError,
@@ -10,7 +12,7 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 
 type EventAnalyticsParams = {
-  event: string
+  event: AnalyticsEventName
   type?: 'event'
   props?: AnalyticsProps
   options?: CaptureOptions
@@ -35,7 +37,7 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
         console.error(message, error)
 
         sendAnalytics({
-          event: 'Error',
+          event: AnalyticsEvent.ERROR,
           props: {
             message,
             reason: error

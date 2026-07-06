@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { deepMerge } from '@alephium/shared/utils'
 import posthog from 'posthog-js'
 
@@ -21,7 +22,7 @@ class SettingsStorage {
       return deepMerge<Settings>({} as Settings, defaultSettings, parsedSettings)
     } catch (e) {
       console.error(e)
-      posthog.capture('Error', { message: 'Parsing stored settings' })
+      posthog.capture(AnalyticsEvent.ERROR, { message: 'Parsing stored settings' })
       return defaultSettings // Fallback to default settings if something went wrong
     }
   }

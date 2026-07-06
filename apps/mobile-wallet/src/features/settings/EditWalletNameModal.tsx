@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -47,7 +48,7 @@ const EditWalletNameModalContent = () => {
       dispatch(walletNameChanged(name))
       dispatch(walletRenamedInList({ walletId, name }))
 
-      sendAnalytics({ event: 'Wallet: Edited wallet name' })
+      sendAnalytics({ event: AnalyticsEvent.WALLET_EDITED_WALLET_NAME })
     } catch (error) {
       const message = 'Could not edit wallet name'
 

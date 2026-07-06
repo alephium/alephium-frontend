@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignDeployContractTxModalProps } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -48,7 +49,7 @@ const SignDeployContractTxModal = memo(
       const sentTx = signAndSubmitTxResultToSentTx({ type: 'DEPLOY_CONTRACT', txParams, result })
       dispatch(transactionSent(sentTx))
 
-      sendAnalytics({ event: 'Deployed smart contract' })
+      sendAnalytics({ event: AnalyticsEvent.DEPLOYED_SMART_CONTRACT })
     }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])

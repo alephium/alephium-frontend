@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { ContactFormData } from '@alephium/shared/types'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect } from 'react'
@@ -38,7 +39,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
                   try {
                     await deleteContact(walletId, params.contactId)
 
-                    sendAnalytics({ event: 'Contact: Deleted contact' })
+                    sendAnalytics({ event: AnalyticsEvent.CONTACT_DELETED_CONTACT })
                   } catch (error) {
                     const message = 'Could not delete contact'
 
@@ -62,7 +63,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
     try {
       await persistContact(walletId, formData)
 
-      sendAnalytics({ event: 'Contact: Editted contact' })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_EDITTED_CONTACT })
     } catch (error) {
       const message = 'Could not save contact'
 

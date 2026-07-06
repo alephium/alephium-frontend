@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { walletUnlockedMobile } from '@alephium/shared/store'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
@@ -232,7 +233,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
             await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
             dispatch(mnemonicMigrated())
-            sendAnalytics({ event: 'Mnemonic migrated' })
+            sendAnalytics({ event: AnalyticsEvent.MNEMONIC_MIGRATED })
 
             initializeAppWithStoredWallet()
           } catch {

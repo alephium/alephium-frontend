@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -81,7 +82,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         dispatch(newWalletImportedWithMetadata(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: 'Imported wallet', props: { note: 'Scanned desktop wallet QR code' } })
+        sendAnalytics({ event: AnalyticsEvent.IMPORTED_WALLET, props: { note: 'Scanned desktop wallet QR code' } })
 
         try {
           await importAddresses(wallet.id, addresses)

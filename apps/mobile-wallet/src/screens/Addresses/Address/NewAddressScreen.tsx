@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { AnalyticsEvent, GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
 import { newAddressesSaved, selectAllAddressIndexes } from '@alephium/shared/store'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
@@ -69,7 +69,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       dispatch(newAddressesSaved([{ ...newAddress, isNew: true }]))
 
       sendAnalytics({
-        event: 'Address: Generated new address',
+        event: AnalyticsEvent.ADDRESS_GENERATED_NEW_ADDRESS,
         props: {
           note: group === undefined ? 'groupless' : 'In specific group'
         }

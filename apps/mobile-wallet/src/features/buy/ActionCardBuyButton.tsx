@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
@@ -16,7 +17,7 @@ const ActionCardBuyButton = ({ receiveAddressHash, origin }: ActionCardBuyButton
   const dispatch = useAppDispatch()
 
   const handleBuyPress = () => {
-    sendAnalytics({ event: 'Action card: Pressed btn to buy', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_BUY, props: { origin } })
 
     dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash } }))
   }

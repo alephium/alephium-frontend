@@ -1,4 +1,4 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { networkPresetSwitched } from '@alephium/shared/store'
 import { NetworkName, NetworkNames } from '@alephium/shared/types'
 import { capitalize } from '@alephium/shared/utils'
@@ -50,7 +50,7 @@ const NetworkSwitch = () => {
         if (networkId !== undefined) {
           dispatch(networkPresetSwitched(networkName))
 
-          sendAnalytics({ event: 'Changed network from app header', props: { network_name: networkName } })
+          sendAnalytics({ event: AnalyticsEvent.CHANGED_NETWORK_FROM_APP_HEADER, props: { network_name: networkName } })
           return
         }
       }

@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { SignTransferTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { memo } from 'react'
@@ -30,7 +31,7 @@ const SignTransferTxModal = memo(
         const result = await sendTransferTransactions(txParams)
 
         onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
-        sendAnalytics({ event: 'Approved transfer', props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_TRANSFER, props: { origin } })
       }
     })
 

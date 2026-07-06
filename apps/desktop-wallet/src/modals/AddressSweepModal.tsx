@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { selectAddressByHash, selectDefaultAddress } from '@alephium/shared/store'
 import { Address, AddressHash } from '@alephium/shared/types'
 import {
@@ -112,7 +112,7 @@ const AddressSweepModal = memo(
         onClose()
         onSuccessfulSweep && onSuccessfulSweep()
 
-        sendAnalytics({ event: 'Swept address assets', props: { from: 'button' } })
+        sendAnalytics({ event: AnalyticsEvent.SWEPT_ADDRESS_ASSETS, props: { from: 'button' } })
       } catch (error) {
         dispatch(
           transactionSendFailed(

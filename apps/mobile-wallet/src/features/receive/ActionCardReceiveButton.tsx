@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +25,7 @@ const ActionCardReceiveButton = ({ origin, addressHash, onPress }: ActionCardRec
   const receiveAddressHash = addressHash || walletSingleAddressHash
 
   const handleReceivePress = () => {
-    sendAnalytics({ event: 'Action card: Pressed btn to receive funds to', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_RECEIVE_FUNDS_TO, props: { origin } })
 
     if (receiveAddressHash) {
       dispatch(openModal({ name: 'ReceiveQRCodeModal', props: { addressHash: receiveAddressHash } }))

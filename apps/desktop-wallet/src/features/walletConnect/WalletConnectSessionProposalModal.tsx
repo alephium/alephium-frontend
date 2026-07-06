@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
 import { isNetworkValid } from '@alephium/shared/utils'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
@@ -70,7 +71,7 @@ const WalletConnectSessionProposalModal = memo(
 
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
-        sendAnalytics({ event: 'New address created through WalletConnect modal' })
+        sendAnalytics({ event: AnalyticsEvent.NEW_ADDRESS_CREATED_THROUGH_WALLETCONNECT_MODAL })
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
         dispatch(
@@ -89,8 +90,8 @@ const WalletConnectSessionProposalModal = memo(
 
       sendAnalytics({
         event: clickedDecline
-          ? 'Rejected WalletConnect connection by clicking Decline'
-          : 'Rejected WalletConnect connection by closing modal'
+          ? AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLICKING_DECLINE
+          : AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLOSING_MODAL
       })
     }
 
@@ -155,7 +156,7 @@ const WalletConnectSessionProposalModal = memo(
 
         refreshActiveSessions()
 
-        sendAnalytics({ event: 'Approved WalletConnect connection' })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_WALLETCONNECT_CONNECTION })
 
         dispatch(
           showToast({
@@ -181,7 +182,7 @@ const WalletConnectSessionProposalModal = memo(
         walletConnectClient.reject({ id: proposalEventId, reason: getSdkError('USER_REJECTED') })
         console.log('✅ REJECTING: DONE!')
 
-        sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
+        sendAnalytics({ event: AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLICKING_REJECT })
 
         dispatch(
           showToast({

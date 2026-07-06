@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { unhideToken } from '@alephium/shared/store'
 import { isFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
@@ -30,7 +31,7 @@ const HiddenTokensScreen = ({ navigation, ...props }: HiddenTokensScreenProps) =
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectTokenToHideModal' }))
-    sendAnalytics({ event: 'Clicked on button to add an asset to hidden list' })
+    sendAnalytics({ event: AnalyticsEvent.CLICKED_ON_BUTTON_TO_ADD_AN_ASSET_TO_HIDDEN_LIST })
   }
 
   return (
@@ -79,12 +80,12 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
   const handleTokenUnhide = () => {
     dispatch(unhideToken(tokenId))
     showToast({ text1: t('Asset unhidden'), type: 'success' })
-    sendAnalytics({ event: 'Clicked on button to unhide an asset' })
+    sendAnalytics({ event: AnalyticsEvent.CLICKED_ON_BUTTON_TO_UNHIDE_AN_ASSET })
   }
 
   const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
-    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'hidden_assets_list_item' } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_TOKEN_DETAILS_MODAL, props: { origin: 'hidden_assets_list_item' } })
   }
 
   return (

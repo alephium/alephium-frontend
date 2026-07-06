@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
@@ -63,7 +64,7 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
 
               if (success) {
                 showToast({ text1: t('App data were reset'), type: 'success' })
-                sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
+                sendAnalytics({ event: AnalyticsEvent.RECREATED_MISSING_WALLET_METADATA_FOR_EXISTING_WALLET })
               } else {
                 showToast({
                   text1: t('Could not unlock app'),

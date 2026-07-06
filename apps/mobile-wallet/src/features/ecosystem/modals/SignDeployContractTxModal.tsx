@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignDeployContractTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -34,7 +35,7 @@ const SignDeployContractTxModal = memo(
         const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'DEPLOY_CONTRACT' })
         dispatch(transactionSent(sentTx))
 
-        sendAnalytics({ event: 'Approved contract deployment', props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_CONTRACT_DEPLOYMENT, props: { origin } })
 
         onSuccess(data)
       }

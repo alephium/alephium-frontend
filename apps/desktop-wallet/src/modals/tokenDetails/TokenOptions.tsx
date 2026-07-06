@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { hideToken, selectIsTokenHidden, unhideToken } from '@alephium/shared/store'
 import { useAddressExplorerLink } from '@alephium/shared-react'
 import { addressFromTokenId } from '@alephium/web3'
@@ -28,7 +29,7 @@ const TokenDropdownOptions = ({ tokenId }: TokenDetailsModalProps) => {
         label: t(isTokenHidden ? 'Unhide asset' : 'Hide asset'),
         onClick: () => {
           dispatch(isTokenHidden ? unhideToken(tokenId) : hideToken(tokenId))
-          sendAnalytics({ event: 'Hid token', props: { tokenId } })
+          sendAnalytics({ event: AnalyticsEvent.HID_TOKEN, props: { tokenId } })
         }
       }
     ],

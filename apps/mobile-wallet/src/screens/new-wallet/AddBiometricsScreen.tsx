@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
@@ -41,13 +42,13 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   const activateBiometrics = () => {
     dispatch(allBiometricsEnabled())
 
-    sendAnalytics({ event: 'Activated biometrics from wallet creation flow' })
+    sendAnalytics({ event: AnalyticsEvent.ACTIVATED_BIOMETRICS_FROM_WALLET_CREATION_FLOW })
 
     resetNavigation(navigation, skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
   }
 
   const handleLaterPress = () => {
-    sendAnalytics({ event: 'Skipped biometrics activation from wallet creation flow' })
+    sendAnalytics({ event: AnalyticsEvent.SKIPPED_BIOMETRICS_ACTIVATION_FROM_WALLET_CREATION_FLOW })
 
     resetNavigation(
       navigation,

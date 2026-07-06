@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
@@ -27,7 +27,7 @@ const CopyPrivateKeyConfirmationModal = memo(({ id, addressHash }: AddressModalP
       await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(addressHash))
       dispatch(copiedToClipboard(t('Private key copied.')))
 
-      sendAnalytics({ event: 'Copied address private key' })
+      sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS_PRIVATE_KEY })
     } catch (error) {
       dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy private key.'))))
       sendAnalytics({ type: 'error', message: 'Could not copy private key' })

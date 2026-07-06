@@ -1,4 +1,5 @@
 import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/keyring'
+import { AnalyticsEvent } from '@alephium/shared'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -45,7 +46,7 @@ const CheckWordsPage = () => {
         setOptions(generateOptions(mnemonicWords, nextWordIndex))
         setIsError(false)
       } else {
-        sendAnalytics({ event: 'Creating wallet: Verifying words: Completed' })
+        sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_VERIFYING_WORDS_COMPLETED })
         onButtonNext()
       }
     } else {
@@ -54,7 +55,7 @@ const CheckWordsPage = () => {
   }
 
   const handleBackButtonPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Verifying words: Clicked back' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_VERIFYING_WORDS_CLICKED_BACK })
     onButtonBack()
   }
 

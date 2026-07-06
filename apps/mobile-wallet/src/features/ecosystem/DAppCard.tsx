@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
@@ -30,7 +31,7 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
 
   const handleCardPress = () => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links?.website ?? '', dAppName: dApp.name })
-    sendAnalytics({ event: 'Opened dApp', props: { origin: 'dapp_card', dAppName } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_DAPP, props: { origin: 'dapp_card', dAppName } })
   }
 
   const handleLongPress = () => {
@@ -56,7 +57,7 @@ export const FavoriteCustomDAppCard = ({ dAppUrl }: { dAppUrl: string }) => {
 
   const handleCardPress = () => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
-    sendAnalytics({ event: 'Opened favorite custom dApp', props: { origin: 'dapp_card', dAppUrl } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_FAVORITE_CUSTOM_DAPP, props: { origin: 'dapp_card', dAppUrl } })
   }
 
   return (

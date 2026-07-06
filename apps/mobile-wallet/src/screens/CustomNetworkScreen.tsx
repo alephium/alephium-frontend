@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { customNetworkSettingsSaved } from '@alephium/shared/store'
 import { NetworkSettings } from '@alephium/shared/types'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -34,7 +35,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       await persistSettings('network', formData)
       dispatch(customNetworkSettingsSaved(formData))
 
-      sendAnalytics({ event: 'Saved custom network settings' })
+      sendAnalytics({ event: AnalyticsEvent.SAVED_CUSTOM_NETWORK_SETTINGS })
     } catch (error) {
       const message = 'Could not save custom network settings'
 

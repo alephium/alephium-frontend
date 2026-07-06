@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { bip39Words } from '@alephium/shared'
+import { AnalyticsEvent, bip39Words } from '@alephium/shared'
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRef, useState } from 'react'
@@ -68,7 +68,7 @@ const ImportWordsPage = () => {
 
     if (words.length < 12) return
 
-    sendAnalytics({ event: 'Importing wallet: Entering words: Clicked next' })
+    sendAnalytics({ event: AnalyticsEvent.IMPORTING_WALLET_ENTERING_WORDS_CLICKED_NEXT })
 
     try {
       setMnemonic(keyring.importMnemonicString(words.join(' ')))

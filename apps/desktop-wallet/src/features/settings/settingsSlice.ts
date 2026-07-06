@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { fiatCurrencyChanged } from '@alephium/shared/store'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import posthog from 'posthog-js'
@@ -125,7 +126,7 @@ settingsListenerMiddleware.startListening({
         await i18next.changeLanguage(settings.language)
       } catch (e) {
         console.error(e)
-        posthog.capture('Error', { message: 'Changing language' })
+        posthog.capture(AnalyticsEvent.ERROR, { message: 'Changing language' })
       } finally {
         dispatch(languageChangeFinished())
       }

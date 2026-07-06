@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, transactionSent } from '@alephium/shared/store'
 import { SignUnsignedTxModalProps } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -70,7 +71,7 @@ const SignUnsignedTxModal = memo(
           })
         )
 
-        sendAnalytics({ event: 'Signed and submitted unsigned transaction' })
+        sendAnalytics({ event: AnalyticsEvent.SIGNED_AND_SUBMITTED_UNSIGNED_TRANSACTION })
       }
     }
 

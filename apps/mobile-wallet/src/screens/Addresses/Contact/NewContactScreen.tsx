@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { ContactFormData } from '@alephium/shared/types'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +27,7 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
     try {
       await persistContact(walletId, formData)
 
-      sendAnalytics({ event: 'Contact: Created new contact' })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_CREATED_NEW_CONTACT })
     } catch (error) {
       const message = 'Could not save contact'
 

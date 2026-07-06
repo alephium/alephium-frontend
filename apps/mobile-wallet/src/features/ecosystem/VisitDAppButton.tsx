@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
@@ -28,7 +29,7 @@ const VisitDAppButton = ({ dAppName, onVisitDappButtonPress, buttonType, ...prop
 
     if (dApp.links?.website) {
       navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
-      sendAnalytics({ event: 'Opened dApp', props: { origin: 'quick_actions', dAppName } })
+      sendAnalytics({ event: AnalyticsEvent.OPENED_DAPP, props: { origin: 'quick_actions', dAppName } })
     }
   }
 

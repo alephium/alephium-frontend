@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { selectAddressByHash } from '@alephium/shared/store'
 import {
@@ -132,7 +133,7 @@ export const SendContextProvider = ({
         }
 
         onSendSuccess()
-        sendAnalytics({ event: 'Send: Sent transaction' })
+        sendAnalytics({ event: AnalyticsEvent.SEND_SENT_TRANSACTION })
       } catch (error) {
         const message = t('Could not send transaction')
 

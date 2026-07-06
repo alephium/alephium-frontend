@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -27,7 +28,7 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       await Clipboard.setStringAsync(publicKey)
 
       showToast({ text1: t('Public key copied!'), visibilityTime: ToastDuration.SHORT })
-      sendAnalytics({ event: 'Copied public key' })
+      sendAnalytics({ event: AnalyticsEvent.COPIED_PUBLIC_KEY })
     } catch (error) {
       const message = 'Could not copy public key'
 

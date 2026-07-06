@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useFetchWalletBalancesAlph } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
@@ -41,11 +42,11 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
       message: `${contact.name}\n${contact.address}`
     })
 
-    sendAnalytics({ event: 'Contact: Shared contact' })
+    sendAnalytics({ event: AnalyticsEvent.CONTACT_SHARED_CONTACT })
   }
 
   const handleCopyAddressPress = () => {
-    sendAnalytics({ event: 'Copied address', props: { note: 'Contact' } })
+    sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS, props: { note: 'Contact' } })
 
     copyAddressToClipboard(contact.address)
   }

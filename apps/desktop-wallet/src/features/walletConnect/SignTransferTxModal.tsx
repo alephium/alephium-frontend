@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { SignTransferTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -36,7 +37,7 @@ const SignTransferTxModal = memo(
       })
 
       onSuccess(result)
-      sendAnalytics({ event: 'Sent transaction', props: { origin: 'wc' } })
+      sendAnalytics({ event: AnalyticsEvent.SENT_TRANSACTION, props: { origin: 'wc' } })
     }, [isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])

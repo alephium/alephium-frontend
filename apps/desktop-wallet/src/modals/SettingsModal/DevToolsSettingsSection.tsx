@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { selectDefaultAddress } from '@alephium/shared/store'
 import { Address, AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
@@ -33,7 +33,7 @@ const DevToolsSettingsSection = () => {
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 
-    sendAnalytics({ event: 'Enabled dev tools' })
+    sendAnalytics({ event: AnalyticsEvent.ENABLED_DEV_TOOLS })
   }
 
   return (
@@ -72,7 +72,7 @@ const FaucetSection = () => {
 
   const handleFaucetCall = () => {
     defaultAddress && dispatch(receiveFaucetTokens(defaultAddress.hash))
-    sendAnalytics({ event: 'Requested testnet tokens' })
+    sendAnalytics({ event: AnalyticsEvent.REQUESTED_TESTNET_TOKENS })
   }
 
   const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
@@ -117,7 +117,7 @@ const KeyPairsSection = () => {
       await navigator.clipboard.writeText(address.publicKey)
       dispatch(copiedToClipboard(t('Public key copied.')))
 
-      sendAnalytics({ event: 'Copied address public key' })
+      sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS_PUBLIC_KEY })
     } catch (error) {
       dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
       sendAnalytics({ type: 'error', message: 'Could not copy public key' })

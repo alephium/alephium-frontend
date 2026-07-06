@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
@@ -21,15 +22,15 @@ const CameraScanButton = () => {
   const handleValidAddressScanned = (addressHash: AddressHash) => {
     if (contacts.some((c) => c.address === addressHash)) {
       navigation.navigate('SendNavigation', { destinationAddressHash: addressHash })
-      sendAnalytics({ event: 'Captured contact address by scanning QR code from Dashboard' })
+      sendAnalytics({ event: AnalyticsEvent.CAPTURED_CONTACT_ADDRESS_BY_SCANNING_QR_CODE_FROM_DASHBOARD })
     } else {
       dispatch(openModal({ name: 'AddressQRCodeScanActionsModal', props: { addressHash } }))
-      sendAnalytics({ event: 'Send: Captured destination address by scanning QR code from Dashboard' })
+      sendAnalytics({ event: AnalyticsEvent.SEND_CAPTURED_DESTINATION_ADDRESS_BY_SCANNING_QR_CODE_FROM_DASHBOARD })
     }
   }
 
   const handleWalletConnectUriScanned = (uri: string) => {
-    sendAnalytics({ event: 'WC: Scanned WC QR code' })
+    sendAnalytics({ event: AnalyticsEvent.WC_SCANNED_WC_QR_CODE })
 
     if (walletConnectClientStatus === 'initialized') {
       pairWithDapp(uri)

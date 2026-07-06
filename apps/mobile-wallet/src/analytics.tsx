@@ -1,4 +1,6 @@
 import {
+  AnalyticsEvent,
+  AnalyticsEventName,
   AnalyticsProps,
   cleanExceptionMessage,
   getHumanReadableError,
@@ -25,7 +27,7 @@ const posthog = new PostHog(PUBLIC_POSTHOG_KEY, {
 })
 
 type EventAnalyticsParams = {
-  event: string
+  event: AnalyticsEventName
   type?: 'event'
   props?: AnalyticsProps
   options?: PostHogCaptureOptions
@@ -48,7 +50,7 @@ export const sendAnalytics = (params: AnalyticsParams) => {
     console.error(message, isSensitive ? cleanExceptionMessage(error) : error)
 
     sendAnalytics({
-      event: 'Error',
+      event: AnalyticsEvent.ERROR,
       props: {
         message,
         reason: error
@@ -103,7 +105,7 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
     if (!canCaptureUserProperties) return
 
     sendAnalytics({
-      event: 'User identified',
+      event: AnalyticsEvent.USER_IDENTIFIED,
       props: {
         $set: {
           requireAuth,

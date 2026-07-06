@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { Token } from '@alephium/web3'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
@@ -34,7 +35,7 @@ const SendButton = ({
   const dispatch = useAppDispatch()
 
   const handleSendPress = () => {
-    sendAnalytics({ event: 'Send button pressed', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_PRESSED, props: { origin } })
 
     navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId, isNft })
     dispatch(closeAllModals())

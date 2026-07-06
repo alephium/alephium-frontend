@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { SignChainedTxModalProps } from '@alephium/shared/types'
 import { Fragment, memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +24,7 @@ const SignChainedTxModal = memo(
       sign: async () => {
         const results = await sendChainedTransactions(txParams)
 
-        sendAnalytics({ event: 'Approved chained tx', props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_CHAINED_TX, props: { origin } })
         onSuccess(results)
       }
     })

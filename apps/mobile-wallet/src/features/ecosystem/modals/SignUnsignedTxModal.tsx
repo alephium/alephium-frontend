@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { SignUnsignedTxModalProps } from '@alephium/shared/types'
 import {
   nodeTransactionReconstructDecodedUnsignedTxQuery,
@@ -51,7 +52,7 @@ const SignUnsignedTxModal = memo(
           submitAfterSign ? await signer.signAndSubmitUnsignedTx(txParams) : await signer.signUnsignedTx(txParams)
         )
 
-        sendAnalytics({ event: 'Approved unsigned tx', props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.APPROVED_UNSIGNED_TX, props: { origin } })
       }
     })
 
