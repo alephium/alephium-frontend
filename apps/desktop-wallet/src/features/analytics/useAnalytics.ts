@@ -1,4 +1,10 @@
-import { AnalyticsProps, cleanExceptionMessage, getHumanReadableError, throttleEvent } from '@alephium/shared'
+import {
+  AnalyticsProps,
+  cleanExceptionMessage,
+  getHumanReadableError,
+  redactSensitiveData,
+  throttleEvent
+} from '@alephium/shared'
 import { CaptureOptions } from 'posthog-js'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
@@ -32,7 +38,11 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
           event: 'Error',
           props: {
             message,
-            reason: error ? (isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')) : undefined
+            reason: error
+              ? isSensitive
+                ? cleanExceptionMessage(error)
+                : redactSensitiveData(getHumanReadableError(error, ''))
+              : undefined
           }
         })
       } else {

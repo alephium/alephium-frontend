@@ -1,4 +1,10 @@
-import { AnalyticsProps, cleanExceptionMessage, getHumanReadableError, throttleEvent } from '@alephium/shared'
+import {
+  AnalyticsProps,
+  cleanExceptionMessage,
+  getHumanReadableError,
+  redactSensitiveData,
+  throttleEvent
+} from '@alephium/shared'
 import { PostHogCaptureOptions } from '@posthog/core'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
@@ -45,7 +51,11 @@ export const sendAnalytics = (params: AnalyticsParams) => {
       event: 'Error',
       props: {
         message,
-        reason: error ? (isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')) : undefined
+        reason: error
+          ? isSensitive
+            ? cleanExceptionMessage(error)
+            : redactSensitiveData(getHumanReadableError(error, ''))
+          : undefined
       }
     })
   } else {
