@@ -1,0 +1,19 @@
+diff --git a/index.js b/index.js
+index 0b66b8f2764fa589f30d534bc91d722d0d1b8083..ca5a1b598951778017f3ea4e17eefb8d85434461 100644
+--- a/index.js
++++ b/index.js
+@@ -38,7 +38,10 @@ module.exports.types = {
+   str: require('./lib/type/str')
+ }
+ 
+-// Removed functions from JS-YAML 3.0.x
+-module.exports.safeLoad = renamed('safeLoad', 'load')
+-module.exports.safeLoadAll = renamed('safeLoadAll', 'loadAll')
+-module.exports.safeDump = renamed('safeDump', 'dump')
++// Restored as aliases (patched): js-yaml 4's load/loadAll/dump are safe by
++// default, so the 3.x "safe*" names can map straight to them. Lets legacy
++// callers like read-yaml-file (used by @manypkg/changesets) keep working while
++// the audit-driven override forces js-yaml >=4.
++module.exports.safeLoad = loader.load
++module.exports.safeLoadAll = loader.loadAll
++module.exports.safeDump = dumper.dump

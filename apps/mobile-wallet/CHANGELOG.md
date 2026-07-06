@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 2.5.2
+
+### Patch Changes
+
+- c3c4bde: Fix alignment of bottom modal header buttons
+- bc36d52: Reduce bundle size (by replacing @alephium/shared-crypto)
+- c3c4bde: Fix display of token prices that are less than 1 cent
+
 ## 2.5.1
 
 ### Patch Changes

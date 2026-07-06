@@ -39,7 +39,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '2.5.1',
+    version: '2.5.2',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -108,7 +108,6 @@ export default {
     web: {
       favicon: './assets/favicon.png'
     },
-    newArchEnabled: true,
     plugins: [
       withProjectGradleModifiers,
       (!isEasProduction ? withProfileableManifest : null),
@@ -121,9 +120,9 @@ export default {
           },
           android: {
             javaVersion: 17,
-            compileSdkVersion: 35,
-            targetSdkVersion: 35,
-            buildToolsVersion: '35.0.0'
+            compileSdkVersion: 36,
+            targetSdkVersion: 36,
+            buildToolsVersion: '36.0.0'
           }
         }
       ],

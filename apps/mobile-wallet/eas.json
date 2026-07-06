@@ -5,7 +5,8 @@
   },
   "build": {
     "baseConfig": {
-      "pnpm": "9.4.0"
+      "node": "22.14.0",
+      "pnpm": "11.8.0"
     },
     "production": {
       "extends": "baseConfig",

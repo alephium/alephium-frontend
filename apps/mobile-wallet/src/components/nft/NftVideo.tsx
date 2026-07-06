@@ -21,7 +21,7 @@ const NftVideo = memo(({ videoSource, play, size }: NftVideoProps) => {
     <VideoViewStyled
       style={{ width: size, height: size }}
       player={player}
-      allowsFullscreen={false}
+      fullscreenOptions={{ enable: false }}
       nativeControls={!!play}
     />
   )
