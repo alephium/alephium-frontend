@@ -38,7 +38,7 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
   }, [permissionResponse?.status])
 
   const handleCopyAddressPress = () => {
-    sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS, props: { note: 'Receive screen' } })
+    sendAnalytics({ event: AnalyticsEvent.RECEIVE_ADDRESS_COPIED })
 
     copyAddressToClipboard(addressHash)
   }

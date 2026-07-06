@@ -27,6 +27,7 @@ import ActionCardSwapButton from '~/features/swap/ActionCardSwapButton'
 import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import WatchOnlyBadge from '~/features/watchOnlyWallet/WatchOnlyBadge'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useCaptureIsWalletFunded from '~/hooks/useCaptureIsWalletFunded'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
@@ -170,6 +171,8 @@ const WalletEmptyPlaceholder = () => {
 const WalletBalanceSummary = () => {
   const { t } = useTranslation()
   const { data: worth, isLoading, error } = useFetchWalletWorth()
+
+  useCaptureIsWalletFunded()
 
   return (
     <BalanceSummary

@@ -23,7 +23,7 @@ const ActionCardSwapButton = ({ receiveAddressHash, origin, onPress }: ActionCar
   if (network !== networkSettingsPresets[NetworkNames.testnet].networkId) return null
 
   const handleSwapPress = () => {
-    sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_SWAP, props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_SWAP, props: { origin, provider: 'Powfi' } })
 
     navigation.navigate('DAppWebViewScreen', {
       dAppUrl: 'https://powfi.alephium.org/swap',

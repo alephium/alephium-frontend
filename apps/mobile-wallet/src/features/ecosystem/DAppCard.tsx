@@ -31,7 +31,10 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
 
   const handleCardPress = () => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links?.website ?? '', dAppName: dApp.name })
-    sendAnalytics({ event: AnalyticsEvent.OPENED_DAPP, props: { origin: 'dapp_card', dAppName } })
+    sendAnalytics({
+      event: AnalyticsEvent.OPENED_DAPP,
+      props: { origin: 'dapp_card', dapp_name: dAppName, dapp_url: dApp.links?.website }
+    })
   }
 
   const handleLongPress = () => {
@@ -57,7 +60,10 @@ export const FavoriteCustomDAppCard = ({ dAppUrl }: { dAppUrl: string }) => {
 
   const handleCardPress = () => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
-    sendAnalytics({ event: AnalyticsEvent.OPENED_FAVORITE_CUSTOM_DAPP, props: { origin: 'dapp_card', dAppUrl } })
+    sendAnalytics({
+      event: AnalyticsEvent.OPENED_FAVORITE_CUSTOM_DAPP,
+      props: { origin: 'dapp_card', dapp_url: dAppUrl }
+    })
   }
 
   return (

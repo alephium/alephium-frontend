@@ -10,7 +10,7 @@ import {
 import { PostHogCaptureOptions } from '@posthog/core'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
-import { ReactNode, useCallback, useEffect } from 'react'
+import { ReactNode, useCallback, useEffect, useRef } from 'react'
 
 import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -38,6 +38,7 @@ type ErrorAnalyticsParams = {
   message: string
   error?: unknown
   isSensitive?: boolean
+  category?: string
 }
 
 type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
@@ -46,13 +47,14 @@ type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
 // from posthog-react-native/lib/posthog-core/src?
 export const sendAnalytics = (params: AnalyticsParams) => {
   if (params.type === 'error') {
-    const { error, message, isSensitive } = params
+    const { error, message, isSensitive, category } = params
     console.error(message, isSensitive ? cleanExceptionMessage(error) : error)
 
     sendAnalytics({
       event: AnalyticsEvent.ERROR,
       props: {
         message,
+        category,
         reason: error
           ? isSensitive
             ? cleanExceptionMessage(error)
@@ -83,6 +85,7 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
 
   const shouldOptOut = !settingsLoadedFromStorage || __DEV__
   const canCaptureUserProperties = !shouldOptOut && analytics && !!analyticsId
+  const wasAnalyticsEnabled = useRef<boolean | undefined>(undefined)
 
   useEffect(() => {
     if (shouldOptOut) {
@@ -93,8 +96,14 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
     if (analytics && analyticsId) {
       posthog.identify()
       posthog.optIn()
+      // Only when the user actively re-enables analytics, not on initial load or app start
+      if (wasAnalyticsEnabled.current === false) sendAnalytics({ event: AnalyticsEvent.ENABLED_ANALYTICS })
+      wasAnalyticsEnabled.current = true
     } else if (!analytics && analyticsId) {
+      // Capture the opt-out while still opted in, before the SDK stops sending events
+      if (wasAnalyticsEnabled.current === true) sendAnalytics({ event: AnalyticsEvent.DISABLED_ANALYTICS })
       posthog.optOut()
+      wasAnalyticsEnabled.current = false
     } else if (!analyticsId) {
       const newAnalyticsId = nanoid()
       dispatch(analyticsIdGenerated(newAnalyticsId))

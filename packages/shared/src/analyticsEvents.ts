@@ -18,6 +18,8 @@ export const AnalyticsEvent = {
   // ── SHARED (identical string in both apps — funnel-ready) ───────
   CONSOLIDATED_UTXOS: 'Consolidated UTXOs',
   DELETED_WALLET: 'Deleted wallet',
+  DISABLED_ANALYTICS: 'Disabled analytics',
+  ENABLED_ANALYTICS: 'Enabled analytics',
   ERROR: 'Error',
   REGION_CHANGED: 'Region changed',
   SAVED_CUSTOM_NETWORK_SETTINGS: 'Saved custom network settings',
@@ -40,6 +42,13 @@ export const AnalyticsEvent = {
   TRANSACTION_APPROVED: 'Transaction Approved',
   MESSAGE_SIGNED: 'Message Signed',
   WALLETCONNECT_CONNECTED: 'WalletConnect Connected',
+  WALLETCONNECT_CONNECTION_REQUESTED: 'WalletConnect Connection Requested',
+  SEND_DESTINATION_SET: 'Send Destination Set',
+  SEND_AMOUNT_SET: 'Send Amount Set',
+  SEND_REVIEW_REACHED: 'Send Review Reached',
+  TRANSACTION_FAILED: 'Transaction Failed',
+  WALLET_FUNDED: 'Wallet Funded',
+  RECEIVE_ADDRESS_COPIED: 'Receive Address Copied',
 
   // ── DESKTOP wallet ──────────────────────────────────────────────
   ADDRESS_ORDER_CHANGED: 'Address order changed',
@@ -70,9 +79,7 @@ export const AnalyticsEvent = {
   CREATING_WALLET_VERIFYING_WORDS_COMPLETED: 'Creating wallet: Verifying words: Completed',
   CREATING_WALLET_WRITING_DOWN_MNEMONIC_CLICKED_BACK: 'Creating wallet: Writing down mnemonic: Clicked back',
   CREATING_WALLET_WRITING_DOWN_MNEMONIC_CLICKED_NEXT: 'Creating wallet: Writing down mnemonic: Clicked next',
-  DISABLED_ANALYTICS: 'Disabled analytics',
   DISABLED_PASSWORD_REQUIREMENT: 'Disabled password requirement',
-  ENABLED_ANALYTICS: 'Enabled analytics',
   ENABLED_DEV_TOOLS: 'Enabled dev tools',
   ENABLED_PASSWORD_REQUIREMENT: 'Enabled password requirement',
   EXPORTED_CSV: 'Exported CSV',

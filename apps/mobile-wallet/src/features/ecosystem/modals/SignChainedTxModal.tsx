@@ -24,7 +24,10 @@ const SignChainedTxModal = memo(
       sign: async () => {
         const results = await sendChainedTransactions(txParams)
 
-        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'chained' } })
+        sendAnalytics({
+          event: AnalyticsEvent.TRANSACTION_APPROVED,
+          props: { origin, dapp_url: dAppUrl, tx_type: 'chained' }
+        })
         onSuccess(results)
       }
     })

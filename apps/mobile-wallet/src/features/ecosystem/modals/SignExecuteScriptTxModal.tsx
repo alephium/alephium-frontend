@@ -43,7 +43,10 @@ const SignExecuteScriptTxModal = memo(
         const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'EXECUTE_SCRIPT' })
         dispatch(transactionSent(sentTx))
 
-        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'contract_call' } })
+        sendAnalytics({
+          event: AnalyticsEvent.TRANSACTION_APPROVED,
+          props: { origin, dapp_url: dAppUrl, tx_type: 'contract_call' }
+        })
 
         onSuccess(data)
       }

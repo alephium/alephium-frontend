@@ -93,7 +93,8 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
       setStep('tx-sent')
     } catch (error) {
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-      sendAnalytics({ type: 'error', message: 'Could not send tx' })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin: 'send-modal' } })
+      sendAnalytics({ type: 'error', message: 'Could not send tx', category: 'send' })
     } finally {
       setIsLoading(false)
     }
@@ -135,6 +136,8 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
       setSendFlowData(data)
       setIsLoading(true)
       setIsSweeping(shouldSweep)
+
+      sendAnalytics({ event: AnalyticsEvent.SEND_AMOUNT_SET })
 
       try {
         if (shouldSweep) {
@@ -188,16 +191,24 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
     [dispatch, gasRefillGroupedAddress, handleTransactionBuildError, isLedger, sendAnalytics]
   )
 
-  const moveToSecondStep = useCallback((data: TransferAddressesTxModalOnSubmitData) => {
-    setAddressesData(data)
-    setStep('build-tx')
-  }, [])
+  const moveToSecondStep = useCallback(
+    (data: TransferAddressesTxModalOnSubmitData) => {
+      setAddressesData(data)
+      setStep('build-tx')
+      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET })
+    },
+    [sendAnalytics]
+  )
 
   useEffect(() => {
     if (step === 'tx-sent') {
       setTimeout(() => dispatch(closeModal({ id })), 2000)
     }
   }, [dispatch, id, step])
+
+  useEffect(() => {
+    if (step === 'info-check') sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED })
+  }, [step, sendAnalytics])
 
   return (
     <CenteredModal id={id} title={t('Send')} onClose={onClose} isLoading={isLoading} focusMode hasFooterButtons>

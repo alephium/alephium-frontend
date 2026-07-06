@@ -138,7 +138,8 @@ export const SendContextProvider = ({
         const message = t('Could not send transaction')
 
         showExceptionToast(error, message)
-        sendAnalytics({ type: 'error', message })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED })
+        sendAnalytics({ type: 'error', message, category: 'send' })
       }
     },
     [address, assetAmounts, gasRefillGroupedAddress, shouldChainTxsForGasRefill, shouldSweep, t, toAddress]
@@ -166,6 +167,8 @@ export const SendContextProvider = ({
 
       const sendFlowData = { fromAddress: address, toAddress, assetAmounts }
 
+      sendAnalytics({ event: AnalyticsEvent.SEND_AMOUNT_SET })
+
       try {
         if (shouldSweep) {
           const txParams = getSweepTxParams(sendFlowData)
@@ -177,6 +180,7 @@ export const SendContextProvider = ({
           setFees(fees)
         }
 
+        sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED })
         callbacks.onBuildSuccess()
       } catch (e) {
         try {
@@ -204,6 +208,7 @@ export const SendContextProvider = ({
             setChainedTxProps(props)
             setShouldSweep(false)
 
+            sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED })
             callbacks.onBuildSuccess()
           } else throw e
         } catch (e) {

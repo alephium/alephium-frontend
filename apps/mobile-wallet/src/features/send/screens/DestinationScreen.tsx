@@ -100,6 +100,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const handleContinuePress = useCallback(
     (formData: FormData) => {
       setToAddress(formData.toAddressHash)
+      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET })
       navigation.navigate(nextScreen)
     },
     [navigation, nextScreen, setToAddress]

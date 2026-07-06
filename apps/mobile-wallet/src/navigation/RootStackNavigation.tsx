@@ -165,6 +165,15 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     try {
       dispatch(walletUnlockedMobile(metadata))
 
+      sendAnalytics({
+        event: AnalyticsEvent.WALLET_UNLOCKED,
+        props: {
+          wallet_name_length: metadata.name.length,
+          number_of_addresses: metadata.addresses.length,
+          number_of_contacts: metadata.contacts.length
+        }
+      })
+
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
       if (!lastRoute || ['LandingScreen', 'LoginWithPinScreen'].includes(lastRoute)) {

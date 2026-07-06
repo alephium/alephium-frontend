@@ -15,10 +15,10 @@ const useToggleFavoriteCustomDApp = (dAppUrl: string) => {
   const toggleFavoriteCustom = () => {
     if (isFavoriteCustom) {
       dispatch(removeFavoriteCustomDApp(dAppUrl))
-      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dAppUrl } })
+      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dapp_url: dAppUrl } })
     } else {
       dispatch(addFavoriteCustomDApp(dAppUrl))
-      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dAppUrl } })
+      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dapp_url: dAppUrl } })
     }
   }
 

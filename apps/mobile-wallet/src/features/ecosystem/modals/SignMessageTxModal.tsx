@@ -34,7 +34,7 @@ const SignMessageTxModal = memo(
         const messageHash = hashMessage(txParams.message, txParams.messageHasher)
         const signature = sign(messageHash, await getAddressAsymetricKey(walletId, txParams.signerAddress, 'private'))
 
-        sendAnalytics({ event: AnalyticsEvent.MESSAGE_SIGNED, props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.MESSAGE_SIGNED, props: { origin, dapp_url: dAppUrl } })
 
         onSuccess({ signature })
       }

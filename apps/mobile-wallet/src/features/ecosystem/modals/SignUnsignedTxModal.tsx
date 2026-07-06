@@ -52,7 +52,10 @@ const SignUnsignedTxModal = memo(
           submitAfterSign ? await signer.signAndSubmitUnsignedTx(txParams) : await signer.signUnsignedTx(txParams)
         )
 
-        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'unsigned' } })
+        sendAnalytics({
+          event: AnalyticsEvent.TRANSACTION_APPROVED,
+          props: { origin, dapp_url: dAppUrl, tx_type: 'unsigned' }
+        })
       }
     })
 

@@ -24,6 +24,7 @@ const SignChainedTxModal = ({
   txParams,
   props,
   dAppUrl,
+  origin,
   onSuccess,
   ...rest
 }: SignChainedTxModalProps & ModalBaseProp) => {
@@ -43,10 +44,13 @@ const SignChainedTxModal = ({
       dispatch(transactionSent(sentTx))
     })
 
-    sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'chained' } })
+    sendAnalytics({
+      event: AnalyticsEvent.TRANSACTION_APPROVED,
+      props: { origin, dapp_url: dAppUrl, tx_type: 'chained' }
+    })
 
     onSuccess(results)
-  }, [dispatch, isLedger, onSuccess, sendAnalytics, txParams])
+  }, [dAppUrl, dispatch, isLedger, onSuccess, origin, sendAnalytics, txParams])
 
   return (
     <SignTxBaseModal

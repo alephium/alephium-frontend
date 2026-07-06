@@ -5,7 +5,7 @@ import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { PlusSquare } from 'lucide-react'
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -63,6 +63,13 @@ const WalletConnectSessionProposalModal = memo(
     const addressHashesInGroup = useMemo(() => addressesInGroup.map((a) => a.hash), [addressesInGroup])
 
     const { showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
+
+    useEffect(() => {
+      sendAnalytics({
+        event: AnalyticsEvent.WALLETCONNECT_CONNECTION_REQUESTED,
+        props: { dapp_url: metadata.url, dapp_name: metadata.name }
+      })
+    }, [metadata.url, metadata.name, sendAnalytics])
 
     const generateAddressInGroup = async () => {
       try {

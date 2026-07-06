@@ -23,6 +23,7 @@ type ErrorAnalyticsParams = {
   message: string
   error?: unknown
   isSensitive?: boolean
+  category?: string
 }
 
 type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
@@ -33,13 +34,14 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
   const sendAnalytics = useCallback(
     (params: AnalyticsParams) => {
       if (params.type === 'error') {
-        const { error, message, isSensitive } = params
+        const { error, message, isSensitive, category } = params
         console.error(message, error)
 
         sendAnalytics({
           event: AnalyticsEvent.ERROR,
           props: {
             message,
+            category,
             reason: error
               ? isSensitive
                 ? cleanExceptionMessage(error)

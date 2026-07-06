@@ -12,10 +12,10 @@ const useToggleFavoriteDApp = (dAppName: string) => {
   const toggleFavorite = () => {
     if (isFavorite) {
       dispatch(removeFavoriteDApp(dAppName))
-      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dAppName } })
+      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dapp_name: dAppName } })
     } else {
       dispatch(addFavoriteDApp(dAppName))
-      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dAppName } })
+      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dapp_name: dAppName } })
     }
   }
 

@@ -58,8 +58,10 @@ The `origin` property is preserved where it existed.
 | `Transaction Approved` | `chained`       | `Approved chained tx`                       | `Approved chained tx`          |
 
 **Note on `transfer`:** desktop never had a distinct dApp-transfer event — a WalletConnect
-transfer is emitted as `Transaction Sent` with `origin: 'wc'`. That behaviour is unchanged, so
-on desktop a dApp transfer still appears under `Transaction Sent` (distinguishable by `origin`),
+transfer is emitted as `Transaction Sent` with `origin: 'walletconnect'` (it used to be the
+one-off `'wc'`; normalised here since the event is being renamed anyway, so no extra history
+split). That behaviour is unchanged, so on desktop a dApp transfer still appears under
+`Transaction Sent` (distinguishable by `origin`),
 while on mobile it is `Transaction Approved` with `tx_type: 'transfer'`. Keep this asymmetry in
 mind when comparing dApp-transfer volume across platforms.
 
@@ -92,3 +94,23 @@ start appearing in PostHog (creating them now would point at empty data):
    `dapp_url` on all approval + message-signing events (dApp attribution), mobile
    `Wallet Unlocked` (biometric/app-resume path, previously untracked), and mobile
    `Disabled analytics` / `Enabled analytics` (mobile opt-out rate).
+
+## PostHog entities status (2026-07-07)
+
+**Created (use existing data):**
+
+- Cohort **Outliers / likely-internal (auto)** (id 174867) — auto-updating: `Wallet switched` >= 100 OR
+  `Copied address private key` >= 20 in the last 90 days. Exclude it from insights so one power-user does not
+  skew aggregates (median switches/user = 2, but one account = ~91% of all switches). Prefer unique-user counts
+  and median over sum/average for skewed metrics.
+- Insight **Wallet switches per user (distribution) — 90d** (short_id `u3yAuv9O`) — the long-tail histogram.
+
+**Still to do:**
+
+- **Post-release (needs new-event data):** save the Send funnel
+  (`Send Button Clicked → Send Destination Set → Send Amount Set → Send Review Reached → Transaction Sent | Transaction Failed`),
+  the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
+  (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
+  joined on `dapp_url`).
+- **At release:** the rename-proofing Actions above.
+- **Optional now:** a Stickiness insight on `Wallet unlocked` (engagement-frequency distribution).

@@ -65,6 +65,13 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
       )
     }, [addressesInGroup, defaultAddressHash])
 
+    useEffect(() => {
+      sendAnalytics({
+        event: AnalyticsEvent.WALLETCONNECT_CONNECTION_REQUESTED,
+        props: { dapp_url: metadata.url, dapp_name: metadata.name }
+      })
+    }, [metadata.url, metadata.name])
+
     const handleApproveProposal = async (signerAddress: Address) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
