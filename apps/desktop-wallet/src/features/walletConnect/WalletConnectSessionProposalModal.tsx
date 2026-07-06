@@ -156,7 +156,7 @@ const WalletConnectSessionProposalModal = memo(
 
         refreshActiveSessions()
 
-        sendAnalytics({ event: AnalyticsEvent.APPROVED_WALLETCONNECT_CONNECTION })
+        sendAnalytics({ event: AnalyticsEvent.WALLETCONNECT_CONNECTED })
 
         dispatch(
           showToast({

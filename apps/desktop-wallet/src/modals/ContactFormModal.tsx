@@ -50,7 +50,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
       onClose()
 
       sendAnalytics({
-        event: contactData.id ? AnalyticsEvent.EDITED_CONTACT : AnalyticsEvent.SAVED_NEW_CONTACT,
+        event: contactData.id ? AnalyticsEvent.CONTACT_EDITED : AnalyticsEvent.CONTACT_CREATED,
         props: {
           contact_name_length: contactData.name.length
         }
@@ -66,7 +66,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
       try {
         contactsStorage.deleteContact(activeWalletId, contact)
         dispatch(contactDeletedFromPersistentStorage(contact.id))
-        sendAnalytics({ event: AnalyticsEvent.DELETED_CONTACT })
+        sendAnalytics({ event: AnalyticsEvent.CONTACT_DELETED })
       } catch (error) {
         dispatch(contactDeletionFailed(getHumanReadableError(error, t('Could not delete contact.'))))
         sendAnalytics({ type: 'error', error, message: 'Could not delete contact' })

@@ -124,7 +124,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         console.log('✅ APPROVING: DONE!')
         console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', approvalResponse.acknowledged)
 
-        sendAnalytics({ event: AnalyticsEvent.WC_APPROVED_CONNECTION })
+        sendAnalytics({ event: AnalyticsEvent.WALLETCONNECT_CONNECTED })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {

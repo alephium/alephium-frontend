@@ -87,7 +87,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
         const txParams = getTransferTxParams(sendFlowData)
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
-        sendAnalytics({ event: AnalyticsEvent.SENT_TRANSACTION, props: { origin: 'send-modal' } })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'send-modal' } })
       }
 
       setStep('tx-sent')

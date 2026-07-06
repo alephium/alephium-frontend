@@ -39,7 +39,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
                   try {
                     await deleteContact(walletId, params.contactId)
 
-                    sendAnalytics({ event: AnalyticsEvent.CONTACT_DELETED_CONTACT })
+                    sendAnalytics({ event: AnalyticsEvent.CONTACT_DELETED })
                   } catch (error) {
                     const message = 'Could not delete contact'
 
@@ -63,7 +63,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
     try {
       await persistContact(walletId, formData)
 
-      sendAnalytics({ event: AnalyticsEvent.CONTACT_EDITTED_CONTACT })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_EDITED })
     } catch (error) {
       const message = 'Could not save contact'
 

@@ -69,7 +69,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       dispatch(newAddressesSaved([{ ...newAddress, isNew: true }]))
 
       sendAnalytics({
-        event: AnalyticsEvent.ADDRESS_GENERATED_NEW_ADDRESS,
+        event: AnalyticsEvent.ADDRESS_CREATED,
         props: {
           note: group === undefined ? 'groupless' : 'In specific group'
         }

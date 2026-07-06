@@ -101,7 +101,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       dispatch(newWalletGenerated(wallet))
       dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-      sendAnalytics({ event: AnalyticsEvent.IMPORTED_WALLET, props: { note: 'Entered mnemonic manually' } })
+      sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { note: 'Entered mnemonic manually' } })
 
       resetNavigation(
         navigation,

@@ -27,7 +27,7 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
     try {
       await persistContact(walletId, formData)
 
-      sendAnalytics({ event: AnalyticsEvent.CONTACT_CREATED_NEW_CONTACT })
+      sendAnalytics({ event: AnalyticsEvent.CONTACT_CREATED })
     } catch (error) {
       const message = 'Could not save contact'
 

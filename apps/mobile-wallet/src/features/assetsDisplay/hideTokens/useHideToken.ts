@@ -16,7 +16,7 @@ const useHideToken = (origin: 'quick_actions' | 'app_settings', onHide: () => vo
     if (tokenId !== ALPH.id) {
       dispatch(hideToken(tokenId))
       showToast({ text1: t('Asset hidden'), type: 'info' })
-      sendAnalytics({ event: AnalyticsEvent.HID_ASSET, props: { origin, tokenId } })
+      sendAnalytics({ event: AnalyticsEvent.TOKEN_HIDDEN, props: { origin, tokenId } })
     }
 
     onHide()

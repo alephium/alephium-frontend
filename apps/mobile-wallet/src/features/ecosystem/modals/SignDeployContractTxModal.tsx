@@ -35,7 +35,7 @@ const SignDeployContractTxModal = memo(
         const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'DEPLOY_CONTRACT' })
         dispatch(transactionSent(sentTx))
 
-        sendAnalytics({ event: AnalyticsEvent.APPROVED_CONTRACT_DEPLOYMENT, props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'deploy' } })
 
         onSuccess(data)
       }

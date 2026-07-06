@@ -43,7 +43,7 @@ const SignChainedTxModal = ({
       dispatch(transactionSent(sentTx))
     })
 
-    sendAnalytics({ event: AnalyticsEvent.APPROVED_CHAINED_TX, props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'chained' } })
 
     onSuccess(results)
   }, [dispatch, isLedger, onSuccess, sendAnalytics, txParams])

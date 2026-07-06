@@ -71,7 +71,7 @@ const SignUnsignedTxModal = memo(
           })
         )
 
-        sendAnalytics({ event: AnalyticsEvent.SIGNED_AND_SUBMITTED_UNSIGNED_TRANSACTION })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { tx_type: 'unsigned' } })
       }
     }
 

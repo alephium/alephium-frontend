@@ -49,7 +49,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         dispatch(walletUnlockedMobile(wallet))
         resetNavigation(navigation)
         sendAnalytics({
-          event: AnalyticsEvent.UNLOCKED_WALLET,
+          event: AnalyticsEvent.WALLET_UNLOCKED,
           props: {
             wallet_name_length: wallet.name.length,
             number_of_addresses: wallet.addresses.length,

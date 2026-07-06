@@ -48,7 +48,7 @@ const EditWalletNameModalContent = () => {
       dispatch(walletNameChanged(name))
       dispatch(walletRenamedInList({ walletId, name }))
 
-      sendAnalytics({ event: AnalyticsEvent.WALLET_EDITED_WALLET_NAME })
+      sendAnalytics({ event: AnalyticsEvent.WALLET_NAME_EDITED })
     } catch (error) {
       const message = 'Could not edit wallet name'
 

@@ -62,7 +62,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       try {
         saveNewAddresses([{ ...address, ...settings }])
 
-        sendAnalytics({ event: AnalyticsEvent.NEW_ADDRESS_CREATED, props: { label_length: settings.label.length } })
+        sendAnalytics({ event: AnalyticsEvent.ADDRESS_CREATED, props: { label_length: settings.label.length } })
         onClose()
       } catch (error) {
         dispatch(

@@ -133,7 +133,7 @@ export const SendContextProvider = ({
         }
 
         onSendSuccess()
-        sendAnalytics({ event: AnalyticsEvent.SEND_SENT_TRANSACTION })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT })
       } catch (error) {
         const message = t('Could not send transaction')
 

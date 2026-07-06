@@ -42,7 +42,7 @@ const EditWalletNameModal = memo(({ id }: ModalBaseProp) => {
       dispatch(newWalletNameStored(data.name))
       onClose()
 
-      sendAnalytics({ event: AnalyticsEvent.CHANGED_WALLET_NAME, props: { wallet_name_length: data.name.length } })
+      sendAnalytics({ event: AnalyticsEvent.WALLET_NAME_EDITED, props: { wallet_name_length: data.name.length } })
     } catch (error) {
       dispatch(walletNameStorageFailed(getHumanReadableError(error, t('Could not save new wallet name.'))))
       sendAnalytics({ type: 'error', message: 'Could not save new wallet name' })

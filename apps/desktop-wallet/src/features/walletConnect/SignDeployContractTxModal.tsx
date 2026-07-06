@@ -49,7 +49,7 @@ const SignDeployContractTxModal = memo(
       const sentTx = signAndSubmitTxResultToSentTx({ type: 'DEPLOY_CONTRACT', txParams, result })
       dispatch(transactionSent(sentTx))
 
-      sendAnalytics({ event: AnalyticsEvent.DEPLOYED_SMART_CONTRACT })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { tx_type: 'deploy' } })
     }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])

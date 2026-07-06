@@ -59,7 +59,7 @@ const SignExecuteScriptTxModal = ({
     const sentTx = signAndSubmitTxResultToSentTx({ type: 'EXECUTE_SCRIPT', txParams, result })
     dispatch(transactionSent(sentTx))
 
-    sendAnalytics({ event: AnalyticsEvent.CALLED_SMART_CONTRACT })
+    sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { tx_type: 'contract_call' } })
   }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
   const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])

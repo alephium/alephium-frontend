@@ -31,7 +31,7 @@ const SignTransferTxModal = memo(
         const result = await sendTransferTransactions(txParams)
 
         onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
-        sendAnalytics({ event: AnalyticsEvent.APPROVED_TRANSFER, props: { origin } })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_APPROVED, props: { origin, tx_type: 'transfer' } })
       }
     })
 

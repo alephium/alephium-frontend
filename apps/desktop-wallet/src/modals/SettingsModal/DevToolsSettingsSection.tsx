@@ -117,7 +117,7 @@ const KeyPairsSection = () => {
       await navigator.clipboard.writeText(address.publicKey)
       dispatch(copiedToClipboard(t('Public key copied.')))
 
-      sendAnalytics({ event: AnalyticsEvent.COPIED_ADDRESS_PUBLIC_KEY })
+      sendAnalytics({ event: AnalyticsEvent.PUBLIC_KEY_COPIED })
     } catch (error) {
       dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
       sendAnalytics({ type: 'error', message: 'Could not copy public key' })

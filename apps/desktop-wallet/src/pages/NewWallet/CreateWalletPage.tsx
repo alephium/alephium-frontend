@@ -84,9 +84,9 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
           enableLoading: false,
           enableToast: false
         })
-        sendAnalytics({ event: AnalyticsEvent.NEW_WALLET_IMPORTED, props: { wallet_name_length: walletName.length } })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { wallet_name_length: walletName.length } })
       } else {
-        sendAnalytics({ event: AnalyticsEvent.NEW_WALLET_CREATED, props: { wallet_name_length: walletName.length } })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED, props: { wallet_name_length: walletName.length } })
       }
 
       onButtonNext()

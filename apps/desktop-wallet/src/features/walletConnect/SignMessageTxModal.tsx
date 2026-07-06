@@ -21,7 +21,7 @@ const SignMessageTxModal = memo(({ txParams, onSuccess, ...props }: ModalBasePro
     const result = await signer.signMessage(txParams)
 
     onSuccess(result)
-    sendAnalytics({ event: AnalyticsEvent.SIGNED_MESSAGE })
+    sendAnalytics({ event: AnalyticsEvent.MESSAGE_SIGNED })
   }
 
   return (

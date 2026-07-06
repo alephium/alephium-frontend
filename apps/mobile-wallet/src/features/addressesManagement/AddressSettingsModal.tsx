@@ -53,7 +53,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
 
     dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 
-    sendAnalytics({ event: AnalyticsEvent.ADDRESS_EDITED_ADDRESS_SETTINGS })
+    sendAnalytics({ event: AnalyticsEvent.ADDRESS_SETTINGS_EDITED })
 
     dismissModal()
   }

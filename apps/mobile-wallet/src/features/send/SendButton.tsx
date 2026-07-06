@@ -35,7 +35,7 @@ const SendButton = ({
   const dispatch = useAppDispatch()
 
   const handleSendPress = () => {
-    sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_PRESSED, props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_CLICKED, props: { origin } })
 
     navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId, isNft })
     dispatch(closeAllModals())

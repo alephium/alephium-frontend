@@ -28,7 +28,7 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       await Clipboard.setStringAsync(publicKey)
 
       showToast({ text1: t('Public key copied!'), visibilityTime: ToastDuration.SHORT })
-      sendAnalytics({ event: AnalyticsEvent.COPIED_PUBLIC_KEY })
+      sendAnalytics({ event: AnalyticsEvent.PUBLIC_KEY_COPIED })
     } catch (error) {
       const message = 'Could not copy public key'
 

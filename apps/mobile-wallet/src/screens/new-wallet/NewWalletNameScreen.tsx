@@ -67,7 +67,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         dispatch(newWalletGenerated(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: AnalyticsEvent.CREATED_NEW_WALLET })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED })
         resetNavigation(
           navigation,
           deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess

@@ -61,7 +61,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
       onClose()
 
-      sendAnalytics({ event: AnalyticsEvent.CHANGED_ADDRESS_SETTINGS, props: { label_length: settings.label.length } })
+      sendAnalytics({ event: AnalyticsEvent.ADDRESS_SETTINGS_EDITED, props: { label_length: settings.label.length } })
       isDefaultAddressToggleEnabled && sendAnalytics({ event: AnalyticsEvent.CHANGED_DEFAULT_ADDRESS })
     } catch (e) {
       console.error(e)

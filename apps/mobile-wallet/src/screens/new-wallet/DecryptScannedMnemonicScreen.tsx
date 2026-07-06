@@ -82,7 +82,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         dispatch(newWalletImportedWithMetadata(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: AnalyticsEvent.IMPORTED_WALLET, props: { note: 'Scanned desktop wallet QR code' } })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { note: 'Scanned desktop wallet QR code' } })
 
         try {
           await importAddresses(wallet.id, addresses)
