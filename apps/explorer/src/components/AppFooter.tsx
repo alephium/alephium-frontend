@@ -29,7 +29,7 @@ const AppFooter = ({ className }: AppFooterProps) => {
       </LeftGroup>
       <RightGroup>
         <Version>v{version}</Version>
-        <ExternalLink href="https://github.com/alephium/explorer">{t('Source code')} ↗</ExternalLink>
+        <ExternalLink href="https://github.com/alephium/alephium-frontend/tree/master/apps/explorer">{t('Source code')} ↗</ExternalLink>
         <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
         <ExternalLink href="https://alephium.org/privacy-policy/">Privacy Policy ↗</ExternalLink>
         <SocialMediaIconList>
