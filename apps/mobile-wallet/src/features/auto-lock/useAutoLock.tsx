@@ -1,11 +1,10 @@
 import { appBecameInactive } from '@alephium/shared/store'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
-import BackgroundTimer from 'react-native-background-timer'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-let lockTimer: number | undefined
+let backgroundedAt: number | undefined
 
 const useAutoLock = (unlockApp: () => Promise<void>) => {
   const appState = useRef<AppStateStatus>('active')
@@ -27,17 +26,20 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
           if (autoLockSeconds === 0) {
             dispatch(appBecameInactive())
           } else {
-            clearBackgroundTimer()
-            lockTimer = BackgroundTimer.setTimeout(() => {
-              if (lockTimer) {
-                dispatch(appBecameInactive())
-              }
-            }, autoLockSeconds * 1000)
+            // eslint-disable-next-line react-compiler/react-compiler
+            backgroundedAt = Date.now()
           }
         } else if (nextAppState === 'active') {
-          clearBackgroundTimer()
+          const backgroundedForLong =
+            backgroundedAt !== undefined && Date.now() - backgroundedAt >= autoLockSeconds * 1000
+          // eslint-disable-next-line react-compiler/react-compiler
+          backgroundedAt = undefined
 
-          if (!isWalletUnlocked && !isCameraOpen) {
+          if (backgroundedForLong && isWalletUnlocked) {
+            dispatch(appBecameInactive())
+          }
+
+          if ((backgroundedForLong || !isWalletUnlocked) && !isCameraOpen) {
             unlockApp()
           }
         }
@@ -67,14 +69,6 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
     settingsLoadedFromStorage,
     unlockApp
   ])
-
-  const clearBackgroundTimer = () => {
-    if (lockTimer) {
-      BackgroundTimer.clearTimeout(lockTimer)
-      // eslint-disable-next-line react-compiler/react-compiler
-      lockTimer = undefined
-    }
-  }
 }
 
 export default useAutoLock
