@@ -4,10 +4,9 @@ import { AppState, AppStateStatus } from 'react-native'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-let backgroundedAt: number | undefined
-
 const useAutoLock = (unlockApp: () => Promise<void>) => {
   const appState = useRef<AppStateStatus>('active')
+  const backgroundedAt = useRef<number | undefined>(undefined)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -26,14 +25,12 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
           if (autoLockSeconds === 0) {
             dispatch(appBecameInactive())
           } else {
-            // eslint-disable-next-line react-compiler/react-compiler
-            backgroundedAt = Date.now()
+            backgroundedAt.current = Date.now()
           }
         } else if (nextAppState === 'active') {
           const backgroundedForLong =
-            backgroundedAt !== undefined && Date.now() - backgroundedAt >= autoLockSeconds * 1000
-          // eslint-disable-next-line react-compiler/react-compiler
-          backgroundedAt = undefined
+            backgroundedAt.current !== undefined && Date.now() - backgroundedAt.current >= autoLockSeconds * 1000
+          backgroundedAt.current = undefined
 
           if (backgroundedForLong && isWalletUnlocked) {
             dispatch(appBecameInactive())
