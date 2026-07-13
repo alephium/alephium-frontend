@@ -73,7 +73,7 @@ const SignUnsignedTxModal = memo(
 
         sendAnalytics({
           event: AnalyticsEvent.TRANSACTION_APPROVED,
-          props: { origin: props.origin, dapp_url: props.dAppUrl, tx_type: 'unsigned' }
+          props: { origin: props.origin, dapp_host: props.dAppUrl, tx_type: 'unsigned' }
         })
       }
     }

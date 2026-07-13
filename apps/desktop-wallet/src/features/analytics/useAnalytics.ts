@@ -4,6 +4,7 @@ import {
   AnalyticsProps,
   cleanExceptionMessage,
   getHumanReadableError,
+  normalizeAnalyticsProps,
   redactSensitiveData,
   throttleEvent
 } from '@alephium/shared'
@@ -50,7 +51,8 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
           }
         })
       } else {
-        const { event, props, options } = params
+        const { event, options } = params
+        const props = normalizeAnalyticsProps(params.props)
 
         throttleEvent(() => posthog.capture(event, props, options), event, props)
       }

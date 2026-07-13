@@ -67,8 +67,8 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
 
     useEffect(() => {
       sendAnalytics({
-        event: AnalyticsEvent.WALLETCONNECT_CONNECTION_REQUESTED,
-        props: { dapp_url: metadata.url, dapp_name: metadata.name }
+        event: AnalyticsEvent.DAPP_CONNECTION_REQUESTED,
+        props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
       })
     }, [metadata.url, metadata.name])
 
@@ -131,7 +131,10 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         console.log('✅ APPROVING: DONE!')
         console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', approvalResponse.acknowledged)
 
-        sendAnalytics({ event: AnalyticsEvent.WALLETCONNECT_CONNECTED })
+        sendAnalytics({
+          event: AnalyticsEvent.DAPP_CONNECTED,
+          props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+        })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {

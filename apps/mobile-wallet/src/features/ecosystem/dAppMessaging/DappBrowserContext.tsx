@@ -1,4 +1,4 @@
-import { isDappMessageHasherAllowed } from '@alephium/shared'
+import { AnalyticsEvent, isDappMessageHasherAllowed } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { selectAllAddressByType } from '@alephium/shared/store'
 import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
@@ -27,6 +27,7 @@ import { stringify } from '@alephium/web3'
 import { createContext, ReactNode, RefObject, useCallback, useContext, useEffect, useRef } from 'react'
 import WebView from 'react-native-webview'
 
+import { sendAnalytics } from '~/analytics'
 import { isConnectTipShownOnce, setConnectTipShownOnce } from '~/features/connectTip/connectTipStorage'
 import {
   connectionAuthorized,
@@ -162,6 +163,14 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
             }
           }
 
+          // Only the prompted connection is tracked. The `authorizedConnection` branch above silently
+          // re-connects a dApp the user already approved, so counting it would inflate connections and
+          // produce a 'connected' with no matching 'requested'.
+          sendAnalytics({
+            event: AnalyticsEvent.DAPP_CONNECTION_REQUESTED,
+            props: { origin: 'in_app_browser', dapp_host: senderHost, dapp_name: dAppName }
+          })
+
           dispatch(
             openModal({
               name: 'ConnectDappModal',
@@ -169,7 +178,14 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
               props: {
                 ...requestOptions,
                 dAppName,
-                onApprove: (data) => handleApproveDappConnection(data, messageId)
+                onApprove: (data) => {
+                  handleApproveDappConnection(data, messageId)
+
+                  sendAnalytics({
+                    event: AnalyticsEvent.DAPP_CONNECTED,
+                    props: { origin: 'in_app_browser', dapp_host: senderHost, dapp_name: dAppName }
+                  })
+                }
               }
             })
           )

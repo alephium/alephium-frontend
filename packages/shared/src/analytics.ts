@@ -55,8 +55,9 @@ export type AnalyticsProps = {
   from?: string
 
   // dApp identity, carried by every approval, message-signing and dApp-open event so that on-chain
-  // activity can be attributed back to the dApp that requested it.
-  dapp_url?: string
+  // activity can be attributed back to the dApp that requested it. Pass whatever URL or host you have
+  // - it is normalised to a bare host by `normalizeAnalyticsProps` before capture, see below.
+  dapp_host?: string
   dapp_name?: string
 
   // On `Transaction Approved`, which collapses the eight former per-type approval events.
@@ -103,6 +104,31 @@ export type AnalyticsProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $set?: Record<string, any>
 }
+
+// A dApp's identity is its host. The raw value reaching analytics is inconsistent depending on where
+// it came from: a WalletConnect proposal gives 'https://alphpad.com/', the dApp registry gives
+// 'https://app.linxlabs.org', and the in-app browser gives a bare 'app.linxlabs.org'. Left alone,
+// those are three different strings for one dApp, and the whole point of dApp attribution - joining
+// `Opened dApp -> dApp Connected -> Transaction Approved` on the dApp - silently fails.
+//
+// This mirrors how the wallet already identifies a dApp for authorization (host, lowercased, no
+// 'www.'), so analytics agrees with the security model rather than inventing a second identity.
+export const getDappHost = (url?: string): string | undefined => {
+  if (!url) return undefined
+
+  try {
+    const host = new URL(url.includes('://') ? url : `https://${url}`).host
+
+    return host ? host.toLowerCase().replace(/^www\./, '') : undefined
+  } catch {
+    return undefined
+  }
+}
+
+// Applied centrally in each app's `sendAnalytics` rather than at the ~20 emit sites, so a new call
+// site cannot reintroduce the inconsistency by passing a raw URL.
+export const normalizeAnalyticsProps = (props?: AnalyticsProps): AnalyticsProps | undefined =>
+  props?.dapp_host ? { ...props, dapp_host: getDappHost(props.dapp_host) } : props
 
 export const throttleEvent = (callback: () => void, event: string, props?: AnalyticsProps) => {
   const eventKey = `${event}:${props ? Object.entries(props).map(([key, value]) => `${key}:${value}`) : ''}`

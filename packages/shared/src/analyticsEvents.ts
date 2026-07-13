@@ -45,8 +45,12 @@ export const AnalyticsEvent = {
   TRANSACTION_SENT: 'Transaction Sent',
   TRANSACTION_APPROVED: 'Transaction Approved',
   MESSAGE_SIGNED: 'Message Signed',
-  WALLETCONNECT_CONNECTED: 'WalletConnect Connected',
-  WALLETCONNECT_CONNECTION_REQUESTED: 'WalletConnect Connection Requested',
+  // Transport-agnostic on purpose: a dApp connection happens either over WalletConnect or through the
+  // mobile in-app browser, and the `origin` prop says which. Naming them 'WalletConnect ...' would
+  // have meant the in-app browser (the primary surface on mobile) either went untracked or was
+  // recorded under a name that is simply untrue.
+  DAPP_CONNECTION_REQUESTED: 'dApp Connection Requested',
+  DAPP_CONNECTED: 'dApp Connected',
   SEND_DESTINATION_SET: 'Send Destination Set',
   SEND_AMOUNT_SET: 'Send Amount Set',
   SEND_REVIEW_REACHED: 'Send Review Reached',

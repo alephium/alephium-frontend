@@ -33,7 +33,7 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links?.website ?? '', dAppName: dApp.name })
     sendAnalytics({
       event: AnalyticsEvent.OPENED_DAPP,
-      props: { origin: 'dapp_card', dapp_name: dAppName, dapp_url: dApp.links?.website }
+      props: { origin: 'dapp_card', dapp_name: dAppName, dapp_host: dApp.links?.website }
     })
   }
 
@@ -62,7 +62,7 @@ export const FavoriteCustomDAppCard = ({ dAppUrl }: { dAppUrl: string }) => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl, dAppName: '' })
     sendAnalytics({
       event: AnalyticsEvent.OPENED_FAVORITE_CUSTOM_DAPP,
-      props: { origin: 'dapp_card', dapp_url: dAppUrl }
+      props: { origin: 'dapp_card', dapp_host: dAppUrl }
     })
   }
 

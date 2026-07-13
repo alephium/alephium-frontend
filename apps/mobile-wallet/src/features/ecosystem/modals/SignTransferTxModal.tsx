@@ -33,7 +33,7 @@ const SignTransferTxModal = memo(
         onSuccess({ ...result, gasPrice: BigInt(result.gasPrice) })
         sendAnalytics({
           event: AnalyticsEvent.TRANSACTION_APPROVED,
-          props: { origin, dapp_url: dAppUrl, tx_type: 'transfer' }
+          props: { origin, dapp_host: dAppUrl, tx_type: 'transfer' }
         })
       }
     })

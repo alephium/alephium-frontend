@@ -37,7 +37,7 @@ const SignTransferTxModal = memo(
       })
 
       onSuccess(result)
-      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'walletconnect', dapp_url: dAppUrl } })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'walletconnect', dapp_host: dAppUrl } })
     }, [dAppUrl, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])

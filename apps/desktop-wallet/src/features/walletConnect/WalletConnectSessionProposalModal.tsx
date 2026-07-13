@@ -66,8 +66,8 @@ const WalletConnectSessionProposalModal = memo(
 
     useEffect(() => {
       sendAnalytics({
-        event: AnalyticsEvent.WALLETCONNECT_CONNECTION_REQUESTED,
-        props: { dapp_url: metadata.url, dapp_name: metadata.name }
+        event: AnalyticsEvent.DAPP_CONNECTION_REQUESTED,
+        props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
       })
     }, [metadata.url, metadata.name, sendAnalytics])
 
@@ -163,7 +163,10 @@ const WalletConnectSessionProposalModal = memo(
 
         refreshActiveSessions()
 
-        sendAnalytics({ event: AnalyticsEvent.WALLETCONNECT_CONNECTED })
+        sendAnalytics({
+          event: AnalyticsEvent.DAPP_CONNECTED,
+          props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+        })
 
         dispatch(
           showToast({

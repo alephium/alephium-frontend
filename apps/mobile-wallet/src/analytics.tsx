@@ -4,6 +4,7 @@ import {
   AnalyticsProps,
   cleanExceptionMessage,
   getHumanReadableError,
+  normalizeAnalyticsProps,
   redactSensitiveData,
   throttleEvent
 } from '@alephium/shared'
@@ -69,9 +70,8 @@ export const sendAnalytics = (params: AnalyticsParams) => {
       }
     })
   } else {
-    const { event, props, options } = params
-
-    if (props) props.$ip = ''
+    const { event, options } = params
+    const props = normalizeAnalyticsProps(params.props)
 
     throttleEvent(() => posthog.capture(event, props, options), event, props)
   }

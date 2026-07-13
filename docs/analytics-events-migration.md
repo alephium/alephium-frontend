@@ -44,7 +44,7 @@ needed on the PostHog side. Events already under one shared name (see "Left unch
 | `Public Key Copied`       | `Copied address public key`         | `Copied public key`                |
 | `Send Button Clicked`     | `Send button clicked`               | `Send button pressed`              |
 | `Transaction Sent`        | `Sent transaction`                  | `Send: Sent transaction`           |
-| `WalletConnect Connected` | `Approved WalletConnect connection` | `WC: Approved connection`          |
+| `dApp Connected`          | `Approved WalletConnect connection` | `WC: Approved connection`          |
 | `Message Signed`          | `Signed message`                    | `Approved message signing`         |
 
 ## Transaction-approval collapse
@@ -82,14 +82,36 @@ properties and breaks any breakdown built on it. Both are now closed TypeScript 
 
 | Concept              | Old key(s)                                        | New key                       |
 | -------------------- | ------------------------------------------------- | ----------------------------- |
-| dApp URL             | `dAppUrl` (on `Opened favorite custom dApp`)      | `dapp_url`                    |
+| dApp identity        | `dAppUrl` / `dapp_url`                            | `dapp_host` (see below)       |
 | dApp name            | `dAppName` (on `Opened dApp`, `…dApp to favorites`) | `dapp_name`                 |
 | Token                | `tokenId`                                         | `token_id`                    |
-| dApp host            | `claimedHost`                                     | `claimed_host`                |
+| Claimed host         | `claimedHost`                                     | `claimed_host`                |
 | Auto-update versions | `fromVersion` / `toVersion`                       | `from_version` / `to_version` |
 
 The `dAppUrl` / `dAppName` cases were bugs: the same event carried `dapp_url` from one code path
 and `dAppUrl` from another, so no single breakdown ever saw all of its events.
+
+### `dapp_host`: a dApp has ONE identity
+
+`dapp_url` was renamed to `dapp_host` and its value is now normalised, because the smoke test on
+2026-07-13 showed the funnel could not actually be joined. The same dApp arrived in three formats
+depending on which code path emitted it:
+
+| Event                     | Source                | Value observed             |
+| ------------------------- | --------------------- | -------------------------- |
+| `Opened dApp`             | `dApp.links.website`  | `https://app.linxlabs.org` |
+| `dApp Connection Requested` | `senderHost`        | `app.linxlabs.org`         |
+| `Transaction Approved`    | `senderHost`          | `app.linxlabs.org`         |
+
+and separately `Opened dApp` for AlphPad produced `https://alphpad.com/`, with a trailing slash, so
+the format was not even stable within a single event. Three different strings for one dApp means
+`Opened dApp -> dApp Connected -> Transaction Approved` silently joins on nothing.
+
+Every value now passes through `getDappHost()` (host, lowercased, no `www.`), which is the same
+identity the wallet already uses to authorize a dApp - so analytics agrees with the security model
+instead of inventing a second identity. Crucially the normalisation happens **centrally**, inside
+each app's `sendAnalytics`, not at the ~20 emit sites: a new call site can pass a raw URL and still
+cannot reintroduce the inconsistency.
 
 ### `origin` values
 
@@ -167,7 +189,7 @@ start appearing in PostHog (creating them now would point at empty data):
    create an Action that ORs the old and new names, then repoint the 4 exploratory funnels
    (created 2026-07-06) at those Actions so they stay continuous across the slow upgrade tail.
 2. **Build insights on the new props/events** added in the 2026-07-06 instrumentation pass:
-   `dapp_url` on all approval + message-signing events (dApp attribution), mobile
+   `dapp_host` on all approval + message-signing events (dApp attribution), mobile
    `Wallet Unlocked` (biometric/app-resume path, previously untracked), and mobile
    `Disabled analytics` / `Enabled analytics` (mobile opt-out rate).
 
@@ -187,7 +209,7 @@ start appearing in PostHog (creating them now would point at empty data):
   (`Send Button Clicked → Send Destination Set → Send Amount Set → Send Review Reached → Transaction Sent | Transaction Failed`),
   the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
   (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
-  joined on `dapp_url`).
+  joined on `dapp_host`).
 - ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** - 16 Actions
   created in each project, named `<Unified Name> (bridged)`, each OR-ing the old name(s) with the new
   one. They were created *before* release on purpose: an Action can reference an event name that has
@@ -196,7 +218,7 @@ start appearing in PostHog (creating them now would point at empty data):
   event.
 - **At release:** the property/value bridging above (HogQL `coalesce` / `multiIf`). This is
   **separate work from the Actions** and easy to forget precisely because Actions do not cover it.
-  It applies to any insight that breaks down or filters on `origin`, `dapp_url`, `dapp_name`,
+  It applies to any insight that breaks down or filters on `origin`, `dapp_host`, `dapp_name`,
   `token_id`, `claimed_host`, or `from_version` / `to_version`.
 - **Optional now:** a Stickiness insight on `Wallet unlocked` (engagement-frequency distribution).
 

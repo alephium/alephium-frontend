@@ -37,7 +37,7 @@ const SignDeployContractTxModal = memo(
 
         sendAnalytics({
           event: AnalyticsEvent.TRANSACTION_APPROVED,
-          props: { origin, dapp_url: dAppUrl, tx_type: 'deploy' }
+          props: { origin, dapp_host: dAppUrl, tx_type: 'deploy' }
         })
 
         onSuccess(data)

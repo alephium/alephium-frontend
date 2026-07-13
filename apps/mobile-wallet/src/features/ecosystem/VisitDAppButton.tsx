@@ -31,7 +31,7 @@ const VisitDAppButton = ({ dAppName, onVisitDappButtonPress, buttonType, ...prop
       navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
       sendAnalytics({
         event: AnalyticsEvent.OPENED_DAPP,
-        props: { origin: 'quick_actions', dapp_name: dAppName, dapp_url: dApp.links.website }
+        props: { origin: 'quick_actions', dapp_name: dAppName, dapp_host: dApp.links.website }
       })
     }
   }
