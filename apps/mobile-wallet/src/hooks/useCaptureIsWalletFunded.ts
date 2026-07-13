@@ -9,13 +9,16 @@ import { getIsWalletFunded, storeIsWalletFunded } from '~/persistent-storage/wal
 const useCaptureIsWalletFunded = () => {
   const { data: worth, isLoading } = useFetchWalletWorth()
   const walletId = useAppSelector((s) => s.wallet.id)
+  const isAnalyticsEnabled = useAppSelector((s) => s.settings.analytics)
 
   useEffect(() => {
+    if (!isAnalyticsEnabled) return
+
     if (!walletId || isLoading || !worth || worth <= 0 || getIsWalletFunded(walletId)) return
 
     storeIsWalletFunded(walletId, true)
     sendAnalytics({ event: AnalyticsEvent.WALLET_FUNDED })
-  }, [walletId, worth, isLoading])
+  }, [walletId, worth, isLoading, isAnalyticsEnabled])
 }
 
 export default useCaptureIsWalletFunded

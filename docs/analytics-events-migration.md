@@ -225,6 +225,22 @@ Concrete post-release checks, each of which fails loudly if instrumentation is w
   of magnitude as desktop (previously it fired only on the PIN path, so it was drastically undercounted).
 - **`origin` value set.** After the upgrade tail, the distinct values of `origin` should be exactly
   the `AnalyticsOrigin` union and nothing else. A stray camelCase value means a site was missed.
+- **No `$ip`, no `$initial_*`.** `select count() from events where notEmpty(toString(properties.$ip))`
+  must be 0, and no person should carry `$initial_current_url` / `$initial_referrer` / `$initial_pathname`.
+  Both are blanked at the SDK boundary in each app (see `scrubEvent.ts` on desktop, `customAppProperties`
+  on mobile). A non-zero count means the scrubbing regressed - treat that as a privacy problem rather than
+  a data-quality one, because PostHog events are immutable and cannot be scrubbed after the fact.
+
+### Expect a one-time `Wallet Funded` spike, and do not read it as signal
+
+`Wallet Funded` fires the first time a wallet is observed with a non-zero worth, guarded by a
+per-wallet flag in local storage. That flag does not exist for wallets that were already funded before
+this release, so **every existing funded wallet fires `Wallet Funded` once** on its first launch after
+upgrading. The event means "we first noticed this wallet was funded", not "this wallet became funded".
+
+The Activation funnel is unaffected - those users have no preceding `Wallet Created`, so they never
+enter it - but the raw `Wallet Funded` trend will spike for the length of the upgrade tail. Read the
+funnel, not the trend, until it settles.
 
 ## dApp connections are transport-agnostic (`dApp Connection Requested` / `dApp Connected`)
 

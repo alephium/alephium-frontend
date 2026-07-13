@@ -10,13 +10,16 @@ const useCaptureIsWalletFunded = () => {
   const { data: worth, isLoading } = useFetchWalletWorth()
   const { sendAnalytics } = useAnalytics()
   const walletId = useAppSelector((s) => s.activeWallet.id)
+  const isAnalyticsEnabled = useAppSelector((s) => s.settings.analytics)
 
   useEffect(() => {
+    if (!isAnalyticsEnabled) return
+
     if (!walletId || isLoading || !worth || worth <= 0 || getIsWalletFunded(walletId)) return
 
     storeIsWalletFunded(walletId, true)
     sendAnalytics({ event: AnalyticsEvent.WALLET_FUNDED })
-  }, [walletId, worth, isLoading, sendAnalytics])
+  }, [walletId, worth, isLoading, sendAnalytics, isAnalyticsEnabled])
 }
 
 export default useCaptureIsWalletFunded
