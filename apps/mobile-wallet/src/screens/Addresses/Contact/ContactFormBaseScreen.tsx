@@ -1,6 +1,7 @@
 import { AddressHash, ContactFormData } from '@alephium/shared/types'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -14,6 +15,7 @@ import { validateIsAddressValid } from '~/utils/forms'
 interface ContactFormBaseScreenProps extends ScrollScreenProps {
   initialValues: ContactFormData
   onSubmit: (data: ContactFormData) => void
+  onDelete?: () => void
   buttonText?: string
 }
 
@@ -22,6 +24,7 @@ const requiredErrorMessage = i18n.t('This field is required')
 const ContactFormBaseScreen = ({
   initialValues,
   onSubmit,
+  onDelete,
   buttonText,
   headerOptions,
   ...props
@@ -43,7 +46,14 @@ const ContactFormBaseScreen = ({
       contentPaddingTop
       headerOptions={{
         type: 'stack',
-        headerRight: () => <NewContactCameraScanButton onNewContactHashDetected={handleQRCodeScan} />,
+        headerRight: () => (
+          <HeaderButtons>
+            {onDelete && (
+              <Button onPress={onDelete} iconProps={{ name: 'trash-outline' }} variant="alert" squared compact />
+            )}
+            <NewContactCameraScanButton onNewContactHashDetected={handleQRCodeScan} />
+          </HeaderButtons>
+        ),
         ...headerOptions
       }}
       bottomButtonsRender={() => (
@@ -93,5 +103,11 @@ const ContactFormBaseScreen = ({
     </ScrollScreen>
   )
 }
+
+const HeaderButtons = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`
 
 export default ContactFormBaseScreen
