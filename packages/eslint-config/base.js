@@ -69,12 +69,9 @@ module.exports = tseslint.config({
         }
       }
     ],
-    'prettier/prettier': [
-      'error',
-      {
-        endOfLine: 'auto'
-      }
-    ],
+    // Options come from .prettierrc.js. Setting them inline here too makes them drift from
+    // what `pnpm format` uses.
+    'prettier/prettier': 'error',
     'turbo/no-undeclared-env-vars': 'error'
   }
 })

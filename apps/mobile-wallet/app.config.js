@@ -1,7 +1,7 @@
-const { withProjectBuildGradle, withAndroidManifest } = require('@expo/config-plugins');
+const { withProjectBuildGradle, withAndroidManifest } = require('@expo/config-plugins')
 
 // Detect if this is a final production release build on EAS
-const isEasProduction = process.env.EAS_BUILD_PROFILE === 'production';
+const isEasProduction = process.env.EAS_BUILD_PROFILE === 'production'
 
 const withProjectGradleModifiers = (config) => {
   return withProjectBuildGradle(config, (modConfig) => {
@@ -13,26 +13,28 @@ allprojects {
         onlyIf { System.getenv("CI") != null || System.getenv("EAS_BUILD") != null }
     }
 }
-`;
+`
     if (!modConfig.modResults.contents.includes('SentryUpload')) {
-      modConfig.modResults.contents += sentryBypassBlock;
+      modConfig.modResults.contents += sentryBypassBlock
     }
-    return modConfig;
-  });
-};
+    return modConfig
+  })
+}
 
 // 2. NEW: Injects the <profileable android:shell="true" /> tag into your production manifest
 const withProfileableManifest = (config) => {
   return withAndroidManifest(config, (modConfig) => {
-    const mainApplication = modConfig.modResults.manifest.application[0];
+    const mainApplication = modConfig.modResults.manifest.application[0]
     if (!mainApplication['profileable']) {
-      mainApplication['profileable'] = [{
-        $: { 'android:shell': 'true' }
-      }];
+      mainApplication['profileable'] = [
+        {
+          $: { 'android:shell': 'true' }
+        }
+      ]
     }
-    return modConfig;
-  });
-};
+    return modConfig
+  })
+}
 
 export default {
   expo: {
@@ -110,7 +112,7 @@ export default {
     },
     plugins: [
       withProjectGradleModifiers,
-      (!isEasProduction ? withProfileableManifest : null),
+      !isEasProduction ? withProfileableManifest : null,
       [
         'expo-build-properties',
         {

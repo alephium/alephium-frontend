@@ -30,6 +30,13 @@ patchedDependencies:
   js-yaml@4.2.0: patches/js-yaml@4.2.0.patch # re-adds safeLoad/safeLoadAll/safeDump as aliases to load/loadAll/dump so read-yaml-file@1.1.0 (via @manypkg/get-packages@1.1.3, pinned by @changesets/cli@2.31.0) survives the js-yaml>=4 audit override. TODO: remove after upgrading to @changesets/cli@3 (its @manypkg/get-packages@3 drops read-yaml-file); see changesets#1762 / #1772
 
 overrides:
+  # Single prettier 3 across the workspace. autoInstallPeers pulls a second copy in for
+  # eslint-plugin-prettier (which declares prettier as a peer), and the two versions format
+  # nested ternaries differently: `pnpm format` (root prettier) and `pnpm lint`
+  # (eslint-plugin-prettier's copy) then rewrite each other's output forever.
+  # Scoped to >=3 on purpose: @changesets/* pin prettier ^2.7.1 and call its sync format(),
+  # which prettier 3 made async — forcing them to 3.x breaks `pnpm changeset`.
+  'prettier@>=3': '=3.2.4'
   'ws@>=8.0.0 <8.21.0': '=8.21.0'
   'file-type@>=13.0.0 <21.3.2': '=21.3.2'
   'postcss@<8.5.10': '=8.5.10'
