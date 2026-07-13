@@ -1,11 +1,11 @@
-// AUTO-ORGANISED analytics event catalog — the single source of truth for every event
+// AUTO-ORGANISED analytics event catalog - the single source of truth for every event
 // name emitted by the desktop and mobile wallets.
 //
 // RULES:
 //  - A value is the exact string sent to PostHog. Changing a value SPLITS that event's
 //    history in PostHog, so treat values as immutable once shipped.
 //  - SHARED + UNIFIED events use one constant across both apps and can be funnelled together
-//    directly. UNIFIED are the canonical cross-platform names introduced on 2026-07-06 — see
+//    directly. UNIFIED are the canonical cross-platform names introduced on 2026-07-06 - see
 //    docs/analytics-events-migration.md for the old→new mapping and how to bridge the history
 //    split with a PostHog Action.
 //  - DESKTOP-only / MOBILE-only events have no cross-platform twin and keep their legacy names.
@@ -15,7 +15,7 @@
 //    values from this catalog can be captured.
 
 export const AnalyticsEvent = {
-  // ── SHARED (identical string in both apps — funnel-ready) ───────
+  // ── SHARED (identical string in both apps - funnel-ready) ───────
   CONSOLIDATED_UTXOS: 'Consolidated UTXOs',
   DELETED_WALLET: 'Deleted wallet',
   DISABLED_ANALYTICS: 'Disabled analytics',
@@ -25,7 +25,7 @@ export const AnalyticsEvent = {
   SAVED_CUSTOM_NETWORK_SETTINGS: 'Saved custom network settings',
   WC_DISCONNECTED_FROM_DAPP: 'WC: Disconnected from dApp',
 
-  // ── UNIFIED (canonical cross-platform names — added 2026-07-06; see docs/analytics-events-migration.md) ──
+  // ── UNIFIED (canonical cross-platform names - added 2026-07-06; see docs/analytics-events-migration.md) ──
   // Fired when the user enters the create / import / watch-only flow, carrying a `method` prop. This
   // is the funnel entry point: without it, `Wallet Created` has no denominator and onboarding
   // completion rate cannot be computed on either platform.

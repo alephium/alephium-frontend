@@ -19,7 +19,13 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
-const posthog = new PostHog(PUBLIC_POSTHOG_KEY, {
+// Both default to production behaviour: the real project key, and no capturing in dev. Set them in
+// a local .env to point a dev build at a throwaway PostHog project and actually emit events, which
+// is the only way to verify instrumentation end-to-end before shipping it.
+const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY || PUBLIC_POSTHOG_KEY
+const captureInDev = process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true'
+
+const posthog = new PostHog(posthogKey, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
   customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),
@@ -83,7 +89,7 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
-  const shouldOptOut = !settingsLoadedFromStorage || __DEV__
+  const shouldOptOut = !settingsLoadedFromStorage || (__DEV__ && !captureInDev)
   const canCaptureUserProperties = !shouldOptOut && analytics && !!analyticsId
   const wasAnalyticsEnabled = useRef<boolean | undefined>(undefined)
 

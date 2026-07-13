@@ -19,12 +19,12 @@ name forever, and only clients running the new build emit the new name. Because 
 upgrade slowly, expect a **transition window** where both old and new names appear.
 
 To analyse across the split, create a PostHog **Action** that ORs the old + new names (per the
-tables below) and point insights/funnels at the Action — no data is lost, and no rename is
+tables below) and point insights/funnels at the Action - no data is lost, and no rename is
 needed on the PostHog side. Events already under one shared name (see "Left unchanged") did
 **not** change and need no bridging.
 
 > **Actions bridge event names only.** There is no Action-equivalent for a renamed *property key*
-> or *property value* — see "Property and value renames" below for how to bridge those (HogQL
+> or *property value* - see "Property and value renames" below for how to bridge those (HogQL
 > `coalesce`, applied per insight). Do not assume the Actions above cover the property work.
 
 ## Unified cross-platform pairs
@@ -58,10 +58,10 @@ The `origin` property is preserved where it existed.
 | `Transaction Approved` | `contract_call` | `Called smart contract`                     | `Approved contract call`       |
 | `Transaction Approved` | `deploy`        | `Deployed smart contract`                   | `Approved contract deployment` |
 | `Transaction Approved` | `unsigned`      | `Signed and submitted unsigned transaction` | `Approved unsigned tx`         |
-| `Transaction Approved` | `transfer`      | — (see note)                                | `Approved transfer`            |
+| `Transaction Approved` | `transfer`      | - (see note)                                | `Approved transfer`            |
 | `Transaction Approved` | `chained`       | `Approved chained tx`                       | `Approved chained tx`          |
 
-**Note on `transfer`:** desktop never had a distinct dApp-transfer event — a WalletConnect
+**Note on `transfer`:** desktop never had a distinct dApp-transfer event - a WalletConnect
 transfer is emitted as `Transaction Sent` with `origin: 'walletconnect'` (it used to be the
 one-off `'wc'`; normalised here since the event is being renamed anyway, so no extra history
 split). That behaviour is unchanged, so on desktop a dApp transfer still appears under
@@ -73,7 +73,7 @@ mind when comparing dApp-transfer volume across platforms.
 
 Event names were not the only thing that diverged. Property **keys** and the values of the
 `origin` property had drifted into three conventions (snake_case, camelCase, kebab-case), and in
-several cases the *same concept* was spelled two ways — which silently splits it into two PostHog
+several cases the *same concept* was spelled two ways - which silently splits it into two PostHog
 properties and breaks any breakdown built on it. Both are now closed TypeScript unions in
 [`packages/shared/src/analytics.ts`](../packages/shared/src/analytics.ts) (`AnalyticsProps` and
 `AnalyticsOrigin`), so an off-convention key or value fails to compile rather than reaching PostHog.
@@ -95,7 +95,7 @@ and `dAppUrl` from another, so no single breakdown ever saw all of its events.
 
 The important one: **desktop and mobile named the same surface differently** (`token_details` vs
 `tokenDetails`, `address_details` vs `addressDetails`), so `origin` breakdowns could not be
-compared across the two apps — defeating the point of the unified event names above. All values
+compared across the two apps - defeating the point of the unified event names above. All values
 are now snake_case.
 
 | Old value(s)                                       | New value                          |
@@ -137,16 +137,16 @@ multiIf(
 )
 ```
 
-This has to be applied per insight — there is no project-wide mapping — so keep the affected
+This has to be applied per insight - there is no project-wide mapping - so keep the affected
 insights listed below. Once the old builds have aged out of the reporting window, the `coalesce` /
 `multiIf` wrappers can be dropped and the raw property used directly.
 
 ## Left unchanged (already shared, or single-platform)
 
-- **Already shared** (identical string in both apps, so already funnel-ready — renaming would
+- **Already shared** (identical string in both apps, so already funnel-ready - renaming would
   split history for no gain): `Consolidated UTXOs`, `Deleted wallet`, `Region changed`,
   `Saved custom network settings`, `WC: Disconnected from dApp`, `Error`.
-- **Single-platform** events (no cross-platform twin to unify) keep their existing names — e.g.
+- **Single-platform** events (no cross-platform twin to unify) keep their existing names - e.g.
   the desktop `Creating wallet: …` onboarding steps and the mobile `Action card: …`,
   `Opened dApp`, `Backed-up mnemonic`, etc.
 
@@ -175,11 +175,11 @@ start appearing in PostHog (creating them now would point at empty data):
 
 **Created (use existing data):**
 
-- Cohort **Outliers / likely-internal (auto)** (id 174867) — auto-updating: `Wallet switched` >= 100 OR
+- Cohort **Outliers / likely-internal (auto)** (id 174867) - auto-updating: `Wallet switched` >= 100 OR
   `Copied address private key` >= 20 in the last 90 days. Exclude it from insights so one power-user does not
   skew aggregates (median switches/user = 2, but one account = ~91% of all switches). Prefer unique-user counts
   and median over sum/average for skewed metrics.
-- Insight **Wallet switches per user (distribution) — 90d** (short_id `u3yAuv9O`) — the long-tail histogram.
+- Insight **Wallet switches per user (distribution) - 90d** (short_id `u3yAuv9O`) - the long-tail histogram.
 
 **Still to do:**
 
@@ -188,7 +188,7 @@ start appearing in PostHog (creating them now would point at empty data):
   the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
   (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
   joined on `dapp_url`).
-- ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** — 16 Actions
+- ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** - 16 Actions
   created in each project, named `<Unified Name> (bridged)`, each OR-ing the old name(s) with the new
   one. They were created *before* release on purpose: an Action can reference an event name that has
   no data yet, so pointing insights at them now means they stay continuous straight through the
