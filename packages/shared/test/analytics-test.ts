@@ -1,8 +1,24 @@
-import { getDappHost, normalizeAnalyticsProps } from '../src/analytics'
+import { normalizeAnalyticsProps } from '../src/analytics'
+import { getDappHost, getHostFromUrl, normalizeHost } from '../src/utils/dApps'
 
-// The three formats that reach analytics in the wild, observed in the 2026-07-13 smoke test:
-// WalletConnect metadata.url, the dApp registry's links.website, and the in-app browser's senderHost.
-// They must all collapse to the same host or the dApp funnel cannot be joined.
+describe('the analytics dApp identity agrees with the authorization one', () => {
+  it.each([
+    'https://alphpad.com/',
+    'https://app.linxlabs.org',
+    'https://WWW.AlphPad.com',
+    'https://app.linxlabs.org/swap?from=ALPH',
+    'https://localhost:3000/x'
+  ])('%s resolves to the same host through both paths', (url) => {
+    expect(getDappHost(url)).toBe(normalizeHost(getHostFromUrl(url)))
+  })
+})
+
+describe('getHostFromUrl stays strict', () => {
+  it.each(['about:blank', 'data:text/html,<h1>hi</h1>', 'not a url', ''])('rejects %s', (input) => {
+    expect(getHostFromUrl(input)).toBeUndefined()
+  })
+})
+
 describe('getDappHost', () => {
   it('Collapses the formats a single dApp arrives in into one host', () => {
     expect(getDappHost('https://app.linxlabs.org')).toBe('app.linxlabs.org')

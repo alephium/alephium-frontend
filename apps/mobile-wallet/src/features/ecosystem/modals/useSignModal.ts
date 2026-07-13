@@ -1,9 +1,9 @@
 import { getHumanReadableError } from '@alephium/shared'
 import { SignTxModalType } from '@alephium/shared/types'
+import { getHostFromUrl } from '@alephium/shared/utils'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { getHostFromUrl } from '~/features/ecosystem/ecosystemUtils'
 import useUnverifiedDappGuard from '~/features/ecosystem/unverifiedDapps/useUnverifiedDappGuard'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'

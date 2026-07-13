@@ -1,3 +1,5 @@
+import { getDappHost } from './utils/dApps'
+
 const eventThrottleStatus: Record<string, boolean> = {}
 
 const ANALYTICS_THROTTLING_TIMEOUT = 5000
@@ -107,26 +109,6 @@ export type AnalyticsProps = {
   // PostHog special property: `$set` carries person properties on `User identified`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $set?: Record<string, any>
-}
-
-// A dApp's identity is its host. The raw value reaching analytics is inconsistent depending on where
-// it came from: a WalletConnect proposal gives 'https://alphpad.com/', the dApp registry gives
-// 'https://app.linxlabs.org', and the in-app browser gives a bare 'app.linxlabs.org'. Left alone,
-// those are three different strings for one dApp, and the whole point of dApp attribution - joining
-// `Opened dApp -> dApp Connected -> Transaction Approved` on the dApp - silently fails.
-//
-// This mirrors how the wallet already identifies a dApp for authorization (host, lowercased, no
-// 'www.'), so analytics agrees with the security model rather than inventing a second identity.
-export const getDappHost = (url?: string): string | undefined => {
-  if (!url) return undefined
-
-  try {
-    const host = new URL(url.includes('://') ? url : `https://${url}`).host
-
-    return host ? host.toLowerCase().replace(/^www\./, '') : undefined
-  } catch {
-    return undefined
-  }
 }
 
 // Applied centrally in each app's `sendAnalytics` rather than at the ~20 emit sites, so a new call

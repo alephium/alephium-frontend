@@ -3,7 +3,7 @@ import { throttledClient } from '@alephium/shared/api'
 import { selectAllAddressByType } from '@alephium/shared/store'
 import { getChainedTxPropsFromSignChainedTxParams } from '@alephium/shared/transactions'
 import { NetworkName, SignTxModalCommonProps } from '@alephium/shared/types'
-import { getNetworkIdFromNetworkName, isInsufficientFundsError } from '@alephium/shared/utils'
+import { getHostFromUrl, getNetworkIdFromNetworkName, isInsufficientFundsError } from '@alephium/shared/utils'
 import {
   buildDeployContractTxQuery,
   buildExecuteScriptTxQuery,
@@ -50,7 +50,6 @@ import {
   useNetwork,
   validateChainedTxsNetwork
 } from '~/features/ecosystem/dAppMessaging/dAppMessagingUtils'
-import { getHostFromUrl } from '~/features/ecosystem/ecosystemUtils'
 import useUnverifiedDappGuard from '~/features/ecosystem/unverifiedDapps/useUnverifiedDappGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'

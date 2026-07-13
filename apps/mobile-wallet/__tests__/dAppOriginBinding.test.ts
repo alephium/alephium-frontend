@@ -1,14 +1,10 @@
+import { getHostFromUrl, normalizeHost } from '@alephium/shared/utils'
 import type { WebViewMessageEvent } from 'react-native-webview'
 
 import { matchRequestOptionsToAuthorizedConnection } from '~/features/ecosystem/authorizedConnections/authorizedConnectionsUtils'
 import { parseIncomingWebViewDappMessageEvent } from '~/features/ecosystem/dAppMessaging/incomingDappMessage'
 import type { DApp } from '~/features/ecosystem/ecosystemTypes'
-import {
-  getHostFromUrl,
-  getKnownDappHosts,
-  isDappHostVerified,
-  normalizeHost
-} from '~/features/ecosystem/ecosystemUtils'
+import { getKnownDappHosts, isDappHostVerified } from '~/features/ecosystem/ecosystemUtils'
 
 const makeMessageEvent = (data: string, url: string) =>
   ({ nativeEvent: { data, url } }) as unknown as WebViewMessageEvent
