@@ -51,6 +51,7 @@ const SendNavigation = ({
 
   return (
     <SendContextProvider
+      origin={params?.origin}
       originAddressHash={originAddressHash}
       destinationAddressHash={params?.destinationAddressHash}
       tokenId={params?.tokenId}

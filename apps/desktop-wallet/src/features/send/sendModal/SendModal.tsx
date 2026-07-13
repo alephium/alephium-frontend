@@ -1,4 +1,4 @@
-import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError, SendOrigin } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import {
   getChainedTxPropsFromSignChainedTxParams,
@@ -39,11 +39,11 @@ import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import { signer } from '@/signer'
 import { transactionBuildFailed, transactionSendFailed } from '@/storage/transactions/transactionsActions'
 
-export type SendModalProps = TransferTxModalData
+export type SendModalProps = TransferTxModalData & { origin: SendOrigin }
 
 type Step = 'addresses' | 'build-tx' | 'info-check' | 'password-check' | 'tx-sent'
 
-const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps) => {
+const SendModal = memo(({ id, origin, ...initialTxData }: ModalBaseProp & SendModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
@@ -88,12 +88,12 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
       }
 
-      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'send_modal' } })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin } })
 
       setStep('tx-sent')
     } catch (error) {
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin: 'send_modal' } })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin } })
       sendAnalytics({ type: 'error', message: 'Could not send tx', category: 'send' })
     } finally {
       setIsLoading(false)
@@ -104,6 +104,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
     isLedger,
     isSweeping,
     onLedgerError,
+    origin,
     sendAnalytics,
     shouldChainTxsForGasRefill,
     t,
@@ -137,7 +138,7 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
       setIsLoading(true)
       setIsSweeping(shouldSweep)
 
-      sendAnalytics({ event: AnalyticsEvent.SEND_AMOUNT_SET })
+      sendAnalytics({ event: AnalyticsEvent.SEND_AMOUNT_SET, props: { origin } })
 
       try {
         if (shouldSweep) {
@@ -188,16 +189,16 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
 
       setIsLoading(false)
     },
-    [dispatch, gasRefillGroupedAddress, handleTransactionBuildError, isLedger, sendAnalytics]
+    [dispatch, gasRefillGroupedAddress, handleTransactionBuildError, isLedger, origin, sendAnalytics]
   )
 
   const moveToSecondStep = useCallback(
     (data: TransferAddressesTxModalOnSubmitData) => {
       setAddressesData(data)
       setStep('build-tx')
-      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET })
+      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET, props: { origin } })
     },
-    [sendAnalytics]
+    [origin, sendAnalytics]
   )
 
   useEffect(() => {
@@ -207,8 +208,8 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
   }, [dispatch, id, step])
 
   useEffect(() => {
-    if (step === 'info-check') sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED })
-  }, [step, sendAnalytics])
+    if (step === 'info-check') sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED, props: { origin } })
+  }, [origin, step, sendAnalytics])
 
   return (
     <CenteredModal id={id} title={t('Send')} onClose={onClose} isLoading={isLoading} focusMode hasFooterButtons>

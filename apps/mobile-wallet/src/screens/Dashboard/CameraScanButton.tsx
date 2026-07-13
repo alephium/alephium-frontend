@@ -21,7 +21,7 @@ const CameraScanButton = () => {
 
   const handleValidAddressScanned = (addressHash: AddressHash) => {
     if (contacts.some((c) => c.address === addressHash)) {
-      navigation.navigate('SendNavigation', { destinationAddressHash: addressHash })
+      navigation.navigate('SendNavigation', { origin: 'qr_code_scan', destinationAddressHash: addressHash })
       sendAnalytics({ event: AnalyticsEvent.CAPTURED_CONTACT_ADDRESS_BY_SCANNING_QR_CODE_FROM_DASHBOARD })
     } else {
       dispatch(openModal({ name: 'AddressQRCodeScanActionsModal', props: { addressHash } }))

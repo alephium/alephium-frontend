@@ -42,7 +42,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
-  const { setToAddress, setFromAddress, toAddress } = useSendContext()
+  const { setToAddress, setFromAddress, toAddress, origin } = useSendContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const { screenScrollHandler } = useHeaderContext()
@@ -100,10 +100,10 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const handleContinuePress = useCallback(
     (formData: FormData) => {
       setToAddress(formData.toAddressHash)
-      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET })
+      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET, props: { origin } })
       navigation.navigate(nextScreen)
     },
-    [navigation, nextScreen, setToAddress]
+    [navigation, nextScreen, origin, setToAddress]
   )
 
   const openSelectContactModal = () =>

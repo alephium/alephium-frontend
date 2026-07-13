@@ -133,12 +133,29 @@ are now snake_case.
 | `walletConnectPairing`                             | `walletconnect_pairing`            |
 | `selectAddressModal`                               | `select_address_modal`             |
 | `connectDappModal`                                 | `connect_dapp_modal`               |
-| `send-modal`                                       | `send_modal`                       |
+| `send-modal`                                       | (removed, see below)               |
 | `in-app-browser`                                   | `in_app_browser`                   |
 | `in-app-browser:insufficient-funds`                | `in_app_browser:insufficient_funds`|
 | `walletconnect:insufficient-funds`                 | `walletconnect:insufficient_funds` |
 | `wc` (desktop dApp transfer only)                  | `walletconnect`                    |
 | `Auto lock`                                        | `auto_lock`                        |
+
+### `origin` on the send funnel now means the entry point, not the surface
+
+`send-modal` has no replacement value. It used to be the `origin` of desktop's terminal send event, and
+it said nothing: every send in the modal was a send in the modal, so a breakdown on it had exactly one
+bucket. Mobile sent no `origin` at all, so the two ends of the send funnel could not be joined.
+
+Now the **entry point** (`dashboard`, `overview_page`, `address_details`, `token_details`, `contact`,
+`qr_code_scan`, typed as `SendOrigin`) is captured once where the send starts and carried unchanged
+through `Send Button Clicked` -> `Send Destination Set` -> `Send Amount Set` -> `Send Review Reached` ->
+`Transaction Sent` / `Transaction Failed`, on both wallets. So the funnel can finally be broken down by
+where the send began, and the answer to "which surface actually converts" is a breakdown rather than a
+guess.
+
+When comparing against history, note that pre-migration `Sent transaction` carries `origin: 'send-modal'`
+on desktop and no `origin` on mobile. There is nothing to coalesce it to; treat the old value as "desktop,
+send flow, entry point unknown".
 
 ### Bridging these in PostHog (there is no Action for this)
 

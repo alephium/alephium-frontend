@@ -33,7 +33,6 @@ export type AnalyticsOrigin =
   | 'dapp_card'
   | 'token_list_item'
   | 'hidden_assets_list_item'
-  | 'send_modal'
   | 'qr_code_scan'
   | 'origin_address'
   | 'destination_address'
@@ -48,6 +47,13 @@ export type AnalyticsOrigin =
   | 'walletconnect:insufficient_funds'
   | 'in_app_browser'
   | 'in_app_browser:insufficient_funds'
+
+// Set at the send entry point and carried unchanged through every send funnel event, so the funnel can
+// be broken down by where the send began.
+export type SendOrigin = Extract<
+  AnalyticsOrigin,
+  'dashboard' | 'overview_page' | 'address_details' | 'token_details' | 'contact' | 'qr_code_scan'
+>
 
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
