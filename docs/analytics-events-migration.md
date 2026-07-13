@@ -193,25 +193,15 @@ start appearing in PostHog (creating them now would point at empty data):
    `Wallet Unlocked` (biometric/app-resume path, previously untracked), and mobile
    `Disabled analytics` / `Enabled analytics` (mobile opt-out rate).
 
-## PostHog entities status (2026-07-07)
-
-**Created (use existing data):**
-
-- Cohort **Outliers / likely-internal (auto)** (id 174867) - auto-updating: `Wallet switched` >= 100 OR
-  `Copied address private key` >= 20 in the last 90 days. Exclude it from insights so one power-user does not
-  skew aggregates (median switches/user = 2, but one account = ~91% of all switches). Prefer unique-user counts
-  and median over sum/average for skewed metrics.
-- Insight **Wallet switches per user (distribution) - 90d** (short_id `u3yAuv9O`) - the long-tail histogram.
-
-**Still to do:**
+## Follow-ups
 
 - **Post-release (needs new-event data):** save the Send funnel
   (`Send Button Clicked → Send Destination Set → Send Amount Set → Send Review Reached → Transaction Sent | Transaction Failed`),
   the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
   (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
   joined on `dapp_host`).
-- ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** - 16 Actions
-  created in each project, named `<Unified Name> (bridged)`, each OR-ing the old name(s) with the new
+- ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** - A bridging Action
+  created per renamed event, in each project, named `<Unified Name> (bridged)`, each OR-ing the old name(s) with the new
   one. They were created *before* release on purpose: an Action can reference an event name that has
   no data yet, so pointing insights at them now means they stay continuous straight through the
   upgrade tail with no release-day scramble. Build every new insight against the Action, not the raw
@@ -226,16 +216,56 @@ start appearing in PostHog (creating them now would point at empty data):
 
 Concrete post-release checks, each of which fails loudly if instrumentation is wrong:
 
-- **Property fill rate.** `dapp_url` should be set on ~100% of `Transaction Approved` (it was 0%).
+- **Property fill rate.** `dapp_host` should be set on ~100% of `Transaction Approved`.
   Anything materially lower means an emit site was missed.
 - **Funnel monotonicity.** `Send Button Clicked` >= `Send Destination Set` >= `Send Amount Set` >=
   `Send Review Reached` >= `Transaction Sent`. An inversion means a double-fire or a path that
   skips a step.
 - **Cross-platform reconciliation.** Mobile `Wallet Unlocked` per user should now be the same order
-  of magnitude as desktop (it was ~300x lower, because only the PIN path was tracked).
-- **Error cardinality collapse.** Count distinct `reason` values on `Error` before vs after. The
-  redaction pass strips tx hashes and addresses, so distinct reasons should drop sharply while
-  total error volume stays flat — that is what makes `reason` groupable and "top 5 failure modes"
-  answerable.
+  of magnitude as desktop (previously it fired only on the PIN path, so it was drastically undercounted).
 - **`origin` value set.** After the upgrade tail, the distinct values of `origin` should be exactly
   the `AnalyticsOrigin` union and nothing else. A stray camelCase value means a site was missed.
+
+## dApp connections are transport-agnostic (`dApp Connection Requested` / `dApp Connected`)
+
+A dApp connection happens over one of two transports: **WalletConnect** (both apps) or the **mobile
+in-app browser** (Ecosystem tab). The smoke test on 2026-07-13 caught that connecting through the
+in-app browser emitted **no event at all** - `ConnectDappModal` and `DappBrowserContext` had no
+instrumentation - so the dApp funnel had a hole exactly where most mobile users connect. `Opened dApp`
+fired, `Transaction Approved` would fire, and nothing in between.
+
+Rather than fire an event called `WalletConnect Connected` for a connection that has nothing to do
+with WalletConnect, the two events are named for the concept and carry the transport in `origin`:
+
+| Event                       | `origin`                            | Fired from                               |
+| --------------------------- | ----------------------------------- | ---------------------------------------- |
+| `dApp Connection Requested` | `walletconnect` \| `in_app_browser` | the approval prompt is shown to the user |
+| `dApp Connected`            | `walletconnect` \| `in_app_browser` | the user approves it                     |
+
+Both carry `dapp_host` and `dapp_name`. Desktop has no in-app browser, so `origin` there is always
+`walletconnect`.
+
+Note the in-app browser silently re-connects a dApp the user has already authorized, without showing
+the prompt. That path is deliberately **not** tracked: counting it would inflate connections and
+produce a `dApp Connected` with no matching `dApp Connection Requested`, breaking the funnel.
+
+The funnel is therefore
+`Opened dApp -> dApp Connection Requested -> dApp Connected -> Transaction Approved`, joinable on
+`dapp_host` and breakable down by `origin` to compare the two transports.
+
+## Onboarding funnel entry point (`Onboarding Started`)
+
+Neither app could compute an onboarding completion rate before this release: `Wallet Created` had no
+denominator. Desktop's earliest step event was "clicked next on the password screen", already deep in
+the flow, and mobile had no step events at all.
+
+`Onboarding Started` now fires the moment the user enters a flow, carrying `method`
+(`create` | `import` | `watch_only`) - desktop from the welcome screen's two buttons, mobile from the
+landing screen and the watch-only entry. The funnel is then
+`Onboarding Started → Wallet Created` (or `Wallet Imported`) `→ Wallet Funded → Transaction Sent`,
+comparable across both apps.
+
+The nine legacy desktop `Creating wallet: …` step events are untouched and keep working; they give
+desktop finer intra-flow detail that mobile does not have. They are not worth replicating on mobile,
+whose creation flow is genuinely shorter (the mnemonic backup is deferred to a separate flow rather
+than being part of creation).
