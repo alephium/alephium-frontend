@@ -57,6 +57,9 @@ export const AnalyticsEvent = {
   TRANSACTION_FAILED: 'Transaction Failed',
   WALLET_FUNDED: 'Wallet Funded',
   RECEIVE_ADDRESS_COPIED: 'Receive Address Copied',
+  // Mobile only. Desktop's equivalent toggle keeps its shipped `Enabled/Disabled password requirement`
+  // names, because renaming them would split their history.
+  AUTHENTICATION_SETTINGS_CHANGED: 'Authentication Settings Changed',
 
   // ── DESKTOP wallet ──────────────────────────────────────────────
   ADDRESS_ORDER_CHANGED: 'Address order changed',

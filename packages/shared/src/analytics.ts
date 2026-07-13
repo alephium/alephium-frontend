@@ -77,6 +77,10 @@ export type AnalyticsProps = {
   // On `Onboarding Started`: which flow the user entered.
   method?: 'create' | 'import' | 'watch_only'
 
+  // On `Authentication Settings Changed`.
+  setting?: 'app_access' | 'transactions'
+  enabled?: boolean
+
   // On the `Error` event.
   message?: string
   reason?: string
