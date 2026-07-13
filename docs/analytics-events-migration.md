@@ -188,7 +188,12 @@ start appearing in PostHog (creating them now would point at empty data):
   the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
   (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
   joined on `dapp_url`).
-- **At release:** the rename-proofing Actions above (event names).
+- ~~**At release:** the rename-proofing Actions (event names).~~ **DONE 2026-07-13** — 16 Actions
+  created in each project, named `<Unified Name> (bridged)`, each OR-ing the old name(s) with the new
+  one. They were created *before* release on purpose: an Action can reference an event name that has
+  no data yet, so pointing insights at them now means they stay continuous straight through the
+  upgrade tail with no release-day scramble. Build every new insight against the Action, not the raw
+  event.
 - **At release:** the property/value bridging above (HogQL `coalesce` / `multiIf`). This is
   **separate work from the Actions** and easy to forget precisely because Actions do not cover it.
   It applies to any insight that breaks down or filters on `origin`, `dapp_url`, `dapp_name`,
