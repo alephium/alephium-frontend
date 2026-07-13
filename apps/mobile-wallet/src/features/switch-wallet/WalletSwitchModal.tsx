@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { WalletListEntry } from '@alephium/shared/types'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -6,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -70,6 +72,8 @@ const WalletSwitchModalContent = () => {
   const handleWatchAddress = useCallback(() => {
     dismissModal()
     navigation.navigate('WatchOnlyAddressScreen')
+
+    sendAnalytics({ event: AnalyticsEvent.ONBOARDING_STARTED, props: { method: 'watch_only' } })
   }, [dismissModal, navigation])
 
   return (

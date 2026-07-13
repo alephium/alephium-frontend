@@ -26,6 +26,10 @@ export const AnalyticsEvent = {
   WC_DISCONNECTED_FROM_DAPP: 'WC: Disconnected from dApp',
 
   // ── UNIFIED (canonical cross-platform names — added 2026-07-06; see docs/analytics-events-migration.md) ──
+  // Fired when the user enters the create / import / watch-only flow, carrying a `method` prop. This
+  // is the funnel entry point: without it, `Wallet Created` has no denominator and onboarding
+  // completion rate cannot be computed on either platform.
+  ONBOARDING_STARTED: 'Onboarding Started',
   WALLET_CREATED: 'Wallet Created',
   WALLET_IMPORTED: 'Wallet Imported',
   WALLET_UNLOCKED: 'Wallet Unlocked',

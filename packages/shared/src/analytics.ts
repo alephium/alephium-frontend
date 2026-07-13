@@ -65,6 +65,9 @@ export type AnalyticsProps = {
   // Third-party service behind a Buy or Swap action.
   provider?: string
 
+  // On `Onboarding Started`: which flow the user entered.
+  method?: 'create' | 'import' | 'watch_only'
+
   // On the `Error` event.
   message?: string
   reason?: string
