@@ -24,12 +24,14 @@ const WalletWordsPage = () => {
   const { sendAnalytics } = useAnalytics()
 
   useEffect(() => {
-    if (!mnemonic) {
-      try {
-        setMnemonic(keyring.generateRandomMnemonic())
-      } catch (error) {
-        sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
-      }
+    if (mnemonic) return
+
+    try {
+      keyring.clear()
+
+      setMnemonic(keyring.generateRandomMnemonic())
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
     }
   }, [mnemonic, sendAnalytics, setMnemonic])
 

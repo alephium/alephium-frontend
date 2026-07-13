@@ -21,7 +21,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 const ImportWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const { setMnemonic } = useWalletContext()
+  const { setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { sendAnalytics } = useAnalytics()
 
   const [phrase, setPhrase] = useState('')
@@ -82,6 +82,12 @@ const ImportWordsPage = () => {
     }
   }
 
+  const handleCancelButtonPress = () => {
+    keyring.clear()
+    resetCachedMnemonic()
+    onButtonBack()
+  }
+
   const words = phrase.length > 0 && phrase[0] !== '' ? phrase.trim().split(/\s+/) : []
   const firstColumnWords = words.slice(0, 12)
   const secondColumnWords = words.slice(12, 24)
@@ -106,7 +112,7 @@ const ImportWordsPage = () => {
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </PanelContentContainer>
         <FooterActionsContainer>
-          <Button role="secondary" onClick={onButtonBack} tall>
+          <Button role="secondary" onClick={handleCancelButtonPress} tall>
             {t('Cancel')}
           </Button>
           <Button onClick={handleNextButtonPress} disabled={!isPhraseLongEnough} tall>
