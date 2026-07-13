@@ -87,6 +87,15 @@ describe('scrubEvent', () => {
     expect(scrubbed).not.toContain('somebody')
   })
 
+  it('Keeps $set, which carries the person properties useTrackUserSettings sends', () => {
+    // `$set` and `$set_once` are different bags. Only the latter holds posthog-js's `$initial_*`
+    // properties; `posthog.people.set` writes to the former, and dropping that too would silently take
+    // the wallet's own person properties (theme, network, region, ...) down with it.
+    const event = buildEvent({ $set: { theme: 'dark', network: 'mainnet', wallets: 2 } })
+
+    expect(scrubEvent(event)?.$set).toEqual({ theme: 'dark', network: 'mainnet', wallets: 2 })
+  })
+
   it('Keeps the event and the product properties we actually want', () => {
     const scrubbed = scrubEvent(buildEvent())
 
