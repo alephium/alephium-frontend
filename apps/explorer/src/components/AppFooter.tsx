@@ -6,7 +6,6 @@ import NetworkSwitch from '@/components/NetworkSwitch'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import LanguageSwitch from '@/features/localization/LanguageSwitch'
 import DiscordIcon from '@/images/brand-icon-discord.svg?react'
-import RedditIcon from '@/images/brand-icon-reddit.svg?react'
 import TelegramIcon from '@/images/brand-icon-telegram.svg?react'
 import TwitterIcon from '@/images/brand-icon-twitter.svg?react'
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -29,7 +28,9 @@ const AppFooter = ({ className }: AppFooterProps) => {
       </LeftGroup>
       <RightGroup>
         <Version>v{version}</Version>
-        <ExternalLink href="https://github.com/alephium/alephium-frontend/tree/master/apps/explorer">{t('Source code')} ↗</ExternalLink>
+        <ExternalLink href="https://github.com/alephium/alephium-frontend/tree/master/apps/explorer">
+          {t('Source code')} ↗
+        </ExternalLink>
         <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
         <ExternalLink href="https://alephium.org/privacy-policy/">Privacy Policy ↗</ExternalLink>
         <SocialMediaIconList>
@@ -54,11 +55,6 @@ const socialMediaData = [
     name: 'Telegram',
     link: 'https://t.me/alephiumgroup',
     Icon: TelegramIcon
-  },
-  {
-    name: 'Reddit',
-    link: 'https://www.reddit.com/r/Alephium',
-    Icon: RedditIcon
   },
   {
     name: 'Twitter',
