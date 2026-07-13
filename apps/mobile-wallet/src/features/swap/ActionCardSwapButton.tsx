@@ -10,7 +10,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardSwapButtonProps {
-  origin: 'dashboard' | 'tokenDetails'
+  origin: 'dashboard' | 'token_details'
   receiveAddressHash: AddressHash
   onPress?: () => void
 }

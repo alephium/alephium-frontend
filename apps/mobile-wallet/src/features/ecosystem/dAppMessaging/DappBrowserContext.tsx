@@ -224,7 +224,7 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
           const commonModalProps: SignTxModalCommonProps = {
             dAppUrl: senderHost,
             dAppIcon,
-            origin: 'in-app-browser',
+            origin: 'in_app_browser',
             onError: (error) => replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
           }
 
@@ -379,7 +379,7 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
                         replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
                       dAppUrl: senderHost,
                       dAppIcon,
-                      origin: 'in-app-browser:insufficient-funds',
+                      origin: 'in_app_browser:insufficient_funds',
                       onError: (error) =>
                         replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
                     }
@@ -410,7 +410,7 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
                   replyToDapp({ type: 'ALPH_TRANSACTION_SUBMITTED', data: { result, actionHash } }, messageId),
                 dAppUrl: senderHost,
                 dAppIcon,
-                origin: 'in-app-browser',
+                origin: 'in_app_browser',
                 onError: (error) =>
                   replyToDapp({ type: 'ALPH_TRANSACTION_FAILED', data: { actionHash, error } }, messageId)
               }
@@ -462,7 +462,7 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
               txParams: data,
               unsignedData: decodedTx,
               submitAfterSign: false,
-              origin: 'in-app-browser',
+              origin: 'in_app_browser',
               onError: (error) =>
                 replyToDapp({ type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE', data: { actionHash, error } }, messageId),
               onSuccess: (result) =>
@@ -509,7 +509,7 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
             dAppIcon: data.icon,
             txParams: data,
             unsignedData: data.message,
-            origin: 'in-app-browser',
+            origin: 'in_app_browser',
             onError: (error) =>
               replyToDapp({ type: 'ALPH_SIGN_MESSAGE_FAILURE', data: { actionHash, error } }, messageId),
             onSuccess: (result) =>

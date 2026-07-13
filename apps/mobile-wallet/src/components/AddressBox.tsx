@@ -32,12 +32,12 @@ import { ImpactStyle, vibrate } from '~/utils/haptics'
 export interface AddressBoxProps extends Omit<PressableProps, 'onPress'> {
   addressHash: AddressHash
   origin:
-    | 'addressesScreen'
-    | 'originAddress'
-    | 'destinationAddress'
-    | 'walletConnectPairing'
-    | 'selectAddressModal'
-    | 'connectDappModal'
+    | 'addresses_screen'
+    | 'origin_address'
+    | 'destination_address'
+    | 'walletconnect_pairing'
+    | 'select_address_modal'
+    | 'connect_dapp_modal'
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
@@ -83,13 +83,13 @@ const AddressBox = ({
 
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
-    if (origin === 'addressesScreen') {
+    if (origin === 'addresses_screen') {
       dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
     } else if (
-      origin === 'originAddress' ||
-      origin === 'destinationAddress' ||
-      origin === 'walletConnectPairing' ||
-      origin === 'selectAddressModal'
+      origin === 'origin_address' ||
+      origin === 'destination_address' ||
+      origin === 'walletconnect_pairing' ||
+      origin === 'select_address_modal'
     ) {
       dispatch(
         openModal({

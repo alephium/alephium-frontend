@@ -39,7 +39,7 @@ const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
           addressHash={addressHash}
           isLast={index === addresses.length - 1}
           onPress={() => handleAddressPress(addressHash)}
-          origin="addressesScreen"
+          origin="addresses_screen"
         />
       )}
       ListFooterComponent={() =>

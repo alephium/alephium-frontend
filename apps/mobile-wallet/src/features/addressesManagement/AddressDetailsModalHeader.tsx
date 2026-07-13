@@ -59,8 +59,8 @@ const AddressDetailsModalHeader = ({
 
       <ActionButtons>
         <AddressSendButton addressHash={addressHash} onSendPress={onSendPress} />
-        <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
-        <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
+        <ActionCardReceiveButton origin="address_details" addressHash={addressHash} />
+        <ActionCardBuyButton origin="address_details" receiveAddressHash={addressHash} />
         <ActionCardButton
           title={t('Settings')}
           onPress={handleSettingsPress}
@@ -111,7 +111,7 @@ const AddressSendButton = ({
 
   if (!addressBalances?.length) return null
 
-  return <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={onSendPress} />
+  return <SendButton origin="address_details" originAddressHash={addressHash} onPress={onSendPress} />
 }
 
 const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {

@@ -11,7 +11,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardReceiveButtonProps {
-  origin: 'dashboard' | 'addressDetails' | 'tokenDetails'
+  origin: 'dashboard' | 'address_details' | 'token_details'
   addressHash?: AddressHash
   onPress?: () => void
 }

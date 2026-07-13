@@ -62,7 +62,7 @@ const AutoUpdateToastBox = memo(() => {
     closeSnackbar()
     sendAnalytics({
       event: AnalyticsEvent.AUTO_UPDATE_MODAL_CLICKED_DOWNLOAD,
-      props: { fromVersion: currentVersion, toVersion: newManualUpdateVersion }
+      props: { from_version: currentVersion, to_version: newManualUpdateVersion }
     })
   }
 

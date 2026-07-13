@@ -23,6 +23,10 @@ tables below) and point insights/funnels at the Action — no data is lost, and 
 needed on the PostHog side. Events already under one shared name (see "Left unchanged") did
 **not** change and need no bridging.
 
+> **Actions bridge event names only.** There is no Action-equivalent for a renamed *property key*
+> or *property value* — see "Property and value renames" below for how to bridge those (HogQL
+> `coalesce`, applied per insight). Do not assume the Actions above cover the property work.
+
 ## Unified cross-platform pairs
 
 | New unified event         | Old desktop event                   | Old mobile event                   |
@@ -64,6 +68,78 @@ split). That behaviour is unchanged, so on desktop a dApp transfer still appears
 `Transaction Sent` (distinguishable by `origin`),
 while on mobile it is `Transaction Approved` with `tx_type: 'transfer'`. Keep this asymmetry in
 mind when comparing dApp-transfer volume across platforms.
+
+## Property and value renames
+
+Event names were not the only thing that diverged. Property **keys** and the values of the
+`origin` property had drifted into three conventions (snake_case, camelCase, kebab-case), and in
+several cases the *same concept* was spelled two ways — which silently splits it into two PostHog
+properties and breaks any breakdown built on it. Both are now closed TypeScript unions in
+[`packages/shared/src/analytics.ts`](../packages/shared/src/analytics.ts) (`AnalyticsProps` and
+`AnalyticsOrigin`), so an off-convention key or value fails to compile rather than reaching PostHog.
+
+### Property keys
+
+| Concept              | Old key(s)                                        | New key                       |
+| -------------------- | ------------------------------------------------- | ----------------------------- |
+| dApp URL             | `dAppUrl` (on `Opened favorite custom dApp`)      | `dapp_url`                    |
+| dApp name            | `dAppName` (on `Opened dApp`, `…dApp to favorites`) | `dapp_name`                 |
+| Token                | `tokenId`                                         | `token_id`                    |
+| dApp host            | `claimedHost`                                     | `claimed_host`                |
+| Auto-update versions | `fromVersion` / `toVersion`                       | `from_version` / `to_version` |
+
+The `dAppUrl` / `dAppName` cases were bugs: the same event carried `dapp_url` from one code path
+and `dAppUrl` from another, so no single breakdown ever saw all of its events.
+
+### `origin` values
+
+The important one: **desktop and mobile named the same surface differently** (`token_details` vs
+`tokenDetails`, `address_details` vs `addressDetails`), so `origin` breakdowns could not be
+compared across the two apps — defeating the point of the unified event names above. All values
+are now snake_case.
+
+| Old value(s)                                       | New value                          |
+| -------------------------------------------------- | ---------------------------------- |
+| `addressDetails` (mobile)                          | `address_details`                  |
+| `tokenDetails` (mobile)                            | `token_details`                    |
+| `qrCodeScan`                                       | `qr_code_scan`                     |
+| `quickActions`                                     | `quick_actions`                    |
+| `addressSettings`                                  | `address_settings`                 |
+| `addressesScreen`                                  | `addresses_screen`                 |
+| `originAddress`                                    | `origin_address`                   |
+| `destinationAddress`                               | `destination_address`              |
+| `walletConnectPairing`                             | `walletconnect_pairing`            |
+| `selectAddressModal`                               | `select_address_modal`             |
+| `connectDappModal`                                 | `connect_dapp_modal`               |
+| `send-modal`                                       | `send_modal`                       |
+| `in-app-browser`                                   | `in_app_browser`                   |
+| `in-app-browser:insufficient-funds`                | `in_app_browser:insufficient_funds`|
+| `walletconnect:insufficient-funds`                 | `walletconnect:insufficient_funds` |
+| `wc` (desktop dApp transfer only)                  | `walletconnect`                    |
+| `Auto lock`                                        | `auto_lock`                        |
+
+### Bridging these in PostHog (there is no Action for this)
+
+A PostHog Action ORs *event names*; it cannot union two property keys or two property values. To
+analyse across a property split, use a **HogQL expression** in the insight's breakdown or filter
+rather than the raw property:
+
+```sql
+-- dApp attribution across the key rename
+coalesce(properties.dapp_url, properties.dAppUrl)
+
+-- origin across the value rename (and the desktop/mobile casing split)
+multiIf(
+  properties.origin = 'tokenDetails',  'token_details',
+  properties.origin = 'addressDetails', 'address_details',
+  properties.origin = 'quickActions',   'quick_actions',
+  properties.origin
+)
+```
+
+This has to be applied per insight — there is no project-wide mapping — so keep the affected
+insights listed below. Once the old builds have aged out of the reporting window, the `coalesce` /
+`multiIf` wrappers can be dropped and the raw property used directly.
 
 ## Left unchanged (already shared, or single-platform)
 
@@ -112,5 +188,27 @@ start appearing in PostHog (creating them now would point at empty data):
   the Activation funnel (`Wallet Created → Wallet Funded → Transaction Sent`), and the dApp funnel
   (`WalletConnect Connection Requested → WalletConnect Connected`; plus `Opened dApp → Transaction Approved`
   joined on `dapp_url`).
-- **At release:** the rename-proofing Actions above.
+- **At release:** the rename-proofing Actions above (event names).
+- **At release:** the property/value bridging above (HogQL `coalesce` / `multiIf`). This is
+  **separate work from the Actions** and easy to forget precisely because Actions do not cover it.
+  It applies to any insight that breaks down or filters on `origin`, `dapp_url`, `dapp_name`,
+  `token_id`, `claimed_host`, or `from_version` / `to_version`.
 - **Optional now:** a Stickiness insight on `Wallet unlocked` (engagement-frequency distribution).
+
+## Verifying the rollout (how we know the new data is better)
+
+Concrete post-release checks, each of which fails loudly if instrumentation is wrong:
+
+- **Property fill rate.** `dapp_url` should be set on ~100% of `Transaction Approved` (it was 0%).
+  Anything materially lower means an emit site was missed.
+- **Funnel monotonicity.** `Send Button Clicked` >= `Send Destination Set` >= `Send Amount Set` >=
+  `Send Review Reached` >= `Transaction Sent`. An inversion means a double-fire or a path that
+  skips a step.
+- **Cross-platform reconciliation.** Mobile `Wallet Unlocked` per user should now be the same order
+  of magnitude as desktop (it was ~300x lower, because only the PIN path was tracked).
+- **Error cardinality collapse.** Count distinct `reason` values on `Error` before vs after. The
+  redaction pass strips tx hashes and addresses, so distinct reasons should drop sharply while
+  total error volume stays flat — that is what makes `reason` groupable and "top 5 failure modes"
+  answerable.
+- **`origin` value set.** After the upgrade tail, the distinct values of `origin` should be exactly
+  the `AnalyticsOrigin` union and nothing else. A stray camelCase value means a site was missed.

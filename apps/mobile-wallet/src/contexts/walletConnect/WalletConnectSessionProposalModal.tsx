@@ -197,7 +197,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                         sendAnalytics({ event: AnalyticsEvent.WC_SWITCHED_SIGNER_ADDRESS })
                       }}
                       isLast={i === addressesInGroup.length - 1}
-                      origin="walletConnectPairing"
+                      origin="walletconnect_pairing"
                     />
                   ))}
                 </AddressList>
@@ -213,7 +213,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                     isSelected
                     isLast
                     rounded
-                    origin="walletConnectPairing"
+                    origin="walletconnect_pairing"
                   />
                 </AddressList>
               </ScreenSection>

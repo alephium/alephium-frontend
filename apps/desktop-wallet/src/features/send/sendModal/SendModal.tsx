@@ -87,13 +87,13 @@ const SendModal = memo(({ id, ...initialTxData }: ModalBaseProp & SendModalProps
         const txParams = getTransferTxParams(sendFlowData)
         await sendTransferTransaction(txParams, isLedger, ledgerTxParams)
 
-        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'send-modal' } })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin: 'send_modal' } })
       }
 
       setStep('tx-sent')
     } catch (error) {
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin: 'send-modal' } })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin: 'send_modal' } })
       sendAnalytics({ type: 'error', message: 'Could not send tx', category: 'send' })
     } finally {
       setIsLoading(false)

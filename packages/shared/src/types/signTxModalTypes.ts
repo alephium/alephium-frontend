@@ -17,13 +17,16 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 
+import { AnalyticsOrigin } from '../analytics'
 import { SweepTxParams } from '../types/transactions'
 
-export type ModalOrigin =
-  | 'walletconnect'
-  | 'in-app-browser'
-  | 'walletconnect:insufficient-funds'
-  | 'in-app-browser:insufficient-funds'
+// Derived from AnalyticsOrigin rather than redeclared, because these values are sent to PostHog as
+// the `origin` property: a value that drifts from the analytics union would silently create a new
+// property value rather than fail to compile.
+export type ModalOrigin = Extract<
+  AnalyticsOrigin,
+  'walletconnect' | 'in_app_browser' | 'walletconnect:insufficient_funds' | 'in_app_browser:insufficient_funds'
+>
 
 export type SignTxModalCommonProps = {
   onError: (message: string) => void

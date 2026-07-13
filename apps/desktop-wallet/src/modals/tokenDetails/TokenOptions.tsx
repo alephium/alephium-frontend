@@ -29,7 +29,7 @@ const TokenDropdownOptions = ({ tokenId }: TokenDetailsModalProps) => {
         label: t(isTokenHidden ? 'Unhide asset' : 'Hide asset'),
         onClick: () => {
           dispatch(isTokenHidden ? unhideToken(tokenId) : hideToken(tokenId))
-          sendAnalytics({ event: AnalyticsEvent.TOKEN_HIDDEN, props: { tokenId } })
+          sendAnalytics({ event: AnalyticsEvent.TOKEN_HIDDEN, props: { token_id: tokenId } })
         }
       }
     ],

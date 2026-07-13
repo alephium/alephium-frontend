@@ -29,7 +29,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
 
   const forgetAddress = useForgetAddress({
     addressHash,
-    origin: 'addressSettings',
+    origin: 'address_settings',
     onConfirm: () => {
       onForgetAddress?.()
       dismissModal()

@@ -52,7 +52,7 @@ const ConnectDappModal = memo<ConnectDappModalProps>(({ icon, dAppName, keyType,
             addressHash={addressHash}
             onPress={(address) => handleAddressSelect(address)}
             isLast={index === allAddressesStrInGroup.length - 1}
-            origin="connectDappModal"
+            origin="connect_dapp_modal"
             showGroup
           />
         )

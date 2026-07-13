@@ -1,4 +1,4 @@
-import { AnalyticsEvent } from '@alephium/shared'
+import { AnalyticsEvent, AnalyticsOrigin } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { AddressHash, TokenId } from '@alephium/shared/types'
 import {
@@ -16,7 +16,7 @@ interface UseSendButtonProps {
   fromAddressHash: AddressHash
   toAddressHash?: AddressHash
   tokenId?: TokenId
-  analyticsOrigin: string
+  analyticsOrigin: AnalyticsOrigin
 }
 
 const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigin }: UseSendButtonProps) => {

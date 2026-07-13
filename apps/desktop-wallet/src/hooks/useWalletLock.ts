@@ -1,5 +1,5 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AnalyticsEvent, GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { AnalyticsEvent, AnalyticsOrigin, GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import {
   hiddenTokensLoadedFromStorage,
@@ -46,7 +46,7 @@ const useWalletLock = () => {
   const isActiveWalletPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
 
   const lockWallet = useCallback(
-    async (lockedFrom?: string) => {
+    async (lockedFrom?: AnalyticsOrigin) => {
       keyring.clear()
 
       if (activeWalletId && !isActiveWalletPassphraseUsed) {

@@ -8,7 +8,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface ActionCardBuyButtonProps {
-  origin: 'dashboard' | 'addressDetails' | 'tokenDetails'
+  origin: 'dashboard' | 'address_details' | 'token_details'
   receiveAddressHash: AddressHash
 }
 

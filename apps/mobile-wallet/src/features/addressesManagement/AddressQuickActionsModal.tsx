@@ -54,7 +54,7 @@ interface ActionButtonProps extends AddressQuickActionsModalProps {
 const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const { t } = useTranslation()
-  const forgetAddress = useForgetAddress({ addressHash, origin: 'quickActions', onConfirm: onActionCompleted })
+  const forgetAddress = useForgetAddress({ addressHash, origin: 'quick_actions', onConfirm: onActionCompleted })
   const canDeleteAddress = useCanDeleteAddress(addressHash)
 
   if (!address) return
@@ -114,7 +114,7 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
 
     dispatch(addressSettingsSaved({ addressHash: address.hash, settings: { isDefault: true } }))
     showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
-    sendAnalytics({ event: AnalyticsEvent.SET_ADDRESS_AS_DEFAULT, props: { origin: 'quickActions' } })
+    sendAnalytics({ event: AnalyticsEvent.SET_ADDRESS_AS_DEFAULT, props: { origin: 'quick_actions' } })
   }
 
   return isDefaultAddress ? (

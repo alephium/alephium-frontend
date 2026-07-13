@@ -42,7 +42,7 @@ const DefaultAddressSection = () => {
         noBottomMargin
         showTokenAmount
         tokenId={ALPH.id}
-        origin="selectAddressModal"
+        origin="select_address_modal"
         rounded
         style={{ borderWidth: 1, borderColor: theme.border.primary }}
         onPress={openDefaultAddressModal}

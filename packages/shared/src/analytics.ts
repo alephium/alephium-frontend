@@ -13,9 +13,45 @@ const ANALYTICS_THROTTLING_TIMEOUT = 5000
 // same way renaming an event does. Treat keys as immutable once shipped. The existing keys below
 // are a mix of conventions for that reason; new keys should be snake_case, like the event catalog
 // in analyticsEvents.ts. Adding a key here is the only way to start sending it.
+// The UI surface an action was triggered from. A closed union so the same surface cannot be
+// spelled two ways: desktop used to send `token_details` where mobile sent `tokenDetails` for the
+// identical screen, which made `origin` breakdowns incomparable across the two apps - the exact
+// thing the unified event catalog exists to enable. All values are snake_case.
+export type AnalyticsOrigin =
+  // Screens
+  | 'dashboard' // mobile home
+  | 'overview_page' // desktop home
+  | 'address_details'
+  | 'token_details'
+  | 'addresses_screen'
+  | 'staking'
+  | 'contact'
+  // Components and surfaces
+  | 'quick_actions'
+  | 'address_settings'
+  | 'app_settings'
+  | 'dapp_card'
+  | 'token_list_item'
+  | 'hidden_assets_list_item'
+  | 'send_modal'
+  | 'qr_code_scan'
+  | 'origin_address'
+  | 'destination_address'
+  | 'select_address_modal'
+  | 'connect_dapp_modal'
+  | 'walletconnect_pairing'
+  | 'settings'
+  | 'notifications'
+  | 'auto_lock'
+  // dApp entry points. The `:insufficient_funds` suffix marks the failure variant of the flow.
+  | 'walletconnect'
+  | 'walletconnect:insufficient_funds'
+  | 'in_app_browser'
+  | 'in_app_browser:insufficient_funds'
+
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
-  origin?: string
+  origin?: AnalyticsOrigin
   from?: string
 
   // dApp identity, carried by every approval, message-signing and dApp-open event so that on-chain
@@ -53,10 +89,10 @@ export type AnalyticsProps = {
   number_of_contacts?: number
 
   note?: string
-  tokenId?: string
-  claimedHost?: string
-  fromVersion?: string
-  toVersion?: string
+  token_id?: string
+  claimed_host?: string
+  from_version?: string
+  to_version?: string
 
   // PostHog special properties. `$ip` is set to '' to suppress IP capture; `$set` carries person
   // properties on `User identified`.

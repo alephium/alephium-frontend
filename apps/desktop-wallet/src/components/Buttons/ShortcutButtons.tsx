@@ -1,4 +1,4 @@
-import { AnalyticsEvent } from '@alephium/shared'
+import { AnalyticsEvent, AnalyticsOrigin } from '@alephium/shared'
 import { selectAddressByHash, selectDefaultAddressHash } from '@alephium/shared/store'
 import { AddressHash, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {
-  analyticsOrigin: string
+  analyticsOrigin: AnalyticsOrigin
   color?: string
   highlight?: boolean
 }

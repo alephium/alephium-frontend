@@ -12,7 +12,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface SendButtonProps {
-  origin: 'dashboard' | 'addressDetails' | 'tokenDetails' | 'qrCodeScan' | 'contact'
+  origin: 'dashboard' | 'address_details' | 'token_details' | 'qr_code_scan' | 'contact'
   buttonType?: 'action-card' | 'quick-action'
   originAddressHash?: AddressHash
   destinationAddressHash?: AddressHash

@@ -12,7 +12,7 @@ import { showToast } from '~/utils/layout'
 
 interface UseForgetAddressProps {
   addressHash: AddressHash
-  origin: 'quickActions' | 'addressSettings'
+  origin: 'quick_actions' | 'address_settings'
   onConfirm?: () => void
 }
 
