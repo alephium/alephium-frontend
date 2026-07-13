@@ -98,9 +98,7 @@ export type AnalyticsProps = {
   from_version?: string
   to_version?: string
 
-  // PostHog special properties. `$ip` is set to '' to suppress IP capture; `$set` carries person
-  // properties on `User identified`.
-  $ip?: string
+  // PostHog special property: `$set` carries person properties on `User identified`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $set?: Record<string, any>
 }

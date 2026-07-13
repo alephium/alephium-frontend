@@ -1,10 +1,10 @@
-import { PostHogConfig, Properties } from 'posthog-js'
+import { PostHogConfig } from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
+import scrubEvent from '@/features/analytics/scrubEvent'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/features/settings/settingsTypes'
-import { currentVersion } from '@/utils/app-data'
 
 const PUBLIC_POSTHOG_KEY = 'phc_FLKGQDmMQSdSb3qjaTwHWwm9plmz7couyVJFG9GOMr7'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
@@ -22,37 +22,9 @@ const options: Partial<PostHogConfig> = {
   capture_pageleave: false,
   disable_session_recording: true,
   disable_persistence: true,
-  // Blanks every property that describes the machine rather than the product.
-  // Replaces the deprecated `sanitize_properties`; unlike it, `before_send` gets the whole event and
-  // may return null to drop it.
-  before_send: (event) => {
-    if (!event) return event
-
-    // `$session_entry_*` mirrors the url/referrer/host properties for the session's first page, and
-    // is matched by prefix so a new one added by a future posthog-js release cannot silently leak.
-    const sessionEntryProps = Object.keys(event.properties)
-      .filter((key) => key.startsWith('$session_entry_'))
-      .reduce<Properties>((props, key) => ({ ...props, [key]: '' }), {})
-
-    event.properties = {
-      ...event.properties,
-      ...sessionEntryProps,
-      $current_url: '',
-      $host: '',
-      $referrer: '',
-      $referring_domain: '',
-      $pathname: '',
-      $device_type: '',
-      $browser: '',
-      $raw_user_agent: '',
-      $timezone: '',
-      $timezone_offset: '',
-      $geoip_disable: true,
-      desktop_wallet_version: currentVersion
-    }
-
-    return event
-  },
+  // Replaces the deprecated `sanitize_properties`; unlike it, `before_send` gets the whole event
+  // (including the `$set_once` person-properties bag) and may return null to drop it.
+  before_send: scrubEvent,
   loaded(posthog) {
     const { analytics } = SettingsStorage.load('general') as GeneralSettings
 
