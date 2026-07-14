@@ -1,7 +1,6 @@
 import { MAX_API_RETRIES } from '@alephium/shared/api'
 import { isConfirmedTx } from '@alephium/shared/transactions'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
 import { PerChainHeight } from '@alephium/web3/api/explorer'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
@@ -29,6 +28,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
+import { computeConfirmations } from '@/utils/confirmations'
 import { calculateIoAmountsDelta } from '@/utils/transactions'
 
 type ParamTypes = {
@@ -84,7 +84,7 @@ const TransactionInfoPage = () => {
     enabled: !!confirmedTxInfo
   })
 
-  const { data: chainHeights } = useQuery(queries.infos.all.heights())
+  const { data: chainHeights } = useQuery(queries.infos.all.heights(isAppVisible))
 
   const assetIds = [...new Set(confirmedTxInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))].filter(
     (id): id is string => !!id
@@ -347,17 +347,6 @@ const TransactionInfoPage = () => {
       )}
     </Section>
   )
-}
-
-const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
-  let confirmations = 0
-
-  if (txBlock && txChain) {
-    const chainHeight = txChain.value
-    confirmations = chainHeight - txBlock.height + 1
-  }
-
-  return confirmations
 }
 
 const IOItemContainer = styled.div`
