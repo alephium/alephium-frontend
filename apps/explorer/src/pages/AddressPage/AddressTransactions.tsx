@@ -12,6 +12,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import usePageNumber from '@/hooks/usePageNumber'
 import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
+import { ADDRESS_DATA_POLLING_INTERVAL } from '@/pages/AddressPage/useAddressDataPolling'
 import useIsContract from '@/pages/AddressPage/useIsContract'
 
 const numberOfTxsPerPage = 10
@@ -28,7 +29,7 @@ const AddressTransactions = ({ addressStr }: AddressTransactionsProps) => {
 
   const { data: txNumber } = useFetchAddressTransactionsCount(addressStr)
 
-  const refetchInterval = isAppVisible && pageNumber === 1 ? 10000 : undefined
+  const refetchInterval = isAppVisible && pageNumber === 1 ? ADDRESS_DATA_POLLING_INTERVAL : undefined
 
   const { data: txList, isLoading: txListLoading } = useQuery({
     ...queries.address.transactions.confirmed(addressStr, pageNumber, numberOfTxsPerPage),

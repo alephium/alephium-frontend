@@ -1,15 +1,13 @@
-import { ONE_DAY_MS } from '@alephium/shared'
-import { MAX_API_RETRIES } from '@alephium/shared/api'
 import { networkPresetSwitched } from '@alephium/shared/store'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { useEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import { getNetworkSettings } from '@/api/getNetworkSettings'
+import { queryClient } from '@/api/queryClient'
 import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
 import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
@@ -26,6 +24,10 @@ import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
 
+const persister = createSyncStoragePersister({
+  storage: window.localStorage
+})
+
 const App = () => {
   const { theme } = useSettings()
   const navigate = useNavigate()
@@ -38,32 +40,6 @@ const App = () => {
   }, [dispatch])
 
   useInitializeThrottledClient()
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
-        retry: (failureCount, error) => {
-          // TODO: We should account for 429 errors from other libraries other than web3
-          if (!error.message.includes('Status code: 429')) {
-            return false
-          } else if (failureCount > MAX_API_RETRIES) {
-            console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
-            return false
-          }
-
-          return true
-        },
-        staleTime: 10000, // default ms before cache data is considered stale
-        gcTime: ONE_DAY_MS
-      }
-    }
-  })
-
-  const persister = createSyncStoragePersister({
-    storage: window.localStorage
-  })
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   useEffect(() => {

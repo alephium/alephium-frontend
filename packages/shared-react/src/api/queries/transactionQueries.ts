@@ -240,7 +240,8 @@ export const addressTransactionsCountQuery = ({
   skip
 }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'transactions', 'count', { networkId }],
+    // The level: segment is what invalidateAddressQueries matches on to refresh this query.
+    queryKey: ['address', addressHash, 'level:0', 'transactions', 'count', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken

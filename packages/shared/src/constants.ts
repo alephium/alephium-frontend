@@ -19,7 +19,9 @@ export enum WALLETCONNECT_ERRORS {
   TRANSACTION_DECODE_FAILED = -38000
 }
 
-export const ONE_MINUTE_MS = 1000 * 60
+export const ONE_SECOND_MS = 1000
+
+export const ONE_MINUTE_MS = 60 * ONE_SECOND_MS
 
 export const FIVE_MINUTES_MS = 5 * ONE_MINUTE_MS
 
