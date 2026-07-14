@@ -92,6 +92,37 @@ Turbo handles ordering: that built package must build before apps (`^build`). Th
 - **Wallet connectivity**: WalletConnect v2 protocol via `@walletconnect/sign-client`
 - **Crypto**: Wallet key management (BIP39 mnemonics, elliptic curve operations) via `@alephium/keyring` and `@alephium/web3`; password-based encryption (AES-256-GCM + PBKDF2) via `@alephium/encryptor`
 
+## Changesets
+
+Any change that affects a user must ship with a changeset, in the same PR. The changelogs are
+generated from these, so a missing changeset means the change never shows up in the release notes.
+
+```bash
+npx changeset          # pick the package(s), pick "patch", write the description
+npx changeset status   # verify it parses and bumps what you expect
+```
+
+That writes a file to `.changeset/`, which you commit alongside the code:
+
+```markdown
+---
+'@alephium/mobile-wallet': patch
+---
+
+Fix contact deletion
+```
+
+Conventions:
+
+- **Name the app whose behaviour changed**, not every package you touched. A change to
+  `packages/shared` or `packages/shared-react` that only exists to serve the explorer belongs in the
+  explorer's changelog; a reader of `@alephium/shared`'s changelog does not care.
+- **Write it for a user, not a reviewer.** Describe the product change in one line, imperative mood,
+  no trailing period. "Fix contact deletion", not "Refactor useAddressDataPolling to drive the
+  invalidation cascade".
+- Skip the changeset only when nothing user-facing changed (docs, CI, internal refactors with no
+  behavioural difference, test-only changes).
+
 ## Code Style
 
 - No semicolons, single quotes, no trailing commas, 120 char print width, 2-space indent (see `.prettierrc.js`)
