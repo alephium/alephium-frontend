@@ -1,3 +1,5 @@
+import '~/api/reactQueryPlatform'
+
 import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
