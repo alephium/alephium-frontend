@@ -48,12 +48,14 @@ pnpm --filter @alephium/mobile-wallet start
 ### Running a single test file
 
 ```bash
-# Vitest-based packages (explorer, desktop-wallet, shared, shared-react, keyring)
+# Every package uses Vitest
 pnpm --filter @alephium/shared exec vitest run path/to/file.test.ts
-
-# Jest-based packages (mobile-wallet, encryptor)
-pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
+pnpm --filter @alephium/mobile-wallet exec vitest run path/to/file.test.ts
 ```
+
+Note that the mobile wallet only collects tests matching `__tests__/**/*.{test,spec}.{js,ts}`
+(see `apps/mobile-wallet/vitest.config.ts`), whereas the other packages colocate their test
+files next to the source.
 
 ## Architecture
 
@@ -61,7 +63,7 @@ pnpm --filter @alephium/mobile-wallet exec jest path/to/file.test.ts
 
 - **`apps/explorer`** — Blockchain explorer web app (Vite + React + React Router)
 - **`apps/desktop-wallet`** — Desktop wallet (Electron + Vite + React). Electron main process in `electron/main.ts`, preload in `electron/preload.ts`
-- **`apps/mobile-wallet`** — Mobile wallet (React Native + Expo 54). Uses Jest (not Vitest) for tests
+- **`apps/mobile-wallet`** — Mobile wallet (React Native + Expo 54)
 
 ### Shared Packages
 
