@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { addressesImported } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
@@ -67,7 +68,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       await persistAddressSettings(newAddresses)
       dispatch(addressesImported(newAddresses))
 
-      sendAnalytics({ event: 'Imported discovered addresses' })
+      sendAnalytics({ event: AnalyticsEvent.IMPORTED_DISCOVERED_ADDRESSES })
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not import addresses from address discovery' })
     }
@@ -107,19 +108,19 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }, [discoveredAddresses])
 
   const handleStartScanPress = () => {
-    sendAnalytics({ event: 'Started address discovery from settings' })
+    sendAnalytics({ event: AnalyticsEvent.STARTED_ADDRESS_DISCOVERY_FROM_SETTINGS })
 
     startScan()
   }
 
   const handleStopScanPress = () => {
-    sendAnalytics({ event: 'Stopped address discovery' })
+    sendAnalytics({ event: AnalyticsEvent.STOPPED_ADDRESS_DISCOVERY })
 
     stopScan()
   }
 
   const handleContinueScanPress = () => {
-    sendAnalytics({ event: 'Continued address discovery' })
+    sendAnalytics({ event: AnalyticsEvent.CONTINUED_ADDRESS_DISCOVERY })
 
     startScan()
   }
@@ -252,7 +253,7 @@ const CurrentAddresses = () => {
             addressHash={addressHash}
             isLast={index === addresses.length - 1}
             onPress={() => handleAddressPress(addressHash)}
-            origin="addressesScreen"
+            origin="addresses_screen"
           />
         ))}
       </Surface>

@@ -1,4 +1,4 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { selectAddressesInGroup, selectDefaultAddressHash } from '@alephium/shared/store'
 import { Address, WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
 import { isNetworkValid } from '@alephium/shared/utils'
@@ -65,6 +65,13 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
       )
     }, [addressesInGroup, defaultAddressHash])
 
+    useEffect(() => {
+      sendAnalytics({
+        event: AnalyticsEvent.DAPP_CONNECTION_REQUESTED,
+        props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+      })
+    }, [metadata.url, metadata.name])
+
     const handleApproveProposal = async (signerAddress: Address) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
@@ -124,7 +131,10 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
         console.log('✅ APPROVING: DONE!')
         console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', approvalResponse.acknowledged)
 
-        sendAnalytics({ event: 'WC: Approved connection' })
+        sendAnalytics({
+          event: AnalyticsEvent.DAPP_CONNECTED,
+          props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+        })
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -187,10 +197,10 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                       onPress={() => {
                         setSignerAddress(address)
                         setShowAlternativeSignerAddresses(false)
-                        sendAnalytics({ event: 'WC: Switched signer address' })
+                        sendAnalytics({ event: AnalyticsEvent.WC_SWITCHED_SIGNER_ADDRESS })
                       }}
                       isLast={i === addressesInGroup.length - 1}
-                      origin="walletConnectPairing"
+                      origin="walletconnect_pairing"
                     />
                   ))}
                 </AddressList>
@@ -206,7 +216,7 @@ const WalletConnectSessionProposalModal = memo<WalletConnectSessionProposalModal
                     isSelected
                     isLast
                     rounded
-                    origin="walletConnectPairing"
+                    origin="walletconnect_pairing"
                   />
                 </AddressList>
               </ScreenSection>

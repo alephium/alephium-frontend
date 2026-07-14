@@ -1,4 +1,4 @@
-import { getNetworkName, networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared/store'
 import { NetworkName, NetworkNames, NetworkSettings } from '@alephium/shared/types'
@@ -92,7 +92,7 @@ const NetworkSettingsSection = () => {
           dispatch(networkPresetSwitched(networkName))
           setTempNetworkSettings(newNetworkSettings)
 
-          sendAnalytics({ event: 'Changed network', props: { network_name: networkName } })
+          sendAnalytics({ event: AnalyticsEvent.CHANGED_NETWORK, props: { network_name: networkName } })
           return
         }
 
@@ -106,7 +106,7 @@ const NetworkSettingsSection = () => {
           dispatch(customNetworkSettingsSaved(settings))
           setTempNetworkSettings(settings)
 
-          sendAnalytics({ event: 'Saved custom network settings' })
+          sendAnalytics({ event: AnalyticsEvent.SAVED_CUSTOM_NETWORK_SETTINGS })
         }
       }
     },
@@ -127,7 +127,7 @@ const NetworkSettingsSection = () => {
     // Proxy settings (no need to be awaited)
     if (tempNetworkSettings.proxy) window.electron?.app.setProxySettings(tempNetworkSettings.proxy)
 
-    sendAnalytics({ event: 'Saved custom network settings' })
+    sendAnalytics({ event: AnalyticsEvent.SAVED_CUSTOM_NETWORK_SETTINGS })
   }, [dispatch, network.name, overrideSelectionIfMatchesPreset, selectedNetwork, sendAnalytics, tempNetworkSettings])
 
   // Set existing value on mount

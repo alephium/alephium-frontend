@@ -1,4 +1,4 @@
-import { isValidRemoteHttpUrl } from '@alephium/shared/utils'
+import { getHostFromUrl, isValidRemoteHttpUrl, normalizeHost } from '@alephium/shared/utils'
 
 import type { DApp } from '~/features/ecosystem/ecosystemTypes'
 
@@ -8,17 +8,6 @@ export const getValidUrl = (text: string) => {
 
   return isValidRemoteHttpUrl(urlToLoad) ? urlToLoad : undefined
 }
-
-export const getHostFromUrl = (url: string): string | undefined => {
-  try {
-    return new URL(url).host || undefined
-  } catch {
-    return undefined
-  }
-}
-
-export const normalizeHost = (host: string | undefined): string | undefined =>
-  host ? host.toLowerCase().replace(/^www\./, '') : undefined
 
 // Builds the set of normalized hosts of the dApps listed in the alph.land directory.
 export const getKnownDappHosts = (dApps: DApp[]): Set<string> => {

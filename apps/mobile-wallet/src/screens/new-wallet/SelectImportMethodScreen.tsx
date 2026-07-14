@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
@@ -32,7 +33,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
 
     navigation.navigate('DecryptScannedMnemonicScreen')
 
-    sendAnalytics({ event: 'Scanned QR code from desktop wallet' })
+    sendAnalytics({ event: AnalyticsEvent.SCANNED_QR_CODE_FROM_DESKTOP_WALLET })
   }
 
   return (

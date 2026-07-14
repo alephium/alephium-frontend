@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 import posthog from 'posthog-js'
 
@@ -30,7 +31,7 @@ class WalletStorage {
           wallets.push(wallet)
         } catch (e) {
           console.error(e)
-          posthog.capture('Error', { message: 'Parsing stored wallet data' })
+          posthog.capture(AnalyticsEvent.ERROR, { message: 'Parsing stored wallet data' })
           continue
         }
       }

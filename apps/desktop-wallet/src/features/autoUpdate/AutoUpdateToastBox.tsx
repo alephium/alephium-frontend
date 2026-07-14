@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -60,19 +61,19 @@ const AutoUpdateToastBox = memo(() => {
     openInWebBrowser(links.latestRelease)
     closeSnackbar()
     sendAnalytics({
-      event: 'Auto-update modal: Clicked "Download"',
-      props: { fromVersion: currentVersion, toVersion: newManualUpdateVersion }
+      event: AnalyticsEvent.AUTO_UPDATE_MODAL_CLICKED_DOWNLOAD,
+      props: { from_version: currentVersion, to_version: newManualUpdateVersion }
     })
   }
 
   const handleRestartClick = () => {
-    sendAnalytics({ event: 'Auto-update modal: Clicked "Restart"' })
+    sendAnalytics({ event: AnalyticsEvent.AUTO_UPDATE_MODAL_CLICKED_RESTART })
     window.electron?.updater.quitAndInstallUpdate()
   }
 
   const closeSnackbar = () => {
     setIsUpdateSnackbarVisible(false)
-    sendAnalytics({ event: 'Auto-update modal: Closed' })
+    sendAnalytics({ event: AnalyticsEvent.AUTO_UPDATE_MODAL_CLOSED })
   }
 
   const downloadTitle = {

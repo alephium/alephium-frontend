@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { SignMessageTxModalProps } from '@alephium/shared/types'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
@@ -20,7 +21,7 @@ const SignMessageTxModal = memo(({ txParams, onSuccess, ...props }: ModalBasePro
     const result = await signer.signMessage(txParams)
 
     onSuccess(result)
-    sendAnalytics({ event: 'Signed message' })
+    sendAnalytics({ event: AnalyticsEvent.MESSAGE_SIGNED, props: { origin: props.origin, dapp_host: props.dAppUrl } })
   }
 
   return (

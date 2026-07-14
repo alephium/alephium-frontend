@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
 import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
@@ -42,7 +43,10 @@ const SignExecuteScriptTxModal = memo(
         const sentTx = signAndSubmitTxResultToSentTx({ txParams, result: data, type: 'EXECUTE_SCRIPT' })
         dispatch(transactionSent(sentTx))
 
-        sendAnalytics({ event: 'Approved contract call', props: { origin } })
+        sendAnalytics({
+          event: AnalyticsEvent.TRANSACTION_APPROVED,
+          props: { origin, dapp_host: dAppUrl, tx_type: 'contract_call' }
+        })
 
         onSuccess(data)
       }

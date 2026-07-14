@@ -12,9 +12,10 @@ interface QRCodeProps {
   size: number
   copyButtonLabel?: string
   className?: string
+  onCopy?: () => void
 }
 
-const QRCode = ({ value, size, copyButtonLabel, className }: QRCodeProps) => {
+const QRCode = ({ value, size, copyButtonLabel, className, onCopy }: QRCodeProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
 
@@ -29,9 +30,10 @@ const QRCode = ({ value, size, copyButtonLabel, className }: QRCodeProps) => {
         })
         .then(() => {
           dispatch(copiedToClipboard())
+          onCopy?.()
         })
     }
-  }, [dispatch, value])
+  }, [dispatch, value, onCopy])
 
   return (
     <div className={className}>

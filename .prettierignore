@@ -1,0 +1,17 @@
+# Build output and generated artifacts. `pnpm format` (prettier --write) would otherwise
+# rewrite these, e.g. packages/wallet-dapp-provider/dist/index.d.ts.
+dist
+build
+out
+coverage
+.turbo
+node_modules
+
+# Native / generated app scaffolding
+apps/mobile-wallet/ios
+apps/mobile-wallet/android
+apps/desktop-wallet/release
+
+# Auto-generated
+CHANGELOG.md
+pnpm-lock.yaml

@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { isFT } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -36,7 +37,7 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) =
   const openTokenDetailsModal = () => {
     dismissModal()
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
-    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_TOKEN_DETAILS_MODAL, props: { origin: 'quick_actions' } })
   }
 
   return (

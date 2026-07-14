@@ -33,9 +33,9 @@ config.transformer.minifierConfig = {
 config.transformer.getTransformOptions = async () => ({
   transform: {
     experimentalImportSupport: false,
-    inlineRequires: true,
-  },
-});
+    inlineRequires: true
+  }
+})
 
 // 1) Use WalletConnect's ESM build so it prefers global WebSocket.
 // 2) Resolve 'ws' to its browser stub so the Node ws (and its http/https/net/tls/url deps) are never loaded.

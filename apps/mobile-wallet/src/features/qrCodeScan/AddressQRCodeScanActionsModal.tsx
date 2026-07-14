@@ -28,7 +28,7 @@ const AddressQRCodeScanActionsModal = memo<AddressQRCodeScanActionsModalProps>((
       <ScreenSection>
         <ActionButtons>
           <SendButton
-            origin="qrCodeScan"
+            origin="qr_code_scan"
             destinationAddressHash={addressHash}
             onPress={dismissModal}
             buttonType="quick-action"

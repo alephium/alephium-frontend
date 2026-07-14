@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { isValidAddress } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
@@ -48,7 +49,7 @@ const CameraScanButtonBase = ({
         onPress: () => Linking.openURL('https://bridge.alephium.org'),
         type: 'error'
       })
-      sendAnalytics({ event: 'Scanned Ethereum address', props: { origin } })
+      sendAnalytics({ event: AnalyticsEvent.SCANNED_ETHEREUM_ADDRESS, props: { origin } })
     } else {
       showToast({
         text1: t('Invalid scanned data'),
@@ -59,7 +60,7 @@ const CameraScanButtonBase = ({
             }),
         type: 'error'
       })
-      sendAnalytics({ event: 'Scanned invalid address', props: { origin } })
+      sendAnalytics({ event: AnalyticsEvent.SCANNED_INVALID_ADDRESS, props: { origin } })
     }
   }
 

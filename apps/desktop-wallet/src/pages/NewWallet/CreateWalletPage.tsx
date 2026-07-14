@@ -1,5 +1,5 @@
 import { encryptMnemonic } from '@alephium/keyring'
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -72,7 +72,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   }
 
   const handleNextButtonClick = async () => {
-    sendAnalytics({ event: 'Creating wallet: Creating password: Clicked next' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_CREATING_PASSWORD_CLICKED_NEXT })
 
     try {
       saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
@@ -84,9 +84,9 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
           enableLoading: false,
           enableToast: false
         })
-        sendAnalytics({ event: 'New wallet imported', props: { wallet_name_length: walletName.length } })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { wallet_name_length: walletName.length } })
       } else {
-        sendAnalytics({ event: 'New wallet created', props: { wallet_name_length: walletName.length } })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED, props: { wallet_name_length: walletName.length } })
       }
 
       onButtonNext()
@@ -107,7 +107,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   }
 
   const handleBackPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Creating password: Clicked back' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_CREATING_PASSWORD_CLICKED_BACK })
     onButtonBack()
   }
 

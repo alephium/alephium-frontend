@@ -1,8 +1,8 @@
+import { getHostFromUrl } from '@alephium/shared/utils'
 import type { MessageType } from '@alephium/wallet-dapp-provider'
 import type { WebViewMessageEvent } from 'react-native-webview'
 
 import { familiarDappMessageTypes } from '~/features/ecosystem/dAppMessaging/dAppMessagingTypes'
-import { getHostFromUrl } from '~/features/ecosystem/ecosystemUtils'
 
 export interface ParsedDappMessage {
   message: MessageType

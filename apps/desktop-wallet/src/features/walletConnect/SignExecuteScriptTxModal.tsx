@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
 import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
@@ -27,6 +28,7 @@ const SignExecuteScriptTxModal = ({
   txParams,
   unsignedData,
   dAppUrl,
+  origin,
   onSuccess,
   ...props
 }: SignExecuteScriptTxModalProps & ModalBaseProp) => {
@@ -58,8 +60,11 @@ const SignExecuteScriptTxModal = ({
     const sentTx = signAndSubmitTxResultToSentTx({ type: 'EXECUTE_SCRIPT', txParams, result })
     dispatch(transactionSent(sentTx))
 
-    sendAnalytics({ event: 'Called smart contract' })
-  }, [dispatch, isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
+    sendAnalytics({
+      event: AnalyticsEvent.TRANSACTION_APPROVED,
+      props: { origin, dapp_host: dAppUrl, tx_type: 'contract_call' }
+    })
+  }, [dAppUrl, dispatch, isLedger, onLedgerError, onSuccess, origin, sendAnalytics, signerAddress, txParams])
 
   const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 

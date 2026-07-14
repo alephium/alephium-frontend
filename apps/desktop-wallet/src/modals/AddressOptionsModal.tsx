@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, selectDefaultAddress } from '@alephium/shared/store'
 import { useFetchAddressBalancesAlph, useUnsortedAddresses } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -60,8 +61,8 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
       onClose()
 
-      sendAnalytics({ event: 'Changed address settings', props: { label_length: settings.label.length } })
-      isDefaultAddressToggleEnabled && sendAnalytics({ event: 'Changed default address' })
+      sendAnalytics({ event: AnalyticsEvent.ADDRESS_SETTINGS_EDITED, props: { label_length: settings.label.length } })
+      isDefaultAddressToggleEnabled && sendAnalytics({ event: AnalyticsEvent.CHANGED_DEFAULT_ADDRESS })
     } catch (e) {
       console.error(e)
     }

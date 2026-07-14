@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { SessionProposalEvent, SessionRequestEvent, WalletConnectClientStatus } from '@alephium/shared/types'
 import { getActiveWalletConnectSessions, parseSessionProposalEvent } from '@alephium/shared/utils'
 import { useInterval } from '@alephium/shared-react'
@@ -417,7 +417,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
         console.log('✅ DISCONNECTING: DONE!')
 
-        sendAnalytics({ event: 'WC: Disconnected from dApp' })
+        sendAnalytics({ event: AnalyticsEvent.WC_DISCONNECTED_FROM_DAPP })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       } finally {

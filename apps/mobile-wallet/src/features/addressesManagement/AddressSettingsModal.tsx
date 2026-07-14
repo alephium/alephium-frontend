@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { addressSettingsSaved, selectAddressByHash } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { memo, useState } from 'react'
@@ -28,7 +29,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
 
   const forgetAddress = useForgetAddress({
     addressHash,
-    origin: 'addressSettings',
+    origin: 'address_settings',
     onConfirm: () => {
       onForgetAddress?.()
       dismissModal()
@@ -52,7 +53,7 @@ const AddressSettingsModal = memo<AddressSettingsModalProps>(({ addressHash, onF
 
     dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 
-    sendAnalytics({ event: 'Address: Edited address settings' })
+    sendAnalytics({ event: AnalyticsEvent.ADDRESS_SETTINGS_EDITED })
 
     dismissModal()
   }

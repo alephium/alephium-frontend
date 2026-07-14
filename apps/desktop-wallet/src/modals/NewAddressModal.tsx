@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectDefaultAddress } from '@alephium/shared/store'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
@@ -61,7 +62,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       try {
         saveNewAddresses([{ ...address, ...settings }])
 
-        sendAnalytics({ event: 'New address created', props: { label_length: settings.label.length } })
+        sendAnalytics({ event: AnalyticsEvent.ADDRESS_CREATED, props: { label_length: settings.label.length } })
         onClose()
       } catch (error) {
         dispatch(
@@ -88,7 +89,10 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
     setIsLoading(false)
     onClose()
 
-    sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
+    sendAnalytics({
+      event: AnalyticsEvent.ONE_ADDRESS_PER_GROUP_GENERATED,
+      props: { label_length: addressLabel.title.length }
+    })
   }
 
   const defaultAddressMessage = `${t('Default address for sending transactions.')} ${t(

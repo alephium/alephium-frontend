@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -22,7 +23,7 @@ const AddressSortingSelect = () => {
 
   const onSelect = (value: AddressOrder) => {
     dispatch(addressOrderPreferenceChanged(value))
-    sendAnalytics({ event: 'Address order changed', props: { value } })
+    sendAnalytics({ event: AnalyticsEvent.ADDRESS_ORDER_CHANGED, props: { value } })
   }
 
   return (

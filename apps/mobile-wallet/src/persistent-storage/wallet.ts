@@ -27,6 +27,7 @@ import { GeneratedWallet, WalletStoredState } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const isNewWalletKey = (walletId: string) => `is-new-wallet-${walletId}`
+const isWalletFundedKey = (walletId: string) => `is-wallet-funded-${walletId}`
 
 export const generateAndStoreWallet = async (
   name: WalletStoredState['name'],
@@ -152,6 +153,12 @@ export const getIsNewWallet = (walletId: string): boolean | undefined => storage
 
 export const storeIsNewWallet = (walletId: string, isNew: boolean) =>
   storeWithReportableError(isNewWalletKey(walletId), isNew)
+
+export const getIsWalletFunded = (walletId: string): boolean | undefined =>
+  storage.getBoolean(isWalletFundedKey(walletId))
+
+export const storeIsWalletFunded = (walletId: string, isFunded: boolean) =>
+  storeWithReportableError(isWalletFundedKey(walletId), isFunded)
 
 const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(walletMnemonicKey(walletId), JSON.stringify(mnemonic), true, '')

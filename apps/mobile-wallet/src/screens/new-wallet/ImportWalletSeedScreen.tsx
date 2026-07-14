@@ -1,4 +1,4 @@
-import { bip39Words } from '@alephium/shared'
+import { AnalyticsEvent, bip39Words } from '@alephium/shared'
 import { newWalletInitialAddressGenerated } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -101,7 +101,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       dispatch(newWalletGenerated(wallet))
       dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-      sendAnalytics({ event: 'Imported wallet', props: { note: 'Entered mnemonic manually' } })
+      sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { note: 'Entered mnemonic manually' } })
 
       resetNavigation(
         navigation,

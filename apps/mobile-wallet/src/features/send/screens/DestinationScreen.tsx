@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash, Contact } from '@alephium/shared/types'
 import { isValidAddress } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -41,7 +42,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
-  const { setToAddress, setFromAddress, toAddress } = useSendContext()
+  const { setToAddress, setFromAddress, toAddress, origin } = useSendContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const { screenScrollHandler } = useHeaderContext()
@@ -58,7 +59,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     if (isValidAddress(addressHash)) {
       setValue('toAddressHash', addressHash)
 
-      sendAnalytics({ event: 'Send: Captured destination address by scanning QR code' })
+      sendAnalytics({ event: AnalyticsEvent.SEND_CAPTURED_DESTINATION_ADDRESS_BY_SCANNING_QR_CODE })
     } else if (isEthereumAddress(addressHash)) {
       showToast({
         text1: t('You scanned an Ethereum address'),
@@ -83,14 +84,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     if (contact) {
       setToAddress(contact.address)
 
-      sendAnalytics({ event: 'Send: Selected contact to send funds to' })
+      sendAnalytics({ event: AnalyticsEvent.SEND_SELECTED_CONTACT_TO_SEND_FUNDS_TO })
     }
   }
 
   const handleAddressPress = (addressHash: AddressHash) => {
     setToAddress(addressHash)
 
-    sendAnalytics({ event: 'Send: Selected own address to send funds to' })
+    sendAnalytics({ event: AnalyticsEvent.SEND_SELECTED_OWN_ADDRESS_TO_SEND_FUNDS_TO })
   }
 
   const openAddressSelectModal = () =>
@@ -99,9 +100,10 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const handleContinuePress = useCallback(
     (formData: FormData) => {
       setToAddress(formData.toAddressHash)
+      sendAnalytics({ event: AnalyticsEvent.SEND_DESTINATION_SET, props: { origin } })
       navigation.navigate(nextScreen)
     },
-    [navigation, nextScreen, setToAddress]
+    [navigation, nextScreen, origin, setToAddress]
   )
 
   const openSelectContactModal = () =>

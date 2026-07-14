@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import posthog from 'posthog-js'
 
@@ -27,7 +27,7 @@ export const fetchTransactionsCsv = createAsyncThunk<string, CsvExportQueryParam
     try {
       return await fetchCsv(queryParams)
     } catch (e) {
-      posthog.capture('Error', { message: 'Fetching CSV' })
+      posthog.capture(AnalyticsEvent.ERROR, { message: 'Fetching CSV' })
       return rejectWithValue({
         text: getHumanReadableError(e, i18n.t('Encountered error while exporting your transactions.')),
         type: 'error'

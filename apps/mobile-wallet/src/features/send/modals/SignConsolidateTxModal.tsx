@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { ConsolidationTxModalProps } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +24,7 @@ const SignConsolidateTxModal = memo<ConsolidationTxModalProps>(({ txParams, fees
     sign: async () => {
       await sendSweepTransactions(txParams)
 
-      sendAnalytics({ event: 'Consolidated UTXOs' })
+      sendAnalytics({ event: AnalyticsEvent.CONSOLIDATED_UTXOS })
       onSuccess()
     }
   })

@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { ConsolidationTxModalProps } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -35,7 +36,7 @@ const SignConsolidateTxModal = memo(
       })
 
       onSuccess()
-      sendAnalytics({ event: 'Consolidated UTXOs' })
+      sendAnalytics({ event: AnalyticsEvent.CONSOLIDATED_UTXOS })
     }, [isLedger, onLedgerError, onSuccess, sendAnalytics, signerAddress, txParams])
 
     return (

@@ -1,3 +1,4 @@
+import { AnalyticsEvent, SendOrigin } from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import { selectAddressByHash } from '@alephium/shared/store'
 import {
@@ -34,6 +35,7 @@ export type BuildTransactionCallbacks = {
 }
 
 interface SendContextValue {
+  origin?: SendOrigin
   toAddress?: AddressHash
   setToAddress: (toAddress: AddressHash) => void
   fromAddress?: AddressHash
@@ -47,6 +49,7 @@ interface SendContextValue {
 }
 
 const initialValues: SendContextValue = {
+  origin: undefined,
   toAddress: undefined,
   setToAddress: () => null,
   fromAddress: undefined,
@@ -63,6 +66,7 @@ const SendContext = createContext(initialValues)
 
 interface SendContextProviderProps {
   children: ReactNode
+  origin?: SendOrigin
   originAddressHash?: AddressHash
   destinationAddressHash?: AddressHash
   tokenId?: Token['id']
@@ -71,6 +75,7 @@ interface SendContextProviderProps {
 
 export const SendContextProvider = ({
   children,
+  origin,
   originAddressHash,
   destinationAddressHash,
   tokenId,
@@ -132,15 +137,16 @@ export const SendContextProvider = ({
         }
 
         onSendSuccess()
-        sendAnalytics({ event: 'Send: Sent transaction' })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_SENT, props: { origin } })
       } catch (error) {
         const message = t('Could not send transaction')
 
         showExceptionToast(error, message)
-        sendAnalytics({ type: 'error', message })
+        sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin } })
+        sendAnalytics({ type: 'error', message, category: 'send' })
       }
     },
-    [address, assetAmounts, gasRefillGroupedAddress, shouldChainTxsForGasRefill, shouldSweep, t, toAddress]
+    [address, assetAmounts, gasRefillGroupedAddress, origin, shouldChainTxsForGasRefill, shouldSweep, t, toAddress]
   )
 
   const authenticateAndSend = useCallback(
@@ -165,6 +171,8 @@ export const SendContextProvider = ({
 
       const sendFlowData = { fromAddress: address, toAddress, assetAmounts }
 
+      sendAnalytics({ event: AnalyticsEvent.SEND_AMOUNT_SET, props: { origin } })
+
       try {
         if (shouldSweep) {
           const txParams = getSweepTxParams(sendFlowData)
@@ -176,6 +184,7 @@ export const SendContextProvider = ({
           setFees(fees)
         }
 
+        sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED, props: { origin } })
         callbacks.onBuildSuccess()
       } catch (e) {
         try {
@@ -203,6 +212,7 @@ export const SendContextProvider = ({
             setChainedTxProps(props)
             setShouldSweep(false)
 
+            sendAnalytics({ event: AnalyticsEvent.SEND_REVIEW_REACHED, props: { origin } })
             callbacks.onBuildSuccess()
           } else throw e
         } catch (e) {
@@ -211,12 +221,13 @@ export const SendContextProvider = ({
         }
       }
     },
-    [address, toAddress, assetAmounts, dispatch, t, gasRefillGroupedAddress]
+    [address, toAddress, assetAmounts, dispatch, origin, t, gasRefillGroupedAddress]
   )
 
   return (
     <SendContext.Provider
       value={{
+        origin,
         toAddress,
         setToAddress,
         fromAddress,

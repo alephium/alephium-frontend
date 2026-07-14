@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -21,12 +22,12 @@ const CheckWordsIntroPage = () => {
   const { sendAnalytics } = useAnalytics()
 
   const handleNextPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Ready to verify words: Clicked next' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_READY_TO_VERIFY_WORDS_CLICKED_NEXT })
     onButtonNext()
   }
 
   const handleBackPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Ready to verify words: Clicked back' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_READY_TO_VERIFY_WORDS_CLICKED_BACK })
     onButtonBack()
   }
 

@@ -39,7 +39,7 @@ const NftModal = memo<NftModalProps>(({ nftId }) => {
 
       <ActionButtons>
         <SendButton
-          origin="addressDetails"
+          origin="address_details"
           onPress={dismissAll}
           tokenId={nftId}
           isNft

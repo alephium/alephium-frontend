@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash, isFT, isUnlistedFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken } from '@alephium/shared-react'
 import { Optional } from '@alephium/web3'
@@ -30,13 +31,13 @@ const FtListItem = ({ tokenId, addressHash, ...props }: FtListItemProps) => {
     dispatch(
       openModal({ name: 'TokenDetailsModal', props: { tokenId, addressHash, onClose: props.onTokenDetailsModalClose } })
     )
-    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'token_list_item' } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_TOKEN_DETAILS_MODAL, props: { origin: 'token_list_item' } })
   }
 
   const openTokenQuickActionsModal = () => {
     vibrate(ImpactStyle.Heavy)
     dispatch(openModal({ name: 'TokenQuickActionsModal', props: { tokenId } }))
-    sendAnalytics({ event: 'Opened token quick actions modal' })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_TOKEN_QUICK_ACTIONS_MODAL })
   }
 
   return (

@@ -1,3 +1,4 @@
+import { AnalyticsEvent, SendOrigin } from '@alephium/shared'
 import { selectAddressByHash, selectDefaultAddressHash } from '@alephium/shared/store'
 import { AddressHash, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
@@ -13,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {
-  analyticsOrigin: string
+  analyticsOrigin: SendOrigin
   color?: string
   highlight?: boolean
 }
@@ -81,12 +82,12 @@ const SettingsButton = ({ addressHash, analyticsOrigin, color }: SettingsButtonP
 
   const handleWalletSettingsClick = () => {
     dispatch(openModal({ name: 'SettingsModal', props: {} }))
-    sendAnalytics({ event: 'Wallet settings button clicked', props: { origin: analyticsOrigin } })
+    sendAnalytics({ event: AnalyticsEvent.WALLET_SETTINGS_BUTTON_CLICKED, props: { origin: analyticsOrigin } })
   }
 
   const handleAddressSettingsClick = (addressHash: AddressHash) => {
     dispatch(openModal({ name: 'AddressOptionsModal', props: { addressHash } }))
-    sendAnalytics({ event: 'Address settings button clicked', props: { origin: analyticsOrigin } })
+    sendAnalytics({ event: AnalyticsEvent.ADDRESS_SETTINGS_BUTTON_CLICKED, props: { origin: analyticsOrigin } })
   }
 
   return (
@@ -107,7 +108,7 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsG
 
   const handleReceiveClick = () => {
     dispatch(openModal({ name: 'ReceiveModal', props: { addressHash } }))
-    sendAnalytics({ event: 'Receive button clicked', props: { origin: analyticsOrigin } })
+    sendAnalytics({ event: AnalyticsEvent.RECEIVE_BUTTON_CLICKED, props: { origin: analyticsOrigin } })
   }
 
   return (
@@ -154,7 +155,7 @@ const BuyButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsGroup
 
   const handleBuyClick = () => {
     dispatch(openModal({ name: 'BuyModal', props: { addressHash } }))
-    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
+    sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_CLICKED, props: { origin: analyticsOrigin } })
   }
 
   return (

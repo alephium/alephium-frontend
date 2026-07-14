@@ -1,5 +1,5 @@
 import { keyring } from '@alephium/keyring'
-import { bip39Words } from '@alephium/shared'
+import { AnalyticsEvent, bip39Words } from '@alephium/shared'
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRef, useState } from 'react'
@@ -21,7 +21,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 const ImportWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const { setMnemonic } = useWalletContext()
+  const { setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { sendAnalytics } = useAnalytics()
 
   const [phrase, setPhrase] = useState('')
@@ -68,7 +68,7 @@ const ImportWordsPage = () => {
 
     if (words.length < 12) return
 
-    sendAnalytics({ event: 'Importing wallet: Entering words: Clicked next' })
+    sendAnalytics({ event: AnalyticsEvent.IMPORTING_WALLET_ENTERING_WORDS_CLICKED_NEXT })
 
     try {
       setMnemonic(keyring.importMnemonicString(words.join(' ')))
@@ -80,6 +80,12 @@ const ImportWordsPage = () => {
     } finally {
       setPhrase('')
     }
+  }
+
+  const handleCancelButtonPress = () => {
+    keyring.clear()
+    resetCachedMnemonic()
+    onButtonBack()
   }
 
   const words = phrase.length > 0 && phrase[0] !== '' ? phrase.trim().split(/\s+/) : []
@@ -106,7 +112,7 @@ const ImportWordsPage = () => {
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </PanelContentContainer>
         <FooterActionsContainer>
-          <Button role="secondary" onClick={onButtonBack} tall>
+          <Button role="secondary" onClick={handleCancelButtonPress} tall>
             {t('Cancel')}
           </Button>
           <Button onClick={handleNextButtonPress} disabled={!isPhraseLongEnough} tall>

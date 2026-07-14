@@ -1,10 +1,19 @@
-import { AnalyticsProps, cleanExceptionMessage, getHumanReadableError, throttleEvent } from '@alephium/shared'
+import {
+  AnalyticsEvent,
+  AnalyticsEventName,
+  AnalyticsProps,
+  cleanExceptionMessage,
+  getHumanReadableError,
+  normalizeAnalyticsProps,
+  redactSensitiveData,
+  throttleEvent
+} from '@alephium/shared'
 import { CaptureOptions } from 'posthog-js'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 
 type EventAnalyticsParams = {
-  event: string
+  event: AnalyticsEventName
   type?: 'event'
   props?: AnalyticsProps
   options?: CaptureOptions
@@ -15,6 +24,7 @@ type ErrorAnalyticsParams = {
   message: string
   error?: unknown
   isSensitive?: boolean
+  category?: string
 }
 
 type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
@@ -25,18 +35,24 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
   const sendAnalytics = useCallback(
     (params: AnalyticsParams) => {
       if (params.type === 'error') {
-        const { error, message, isSensitive } = params
+        const { error, message, isSensitive, category } = params
         console.error(message, error)
 
         sendAnalytics({
-          event: 'Error',
+          event: AnalyticsEvent.ERROR,
           props: {
             message,
-            reason: error ? (isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')) : undefined
+            category,
+            reason: error
+              ? isSensitive
+                ? cleanExceptionMessage(error)
+                : redactSensitiveData(getHumanReadableError(error, ''))
+              : undefined
           }
         })
       } else {
-        const { event, props, options } = params
+        const { event, options } = params
+        const props = normalizeAnalyticsProps(params.props)
 
         throttleEvent(() => posthog.capture(event, props, options), event, props)
       }

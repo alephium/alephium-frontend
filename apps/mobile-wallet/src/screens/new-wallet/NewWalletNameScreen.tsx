@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { newWalletInitialAddressGenerated } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -66,7 +67,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         dispatch(newWalletGenerated(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: 'Created new wallet' })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED })
         resetNavigation(
           navigation,
           deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess

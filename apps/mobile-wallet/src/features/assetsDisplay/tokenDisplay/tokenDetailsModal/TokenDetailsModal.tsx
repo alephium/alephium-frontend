@@ -47,8 +47,8 @@ const TokenDetailsModal = memo<TokenDetailsModalProps>(({ tokenId, addressHash, 
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
-          <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
-          <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
+          <SendButton origin="token_details" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
+          <ActionCardReceiveButton origin="token_details" addressHash={addressHash} onPress={handleClose} />
           <TokenBuyButton tokenId={tokenId} addressHash={addressHash} />
           <TokenSwapButton tokenId={tokenId} addressHash={addressHash} />
         </ActionButtons>
@@ -63,7 +63,7 @@ const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) 
 
   if (!defaultAddressHash || tokenId !== ALPH.id) return null
 
-  return <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />
+  return <ActionCardBuyButton origin="token_details" receiveAddressHash={addressHash || defaultAddressHash} />
 }
 
 const TokenSwapButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
@@ -75,7 +75,7 @@ const TokenSwapButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps)
 
   return (
     <ActionCardSwapButton
-      origin="tokenDetails"
+      origin="token_details"
       receiveAddressHash={addressHash || defaultAddressHash}
       onPress={dismissModal}
     />

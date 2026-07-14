@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignDeployContractTxModalProps } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -19,7 +20,14 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { signer } from '@/signer'
 
 const SignDeployContractTxModal = memo(
-  ({ dAppUrl, txParams, unsignedData, onSuccess, ...props }: SignDeployContractTxModalProps & ModalBaseProp) => {
+  ({
+    dAppUrl,
+    origin,
+    txParams,
+    unsignedData,
+    onSuccess,
+    ...props
+  }: SignDeployContractTxModalProps & ModalBaseProp) => {
     const dispatch = useAppDispatch()
     const { t } = useTranslation()
     const { isLedger, onLedgerError } = useLedger()
@@ -48,8 +56,11 @@ const SignDeployContractTxModal = memo(
       const sentTx = signAndSubmitTxResultToSentTx({ type: 'DEPLOY_CONTRACT', txParams, result })
       dispatch(transactionSent(sentTx))
 
-      sendAnalytics({ event: 'Deployed smart contract' })
-    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError])
+      sendAnalytics({
+        event: AnalyticsEvent.TRANSACTION_APPROVED,
+        props: { origin, dapp_host: dAppUrl, tx_type: 'deploy' }
+      })
+    }, [signerAddress, isLedger, onSuccess, dispatch, txParams, sendAnalytics, onLedgerError, dAppUrl, origin])
 
     const fees = useMemo(() => BigInt(unsignedData.gasAmount) * BigInt(unsignedData.gasPrice), [unsignedData])
 

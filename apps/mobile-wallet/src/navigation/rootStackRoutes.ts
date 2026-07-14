@@ -1,3 +1,4 @@
+import { SendOrigin } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { Token } from '@alephium/web3'
 
@@ -23,6 +24,7 @@ type RootStackParamList = {
   NewAddressScreen: undefined
   SettingsScreen: undefined
   SendNavigation?: {
+    origin: SendOrigin
     originAddressHash?: AddressHash
     destinationAddressHash?: AddressHash
     tokenId?: Token['id']

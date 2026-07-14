@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { FlashList } from '@shopify/flash-list'
 import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -77,7 +78,7 @@ const RegionRadioButton = ({ label, value, isLast, parentModalId }: RegionRadioB
   const handleRegionChange = (region: string) => {
     dispatch(numberFormatRegionChanged(region))
     dispatch(closeModal({ id: parentModalId }))
-    sendAnalytics({ event: 'Region changed', props: { region } })
+    sendAnalytics({ event: AnalyticsEvent.REGION_CHANGED, props: { region } })
   }
 
   return (

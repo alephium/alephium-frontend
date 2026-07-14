@@ -1,7 +1,9 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import { Platform } from 'react-native'
 import { styled } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
@@ -69,13 +71,25 @@ const BiometricsSettingsRows = () => {
   const toggleBiometricsAppAccess = () =>
     triggerBiometricsAuthGuard({
       settingsToCheck: 'appAccess',
-      successCallback: () => dispatch(biometricsToggled())
+      successCallback: () => {
+        dispatch(biometricsToggled())
+        sendAnalytics({
+          event: AnalyticsEvent.AUTHENTICATION_SETTINGS_CHANGED,
+          props: { setting: 'app_access', enabled: !biometricsRequiredForAppAccess }
+        })
+      }
     })
 
   const toggleBiometricsTransactions = () =>
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
-      successCallback: () => dispatch(passwordRequirementToggled())
+      successCallback: () => {
+        dispatch(passwordRequirementToggled())
+        sendAnalytics({
+          event: AnalyticsEvent.AUTHENTICATION_SETTINGS_CHANGED,
+          props: { setting: 'transactions', enabled: !biometricsRequiredForTransactions }
+        })
+      }
     })
 
   return (

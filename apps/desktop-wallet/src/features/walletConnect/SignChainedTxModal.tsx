@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { signChainedTxResultsToTxSubmittedResults } from '@alephium/shared/transactions'
 import { SignChainedTxModalProps } from '@alephium/shared/types'
@@ -23,6 +24,7 @@ const SignChainedTxModal = ({
   txParams,
   props,
   dAppUrl,
+  origin,
   onSuccess,
   ...rest
 }: SignChainedTxModalProps & ModalBaseProp) => {
@@ -42,10 +44,13 @@ const SignChainedTxModal = ({
       dispatch(transactionSent(sentTx))
     })
 
-    sendAnalytics({ event: 'Approved chained tx', props: { origin } })
+    sendAnalytics({
+      event: AnalyticsEvent.TRANSACTION_APPROVED,
+      props: { origin, dapp_host: dAppUrl, tx_type: 'chained' }
+    })
 
     onSuccess(results)
-  }, [dispatch, isLedger, onSuccess, sendAnalytics, txParams])
+  }, [dAppUrl, dispatch, isLedger, onSuccess, origin, sendAnalytics, txParams])
 
   return (
     <SignTxBaseModal

@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
@@ -17,7 +18,7 @@ const RegionSettings = () => {
   const handleRegionSelect = (region: string) => {
     dispatch(numberFormatRegionChanged(region))
 
-    sendAnalytics({ event: 'Region changed', props: { region } })
+    sendAnalytics({ event: AnalyticsEvent.REGION_CHANGED, props: { region } })
   }
 
   return (

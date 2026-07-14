@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useState } from 'react'
@@ -75,6 +76,8 @@ const LandingScreen = ({ navigation, route, ...props }: LandingScreenProps) => {
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
     navigation.navigate('NewWalletIntroScreen')
+
+    sendAnalytics({ event: AnalyticsEvent.ONBOARDING_STARTED, props: { method } })
   }
 
   return (

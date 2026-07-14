@@ -32,7 +32,7 @@ const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress }) =>
             addressHash={addressHash}
             onPress={() => handleAddressPress(addressHash)}
             isLast={index === data.length - 1}
-            origin="selectAddressModal"
+            origin="select_address_modal"
             showGroup
           />
         )

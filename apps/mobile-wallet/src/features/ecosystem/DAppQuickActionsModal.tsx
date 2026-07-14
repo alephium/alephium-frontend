@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
@@ -26,7 +27,7 @@ const DAppQuickActionsModal = memo<DAppQuickActionsModalProps>(({ dAppName }) =>
   const handleShowDetails = () => {
     dismissModal()
     dispatch(openModal({ name: 'DAppDetailsModal', props: { dAppName } }))
-    sendAnalytics({ event: 'Opened dApp details modal', props: { origin: 'quick_actions' } })
+    sendAnalytics({ event: AnalyticsEvent.OPENED_DAPP_DETAILS_MODAL, props: { origin: 'quick_actions' } })
   }
 
   return (

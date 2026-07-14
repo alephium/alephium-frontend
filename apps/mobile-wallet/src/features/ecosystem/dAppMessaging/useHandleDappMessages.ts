@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useCallback } from 'react'
 import type { WebViewMessageEvent } from 'react-native-webview'
 
@@ -18,7 +19,10 @@ const useHandleDappMessages = () => {
 
       if (parsed.claimedHost && parsed.senderHost && parsed.claimedHost !== parsed.senderHost) {
         console.warn(`dApp host mismatch — claimed "${parsed.claimedHost}", real origin "${parsed.senderHost}"`)
-        sendAnalytics({ event: 'dApp host mismatch detected', props: { claimedHost: parsed.claimedHost } })
+        sendAnalytics({
+          event: AnalyticsEvent.DAPP_HOST_MISMATCH_DETECTED,
+          props: { claimed_host: parsed.claimedHost }
+        })
       }
 
       dispatch(receivedDappMessage({ message: parsed.message, senderHost: parsed.senderHost }))

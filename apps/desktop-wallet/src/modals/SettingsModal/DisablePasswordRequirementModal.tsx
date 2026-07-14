@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -21,7 +22,7 @@ const DisablePasswordRequirementModal = memo(
       dispatch(passwordRequirementToggled())
       dispatch(closeModal({ id }))
 
-      sendAnalytics({ event: 'Disabled password requirement' })
+      sendAnalytics({ event: AnalyticsEvent.DISABLED_PASSWORD_REQUIREMENT })
     }
 
     return (

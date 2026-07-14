@@ -1,4 +1,9 @@
-import { getHumanReadableError, isDappMessageHasherAllowed, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import {
+  AnalyticsEvent,
+  getHumanReadableError,
+  isDappMessageHasherAllowed,
+  WALLETCONNECT_ERRORS
+} from '@alephium/shared'
 import { throttledClient } from '@alephium/shared/api'
 import {
   selectAllAddressByType,
@@ -253,7 +258,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         console.log('✅ DISCONNECTING: DONE!')
 
-        sendAnalytics({ event: 'WC: Disconnected from dApp' })
+        sendAnalytics({ event: AnalyticsEvent.WC_DISCONNECTED_FROM_DAPP })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
       } finally {
@@ -709,7 +714,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                       respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result }),
                     dAppUrl: requestEvent.verifyContext.verified.origin,
                     dAppIcon: getDappIcon(requestEvent.topic),
-                    origin: 'walletconnect:insufficient-funds',
+                    origin: 'walletconnect:insufficient_funds',
                     onError: (message) => {
                       respondToWalletConnectWithError(requestEvent, {
                         message,

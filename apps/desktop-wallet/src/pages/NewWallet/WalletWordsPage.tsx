@@ -1,4 +1,5 @@
 import { dangerouslyConvertUint8ArrayMnemonicToString, keyring } from '@alephium/keyring'
+import { AnalyticsEvent } from '@alephium/shared'
 import { Edit3 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,12 +24,14 @@ const WalletWordsPage = () => {
   const { sendAnalytics } = useAnalytics()
 
   useEffect(() => {
-    if (!mnemonic) {
-      try {
-        setMnemonic(keyring.generateRandomMnemonic())
-      } catch (error) {
-        sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
-      }
+    if (mnemonic) return
+
+    try {
+      keyring.clear()
+
+      setMnemonic(keyring.generateRandomMnemonic())
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
     }
   }, [mnemonic, sendAnalytics, setMnemonic])
 
@@ -61,14 +64,14 @@ const WalletWordsPage = () => {
   }
 
   const handleBackPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked back' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_WRITING_DOWN_MNEMONIC_CLICKED_BACK })
     keyring.clear()
     resetCachedMnemonic()
     onButtonBack()
   }
 
   const handleNextPress = () => {
-    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked next' })
+    sendAnalytics({ event: AnalyticsEvent.CREATING_WALLET_WRITING_DOWN_MNEMONIC_CLICKED_NEXT })
     onButtonNext()
   }
 

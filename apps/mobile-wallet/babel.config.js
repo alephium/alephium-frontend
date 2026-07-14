@@ -1,7 +1,7 @@
 module.exports = function (api) {
   const isProduction = api.env('production')
   api.cache.using(() => process.env.NODE_ENV)
-  
+
   return {
     presets: ['babel-preset-expo'],
     plugins: [
@@ -17,7 +17,7 @@ module.exports = function (api) {
           alias: {
             '~': './src'
           }
-        },
+        }
       ]
     ]
   }

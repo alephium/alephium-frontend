@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAllAddressIndexes, selectDefaultAddressHash } from '@alephium/shared/store'
 import { Codesandbox, HardHat, Lightbulb, Search, Trash2 } from 'lucide-react'
 import { memo } from 'react'
@@ -36,7 +37,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
       dispatch(openModal({ name: 'NewAddressModal', props: { title: t('Generate one address per group') } }))
     }
 
-    sendAnalytics({ event: 'Advanced operation to generate one address per group clicked' })
+    sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_GENERATE_ONE_ADDRESS_PER_GROUP_CLICKED })
   }
 
   const handleDiscoverAddressesClick = () => {
@@ -44,17 +45,17 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
       skipIndexesForAddressesWithGroup: allAddressesIndexes.indexesOfAddressesWithGroup,
       skipIndexesForGrouplessAddresses: allAddressesIndexes.indexesOfGrouplessAddresses
     })
-    sendAnalytics({ event: 'Advanced operation to discover addresses clicked' })
+    sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_DISCOVER_ADDRESSES_CLICKED })
   }
 
   const handleTellUsIdeasClick = () => {
     openInWebBrowser(links.discord)
-    sendAnalytics({ event: 'Advanced operation to share ideas clicked' })
+    sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_SHARE_IDEAS_CLICKED })
   }
 
   const handleDeleteAddressesClick = () => {
     dispatch(openModal({ name: 'DeleteAddressesModal' }))
-    sendAnalytics({ event: 'Advanced operation to delete addresses clicked' })
+    sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_DELETE_ADDRESSES_CLICKED })
   }
 
   return (
@@ -117,7 +118,7 @@ const ConsolidationOperationBox = () => {
     dispatch(
       openModal({ name: 'AddressSweepModal', props: { addressHash: defaultAddressHash, isUtxoConsolidation: true } })
     )
-    sendAnalytics({ event: 'Advanced operation to consolidate UTXOs clicked' })
+    sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_CONSOLIDATE_UTXOS_CLICKED })
   }
 
   return (

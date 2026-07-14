@@ -43,12 +43,12 @@ All four come from the SSL.com / eSigner account and are consumed in
 [`.github/workflows/release-desktop.yml`](../../.github/workflows/release-desktop.yml) → the
 "Build & release Windows Electron app" step, then read by `.signWindows.js`.
 
-| Secret | What it is |
-| --- | --- |
-| `WINDOWS_SIGN_USER_NAME` | SSL.com account username |
-| `WINDOWS_SIGN_PASSWORD` | SSL.com account password |
-| `WINDOWS_SIGN_CREDENTIAL_ID` | eSigner credential/certificate ID to sign with |
-| `WINDOWS_SIGN_TOTP_SECRET` | TOTP secret for automated (headless) eSigner signing |
+| Secret                       | What it is                                           |
+| ---------------------------- | ---------------------------------------------------- |
+| `WINDOWS_SIGN_USER_NAME`     | SSL.com account username                             |
+| `WINDOWS_SIGN_PASSWORD`      | SSL.com account password                             |
+| `WINDOWS_SIGN_CREDENTIAL_ID` | eSigner credential/certificate ID to sign with       |
+| `WINDOWS_SIGN_TOTP_SECRET`   | TOTP secret for automated (headless) eSigner signing |
 
 If any are missing the script calls `process.exit(1)` and the release fails — so a green Windows
 release means signing **did** run.
@@ -63,10 +63,10 @@ versions" step), so RC builds are intentionally unsigned and **will** warn. That
 
 The signature is valid, but Microsoft SmartScreen treats reputation differently by certificate tier:
 
-| Cert tier | Leaf cert policy OID | SmartScreen behavior |
-| --- | --- | --- |
-| **OV** (what we have) | `2.23.140.1.4.1` | No automatic reputation. Warns until each binary earns enough downloads. |
-| **EV** | `2.23.140.1.3` | **Immediate** reputation. No warning from the first download. |
+| Cert tier             | Leaf cert policy OID | SmartScreen behavior                                                     |
+| --------------------- | -------------------- | ------------------------------------------------------------------------ |
+| **OV** (what we have) | `2.23.140.1.4.1`     | No automatic reputation. Warns until each binary earns enough downloads. |
+| **EV**                | `2.23.140.1.3`       | **Immediate** reputation. No warning from the first download.            |
 
 Because reputation is largely **per-binary-hash**, every new release starts from zero with an OV
 cert, so the warning effectively never goes away for fresh releases. For a crypto wallet this is
@@ -121,7 +121,7 @@ Step-by-step for moving the existing OV cert to EV. Tracked in
 1. **Buy** → choose **EV Code Signing Certificate** (1-year, or multi-year for a lower per-year
    price).
 2. ⚠️ **Choose cloud signing, not a token.** When asked how the private key is stored, pick
-   **eSigner / cloud signing (cloud HSM)** — *not* "ship USB token." A physical token would break
+   **eSigner / cloud signing (cloud HSM)** — _not_ "ship USB token." A physical token would break
    headless CI signing. This is the single most important click.
 3. **Complete EV validation** under the `Validations` tab — start this immediately, it's the slow
    part (a few days to ~2 weeks). Beyond the OV checks, EV vetting needs:
@@ -133,7 +133,7 @@ Step-by-step for moving the existing OV cert to EV. Tracked in
    - A designated **authorized signer** who accepts the EV subscriber agreement.
 4. **Enroll the issued EV order in eSigner** (it shows under "esigner enrolled orders" like the OV
    one) and enable **automated signing**:
-   - Save the **TOTP seed** — the base64 string, *not* the rotating 6-digit code →
+   - Save the **TOTP seed** — the base64 string, _not_ the rotating 6-digit code →
      `WINDOWS_SIGN_TOTP_SECRET`.
    - Get the **credential_id** from the eSigner order page, or run
      `CodeSignTool.bat get_credential_ids -username=<account>` → `WINDOWS_SIGN_CREDENTIAL_ID`.
@@ -171,5 +171,5 @@ cert valid Aug 2025 → Aug 2026, policy OID `2.23.140.1.4.1` → **OV**.
 ## Renewal
 
 The current cert expires **Aug 14 2026**. Because signatures are timestamped, binaries signed
-before expiry keep verifying afterward — but you cannot sign *new* releases with an expired cert.
+before expiry keep verifying afterward — but you cannot sign _new_ releases with an expired cert.
 Renew (ideally as EV) before then.

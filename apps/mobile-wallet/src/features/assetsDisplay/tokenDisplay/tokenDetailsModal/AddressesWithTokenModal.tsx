@@ -47,7 +47,7 @@ const AddressesWithTokenModal = memo<AddressesWithTokenModalProps>(({ tokenId })
             isLast={i === addresses.length - 1}
             onPress={() => handleAddressPress(addressHash)}
             tokenId={tokenId}
-            origin="selectAddressModal"
+            origin="select_address_modal"
           />
         ))}
       </Content>

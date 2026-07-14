@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { hideToken } from '@alephium/shared/store'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
@@ -15,7 +16,7 @@ const useHideToken = (origin: 'quick_actions' | 'app_settings', onHide: () => vo
     if (tokenId !== ALPH.id) {
       dispatch(hideToken(tokenId))
       showToast({ text1: t('Asset hidden'), type: 'info' })
-      sendAnalytics({ event: 'Hid asset', props: { origin, tokenId } })
+      sendAnalytics({ event: AnalyticsEvent.TOKEN_HIDDEN, props: { origin, token_id: tokenId } })
     }
 
     onHide()

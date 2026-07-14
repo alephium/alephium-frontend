@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -5,6 +6,7 @@ import styled from 'styled-components'
 
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import CenteredModal from '@/modals/CenteredModal'
 
@@ -12,6 +14,7 @@ const QRCodeSize = 250
 
 const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
+  const { sendAnalytics } = useAnalytics()
   const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
 
   const [selectedAddress, setSelectedAddress] = useState(addressHash)
@@ -29,7 +32,14 @@ const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
           noMargin
         />
         <QRCodeSection>
-          {selectedAddress && <QRCode value={selectedAddress} size={QRCodeSize} copyButtonLabel={t('Copy address')} />}
+          {selectedAddress && (
+            <QRCode
+              value={selectedAddress}
+              size={QRCodeSize}
+              copyButtonLabel={t('Copy address')}
+              onCopy={() => sendAnalytics({ event: AnalyticsEvent.RECEIVE_ADDRESS_COPIED })}
+            />
+          )}
         </QRCodeSection>
       </Content>
     </CenteredModal>

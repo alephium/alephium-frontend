@@ -1,10 +1,11 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { WalletConnectSessionProposalModalProps } from '@alephium/shared/types'
 import { isNetworkValid } from '@alephium/shared/utils'
 import { useWalletConnectNetwork } from '@alephium/shared-react'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { PlusSquare } from 'lucide-react'
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -63,6 +64,13 @@ const WalletConnectSessionProposalModal = memo(
 
     const { showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
 
+    useEffect(() => {
+      sendAnalytics({
+        event: AnalyticsEvent.DAPP_CONNECTION_REQUESTED,
+        props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+      })
+    }, [metadata.url, metadata.name, sendAnalytics])
+
     const generateAddressInGroup = async () => {
       try {
         const address = await generateAddress(group)
@@ -70,7 +78,7 @@ const WalletConnectSessionProposalModal = memo(
 
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
-        sendAnalytics({ event: 'New address created through WalletConnect modal' })
+        sendAnalytics({ event: AnalyticsEvent.NEW_ADDRESS_CREATED_THROUGH_WALLETCONNECT_MODAL })
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
         dispatch(
@@ -89,8 +97,8 @@ const WalletConnectSessionProposalModal = memo(
 
       sendAnalytics({
         event: clickedDecline
-          ? 'Rejected WalletConnect connection by clicking Decline'
-          : 'Rejected WalletConnect connection by closing modal'
+          ? AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLICKING_DECLINE
+          : AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLOSING_MODAL
       })
     }
 
@@ -155,7 +163,10 @@ const WalletConnectSessionProposalModal = memo(
 
         refreshActiveSessions()
 
-        sendAnalytics({ event: 'Approved WalletConnect connection' })
+        sendAnalytics({
+          event: AnalyticsEvent.DAPP_CONNECTED,
+          props: { origin: 'walletconnect', dapp_host: metadata.url, dapp_name: metadata.name }
+        })
 
         dispatch(
           showToast({
@@ -181,7 +192,7 @@ const WalletConnectSessionProposalModal = memo(
         walletConnectClient.reject({ id: proposalEventId, reason: getSdkError('USER_REJECTED') })
         console.log('✅ REJECTING: DONE!')
 
-        sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
+        sendAnalytics({ event: AnalyticsEvent.REJECTED_WALLETCONNECT_CONNECTION_BY_CLICKING_REJECT })
 
         dispatch(
           showToast({

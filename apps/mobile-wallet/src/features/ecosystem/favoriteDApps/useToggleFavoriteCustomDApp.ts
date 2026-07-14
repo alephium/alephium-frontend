@@ -1,3 +1,5 @@
+import { AnalyticsEvent } from '@alephium/shared'
+
 import { sendAnalytics } from '~/analytics'
 import {
   addFavoriteCustomDApp,
@@ -13,10 +15,10 @@ const useToggleFavoriteCustomDApp = (dAppUrl: string) => {
   const toggleFavoriteCustom = () => {
     if (isFavoriteCustom) {
       dispatch(removeFavoriteCustomDApp(dAppUrl))
-      sendAnalytics({ event: 'Removed dApp to favorites', props: { dAppUrl } })
+      sendAnalytics({ event: AnalyticsEvent.REMOVED_DAPP_TO_FAVORITES, props: { dapp_host: dAppUrl } })
     } else {
       dispatch(addFavoriteCustomDApp(dAppUrl))
-      sendAnalytics({ event: 'Added dApp to favorites', props: { dAppUrl } })
+      sendAnalytics({ event: AnalyticsEvent.ADDED_DAPP_TO_FAVORITES, props: { dapp_host: dAppUrl } })
     }
   }
 

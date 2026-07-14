@@ -1,4 +1,4 @@
-import { bip39Words } from '@alephium/shared'
+import { AnalyticsEvent, bip39Words } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -65,7 +65,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
         dispatch(mnemonicBackedUp())
 
-        sendAnalytics({ event: 'Backed-up mnemonic' })
+        sendAnalytics({ event: AnalyticsEvent.BACKED_UP_MNEMONIC })
       } catch (error) {
         const message = 'Could not confirm backup'
 

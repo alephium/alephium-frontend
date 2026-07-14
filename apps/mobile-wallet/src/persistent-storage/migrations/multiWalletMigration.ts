@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { WalletMetadataMobile } from '@alephium/shared/types'
 
 import { sendAnalytics } from '~/analytics'
@@ -189,7 +190,7 @@ export const runMultiWalletMigrationIfNeeded = async (): Promise<void> => {
     }
 
     console.log(`Multi-wallet migration completed for wallet ${walletId}`)
-    sendAnalytics({ event: 'Multi-wallet migration completed' })
+    sendAnalytics({ event: AnalyticsEvent.MULTI_WALLET_MIGRATION_COMPLETED })
   } catch (error) {
     sendAnalytics({ type: 'error', error, message: 'Multi-wallet migration failed' })
     // Old keys remain intact, migration will retry on next launch

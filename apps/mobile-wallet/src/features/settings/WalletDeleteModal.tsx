@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { activeWalletDeleted } from '@alephium/shared/store'
 import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { memo, useState } from 'react'
@@ -72,7 +73,7 @@ const WalletDeleteModalContent = ({ onDelete }: WalletDeleteModalProps) => {
 
       await onDelete()
 
-      sendAnalytics({ event: 'Deleted wallet' })
+      sendAnalytics({ event: AnalyticsEvent.DELETED_WALLET })
     } catch (error) {
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {

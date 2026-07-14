@@ -1,3 +1,4 @@
+import { AnalyticsEvent, SendOrigin } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { Token } from '@alephium/web3'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
@@ -11,7 +12,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface SendButtonProps {
-  origin: 'dashboard' | 'addressDetails' | 'tokenDetails' | 'qrCodeScan' | 'contact'
+  origin: SendOrigin
   buttonType?: 'action-card' | 'quick-action'
   originAddressHash?: AddressHash
   destinationAddressHash?: AddressHash
@@ -34,9 +35,9 @@ const SendButton = ({
   const dispatch = useAppDispatch()
 
   const handleSendPress = () => {
-    sendAnalytics({ event: 'Send button pressed', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_CLICKED, props: { origin } })
 
-    navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId, isNft })
+    navigation.navigate('SendNavigation', { origin, originAddressHash, destinationAddressHash, tokenId, isNft })
     dispatch(closeAllModals())
 
     onPress?.()

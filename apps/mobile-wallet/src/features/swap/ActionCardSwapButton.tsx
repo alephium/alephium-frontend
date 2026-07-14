@@ -1,4 +1,4 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { AddressHash, NetworkNames } from '@alephium/shared/types'
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useNavigation } from '@react-navigation/native'
@@ -10,7 +10,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardSwapButtonProps {
-  origin: 'dashboard' | 'tokenDetails'
+  origin: 'dashboard' | 'token_details'
   receiveAddressHash: AddressHash
   onPress?: () => void
 }
@@ -23,7 +23,7 @@ const ActionCardSwapButton = ({ receiveAddressHash, origin, onPress }: ActionCar
   if (network !== networkSettingsPresets[NetworkNames.testnet].networkId) return null
 
   const handleSwapPress = () => {
-    sendAnalytics({ event: 'Action card: Pressed btn to swap', props: { origin } })
+    sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_SWAP, props: { origin, provider: 'Powfi' } })
 
     navigation.navigate('DAppWebViewScreen', {
       dAppUrl: 'https://powfi.alephium.org/swap',

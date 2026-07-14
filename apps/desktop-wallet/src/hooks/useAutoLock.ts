@@ -13,7 +13,7 @@ const useAutoLock = () => {
   const { lockWallet } = useWalletLock()
 
   useIdleTimer({
-    onIdle: () => lockWallet('Auto lock'),
+    onIdle: () => lockWallet('auto_lock'),
     timeout: lockAfterMs > 0 ? lockAfterMs : undefined,
     throttle: 500,
     disabled: !isWalletUnlocked || lockAfterMs === 0

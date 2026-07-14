@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +32,7 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
     onClose()
     getCSVFile()
 
-    sendAnalytics({ event: 'Exported CSV', props: { time_period: selectedTimePeriod } })
+    sendAnalytics({ event: AnalyticsEvent.EXPORTED_CSV, props: { time_period: selectedTimePeriod } })
   }
 
   const getCSVFile = async () => {

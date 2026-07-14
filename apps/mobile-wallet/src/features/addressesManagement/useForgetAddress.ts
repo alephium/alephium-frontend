@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { addressDeleted } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +12,7 @@ import { showToast } from '~/utils/layout'
 
 interface UseForgetAddressProps {
   addressHash: AddressHash
-  origin: 'quickActions' | 'addressSettings'
+  origin: 'quick_actions' | 'address_settings'
   onConfirm?: () => void
 }
 
@@ -53,7 +53,7 @@ const useForgetAddress = ({ addressHash, onConfirm, origin }: UseForgetAddressPr
             })
           }
 
-          sendAnalytics({ event: 'Deleted address', props: { origin } })
+          sendAnalytics({ event: AnalyticsEvent.DELETED_ADDRESS, props: { origin } })
         }
       }
     ])

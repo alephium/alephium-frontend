@@ -30,6 +30,13 @@ patchedDependencies:
   js-yaml@4.2.0: patches/js-yaml@4.2.0.patch # re-adds safeLoad/safeLoadAll/safeDump as aliases to load/loadAll/dump so read-yaml-file@1.1.0 (via @manypkg/get-packages@1.1.3, pinned by @changesets/cli@2.31.0) survives the js-yaml>=4 audit override. TODO: remove after upgrading to @changesets/cli@3 (its @manypkg/get-packages@3 drops read-yaml-file); see changesets#1762 / #1772
 
 overrides:
+  # Single prettier 3 across the workspace. autoInstallPeers pulls a second copy in for
+  # eslint-plugin-prettier (which declares prettier as a peer), and the two versions format
+  # nested ternaries differently: `pnpm format` (root prettier) and `pnpm lint`
+  # (eslint-plugin-prettier's copy) then rewrite each other's output forever.
+  # Scoped to >=3 on purpose: @changesets/* pin prettier ^2.7.1 and call its sync format(),
+  # which prettier 3 made async - forcing them to 3.x breaks `pnpm changeset`.
+  'prettier@>=3': '=3.2.4'
   'ws@>=8.0.0 <8.21.0': '=8.21.0'
   'file-type@>=13.0.0 <21.3.2': '=21.3.2'
   'postcss@<8.5.10': '=8.5.10'
@@ -39,7 +46,10 @@ overrides:
   'on-headers@<1.1.0': '=1.1.0'
   'undici@<6.27.0': '=6.27.0'
   'qs@>=6.11.1 <=6.15.1': '=6.15.2'
-  'dompurify@<3.4.11': '=3.4.11' # TODO: Remove after updating posthog-js once it is old enough
+  # dompurify's only consumer is posthog-js, which declares `^3.3.2` - including on the latest
+  # release (1.399.2), so bumping posthog-js does NOT let this override go (an earlier TODO here
+  # claimed it would). It stays until posthog-js raises its own floor past the vulnerable range.
+  'dompurify@<3.4.11': '=3.4.11'
   'tar@<7.5.16': '=7.5.16' # TODO: Remove after updating electron-builder to v26
 
 allowBuilds:

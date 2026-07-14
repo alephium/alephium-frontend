@@ -1,4 +1,4 @@
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared/store'
 import { Contact, ContactFormData } from '@alephium/shared/types'
 import { UserMinus } from 'lucide-react'
@@ -50,7 +50,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
       onClose()
 
       sendAnalytics({
-        event: contactData.id ? 'Edited contact' : 'Saved new contact',
+        event: contactData.id ? AnalyticsEvent.CONTACT_EDITED : AnalyticsEvent.CONTACT_CREATED,
         props: {
           contact_name_length: contactData.name.length
         }
@@ -66,7 +66,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
       try {
         contactsStorage.deleteContact(activeWalletId, contact)
         dispatch(contactDeletedFromPersistentStorage(contact.id))
-        sendAnalytics({ event: 'Deleted contact' })
+        sendAnalytics({ event: AnalyticsEvent.CONTACT_DELETED })
       } catch (error) {
         dispatch(contactDeletionFailed(getHumanReadableError(error, t('Could not delete contact.'))))
         sendAnalytics({ type: 'error', error, message: 'Could not delete contact' })
