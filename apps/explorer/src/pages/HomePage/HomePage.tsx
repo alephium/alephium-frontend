@@ -28,7 +28,7 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
 
-import useBlockListData, { BLOCKS_PER_PAGE } from './useBlockListData'
+import useBlockListData, { BLOCKS_PER_PAGE, BLOCKS_REFRESH_INTERVAL } from './useBlockListData'
 import useStatisticsData from './useStatisticsData'
 
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
@@ -46,7 +46,7 @@ const HomePage = () => {
   const {
     getBlocks,
     blockPageLoading,
-    data: { blockList }
+    data: { blockList, newBlockHashes }
   } = useBlockListData(currentPageNumber)
 
   const {
@@ -59,18 +59,10 @@ const HomePage = () => {
 
   const vectorData = vector
 
-  // Polling
-  useInterval(
-    () => {
-      refreshStatistics()
+  useInterval(refreshStatistics, 10 * 1000, !isAppVisible)
 
-      if (currentPageNumber === 1) {
-        getBlocks(currentPageNumber, false)
-      }
-    },
-    10 * 1000,
-    !isAppVisible
-  )
+  // Poll the latest blocks on their own faster cadence so the list keeps up with the chain's block rate.
+  useInterval(() => getBlocks(1, false), BLOCKS_REFRESH_INTERVAL, !isAppVisible || currentPageNumber !== 1)
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, '', 'hash')
 
@@ -179,7 +171,7 @@ const HomePage = () => {
               <TableBody tdStyles={TableBodyCustomStyles}>
                 {blockList &&
                   blockList.blocks?.map((b) => (
-                    <TableRow key={b.hash} linkTo={`blocks/${b.hash}`}>
+                    <TableRow key={b.hash} linkTo={`blocks/${b.hash}`} isNew={newBlockHashes.has(b.hash)}>
                       <BlockHeight>{b.height.toString()}</BlockHeight>
                       <Timestamp
                         timeInMs={b.timestamp}
