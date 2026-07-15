@@ -16,6 +16,10 @@ export const queryClientConfig: QueryClientConfig = {
     queries: {
       staleTime: ONE_MINUTE_MS,
       gcTime: FIVE_MINUTES_MS,
+      // Set explicitly, not inherited: on mobile these only take effect via the AppState/NetInfo wiring in the mobile
+      // wallet's reactQueryPlatform.
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
       retry: (failureCount, error) =>
         failureCount < MAX_RETRIES && (shouldRetryAlephiumApi(error) || shouldRetryFetch(error as FetchError))
     }
