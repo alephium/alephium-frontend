@@ -18,6 +18,7 @@ import AddressTransactions from '@/pages/AddressPage/AddressTransactions'
 import AddressTransactionsCount from '@/pages/AddressPage/AddressTransactionsCount'
 import AddressTransactionsExportButton from '@/pages/AddressPage/AddressTransactionsExportButton'
 import AddressWorth from '@/pages/AddressPage/AddressWorth'
+import { useAddressDataPolling } from '@/pages/AddressPage/useAddressDataPolling'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface AddressPageProps {
@@ -28,6 +29,8 @@ const AddressPage = ({ addressStr }: AddressPageProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
+
+  useAddressDataPolling(addressStr)
 
   useEffect(() => {
     dispatch(initializeViewOnlyAddress(addressStr))
