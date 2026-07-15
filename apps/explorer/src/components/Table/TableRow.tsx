@@ -1,17 +1,27 @@
 import { motion } from 'framer-motion'
 import { Children } from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface RowProps {
   isActive?: boolean
   highlight?: boolean
+  isNew?: boolean
   onClick?: React.MouseEventHandler<HTMLTableRowElement>
   linkTo?: string
   className?: string
 }
+
+const newRowFlash = keyframes`
+  from {
+    background-color: var(--new-row-flash-color);
+  }
+  to {
+    background-color: transparent;
+  }
+`
 
 const rowVariants = {
   hidden: { opacity: 0 },
@@ -36,9 +46,18 @@ const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
 )
 
 export default styled(TableRow)`
+  --new-row-flash-color: ${({ theme }) => theme.bg.accent};
   background-color: ${({ theme, isActive }) => (isActive ? theme.bg.primary : '')};
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
+
+  ${({ isNew }) =>
+    isNew &&
+    css`
+      @media (prefers-reduced-motion: no-preference) {
+        animation: ${newRowFlash} 1.6s ease-out;
+      }
+    `}
 
   td:first-child {
     display: flex;
