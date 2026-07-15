@@ -28,7 +28,7 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
 
-import useBlockListData from './useBlockListData'
+import useBlockListData, { BLOCKS_PER_PAGE } from './useBlockListData'
 import useStatisticsData from './useStatisticsData'
 
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
@@ -50,7 +50,7 @@ const HomePage = () => {
   } = useBlockListData(currentPageNumber)
 
   const {
-    fetchStatistics,
+    refreshStatistics,
     data: {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
       vector
@@ -62,7 +62,7 @@ const HomePage = () => {
   // Polling
   useInterval(
     () => {
-      fetchStatistics()
+      refreshStatistics()
 
       if (currentPageNumber === 1) {
         getBlocks(currentPageNumber, false)
@@ -198,7 +198,7 @@ const HomePage = () => {
               </TableBody>
             </BlockListTable>
           </Content>
-          {blockList?.total && <PageSwitch totalNumberOfElements={blockList.total} elementsPerPage={8} />}
+          {blockList?.total && <PageSwitch totalNumberOfElements={blockList.total} elementsPerPage={BLOCKS_PER_PAGE} />}
         </LatestsBlocks>
       </MainContent>
       <Waves />

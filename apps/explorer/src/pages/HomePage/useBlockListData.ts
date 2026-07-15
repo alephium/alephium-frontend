@@ -3,22 +3,19 @@ import { useCallback, useEffect, useState } from 'react'
 
 import client from '@/api/client'
 
+export const BLOCKS_PER_PAGE = 10
+
 const useBlockListData = (currentPageNumber: number) => {
   const [blockList, setBlockList] = useState<explorer.ListBlocks>()
   const [manualLoading, setManualLoading] = useState(false)
 
   const getBlocks = useCallback(async (pageNumber: number, manualFetch?: boolean) => {
-    console.log('Fetching blocks...')
-
     manualFetch && setManualLoading(true)
 
     try {
-      const data = await client.explorer.blocks.getBlocks({ page: pageNumber, limit: 10 })
+      const data = await client.explorer.blocks.getBlocks({ page: pageNumber, limit: BLOCKS_PER_PAGE })
 
-      if (data) {
-        console.log('Number of block fetched: ' + data.blocks?.length)
-        setBlockList(data)
-      }
+      if (data) setBlockList(data)
     } catch (e) {
       console.error(e)
     }
