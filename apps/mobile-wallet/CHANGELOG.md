@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.5.3
+
+### Patch Changes
+
+- c760853: Fix contact deletion
+
 ## 2.5.2
 
 ### Patch Changes
