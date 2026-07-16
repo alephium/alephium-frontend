@@ -42,10 +42,16 @@ const nodeAddressBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }
       : () => throttledClient.node.addresses.getAddressesAddressBalance(addressHash)
   })
 
+export const addressAlphBalancesQueryKey = ({
+  addressHash,
+  networkId
+}: Pick<AddressNodeQueryProps, 'addressHash' | 'networkId'>) =>
+  ['address', addressHash, 'level:0', 'balance', 'ALPH', { networkId }] as const
+
 // Adding networkId in queryKey ensures that switching the network we get different data.
 export const addressAlphBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:0', 'balance', 'ALPH', { networkId }],
+    queryKey: addressAlphBalancesQueryKey({ addressHash, networkId }),
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
