@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "tsconfig.json"],
+  "globalPassThroughEnv": ["REMOTE_DEBUG_PORT"],
   "tasks": {
     "lint": {},
     "lint:fix": { "cache": false },

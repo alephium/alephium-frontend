@@ -28,6 +28,8 @@ app.setName(OLD_APP_NAME)
 // Expose Garbage Collector flag for manual trigger
 app.commandLine.appendSwitch('js-flags', '--expose-gc')
 
+if (process.env.REMOTE_DEBUG_PORT) app.commandLine.appendSwitch('remote-debugging-port', process.env.REMOTE_DEBUG_PORT)
+
 registerAppProtocol()
 
 contextMenu()
