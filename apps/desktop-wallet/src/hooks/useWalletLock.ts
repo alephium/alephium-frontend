@@ -161,10 +161,10 @@ const useWalletLock = () => {
 
     afterUnlock()
 
-    // Navigating to the Overview screen freezes the app. This is because the React components need some time to load.
-    // We could use Suspence to display some placeholder content until all components of the Overview page have been
-    // rendered instead of freezing the app. For now, by delaying the hiding of the loader, we achieve a similar effect.
-    sleep(2000).then(() => dispatch(toggleAppLoading(false)))
+    // Rendering the Overview screen blocks the main thread while the components mount, so we keep the loader up until
+    // the first frame after that work has shipped. The sleep is a fallback ceiling for when frames are not being
+    // produced, e.g. when the window is in the background.
+    Promise.race([nextFramePainted(), sleep(2000)]).then(() => dispatch(toggleAppLoading(false)))
 
     encryptedWallet = null
     passphrase = ''
@@ -179,3 +179,6 @@ const useWalletLock = () => {
 }
 
 export default useWalletLock
+
+const nextFramePainted = () =>
+  new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
