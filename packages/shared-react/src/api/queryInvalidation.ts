@@ -7,14 +7,13 @@ import {
 } from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 
+export const ADDRESS_QUERY_LEVELS = ['level:-1', 'level:0', 'level:1', 'level:2', 'level:3', 'level:4'] as const
+
 // Queries need to be invalidated in order of dependency
 export const invalidateAddressQueries = async (addressHash: AddressHash) => {
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:-1'] })
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:0'] })
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:1'] })
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:2'] })
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:3'] })
-  await queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'level:4'] })
+  for (const level of ADDRESS_QUERY_LEVELS) {
+    await queryClient.invalidateQueries({ queryKey: ['address', addressHash, level] })
+  }
 }
 
 export const invalidateWalletQueries = async () => {
