@@ -71,10 +71,10 @@ const TokensAmountInputs = ({
 
   const maxSendableAlph = useMemo(() => {
     const alphBalance = tokensBalances?.find(({ id }) => id === ALPH.id)
-    if (!alphBalance) return undefined
+    if (!alphBalance || !utxos) return undefined
     return calculateMaxSendableAlph({
       availableBalance: BigInt(alphBalance.availableBalance),
-      utxos: utxos ?? [],
+      utxos,
       feeEstimate: BigInt(MINIMAL_GAS_AMOUNT) * MINIMAL_GAS_PRICE
     })
   }, [tokensBalances, utxos])
