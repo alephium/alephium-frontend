@@ -1,4 +1,6 @@
+import { MINIMAL_GAS_AMOUNT, MINIMAL_GAS_PRICE } from '@alephium/shared'
 import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared/numbers'
+import { calculateMaxSendableAlph } from '@alephium/shared/transactions'
 import { Address, AddressHash } from '@alephium/shared/types'
 import {
   addressTokensSearchStringsQuery,
@@ -6,6 +8,7 @@ import {
   useFetchAddressFtsSorted,
   useFetchAddressFtsUnsorted,
   useFetchAddressTokensByType,
+  useFetchAddressUtxos,
   useIsNodeOnline,
   useNetworkId,
   useSortedTokenIds
@@ -62,8 +65,19 @@ const TokensAmountInputs = ({
   const {
     data: { nftIds }
   } = useFetchAddressTokensByType(address.hash)
+  const { data: utxos } = useFetchAddressUtxos(address.hash)
 
   const allTokensOptions = useAddressTokensSelectOptions(address.hash)
+
+  const maxSendableAlph = useMemo(() => {
+    const alphBalance = tokensBalances?.find(({ id }) => id === ALPH.id)
+    if (!alphBalance) return undefined
+    return calculateMaxSendableAlph({
+      availableBalance: BigInt(alphBalance.availableBalance),
+      utxos: utxos ?? [],
+      feeEstimate: BigInt(MINIMAL_GAS_AMOUNT) * MINIMAL_GAS_PRICE
+    })
+  }, [tokensBalances, utxos])
 
   const [isAssetSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [selectedTokenRowIndex, setSelectedTokenRowIndex] = useState(0)
@@ -110,10 +124,10 @@ const TokensAmountInputs = ({
       const amountValueAsFloat = parseFloat(cleanedAmount)
 
       const ft = fts.find(({ id }) => selectedTokenId === id)
-      const availableAmount = toHumanReadableAmount(
-        BigInt(selectedTokenBalances.availableBalance ?? 0),
-        ft?.decimals ?? 0
-      )
+      const availableAmount =
+        selectedTokenId === ALPH.id && maxSendableAlph !== undefined
+          ? toHumanReadableAmount(maxSendableAlph)
+          : toHumanReadableAmount(BigInt(selectedTokenBalances.availableBalance ?? 0), ft?.decimals ?? 0)
 
       const newError =
         amountValueAsFloat > parseFloat(availableAmount)
@@ -137,7 +151,7 @@ const TokensAmountInputs = ({
       })
       onTokenAmountsChange(newTokenAmounts)
     },
-    [assetAmounts, errors, minAmountInAlph, nftIds, onTokenAmountsChange, fts, t, tokensBalances]
+    [assetAmounts, errors, maxSendableAlph, minAmountInAlph, nftIds, onTokenAmountsChange, fts, t, tokensBalances]
   )
 
   const handleAddAssetClick = () => {
@@ -186,11 +200,10 @@ const TokensAmountInputs = ({
 
             const ft = fts.find((token) => token.id === id)
 
-            // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
-            const availableHumanReadableAmount = toHumanReadableAmount(
-              BigInt(tokenBalances?.availableBalance ?? 0),
-              ft?.decimals ?? 0
-            )
+            const availableHumanReadableAmount =
+              id === ALPH.id && maxSendableAlph !== undefined
+                ? toHumanReadableAmount(maxSendableAlph)
+                : toHumanReadableAmount(BigInt(tokenBalances?.availableBalance ?? 0), ft?.decimals ?? 0)
 
             return (
               <SelectContainer key={id}>
