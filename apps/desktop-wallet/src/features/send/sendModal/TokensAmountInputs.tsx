@@ -1,5 +1,5 @@
 import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared/numbers'
-import { Address, AddressHash } from '@alephium/shared/types'
+import { Address, AddressHash, TokenApiBalances } from '@alephium/shared/types'
 import {
   addressTokensSearchStringsQuery,
   useFetchAddressBalances,
@@ -282,6 +282,9 @@ const TokensAmountInputs = ({
 
 export default TokensAmountInputs
 
+const hasAvailableBalance = (balance: TokenApiBalances | undefined) =>
+  balance !== undefined && BigInt(balance.availableBalance) > 0n
+
 const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const networkId = useNetworkId()
   const isNodeOnline = useIsNodeOnline()
@@ -289,6 +292,7 @@ const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const {
     data: { nftIds, nstIds }
   } = useFetchAddressTokensByType(addressHash)
+  const { data: tokensBalances } = useFetchAddressBalances(addressHash)
   const sortedTokenIds = useSortedTokenIds({ sortedFts, nftIds, nstIds })
 
   const { data: tokensSearchStrings } = useQuery(
@@ -297,12 +301,14 @@ const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
 
   const allTokensOptions = useMemo(
     () =>
-      sortedTokenIds.map((id) => ({
-        value: id,
-        label: id,
-        searchString: tokensSearchStrings?.[id] ?? ''
-      })),
-    [sortedTokenIds, tokensSearchStrings]
+      sortedTokenIds
+        .filter((id) => hasAvailableBalance(tokensBalances?.find((balance) => balance.id === id)))
+        .map((id) => ({
+          value: id,
+          label: id,
+          searchString: tokensSearchStrings?.[id] ?? ''
+        })),
+    [sortedTokenIds, tokensBalances, tokensSearchStrings]
   )
 
   return allTokensOptions
