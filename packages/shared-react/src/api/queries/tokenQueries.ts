@@ -84,7 +84,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id' | 'i
 
 export const tokenTypeQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'type', getId(id, skipCaching)],
+    queryKey: ['token', 'type', getId(id, skipCaching), { networkId }],
     // We always want to remember the type of a token, even when user navigates for too long from components that use
     // tokens.
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
@@ -128,7 +128,7 @@ export const combineTokenTypes = (tokenTypes: (e.TokenInfo | { data: e.TokenInfo
 
 export const fungibleTokenMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'fungible', 'metadata', getId(id, skipCaching)],
+    queryKey: ['token', 'fungible', 'metadata', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
@@ -141,7 +141,7 @@ export const fungibleTokenMetadataQuery = ({ id, networkId, isExplorerOnline, sk
 
 const nftMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'non-fungible', 'metadata', getId(id, skipCaching)],
+    queryKey: ['token', 'non-fungible', 'metadata', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
@@ -150,7 +150,7 @@ const nftMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }
 
 const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFTQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'non-fungible', 'data', getId(id, skipCaching)],
+    queryKey: ['token', 'non-fungible', 'data', getId(id, skipCaching), { networkId }],
     // We don't want to delete the NFT data when the user navigates away from NFT components.
     ...getQueryConfig({ gcTime: Infinity, networkId, skipCaching }),
     staleTime: (query) => (skipCaching ? 0 : isTokenResolutionFallback(query.state.data) ? ONE_MINUTE_MS : ONE_DAY_MS),

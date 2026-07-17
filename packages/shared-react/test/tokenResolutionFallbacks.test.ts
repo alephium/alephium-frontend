@@ -159,7 +159,7 @@ describe('invalidateTokenResolutionFallbacks', () => {
       id: 'flagged-id',
       isResolutionFallback: true
     })
-    queryClient.setQueryData(['token', 'non-fungible', 'data', 'flagged-nft-id'], {
+    queryClient.setQueryData(['token', 'non-fungible', 'data', 'flagged-nft-id', { networkId: NETWORK_ID }], {
       id: 'flagged-nft-id',
       name: 'Unknown NFT',
       isResolutionFallback: true
@@ -175,7 +175,10 @@ describe('invalidateTokenResolutionFallbacks', () => {
     await invalidateTokenResolutionFallbacks()
 
     expect(queryClient.getQueryState(['token', 'flagged-id', { networkId: NETWORK_ID }])?.isInvalidated).toBe(true)
-    expect(queryClient.getQueryState(['token', 'non-fungible', 'data', 'flagged-nft-id'])?.isInvalidated).toBe(true)
+    expect(
+      queryClient.getQueryState(['token', 'non-fungible', 'data', 'flagged-nft-id', { networkId: NETWORK_ID }])
+        ?.isInvalidated
+    ).toBe(true)
     expect(queryClient.getQueryState(['token', 'real-id', { networkId: NETWORK_ID }])?.isInvalidated).toBe(false)
     expect(queryClient.getQueryState(['tokenPrices', 'currentPrice', 'ALPH'])?.isInvalidated).toBe(false)
   })
