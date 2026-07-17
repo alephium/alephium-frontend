@@ -42,9 +42,3 @@ export const buildDeployContractTxQuery = ({
     queryKey: ['buildTx', 'deployContract', params, publicKey, { networkId }],
     queryFn: () => throttledClient.txBuilder.buildDeployContractTx(params, publicKey)
   })
-
-export const decodeUnsignedTxQuery = ({ unsignedTx }: { unsignedTx: string }) =>
-  queryOptions({
-    queryKey: ['decodeUnsignedTx', unsignedTx],
-    queryFn: () => throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
-  })
