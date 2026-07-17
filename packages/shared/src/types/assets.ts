@@ -53,13 +53,15 @@ export enum NFTDataTypes {
 
 export type NFTDataType = keyof typeof NFTDataTypes
 
-export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'> & { dataType: NFTDataType }
+export type NFT = NFTTokenUriMetaData &
+  Omit<e.NFTMetadata, 'tokenUri'> & { dataType: NFTDataType; isResolutionFallback?: boolean }
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}
 export interface UnlistedFT extends FungibleTokenBasicMetadata {}
 export interface NonStandardToken {
   id: string
+  isResolutionFallback?: boolean
 }
 
 // To represent a token that is not in the token list but we haven't discovered its type yet
@@ -110,6 +112,11 @@ export const isListedFT = (token: Token): token is ListedFT => (token as ListedF
 export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
 
 export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined
+
+// Marks data returned in place of token info that could not be fetched (e.g. while offline), so that it can be
+// re-resolved instead of being cached as if it were real data
+export const isTokenResolutionFallback = (data: unknown): boolean =>
+  typeof data === 'object' && data !== null && (data as NonStandardToken | NFT).isResolutionFallback === true
 
 export type FtListMap = Record<TokenId, TokenInfo | undefined>
 

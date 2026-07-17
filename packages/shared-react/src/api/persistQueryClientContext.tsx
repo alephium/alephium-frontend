@@ -1,3 +1,4 @@
+import { isTokenResolutionFallback } from '@alephium/shared/types'
 import { sleep } from '@alephium/web3'
 import { PersistQueryClientOptions, persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
@@ -5,6 +6,7 @@ import {
   hydrate,
   IsRestoringProvider,
   OmitKeyof,
+  Query,
   QueryClientProvider,
   QueryClientProviderProps
 } from '@tanstack/react-query'
@@ -63,10 +65,7 @@ export const PersistQueryClientContextProvider = ({
         await persistQueryClientSave({
           queryClient,
           persister: createPersister(getPersisterKey(walletId)),
-          dehydrateOptions: {
-            shouldDehydrateQuery: (query) =>
-              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
-          }
+          dehydrateOptions: { shouldDehydrateQuery }
         })
 
         console.log('✅ query client saved')
@@ -117,6 +116,13 @@ export const PersistQueryClientContextProvider = ({
 export const usePersistQueryClientContext = () => useContext(PersistQueryClientContext)
 
 export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-' + walletId
+
+// Token resolution fallbacks are placeholders for data that could not be fetched, not real data, so they must not
+// outlive the session by being persisted to disk.
+export const shouldDehydrateQuery = (query: Query) =>
+  query.meta?.['isMainnet'] === false || isTokenResolutionFallback(query.state.data)
+    ? false
+    : defaultShouldDehydrateQuery(query)
 
 const RESTORE_CHUNK_SIZE = 250
 
