@@ -252,7 +252,9 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
                 // address be?
 
                 const publicKey = await signer.getPublicKey(params.signerAddress)
-                const unsignedData = await queryClient.fetchQuery(buildTransferTxQuery({ params, publicKey }))
+                const unsignedData = await queryClient.fetchQuery(
+                  buildTransferTxQuery({ params, publicKey, networkId })
+                )
 
                 dispatch(
                   openModal({
@@ -280,7 +282,9 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
 
               case 'EXECUTE_SCRIPT': {
                 const publicKey = await signer.getPublicKey(params.signerAddress)
-                const unsignedData = await queryClient.fetchQuery(buildExecuteScriptTxQuery({ params, publicKey }))
+                const unsignedData = await queryClient.fetchQuery(
+                  buildExecuteScriptTxQuery({ params, publicKey, networkId })
+                )
 
                 dispatch(
                   openModal({
@@ -307,7 +311,9 @@ export const DappBrowserContextProvider = ({ children, dAppName }: DappBrowserCo
               }
               case 'DEPLOY_CONTRACT': {
                 const publicKey = await signer.getPublicKey(params.signerAddress)
-                const unsignedData = await queryClient.fetchQuery(buildDeployContractTxQuery({ params, publicKey }))
+                const unsignedData = await queryClient.fetchQuery(
+                  buildDeployContractTxQuery({ params, publicKey, networkId })
+                )
 
                 dispatch(
                   openModal({

@@ -4,39 +4,42 @@ import { queryOptions } from '@tanstack/react-query'
 
 interface BuildTxQueryBaseProps {
   publicKey: string
-  networkId?: number
+  networkId: number
 }
 
 export const buildTransferTxQuery = ({
   params,
-  publicKey
+  publicKey,
+  networkId
 }: BuildTxQueryBaseProps & {
   params: SignTransferTxParams
 }) =>
   queryOptions({
-    queryKey: ['buildTx', 'transfer', params],
+    queryKey: ['buildTx', 'transfer', params, publicKey, { networkId }],
     queryFn: () => throttledClient.txBuilder.buildTransferTx(params, publicKey)
   })
 
 export const buildExecuteScriptTxQuery = ({
   params,
-  publicKey
+  publicKey,
+  networkId
 }: BuildTxQueryBaseProps & {
   params: SignExecuteScriptTxParams
 }) =>
   queryOptions({
-    queryKey: ['buildTx', 'executeScript', params],
+    queryKey: ['buildTx', 'executeScript', params, publicKey, { networkId }],
     queryFn: () => throttledClient.txBuilder.buildExecuteScriptTx(params, publicKey)
   })
 
 export const buildDeployContractTxQuery = ({
   params,
-  publicKey
+  publicKey,
+  networkId
 }: BuildTxQueryBaseProps & {
   params: SignDeployContractTxParams
 }) =>
   queryOptions({
-    queryKey: ['buildTx', 'deployContract', params],
+    queryKey: ['buildTx', 'deployContract', params, publicKey, { networkId }],
     queryFn: () => throttledClient.txBuilder.buildDeployContractTx(params, publicKey)
   })
 
