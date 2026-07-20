@@ -1054,12 +1054,21 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: ^5.81.2
         version: 5.81.2(@tanstack/react-query@5.81.2(react@19.2.7))(react@19.2.7)
+      '@testing-library/react':
+        specifier: ^14.0.0
+        version: 14.1.2(@types/react@19.1.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@types/react':
         specifier: ~19.1.10
         version: 19.1.17
+      happy-dom:
+        specifier: ^20.8.9
+        version: 20.9.0
       react:
         specifier: ^19.2.0
         version: 19.2.7
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.7(react@19.2.7)
       react-redux:
         specifier: ^9.2.0
         version: 9.2.0(@types/react@19.1.17)(react@19.2.7)(redux@5.0.1)

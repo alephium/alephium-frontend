@@ -39,8 +39,11 @@
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/react-query": "^5.81.2",
     "@tanstack/react-query-persist-client": "^5.81.2",
+    "@testing-library/react": "^14.0.0",
     "@types/react": "~19.1.10",
+    "happy-dom": "^20.8.9",
     "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-redux": "^9.2.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.0"
