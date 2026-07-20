@@ -4,7 +4,8 @@ import {
   ApiContextProvider,
   PersistQueryClientContextProvider,
   useAddressesDataPolling,
-  useInitializeThrottledClient
+  useInitializeThrottledClient,
+  useRecoverTokenResolutionFallbacks
 } from '@alephium/shared-react'
 import { StatusBar } from 'expo-status-bar'
 import { ActivityIndicator, View, ViewProps } from 'react-native'
@@ -92,6 +93,7 @@ const Routes = ({ initialRouteName }: { initialRouteName: keyof RootStackParamLi
   useInitializeThrottledClient()
   usePersistQueryCacheOnBackground()
   useAddressesDataPolling()
+  useRecoverTokenResolutionFallbacks()
 
   return (
     <ApiContextProvider>

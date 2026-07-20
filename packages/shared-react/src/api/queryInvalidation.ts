@@ -1,4 +1,4 @@
-import { AddressHash } from '@alephium/shared/types'
+import { AddressHash, isTokenResolutionFallback } from '@alephium/shared/types'
 import { InfiniteData } from '@tanstack/react-query'
 
 import {
@@ -26,6 +26,12 @@ export const invalidateWalletQueries = async () => {
 
 export const invalidateTokenPrices = async () => {
   await queryClient.invalidateQueries({ queryKey: ['tokenPrices', 'currentPrice'] })
+}
+
+export const invalidateTokenResolutionFallbacks = async () => {
+  await queryClient.invalidateQueries({
+    predicate: (query) => query.queryKey[0] === 'token' && isTokenResolutionFallback(query.state.data)
+  })
 }
 
 type WalletTransactionsQueryData = InfiniteData<

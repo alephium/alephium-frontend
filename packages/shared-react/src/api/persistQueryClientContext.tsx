@@ -1,3 +1,4 @@
+import { isTokenResolutionFallback } from '@alephium/shared/types'
 import { sleep } from '@alephium/web3'
 import { PersistQueryClientOptions, persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
@@ -5,6 +6,7 @@ import {
   hydrate,
   IsRestoringProvider,
   OmitKeyof,
+  Query,
   QueryClientProvider,
   QueryClientProviderProps
 } from '@tanstack/react-query'
@@ -63,10 +65,8 @@ export const PersistQueryClientContextProvider = ({
         await persistQueryClientSave({
           queryClient,
           persister: createPersister(getPersisterKey(walletId)),
-          dehydrateOptions: {
-            shouldDehydrateQuery: (query) =>
-              query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
-          }
+          buster: CACHE_SCHEMA_VERSION,
+          dehydrateOptions: { shouldDehydrateQuery }
         })
 
         console.log('✅ query client saved')
@@ -82,8 +82,6 @@ export const PersistQueryClientContextProvider = ({
       setIsRestoring(true)
 
       if (!isPassphraseUsed) {
-        // TODO: Add buster: CACHE_SCHEMA_VERSION (global variable) for when I want to force a cache refresh to
-        // everyone who updates. Useful for when the API schema or the cached query shapes change.
         await restoreQueryCacheInChunks(createPersister(getPersisterKey(walletId)))
       } else {
         // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
@@ -118,15 +116,32 @@ export const usePersistQueryClientContext = () => useContext(PersistQueryClientC
 
 export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-' + walletId
 
+// Token resolution fallbacks are placeholders for data that could not be fetched, not real data, so they must not
+// outlive the session by being persisted to disk.
+export const shouldDehydrateQuery = (query: Query) =>
+  query.meta?.['isMainnet'] === false || isTokenResolutionFallback(query.state.data)
+    ? false
+    : defaultShouldDehydrateQuery(query)
+
+// Bump to force a one-time cold start of the query cache for everyone who updates, e.g. when query keys or cached
+// query shapes change and the persisted entries would otherwise be orphaned or misread. Payloads persisted before the
+// buster existed carry the persistQueryClientSave default of '' and are treated as mismatched.
+export const CACHE_SCHEMA_VERSION = '1'
+
 const RESTORE_CHUNK_SIZE = 250
 
 // Equivalent to persistQueryClientRestore but hydrating in chunks that yield to the event loop, so that restoring
 // thousands of queries (and scheduling their gc timers) does not block the main thread in one long task at unlock.
-const restoreQueryCacheInChunks = async (persister: Persister) => {
+export const restoreQueryCacheInChunks = async (persister: Persister) => {
   try {
     const persistedClient = await persister.restoreClient()
 
     if (!persistedClient) return
+
+    if (persistedClient.buster !== CACHE_SCHEMA_VERSION) {
+      await persister.removeClient()
+      return
+    }
 
     const { queries, mutations } = persistedClient.clientState
 

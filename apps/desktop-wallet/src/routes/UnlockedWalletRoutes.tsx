@@ -1,4 +1,4 @@
-import { ApiContextProvider, useAddressesDataPolling } from '@alephium/shared-react'
+import { ApiContextProvider, useAddressesDataPolling, useRecoverTokenResolutionFallbacks } from '@alephium/shared-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
@@ -19,6 +19,7 @@ const WalletRoutes = () => {
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
 
   useAddressesDataPolling()
+  useRecoverTokenResolutionFallbacks()
   usePrefetchQueries()
 
   const headerTitles: { [key: string]: string } = {

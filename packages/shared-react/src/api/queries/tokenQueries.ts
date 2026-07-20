@@ -1,7 +1,8 @@
-import { ONE_DAY_MS } from '@alephium/shared'
+import { ONE_DAY_MS, ONE_MINUTE_MS } from '@alephium/shared'
 import { batchers } from '@alephium/shared/api'
 import {
   FtListMap,
+  isTokenResolutionFallback,
   ListedFT,
   NFT,
   NFTDataType,
@@ -83,7 +84,7 @@ export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id' | 'i
 
 export const tokenTypeQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'type', getId(id, skipCaching)],
+    queryKey: ['token', 'type', getId(id, skipCaching), { networkId }],
     // We always want to remember the type of a token, even when user navigates for too long from components that use
     // tokens.
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
@@ -127,7 +128,7 @@ export const combineTokenTypes = (tokenTypes: (e.TokenInfo | { data: e.TokenInfo
 
 export const fungibleTokenMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'fungible', 'metadata', getId(id, skipCaching)],
+    queryKey: ['token', 'fungible', 'metadata', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
@@ -140,7 +141,7 @@ export const fungibleTokenMetadataQuery = ({ id, networkId, isExplorerOnline, sk
 
 const nftMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'non-fungible', 'metadata', getId(id, skipCaching)],
+    queryKey: ['token', 'non-fungible', 'metadata', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
@@ -149,9 +150,10 @@ const nftMetadataQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }
 
 const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFTQueryProps) =>
   queryOptions({
-    queryKey: ['token', 'non-fungible', 'data', getId(id, skipCaching)],
+    queryKey: ['token', 'non-fungible', 'data', getId(id, skipCaching), { networkId }],
     // We don't want to delete the NFT data when the user navigates away from NFT components.
-    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId, skipCaching }),
+    ...getQueryConfig({ gcTime: Infinity, networkId, skipCaching }),
+    staleTime: (query) => (skipCaching ? 0 : isTokenResolutionFallback(query.state.data) ? ONE_MINUTE_MS : ONE_DAY_MS),
     queryFn:
       skip || !tokenUri
         ? skipToken
@@ -198,9 +200,17 @@ const nftDataQuery = ({ id, tokenUri, networkId, skip, skipCaching }: NFTQueryPr
                       : `https://placehold.co/400x400/000000/FFFFFF/jpeg?text=${encodeURIComponent(nftData.name)}`
                   }
             } catch (error) {
-              errorResponse.description =
-                error instanceof FetchError ? `${error.message} - ${tokenUri}` : errorResponse.description
-              return errorResponse
+              const isFetchError = error instanceof FetchError
+              // Only a connectivity failure (no HTTP response) is transient and worth re-resolving once back online.
+              // A reachable host that answered with an error status, or a malformed data: URI, fails identically on
+              // retry, so we keep it cached like real data instead of re-hitting the dead source on every trigger.
+              const isConnectivityError = !tokenUri.startsWith('data:') && !isFetchError
+
+              return {
+                ...errorResponse,
+                description: isFetchError ? `${error.message} - ${tokenUri}` : errorResponse.description,
+                isResolutionFallback: isConnectivityError
+              }
             }
           }
   })
@@ -221,11 +231,11 @@ export const tokenQuery = ({
   return queryOptions({
     queryKey: ['token', getId(id, skipCaching), { networkId }],
     ...getQueryConfig({
-      staleTime: Infinity,
       gcTime: Infinity,
       networkId,
       skipCaching
     }),
+    staleTime: (query) => (skipCaching ? 0 : isTokenResolutionFallback(query.state.data) ? ONE_MINUTE_MS : Infinity),
     queryFn: skip
       ? skipToken
       : async (): Promise<Token> => {
@@ -267,7 +277,7 @@ export const tokenQuery = ({
               return nft ?? nst
             }
           } catch (error) {
-            if (!isExplorerOnline) return nst
+            if (!isExplorerOnline) return { ...nst, isResolutionFallback: true }
 
             throw error
           }
@@ -281,7 +291,8 @@ export const tokenQuery = ({
 export const nftQuery = ({ id, networkId, isExplorerOnline, skip, skipCaching }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', getId(id, skipCaching), { networkId }],
-    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId, skipCaching }),
+    ...getQueryConfig({ gcTime: Infinity, networkId, skipCaching }),
+    staleTime: (query) => (skipCaching ? 0 : isTokenResolutionFallback(query.state.data) ? ONE_MINUTE_MS : Infinity),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
       : async (): Promise<NFT | null> => {
