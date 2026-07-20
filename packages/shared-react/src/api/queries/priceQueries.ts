@@ -20,6 +20,12 @@ export type TokenPrice = {
 
 export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensPriceQueryProps) =>
   queryOptions<TokenPrice[]>({
+    // The symbols are intentionally left out of the query key so every price fetch shares one cache slot per
+    // (currency, networkId). That buys three things: the persisted cache is restored on launch regardless of which
+    // tokens have been discovered yet (no loader on every cold start), a growing symbol set is a cache hit refetched in
+    // place rather than a miss that reloads, and invalidateTokenPrices() can target the slot by prefix after a tx. The
+    // trade-off is that the cached array can lag the current symbol set, which is why worth loading is derived from data
+    // completeness in useFetchListedFtsWorth instead of from this query's settled state.
     queryKey: ['tokenPrices', 'currentPrice', { currency, networkId }],
     refetchInterval: PRICES_REFRESH_INTERVAL,
     // When the user changes currency settings we don't want to keep the previous cache for too long.
@@ -30,7 +36,10 @@ export const tokensPriceQuery = ({ symbols, currency, networkId, skip }: TokensP
           try {
             const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
 
-            return prices.map((price, i) => ({ price, symbol: symbols[i] }))
+            // Map over the requested symbols, not the response, so we always return one entry per symbol. Worth loading
+            // in useFetchListedFtsWorth treats a symbol with no entry as "still loading", so a short or reordered
+            // response would otherwise leave a held token uncovered and deadlock its skeleton.
+            return symbols.map((symbol, i) => ({ price: prices[i] ?? 0, symbol }))
           } catch (e) {
             if (is5XXError(e)) {
               const coingeckoIds = symbols.map(symbolToCoingeckoId).filter((id) => id !== '')
