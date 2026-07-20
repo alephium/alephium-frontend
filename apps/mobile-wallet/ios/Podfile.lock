@@ -1785,8 +1785,6 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-background-timer (2.4.1):
-    - React-Core
   - react-native-capture-protection (2.3.2):
     - hermes-engine
     - RCTRequired
@@ -2858,7 +2856,6 @@ DEPENDENCIES:
   - React-logger (from `../../../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../../../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
-  - react-native-background-timer (from `../../../node_modules/react-native-background-timer`)
   - react-native-capture-protection (from `../../../node_modules/react-native-capture-protection`)
   - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
@@ -3095,8 +3092,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
-  react-native-background-timer:
-    :path: "../../../node_modules/react-native-background-timer"
   react-native-capture-protection:
     :path: "../../../node_modules/react-native-capture-protection"
   react-native-compat:
@@ -3294,7 +3289,6 @@ SPEC CHECKSUMS:
   React-logger: 702a49dadb10a6bd63d56b297c3350b5ea552141
   React-Mapbuffer: bcd9f00a498b2981c7b390f00fd2b7cd6e0ead29
   React-microtasksnativemodule: 203b41906d627dac7d697bccba6137b630951fae
-  react-native-background-timer: 4638ae3bee00320753647900b21260b10587b6f7
   react-native-capture-protection: c84cea028829f237c35e519e284b8b6877ca8e6b
   react-native-compat: 0d1aeb10e625b52ef9650ededaa5620622ade2f2
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
