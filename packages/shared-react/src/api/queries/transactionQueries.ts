@@ -9,6 +9,7 @@ import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '../../api/apiUtils'
 import { queryClient } from '../../api/queryClient'
 import { invalidateAddressQueries, invalidateTokenPrices, invalidateWalletQueries } from '../../api/queryInvalidation'
+import { addressAlphBalancesQueryKey } from './addressQueries'
 import { shouldSkip } from './queriesUtils'
 
 export interface AddressLatestTransactionQueryProps {
@@ -54,9 +55,18 @@ export const addressLatestTransactionQuery = ({
           // The following block invalidates queries that need to refetch data if a new transaction hash has been
           // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-            await invalidateAddressQueries(addressHash)
-            await invalidateWalletQueries()
-            await invalidateTokenPrices()
+            const isFirstAddressData =
+              cachedData === undefined &&
+              queryClient.getQueryData(addressAlphBalancesQueryKey({ addressHash, networkId })) === undefined
+
+            // On the very first fetch (cold start, new address) dependent queries have no data to refresh and are
+            // being fetched on their own as they mount, so invalidating them would only cancel and restart their
+            // in-flight requests.
+            if (!isFirstAddressData) {
+              await invalidateAddressQueries(addressHash)
+              await invalidateWalletQueries()
+              await invalidateTokenPrices()
+            }
           }
 
           return {

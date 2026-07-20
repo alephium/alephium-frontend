@@ -24,6 +24,10 @@ const usePersistQueryCacheBeforeQuit = () => {
         window.electron?.window.close()
         window.close()
       }
+    } else {
+      // Without this, closing the app while the wallet is locked runs the handler of the previously active wallet,
+      // persisting the cleared query cache over the one that was saved when the wallet got locked.
+      window.onbeforeunload = null
     }
 
     const removeBeforeQuitListener = window.electron?.app.onBeforeQuit(async () => {

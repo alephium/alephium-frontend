@@ -110,14 +110,22 @@ describe('fetchContentType', () => {
     expect(result).toBe('application/json')
   })
 
-  it('sends HEAD request for HTTP URLs', async () => {
+  it('infers content type from the URL file extension without a network request', async () => {
+    expect(await fetchContentType('https://example.com/image.png')).toBe('image/png')
+    expect(await fetchContentType('https://example.com/path/video.MP4')).toBe('video/mp4')
+    expect(await fetchContentType('https://example.com/sound.ogg?query=1')).toBe('audio/ogg')
+
+    expect(mockFetch).not.toHaveBeenCalled()
+  })
+
+  it('sends HEAD request for HTTP URLs without a known file extension', async () => {
     mockFetch.mockResolvedValueOnce({
       headers: new Headers({ 'content-type': 'image/png' })
     })
 
-    const result = await fetchContentType('https://example.com/image.png')
+    const result = await fetchContentType('https://example.com/token/42')
 
-    expect(mockFetch).toHaveBeenCalledWith('https://example.com/image.png', { method: 'HEAD' })
+    expect(mockFetch).toHaveBeenCalledWith('https://example.com/token/42', { method: 'HEAD' })
     expect(result).toBe('image/png')
   })
 

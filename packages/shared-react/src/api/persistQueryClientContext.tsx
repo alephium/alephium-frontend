@@ -1,11 +1,8 @@
 import { sleep } from '@alephium/web3'
-import {
-  PersistQueryClientOptions,
-  persistQueryClientRestore,
-  persistQueryClientSave
-} from '@tanstack/query-persist-client-core'
+import { PersistQueryClientOptions, persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   defaultShouldDehydrateQuery,
+  hydrate,
   IsRestoringProvider,
   OmitKeyof,
   QueryClientProvider,
@@ -85,16 +82,9 @@ export const PersistQueryClientContextProvider = ({
       setIsRestoring(true)
 
       if (!isPassphraseUsed) {
-        const options: PersistQueryClientOptions = {
-          queryClient,
-          maxAge: Infinity,
-          persister: createPersister(getPersisterKey(walletId)),
-          dehydrateOptions: undefined
-          // TODO: Add buster: CACHE_SCHEMA_VERSION (global variable) for when I want to force a cache refresh to
-          // everyone who updates. Useful for when the API schema or the cached query shapes change.
-        }
-
-        await persistQueryClientRestore(options)
+        // TODO: Add buster: CACHE_SCHEMA_VERSION (global variable) for when I want to force a cache refresh to
+        // everyone who updates. Useful for when the API schema or the cached query shapes change.
+        await restoreQueryCacheInChunks(createPersister(getPersisterKey(walletId)))
       } else {
         // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
         // then to `false` to make sure the useQuery instances are reset.
@@ -127,3 +117,30 @@ export const PersistQueryClientContextProvider = ({
 export const usePersistQueryClientContext = () => useContext(PersistQueryClientContext)
 
 export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-' + walletId
+
+const RESTORE_CHUNK_SIZE = 250
+
+// Equivalent to persistQueryClientRestore but hydrating in chunks that yield to the event loop, so that restoring
+// thousands of queries (and scheduling their gc timers) does not block the main thread in one long task at unlock.
+const restoreQueryCacheInChunks = async (persister: Persister) => {
+  try {
+    const persistedClient = await persister.restoreClient()
+
+    if (!persistedClient) return
+
+    const { queries, mutations } = persistedClient.clientState
+
+    hydrate(queryClient, { queries: [], mutations })
+
+    for (let i = 0; i < queries.length; i += RESTORE_CHUNK_SIZE) {
+      hydrate(queryClient, { queries: queries.slice(i, i + RESTORE_CHUNK_SIZE), mutations: [] })
+
+      if (i + RESTORE_CHUNK_SIZE < queries.length) await yieldToEventLoop()
+    }
+  } catch (error) {
+    console.error('Error restoring query client', error)
+    persister.removeClient()
+  }
+}
+
+const yieldToEventLoop = () => new Promise((resolve) => setTimeout(resolve))
