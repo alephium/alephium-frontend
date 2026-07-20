@@ -9,7 +9,11 @@ import { queryClient } from '../api/queryClient'
 
 export const ADDRESS_QUERY_LEVELS = ['level:-1', 'level:0', 'level:1', 'level:2', 'level:3', 'level:4'] as const
 
-// Queries need to be invalidated in order of dependency
+// Queries must be invalidated one dependency level at a time. A single unordered invalidateQueries call refetches in
+// cache insertion order, where consumers often precede their dependencies (their queryFns create the dependency
+// entries lazily via fetchQuery). The consumer's refetch then starts its dependency's fetch, and when the same batch
+// reaches the dependency's own entry, cancelRefetch silently cancels the fetch the consumer is awaiting, leaving the
+// consumer invalidated with stale data. See test/invalidationSinglePass.test.ts.
 export const invalidateAddressQueries = async (addressHash: AddressHash) => {
   for (const level of ADDRESS_QUERY_LEVELS) {
     await queryClient.invalidateQueries({ queryKey: ['address', addressHash, level] })
