@@ -1,14 +1,11 @@
 import { appBecameInactive } from '@alephium/shared/store'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
-import BackgroundTimer from 'react-native-background-timer'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-let lockTimer: number | undefined
-
 const useAutoLock = (unlockApp: () => Promise<void>) => {
-  const appState = useRef<AppStateStatus>('active')
+  const backgroundedAt = useRef<number | undefined>(undefined)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -16,7 +13,7 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
 
-  const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
+  const [appStateStatus, setAppStateStatus] = useState<AppStateStatus>(AppState.currentState)
 
   useEffect(() => {
     if (!settingsLoadedFromStorage) return
@@ -27,54 +24,43 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
           if (autoLockSeconds === 0) {
             dispatch(appBecameInactive())
           } else {
-            clearBackgroundTimer()
-            lockTimer = BackgroundTimer.setTimeout(() => {
-              if (lockTimer) {
-                dispatch(appBecameInactive())
-              }
-            }, autoLockSeconds * 1000)
+            backgroundedAt.current = Date.now()
           }
         } else if (nextAppState === 'active') {
-          clearBackgroundTimer()
+          const elapsed = backgroundedAt.current !== undefined ? Date.now() - backgroundedAt.current : undefined
+          const backgroundedForLong = elapsed !== undefined && (elapsed < 0 || elapsed >= autoLockSeconds * 1000)
+          backgroundedAt.current = undefined
 
-          if (!isWalletUnlocked && !isCameraOpen) {
-            unlockApp()
+          if (backgroundedForLong && isWalletUnlocked) {
+            dispatch(appBecameInactive())
           }
         }
-      } else if (nextAppState === 'active' && !isWalletUnlocked) {
-        unlockApp()
       }
 
-      appState.current = nextAppState
-    }
-
-    if (!isAppStateChangeCallbackRegistered && appState.current === 'active') {
-      handleAppStateChange('active')
+      setAppStateStatus(nextAppState)
     }
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
-
-    setIsAppStateChangeCallbackRegistered(true)
 
     return subscription.remove
   }, [
     autoLockSeconds,
     biometricsRequiredForAppAccess,
     dispatch,
-    isAppStateChangeCallbackRegistered,
     isCameraOpen,
     isWalletUnlocked,
-    settingsLoadedFromStorage,
-    unlockApp
+    settingsLoadedFromStorage
   ])
 
-  const clearBackgroundTimer = () => {
-    if (lockTimer) {
-      BackgroundTimer.clearTimeout(lockTimer)
-      // eslint-disable-next-line react-compiler/react-compiler
-      lockTimer = undefined
+  // Fire unlockApp from a separate effect so it runs on the next render with a fresh closure,
+  // even when the AppState handler above just dispatched the lock in the same synchronous tick.
+  useEffect(() => {
+    if (!settingsLoadedFromStorage) return
+    if (appStateStatus !== 'active') return
+    if (!isWalletUnlocked && !isCameraOpen) {
+      unlockApp()
     }
-  }
+  }, [appStateStatus, isCameraOpen, isWalletUnlocked, settingsLoadedFromStorage, unlockApp])
 }
 
 export default useAutoLock
