@@ -42,6 +42,10 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import SwapFromAddressModal from '~/features/swap/modals/SwapFromAddressModal'
+import SwapHighPriceImpactModal from '~/features/swap/modals/SwapHighPriceImpactModal'
+import SwapSlippageModal from '~/features/swap/modals/SwapSlippageModal'
+import SwapTokenSelectModal from '~/features/swap/modals/SwapTokenSelectModal'
 import WalletSwitchModal from '~/features/switch-wallet/WalletSwitchModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
@@ -109,7 +113,11 @@ const ModalComponents = {
   SignChainedTxModal,
   WalletSwitchModal,
   StakeModal,
-  UnstakeModal
+  UnstakeModal,
+  SwapTokenSelectModal,
+  SwapSlippageModal,
+  SwapHighPriceImpactModal,
+  SwapFromAddressModal
 }
 
 type ModalName = keyof typeof ModalComponents

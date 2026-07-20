@@ -3,11 +3,9 @@ import { addressSettingsSaved, selectDefaultAddressHash } from '@alephium/shared
 import { AddressHash } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import AddressBox from '~/components/AddressBox'
-import AppText from '~/components/AppText'
+import AddressSelectorCard from '~/components/AddressSelectorCard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { showToast, ToastDuration } from '~/utils/layout'
@@ -16,7 +14,6 @@ const DefaultAddressSection = () => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const theme = useTheme()
 
   if (!defaultAddressHash) return null
 
@@ -32,27 +29,13 @@ const DefaultAddressSection = () => {
     dispatch(openModal({ name: 'SelectAddressModal', props: { onAddressPress: handleSetDefaultAddress } }))
 
   return (
-    <DefaultAddressSectionStyled>
-      <AppText color="tertiary" size={13}>
-        {t('Default address')}
-      </AppText>
-      <AddressBox
-        addressHash={defaultAddressHash}
-        hideAssets
-        noBottomMargin
-        showTokenAmount
-        tokenId={ALPH.id}
-        origin="select_address_modal"
-        rounded
-        style={{ borderWidth: 1, borderColor: theme.border.primary }}
-        onPress={openDefaultAddressModal}
-      />
-    </DefaultAddressSectionStyled>
+    <AddressSelectorCard
+      label={t('Default address')}
+      addressHash={defaultAddressHash}
+      tokenId={ALPH.id}
+      onPress={openDefaultAddressModal}
+    />
   )
 }
 
 export default DefaultAddressSection
-
-const DefaultAddressSectionStyled = styled.View`
-  gap: 8px;
-`

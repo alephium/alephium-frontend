@@ -135,6 +135,7 @@ export const AnalyticsEvent = {
   CREATED_WATCH_ONLY_WALLET: 'Created watch-only wallet',
   DELETED_ADDRESS: 'Deleted address',
   DELETED_FUND_PASSWORD: 'Deleted fund password',
+  EXECUTED_SWAP: 'Executed swap',
   IMPORTED_DISCOVERED_ADDRESSES: 'Imported discovered addresses',
   MNEMONIC_MIGRATED: 'Mnemonic migrated',
   MNEMONIC_VERIFICATION_ABANDONED: 'Mnemonic Verification Abandoned',
