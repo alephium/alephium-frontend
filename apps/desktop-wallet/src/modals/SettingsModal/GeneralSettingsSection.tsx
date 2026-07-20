@@ -31,6 +31,7 @@ import { fiatCurrencyOptions, locktimeInMinutes } from '@/features/settings/sett
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 import { switchTheme } from '@/features/theme/themeUtils'
+import { deleteNftImagesDB } from '@/features/thumbnails/nftImageStorage'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -135,6 +136,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
     try {
       deleteThumbnailsDB()
+      await deleteNftImagesDB()
     } catch (e) {
       console.error(e)
     }

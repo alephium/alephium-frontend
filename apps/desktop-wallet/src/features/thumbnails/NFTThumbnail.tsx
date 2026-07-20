@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
+import useCachedNftImage from '@/features/thumbnails/useCachedNftImage'
 import VideoThumbnail from '@/features/thumbnails/VideoThumbnail'
 
 interface NFTThumbnailProps {
@@ -17,6 +18,7 @@ interface NFTThumbnailProps {
   autoPlay?: boolean
   playOnHover?: boolean
   showPlayIconIfVideo?: boolean
+  fullResolution?: boolean
   onClick?: () => void
 }
 
@@ -34,7 +36,7 @@ const NFTThumbnail = ({ border, borderRadius, onClick, hideIfError, ...props }: 
 
 export default NFTThumbnail
 
-const NftThumbnailMedia = memo(({ nftId, size, ...props }: NFTThumbnailProps) => {
+const NftThumbnailMedia = memo(({ nftId, size, fullResolution, ...props }: NFTThumbnailProps) => {
   const { data: nft, isLoading, error: fetchNftError } = useFetchNft({ id: nftId })
 
   if (isLoading) return <SkeletonLoaderStyled height={size} />
@@ -45,20 +47,24 @@ const NftThumbnailMedia = memo(({ nftId, size, ...props }: NFTThumbnailProps) =>
 
   // TODO: Add support for audio, possibly with an `audio` element
 
-  return <NftThumbnailMediaImage src={nft.image} alt={nft.description} size={size} />
+  return <NftThumbnailMediaImage src={nft.image} alt={nft.description} size={size} fullResolution={fullResolution} />
 })
 
 interface NftThumbnailMediaImageProps {
   src: string
   alt?: string
   size?: string
+  fullResolution?: boolean
 }
 
-const NftThumbnailMediaImage = memo(({ src, alt, size }: NftThumbnailMediaImageProps) => {
+const NftThumbnailMediaImage = memo(({ src: imageUrl, alt, size, fullResolution }: NftThumbnailMediaImageProps) => {
   const { t } = useTranslation()
+  const { src, isLoading } = useCachedNftImage(imageUrl, fullResolution)
   const [error, setError] = useState(false)
 
-  if (error) return <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
+  if (isLoading) return <SkeletonLoaderStyled height={size} />
+
+  if (error || !src) return <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
 
   return <Image src={src} alt={alt} height={size} width={size} onError={() => setError(true)} />
 })
