@@ -1,5 +1,17 @@
 # @alephium/mobile-wallet
 
+## 2.5.4
+
+### Patch Changes
+
+- f7fcfea: Reset cached data once to fix stale token metadata
+- 153f943: Fix reloading of balances with pull-to-refresh
+- f60219d: Save battery and mobile data by not fetching in the background, and refresh instantly when you reopen the app
+- f31c72e: Speed up wallet unlock and reduce CPU and network usage
+- ea15e80: Replace unmaintained react-native-background-timer with an AppState-based timestamp check in useAutoLock
+- 4550d74: Recover token info that failed to load while offline
+- 6ccdde6: Fix wallet worth flashing a wrong value while loading
+
 ## 2.5.3
 
 ### Patch Changes
