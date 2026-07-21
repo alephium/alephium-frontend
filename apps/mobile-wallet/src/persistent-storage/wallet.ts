@@ -28,6 +28,10 @@ import { getRandomLabelColor } from '~/utils/colors'
 
 const isNewWalletKey = (walletId: string) => `is-new-wallet-${walletId}`
 const isWalletFundedKey = (walletId: string) => `is-wallet-funded-${walletId}`
+const walletOrdinalKey = (walletId: string) => `wallet-ordinal-${walletId}`
+
+// Never decremented, so deleting a wallet cannot make a later one reuse an ordinal.
+const WALLET_CREATION_COUNTER_KEY = 'wallet-creation-counter'
 
 export const generateAndStoreWallet = async (
   name: WalletStoredState['name'],
@@ -48,6 +52,7 @@ export const generateAndStoreWallet = async (
 
     storeWalletMetadata(walletId, walletMetadata)
     addWalletToList(createWalletListEntry(walletId, name, 'seed'))
+    assignWalletOrdinal(walletId)
 
     return {
       id: walletId,
@@ -81,6 +86,7 @@ export const createWatchOnlyWallet = (name: string, addressHash: string): Wallet
 
   storeWalletMetadata(walletId, metadata)
   addWalletToList(createWalletListEntry(walletId, name, 'watch-only'))
+  assignWalletOrdinal(walletId)
 
   return metadata
 }
@@ -147,6 +153,15 @@ export const persistAddressesMetadata = (walletId: string, addressesMetadata: Ad
   }
 
   storeWalletMetadata(walletId, walletMetadata)
+}
+
+export const getWalletOrdinal = (walletId: string): number | undefined => storage.getNumber(walletOrdinalKey(walletId))
+
+const assignWalletOrdinal = (walletId: string) => {
+  const ordinal = (storage.getNumber(WALLET_CREATION_COUNTER_KEY) ?? 0) + 1
+
+  storeWithReportableError(WALLET_CREATION_COUNTER_KEY, ordinal)
+  storeWithReportableError(walletOrdinalKey(walletId), ordinal)
 }
 
 export const getIsNewWallet = (walletId: string): boolean | undefined => storage.getBoolean(isNewWalletKey(walletId))

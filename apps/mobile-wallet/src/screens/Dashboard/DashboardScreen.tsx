@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
@@ -7,6 +8,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import AppText from '~/components/AppText'
@@ -29,7 +31,7 @@ import WatchOnlyBadge from '~/features/watchOnlyWallet/WatchOnlyBadge'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useCaptureIsWalletFunded from '~/hooks/useCaptureIsWalletFunded'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
+import { getIsNewWallet, getIsWalletFunded, getWalletOrdinal, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import CoreDappAnnouncement from '~/screens/Dashboard/CoreDappAnnouncement'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
@@ -54,18 +56,33 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const nftsCount = isTokensByTypeLoading ? '-' : tokensByType?.nftIds?.length ?? 0
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
+  const remindedWalletIds = useAppSelector((s) => s.backup.remindedWalletIds)
   const walletId = useAppSelector((s) => s.wallet.id)
 
   useEffect(() => {
+    if (!walletId) return
+
     const isNewWallet = getIsNewWallet(walletId)
 
-    if (needsBackupReminder && !isMnemonicBackedUp && isNewWallet !== undefined) {
-      dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
+    if (!remindedWalletIds.includes(walletId) && !isMnemonicBackedUp && isNewWallet !== undefined) {
+      const props = {
+        is_new_wallet: isNewWallet,
+        is_funded: getIsWalletFunded(walletId) ?? false,
+        wallet_ordinal: getWalletOrdinal(walletId)
+      }
+
+      sendAnalytics({ event: AnalyticsEvent.BACKUP_REMINDER_SHOWN, props })
+      dispatch(
+        openModal({
+          name: 'BackupReminderModal',
+          props: { isNewWallet, walletId },
+          onUserDismiss: () => sendAnalytics({ event: AnalyticsEvent.BACKUP_REMINDER_DISMISSED, props })
+        })
+      )
     }
 
     storeIsNewWallet(walletId, false)
-  }, [dispatch, isMnemonicBackedUp, needsBackupReminder, walletId])
+  }, [dispatch, isMnemonicBackedUp, remindedWalletIds, walletId])
 
   return (
     <DashboardScreenStyled

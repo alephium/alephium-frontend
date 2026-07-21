@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
-import { generateAndStoreWallet } from '~/persistent-storage/wallet'
+import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
@@ -82,7 +82,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         dispatch(newWalletImportedWithMetadata(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { note: 'Scanned desktop wallet QR code' } })
+        sendAnalytics({
+          event: AnalyticsEvent.WALLET_IMPORTED,
+          props: { note: 'Scanned desktop wallet QR code', wallet_ordinal: getWalletOrdinal(wallet.id) }
+        })
 
         try {
           await importAddresses(wallet.id, addresses)

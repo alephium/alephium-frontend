@@ -77,6 +77,15 @@ export type AnalyticsProps = {
   // On `Onboarding Started`: which flow the user entered.
   method?: 'create' | 'import' | 'watch_only'
 
+  // A per-install creation counter, deliberately not the wallet id: it answers first-vs-subsequent
+  // without putting a stable per-wallet key on the wire.
+  wallet_ordinal?: number
+
+  is_new_wallet?: boolean
+  is_funded?: boolean
+  words_completed?: number
+  words_total?: number
+
   // On `Authentication Settings Changed`.
   setting?: 'app_access' | 'transactions'
   enabled?: boolean

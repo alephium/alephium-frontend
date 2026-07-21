@@ -2,8 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { openModal } from '~/features/modals/modalActions'
 
+// Not persisted on purpose: the reminder should reappear on a fresh launch, but not when the user
+// merely backgrounds the app and returns.
 const initialState = {
-  needsReminder: true
+  remindedWalletIds: [] as string[]
 }
 
 const backupSlice = createSlice({
@@ -11,9 +13,9 @@ const backupSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(openModal, (state, { payload: { name: modalName } }) => {
-      if (modalName === 'BackupReminderModal') {
-        state.needsReminder = false
+    builder.addCase(openModal, (state, { payload }) => {
+      if (payload.name === 'BackupReminderModal' && !state.remindedWalletIds.includes(payload.props.walletId)) {
+        state.remindedWalletIds.push(payload.props.walletId)
       }
     })
   }

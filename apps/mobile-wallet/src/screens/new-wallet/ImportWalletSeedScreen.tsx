@@ -19,7 +19,7 @@ import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/Secret
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { generateAndStoreWallet } from '~/persistent-storage/wallet'
+import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletAddedToList } from '~/store/wallet/walletsSlice'
@@ -101,7 +101,10 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       dispatch(newWalletGenerated(wallet))
       dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-      sendAnalytics({ event: AnalyticsEvent.WALLET_IMPORTED, props: { note: 'Entered mnemonic manually' } })
+      sendAnalytics({
+        event: AnalyticsEvent.WALLET_IMPORTED,
+        props: { note: 'Entered mnemonic manually', wallet_ordinal: getWalletOrdinal(wallet.id) }
+      })
 
       resetNavigation(
         navigation,
