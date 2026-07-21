@@ -1,5 +1,17 @@
 # alephium-desktop-wallet
 
+## 3.2.5
+
+### Patch Changes
+
+- f7fcfea: Reset cached data once to fix stale token metadata
+- f31c72e: Fix wallet data being refetched from scratch when relaunching after locking
+- a7e90a6: Show a clear message in the NFT details view when an NFT's media or metadata can't be loaded
+- a7e90a6: Downscale and cache NFT images so the NFTs tab loads faster and no longer re-downloads them on every visit
+- f31c72e: Speed up wallet unlock and reduce CPU and network usage
+- 4550d74: Recover token info that failed to load while offline
+- 6ccdde6: Fix wallet worth flashing a wrong value while loading
+
 ## 3.2.3
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @alephium/explorer
 
+## 1.12.2
+
+### Patch Changes
+
+- 34580b5: Fix transaction confirmations showing 0 and never increasing
+- 15a4e6c: Reduce the number of requests the homepage makes and let its chart data be cached
+- 7b66842: Update the address page balance, worth and transaction count when new transactions arrive
+- 694beaf: Refresh the homepage's latest blocks every 5s and briefly highlight newly-arrived ones
+
 ## 1.12.1
 
 ### Patch Changes
