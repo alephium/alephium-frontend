@@ -1,6 +1,7 @@
 import { MAX_PRICE_IMPACT } from '@alephium/powfi-sdk'
 import { AnalyticsEvent } from '@alephium/shared'
 import { formatAmountForDisplay } from '@alephium/shared/numbers'
+import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchAddressBalances, useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -22,7 +23,9 @@ import SwapTokenRow from '~/features/swap/components/SwapTokenRow'
 import useExecuteSwap from '~/features/swap/hooks/useExecuteSwap'
 import useFetchSwappableTokens from '~/features/swap/hooks/useFetchSwappableTokens'
 import useSwapConfirmation from '~/features/swap/hooks/useSwapConfirmation'
+import useSwapFunnelTracking from '~/features/swap/hooks/useSwapFunnelTracking'
 import useSwapQuote from '~/features/swap/hooks/useSwapQuote'
+import { swapQuoteAnalyticsProps } from '~/features/swap/swapAnalytics'
 import { SWAP_HIGH_PRICE_IMPACT_PERCENT } from '~/features/swap/swapConstants'
 import { classifySwapError } from '~/features/swap/swapErrors'
 import { swapExecutionInitialState, swapExecutionReducer } from '~/features/swap/swapExecutionMachine'
@@ -41,6 +44,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const fromAddressHash = useAppSelector(selectSwapFromAddressHash)
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const slippage = useAppSelector((s) => s.swap.slippage)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
@@ -95,6 +99,16 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
     direction: 'sell',
     slippageBps,
     paused: isPanelLocked
+  })
+
+  const usedNonDefaultAddress = fromAddressHash !== defaultAddressHash
+
+  useSwapFunnelTracking({
+    quote,
+    quoteError,
+    isSubmitted: execution.status === 'submitted',
+    confirmation,
+    usedNonDefaultAddress
   })
 
   const toAmountDisplay = quote
@@ -188,7 +202,10 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
 
     try {
       const result = await executeSwap(quote, balancesMap)
-      sendAnalytics({ event: AnalyticsEvent.EXECUTED_SWAP, props: { provider: 'Powfi' } })
+      sendAnalytics({
+        event: AnalyticsEvent.EXECUTED_SWAP,
+        props: { provider: 'Powfi', ...swapQuoteAnalyticsProps(quote), used_non_default_address: usedNonDefaultAddress }
+      })
       dispatchExecution({ type: 'SUBMITTED', txHash: result.txId })
     } catch (error) {
       const { kind, raw } = classifySwapError(error)
@@ -197,12 +214,18 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
           ? t('This address does not have enough balance for this transaction')
           : t('The swap could not be completed')
 
+      sendAnalytics({
+        event: AnalyticsEvent.SWAP_FAILED,
+        props: { ...swapQuoteAnalyticsProps(quote), error_code: kind }
+      })
       dispatchExecution({ type: 'FAILED', message, details: raw || undefined })
     }
   }
 
   const handleSwapPress = () => {
     if (!quote) return
+
+    sendAnalytics({ event: AnalyticsEvent.SWAP_INITIATED, props: swapQuoteAnalyticsProps(quote) })
 
     const runSwap = () =>
       triggerBiometricsAuthGuard({

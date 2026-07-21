@@ -136,6 +136,13 @@ export const AnalyticsEvent = {
   DELETED_ADDRESS: 'Deleted address',
   DELETED_FUND_PASSWORD: 'Deleted fund password',
   EXECUTED_SWAP: 'Executed swap',
+  // Swap funnel (mobile). ACTION_CARD_PRESSED_BTN_TO_SWAP is the entry; EXECUTED_SWAP is the broadcast.
+  SWAP_AMOUNT_SET: 'Swap Amount Set',
+  SWAP_INITIATED: 'Swap Initiated',
+  SWAP_QUOTE_FAILED: 'Swap Quote Failed',
+  SWAP_CONFIRMED: 'Swap Confirmed',
+  SWAP_REVERTED: 'Swap Reverted',
+  SWAP_FAILED: 'Swap Failed',
   IMPORTED_DISCOVERED_ADDRESSES: 'Imported discovered addresses',
   MNEMONIC_MIGRATED: 'Mnemonic migrated',
   MNEMONIC_VERIFICATION_ABANDONED: 'Mnemonic Verification Abandoned',
