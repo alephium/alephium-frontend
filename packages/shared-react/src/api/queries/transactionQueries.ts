@@ -1,5 +1,5 @@
 import { FIVE_MINUTES_MS, is5XXError, ONE_MINUTE_MS, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
-import { throttledClient } from '@alephium/shared/api'
+import { batchers, throttledClient } from '@alephium/shared/api'
 import { isConfirmedTx } from '@alephium/shared/transactions'
 import { AddressHash } from '@alephium/shared/types'
 import { explorer as e, node as n, sleep } from '@alephium/web3'
@@ -36,18 +36,10 @@ export const addressLatestTransactionQuery = ({
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
       : async ({ queryKey }) => {
-          let latestTx: { hash: string; timestamp: number } | undefined = undefined
-
-          // Backend returns 404 if the address has no transactions and Tanstack will consider it an error. This will
-          // result in isLoading to be set to true more often than needed, leading to unnecessary re-renders. By
-          // catching the error and setting latestTx to undefined, we can avoid this issue.
-          try {
-            latestTx = await throttledClient.explorer.addresses.getAddressesAddressLatestTransaction(addressHash)
-          } catch (error) {
-            if (!(error instanceof Error && error.message.includes('Status code: 404'))) {
-              throw error
-            }
-          }
+          // The batched POST /addresses/latest-transactions coalesces the per-address polling fan-out into one
+          // request. It omits addresses that have no transactions, so such an address resolves to undefined here
+          // (the per-address endpoint used to 404 for that case).
+          const latestTx = await batchers.addressLatestTxBatcher.fetch(addressHash)
 
           const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
           const cachedLatestTx = cachedData?.latestTx
