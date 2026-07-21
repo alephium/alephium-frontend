@@ -9,7 +9,7 @@ import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '../../api/apiUtils'
 import { queryClient } from '../../api/queryClient'
 import { invalidateAddressQueries, invalidateTokenPrices, invalidateWalletQueries } from '../../api/queryInvalidation'
-import { addressAlphBalancesQueryKey } from './addressQueries'
+import { ADDRESS_DATA, addressAlphBalancesQueryKey } from './addressQueries'
 import { shouldSkip } from './queriesUtils'
 
 export interface AddressLatestTransactionQueryProps {
@@ -250,8 +250,8 @@ export const addressTransactionsCountQuery = ({
   skip
 }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    // The level: segment is what invalidateAddressQueries matches on to refresh this query.
-    queryKey: ['address', addressHash, 'level:0', 'transactions', 'count', { networkId }],
+    // The ADDRESS_DATA segment is what invalidateAddressQueries matches on to refresh this query.
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'transactions', 'count', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken

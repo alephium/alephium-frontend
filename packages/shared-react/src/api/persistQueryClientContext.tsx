@@ -126,7 +126,7 @@ export const shouldDehydrateQuery = (query: Query) =>
 // Bump to force a one-time cold start of the query cache for everyone who updates, e.g. when query keys or cached
 // query shapes change and the persisted entries would otherwise be orphaned or misread. Payloads persisted before the
 // buster existed carry the persistQueryClientSave default of '' and are treated as mismatched.
-export const CACHE_SCHEMA_VERSION = '1'
+export const CACHE_SCHEMA_VERSION = '2'
 
 const RESTORE_CHUNK_SIZE = 250
 

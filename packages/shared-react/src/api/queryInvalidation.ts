@@ -1,24 +1,37 @@
 import { AddressHash, isTokenResolutionFallback } from '@alephium/shared/types'
 import { InfiniteData } from '@tanstack/react-query'
 
+import { ADDRESS_DATA } from '../api/queries/addressQueries'
 import {
   AddressTransactionsInfiniteQueryPageData,
   WalletTransactionsInfiniteQueryPageParam
 } from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 
-export const ADDRESS_QUERY_LEVELS = ['level:-1', 'level:0', 'level:1', 'level:2', 'level:3', 'level:4'] as const
+const isAddressDataQuery = (queryKey: readonly unknown[], matchesAddress: (hash: AddressHash) => boolean) =>
+  queryKey[0] === 'address' &&
+  typeof queryKey[1] === 'string' &&
+  matchesAddress(queryKey[1] as AddressHash) &&
+  queryKey[2] === ADDRESS_DATA
 
-// Queries must be invalidated one dependency level at a time. A single unordered invalidateQueries call refetches in
-// cache insertion order, where consumers often precede their dependencies (their queryFns create the dependency
-// entries lazily via fetchQuery). The consumer's refetch then starts its dependency's fetch, and when the same batch
-// reaches the dependency's own entry, cancelRefetch silently cancels the fetch the consumer is awaiting, leaving the
-// consumer invalidated with stale data. See test/invalidationSinglePass.test.ts.
-export const invalidateAddressQueries = async (addressHash: AddressHash) => {
-  for (const level of ADDRESS_QUERY_LEVELS) {
-    await queryClient.invalidateQueries({ queryKey: ['address', addressHash, level] })
-  }
+// Address balance/token queries compose their dependencies through fetchQuery inside their queryFns. A plain
+// invalidateQueries breaks that graph two ways: its default cancelRefetch:true cancels the dependency fetch a
+// consumer is mid-await on (stranding the consumer on stale data), and a fetch already in flight when we invalidate
+// resolves with pre-change data and clears the invalidation flag. cancelQueries drops any in-flight fetch first, then
+// invalidateQueries with cancelRefetch:false lets each consumer dedupe onto its dependency's fetch instead of
+// cancelling it. This converges regardless of cache insertion order, so no dependency-level ordering is needed.
+const cancelThenInvalidateAddressQueries = async (matchesAddress: (hash: AddressHash) => boolean) => {
+  const predicate = (query: { queryKey: readonly unknown[] }) => isAddressDataQuery(query.queryKey, matchesAddress)
+
+  await queryClient.cancelQueries({ predicate })
+  await queryClient.invalidateQueries({ predicate }, { cancelRefetch: false })
 }
+
+export const invalidateAddressQueries = (addressHash: AddressHash) =>
+  cancelThenInvalidateAddressQueries((hash) => hash === addressHash)
+
+export const invalidateAddressesQueries = (addressHashes: Set<AddressHash>) =>
+  cancelThenInvalidateAddressQueries((hash) => addressHashes.has(hash))
 
 export const invalidateWalletQueries = async () => {
   await invalidateWalletTransactionsQuery()

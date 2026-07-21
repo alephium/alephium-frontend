@@ -2,8 +2,9 @@ import { AddressHash } from '@alephium/shared/types'
 import { notifyManager, Query } from '@tanstack/react-query'
 import { useCallback, useMemo, useSyncExternalStore } from 'react'
 
+import { ADDRESS_DATA } from '../../api/queries/addressQueries'
 import { queryClient } from '../../api/queryClient'
-import { ADDRESS_QUERY_LEVELS, invalidateTokenPrices } from '../../api/queryInvalidation'
+import { invalidateAddressesQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
 import { useUnsortedAddressesHashesSet } from '../../hooks/addresses/useUnsortedAddresses'
 
 export const useRefreshAddressesBalances = () => {
@@ -13,17 +14,7 @@ export const useRefreshAddressesBalances = () => {
   const refreshBalances = useCallback(async () => {
     if (isFetchingBalances) return
 
-    // One cache pass per level instead of one per level per address. Queries need to be invalidated in order of
-    // dependency, see queryInvalidation.ts.
-    for (const level of ADDRESS_QUERY_LEVELS) {
-      await queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === 'address' &&
-          query.queryKey[2] === level &&
-          addressHashesSet.has(query.queryKey[1] as AddressHash)
-      })
-    }
-
+    await invalidateAddressesQueries(addressHashesSet)
     await invalidateTokenPrices()
   }, [addressHashesSet, isFetchingBalances])
 
@@ -41,7 +32,8 @@ const useIsFetchingAddressesBalances = (addressHashesSet: Set<AddressHash>) => {
 
     const isBalanceQuery = (query: Query) =>
       query.queryKey[0] === 'address' &&
-      query.queryKey[2] === 'level:0' &&
+      query.queryKey[2] === ADDRESS_DATA &&
+      query.queryKey[3] === 'balance' &&
       addressHashesSet.has(query.queryKey[1] as AddressHash)
 
     const compute = () => {

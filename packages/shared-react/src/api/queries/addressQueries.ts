@@ -18,6 +18,10 @@ import {
 import { queryClient } from '../../api/queryClient'
 import { shouldSkip } from './queriesUtils'
 
+// Marks the queries that hold an address's on-chain data (balances, tokens, tx count, and everything derived from
+// them). invalidateAddressQueries refreshes exactly this set when the address's latest transaction changes.
+export const ADDRESS_DATA = 'data'
+
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
   balances: ApiBalances
@@ -35,7 +39,7 @@ interface AddressNodeQueryProps extends AddressQueryProps {
 
 const nodeAddressBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:-1', 'balance', 'node', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'balance', 'node', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -46,7 +50,7 @@ export const addressAlphBalancesQueryKey = ({
   addressHash,
   networkId
 }: Pick<AddressNodeQueryProps, 'addressHash' | 'networkId'>) =>
-  ['address', addressHash, 'level:0', 'balance', 'ALPH', { networkId }] as const
+  ['address', addressHash, ADDRESS_DATA, 'balance', 'ALPH', { networkId }] as const
 
 // Adding networkId in queryKey ensures that switching the network we get different data.
 export const addressAlphBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
@@ -91,7 +95,7 @@ export type AddressTokensBalancesQueryFnData = {
 
 export const addressTokensBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:0', 'balance', 'tokens', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'balance', 'tokens', { networkId }],
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
@@ -153,7 +157,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, isNodeOnlin
 
 export const addressBalancesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:1', 'balances-all', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'balances-all', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -177,7 +181,7 @@ export const addressBalancesQuery = ({ addressHash, networkId, isNodeOnline, ski
 
 export const addressBalancesByListingQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:2', 'balances-by-listing', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'balances-by-listing', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -205,7 +209,7 @@ export const addressTokensSearchStringsQuery = ({
   skip
 }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:1', 'tokens-search-strings', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'tokens-search-strings', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -250,7 +254,7 @@ export const addressTokensSearchStringsQuery = ({
 // Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses.
 export const addressSearchStringQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:2', 'search-string', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'search-string', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -268,7 +272,7 @@ export const addressSearchStringQuery = ({ addressHash, networkId, isNodeOnline,
 
 export const addressTokensByTypeQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:3', 'tokens-by-type', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'tokens-by-type', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -296,7 +300,7 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId, isNodeOnline,
 
 export const addressFtsQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:4', 'tokens', 'fts', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'tokens', 'fts', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken
@@ -322,7 +326,7 @@ export const addressFtsQuery = ({ addressHash, networkId, isNodeOnline, skip }: 
 
 export const addressNftsQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'level:4', 'tokens', 'nfts', { networkId }],
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'tokens', 'nfts', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: shouldSkip(isNodeOnline, skip)
       ? skipToken

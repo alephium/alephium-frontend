@@ -2,6 +2,7 @@ import { AddressHash } from '@alephium/shared/types'
 import { CancelledError } from '@tanstack/react-query'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { ADDRESS_DATA } from '../src/api/queries/addressQueries'
 import { queryClient } from '../src/api/queryClient'
 import { invalidateAddressQueries } from '../src/api/queryInvalidation'
 import {
@@ -26,15 +27,30 @@ import {
   txCountQuery
 } from './invalidationTestHarness'
 
-// The proposed replacement for the ordered cascade: one invalidateQueries call covering all levels at once
+// This file is a guard rail. It reproduces the two naive alternatives to the cancel-then-invalidate pass in
+// invalidateAddressQueries so that anyone tempted to "simplify" the real code back into one of them meets a red test
+// explaining why it was rejected.
+
+// Rejected alternative 1: a single invalidateQueries pass over all levels with the default cancelRefetch:true
 const invalidateAddressQueriesSinglePass = (addressHash: AddressHash) =>
   queryClient.invalidateQueries({
     predicate: (query) =>
-      query.queryKey[0] === 'address' &&
-      query.queryKey[1] === addressHash &&
-      typeof query.queryKey[2] === 'string' &&
-      query.queryKey[2].startsWith('level:')
+      query.queryKey[0] === 'address' && query.queryKey[1] === addressHash && query.queryKey[2] === ADDRESS_DATA
   })
+
+// Rejected alternative 2: the same pass with cancelRefetch:false but no cancelQueries beforehand
+const invalidateSinglePassNoCancel = (addressHash: AddressHash) =>
+  queryClient.invalidateQueries(
+    {
+      predicate: (query) =>
+        query.queryKey[0] === 'address' && query.queryKey[1] === addressHash && query.queryKey[2] === ADDRESS_DATA
+    },
+    { cancelRefetch: false }
+  )
+
+const flush = async (times = 6) => {
+  for (let i = 0; i < times; i++) await new Promise((resolve) => setTimeout(resolve, 0))
+}
 
 let mockExplorer: MockExplorer
 
@@ -47,8 +63,8 @@ afterEach(async () => {
   vi.restoreAllMocks()
 })
 
-describe('single-pass invalidation when dependencies entered the cache before their consumers', () => {
-  it('converges like the cascade: refetches initiated bottom-up deduplicate into fresh results', async () => {
+describe('default single pass (cancelRefetch:true) when dependencies entered the cache before their consumers', () => {
+  it('converges: refetches initiated bottom-up deduplicate into fresh results', async () => {
     await seedDependenciesFirst()
 
     const observedQueries = [
@@ -76,13 +92,13 @@ describe('single-pass invalidation when dependencies entered the cache before th
   })
 })
 
-describe('single-pass invalidation when a consumer entered the cache before its dependencies', () => {
+describe('default single pass (cancelRefetch:true) when a consumer entered the cache before its dependencies', () => {
   // Derived queries create their dependency cache entries lazily via fetchQuery inside their queryFns, so whenever a
   // derived hook mounts before any component observes level 0 directly, the consumer precedes its dependencies in the
-  // query cache. refetchQueries walks the cache in insertion order, so it starts the consumer's refetch first. The
-  // consumer's queryFn synchronously starts its dependency's fetch through fetchQuery, and when refetchQueries then
-  // reaches the dependency itself, cancelRefetch (default true) silently cancels that exact in-flight fetch out from
-  // under the consumer. The consumer's queryFn rejects with a silent CancelledError and never recovers.
+  // query cache. invalidateQueries walks the cache in insertion order, so it starts the consumer's refetch first. The
+  // consumer's queryFn synchronously starts its dependency's fetch through fetchQuery, and when the pass then reaches
+  // the dependency itself, cancelRefetch (default true) silently cancels that exact in-flight fetch out from under the
+  // consumer. The consumer's queryFn rejects with a silent CancelledError and never recovers.
   it('leaves the consumer with stale data, still marked invalidated, and a poisoned fetch promise', async () => {
     await seedConsumersFirst(balancesAllQuery())
 
@@ -133,26 +149,7 @@ describe('single-pass invalidation when a consumer entered the cache before its 
     }
   })
 
-  it('is healed by the ordered cascade, which refetches each level only after its dependencies completed', async () => {
-    await seedConsumersFirst(balancesAllQuery())
-
-    observe(balancesAllQuery())
-    observe(alphBalanceQuery())
-
-    bumpServerBalance(mockExplorer, '2000')
-    await invalidateAddressQueriesSinglePass(ADDRESS_HASH)
-
-    expect(getAlphTotalBalanceMarker(getState(balancesAllQuery()).data)).toBe('1000')
-
-    await invalidateAddressQueries(ADDRESS_HASH)
-
-    const consumerState = getState(balancesAllQuery())
-    expect(getAlphTotalBalanceMarker(consumerState.data)).toBe('2000')
-    expect(consumerState.isInvalidated).toBe(false)
-    expect(consumerState.fetchStatus).toBe('idle')
-  })
-
-  it('does not diverge from the cascade in this order: the ordered cascade recomputes everything correctly', async () => {
+  it('is avoided by the real invalidateAddressQueries, which recomputes everything correctly in this same order', async () => {
     await seedConsumersFirst(ftsQuery())
 
     observe(ftsQuery())
@@ -168,7 +165,7 @@ describe('single-pass invalidation when a consumer entered the cache before its 
   })
 })
 
-describe('shared semantics of both variants', () => {
+describe('shared semantics of the single pass', () => {
   it('fetchQuery refetches an invalidated inactive dependency despite staleTime Infinity', async () => {
     await seedDependenciesFirst()
 
@@ -188,7 +185,7 @@ describe('shared semantics of both variants', () => {
     expect(getAlphTotalBalanceMarker(getState(balancesAllQuery()).data)).toBe('2000')
   })
 
-  it('retries a flaky level-0 fetch under the single pass exactly like under the cascade', async () => {
+  it('retries a flaky level-0 fetch under the single pass exactly like the real invalidation', async () => {
     await seedDependenciesFirst()
 
     const observedQueries = [alphBalanceQuery(), tokensBalanceQuery(), balancesAllQuery(), ftsQuery()]
@@ -204,30 +201,59 @@ describe('shared semantics of both variants', () => {
     expect(getListedFtsMarker(getState(ftsQuery()).data)).toBe('2000')
     expect(mockExplorer.mocks.alphBalance).toHaveBeenCalledTimes(3)
   })
+})
 
-  it('serves pre-invalidation data when a dependency fetch was already in flight, under both variants', async () => {
-    await seedDependenciesFirst()
+// A balance fetch is already in flight on an ACTIVE level-0 query when a new transaction fires the invalidation.
+// That in-flight fetch was issued before the change, so it will resolve with pre-change data. This is the one place
+// where cancelRefetch's two values do different things: true cancels and restarts the fetch, false lets it finish.
+const runInFlightSupersededScenario = async (invalidate: (addressHash: AddressHash) => Promise<void>) => {
+  await seedDependenciesFirst()
+  observe(alphBalanceQuery())
+  observe(balancesAllQuery())
 
-    let resolveInFlightFetch: (value: { balance: string; lockedBalance: string }) => void = () => undefined
-    mockExplorer.mocks.alphBalance.mockImplementationOnce(
-      () => new Promise((resolve) => (resolveInFlightFetch = resolve))
-    )
+  let resolveInFlight: (value: { balance: string; lockedBalance: string }) => void = () => undefined
+  mockExplorer.mocks.alphBalance.mockImplementationOnce(() => new Promise((resolve) => (resolveInFlight = resolve)))
+  const inFlight = queryClient.fetchQuery({ ...alphBalanceQuery(), staleTime: 0 }).catch(() => undefined)
+  await flush()
 
-    const inFlightFetch = queryClient.fetchQuery({ ...alphBalanceQuery(), staleTime: 0 })
+  bumpServerBalance(mockExplorer, '2000')
 
-    bumpServerBalance(mockExplorer, '2000')
-    await invalidateAddressQueries(ADDRESS_HASH)
+  const invalidation = invalidate(ADDRESS_HASH)
+  await flush()
 
-    expect(getState(alphBalanceQuery()).isInvalidated).toBe(true)
+  resolveInFlight({ balance: '1000', lockedBalance: '0' })
+  await invalidation
+  await inFlight
+  await flush()
 
-    resolveInFlightFetch({ balance: '1000', lockedBalance: '0' })
-    await inFlightFetch
+  return {
+    alph: getAlphL0BalanceMarker(getState(alphBalanceQuery()).data),
+    balancesAll: getAlphTotalBalanceMarker(getState(balancesAllQuery()).data),
+    alphInvalidated: getState(alphBalanceQuery()).isInvalidated,
+    alphServerCalls: mockExplorer.mocks.alphBalance.mock.calls.length
+  }
+}
 
-    // The success of the pre-invalidation fetch clears the invalidation flag with pre-invalidation data
-    expect(getState(alphBalanceQuery()).isInvalidated).toBe(false)
+describe('why plain cancelRefetch:false is not enough, and why we cancel first', () => {
+  it('CANCEL-FIRST (real invalidateAddressQueries): cancels the superseded fetch and converges to the fresh balance', async () => {
+    const result = await runInFlightSupersededScenario(invalidateAddressQueries)
 
-    const result = await queryClient.fetchQuery(balancesAllQuery())
+    expect(result.alph).toBe('2000')
+    expect(result.balancesAll).toBe('2000')
+    expect(result.alphInvalidated).toBe(false)
+  })
 
-    expect(getAlphTotalBalanceMarker(result)).toBe('1000')
+  it('SINGLE PASS (cancelRefetch:false): keeps the stale in-flight result, and it sticks under staleTime Infinity', async () => {
+    const result = await runInFlightSupersededScenario(invalidateSinglePassNoCancel)
+
+    expect(result.alph).toBe('1000')
+    expect(result.balancesAll).toBe('1000')
+
+    // The stale fetch cleared the invalidation flag, so nothing will refetch this on its own
+    expect(result.alphInvalidated).toBe(false)
+
+    // A later consumer mount reads the same stale value, confirming the staleness is persistent, not transient
+    const fts = await queryClient.fetchQuery(ftsQuery())
+    expect(getListedFtsMarker(fts)).toBe('1000')
   })
 })
