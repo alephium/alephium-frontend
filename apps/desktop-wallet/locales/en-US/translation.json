@@ -487,6 +487,8 @@
   "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it.",
   "Total worth": "Total worth",
   "Could not load NFT metadata": "Could not load NFT metadata",
+  "Could not load this NFT": "Could not load this NFT",
+  "Its media or metadata is unavailable or hosted at a source that could not be reached.": "Its media or metadata is unavailable or hosted at a source that could not be reached.",
   "Region": "Region",
   "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
   "Video thumbnail": "Video thumbnail",

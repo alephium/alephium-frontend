@@ -25,7 +25,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
   return (
     <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nftId={nftId} hideIfError autoPlay />
+        <NFTThumbnail size="100%" nftId={nftId} hideIfError autoPlay fullResolution />
       </NFTImageContainer>
 
       <NFTDataList nftId={nftId} />
@@ -37,14 +37,16 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const { data: nft, error } = useFetchNft({ id: nftId })
 
-  const collectionId = nft?.collectionId || nft?.collectionId
+  const collectionId = nft?.collectionId
+  const loadFailed = !!nft && !nft.image
 
   return (
     <NFTMetadataContainer>
       {error && error instanceof FetchError && <NftMetadataError error={error} />}
+      {loadFailed && <NftLoadError />}
       <DataList>
         <NftNameDataListRow label={t('Name')}>{nft?.name}</NftNameDataListRow>
-        <DataList.Row label={t('Description')}>{nft?.description}</DataList.Row>
+        {!loadFailed && <DataList.Row label={t('Description')}>{nft?.description}</DataList.Row>}
         <DataList.Row label={t('ID')}>
           <HashEllipsed hash={nftId} tooltipText={t('Copy ID')} />
         </DataList.Row>
@@ -86,6 +88,19 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
 
 interface NftMetadataErrorProps {
   error: FetchError
+}
+
+const NftLoadError = () => {
+  const { t } = useTranslation()
+
+  return (
+    <InfoBox importance="alert" Icon={AlertTriangle}>
+      <ErrorContents>
+        <ErrorTitle>{t('Could not load this NFT')}</ErrorTitle>
+        <span>{t('Its media or metadata is unavailable or hosted at a source that could not be reached.')}</span>
+      </ErrorContents>
+    </InfoBox>
+  )
 }
 
 const NftMetadataError = ({ error }: NftMetadataErrorProps) => {
