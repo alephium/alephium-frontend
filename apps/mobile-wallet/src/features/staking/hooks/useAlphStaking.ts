@@ -1,8 +1,9 @@
-import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import { powfiSdk, xAlphTokenId } from '~/api/powfi'
+import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import {
   stakeOrUnstakeCompleted,
   stakeOrUnstakeStarted,
@@ -19,16 +20,16 @@ type RecordTxAndRefreshProps = {
 
 const useAlphStaking = () => {
   const dispatch = useAppDispatch()
-  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const stakingAddressHash = useAppSelector(selectStakingAddressHash)
 
   const recordTx = useCallback(
     async ({ result, alphAmount, xAlphAmount }: RecordTxAndRefreshProps) => {
-      if (!defaultAddressHash) throw Error('Default address hash not found')
+      if (!stakingAddressHash) throw Error('Staking address hash not found')
 
       const sentTx = signAndSubmitTxResultToSentTx({
         type: 'EXECUTE_SCRIPT',
         txParams: {
-          signerAddress: defaultAddressHash,
+          signerAddress: stakingAddressHash,
           attoAlphAmount: alphAmount,
           tokens: xAlphAmount ? [{ id: xAlphTokenId, amount: xAlphAmount }] : undefined,
           bytecode: ''
@@ -37,7 +38,7 @@ const useAlphStaking = () => {
       })
       dispatch(transactionSent(sentTx))
     },
-    [dispatch, defaultAddressHash]
+    [dispatch, stakingAddressHash]
   )
 
   const stakeAlph = useCallback(

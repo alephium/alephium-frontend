@@ -1,4 +1,3 @@
-import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -8,9 +7,10 @@ import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
 import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
+import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import DefaultAddressSection from '~/screens/Staking/DefaultAddressSection'
+import StakingAddressSection from '~/screens/Staking/StakingAddressSection'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 import StakingCard from './StakingCard'
@@ -18,7 +18,7 @@ import UnstakingRequestsList from './UnstakingRequestsList'
 
 const StakingScreen = () => {
   const { t } = useTranslation()
-  const addressHash = useAppSelector(selectDefaultAddressHash)
+  const addressHash = useAppSelector(selectStakingAddressHash)
   const dispatch = useAppDispatch()
   const isStakingEnabled = useIsStakingEnabled()
   const hasPendingStakeOrUnstake = useAppSelector((s) => !!s.staking.pendingStakeOrUnstake)
@@ -37,7 +37,7 @@ const StakingScreen = () => {
         <ScreenTitle title={t('Staking')} scrollY={screenScrollY} sideDefaultMargin paddingTop />
 
         <ContentContainer>
-          <DefaultAddressSection />
+          <StakingAddressSection />
 
           <StakingCard addressHash={addressHash} />
 
