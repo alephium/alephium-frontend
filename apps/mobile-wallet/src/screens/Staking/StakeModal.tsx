@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -5,6 +6,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TextInput } from 'react-native-gesture-handler'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useModalContext } from '~/features/modals/ModalContext'
@@ -46,6 +48,8 @@ const StakeModal = ({ addressHash }: StakeModalProps) => {
   const handleStake = () => {
     if (!amountInAttoAlph || !!error) return
 
+    sendAnalytics({ event: AnalyticsEvent.STAKE_INITIATED, props: { action: 'stake' } })
+
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
       successCallback: () =>
@@ -58,6 +62,7 @@ const StakeModal = ({ addressHash }: StakeModalProps) => {
               await stakeAlph(amountInAttoAlph)
               dismissModal()
             } catch (err) {
+              sendAnalytics({ event: AnalyticsEvent.STAKE_FAILED, props: { action: 'stake' } })
               showExceptionToast(err, t('Stake ALPH'))
             } finally {
               setIsLoading(false)

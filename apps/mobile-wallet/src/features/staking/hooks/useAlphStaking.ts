@@ -1,7 +1,9 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import { powfiSdk, xAlphTokenId } from '~/api/powfi'
 import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import {
@@ -45,6 +47,7 @@ const useAlphStaking = () => {
     async (amount: bigint) => {
       try {
         const result = await powfiSdk.staking.stakeAlph(amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'stake' } })
         dispatch(stakeOrUnstakeStarted({ type: 'stake', txHash: result.txId }))
         recordTx({ result, alphAmount: amount })
         return result
@@ -60,6 +63,7 @@ const useAlphStaking = () => {
     async (amount: bigint) => {
       try {
         const result = await powfiSdk.staking.startUnstake(amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'unstake' } })
         dispatch(stakeOrUnstakeStarted({ type: 'unstake', txHash: result.txId }))
         await recordTx({ result, xAlphAmount: amount })
         return result
@@ -75,6 +79,7 @@ const useAlphStaking = () => {
     async (vaultIndex: bigint, amount: bigint) => {
       try {
         const result = await powfiSdk.staking.claimUnstaked(vaultIndex, amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'claim' } })
         dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'claim', txHash: result.txId }))
         await recordTx({ result, alphAmount: amount })
         return result
@@ -90,6 +95,7 @@ const useAlphStaking = () => {
     async (vaultIndex: bigint) => {
       try {
         const result = await powfiSdk.staking.cancelUnstake(vaultIndex)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'cancel' } })
         dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'cancel', txHash: result.txId }))
         await recordTx({ result })
         return result

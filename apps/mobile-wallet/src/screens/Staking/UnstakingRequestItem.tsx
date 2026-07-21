@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { selectSentTransactionByHash } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
@@ -8,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
@@ -44,6 +46,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
     await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
     await queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })
     dispatch(vaultActionCompleted(vaultIndex))
+    sendAnalytics({ event: AnalyticsEvent.STAKE_CONFIRMED, props: { action: pendingVaultAction?.type } })
     showToast({
       type: 'success',
       text1: pendingVaultAction?.type === 'claim' ? t('ALPH claimed!') : t('Unstake request cancelled!')
@@ -80,6 +83,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   }
 
   const submitClaim = () => {
+    sendAnalytics({ event: AnalyticsEvent.STAKE_INITIATED, props: { action: 'claim' } })
+
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
       successCallback: () =>
@@ -90,6 +95,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
               showToast({ type: 'info', text1: t('Claiming ALPH...') })
               await claimUnstaked(request.vaultIndex, request.claimableAmount)
             } catch (error) {
+              sendAnalytics({ event: AnalyticsEvent.STAKE_FAILED, props: { action: 'claim' } })
               showExceptionToast(error, t('Claim'))
             } finally {
               setIsClaiming(false)
@@ -106,6 +112,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
         text: t('Yes, cancel'),
         style: 'destructive',
         onPress: () => {
+          sendAnalytics({ event: AnalyticsEvent.STAKE_INITIATED, props: { action: 'cancel' } })
+
           triggerBiometricsAuthGuard({
             settingsToCheck: 'transactions',
             successCallback: () =>
@@ -116,6 +124,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
                     showToast({ type: 'info', text1: t('Cancelling unstaking request...') })
                     await cancelUnstake(request.vaultIndex)
                   } catch (error) {
+                    sendAnalytics({ event: AnalyticsEvent.STAKE_FAILED, props: { action: 'cancel' } })
                     showExceptionToast(error, t('Cancel unstaking'))
                   } finally {
                     setIsCancelling(false)

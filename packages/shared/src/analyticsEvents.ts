@@ -143,6 +143,11 @@ export const AnalyticsEvent = {
   SWAP_CONFIRMED: 'Swap Confirmed',
   SWAP_REVERTED: 'Swap Reverted',
   SWAP_FAILED: 'Swap Failed',
+  // Staking funnel (mobile). One funnel across stake / unstake / claim / cancel, split by `action`.
+  STAKE_INITIATED: 'Stake Initiated',
+  STAKE_EXECUTED: 'Stake Executed',
+  STAKE_CONFIRMED: 'Stake Confirmed',
+  STAKE_FAILED: 'Stake Failed',
   IMPORTED_DISCOVERED_ADDRESSES: 'Imported discovered addresses',
   MNEMONIC_MIGRATED: 'Mnemonic migrated',
   MNEMONIC_VERIFICATION_ABANDONED: 'Mnemonic Verification Abandoned',

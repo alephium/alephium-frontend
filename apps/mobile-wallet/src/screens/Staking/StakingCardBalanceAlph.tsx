@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { AddressHash } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
@@ -6,6 +7,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import useStakedValue from '~/features/staking/hooks/useStakedValue'
 import { stakeOrUnstakeCompleted } from '~/features/staking/stakingSlice'
@@ -30,6 +32,7 @@ const StakingCardBalanceAlph = ({ addressHash }: StakingCardBalanceAlphProps) =>
   const handleTxConfirmed = useCallback(async () => {
     await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
     dispatch(stakeOrUnstakeCompleted())
+    sendAnalytics({ event: AnalyticsEvent.STAKE_CONFIRMED, props: { action: 'stake' } })
     showToast({ type: 'success', text1: t('ALPH staked successfully!') })
   }, [addressHash, dispatch, t])
 

@@ -120,6 +120,9 @@ export type AnalyticsProps = {
   amount_usd_bucket?: string
   used_non_default_address?: boolean
 
+  // On staking funnel events: which staking action the event is about.
+  action?: 'stake' | 'unstake' | 'claim' | 'cancel'
+
   // Settings.
   region?: string
   language?: string
