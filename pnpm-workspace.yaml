@@ -21,13 +21,11 @@ sideEffectsCache: false
 minimumReleaseAge: 10080 # 7 days
 minimumReleaseAgeExclude:
   - '@alephium/'
-  - undici@6.27.0 # pnpm audit flags undici as a vulnerable dependency but the patched version is not 7 days old
-  - dompurify@3.4.11 # TODO: Remove after updating posthog-js once it is old enough
 
 patchedDependencies:
   '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch # TODO: remove after bumping @expo/cli past 55.0.32 (fixes `expo run:ios --device` "Cannot convert object to primitive value"; fixed upstream, see expo/expo#46114)
   '@metamask/scure-bip39@2.1.1': patches/@metamask__scure-bip39@2.1.1.patch
-  js-yaml@4.2.0: patches/js-yaml@4.2.0.patch # re-adds safeLoad/safeLoadAll/safeDump as aliases to load/loadAll/dump so read-yaml-file@1.1.0 (via @manypkg/get-packages@1.1.3, pinned by @changesets/cli@2.31.0) survives the js-yaml>=4 audit override. TODO: remove after upgrading to @changesets/cli@3 (its @manypkg/get-packages@3 drops read-yaml-file); see changesets#1762 / #1772
+  js-yaml@4: patches/js-yaml@4.3.0.patch # re-adds safeLoad/safeLoadAll/safeDump as aliases to load/loadAll/dump so read-yaml-file@1.1.0 (via @manypkg/get-packages@1.1.3, pinned by @changesets/cli@2.31.0) survives the js-yaml>=4 audit override. TODO: remove after upgrading to @changesets/cli@3 (its @manypkg/get-packages@3 drops read-yaml-file); see changesets#1762 / #1772
 
 overrides:
   # Single prettier 3 across the workspace. autoInstallPeers pulls a second copy in for
@@ -42,15 +40,20 @@ overrides:
   'postcss@<8.5.10': '=8.5.10'
   'fast-xml-parser@<5.7.0': '=5.7.0'
   'uuid@<14.0.0': '>=14.0.0'
-  'js-yaml@<4.1.2': '>4.1.2'
+  'js-yaml@<4.3.0': '=4.3.0'
   'on-headers@<1.1.0': '=1.1.0'
   'undici@<6.27.0': '=6.27.0'
   'qs@>=6.11.1 <=6.15.1': '=6.15.2'
   # dompurify's only consumer is posthog-js, which declares `^3.3.2` - including on the latest
   # release (1.399.2), so bumping posthog-js does NOT let this override go (an earlier TODO here
   # claimed it would). It stays until posthog-js raises its own floor past the vulnerable range.
-  'dompurify@<3.4.11': '=3.4.11'
-  'tar@<7.5.16': '=7.5.16' # TODO: Remove after updating electron-builder to v26
+  'dompurify@<3.4.12': '=3.4.12'
+  'tar@<7.5.19': '=7.5.19' # TODO: Remove after updating electron-builder to v26
+  'brace-expansion@<1.1.16': '=1.1.16'
+  'brace-expansion@>=2.0.0 <2.1.2': '=2.1.2'
+  'brace-expansion@>=3.0.0 <5.0.7': '=5.0.7'
+  'shell-quote@<1.8.5': '=1.9.0'
+  'fast-uri@>=3.0.0 <3.1.4': '=3.1.3'
 
 allowBuilds:
   electron: true
