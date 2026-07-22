@@ -16,6 +16,7 @@ import { activateAppLoading, deactivateAppLoading } from '~/features/loader/load
 import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
@@ -46,6 +47,8 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
 
   const [name, setName] = useState('')
+
+  useCaptureOnboardingStep('name')
 
   const handleButtonPress = async () => {
     if (!name) return

@@ -30,6 +30,10 @@ export const AnalyticsEvent = {
   // is the funnel entry point: without it, `Wallet Created` has no denominator and onboarding
   // completion rate cannot be computed on either platform.
   ONBOARDING_STARTED: 'Onboarding Started',
+  // Mobile only: desktop asks for everything on one form, so it has no intermediate steps to lose
+  // people on. A `step` prop rather than one event per screen, so that removing or reordering an
+  // onboarding screen needs no new event name and no fresh history split.
+  ONBOARDING_STEP_VIEWED: 'Onboarding Step Viewed',
   WALLET_CREATED: 'Wallet Created',
   WALLET_IMPORTED: 'Wallet Imported',
   WALLET_UNLOCKED: 'Wallet Unlocked',

@@ -18,6 +18,7 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/SecretPhraseWordList'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
@@ -44,6 +45,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const allowedWords = useRef(bip39Words)
   const { t } = useTranslation()
   const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
+
+  useCaptureOnboardingStep('seed_entry')
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])

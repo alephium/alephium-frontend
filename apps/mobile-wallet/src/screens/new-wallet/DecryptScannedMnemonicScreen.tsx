@@ -15,6 +15,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
 import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
@@ -40,6 +41,8 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const inputRef = useRef<TextInput>(null)
   const { t } = useTranslation()
   const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
+
+  useCaptureOnboardingStep('qr_decrypt')
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
