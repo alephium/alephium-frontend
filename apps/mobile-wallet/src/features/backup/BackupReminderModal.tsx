@@ -1,7 +1,9 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
@@ -9,17 +11,28 @@ import { ModalScreenTitle } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { getIsWalletFunded, getWalletOrdinal } from '~/persistent-storage/wallet'
 
 interface BackupReminderModalProps {
   isNewWallet: boolean
+  walletId: string
 }
 
-const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet }) => {
+const BackupReminderModal = memo<BackupReminderModalProps>(({ isNewWallet, walletId }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
   const { dismissModal } = useModalContext()
 
   const handleValidatePress = () => {
+    sendAnalytics({
+      event: AnalyticsEvent.BACKUP_REMINDER_ACCEPTED,
+      props: {
+        is_new_wallet: isNewWallet,
+        is_funded: getIsWalletFunded(walletId) ?? false,
+        wallet_ordinal: getWalletOrdinal(walletId)
+      }
+    })
+
     dismissModal()
     navigation.navigate('BackupMnemonicNavigation')
   }

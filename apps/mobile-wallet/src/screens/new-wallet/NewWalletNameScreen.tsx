@@ -16,8 +16,9 @@ import { activateAppLoading, deactivateAppLoading } from '~/features/loader/load
 import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { generateAndStoreWallet } from '~/persistent-storage/wallet'
+import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletAddedToList } from '~/store/wallet/walletsSlice'
@@ -47,6 +48,8 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
 
   const [name, setName] = useState('')
 
+  useCaptureOnboardingStep('name')
+
   const handleButtonPress = async () => {
     if (!name) return
 
@@ -67,7 +70,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         dispatch(newWalletGenerated(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
-        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED })
+        sendAnalytics({ event: AnalyticsEvent.WALLET_CREATED, props: { wallet_ordinal: getWalletOrdinal(wallet.id) } })
         resetNavigation(
           navigation,
           deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess

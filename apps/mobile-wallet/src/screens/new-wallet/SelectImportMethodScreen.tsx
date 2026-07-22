@@ -11,6 +11,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { cameraToggled } from '~/store/appSlice'
 import { qrCodeFromDesktopWalletScanned } from '~/store/walletGenerationSlice'
@@ -24,6 +25,8 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+
+  useCaptureOnboardingStep('import_method')
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))

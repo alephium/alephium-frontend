@@ -19,7 +19,7 @@ import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWor
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { getIsWalletFunded, getWalletOrdinal, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/walletMnemonic'
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
@@ -46,6 +46,14 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const [showSuccess, setShowSuccess] = useState(false)
   const [mnemonicWords, setMnemonicWords] = useState<Array<string>>([])
 
+  // The unmount cleanup below would otherwise close over stale values.
+  const progress = useRef({ completed: false, wordsSelected: 0, wordsTotal: 0 })
+
+  useEffect(() => {
+    progress.current.wordsSelected = selectedWords.length
+    progress.current.wordsTotal = mnemonicWords.length
+  })
+
   useEffect(() => {
     try {
       dangerouslyExportWalletMnemonic(walletId).then((mnemonic) => {
@@ -53,19 +61,52 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         setMnemonicWords(words)
         randomizedOptions.current = getRandomizedOptions(words, allowedWords.current)
         setPossibleMatches(randomizedOptions.current[0])
+
+        sendAnalytics({
+          event: AnalyticsEvent.MNEMONIC_VERIFICATION_STARTED,
+          props: {
+            words_total: words.length,
+            is_funded: getIsWalletFunded(walletId) ?? false,
+            wallet_ordinal: getWalletOrdinal(walletId)
+          }
+        })
       })
     } catch (e) {
       if (__DEV__) console.error(e)
     }
   }, [walletId])
 
+  useEffect(
+    () => () => {
+      const { completed, wordsSelected, wordsTotal } = progress.current
+
+      if (completed || wordsTotal === 0) return
+
+      sendAnalytics({
+        event: AnalyticsEvent.MNEMONIC_VERIFICATION_ABANDONED,
+        props: {
+          words_completed: wordsSelected,
+          words_total: wordsTotal,
+          is_funded: getIsWalletFunded(walletId) ?? false,
+          wallet_ordinal: getWalletOrdinal(walletId)
+        }
+      })
+    },
+    [walletId]
+  )
+
   const confirmBackup = useCallback(async () => {
+    progress.current.completed = true
+
     if (!isMnemonicBackedUp) {
       try {
         updateStoredWalletMetadata(walletId, { isMnemonicBackedUp: true })
         dispatch(mnemonicBackedUp())
 
-        sendAnalytics({ event: AnalyticsEvent.BACKED_UP_MNEMONIC })
+        sendAnalytics({
+          event: AnalyticsEvent.BACKED_UP_MNEMONIC,
+          props: { words_total: mnemonicWords.length, wallet_ordinal: getWalletOrdinal(walletId) }
+        })
       } catch (error) {
         const message = 'Could not confirm backup'
 
@@ -73,7 +114,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         sendAnalytics({ type: 'error', error, message })
       }
     }
-  }, [isMnemonicBackedUp, dispatch, t, walletId])
+  }, [isMnemonicBackedUp, dispatch, t, walletId, mnemonicWords.length])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.length) {

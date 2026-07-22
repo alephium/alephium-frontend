@@ -57,6 +57,13 @@ export type SendOrigin = Extract<
   'dashboard' | 'overview_page' | 'address_details' | 'token_details' | 'contact' | 'qr_code_scan'
 >
 
+// The screens between `Onboarding Started` and `Wallet Created` / `Wallet Imported`.
+//
+// No `intro` step: `Onboarding Started` fires on the press that navigates to the intro screen, so it
+// already marks it. No address-discovery step: `Wallet Imported` fires before that screen, which puts
+// it outside the funnel.
+export type OnboardingStep = 'name' | 'import_method' | 'seed_entry' | 'qr_decrypt'
+
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
   origin?: AnalyticsOrigin
@@ -74,8 +81,20 @@ export type AnalyticsProps = {
   // Third-party service behind a Buy or Swap action.
   provider?: string
 
-  // On `Onboarding Started`: which flow the user entered.
+  // On `Onboarding Started` and `Onboarding Step Viewed`: which flow the user entered.
   method?: 'create' | 'import' | 'watch_only'
+
+  // On `Onboarding Step Viewed`.
+  step?: OnboardingStep
+
+  // A per-install creation counter, deliberately not the wallet id: it answers first-vs-subsequent
+  // without putting a stable per-wallet key on the wire.
+  wallet_ordinal?: number
+
+  is_new_wallet?: boolean
+  is_funded?: boolean
+  words_completed?: number
+  words_total?: number
 
   // On `Authentication Settings Changed`.
   setting?: 'app_access' | 'transactions'

@@ -30,6 +30,10 @@ export const AnalyticsEvent = {
   // is the funnel entry point: without it, `Wallet Created` has no denominator and onboarding
   // completion rate cannot be computed on either platform.
   ONBOARDING_STARTED: 'Onboarding Started',
+  // Mobile only: desktop asks for everything on one form, so it has no intermediate steps to lose
+  // people on. A `step` prop rather than one event per screen, so that removing or reordering an
+  // onboarding screen needs no new event name and no fresh history split.
+  ONBOARDING_STEP_VIEWED: 'Onboarding Step Viewed',
   WALLET_CREATED: 'Wallet Created',
   WALLET_IMPORTED: 'Wallet Imported',
   WALLET_UNLOCKED: 'Wallet Unlocked',
@@ -114,6 +118,9 @@ export const AnalyticsEvent = {
   ACTIVATED_BIOMETRICS_FROM_WALLET_CREATION_FLOW: 'Activated biometrics from wallet creation flow',
   ADDED_DAPP_TO_FAVORITES: 'Added dApp to favorites',
   BACKED_UP_MNEMONIC: 'Backed-up mnemonic',
+  BACKUP_REMINDER_ACCEPTED: 'Backup Reminder Accepted',
+  BACKUP_REMINDER_DISMISSED: 'Backup Reminder Dismissed',
+  BACKUP_REMINDER_SHOWN: 'Backup Reminder Shown',
   CAPTURED_CONTACT_ADDRESS_BY_SCANNING_QR_CODE_FROM_DASHBOARD:
     'Captured contact address by scanning QR code from Dashboard',
   CLICKED_ON_BUTTON_TO_ADD_AN_ASSET_TO_HIDDEN_LIST: 'Clicked on button to add an asset to hidden list',
@@ -130,6 +137,8 @@ export const AnalyticsEvent = {
   DELETED_FUND_PASSWORD: 'Deleted fund password',
   IMPORTED_DISCOVERED_ADDRESSES: 'Imported discovered addresses',
   MNEMONIC_MIGRATED: 'Mnemonic migrated',
+  MNEMONIC_VERIFICATION_ABANDONED: 'Mnemonic Verification Abandoned',
+  MNEMONIC_VERIFICATION_STARTED: 'Mnemonic Verification Started',
   MULTI_WALLET_MIGRATION_COMPLETED: 'Multi-wallet migration completed',
   OPENED_ADDRESS_QUICK_ACTIONS_MODAL: 'Opened address quick actions modal',
   OPENED_DAPP: 'Opened dApp',
