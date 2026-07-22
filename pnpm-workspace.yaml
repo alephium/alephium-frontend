@@ -20,7 +20,7 @@ verifyDepsBeforeRun: false
 sideEffectsCache: false
 minimumReleaseAge: 10080 # 7 days
 minimumReleaseAgeExclude:
-  - '@alephium/'
+  - '@alephium/*'
   - fast-uri@3.1.4 # TODO: remove on/after 2026-07-26, when it clears minimumReleaseAge on its own
 
 patchedDependencies:
