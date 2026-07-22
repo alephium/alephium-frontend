@@ -54,6 +54,11 @@ overrides:
   'brace-expansion@>=2.0.0 <2.1.2': '=2.1.2'
   'brace-expansion@>=3.0.0 <5.0.7': '=5.0.7'
   'shell-quote@<1.8.5': '=1.9.0'
+  # powfi-sdk declares @alephium/web3 as an exact regular dependency instead of a peer, so it pulls
+  # in a second copy whenever the workspace pin differs. Two copies means two distinct SignerProvider
+  # classes, and TypeScript's nominal check on protected members rejects our signer at Powfi.load();
+  # at runtime it would also give the SDK its own web3 global (node provider, contract registry).
+  '@alephium/powfi-sdk>@alephium/web3': '3.0.5'
 
 allowBuilds:
   electron: true

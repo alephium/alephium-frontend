@@ -21,6 +21,7 @@ overrides:
   brace-expansion@>=2.0.0 <2.1.2: '=2.1.2'
   brace-expansion@>=3.0.0 <5.0.7: '=5.0.7'
   shell-quote@<1.8.5: '=1.9.0'
+  '@alephium/powfi-sdk>@alephium/web3': 3.0.5
 
 patchedDependencies:
   '@expo/cli@55.0.32': 2eb942eebf04ca9cf7227d14070636d861ef5a58fc4f6172684bb10273db0112
@@ -1185,10 +1186,6 @@ packages:
 
   '@alephium/web3@3.0.0-test.9':
     resolution: {integrity: sha512-mUznVrDlFhNEOPJxgc/S02392fXbIgJbB1v0IXvy0oI6Twr5Mezya18PJYSMuznHrsBDAczk1gesfjB1iCDRtA==}
-    engines: {node: '>=20.0.0', npm: '>=7.0.0'}
-
-  '@alephium/web3@3.0.3':
-    resolution: {integrity: sha512-qVU6INmXu9d5KBl9lNt/Y0XNTvWbgdCdWhsQngbs+GktjiTwIecuJ1SKNpHBMq/86rWb/RlU64Bi1SxtJJ/pMQ==}
     engines: {node: '>=20.0.0', npm: '>=7.0.0'}
 
   '@alephium/web3@3.0.5':
@@ -11249,7 +11246,7 @@ snapshots:
   '@alephium/powfi-sdk@0.0.1-rc.30(encoding@0.1.13)':
     dependencies:
       '@alephium/token-list': 0.0.20(encoding@0.1.13)
-      '@alephium/web3': 3.0.3
+      '@alephium/web3': 3.0.5
       bignumber.js: 10.0.2
       decimal.js: 10.6.0
     transitivePeerDependencies:
@@ -11258,7 +11255,7 @@ snapshots:
   '@alephium/powfi-sdk@0.0.1-rc.31(encoding@0.1.13)':
     dependencies:
       '@alephium/token-list': 0.0.20(encoding@0.1.13)
-      '@alephium/web3': 3.0.3
+      '@alephium/web3': 3.0.5
       bignumber.js: 10.0.2
       decimal.js: 10.6.0
     transitivePeerDependencies:
@@ -11344,15 +11341,6 @@ snapshots:
       '@scure/bip39': 1.6.0
 
   '@alephium/web3@3.0.0-test.9':
-    dependencies:
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      '@noble/secp256k1': 1.7.2
-      base-x: 4.0.1
-      bignumber.js: 9.1.2
-      eventemitter3: 4.0.7
-
-  '@alephium/web3@3.0.3':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
