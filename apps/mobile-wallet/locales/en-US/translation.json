@@ -564,5 +564,6 @@
   "ALPH claimed!": "ALPH claimed!",
   "Cancelling unstaking request...": "Cancelling unstaking request...",
   "Claiming ALPH...": "Claiming ALPH...",
-  "Swap": "Swap"
+  "Swap": "Swap",
+  "Could not reach the payment provider. Please try again later.": "Could not reach the payment provider. Please try again later."
 }

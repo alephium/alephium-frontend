@@ -15,6 +15,7 @@ import { ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import Devtools from '~/Devtools'
+import useCloseOnrampTab from '~/features/buy/useCloseOnrampTab'
 import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
 import usePersistQueryCacheOnBackground from '~/features/persistQueryCache/usePersistQueryCacheOnBackground'
@@ -62,6 +63,7 @@ const StateAwareContent = ({ children, ...props }: ViewProps) => {
   useLoadStoredSettings()
   useLocalization()
   useSystemRegion()
+  useCloseOnrampTab()
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
