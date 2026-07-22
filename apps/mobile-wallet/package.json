@@ -129,7 +129,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@babel/core": "^7.29.6",
+    "@babel/core": "^7.29.7",
     "@babel/plugin-transform-class-static-block": "7.28.6",
     "@buoy-gg/core": "^2.1.12",
     "@buoy-gg/react-query": "^2.1.12",
