@@ -8,10 +8,10 @@ interface AddressAssetsCountProps {
 }
 
 const AddressAssetsCount = ({ addressStr }: AddressAssetsCountProps) => {
-  const { data } = useFetchAddressBalances(addressStr)
+  const { data, isLoading, isError } = useFetchAddressBalances(addressStr)
   const { t } = useTranslation()
 
-  return <InfoGrid.Cell label={t('Nb. of assets')} value={data?.length ?? 0} />
+  return <InfoGrid.Cell label={t('Nb. of assets')} value={isLoading ? undefined : isError ? '-' : data?.length ?? 0} />
 }
 
 export default AddressAssetsCount
