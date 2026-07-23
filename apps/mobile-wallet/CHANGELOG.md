@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 2.5.5
+
+### Patch Changes
+
+- 6075b1d: Fix balances and tokens occasionally sticking on stale data after a transaction
+- 65eed20: Fix missing recovery phrase reminder for additional wallets
+
 ## 2.5.4
 
 ### Patch Changes
