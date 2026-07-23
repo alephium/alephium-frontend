@@ -23,26 +23,35 @@ import {
   HiddenWalletTokensBalancesListSection
 } from '@/features/hiddenTokens/HiddenTokensBalancesLists'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppSelector } from '@/hooks/redux'
 
 export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
   const { data: sortedFts, isLoading } = useFetchAddressFtsSorted(addressHash)
-  const isEmpty = !isLoading && sortedFts.length === 0
   const {
     data: { nstIds }
   } = useFetchAddressTokensByType(addressHash)
+  const hiddenTokenIds = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)
+
+  // The filter is intentionally kept at the component level for the two address-scoped lists, rather than adding an
+  // includeHidden parameter to the shared `useFetchAddress*` hooks. Those hooks are consumed by the explorer, the
+  // send modal, and mobile screens.
+  const visibleFts = sortedFts.filter(({ id }) => !hiddenTokenIds.includes(id))
+  const visibleNstIds = nstIds.filter((tokenId) => !hiddenTokenIds.includes(tokenId))
+
+  const isEmpty = !isLoading && visibleFts.length === 0
 
   return (
     <>
       <Table>
         {!isEmpty && <TokensBalancesHeader />}
-        {sortedFts.map(({ id }) => (
+        {visibleFts.map(({ id }) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
         ))}
-        {nstIds.map((tokenId) => (
+        {visibleNstIds.map((tokenId) => (
           <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
         ))}
-        {!isLoading && sortedFts.length === 0 && nstIds.length === 0 && (
+        {!isLoading && visibleFts.length === 0 && visibleNstIds.length === 0 && (
           <EmptyPlaceholder emoji="👀">{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
         )}
         {isLoading && <TokensSkeletonLoader />}
