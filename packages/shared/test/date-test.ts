@@ -61,6 +61,34 @@ describe('formatRelativeTime', () => {
     const result = formatRelativeTime(justNow)
     expect(result).toMatch(/second|now/)
   })
+
+  describe('neverFuture option', () => {
+    it('should never render future tense for a timestamp slightly in the future', () => {
+      const thirtySecondsInFuture = Date.now() + 30 * 1000
+      const result = formatRelativeTime(thirtySecondsInFuture, 'en', 'long', { neverFuture: true })
+      expect(result).not.toMatch(/\bin\b/)
+      expect(result).toBe('now')
+    })
+
+    it('should not render "in a day" for a timestamp days in the future', () => {
+      const twoDaysInFuture = Date.now() + 2 * ONE_DAY_MS
+      const result = formatRelativeTime(twoDaysInFuture, 'en', 'long', { neverFuture: true })
+      expect(result).not.toMatch(/\bin\b/)
+      expect(result).not.toContain('day')
+    })
+
+    it('should render a few minutes ago as past tense', () => {
+      const fiveMinutesAgo = Date.now() - 5 * 60 * 1000
+      const result = formatRelativeTime(fiveMinutesAgo, 'en', 'long', { neverFuture: true })
+      expect(result).toBe('5 minutes ago')
+    })
+
+    it('should render a few hours ago as past tense', () => {
+      const threeHoursAgo = Date.now() - 3 * 60 * 60 * 1000
+      const result = formatRelativeTime(threeHoursAgo, 'en', 'long', { neverFuture: true })
+      expect(result).toBe('3 hours ago')
+    })
+  })
 })
 
 describe('SHORT_DATE_OPTIONS', () => {
