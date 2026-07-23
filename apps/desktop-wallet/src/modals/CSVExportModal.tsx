@@ -13,12 +13,13 @@ import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/C
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
 import { TransactionTimePeriod } from '@/types/transactions'
 import { generateCsvFile, getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
-import { timePeriodsOptions } from '@/utils/transactions'
+import { useTimePeriodsOptions } from '@/utils/transactions'
 
 const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
+  const timePeriodsOptions = useTimePeriodsOptions()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 

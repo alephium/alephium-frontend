@@ -10,7 +10,6 @@ import HighlightedHash from '@/components/HighlightedHash'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal, { ModalProps } from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
-import i18n from '@/features/localization/i18n'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { SIMPLE_DATE_OPTIONS } from '@/utils/strings'
 
@@ -34,6 +33,47 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
   const { t } = useTranslation()
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
+
+  const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
+    {
+      value: '24h',
+      label: t('Last 24h')
+    },
+    {
+      value: '1w',
+      label: t('Last week')
+    },
+    {
+      value: '1m',
+      label: t('Last month')
+    },
+    {
+      value: '6m',
+      label: t('Last 6 months')
+    },
+    {
+      value: '12m',
+      label: t('Last 12 months')
+    },
+    {
+      value: 'currentYear',
+      label: `${t('This year so far')} (01/01/${currentYear} - ${today})`
+    },
+    {
+      value: 'oneYearAgo',
+      label: `${t('Last year')} (${currentYear - 1})`
+    },
+    {
+      value: 'twoYearsAgo',
+      label: `${t('Two years ago')}
+    (${currentYear - 2})`
+    },
+    {
+      value: 'threeYearsAgo',
+      label: `${t('Three years ago')}
+    (${currentYear - 3})`
+    }
+  ]
 
   const getCSVFile = useCallback(async () => {
     onClose()
@@ -113,47 +153,6 @@ const thisMoment = now.getTime()
 const currentYear = now.getFullYear()
 const dateFormatter = new Intl.DateTimeFormat(undefined, SIMPLE_DATE_OPTIONS)
 const today = dateFormatter.format(now)
-
-const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
-  {
-    value: '24h',
-    label: i18n.t('Last 24h')
-  },
-  {
-    value: '1w',
-    label: i18n.t('Last week')
-  },
-  {
-    value: '1m',
-    label: i18n.t('Last month')
-  },
-  {
-    value: '6m',
-    label: i18n.t('Last 6 months')
-  },
-  {
-    value: '12m',
-    label: i18n.t('Last 12 months')
-  },
-  {
-    value: 'currentYear',
-    label: `${i18n.t('This year so far')} (01/01/${currentYear} - ${today})`
-  },
-  {
-    value: 'oneYearAgo',
-    label: `${i18n.t('Last year')} (${currentYear - 1})`
-  },
-  {
-    value: 'twoYearsAgo',
-    label: `${i18n.t('Two years ago')}
-    (${currentYear - 2})`
-  },
-  {
-    value: 'threeYearsAgo',
-    label: `${i18n.t('Three years ago')}
-    (${currentYear - 3})`
-  }
-]
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
   '24h': { from: thisMoment - ONE_DAY_MS, to: thisMoment },

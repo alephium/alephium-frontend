@@ -7,7 +7,6 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import i18n from '~/features/localization/i18n'
 import NewContactCameraScanButton from '~/features/qrCodeScan/NewContactCameraScanButton'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
@@ -18,8 +17,6 @@ interface ContactFormBaseScreenProps extends ScrollScreenProps {
   onDelete?: () => void
   buttonText?: string
 }
-
-const requiredErrorMessage = i18n.t('This field is required')
 
 const ContactFormBaseScreen = ({
   initialValues,
@@ -36,6 +33,8 @@ const ContactFormBaseScreen = ({
     setValue
   } = useForm<ContactFormData>({ defaultValues: initialValues })
   const { t } = useTranslation()
+
+  const requiredErrorMessage = t('This field is required')
 
   const handleQRCodeScan = (addressHash: AddressHash) => setValue('address', addressHash)
 
