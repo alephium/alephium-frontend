@@ -1,11 +1,17 @@
-import { NFT } from '@alephium/shared/types'
-import { FetchError, useFetchNft, useFetchNftCollection } from '@alephium/shared-react'
+import { AddressHash, NFT } from '@alephium/shared/types'
+import {
+  FetchError,
+  useFetchAddressesHashesWithBalance,
+  useFetchNft,
+  useFetchNftCollection
+} from '@alephium/shared-react'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
+import { ShortcutButtonsGroupNft } from '@/components/Buttons/ShortcutButtons'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import InfoBox from '@/components/InfoBox'
@@ -28,10 +34,31 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
         <NFTThumbnail size="100%" nftId={nftId} hideIfError autoPlay fullResolution />
       </NFTImageContainer>
 
+      <SendNFTButton nftId={nftId} />
+
       <NFTDataList nftId={nftId} />
     </SideModal>
   )
 })
+
+const SendNFTButton = ({ nftId }: NFTDetailsModalProps) => {
+  const { data: addressesWithNft } = useFetchAddressesHashesWithBalance(nftId)
+  const fromAddressHash = addressesWithNft.at(0)
+
+  if (!fromAddressHash) return null
+
+  return <SendNFTButtonContent nftId={nftId} fromAddressHash={fromAddressHash} />
+}
+
+interface SendNFTButtonContentProps extends NFTDetailsModalProps {
+  fromAddressHash: AddressHash
+}
+
+const SendNFTButtonContent = ({ nftId, fromAddressHash }: SendNFTButtonContentProps) => (
+  <SendNFTButtonContainer>
+    <ShortcutButtonsGroupNft nftId={nftId} addressHash={fromAddressHash} analyticsOrigin="token_details" />
+  </SendNFTButtonContainer>
+)
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
@@ -133,6 +160,10 @@ const NFTImageContainer = styled.div`
   &:empty {
     display: none;
   }
+`
+
+const SendNFTButtonContainer = styled.div`
+  padding: 0 var(--spacing-3);
 `
 
 const NFTMetadataContainer = styled.div`
