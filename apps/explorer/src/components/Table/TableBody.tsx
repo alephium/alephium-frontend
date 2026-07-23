@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { TDStyle } from './Table'
@@ -6,6 +7,7 @@ import { TDStyle } from './Table'
 interface TableBodyProps {
   tdStyles?: TDStyle[]
   className?: string
+  children?: ReactNode
 }
 
 const bodyVariants = {
@@ -18,7 +20,7 @@ const bodyVariants = {
   }
 }
 
-const TableBody: FC<TableBodyProps> = ({ className, children }) => (
+const TableBody = ({ className, children }: TableBodyProps) => (
   <motion.tbody className={className} variants={bodyVariants} initial="hidden" animate="shown">
     {children}
   </motion.tbody>

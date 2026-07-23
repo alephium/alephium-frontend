@@ -1,5 +1,5 @@
 import { resetArray } from '@alephium/shared/utils'
-import { createContext, useContext, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 
@@ -17,7 +17,7 @@ const initialWalletContext: WalletContextType = {
 
 const WalletContext = createContext<WalletContextType>(initialWalletContext)
 
-export const WalletContextProvider: FC = ({ children }) => {
+export const WalletContextProvider = ({ children }: { children?: ReactNode }) => {
   const [mnemonic, setMnemonic] = useState<WalletContextType['mnemonic']>(null)
 
   const resetCachedMnemonic = () => {

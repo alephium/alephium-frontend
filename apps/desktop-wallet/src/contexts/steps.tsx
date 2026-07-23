@@ -19,9 +19,10 @@ export const StepsContext = createContext<StepsContext>(initialContext)
 interface StepsContextProviderProps {
   stepElements: ReactNode[]
   baseUrl: string
+  children?: ReactNode
 }
 
-export const StepsContextProvider: FC<StepsContextProviderProps> = ({ baseUrl, stepElements, children }) => {
+export const StepsContextProvider = ({ baseUrl, stepElements, children }: StepsContextProviderProps) => {
   const navigate = useNavigate()
   const { step } = useParams<RouteParams>()
 

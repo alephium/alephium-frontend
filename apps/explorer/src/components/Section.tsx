@@ -1,6 +1,7 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-const Section: FC<{ className?: string }> = ({ children, className }) => (
+const Section = ({ children, className }: { className?: string; children?: ReactNode }) => (
   <Container className={className}>{children}</Container>
 )
 

@@ -2,6 +2,7 @@ import { selectDefaultAddress } from '@alephium/shared/store'
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -27,9 +28,10 @@ interface AppHeader {
   title?: string
   invisible?: boolean
   className?: string
+  children?: ReactNode
 }
 
-const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => {
+const AppHeader = ({ children, title, className, invisible }: AppHeader) => {
   const { t } = useTranslation()
   const { scrollY: scrollYContext } = useScrollContext()
   const initialScroll = useMotionValue(0)

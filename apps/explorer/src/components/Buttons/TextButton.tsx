@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, ...props }) => (
+const TextButton = ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <StyledTextButton {...props}>{children}</StyledTextButton>
 )
 

@@ -1,5 +1,6 @@
 import { PostHogConfig } from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
+import { ReactNode } from 'react'
 
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import scrubEvent from '@/features/analytics/scrubEvent'
@@ -39,7 +40,7 @@ const options: Partial<PostHogConfig> = {
   }
 }
 
-const AnalyticsProvider: FC = ({ children }) => (
+const AnalyticsProvider = ({ children }: { children?: ReactNode }) => (
   <PostHogProvider apiKey={posthogKey} options={options}>
     {children}
   </PostHogProvider>

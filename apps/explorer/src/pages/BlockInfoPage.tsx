@@ -163,7 +163,7 @@ interface TransactionRowProps {
   transaction: explorer.Transaction
 }
 
-const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
+const TransactionRow = ({ transaction }: TransactionRowProps) => {
   const { t } = useTranslation()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 

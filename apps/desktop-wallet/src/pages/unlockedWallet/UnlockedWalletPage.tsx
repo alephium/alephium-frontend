@@ -10,9 +10,10 @@ interface UnlockedWalletPageProps extends MotionProps {
   subtitle?: string
   BottomComponent?: ReactNode
   className?: string
+  children?: ReactNode
 }
 
-const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, BottomComponent, children, ...props }) => (
+const UnlockedWalletPage = ({ title, subtitle, BottomComponent, children, ...props }: UnlockedWalletPageProps) => (
   <motion.div {...fadeIn} {...props}>
     {(title || subtitle) && (
       <PageHeader>

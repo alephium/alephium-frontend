@@ -1,11 +1,13 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 interface InfoRowProps {
   label: string
   className?: string
+  children?: ReactNode
 }
 
-const InfoRow: FC<InfoRowProps> = ({ label, className, children }) => (
+const InfoRow = ({ label, className, children }: InfoRowProps) => (
   <div className={className}>
     <Label>{label}</Label>
     <div>{children}</div>

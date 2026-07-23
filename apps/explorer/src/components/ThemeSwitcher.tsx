@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import React from 'react'
 import { RiMoonLine, RiSunLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -27,7 +26,7 @@ const toggleColorVariants = {
   dark: { backgroundColor: '#3A0595' }
 }
 
-const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
+const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const { theme, switchTheme } = useSettings()
 
   return (

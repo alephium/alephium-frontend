@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { HTMLProps } from 'react'
+import { HTMLProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
@@ -7,6 +7,7 @@ import { fadeInSlowly } from '@/animations'
 interface TableProps {
   minWidth?: string
   className?: string
+  children?: ReactNode
 }
 
 export interface TableCellProps {
@@ -15,7 +16,7 @@ export interface TableCellProps {
   align?: 'left' | 'center' | 'right'
 }
 
-const Table: FC<TableProps> = ({ className, children, minWidth }) => (
+const Table = ({ className, children, minWidth }: TableProps) => (
   <TableWrapper className={className} minWidth={minWidth} {...fadeInSlowly}>
     <div role="table" tabIndex={0}>
       {children}

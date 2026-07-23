@@ -112,7 +112,7 @@ export const InputErrorMessage = styled(motion.label)<InputProps>`
   padding: 2px 8px;
 `
 
-export const InputLabel: FC<MotionProps & { isElevated: boolean }> = ({ isElevated, ...props }) => (
+export const InputLabel = ({ isElevated, ...props }: MotionProps & { isElevated: boolean; children?: ReactNode }) => (
   <StyledInputLabel
     {...props}
     variants={inputPlaceHolderVariants}

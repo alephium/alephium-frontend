@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { fastTransition } from '@/animations'
@@ -17,9 +17,10 @@ interface ExpandableSectionProps {
   shrinkWhenOpen?: boolean
   isCheckbox?: boolean
   className?: string
+  children?: ReactNode
 }
 
-const ExpandableSection: FC<ExpandableSectionProps> = ({
+const ExpandableSection = ({
   sectionTitleClosed,
   sectionTitleOpen,
   open = false,
@@ -29,7 +30,7 @@ const ExpandableSection: FC<ExpandableSectionProps> = ({
   shrinkWhenOpen = false,
   isCheckbox = false,
   className
-}) => {
+}: ExpandableSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(open)
   const [isVisible, setIsVisible] = useState(open)
 

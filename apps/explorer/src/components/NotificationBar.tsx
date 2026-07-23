@@ -1,6 +1,7 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-const NotificationBar: FC<{ className?: string }> = ({ className, children }) => (
+const NotificationBar = ({ className, children }: { className?: string; children?: ReactNode }) => (
   <div className={className}>{children}</div>
 )
 

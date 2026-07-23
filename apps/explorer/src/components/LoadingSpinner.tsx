@@ -7,7 +7,7 @@ interface LoadingSpinnerProps {
   style?: CSSProperties
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => (
+const LoadingSpinner = ({ size, style }: LoadingSpinnerProps) => (
   <SpinnerContainer>
     <Spinner style={style} size={size} />
   </SpinnerContainer>

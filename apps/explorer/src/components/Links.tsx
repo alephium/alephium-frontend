@@ -29,7 +29,7 @@ export const SimpleLink = ({ children, newTab, ...props }: SimpleLinkProps) => (
   </StyledLink>
 )
 
-export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, isHash, ...props }) => (
+export const TightLink = ({ maxWidth, text, isHash, ...props }: TightLinkProps) => (
   <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
     <StyledLink
       {...props}
