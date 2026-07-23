@@ -4,6 +4,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import Animated, {
   cancelAnimation,
+  Easing,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -21,7 +22,12 @@ import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatc
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
+const BUTTON_SIZE = 40
+const RING_ACTIVE = 810 // must equal the sum of the ring step durations in RingingBell
 const RING_PAUSE = 3000
+// The bell and the pulse run as two independent loops; sharing one cycle keeps them in phase.
+const CYCLE = RING_ACTIVE + RING_PAUSE
+const PULSE_EXPAND = 800
 
 const BackupNotificationButton = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
@@ -37,6 +43,7 @@ const BackupNotificationButton = () => {
 
   return (
     <Container>
+      <PulseRing />
       <Button onPress={handlePress} customIcon={<RingingBell />} squared />
       <Badge>
         <BadgeText color="white" size={11} semiBold>
@@ -83,8 +90,55 @@ const RingingBell = () => {
   )
 }
 
+const PulseRing = () => {
+  const reducedMotion = useReducedMotion()
+  const scale = useSharedValue(1)
+  const opacity = useSharedValue(0.4)
+
+  useEffect(() => {
+    if (reducedMotion) return
+
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(2.2, { duration: PULSE_EXPAND, easing: Easing.out(Easing.ease) }),
+        withTiming(1, { duration: 0 }),
+        withDelay(CYCLE - PULSE_EXPAND, withTiming(1, { duration: 0 }))
+      ),
+      -1
+    )
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0, { duration: PULSE_EXPAND, easing: Easing.out(Easing.ease) }),
+        withDelay(CYCLE - PULSE_EXPAND, withTiming(0.4, { duration: 0 }))
+      ),
+      -1
+    )
+
+    return () => {
+      cancelAnimation(scale)
+      cancelAnimation(opacity)
+    }
+  }, [reducedMotion, scale, opacity])
+
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }], opacity: opacity.value }))
+
+  if (reducedMotion) return null
+
+  return <Pulse style={animatedStyle} />
+}
+
 const Container = styled.View`
   position: relative;
+`
+
+const Pulse = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${BUTTON_SIZE}px;
+  height: ${BUTTON_SIZE}px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.global.accent};
 `
 
 const Badge = styled.View`
