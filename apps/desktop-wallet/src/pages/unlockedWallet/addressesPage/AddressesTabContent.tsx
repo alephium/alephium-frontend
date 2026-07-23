@@ -64,6 +64,7 @@ const AddressesTabContent = memo(() => {
               addressHash={addressHash}
               key={addressHash}
               isLast={index === visibleAddresses.length - 1}
+              searchTerm={searchInput}
             />
           ))}
           <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>

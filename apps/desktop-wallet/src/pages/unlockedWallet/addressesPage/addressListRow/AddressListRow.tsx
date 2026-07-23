@@ -22,9 +22,10 @@ interface AddressListRowProps {
   className?: string
   tokenId?: TokenId
   isLast?: boolean
+  searchTerm?: string
 }
 
-const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: AddressListRowProps) => {
+const AddressListRow = memo(({ addressHash, tokenId, className, isLast, searchTerm }: AddressListRowProps) => {
   const dispatch = useAppDispatch()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
@@ -63,7 +64,7 @@ const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: Addres
               <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
             ) : (
               <Cell noBorder={isLast} {...fadeInSlowly}>
-                <AddressTokensBadgesListStyled addressHash={addressHash} />
+                <AddressTokensBadgesListStyled addressHash={addressHash} searchTerm={searchTerm} />
               </Cell>
             )}
 

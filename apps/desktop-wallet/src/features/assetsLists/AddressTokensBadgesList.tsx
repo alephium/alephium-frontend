@@ -1,5 +1,11 @@
 import { AddressHash } from '@alephium/shared/types'
-import { useFetchAddressTokensByType } from '@alephium/shared-react'
+import {
+  addressTokensSearchStringsQuery,
+  useFetchAddressTokensByType,
+  useIsNodeOnline,
+  useNetworkId
+} from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -9,11 +15,13 @@ import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
 interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
   addressHash: AddressHash
   maxDisplayedAssets?: number
+  searchTerm?: string
 }
 
 const AddressTokensBadgesList = ({
   addressHash,
   maxDisplayedAssets = 8,
+  searchTerm,
   className,
   ...badgeProps
 }: AddressTokensBadgesListProps) => {
@@ -21,15 +29,30 @@ const AddressTokensBadgesList = ({
     data: { listedFts, unlistedFtIds, nftIds, nstIds },
     isLoading: isLoadingTokens
   } = useFetchAddressTokensByType(addressHash)
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
+
+  const search = searchTerm?.trim().toLowerCase() ?? ''
+  const isSearching = search.length >= 2
+
+  const { data: tokensSearchStrings } = useQuery({
+    ...addressTokensSearchStringsQuery({ addressHash, networkId, isNodeOnline }),
+    enabled: isSearching
+  })
 
   const { displayedStandardTokenIds, hiddenStandardTokensIds } = useMemo(() => {
     const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds]
 
+    const tokenMatchesSearch = (id: string) => tokensSearchStrings?.[id]?.includes(search) ?? false
+    const matchingTokenIds = isSearching ? standardTokens.filter(tokenMatchesSearch) : []
+    const nonMatchingTokenIds = isSearching ? standardTokens.filter((id) => !tokenMatchesSearch(id)) : standardTokens
+    const remainingSlots = Math.max(maxDisplayedAssets - matchingTokenIds.length, 0)
+
     return {
-      displayedStandardTokenIds: standardTokens.slice(0, maxDisplayedAssets),
-      hiddenStandardTokensIds: standardTokens.slice(maxDisplayedAssets)
+      displayedStandardTokenIds: [...matchingTokenIds, ...nonMatchingTokenIds.slice(0, remainingSlots)],
+      hiddenStandardTokensIds: nonMatchingTokenIds.slice(remainingSlots)
     }
-  }, [listedFts, maxDisplayedAssets, nftIds, unlistedFtIds])
+  }, [isSearching, listedFts, maxDisplayedAssets, nftIds, search, tokensSearchStrings, unlistedFtIds])
 
   if (isLoadingTokens) return <SkeletonLoader height="33.5px" />
 
