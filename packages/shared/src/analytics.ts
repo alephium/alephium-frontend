@@ -63,6 +63,8 @@ export type BuyOrigin = Extract<AnalyticsOrigin, 'dashboard' | 'address_details'
 // address-discovery step: `Wallet Imported` fires before that screen.
 export type OnboardingStep = 'name' | 'import_method' | 'seed_entry' | 'qr_decrypt'
 
+export type GettingStartedItem = 'backup' | 'receive_funds' | 'biometrics'
+
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
   origin?: AnalyticsOrigin
@@ -88,6 +90,9 @@ export type AnalyticsProps = {
 
   // On `Onboarding Step Viewed`.
   step?: OnboardingStep
+
+  // On `Getting Started Item Pressed`.
+  checklist_item?: GettingStartedItem
 
   // A per-install creation counter, deliberately not the wallet id: it answers first-vs-subsequent
   // without putting a stable per-wallet key on the wire.

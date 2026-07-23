@@ -565,5 +565,10 @@
   "Cancelling unstaking request...": "Cancelling unstaking request...",
   "Claiming ALPH...": "Claiming ALPH...",
   "Swap": "Swap",
-  "Could not reach the payment provider. Please try again later.": "Could not reach the payment provider. Please try again later."
+  "Could not reach the payment provider. Please try again later.": "Could not reach the payment provider. Please try again later.",
+  "Getting started": "Getting started",
+  "{{ completed }}/{{ total }} complete": "{{ completed }}/{{ total }} complete",
+  "Back up your recovery phrase": "Back up your recovery phrase",
+  "Receive your first funds": "Receive your first funds",
+  "Enable biometric unlock": "Enable biometric unlock"
 }

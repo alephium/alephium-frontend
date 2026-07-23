@@ -1,7 +1,11 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
-import { useFetchWalletBalancesAlph, useFetchWalletTokensByType, useFetchWalletWorth } from '@alephium/shared-react'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import {
+  useFetchWalletBalances,
+  useFetchWalletBalancesAlph,
+  useFetchWalletTokensByType,
+  useFetchWalletWorth
+} from '@alephium/shared-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
@@ -11,10 +15,7 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
-import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import Button from '~/components/buttons/Button'
-import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
@@ -30,16 +31,21 @@ import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatc
 import WatchOnlyBadge from '~/features/watchOnlyWallet/WatchOnlyBadge'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useCaptureIsWalletFunded from '~/hooks/useCaptureIsWalletFunded'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getIsNewWallet, getIsWalletFunded, getWalletOrdinal, storeIsNewWallet } from '~/persistent-storage/wallet'
+import BackupNotificationButton from '~/screens/Dashboard/BackupNotificationButton'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import CoreDappAnnouncement from '~/screens/Dashboard/CoreDappAnnouncement'
+import GettingStartedChecklist from '~/screens/Dashboard/GettingStartedChecklist'
+import useGettingStartedChecklist from '~/screens/Dashboard/useGettingStartedChecklist'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import WalletNftsList from '~/screens/Dashboard/WalletNftsList'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import WalletSwitcherButton from '~/screens/Dashboard/WalletSwitcherButton'
 import WalletTokensList from '~/screens/Dashboard/WalletTokensList'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
+
+// Re-enabled in a future release; kept in place rather than deleted.
+const SHOW_CORE_DAPP_ANNOUNCEMENT = false
 
 const DashboardScreen = (props: BottomBarScrollScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -54,6 +60,12 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
     ? '-'
     : (tokensByType?.listedFts?.length ?? 0) + (tokensByType?.unlistedFtIds?.length ?? 0)
   const nftsCount = isTokensByTypeLoading ? '-' : tokensByType?.nftIds?.length ?? 0
+
+  const { data: tokenBalances } = useFetchWalletBalances()
+  const isWalletFunded = tokenBalances.length > 0
+
+  const checklist = useGettingStartedChecklist()
+  const showTokensSection = isWalletFunded || !checklist.isVisible
 
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const remindedWalletIds = useAppSelector((s) => s.backup.remindedWalletIds)
@@ -100,7 +112,7 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <CoreDappAnnouncement />
+        {SHOW_CORE_DAPP_ANNOUNCEMENT && <CoreDappAnnouncement />}
         <RoundedCard>
           <AnimatedBackground />
           <WalletBalanceSummary />
@@ -115,23 +127,25 @@ const DashboardScreen = (props: BottomBarScrollScreenProps) => {
         <WalletSwapButton />
       </ButtonsRowContainer>
 
-      <ScreenSection>
-        <TokenTypeTabs>
-          <TopTabBar
-            tabLabels={[
-              { name: t('Tokens'), count: tokensCount !== '-' ? tokensCount : undefined },
-              { name: t('NFTs'), count: nftsCount !== '-' ? nftsCount : undefined }
-            ]}
-            activeTab={activeTab}
-            onTabPress={setActiveTab}
-          />
-        </TokenTypeTabs>
-        <Animated.View key={activeTab} entering={FadeIn.duration(200)} exiting={FadeOut.duration(200)}>
-          {activeTab === 0 ? <WalletTokensList /> : <WalletNftsList />}
-        </Animated.View>
-      </ScreenSection>
+      <GettingStartedChecklist checklist={checklist} />
 
-      <WalletEmptyPlaceholder />
+      {showTokensSection && (
+        <ScreenSection>
+          <TokenTypeTabs>
+            <TopTabBar
+              tabLabels={[
+                { name: t('Tokens'), count: tokensCount !== '-' ? tokensCount : undefined },
+                { name: t('NFTs'), count: nftsCount !== '-' ? nftsCount : undefined }
+              ]}
+              activeTab={activeTab}
+              onTabPress={setActiveTab}
+            />
+          </TokenTypeTabs>
+          <Animated.View key={activeTab} entering={FadeIn.duration(200)} exiting={FadeOut.duration(200)}>
+            {activeTab === 0 ? <WalletTokensList /> : <WalletNftsList />}
+          </Animated.View>
+        </ScreenSection>
+      )}
     </DashboardScreenStyled>
   )
 }
@@ -170,21 +184,6 @@ const WalletSwapButton = () => {
   return <ActionCardSwapButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
 }
 
-const WalletEmptyPlaceholder = () => {
-  const { t } = useTranslation()
-  const { data: alphBalances, isLoading } = useFetchWalletBalancesAlph()
-
-  if (alphBalances.availableBalance !== '0' || isLoading) return null
-
-  return (
-    <EmptyPlaceholder hasHorizontalMargin>
-      <AppText size={32}>🌈</AppText>
-      <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
-      <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
-    </EmptyPlaceholder>
-  )
-}
-
 const WalletBalanceSummary = () => {
   const { t } = useTranslation()
   const { data: worth, isLoading, error } = useFetchWalletWorth()
@@ -203,24 +202,13 @@ const WalletBalanceSummary = () => {
 }
 
 const HeaderLeft = () => {
-  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const isWatchOnly = useIsWalletWatchOnly()
 
   return (
     <HeaderButtonsContainer>
       <WalletSwitcherButton />
       {!isWatchOnly && <CameraScanButton />}
-      {!isWatchOnly && !isMnemonicBackedUp && (
-        <Button
-          onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-          iconProps={{ name: 'alert-outline' }}
-          variant="alert"
-          squared
-          compact
-          style={{ marginRight: 10 }}
-        />
-      )}
+      <BackupNotificationButton />
     </HeaderButtonsContainer>
   )
 }

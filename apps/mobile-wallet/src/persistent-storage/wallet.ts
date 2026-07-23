@@ -29,6 +29,7 @@ import { getRandomLabelColor } from '~/utils/colors'
 const isNewWalletKey = (walletId: string) => `is-new-wallet-${walletId}`
 const isWalletFundedKey = (walletId: string) => `is-wallet-funded-${walletId}`
 const walletOrdinalKey = (walletId: string) => `wallet-ordinal-${walletId}`
+const gettingStartedActiveKey = (walletId: string) => `getting-started-active-${walletId}`
 
 // Never decremented, so deleting a wallet cannot make a later one reuse an ordinal.
 const WALLET_CREATION_COUNTER_KEY = 'wallet-creation-counter'
@@ -174,6 +175,14 @@ export const getIsWalletFunded = (walletId: string): boolean | undefined =>
 
 export const storeIsWalletFunded = (walletId: string, isFunded: boolean) =>
   storeWithReportableError(isWalletFundedKey(walletId), isFunded)
+
+// Only wallets created or imported from this feature onward get the flag, so the checklist never
+// appears on established wallets.
+export const getIsGettingStartedActive = (walletId: string): boolean =>
+  storage.getBoolean(gettingStartedActiveKey(walletId)) ?? false
+
+export const storeIsGettingStartedActive = (walletId: string, isActive: boolean) =>
+  storeWithReportableError(gettingStartedActiveKey(walletId), isActive)
 
 const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(walletMnemonicKey(walletId), JSON.stringify(mnemonic), true, '')
