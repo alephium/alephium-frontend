@@ -1,3 +1,4 @@
+import { NewAddressType } from './types/addresses'
 import { getDappHost } from './utils/dApps'
 
 const eventThrottleStatus: Record<string, boolean> = {}
@@ -77,6 +78,10 @@ export type AnalyticsProps = {
 
   // On `Transaction Approved`, which collapses the eight former per-type approval events.
   tx_type?: 'contract_call' | 'deploy' | 'unsigned' | 'transfer' | 'chained'
+
+  // On `Address Created`: which address type the user picked, so adoption of the advanced grouped
+  // and Schnorr types can be measured against the groupless default.
+  address_type?: NewAddressType
 
   // Third-party service behind a Buy or Swap action.
   provider?: string

@@ -59,7 +59,7 @@ export const discoverAddresses = createAsyncThunk(
     const minGap = 5
     const state = getState() as RootState
     await sleep(1) // Allow execution to continue to not block rendering
-    const { indexesOfAddressesWithGroup, indexesOfGrouplessAddresses } = selectAllAddressIndexes(state)
+    const { indexesOfDefaultAddresses, indexesOfGrouplessAddresses } = selectAllAddressIndexes(state)
 
     dispatch(algoDataInitialized())
 
@@ -107,7 +107,7 @@ export const discoverAddresses = createAsyncThunk(
       const derivedDataCache = new Map<AddressIndex, NonSensitiveAddressData & { group: number }>()
       let group = 0
       gap = 0
-      let checkedIndexes = Array.from(indexesOfAddressesWithGroup)
+      let checkedIndexes = Array.from(indexesOfDefaultAddresses)
 
       while (group < 4) {
         let newAddressGroup: number | undefined = undefined
@@ -152,8 +152,8 @@ export const discoverAddresses = createAsyncThunk(
           const { balance } = await throttledClient.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
-          indexesOfAddressesWithGroup.push(newAddressData.index)
-          indexesOfAddressesWithGroup.sort(ascOrder)
+          indexesOfDefaultAddresses.push(newAddressData.index)
+          indexesOfDefaultAddresses.sort(ascOrder)
         } else {
           gap += 1
         }
@@ -163,7 +163,7 @@ export const discoverAddresses = createAsyncThunk(
 
           group += 1
           gap = 0
-          checkedIndexes = Array.from(indexesOfAddressesWithGroup)
+          checkedIndexes = Array.from(indexesOfDefaultAddresses)
         }
 
         const state = getState() as RootState

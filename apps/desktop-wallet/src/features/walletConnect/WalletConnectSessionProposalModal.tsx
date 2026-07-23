@@ -73,7 +73,7 @@ const WalletConnectSessionProposalModal = memo(
 
     const generateAddressInGroup = async () => {
       try {
-        const address = await generateAddress(group)
+        const address = await generateAddress({ group })
         if (!address) return
 
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])

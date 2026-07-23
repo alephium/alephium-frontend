@@ -1,4 +1,4 @@
-import { AddressSettings } from '@alephium/shared/types'
+import { AddressSettings, NewAddressType } from '@alephium/shared/types'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Keyboard, View } from 'react-native'
@@ -9,6 +9,7 @@ import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import Surface from '~/components/layout/Surface'
+import RadioButtonRow from '~/components/RadioButtonRow'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { openModal } from '~/features/modals/modalActions'
@@ -17,6 +18,7 @@ import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export type AddressFormData = AddressSettings & {
   group?: number
+  addressType?: NewAddressType
 }
 
 interface AddressFormProps {
@@ -43,10 +45,11 @@ const AddressForm = ({
   const [color, setColor] = useState(initialValues?.color || '')
   const [isDefault, setIsDefault] = useState(initialValues?.isDefault || false)
   const [group, setGroup] = useState<number>()
+  const [addressType, setAddressType] = useState<NewAddressType>('groupless')
 
   useEffect(() => {
-    onValuesChange({ label, color, isDefault, group })
-  }, [color, group, isDefault, label, onValuesChange])
+    onValuesChange({ label, color, isDefault, group, addressType })
+  }, [addressType, color, group, isDefault, label, onValuesChange])
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -56,11 +59,23 @@ const AddressForm = ({
     Keyboard.dismiss()
   }
 
+  const handleAddressTypeChange = (type: NewAddressType) => {
+    setAddressType(type)
+    if (type === 'groupless') setGroup(undefined)
+    Keyboard.dismiss()
+  }
+
   const openGroupSelectModal = () => {
-    dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
+    dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup, selectedGroup: group } }))
 
     Keyboard.dismiss()
   }
+
+  const addressTypeOptions: { value: NewAddressType; label: string }[] = [
+    { value: 'groupless', label: t('Groupless (recommended)') },
+    { value: 'grouped', label: t('Grouped') },
+    { value: 'schnorr', label: t('Schnorr') }
+  ]
 
   return (
     <View>
@@ -88,20 +103,26 @@ const AddressForm = ({
       </Row>
       {allowGroupSelection && (
         <AdvancedOptionSection>
-          <Surface type="accent" withPadding>
-            <AppText>
-              {t(
-                'Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.'
-              )}
-            </AppText>
-          </Surface>
           <SurfaceStyled type="secondary">
-            <Row title={t('Address group')} onPress={openGroupSelectModal} isLast>
-              <AppText>
-                {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Groupless')}
-              </AppText>
-            </Row>
+            {addressTypeOptions.map((option, index) => (
+              <RadioButtonRow
+                key={option.value}
+                title={option.label}
+                isActive={addressType === option.value}
+                onPress={() => handleAddressTypeChange(option.value)}
+                isLast={index === addressTypeOptions.length - 1}
+              />
+            ))}
           </SurfaceStyled>
+          {addressType !== 'groupless' && (
+            <SurfaceStyled type="secondary">
+              <Row title={t('Address group')} onPress={openGroupSelectModal} isLast>
+                <AppText>
+                  {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Random')}
+                </AppText>
+              </Row>
+            </SurfaceStyled>
+          )}
         </AdvancedOptionSection>
       )}
     </View>
