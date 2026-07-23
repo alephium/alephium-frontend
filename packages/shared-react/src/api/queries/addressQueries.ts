@@ -233,7 +233,7 @@ export const addressTokensSearchStringsQuery = ({
               tokensSearchStrings[token.id] = isFT(token)
                 ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
                 : isNFT(token)
-                  ? `${token.name.toLowerCase()} ${token.id}`
+                  ? `${token.name.toLowerCase()} ${token.description?.toLowerCase() ?? ''} ${token.id}`
                   : token.id
             })
           } else {
