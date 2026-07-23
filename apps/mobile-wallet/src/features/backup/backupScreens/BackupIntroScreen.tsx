@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import backupAnimationSrc from '~/animations/lottie/backup.json'
-import BottomButtons from '~/components/buttons/BottomButtons'
 import Button, { BackButton } from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -53,7 +52,20 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   }
 
   return (
-    <ScrollScreen fill onScroll={screenScrollHandler} {...props}>
+    <ScrollScreen
+      fill
+      onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Show secret recovery phrase')}
+          iconProps={{ name: 'key-outline' }}
+          type="primary"
+          variant="highlight"
+          onPress={onShowSecretRecoveryPhraseButtonPress}
+        />
+      )}
+      {...props}
+    >
       <ScreenSection fill centered verticallyCentered>
         <StyledAnimation source={backupAnimationSrc} autoPlay />
       </ScreenSection>
@@ -73,15 +85,6 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           ]}
         />
       </ScreenSection>
-      <BottomButtons>
-        <Button
-          title={t('Show secret recovery phrase')}
-          iconProps={{ name: 'key-outline' }}
-          type="primary"
-          variant="highlight"
-          onPress={onShowSecretRecoveryPhraseButtonPress}
-        />
-      </BottomButtons>
     </ScrollScreen>
   )
 }
@@ -90,5 +93,5 @@ export default BackupIntroScreen
 
 const StyledAnimation = styled(LottieView)`
   width: 100%;
-  height: 50%;
+  height: 200px;
 `
