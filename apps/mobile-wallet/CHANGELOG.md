@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 2.5.6
+
+### Patch Changes
+
+- aa8e87b: Add a getting started checklist to new wallets
+- 4ed0161: Close the payment provider tab and report when it cannot be reached
+
 ## 2.5.5
 
 ### Patch Changes
