@@ -47,25 +47,29 @@ describe('getHumanReadableError', () => {
     })
   })
 
-  describe('current behavior: throws on primitive or nullish errors (see PR notes)', () => {
-    it('throws a TypeError for null', () => {
-      expect(() => getHumanReadableError(null, 'x')).toThrow(TypeError)
+  describe('with a primitive or nullish error', () => {
+    it('returns just the default message for null', () => {
+      expect(getHumanReadableError(null, 'x')).toBe('x')
     })
 
-    it('throws a TypeError for undefined', () => {
-      expect(() => getHumanReadableError(undefined, 'x')).toThrow(TypeError)
+    it('returns just the default message for undefined', () => {
+      expect(getHumanReadableError(undefined, 'x')).toBe('x')
     })
 
-    it('throws a TypeError for a string', () => {
-      expect(() => getHumanReadableError('boom', 'x')).toThrow(TypeError)
+    it('returns an empty string for null without a default message', () => {
+      expect(getHumanReadableError(null, '')).toBe('')
     })
 
-    it('throws a TypeError for a number', () => {
-      expect(() => getHumanReadableError(42, 'x')).toThrow(TypeError)
+    it('appends the stringified value for a string', () => {
+      expect(getHumanReadableError('boom', 'x')).toBe('x - boom')
     })
 
-    it('throws a TypeError for a boolean', () => {
-      expect(() => getHumanReadableError(true, 'x')).toThrow(TypeError)
+    it('appends the stringified value for a number', () => {
+      expect(getHumanReadableError(42, 'x')).toBe('x - 42')
+    })
+
+    it('appends the stringified value for a boolean', () => {
+      expect(getHumanReadableError(true, 'x')).toBe('x - true')
     })
   })
 })
