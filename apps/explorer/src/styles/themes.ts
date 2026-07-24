@@ -38,6 +38,8 @@ export const lightTheme: DefaultTheme = {
     alert: '#da3341',
     warning: '#ffa600',
     valid: '#028f54',
+    send: '#e8722e',
+    receive: '#028f54',
     highlight: '#7f4ffc',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -78,6 +80,8 @@ export const darkTheme: DefaultTheme = {
     alert: '#f24242',
     warning: '#ffc42d',
     valid: '#1dcd84',
+    send: '#f6a05a',
+    receive: '#1dcd84',
     highlight: '#8564e6',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

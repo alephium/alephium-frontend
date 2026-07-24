@@ -39,16 +39,16 @@ export const getTransactionUI = ({
         swap: RiRepeat2Line
       }[infoType],
       badgeColor: {
-        in: theme.global.valid,
-        out: theme.font.highlight,
+        in: theme.global.receive,
+        out: theme.global.send,
         move: theme.font.secondary,
         moveGroup: theme.font.secondary,
         pending: theme.font.secondary,
         swap: theme.global.complementary
       }[infoType],
       badgeBgColor: {
-        in: colord(theme.global.valid).alpha(0.12).toRgbString(),
-        out: colord(theme.font.highlight).alpha(0.12).toRgbString(),
+        in: colord(theme.global.receive).alpha(0.12).toRgbString(),
+        out: colord(theme.global.send).alpha(0.12).toRgbString(),
         move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
         moveGroup: colord(theme.font.secondary).alpha(0.12).toRgbString(),
         pending: colord(theme.font.secondary).alpha(0.12).toRgbString(),
