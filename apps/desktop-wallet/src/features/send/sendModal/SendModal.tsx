@@ -93,7 +93,7 @@ const SendModal = memo(({ id, origin, ...initialTxData }: ModalBaseProp & SendMo
       setStep('tx-sent')
     } catch (error) {
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin } })
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_FAILED, props: { origin, failure_reason: 'submit_error' } })
       sendAnalytics({ type: 'error', message: 'Could not send tx', category: 'send' })
     } finally {
       setIsLoading(false)
@@ -118,18 +118,24 @@ const SendModal = memo(({ id, origin, ...initialTxData }: ModalBaseProp & SendMo
 
   const handleTransactionBuildError = useCallback(
     (e: unknown) => {
-      const error = (e as unknown as string).toString().toLowerCase()
+      const error = (e as unknown as string).toString()
       const message = 'Error while building transaction'
       const errorMessage = getHumanReadableError(e, t(message))
+      const isInsufficientBalance = error.includes('NotEnoughApprovedBalance')
 
-      if (error.includes('NotEnoughApprovedBalance')) {
+      if (isInsufficientBalance) {
         dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
       } else {
         dispatch(transactionBuildFailed(errorMessage))
         sendAnalytics({ type: 'error', message })
       }
+
+      sendAnalytics({
+        event: AnalyticsEvent.TRANSACTION_FAILED,
+        props: { origin, failure_reason: isInsufficientBalance ? 'insufficient_balance' : 'build_error' }
+      })
     },
-    [dispatch, sendAnalytics, t]
+    [dispatch, origin, sendAnalytics, t]
   )
 
   const buildTransactionExtended = useCallback(

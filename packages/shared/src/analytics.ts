@@ -57,12 +57,13 @@ export type SendOrigin = Extract<
   'dashboard' | 'overview_page' | 'address_details' | 'token_details' | 'contact' | 'qr_code_scan'
 >
 
-// The screens between `Onboarding Started` and `Wallet Created` / `Wallet Imported`.
-//
-// No `intro` step: `Onboarding Started` fires on the press that navigates to the intro screen, so it
-// already marks it. No address-discovery step: `Wallet Imported` fires before that screen, which puts
-// it outside the funnel.
+export type BuyOrigin = Extract<AnalyticsOrigin, 'dashboard' | 'address_details' | 'token_details'>
+
+// No `intro` step: `Onboarding Started` already fires on the press that navigates there. No
+// address-discovery step: `Wallet Imported` fires before that screen.
 export type OnboardingStep = 'name' | 'import_method' | 'seed_entry' | 'qr_decrypt'
+
+export type GettingStartedItem = 'backup' | 'receive_funds' | 'biometrics'
 
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
@@ -78,6 +79,9 @@ export type AnalyticsProps = {
   // On `Transaction Approved`, which collapses the eight former per-type approval events.
   tx_type?: 'contract_call' | 'deploy' | 'unsigned' | 'transfer' | 'chained'
 
+  // On `Transaction Failed`.
+  failure_reason?: 'insufficient_balance' | 'build_error' | 'submit_error'
+
   // Third-party service behind a Buy or Swap action.
   provider?: string
 
@@ -86,6 +90,9 @@ export type AnalyticsProps = {
 
   // On `Onboarding Step Viewed`.
   step?: OnboardingStep
+
+  // On `Getting Started Item Pressed`.
+  checklist_item?: GettingStartedItem
 
   // A per-install creation counter, deliberately not the wallet id: it answers first-vs-subsequent
   // without putting a stable per-wallet key on the wire.

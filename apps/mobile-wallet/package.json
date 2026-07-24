@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "private": true,
   "main": "index.ts",
   "scripts": {

@@ -18,7 +18,7 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
-import { generateAndStoreWallet, getWalletOrdinal } from '~/persistent-storage/wallet'
+import { generateAndStoreWallet, getWalletOrdinal, storeIsGettingStartedActive } from '~/persistent-storage/wallet'
 import { createWalletListEntry } from '~/persistent-storage/walletList'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
@@ -85,6 +85,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         dispatch(newWalletImportedWithMetadata(wallet))
         dispatch(walletAddedToList(createWalletListEntry(wallet.id, name, 'seed')))
 
+        storeIsGettingStartedActive(wallet.id, true)
         sendAnalytics({
           event: AnalyticsEvent.WALLET_IMPORTED,
           props: { note: 'Scanned desktop wallet QR code', wallet_ordinal: getWalletOrdinal(wallet.id) }
