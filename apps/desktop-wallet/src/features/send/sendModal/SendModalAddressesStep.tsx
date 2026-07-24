@@ -66,7 +66,8 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
             onSubmit({
               fromAddress,
               toAddress: toAddress.value,
-              tokenId: data.tokenId
+              tokenId: data.tokenId,
+              assetAmounts: data.assetAmounts
             })
           }
           disabled={!isSubmitButtonActive}
