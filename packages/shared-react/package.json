@@ -22,7 +22,7 @@
   "dependencies": {
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.21",
-    "@alephium/web3": "3.0.3",
+    "@alephium/web3": "3.0.5",
     "@tanstack/query-persist-client-core": "^5.81.2"
   },
   "peerDependencies": {
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "3.0.3",
+    "@alephium/walletconnect-provider": "3.0.5",
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/react-query": "^5.81.2",
     "@tanstack/react-query-persist-client": "^5.81.2",

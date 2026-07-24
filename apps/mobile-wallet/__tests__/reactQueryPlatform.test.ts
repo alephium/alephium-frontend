@@ -1,7 +1,7 @@
 import '~/api/reactQueryPlatform'
 
 import { FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL, ONE_MINUTE_MS } from '@alephium/shared'
-import { throttledClient } from '@alephium/shared/api'
+import { batchers } from '@alephium/shared/api'
 import { addressLatestTransactionQuery, queryClientConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { focusManager, onlineManager, QueryClient, QueryObserver } from '@tanstack/react-query'
@@ -28,18 +28,14 @@ vi.mock('@react-native-community/netinfo', () => ({
 
 vi.mock('@alephium/shared/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@alephium/shared/api')>()),
-  throttledClient: {
-    explorer: {
-      addresses: {
-        getAddressesAddressLatestTransaction: vi.fn()
-      }
-    }
+  batchers: {
+    addressLatestTxBatcher: { fetch: vi.fn() }
   }
 }))
 
 const ADDRESS_HASH = '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
 
-const fetchLatestTransaction = vi.mocked(throttledClient.explorer.addresses.getAddressesAddressLatestTransaction)
+const fetchLatestTransaction = vi.mocked(batchers.addressLatestTxBatcher.fetch)
 
 const emitAppStateChange = (status: AppStateStatus) => {
   const calls = vi.mocked(AppState.addEventListener).mock.calls as unknown as Array<
@@ -84,7 +80,12 @@ describe('reactQueryPlatform', () => {
     focusManager.setFocused(true)
     onlineManager.setOnline(true)
     fetchLatestTransaction.mockReset()
-    fetchLatestTransaction.mockResolvedValue({ hash: 'tx-hash', timestamp: 0 } as e.Transaction)
+    fetchLatestTransaction.mockResolvedValue({
+      hash: 'tx-hash',
+      blockHash: 'block-hash',
+      timestamp: 0,
+      coinbase: false
+    } satisfies e.TransactionInfo)
   })
 
   describe('focusManager', () => {
