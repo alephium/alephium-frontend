@@ -60,11 +60,11 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       simulated: Repeat
     }[infoType],
     iconColor: {
-      incoming: theme.global.valid,
-      outgoing: theme.font.highlight,
+      incoming: theme.global.receive,
+      outgoing: theme.global.send,
       pending: theme.font.secondary,
       dApp: theme.global.complementary,
-      airdrop: theme.global.valid,
+      airdrop: theme.global.receive,
       'dApp-failed': colord(theme.global.complementary).alpha(0.5).toRgbString(),
       'bidirectional-transfer': theme.global.complementary,
       'wallet-self-transfer': theme.font.secondary,
@@ -73,11 +73,11 @@ const useTransactionIconLabel = (props: UseTransactionProps) => {
       simulated: theme.global.complementary
     }[infoType],
     iconBgColor: {
-      incoming: colord(theme.global.valid).alpha(0.08).toRgbString(),
-      outgoing: colord(theme.font.highlight).alpha(0.08).toRgbString(),
+      incoming: colord(theme.global.receive).alpha(0.08).toRgbString(),
+      outgoing: colord(theme.global.send).alpha(0.08).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.08).toRgbString(),
       dApp: colord(theme.global.complementary).alpha(0.08).toRgbString(),
-      airdrop: colord(theme.global.valid).alpha(0.08).toRgbString(),
+      airdrop: colord(theme.global.receive).alpha(0.08).toRgbString(),
       'dApp-failed': colord(theme.global.complementary).alpha(0.05).toRgbString(),
       'bidirectional-transfer': colord(theme.global.complementary).alpha(0.08).toRgbString(),
       'wallet-self-transfer': colord(theme.font.secondary).alpha(0.08).toRgbString(),

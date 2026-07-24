@@ -188,8 +188,8 @@ export default styled(Amount)`
       ? color
       : highlight && value !== undefined
         ? value < 0
-          ? theme.global.alert
-          : theme.global.valid
+          ? theme.global.send
+          : theme.global.receive
         : 'inherit'};
   white-space: nowrap;
   font-weight: 600;

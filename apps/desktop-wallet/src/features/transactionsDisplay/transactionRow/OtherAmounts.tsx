@@ -52,9 +52,9 @@ const OtherAmounts = ({ tx, referenceAddress, view, type }: TransactionOtherToke
       color={
         infoType !== 'wallet-self-transfer'
           ? nbOfTokensReceived > 0
-            ? theme.global.valid
+            ? theme.global.receive
             : nbOfTokensSent > 0
-              ? theme.font.highlight
+              ? theme.global.send
               : undefined
           : undefined
       }

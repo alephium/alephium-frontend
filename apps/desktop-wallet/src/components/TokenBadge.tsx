@@ -37,12 +37,12 @@ const TokenBadge = memo(({ tokenId, className, displaySign, withBackground, amou
       data-tooltip-id="default"
       data-tooltip-content={tooltipContent}
       withBackground={withBackground}
-      color={displaySign ? (amount && amount > 0 ? theme.global.valid : theme.global.alert) : undefined}
+      color={displaySign ? (amount && amount > 0 ? theme.global.receive : theme.global.send) : undefined}
       style={{
         backgroundColor: displaySign
           ? amount && amount > 0
-            ? colord(theme.global.valid).alpha(0.02).toHex()
-            : colord(theme.font.highlight).alpha(0.02).toHex()
+            ? colord(theme.global.receive).alpha(0.02).toHex()
+            : colord(theme.global.send).alpha(0.02).toHex()
           : colord(theme.bg.highlight).alpha(0.02).toHex()
       }}
     >

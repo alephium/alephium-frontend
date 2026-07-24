@@ -129,7 +129,7 @@ const TokenAmountValue = ({ tokenId, amount, ...props }: Omit<AssetAmountRowProp
   if (!token) return null
 
   if (isNFT(token)) {
-    const color = props.showPlusMinus ? (BigInt(amount) > 0 ? theme.global.valid : theme.font.highlight) : undefined
+    const color = props.showPlusMinus ? (BigInt(amount) > 0 ? theme.global.receive : theme.global.send) : undefined
 
     return (
       <Badge short border color={color}>
