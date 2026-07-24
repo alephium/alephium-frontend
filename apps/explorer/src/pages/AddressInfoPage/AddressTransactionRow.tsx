@@ -50,6 +50,9 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
     direction
   })
 
+  const isViewedAddress = (address?: string) =>
+    address !== undefined && (isGrouplessAddress ? isSameBaseAddress(addressHash, address) : address === addressHash)
+
   const renderOutputAccounts = () => {
     if (!tx.outputs) return
 
@@ -59,13 +62,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
       return <AddressLink key={firstAddress} address={firstAddress} maxWidth="250px" />
     }
 
-    const outputs = [
-      ...new Set(
-        tx.outputs
-          .filter((o) => (isGrouplessAddress ? !isSameBaseAddress(addressHash, o.address) : o.address !== addressHash))
-          .map((v) => v.address)
-      )
-    ]
+    const outputs = [...new Set(tx.outputs.filter((o) => !isViewedAddress(o.address)).map((v) => v.address))]
 
     return (
       <div>
@@ -76,16 +73,16 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   }
 
   const renderInputAccounts = () => {
-    if (!tx.inputs) return
-    const inputs = [...new Set(tx.inputs.filter((o) => o.address !== addressHash).map((v) => v.address))]
+    if (!tx.inputs || tx.inputs.length === 0) return <BlockRewardLabel>{t('Block rewards')}</BlockRewardLabel>
 
-    return inputs.length > 0 ? (
+    const otherInputs = [...new Set(tx.inputs.filter((o) => !isViewedAddress(o.address)).map((v) => v.address))]
+    const inputs = otherInputs.length > 0 ? otherInputs : [addressHash]
+
+    return (
       <div>
         {inputs[0] && <AddressLink address={inputs[0]} maxWidth="250px" />}
         {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
       </div>
-    ) : (
-      <BlockRewardLabel>{t('Block rewards')}</BlockRewardLabel>
     )
   }
 
@@ -136,15 +133,17 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
           ))}
         {!isPending && (
           <AmountCell>
-            <Amount
-              key={assets.alph.id}
-              assetId={assets.alph.id}
-              value={assets.alph.amount}
-              suffix={assets.alph.symbol}
-              decimals={assets.alph.decimals}
-              highlight
-              displaySign
-            />
+            {assets.alph.amount !== BigInt(0) && (
+              <Amount
+                key={assets.alph.id}
+                assetId={assets.alph.id}
+                value={assets.alph.amount}
+                suffix={assets.alph.symbol}
+                decimals={assets.alph.decimals}
+                highlight
+                displaySign
+              />
+            )}
             {assets.fungible.map((asset) => (
               <Amount
                 key={asset.id}
