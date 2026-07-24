@@ -10,7 +10,7 @@ export interface WalletConnectContextValue {
   refreshActiveSessions: () => void
 
   resetWalletConnectClientInitializationAttempts: () => void
-  resetWalletConnectStorage: () => void
+  resetWalletConnectStorage: (options?: { showSuccessToast?: boolean }) => void
 }
 
 const walletConnectContextStubValue: WalletConnectContextValue = {

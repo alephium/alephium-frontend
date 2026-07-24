@@ -68,7 +68,7 @@ const WalletDeleteModalContent = ({ onDelete }: WalletDeleteModalProps) => {
       // Reset state and clean up BEFORE switching to next wallet,
       // otherwise activeWalletDeleted would wipe the new wallet's data
       dispatch(activeWalletDeleted())
-      resetWalletConnectStorage()
+      resetWalletConnectStorage({ showSuccessToast: false })
       deletePersistedCache(walletId)
 
       await onDelete()
