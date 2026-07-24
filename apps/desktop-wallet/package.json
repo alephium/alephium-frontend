@@ -121,7 +121,7 @@
     "react-is": "^19.0.0",
     "react-qr-code": "^2.0.15",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^6.30.4",
+    "react-router-dom": "^7.18.1",
     "react-tooltip": "^5.25.1",
     "styled-components": "^6.1.19",
     "ts-json-schema-generator": "^1.5.0",
