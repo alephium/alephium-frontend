@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="calzoneBody" x1="32" y1="10" x2="32" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F6CD82" />
+      <stop offset="0.55" stop-color="#E8A64C" />
+      <stop offset="1" stop-color="#CE842F" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M10 40 C12 6 52 6 54 40 q-3.667 5 -7.333 0 q-3.667 5 -7.333 0 q-3.667 5 -7.333 0 q-3.667 5 -7.333 0 q-3.667 5 -7.333 0 q-3.667 5 -7.333 0 Z"
+    fill="url(#calzoneBody)"
+    stroke="#A5641F"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <path d="M17 30 C19 19 26 13 33 13" stroke="#FCE7B4" stroke-width="3" stroke-linecap="round" opacity="0.55" />
+  <ellipse cx="41" cy="21" rx="4.5" ry="3.2" fill="#C6772C" opacity="0.4" />
+  <ellipse cx="24" cy="27" rx="3.2" ry="2.4" fill="#C6772C" opacity="0.38" />
+  <path d="M20 31 q3.5 -3 7 0" stroke="#8A4E17" stroke-width="2" stroke-linecap="round" />
+  <path d="M29 26 q3.5 -3 7 0" stroke="#8A4E17" stroke-width="2" stroke-linecap="round" />
+  <path d="M33 33 q3.5 -3 7 0" stroke="#8A4E17" stroke-width="2" stroke-linecap="round" />
+  <circle cx="35.5" cy="24.5" r="1.4" fill="#D8452F" />
+</svg>

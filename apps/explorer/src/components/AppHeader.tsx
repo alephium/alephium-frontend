@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css, keyframes, useTheme } from 'styled-components'
 
 import SearchBar from '@/components/SearchBar'
 import { useWindowSize } from '@/hooks/useWindowSize'
+import CalzoneIcon from '@/images/calzone.svg?react'
 import logoDarkSrc from '@/images/explorer-logo-dark.svg'
 import logoLightSrc from '@/images/explorer-logo-light.svg'
 import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
+import { CALZONE_TX_HASH, isCalzoneDay } from '@/utils/calzone'
 
 interface AppHeaderProps {
   className?: string
@@ -22,6 +24,16 @@ const AppHeader = ({ className }: AppHeaderProps) => {
         <StyledLogoLink to="/">
           <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
         </StyledLogoLink>
+        {isCalzoneDay() && (
+          <CalzoneLink
+            to={`/transactions/${CALZONE_TX_HASH}`}
+            aria-label="calzone"
+            data-tooltip-id="default"
+            data-tooltip-content="Happy Calzone Day! 🍕"
+          >
+            <CalzoneIcon />
+          </CalzoneLink>
+        )}
       </HeaderSideContainer>
       {(pathname !== '/' || (width && width <= deviceSizes.mobile)) && <StyledSearchBar />}
       <HeaderSideContainer justifyContent="flex-end" hideOnMobile></HeaderSideContainer>
@@ -63,6 +75,30 @@ const StyledLogoLink = styled(Link)`
   @media ${deviceBreakPoints.mobile} {
     width: 30px;
     overflow: hidden;
+  }
+`
+
+const wobble = keyframes`
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-14deg); }
+  75% { transform: rotate(14deg); }
+`
+
+const CalzoneLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+  width: 28px;
+  height: 28px;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    animation: ${wobble} 0.6s ease-in-out;
   }
 `
 
