@@ -66,20 +66,14 @@ const TokenBuyButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) 
   return <ActionCardBuyButton origin="token_details" receiveAddressHash={addressHash || defaultAddressHash} />
 }
 
-const TokenSwapButton = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
+const TokenSwapButton = ({ tokenId }: TokenDetailsModalCommonProps) => {
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const isWatchOnly = useIsWalletWatchOnly()
   const { dismissModal } = useModalContext()
 
   if (!defaultAddressHash || isWatchOnly) return null
 
-  return (
-    <ActionCardSwapButton
-      origin="token_details"
-      receiveAddressHash={addressHash || defaultAddressHash}
-      onPress={dismissModal}
-    />
-  )
+  return <ActionCardSwapButton origin="token_details" tokenId={tokenId} onPress={dismissModal} />
 }
 
 interface TokenAnimatedBackgroundProps {

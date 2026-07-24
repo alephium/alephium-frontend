@@ -105,6 +105,24 @@ export type AnalyticsProps = {
   reason?: string
   category?: string
 
+  // A compact machine code for a failure, so failure funnels can be broken down without parsing the
+  // free-text `message`. Swap uses the quote error code / classified execution error kind.
+  error_code?: string
+
+  // Swap funnel dimensions. Token symbols, pool type and slippage, plus bucketed (never raw) USD size
+  // and price impact, so a swap can be analysed without any amount or address reaching analytics.
+  pool_type?: string
+  from_token?: string
+  to_token?: string
+  direction?: 'sell' | 'buy'
+  slippage_bps?: number
+  price_impact_bucket?: string
+  amount_usd_bucket?: string
+  used_non_default_address?: boolean
+
+  // On staking funnel events: which staking action the event is about.
+  action?: 'stake' | 'unstake' | 'claim' | 'cancel'
+
   // Settings.
   region?: string
   language?: string

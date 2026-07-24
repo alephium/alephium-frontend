@@ -1,3 +1,4 @@
+import { AddressHash } from '@alephium/shared/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const sliceName = 'staking'
@@ -15,11 +16,14 @@ type PendingVaultAction = {
 type StakingState = {
   pendingStakeOrUnstake: PendingStakeOrUnstake | undefined
   pendingVaultActions: Record<string, PendingVaultAction>
+  // Session-only (not persisted). Undefined = use the wallet default (see selectStakingAddressHash).
+  selectedAddressHash?: AddressHash
 }
 
 const initialState: StakingState = {
   pendingStakeOrUnstake: undefined,
-  pendingVaultActions: {}
+  pendingVaultActions: {},
+  selectedAddressHash: undefined
 }
 
 const stakingSlice = createSlice({
@@ -38,11 +42,19 @@ const stakingSlice = createSlice({
     },
     vaultActionCompleted: (state, action: PayloadAction<string>) => {
       delete state.pendingVaultActions[action.payload]
+    },
+    stakingAddressChanged: (state, action: PayloadAction<AddressHash>) => {
+      state.selectedAddressHash = action.payload
     }
   }
 })
 
 export default stakingSlice
 
-export const { stakeOrUnstakeStarted, stakeOrUnstakeCompleted, vaultActionStarted, vaultActionCompleted } =
-  stakingSlice.actions
+export const {
+  stakeOrUnstakeStarted,
+  stakeOrUnstakeCompleted,
+  vaultActionStarted,
+  vaultActionCompleted,
+  stakingAddressChanged
+} = stakingSlice.actions

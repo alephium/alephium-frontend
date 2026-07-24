@@ -92,6 +92,16 @@ Turbo handles ordering: that built package must build before apps (`^build`). Th
 - **Wallet connectivity**: WalletConnect v2 protocol via `@walletconnect/sign-client`
 - **Crypto**: Wallet key management (BIP39 mnemonics, elliptic curve operations) via `@alephium/keyring` and `@alephium/web3`; password-based encryption (AES-256-GCM + PBKDF2) via `@alephium/encryptor`
 
+## UX Principles
+
+- **Keep the UI as simple as possible for simple users.** Design for the simplest user first, then
+  progressively disclose complexity only when it is actionable. A control that offers no real choice
+  must not be shown. The canonical case is the single-address wallet (many users have exactly one
+  address): a feature must degrade gracefully to it, and anything that only makes sense with multiple
+  addresses - most obviously an address picker - must hide itself when the wallet has one address. Use
+  `useWalletSingleAddress` (mobile) as the single-address check. Apply the same instinct to every
+  added control, option, or step: if the common user cannot act on it, do not put it in front of them.
+
 ## Changesets
 
 Any change that affects a user must ship with a changeset, in the same PR. The changelogs are

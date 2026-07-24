@@ -478,8 +478,8 @@ importers:
         specifier: 0.0.1-rc.16
         version: 0.0.1-rc.16(elysia@1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@21.3.2)(openapi-types@12.1.3)(typescript@5.9.3))(encoding@0.1.13)
       '@alephium/powfi-sdk':
-        specifier: 0.0.1-rc.31
-        version: 0.0.1-rc.31(encoding@0.1.13)
+        specifier: 0.0.1-rc.34
+        version: 0.0.1-rc.34(encoding@0.1.13)
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -1163,8 +1163,8 @@ packages:
     resolution: {integrity: sha512-oVPFrz4cmN/LDYbf2hm5zwc6Ezm8QCx/5pxzSfUmpmEiT0Fc+niU1gfi4eATgzxr9ZjHHmvPmbt1P6gpWz/gPQ==}
     engines: {bun: '>=1.0.0', node: '>=20.0.0'}
 
-  '@alephium/powfi-sdk@0.0.1-rc.31':
-    resolution: {integrity: sha512-bc5ul7kdCrz6BfRbyhWTWsYtin/GYdjQXeWPewV6GwV+ZdOk1ifaglKPFT/4tzYb60gMpoQ1o4BvbfLk3F6N+A==}
+  '@alephium/powfi-sdk@0.0.1-rc.34':
+    resolution: {integrity: sha512-0s3Hs8LjlE1T3g55KQ0Jl+MPbtksLrYzdRr5FCrzvLC+eN/PaMGOapfuZclAS6vW0nwJxk+WnBATojrqH/fdJg==}
     engines: {bun: '>=1.0.0', node: '>=20.0.0'}
 
   '@alephium/token-list@0.0.20':
@@ -11251,7 +11251,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/powfi-sdk@0.0.1-rc.31(encoding@0.1.13)':
+  '@alephium/powfi-sdk@0.0.1-rc.34(encoding@0.1.13)':
     dependencies:
       '@alephium/token-list': 0.0.20(encoding@0.1.13)
       '@alephium/web3': 3.0.3

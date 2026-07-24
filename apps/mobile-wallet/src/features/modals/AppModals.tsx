@@ -45,6 +45,10 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import SwapFromAddressModal from '~/features/swap/modals/SwapFromAddressModal'
+import SwapHighPriceImpactModal from '~/features/swap/modals/SwapHighPriceImpactModal'
+import SwapSlippageModal from '~/features/swap/modals/SwapSlippageModal'
+import SwapTokenSelectModal from '~/features/swap/modals/SwapTokenSelectModal'
 import WalletSwitchModal from '~/features/switch-wallet/WalletSwitchModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
@@ -190,6 +194,14 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
       return <StakeModal {...params.props} />
     case 'UnstakeModal':
       return <UnstakeModal {...params.props} />
+    case 'SwapTokenSelectModal':
+      return <SwapTokenSelectModal {...params.props} />
+    case 'SwapSlippageModal':
+      return <SwapSlippageModal />
+    case 'SwapHighPriceImpactModal':
+      return <SwapHighPriceImpactModal {...params.props} />
+    case 'SwapFromAddressModal':
+      return <SwapFromAddressModal {...params.props} />
     default:
       return null
   }
