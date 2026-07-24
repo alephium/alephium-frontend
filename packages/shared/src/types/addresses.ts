@@ -48,3 +48,7 @@ export type GrouplessAddress = AddressBase & {
 export type Address = AddressWithGroup | GrouplessAddress
 
 export type AddressesState = EntityState<Address>
+
+// The user-facing address kind chosen when creating an address, mapped to a key type at generation
+// time: 'groupless' -> gl-secp256k1, 'grouped' -> default, 'schnorr' -> bip340-schnorr.
+export type NewAddressType = 'groupless' | 'grouped' | 'schnorr'

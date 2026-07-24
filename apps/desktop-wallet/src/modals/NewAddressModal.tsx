@@ -1,5 +1,6 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { selectDefaultAddress } from '@alephium/shared/store'
+import { NewAddressType } from '@alephium/shared/types'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -39,17 +40,29 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
+  const [addressType, setAddressType] = useState<NewAddressType>('groupless')
   const [isLoading, setIsLoading] = useState(false)
 
   if (!defaultAddress) return null
 
   const onClose = () => dispatch(closeModal({ id }))
 
+  const handleAddressTypeSelect = (type: NewAddressType) => {
+    setAddressType(type)
+    if (type === 'groupless') setNewAddressGroup(undefined)
+  }
+
+  const addressTypeSelectOptions = [
+    { value: 'groupless' as const, label: t('Groupless (recommended)') },
+    { value: 'grouped' as const, label: t('Grouped') },
+    { value: 'schnorr' as const, label: t('Schnorr') }
+  ]
+
   const generateSingleAddress = async () => {
     setIsLoading(true)
 
     try {
-      const address = await generateAddress(newAddressGroup)
+      const address = await generateAddress({ group: newAddressGroup, addressType })
 
       if (!address) return
 
@@ -62,7 +75,13 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       try {
         saveNewAddresses([{ ...address, ...settings }])
 
-        sendAnalytics({ event: AnalyticsEvent.ADDRESS_CREATED, props: { label_length: settings.label.length } })
+        sendAnalytics({
+          event: AnalyticsEvent.ADDRESS_CREATED,
+          props: {
+            label_length: settings.label.length,
+            address_type: isLedger ? 'grouped' : addressType
+          }
+        })
         onClose()
       } catch (error) {
         dispatch(
@@ -130,22 +149,27 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         </InfoBox>
       )}
       {singleAddress && (
-        <ToggleSection title={t('Advanced options')} subtitle={t('Select address group')}>
-          {!isPassphraseUsed && !isLedger && (
-            <InfoBox importance="warning">
-              {t(
-                'Leave this setting off to generate a groupless address (recommended). If you specifically need an address in a dedicated group, you can select it below.'
-              )}
-            </InfoBox>
+        <ToggleSection title={t('Advanced options')} subtitle={t('Select address type')}>
+          {!isLedger && (
+            <Select
+              label={t('Address type')}
+              controlledValue={addressTypeSelectOptions.find((option) => option.value === addressType)}
+              options={addressTypeSelectOptions}
+              onSelect={handleAddressTypeSelect}
+              title={t('Select address type')}
+              id="address-type"
+            />
           )}
-          <Select
-            label={t('Group')}
-            controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}
-            options={Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => generateGroupSelectOption(index))}
-            onSelect={setNewAddressGroup}
-            title={t('Select group')}
-            id="group"
-          />
+          {(isLedger || addressType !== 'groupless') && (
+            <Select
+              label={t('Group (random if unset)')}
+              controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}
+              options={Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => generateGroupSelectOption(index))}
+              onSelect={setNewAddressGroup}
+              title={t('Select group')}
+              id="group"
+            />
+          )}
         </ToggleSection>
       )}
       <ModalFooterButtons>

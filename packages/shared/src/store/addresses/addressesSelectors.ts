@@ -2,6 +2,7 @@ import { AddressGroup } from '@alephium/walletconnect-provider'
 import { KeyType } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
+import { DEFAULT_ADDRESS_KEY_TYPE, SCHNORR_ADDRESS_KEY_TYPE } from '../../constants'
 import { addressesAdapter } from '../../store/addresses/addressesAdapters'
 import { SharedRootState } from '../../store/store'
 import { AddressHash } from '../../types/addresses'
@@ -25,13 +26,13 @@ export const selectAllAddressByType = createSelector(selectAllAddresses, (addres
   }
 })
 
-export const selectAllAddressIndexes = createSelector(
-  selectAllAddressByType,
-  ({ addressesWithGroup, grouplessAddresses }) => ({
-    indexesOfAddressesWithGroup: addressesWithGroup.map(({ index }) => index),
-    indexesOfGrouplessAddresses: grouplessAddresses.map(({ index }) => index)
-  })
-)
+// Each key type is derived on its own BIP44 path level (see getHDWalletPath), so index spaces are
+// independent per key type and must be tracked separately to avoid derivation collisions.
+export const selectAllAddressIndexes = createSelector(selectAllAddresses, (addresses) => ({
+  indexesOfDefaultAddresses: addresses.filter((a) => a.keyType === DEFAULT_ADDRESS_KEY_TYPE).map(({ index }) => index),
+  indexesOfSchnorrAddresses: addresses.filter((a) => a.keyType === SCHNORR_ADDRESS_KEY_TYPE).map(({ index }) => index),
+  indexesOfGrouplessAddresses: addresses.filter(isGrouplessAddress).map(({ index }) => index)
+}))
 
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,

@@ -1,7 +1,7 @@
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { GROUPLESS_ADDRESS_KEY_TYPE } from '@alephium/shared'
+import { DEFAULT_ADDRESS_KEY_TYPE, GROUPLESS_ADDRESS_KEY_TYPE, SCHNORR_ADDRESS_KEY_TYPE } from '@alephium/shared'
 import { selectAllAddressIndexes } from '@alephium/shared/store'
-import { AddressBase, AddressStoredMetadataWithoutHash } from '@alephium/shared/types'
+import { AddressBase, AddressStoredMetadataWithoutHash, NewAddressType } from '@alephium/shared/types'
 import { useUnsortedAddresses } from '@alephium/shared-react'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useCallback } from 'react'
@@ -27,6 +27,7 @@ import { getRandomLabelColor } from '@/utils/colors'
 
 interface GenerateAddressProps {
   group?: number
+  addressType?: NewAddressType
 }
 
 interface DiscoverUsedAddressesProps {
@@ -49,24 +50,43 @@ const useAddressGeneration = () => {
   const { sendAnalytics } = useAnalytics()
   const { isLedger, onLedgerError } = useLedger()
   const { t } = useTranslation()
-  const { indexesOfAddressesWithGroup, indexesOfGrouplessAddresses } = useAppSelector(selectAllAddressIndexes)
+  const { indexesOfDefaultAddresses, indexesOfSchnorrAddresses, indexesOfGrouplessAddresses } =
+    useAppSelector(selectAllAddressIndexes)
 
   const generateAddress = useCallback(
-    async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
-      isLedger
-        ? LedgerAlephium.create()
-            .catch(onLedgerError)
-            .then((app) =>
-              app
-                ? app.generateAddress({ group, skipAddressIndexes: indexesOfAddressesWithGroup, keyType: 'default' })
-                : null
-            )
-        : keyring.generateAndCacheAddress({
-            group,
-            skipAddressIndexes: group === undefined ? indexesOfGrouplessAddresses : indexesOfAddressesWithGroup,
-            keyType: group === undefined ? GROUPLESS_ADDRESS_KEY_TYPE : 'default'
-          }),
-    [indexesOfAddressesWithGroup, indexesOfGrouplessAddresses, isLedger, onLedgerError]
+    async ({ group, addressType }: GenerateAddressProps = {}): Promise<NonSensitiveAddressData | null> => {
+      // Ledger only supports the default (grouped) key type.
+      if (isLedger)
+        return LedgerAlephium.create()
+          .catch(onLedgerError)
+          .then((app) =>
+            app
+              ? app.generateAddress({ group, skipAddressIndexes: indexesOfDefaultAddresses, keyType: 'default' })
+              : null
+          )
+
+      const resolvedType: NewAddressType = addressType ?? (group === undefined ? 'groupless' : 'grouped')
+
+      if (resolvedType === 'schnorr')
+        return keyring.generateAndCacheAddress({
+          group,
+          skipAddressIndexes: indexesOfSchnorrAddresses,
+          keyType: SCHNORR_ADDRESS_KEY_TYPE
+        })
+
+      if (resolvedType === 'grouped')
+        return keyring.generateAndCacheAddress({
+          group,
+          skipAddressIndexes: indexesOfDefaultAddresses,
+          keyType: DEFAULT_ADDRESS_KEY_TYPE
+        })
+
+      return keyring.generateAndCacheAddress({
+        skipAddressIndexes: indexesOfGrouplessAddresses,
+        keyType: GROUPLESS_ADDRESS_KEY_TYPE
+      })
+    },
+    [indexesOfDefaultAddresses, indexesOfSchnorrAddresses, indexesOfGrouplessAddresses, isLedger, onLedgerError]
   )
 
   const generateAndSaveOneAddressPerGroup = async (
@@ -79,7 +99,7 @@ const useAddressGeneration = () => {
 
     try {
       for (const group of groups) {
-        const address = await generateAddress(group)
+        const address = await generateAddress({ group })
         if (!address) continue
 
         addresses.push({

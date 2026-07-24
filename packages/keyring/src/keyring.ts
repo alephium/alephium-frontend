@@ -96,10 +96,10 @@ export class Keyring {
     this._getNonSensitiveAddressData(this._generateAndCacheAddress(props))
 
   public signTransaction = (txId: string, addressHash: AddressHash): string =>
-    transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash))
+    transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash), this._getAddress(addressHash).keyType)
 
   public signMessageHash = (messageHash: string, addressHash: AddressHash): string =>
-    sign(messageHash, this.exportPrivateKeyOfAddress(addressHash))
+    sign(messageHash, this.exportPrivateKeyOfAddress(addressHash), this._getAddress(addressHash).keyType)
 
   public exportPublicKeyOfAddress = (address: string): string => this._getAddress(address).publicKey
 

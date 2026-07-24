@@ -11,8 +11,12 @@ export class SecureStoreSigner extends AlephiumWalletSigner {
   public getPublicKey = async (addressStr: string): Promise<string> =>
     getAddressAsymetricKey(this.getWalletId(), getBaseAddressStr(addressStr), 'public')
 
-  public signRaw = async (addressStr: string, tx: string): Promise<string> =>
-    transactionSign(tx, await getAddressAsymetricKey(this.getWalletId(), getBaseAddressStr(addressStr), 'private'))
+  public signRaw = async (addressStr: string, tx: string): Promise<string> => {
+    const baseAddressStr = getBaseAddressStr(addressStr)
+    const keyType = store.getState().addresses.entities[baseAddressStr]?.keyType
+
+    return transactionSign(tx, await getAddressAsymetricKey(this.getWalletId(), baseAddressStr, 'private'), keyType)
+  }
 }
 
 export const signer = new SecureStoreSigner()
