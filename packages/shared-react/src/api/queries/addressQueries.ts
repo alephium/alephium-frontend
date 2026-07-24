@@ -179,6 +179,18 @@ export const addressBalancesQuery = ({ addressHash, networkId, isNodeOnline, ski
         }
   })
 
+export const addressUtxosQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'level:1', 'utxos', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: shouldSkip(isNodeOnline, skip)
+      ? skipToken
+      : async () => {
+          const { utxos } = await throttledClient.node.addresses.getAddressesAddressUtxos(addressHash)
+          return utxos
+        }
+  })
+
 export const addressBalancesByListingQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, ADDRESS_DATA, 'balances-by-listing', { networkId }],
