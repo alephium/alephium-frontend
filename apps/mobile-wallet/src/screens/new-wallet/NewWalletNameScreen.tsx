@@ -13,7 +13,6 @@ import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import useCaptureOnboardingStep from '~/hooks/useCaptureOnboardingStep'
@@ -29,11 +28,6 @@ import { showExceptionToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
 import { resetNavigation } from '~/utils/navigation'
 
-const instructions: Instruction[] = [
-  { text: i18n.t("Alright, let's get to it."), type: 'secondary' },
-  { text: i18n.t('How should we name this wallet?'), type: 'primary' }
-]
-
 interface NewWalletNameScreenProps
   extends NativeStackScreenProps<RootStackParamList, 'NewWalletNameScreen'>,
     ScreenProps {}
@@ -45,6 +39,11 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
+
+  const instructions: Instruction[] = [
+    { text: t("Alright, let's get to it."), type: 'secondary' },
+    { text: t('How should we name this wallet?'), type: 'primary' }
+  ]
 
   const [name, setName] = useState('')
 

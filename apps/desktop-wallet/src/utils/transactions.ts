@@ -1,8 +1,9 @@
 import { SHORT_DATE_OPTIONS } from '@alephium/shared'
 import { TransactionInfoType2 } from '@alephium/shared/transactions'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { SelectOption } from '@/components/Inputs/Select'
-import i18n from '@/features/localization/i18n'
 import { TranslationKey } from '@/features/localization/i18next'
 import { Direction, TransactionTimePeriod } from '@/types/transactions'
 
@@ -13,39 +14,46 @@ const today = dateFormatter.format(now)
 const oneYearAgo = new Date(now)
 oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
 
-export const timePeriodsOptions: SelectOption<TransactionTimePeriod>[] = [
-  {
-    value: '24h',
-    label: i18n.t('Last 24h')
-  },
-  {
-    value: '1w',
-    label: i18n.t('Last week')
-  },
-  {
-    value: '1m',
-    label: i18n.t('Last month')
-  },
-  {
-    value: '6m',
-    label: i18n.t('Last 6 months')
-  },
-  {
-    value: '12m',
-    label: `${i18n.t('Last 12 months')}
+export const useTimePeriodsOptions = (): SelectOption<TransactionTimePeriod>[] => {
+  const { t } = useTranslation()
+
+  return useMemo(
+    () => [
+      {
+        value: '24h',
+        label: t('Last 24h')
+      },
+      {
+        value: '1w',
+        label: t('Last week')
+      },
+      {
+        value: '1m',
+        label: t('Last month')
+      },
+      {
+        value: '6m',
+        label: t('Last 6 months')
+      },
+      {
+        value: '12m',
+        label: `${t('Last 12 months')}
     (${dateFormatter.format(oneYearAgo)}
     - ${today})`
-  },
-  {
-    value: 'previousYear',
-    label: `${i18n.t('Previous year')}
+      },
+      {
+        value: 'previousYear',
+        label: `${t('Previous year')}
     (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
-  },
-  {
-    value: 'thisYear',
-    label: `${i18n.t('This year')} (01/01/${currentYear - 1} - ${today})`
-  }
-]
+      },
+      {
+        value: 'thisYear',
+        label: `${t('This year')} (01/01/${currentYear - 1} - ${today})`
+      }
+    ],
+    [t]
+  )
+}
 
 export const directionOptions: {
   value: Direction

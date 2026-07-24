@@ -12,7 +12,6 @@ import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import i18n from '~/features/localization/i18n'
 import { openModal } from '~/features/modals/modalActions'
 import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -21,16 +20,16 @@ import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
-const instructions: Instruction[] = [
-  { text: `${i18n.t('Do you want to activate biometric security?')} 👆`, type: 'primary' },
-  { text: i18n.t('Use fingerprint or face recognition instead of the pin to unlock the wallet'), type: 'secondary' }
-]
-
 const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
   const addressHashes = useUnsortedAddressesHashes()
   const { t } = useTranslation()
+
+  const instructions: Instruction[] = [
+    { text: `${t('Do you want to activate biometric security?')} 👆`, type: 'primary' },
+    { text: t('Use fingerprint or face recognition instead of the pin to unlock the wallet'), type: 'secondary' }
+  ]
 
   const skipAddressDiscovery = method === 'create' || addressHashes.length > 1
 

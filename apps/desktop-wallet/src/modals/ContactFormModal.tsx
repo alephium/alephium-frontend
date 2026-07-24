@@ -15,12 +15,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
-import {
-  isAddressValid,
-  isContactAddressValid,
-  isContactNameValid,
-  requiredErrorMessage
-} from '@/utils/form-validation'
+import { isAddressValid, isContactAddressValid, isContactNameValid } from '@/utils/form-validation'
 
 export interface ContactFormModalProps {
   contact?: Contact
@@ -101,7 +96,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
               value={value}
               onChange={onChange}
               onBlur={onBlur}
-              error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
+              error={errors.name?.type === 'required' ? t('This field is required') : errors.name?.message}
               isValid={!!value && !errors.name}
             />
           )}
@@ -119,7 +114,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
               value={value}
               onChange={onChange}
               onBlur={onBlur}
-              error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}
+              error={errors.address?.type === 'required' ? t('This field is required') : errors.address?.message}
               isValid={!!value && !errors.address}
             />
           )}

@@ -15,7 +15,6 @@ import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import i18next from '@/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useMountEffect } from '@/utils/hooks'
 
@@ -24,22 +23,22 @@ interface NetworkSelectOption {
   value: NetworkName
 }
 
-const networkSelectOptions: NetworkSelectOption[] = Object.values(NetworkNames).map((networkName) => ({
-  label: {
-    mainnet: i18next.t('Mainnet'),
-    testnet: i18next.t('Testnet'),
-    devnet: i18next.t('Devnet'),
-    custom: i18next.t('Custom')
-  }[networkName],
-  value: networkName
-}))
-
 const NetworkSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
   const { sendAnalytics } = useAnalytics()
   const theme = useTheme()
+
+  const networkSelectOptions: NetworkSelectOption[] = Object.values(NetworkNames).map((networkName) => ({
+    label: {
+      mainnet: t('Mainnet'),
+      testnet: t('Testnet'),
+      devnet: t('Devnet'),
+      custom: t('Custom')
+    }[networkName],
+    value: networkName
+  }))
 
   const [tempNetworkSettings, setTempNetworkSettings] = useState<NetworkSettings>(network.settings)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkName>()
