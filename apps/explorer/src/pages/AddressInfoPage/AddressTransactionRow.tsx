@@ -133,15 +133,17 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
           ))}
         {!isPending && (
           <AmountCell>
-            <Amount
-              key={assets.alph.id}
-              assetId={assets.alph.id}
-              value={assets.alph.amount}
-              suffix={assets.alph.symbol}
-              decimals={assets.alph.decimals}
-              highlight
-              displaySign
-            />
+            {assets.alph.amount !== BigInt(0) && (
+              <Amount
+                key={assets.alph.id}
+                assetId={assets.alph.id}
+                value={assets.alph.amount}
+                suffix={assets.alph.symbol}
+                decimals={assets.alph.decimals}
+                highlight
+                displaySign
+              />
+            )}
             {assets.fungible.map((asset) => (
               <Amount
                 key={asset.id}
