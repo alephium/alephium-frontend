@@ -444,6 +444,8 @@
   "Connecting": "Connecting",
   "Address balance": "Address balance",
   "Wallet balance": "Wallet balance",
+  "Wallet \"{{ deletedWalletName }}\" was deleted, switched to \"{{ nextWalletName }}\"": "Wallet \"{{ deletedWalletName }}\" was deleted, switched to \"{{ nextWalletName }}\"",
+  "Wallet \"{{ deletedWalletName }}\" was deleted": "Wallet \"{{ deletedWalletName }}\" was deleted",
   "The {{ tokenSymbol }} token can be found in these addresses:": "The {{ tokenSymbol }} token can be found in these addresses:",
   "Set as default": "Set as default",
   "token_in_addresses_one": "in {{ count }} address",

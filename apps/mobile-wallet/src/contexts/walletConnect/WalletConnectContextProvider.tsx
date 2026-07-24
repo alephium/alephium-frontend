@@ -822,48 +822,53 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setWalletConnectClientInitializationAttempts(0)
   }
 
-  const resetWalletConnectStorage = useCallback(async () => {
-    if (walletConnectClient === undefined) {
-      console.log('Clear walletconnect storage')
-      const WCService = await import('~/contexts/walletConnect/walletConnectService')
-      await WCService.clearWCStorage()
-      return
-    }
-
-    try {
-      console.log('Disconnect all sessions')
-
-      dispatch(activateAppLoading(t('Disconnecting')))
-
-      const topics = Object.keys(walletConnectClient.getActiveSessions())
-      const WCService = await import('~/contexts/walletConnect/walletConnectService')
-      const reason = WCService.getSdkError('USER_DISCONNECTED')
-
-      for (const topic of topics) {
-        try {
-          await walletConnectClient.disconnectSession({ topic, reason })
-        } catch (error) {
-          console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
-        }
+  const resetWalletConnectStorage = useCallback(
+    async ({ showSuccessToast = true }: { showSuccessToast?: boolean } = {}) => {
+      if (walletConnectClient === undefined) {
+        console.log('Clear walletconnect storage')
+        const WCService = await import('~/contexts/walletConnect/walletConnectService')
+        await WCService.clearWCStorage()
+        return
       }
-      refreshActiveSessions()
 
-      console.log('Clear walletconnect cache')
-      WCService.clearWalletConnectRuntimeCache(walletConnectClient)
+      try {
+        console.log('Disconnect all sessions')
 
-      console.log('Clear walletconnect storage')
-      await WCService.clearWCStorage(walletConnectClient)
+        dispatch(activateAppLoading(t('Disconnecting')))
 
-      showToast({
-        text1: t('WalletConnect cache cleared'),
-        type: 'success'
-      })
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
-    } finally {
-      dispatch(deactivateAppLoading())
-    }
-  }, [dispatch, refreshActiveSessions, walletConnectClient, t])
+        const topics = Object.keys(walletConnectClient.getActiveSessions())
+        const WCService = await import('~/contexts/walletConnect/walletConnectService')
+        const reason = WCService.getSdkError('USER_DISCONNECTED')
+
+        for (const topic of topics) {
+          try {
+            await walletConnectClient.disconnectSession({ topic, reason })
+          } catch (error) {
+            console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
+          }
+        }
+        refreshActiveSessions()
+
+        console.log('Clear walletconnect cache')
+        WCService.clearWalletConnectRuntimeCache(walletConnectClient)
+
+        console.log('Clear walletconnect storage')
+        await WCService.clearWCStorage(walletConnectClient)
+
+        if (showSuccessToast) {
+          showToast({
+            text1: t('WalletConnect cache cleared'),
+            type: 'success'
+          })
+        }
+      } catch (error) {
+        sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
+      } finally {
+        dispatch(deactivateAppLoading())
+      }
+    },
+    [dispatch, refreshActiveSessions, walletConnectClient, t]
+  )
 
   return (
     <WalletConnectContext.Provider
