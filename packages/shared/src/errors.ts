@@ -53,7 +53,7 @@ export const cleanExceptionMessage = (error: unknown) =>
   redactSensitiveData(getHumanReadableError(error, '').replace(BIP39_WORD_RUN, '[...]'))
 
 export const errorHasMessageProp = (error: unknown): error is { message: string } =>
-  'message' in (error as { message?: string })
+  typeof error === 'object' && error !== null && 'message' in error
 
 const extractErrorStatusCode = (error: unknown): number | null => {
   const err = getHumanReadableError(error, '')
