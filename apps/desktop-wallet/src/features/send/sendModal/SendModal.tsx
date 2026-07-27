@@ -61,7 +61,7 @@ const SendModal = memo(({ id, origin, ...initialTxData }: ModalBaseProp & SendMo
 
   const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
   const gasRefillGroupedAddress = groupedAddressesWithEnoughAlphForGas?.find(
-    (hash) => hash !== addressesData.fromAddress.hash
+    ({ hash }) => hash !== addressesData.fromAddress.hash
   )
   const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && gasRefillGroupedAddress
 
@@ -171,7 +171,7 @@ const SendModal = memo(({ id, origin, ...initialTxData }: ModalBaseProp & SendMo
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, data)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
-              await signer.getPublicKey(gasRefillGroupedAddress),
+              await signer.getPublicKey(gasRefillGroupedAddress.hash),
               await signer.getPublicKey(data.fromAddress.hash)
             ])
 

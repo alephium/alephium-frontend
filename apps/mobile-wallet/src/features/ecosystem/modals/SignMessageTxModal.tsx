@@ -1,6 +1,5 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { SignMessageTxModalProps } from '@alephium/shared/types'
-import { hashMessage, sign } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
@@ -16,27 +15,24 @@ import SignModalDestinationDappRow from '~/features/ecosystem/modals/SignModalDe
 import SignTxModalFooterButtonsSection from '~/features/ecosystem/modals/SignTxModalFooterButtonsSection'
 import useSignModal from '~/features/ecosystem/modals/useSignModal'
 import BottomModal from '~/features/modals/BottomModal'
-import { useAppSelector } from '~/hooks/redux'
-import { getAddressAsymetricKey } from '~/persistent-storage/addressKeys'
+import { signer } from '~/signer'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const SignMessageTxModal = memo(
   ({ txParams, unsignedData, dAppUrl, dAppIcon, origin, onError, onSuccess }: SignMessageTxModalProps) => {
     const { t } = useTranslation()
     const theme = useTheme()
-    const walletId = useAppSelector((s) => s.wallet.id)
 
     const { handleApprovePress, handleRejectPress } = useSignModal({
       onError,
       dAppUrl,
       type: 'MESSAGE',
       sign: async () => {
-        const messageHash = hashMessage(txParams.message, txParams.messageHasher)
-        const signature = sign(messageHash, await getAddressAsymetricKey(walletId, txParams.signerAddress, 'private'))
+        const result = await signer.signMessage(txParams)
 
         sendAnalytics({ event: AnalyticsEvent.MESSAGE_SIGNED, props: { origin, dapp_host: dAppUrl } })
 
-        onSuccess({ signature })
+        onSuccess(result)
       }
     })
 

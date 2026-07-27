@@ -1,13 +1,13 @@
 import { MAXIMAL_GAS_FEE, ONE_DAY_MS } from '@alephium/shared'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
-import { AddressHash, TokenId } from '@alephium/shared/types'
+import { AddressHash, AddressWithGroup, TokenId } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { ALPH } from '@alephium/token-list'
-import { isGrouplessAddress } from '@alephium/web3'
 import { useMemo } from 'react'
 
 import { useFetchLatestTransactionOfEachAddress } from '../../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import { useFetchWalletBalancesByAddress } from '../../api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
-import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
+import { useUnsortedAddresses, useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
 import { useCurrentlyOnlineNetworkId } from '../../network/networkHooks'
 import { useSharedSelector } from '../../redux'
 
@@ -117,21 +117,19 @@ export const useFetchAddressesHashesSplitByUseFrequency = () => {
 
 export const useFetchGroupedAddressesWithEnoughAlphForGas = () => {
   const { data: addressesBalances, isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
+  const addresses = useUnsortedAddresses()
 
   const addressesWithEnoughAlphForGas = useMemo(
     () =>
-      Object.keys(addressesBalances)
-        .filter((addressHash) => !isGrouplessAddress(addressHash)) // Groupless addresses cannot be used as input for chained txs
-        .reduce((addressesWithEnoughBalance, addressHash) => {
-          const alphBalance = addressesBalances[addressHash]?.find(({ id }) => id === ALPH.id)
-          // TODO: Use dynamic gas fee instead of MAXIMAL_GAS_FEE
-          if (alphBalance && BigInt(alphBalance.availableBalance) >= MAXIMAL_GAS_FEE) {
-            addressesWithEnoughBalance.push(addressHash as AddressHash)
-          }
+      addresses.filter((address): address is AddressWithGroup => {
+        if (isGrouplessAddress(address)) return false // Groupless addresses cannot be used as input for chained txs
 
-          return addressesWithEnoughBalance
-        }, [] as AddressHash[]),
-    [addressesBalances]
+        const alphBalance = addressesBalances[address.hash]?.find(({ id }) => id === ALPH.id)
+
+        // TODO: Use dynamic gas fee instead of MAXIMAL_GAS_FEE
+        return !!alphBalance && BigInt(alphBalance.availableBalance) >= MAXIMAL_GAS_FEE
+      }),
+    [addresses, addressesBalances]
   )
 
   return {
