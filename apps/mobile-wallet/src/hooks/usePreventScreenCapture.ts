@@ -7,12 +7,21 @@ import { CaptureProtection } from 'react-native-capture-protection'
 // - #1548
 // If they don't, delete this hook and use expo-screen-capture instead.
 
+// A transition between two secret-showing screens mounts the arriving consumer before unmounting
+// the leaving one, so an unconditional allow() on unmount would drop protection while secrets are
+// still on screen.
+let consumers = 0
+
 const usePreventScreenCapture = () => {
   useEffect(() => {
-    CaptureProtection.prevent()
+    consumers += 1
+
+    if (consumers === 1) CaptureProtection.prevent()
 
     return () => {
-      CaptureProtection.allow()
+      consumers -= 1
+
+      if (consumers === 0) CaptureProtection.allow()
     }
   }, [])
 }
