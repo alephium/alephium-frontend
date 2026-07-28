@@ -1,6 +1,9 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useIsExplorerOffline, useIsNodeOffline } from '@alephium/shared-react'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -9,7 +12,22 @@ const OfflineButton = () => {
   const isExplorerOffline = useIsExplorerOffline()
   const { t } = useTranslation()
 
-  if (!isNodeOffline && !isExplorerOffline) return null
+  const isOffline = isNodeOffline || isExplorerOffline
+  const wasOffline = useRef(false)
+
+  // Hooks must run before the early return below, so this stays above it.
+  useEffect(() => {
+    if (isOffline && !wasOffline.current) {
+      sendAnalytics({
+        event: AnalyticsEvent.OFFLINE_DETECTED,
+        props: { service: isNodeOffline && isExplorerOffline ? 'both' : isNodeOffline ? 'node' : 'explorer' }
+      })
+    }
+
+    wasOffline.current = isOffline
+  }, [isExplorerOffline, isNodeOffline, isOffline])
+
+  if (!isOffline) return null
 
   const showOfflineMessage = () => {
     showToast({
