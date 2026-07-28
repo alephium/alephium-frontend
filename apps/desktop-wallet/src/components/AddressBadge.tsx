@@ -50,6 +50,7 @@ const AddressBadge = ({
 
   const displayedHash = contact ? contact.address : address ? address.hash : addressStr
   const displayedLabel = contact ? contact.name : address ? address.label : undefined
+  const isUnknown = !address && !contact
 
   return (
     <AddressBadgeStyled
@@ -58,6 +59,7 @@ const AddressBadge = ({
       hideColorIndication={hideColorIndication}
       truncate={truncate}
       isShort={isShort}
+      alignRight={fullWidthUnknownHash && !isUnknown}
     >
       {!address && !contact ? (
         <NotKnownAddress
@@ -105,7 +107,12 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-type AddressBadgeStyledProps = Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+type AddressBadgeStyledProps = Pick<
+  AddressBadgeProps,
+  'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'
+> & {
+  alignRight?: boolean
+}
 
 const AddressBadgeStyled = styled.div<AddressBadgeStyledProps>`
   display: flex;
@@ -114,6 +121,12 @@ const AddressBadgeStyled = styled.div<AddressBadgeStyledProps>`
   text-align: ${({ hideColorIndication }) => (hideColorIndication ? 'left' : 'center')};
   gap: 6px;
   max-width: 100%;
+
+  ${({ alignRight }) =>
+    alignRight &&
+    css`
+      align-self: flex-end;
+    `}
 
   ${({ withBorders }) =>
     withBorders &&

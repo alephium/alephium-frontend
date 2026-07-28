@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { newWalletNameStored, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { isWalletNameValid, requiredErrorMessage } from '@/utils/form-validation'
+import { isWalletNameValid } from '@/utils/form-validation'
 
 type FormData = {
   name: ActiveWalletDesktop['name']
@@ -60,7 +60,7 @@ const EditWalletNameModal = memo(({ id }: ModalBaseProp) => {
               value={value}
               onChange={onChange}
               onBlur={onBlur}
-              error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
+              error={errors.name?.type === 'required' ? t('This field is required') : errors.name?.message}
               isValid={!!value && !errors.name}
               heightSize="big"
             />

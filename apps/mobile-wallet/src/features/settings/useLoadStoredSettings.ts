@@ -17,6 +17,8 @@ import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordAct
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { loadSettings } from '~/features/settings/settingsPersistentStorage'
 import { storedGeneralSettingsLoaded } from '~/features/settings/settingsSlice'
+import { getSwapSlippage } from '~/features/swap/swapPersistentStorage'
+import { swapSlippageLoadedFromStorage } from '~/features/swap/swapSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getWalletList } from '~/persistent-storage/walletList'
 import { walletListLoaded } from '~/store/wallet/walletsSlice'
@@ -48,6 +50,8 @@ const useLoadStoredSettings = () => {
 
       const hiddenTokensIds = getHiddenTokensIds(walletId)
       dispatch(hiddenTokensLoadedFromStorage(hiddenTokensIds))
+
+      dispatch(swapSlippageLoadedFromStorage(getSwapSlippage()))
 
       const walletList = getWalletList()
       dispatch(walletListLoaded(walletList))

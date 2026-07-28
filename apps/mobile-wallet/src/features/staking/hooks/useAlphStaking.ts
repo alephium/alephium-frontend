@@ -1,8 +1,11 @@
-import { selectDefaultAddressHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
+import { AnalyticsEvent } from '@alephium/shared'
+import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
 import { SignExecuteScriptTxParams, SignExecuteScriptTxResult, Token } from '@alephium/web3'
 import { useCallback } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import { powfiSdk, xAlphTokenId } from '~/api/powfi'
+import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import {
   stakeOrUnstakeCompleted,
   stakeOrUnstakeStarted,
@@ -19,16 +22,16 @@ type RecordTxAndRefreshProps = {
 
 const useAlphStaking = () => {
   const dispatch = useAppDispatch()
-  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
+  const stakingAddressHash = useAppSelector(selectStakingAddressHash)
 
   const recordTx = useCallback(
     async ({ result, alphAmount, xAlphAmount }: RecordTxAndRefreshProps) => {
-      if (!defaultAddressHash) throw Error('Default address hash not found')
+      if (!stakingAddressHash) throw Error('Staking address hash not found')
 
       const sentTx = signAndSubmitTxResultToSentTx({
         type: 'EXECUTE_SCRIPT',
         txParams: {
-          signerAddress: defaultAddressHash,
+          signerAddress: stakingAddressHash,
           attoAlphAmount: alphAmount,
           tokens: xAlphAmount ? [{ id: xAlphTokenId, amount: xAlphAmount }] : undefined,
           bytecode: ''
@@ -37,13 +40,14 @@ const useAlphStaking = () => {
       })
       dispatch(transactionSent(sentTx))
     },
-    [dispatch, defaultAddressHash]
+    [dispatch, stakingAddressHash]
   )
 
   const stakeAlph = useCallback(
     async (amount: bigint) => {
       try {
         const result = await powfiSdk.staking.stakeAlph(amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'stake' } })
         dispatch(stakeOrUnstakeStarted({ type: 'stake', txHash: result.txId }))
         recordTx({ result, alphAmount: amount })
         return result
@@ -59,6 +63,7 @@ const useAlphStaking = () => {
     async (amount: bigint) => {
       try {
         const result = await powfiSdk.staking.startUnstake(amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'unstake' } })
         dispatch(stakeOrUnstakeStarted({ type: 'unstake', txHash: result.txId }))
         await recordTx({ result, xAlphAmount: amount })
         return result
@@ -74,6 +79,7 @@ const useAlphStaking = () => {
     async (vaultIndex: bigint, amount: bigint) => {
       try {
         const result = await powfiSdk.staking.claimUnstaked(vaultIndex, amount)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'claim' } })
         dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'claim', txHash: result.txId }))
         await recordTx({ result, alphAmount: amount })
         return result
@@ -89,6 +95,7 @@ const useAlphStaking = () => {
     async (vaultIndex: bigint) => {
       try {
         const result = await powfiSdk.staking.cancelUnstake(vaultIndex)
+        sendAnalytics({ event: AnalyticsEvent.STAKE_EXECUTED, props: { action: 'cancel' } })
         dispatch(vaultActionStarted({ vaultIndex: vaultIndex.toString(), type: 'cancel', txHash: result.txId }))
         await recordTx({ result })
         return result

@@ -1,9 +1,11 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
 import { Fragment, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import useFetchAddressUnstakeRequests, {
   unstakeVaultRequestsQueryKeyRoot
@@ -39,6 +41,7 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
     await queryClient.refetchQueries({ queryKey: ['address', addressHash, 'transaction', 'latest'] })
     await queryClient.invalidateQueries({ queryKey: unstakeVaultRequestsQueryKeyRoot })
     dispatch(stakeOrUnstakeCompleted())
+    sendAnalytics({ event: AnalyticsEvent.STAKE_CONFIRMED, props: { action: 'unstake' } })
     showToast({ type: 'success', text1: t('Unstake request opened!') })
   }, [addressHash, dispatch, t])
 

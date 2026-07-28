@@ -21,6 +21,7 @@ import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage
 import AppModals from '~/features/modals/AppModals'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import SettingsScreen from '~/features/settings/settingsScreen/SettingsScreen'
+import SwapScreen from '~/features/swap/screens/SwapScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
@@ -123,6 +124,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
                 <RootStack.Screen name="HiddenTokensScreen" component={HiddenTokensScreen} />
                 <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
+                <RootStack.Screen name="SwapScreen" component={SwapScreen} />
                 <RootStack.Screen
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}

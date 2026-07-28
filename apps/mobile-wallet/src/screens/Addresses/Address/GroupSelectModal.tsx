@@ -3,7 +3,6 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import RadioButtonRow from '~/components/RadioButtonRow'
-import i18n from '~/features/localization/i18n'
 import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 
@@ -12,14 +11,14 @@ interface GroupSelectModalProps {
   onSelect: (group?: number) => void
 }
 
-const groupSelectOptions = Array.from({ length: TOTAL_NUMBER_OF_GROUPS + 1 }, (_, i) => ({
-  value: i === 0 ? undefined : i - 1,
-  label: i === 0 ? i18n.t('Random') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
-}))
-
 const GroupSelectModal = memo<GroupSelectModalProps>(({ onSelect, selectedGroup }) => {
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()
+
+  const groupSelectOptions = Array.from({ length: TOTAL_NUMBER_OF_GROUPS + 1 }, (_, i) => ({
+    value: i === 0 ? undefined : i - 1,
+    label: i === 0 ? t('Random') : t('Group {{ groupNumber }}', { groupNumber: i - 1 })
+  }))
 
   const onGroupSelect = (group?: number) => {
     onSelect(group)

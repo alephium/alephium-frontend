@@ -55,6 +55,9 @@ type RootStackParamList = {
     dAppUrl: string
     dAppName: string
   }
+  SwapScreen?: {
+    initialFromTokenId?: Token['id']
+  }
   HiddenTokensScreen: undefined
   AuthorizedConnectionsScreen: undefined
   WatchOnlyAddressScreen: undefined

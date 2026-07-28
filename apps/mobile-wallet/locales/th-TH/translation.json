@@ -492,7 +492,6 @@
   "Transaction {{ number }}": "ธุรกรรม {{ number }}",
   "The origin address doesn't have enough ALPH for gas fees. But don't you worry, {{ amount }} ALPH will be automatically transferred from another address in your wallet!": "ที่อยู่ต้นทางไม่มี ALPH เพียงพอสำหรับค่าแก๊ส แต่อย่ากังวล เพราะ {{ amount }} ALPH จะถูกโอนจากที่อยู่อื่นในกระเป๋าเงินโดยอัตโนมัติ!",
   "Nothing relevant to the signer address.": "ไม่มีอะไรเกี่ยวข้องกับที่อยู่ผู้ลงนาม",
-  "Groupless": "แบบไม่มีกลุ่ม",
   "New": "ใหม่",
   "App cache": "แคชแอป",
   "Delete app cached data and reload.": "ลบข้อมูลแคชของแอปและโหลดใหม่",

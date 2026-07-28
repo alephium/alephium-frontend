@@ -15,10 +15,10 @@
     "start": "turbo start:electron",
     "start:electron": "cross-env VITE_VERSION=$npm_package_version vite",
     "start:debug": "concurrently \"pnpm start\" \"npx react-scan@0.0.47 localhost:3000\"",
-    "build:electron:windows": "electron-builder -w",
-    "build:electron:macos": "electron-builder --mac --universal",
-    "build:electron:ubuntu": "electron-builder -l",
-    "build:electron:linux:arm64": "electron-builder -l --arm64",
+    "build:electron:windows": "electron-builder -w --publish never",
+    "build:electron:macos": "electron-builder --mac --universal --publish never",
+    "build:electron:ubuntu": "electron-builder -l --publish never",
+    "build:electron:linux:arm64": "electron-builder -l --arm64 --publish never",
     "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
     "ci:build:electron:windows": "turbo run build:electron:windows",
     "ci:build:electron:macos": "turbo run build:electron:macos",
@@ -45,7 +45,7 @@
     "@tanstack/react-query-devtools": "^5.50.1",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.8.9"
   },
   "trustedDependencies": [
     "electron",
@@ -121,7 +121,7 @@
     "react-is": "^19.0.0",
     "react-qr-code": "^2.0.15",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^6.30.4",
+    "react-router-dom": "^7.18.1",
     "react-tooltip": "^5.25.1",
     "styled-components": "^6.1.19",
     "ts-json-schema-generator": "^1.5.0",

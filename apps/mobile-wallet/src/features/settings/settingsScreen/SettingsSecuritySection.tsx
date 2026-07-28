@@ -9,7 +9,7 @@ import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
-import { getAutoLockLabel } from '~/features/auto-lock/utils'
+import { useAutoLockLabel } from '~/features/auto-lock/utils'
 import FundPasswordSettingsRow from '~/features/fund-password/FundPasswordSettingsRow'
 import { openModal } from '~/features/modals/modalActions'
 import { biometricsToggled, passwordRequirementToggled } from '~/features/settings/settingsSlice'
@@ -129,6 +129,7 @@ const BiometricsSettingsRows = () => {
 const AutoLockSettingsRow = () => {
   const { t } = useTranslation()
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
+  const autoLockLabel = useAutoLockLabel(autoLockSeconds)
   const dispatch = useAppDispatch()
 
   const openAutoLockOptionsModal = () => dispatch(openModal({ name: 'AutoLockOptionsModal' }))
@@ -140,7 +141,7 @@ const AutoLockSettingsRow = () => {
       isLast
       onPress={openAutoLockOptionsModal}
     >
-      <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
+      <AppText bold>{autoLockLabel}</AppText>
     </Row>
   )
 }

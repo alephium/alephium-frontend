@@ -11,12 +11,12 @@ interface AddressTransactionsCountProps {
 const AddressTransactionsCount = ({ addressStr }: AddressTransactionsCountProps) => {
   const { t } = useTranslation()
 
-  const { data: txNumber, isLoading } = useFetchAddressTransactionsCount(addressStr)
+  const { data: txNumber, isLoading, isError } = useFetchAddressTransactionsCount(addressStr)
 
   return (
     <InfoGrid.Cell
       label={t('Nb. of transactions')}
-      value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !isLoading ? 0 : undefined}
+      value={isLoading ? undefined : isError ? '-' : addApostrophes((txNumber ?? 0).toFixed(0))}
     />
   )
 }

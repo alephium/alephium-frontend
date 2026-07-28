@@ -8,7 +8,7 @@ import AddressInputs from '@/features/send/sendModal/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
+import { isAddressValid } from '@/utils/form-validation'
 
 interface SendModalAddressesStepProps {
   data: TransferTxModalData
@@ -36,7 +36,10 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
 
   const handleToAddressChange = useCallback(
     (value: string) => {
-      setToAddress(value, !value ? requiredErrorMessage : isAddressValid(value) ? '' : t('This address is not valid'))
+      setToAddress(
+        value,
+        !value ? t('This field is required') : isAddressValid(value) ? '' : t('This address is not valid')
+      )
     },
     [setToAddress, t]
   )
@@ -66,7 +69,8 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
             onSubmit({
               fromAddress,
               toAddress: toAddress.value,
-              tokenId: data.tokenId
+              tokenId: data.tokenId,
+              assetAmounts: data.assetAmounts
             })
           }
           disabled={!isSubmitButtonActive}

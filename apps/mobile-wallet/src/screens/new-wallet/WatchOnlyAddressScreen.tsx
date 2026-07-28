@@ -15,7 +15,6 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { createWatchOnlyWallet } from '~/persistent-storage/wallet'
@@ -24,11 +23,6 @@ import { walletAddedToList } from '~/store/wallet/walletsSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
-
-const instructions: Instruction[] = [
-  { text: i18n.t('Watch an address'), type: 'primary' },
-  { text: i18n.t('Enter an Alephium address to track its balance and transactions.'), type: 'secondary' }
-]
 
 interface WatchOnlyAddressScreenProps
   extends NativeStackScreenProps<RootStackParamList, 'WatchOnlyAddressScreen'>,
@@ -39,6 +33,11 @@ const WatchOnlyAddressScreen = ({ navigation, ...props }: WatchOnlyAddressScreen
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const { t } = useTranslation()
   const { clearQueryCache, restoreQueryCache } = usePersistQueryClientContext()
+
+  const instructions: Instruction[] = [
+    { text: t('Watch an address'), type: 'primary' },
+    { text: t('Enter an Alephium address to track its balance and transactions.'), type: 'secondary' }
+  ]
 
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')

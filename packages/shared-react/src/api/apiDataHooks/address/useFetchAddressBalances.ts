@@ -8,10 +8,11 @@ export const useFetchAddressBalances = (addressHash: AddressHash) => {
   const networkId = useNetworkId()
   const isNodeOnline = useIsNodeOnline()
 
-  const { data, isLoading } = useQuery(addressBalancesQuery({ addressHash, networkId, isNodeOnline }))
+  const { data, isLoading, isError } = useQuery(addressBalancesQuery({ addressHash, networkId, isNodeOnline }))
 
   return {
     data: data?.balances,
-    isLoading
+    isLoading,
+    isError
   }
 }

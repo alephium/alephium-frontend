@@ -112,7 +112,7 @@ describe('useFetchListedFtsWorth', () => {
     expect(result.current.isLoading).toBe(true)
   })
 
-  it('stops loading with the complete worth once prices cover tokens discovered later', async () => {
+  it('keeps showing the previous worth instead of a skeleton while later tokens are being priced', async () => {
     queryClient.setQueryData(priceQueryKey, [{ symbol: 'ALPH', price: 10 }])
 
     const { result, rerender } = renderWorthHook([alph])
@@ -122,11 +122,13 @@ describe('useFetchListedFtsWorth', () => {
 
     rerender([alph, usdc])
 
-    expect(result.current.isLoading).toBe(true)
+    // A worth was already shown, so the coverage gap updates it in place rather than reverting to the skeleton
+    expect(result.current.isLoading).toBe(false)
+    expect(result.current.data).toBe(20)
 
     queryClient.setQueryData(priceQueryKey, prices)
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false))
-    expect(result.current.data).toBe(25)
+    await waitFor(() => expect(result.current.data).toBe(25))
+    expect(result.current.isLoading).toBe(false)
   })
 })

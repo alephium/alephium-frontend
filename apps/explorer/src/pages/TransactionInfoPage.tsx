@@ -15,6 +15,7 @@ import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
+import CalzoneRain from '@/components/CalzoneRain'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -28,6 +29,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
+import { CALZONE_TX_HASH } from '@/utils/calzone'
 import { computeConfirmations } from '@/utils/confirmations'
 import { calculateIoAmountsDelta } from '@/utils/transactions'
 
@@ -154,6 +156,7 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
+      {id === CALZONE_TX_HASH && <CalzoneRain />}
       <SectionTitle
         title={t('Transaction')}
         badge={isConflicted ? t('Conflicted') : undefined}

@@ -16,7 +16,11 @@ const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
 
   return (
     <Row title={t('Last activity')} isLast short>
-      <AppText>{data?.latestTx ? formatRelativeTime(data.latestTx.timestamp, i18n.language) : t('Never used')}</AppText>
+      <AppText>
+        {data?.latestTx
+          ? formatRelativeTime(data.latestTx.timestamp, i18n.language, 'long', { neverFuture: true })
+          : t('Never used')}
+      </AppText>
     </Row>
   )
 }

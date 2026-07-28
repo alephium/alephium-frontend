@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
+import { useAutoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
@@ -15,6 +15,7 @@ const AutoLockOptionsModal = memo(() => {
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
   const { dismissModal } = useModalContext()
+  const autoLockSecondsOptions = useAutoLockSecondsOptions()
 
   const handleAutoLockChange = (seconds: number) => {
     dispatch(autoLockSecondsChanged(seconds))

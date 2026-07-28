@@ -167,7 +167,7 @@ const WalletSwapButton = () => {
 
   if (!defaultAddressHash || isWatchOnly) return null
 
-  return <ActionCardSwapButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
+  return <ActionCardSwapButton origin="dashboard" />
 }
 
 const WalletEmptyPlaceholder = () => {

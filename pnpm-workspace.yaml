@@ -20,8 +20,19 @@ verifyDepsBeforeRun: false
 sideEffectsCache: false
 minimumReleaseAge: 10080 # 7 days
 minimumReleaseAgeExclude:
-  - '@alephium/'
+  - '@alephium/*'
   - fast-uri@3.1.4 # TODO: remove on/after 2026-07-26, when it clears minimumReleaseAge on its own
+
+auditConfig:
+  ignoreGhsas:
+    # GHSA-qwww-vcr4-c8h2 (react-router RSC-mode CSRF): only affects React Router's
+    # RSC / framework mode, where a server executes router actions. Both the explorer
+    # and the desktop wallet use react-router purely declaratively (BrowserRouter /
+    # HashRouter + Routes/Route, no loaders/actions/server), so the vuln is not
+    # reachable. The only patched release is react-router 8.3.0, a major bump that
+    # removes react-router-dom and requires Node >=22.22.0 (repo is on 22.14.0).
+    # TODO: drop this once we migrate the explorer + desktop wallet to react-router v8 (see #1703).
+    - GHSA-qwww-vcr4-c8h2
 
 patchedDependencies:
   '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch # TODO: remove after bumping @expo/cli past 55.0.32 (fixes `expo run:ios --device` "Cannot convert object to primitive value"; fixed upstream, see expo/expo#46114)
@@ -38,7 +49,7 @@ overrides:
   'prettier@>=3': '=3.2.4'
   'ws@>=8.0.0 <8.21.0': '=8.21.0'
   'file-type@>=13.0.0 <21.3.2': '=21.3.2'
-  'postcss@<8.5.10': '=8.5.10'
+  'postcss@<8.5.18': '=8.5.19'
   'fast-xml-parser@<5.7.0': '=5.7.0'
   'uuid@<14.0.0': '>=14.0.0'
   'js-yaml@<4.3.0': '=4.3.0'
