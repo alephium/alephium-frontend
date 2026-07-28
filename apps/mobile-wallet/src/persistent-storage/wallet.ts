@@ -174,6 +174,18 @@ const assignWalletOrdinal = (walletId: string) => {
   storeWithReportableError(walletOrdinalKey(walletId), ordinal)
 }
 
+// Must be called before generateAndStoreWallet, which bumps the creation counter.
+export const getDefaultWalletName = (method: 'create' | 'import'): string => {
+  const isFirstWallet = !walletListExists()
+  const nextOrdinal = getNextWalletOrdinal()
+
+  if (method === 'import') {
+    return isFirstWallet ? i18n.t('Imported Wallet') : i18n.t('Imported Wallet {{ number }}', { number: nextOrdinal })
+  }
+
+  return isFirstWallet ? i18n.t('Main Wallet') : i18n.t('Wallet {{ number }}', { number: nextOrdinal })
+}
+
 export const getIsNewWallet = (walletId: string): boolean | undefined => storage.getBoolean(isNewWalletKey(walletId))
 
 export const storeIsNewWallet = (walletId: string, isNew: boolean) =>

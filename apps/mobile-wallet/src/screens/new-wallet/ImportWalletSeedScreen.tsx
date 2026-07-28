@@ -144,7 +144,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       keyboardShouldPersistTaps="always"
       contentPaddingTop
       screenTitle={t('Secret phrase')}
-      screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
+      screenIntro={t('Enter the 24 words of your secret recovery phrase one-by-one.')}
       customBottomRender={() => (
         <BottomPart>
           <View

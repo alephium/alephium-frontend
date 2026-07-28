@@ -15,8 +15,8 @@ import RoundedCard from '~/components/RoundedCard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { storedWalletExists } from '~/persistent-storage/wallet'
-import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
+import { getDefaultWalletName, storedWalletExists } from '~/persistent-storage/wallet'
+import { methodSelected, newWalletNameEntered, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -75,7 +75,13 @@ const LandingScreen = ({ navigation, route, ...props }: LandingScreenProps) => {
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
-    navigation.navigate('NewWalletIntroScreen')
+
+    if (method === 'import') {
+      dispatch(newWalletNameEntered(getDefaultWalletName('import')))
+      navigation.navigate('SelectImportMethodScreen')
+    } else {
+      navigation.navigate('CreatingWalletScreen')
+    }
 
     sendAnalytics({ event: AnalyticsEvent.ONBOARDING_STARTED, props: { method } })
   }

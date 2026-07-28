@@ -8,6 +8,7 @@ import {
 } from '~/persistent-storage/legacyWallet'
 import { runMultiWalletMigrationIfNeeded } from '~/persistent-storage/migrations/multiWalletMigration'
 import { storage } from '~/persistent-storage/storage'
+import { getDefaultWalletName } from '~/persistent-storage/wallet'
 import { getWalletList } from '~/persistent-storage/walletList'
 import { walletMnemonicKey } from '~/persistent-storage/walletMnemonic'
 
@@ -126,6 +127,14 @@ describe('Multi-wallet migration', () => {
       expect(walletList[0].id).toBe(testWalletId)
       expect(walletList[0].name).toBe(testWalletName)
       expect(walletList[0].type).toBe('seed')
+    })
+
+    it('leaves the creation counter unset, so the next default wallet name skips past the migrated wallet', async () => {
+      await runMultiWalletMigrationIfNeeded()
+
+      expect(storage.getNumber('wallet-creation-counter')).toBeUndefined()
+      expect(getDefaultWalletName('create')).toBe('Wallet 2')
+      expect(getDefaultWalletName('import')).toBe('Imported Wallet 2')
     })
 
     it('should set migration version flag', async () => {
