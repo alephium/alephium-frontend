@@ -1,4 +1,4 @@
-import { AnalyticsEvent } from '@alephium/shared'
+import { AnalyticsEvent, BuyOrigin } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
 
@@ -8,7 +8,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface ActionCardBuyButtonProps {
-  origin: 'dashboard' | 'address_details' | 'token_details'
+  origin: BuyOrigin
   receiveAddressHash: AddressHash
 }
 
@@ -19,7 +19,7 @@ const ActionCardBuyButton = ({ receiveAddressHash, origin }: ActionCardBuyButton
   const handleBuyPress = () => {
     sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_BUY, props: { origin, provider: 'onramper' } })
 
-    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash } }))
+    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash, origin } }))
   }
 
   return <ActionCardButton title={t('Buy')} onPress={handleBuyPress} iconProps={{ name: 'card-outline' }} />
