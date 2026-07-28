@@ -76,6 +76,18 @@ type ErrorAnalyticsParams = {
 
 type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
 
+// Events a user legitimately repeats faster than the 5s throttle window, where a second identical
+// capture is a real second action rather than a double-fire. Opening two transactions in a row, or
+// pressing browser back twice, is the exact behaviour these events exist to measure, and they carry
+// no distinguishing props to keep the throttle key apart.
+const REPEATABLE_EVENTS = new Set<AnalyticsEventName>([
+  AnalyticsEvent.TRANSACTION_DETAILS_OPENED,
+  AnalyticsEvent.NFT_DETAILS_OPENED,
+  AnalyticsEvent.NFT_GRID_OPENED,
+  AnalyticsEvent.DAPP_BROWSER_ACTION_PRESSED,
+  AnalyticsEvent.QUICK_ACTION_PRESSED
+])
+
 // Is there a better way to get the types of the arguments of the capture function of the abstract PostHogCore class
 // from posthog-react-native/lib/posthog-core/src?
 export const sendAnalytics = (params: AnalyticsParams) => {
@@ -98,14 +110,27 @@ export const sendAnalytics = (params: AnalyticsParams) => {
   } else {
     const { event, options } = params
     const props = normalizeAnalyticsProps(params.props)
+    const capture = () => posthog.capture(event, props, options)
 
-    throttleEvent(() => posthog.capture(event, props, options), event, props)
+    if (REPEATABLE_EVENTS.has(event)) capture()
+    else throttleEvent(capture, event, props)
   }
 }
 
 // Only the route name is ever sent. Route params carry address hashes, token ids and dApp URLs, so
 // passing them through would put wallet-identifying data on every screen view.
-export const captureScreen = (routeName: string) => posthog.screen(routeName)
+//
+// De-duplicated here rather than by `throttleEvent`, which only sees `sendAnalytics`: navigation
+// state changes for reasons that leave the focused route unchanged, and this is the app's
+// highest-frequency event.
+let lastCapturedRouteName: string | undefined
+
+export const captureScreen = (routeName: string) => {
+  if (routeName === lastCapturedRouteName) return
+
+  lastCapturedRouteName = routeName
+  posthog.screen(routeName)
+}
 
 export const Analytics = ({ children }: { children: ReactNode }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
