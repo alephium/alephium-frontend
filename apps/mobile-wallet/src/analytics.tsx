@@ -45,7 +45,12 @@ const posthog = new PostHog(posthogKey, {
     if (typeof sanitized.$os_name === 'string' && sanitized.$os_name.includes('/')) sanitized.$os_name = 'Android'
     return sanitized
   },
-  captureAppLifecycleEvents: false
+  // Lifecycle events are emitted by the SDK from construction, which happens at module load, before
+  // the effect below has read the stored analytics setting. Without `defaultOptIn: false` the SDK is
+  // opted in for that window and an install that has never been through the settings load would
+  // capture `Application Installed` / `Application Opened` regardless.
+  defaultOptIn: false,
+  captureAppLifecycleEvents: true
 })
 
 type EventAnalyticsParams = {
@@ -91,6 +96,10 @@ export const sendAnalytics = (params: AnalyticsParams) => {
     throttleEvent(() => posthog.capture(event, props, options), event, props)
   }
 }
+
+// Only the route name is ever sent. Route params carry address hashes, token ids and dApp URLs, so
+// passing them through would put wallet-identifying data on every screen view.
+export const captureScreen = (routeName: string) => posthog.screen(routeName)
 
 export const Analytics = ({ children }: { children: ReactNode }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)

@@ -9,7 +9,7 @@ import { Modal, Platform, Pressable } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useTheme } from 'styled-components/native'
 
-import { Analytics, sendAnalytics } from '~/analytics'
+import { Analytics, captureScreen, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContextProvider'
 import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
@@ -85,9 +85,22 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
     }
   }
 
+  // `getCurrentRoute` resolves through nested navigators, so a tab or a send-flow step reports itself
+  // rather than the root route that contains it.
+  const handleNavigationStateChange = () => {
+    const routeName = rootStackNavigationRef.getCurrentRoute()?.name
+
+    if (routeName) captureScreen(routeName)
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
+      <NavigationContainer
+        ref={rootStackNavigationRef}
+        theme={themeNavigator}
+        onReady={handleNavigationStateChange}
+        onStateChange={handleNavigationStateChange}
+      >
         <WalletConnectContextProvider>
           <BottomSheetModalProvider>
             <Analytics>
