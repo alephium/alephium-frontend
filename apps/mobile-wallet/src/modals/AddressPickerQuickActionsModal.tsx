@@ -12,6 +12,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { useModalContext } from '~/features/modals/ModalContext'
+import { useAppDispatch } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressPickerQuickActionsModalProps {
@@ -22,10 +23,11 @@ interface AddressPickerQuickActionsModalProps {
 const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps>(({ addressHash, onSelectAddress }) => {
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const handleOpenAddressDetailsModal = () => {
     sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_details' } })
-    openModal({ name: 'AddressDetailsModal', props: { addressHash } })
+    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
     dismissModal()
   }
 
