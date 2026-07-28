@@ -10,6 +10,7 @@ import {
   getIsGettingStartedActive,
   storeIsGettingStartedActive
 } from '~/persistent-storage/wallet'
+import { isGettingStartedChecklistVisible } from '~/screens/Dashboard/gettingStartedChecklistVisibility'
 
 export interface GettingStartedChecklistItem {
   key: GettingStartedItem
@@ -29,7 +30,7 @@ const useGettingStartedChecklist = (): GettingStartedChecklist => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const usesBiometrics = useAppSelector((s) => s.settings.usesBiometrics)
   const isWatchOnly = useIsWalletWatchOnly()
-  const { data: tokenBalances } = useFetchWalletBalances()
+  const { data: tokenBalances, isLoading: areBalancesLoading } = useFetchWalletBalances()
 
   const [isActive, setIsActive] = useState(() => (walletId ? getIsGettingStartedActive(walletId) : false))
   const wasVisible = useRef(false)
@@ -66,7 +67,7 @@ const useGettingStartedChecklist = (): GettingStartedChecklist => {
     storeIsGettingStartedActive(walletId, false)
   }, [walletId])
 
-  const isVisible = isActive && !isWatchOnly && !allComplete
+  const isVisible = isGettingStartedChecklistVisible({ isActive, isWatchOnly, allComplete, areBalancesLoading })
 
   useEffect(() => {
     if (isVisible) wasVisible.current = true
