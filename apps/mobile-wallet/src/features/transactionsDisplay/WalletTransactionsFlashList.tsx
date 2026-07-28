@@ -1,4 +1,4 @@
-import { TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
+import { AnalyticsEvent, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
 import { selectAllPendingSentTransactions, selectAllSentTransactions } from '@alephium/shared/store'
 import { isAddressPresentInInputsOutputs } from '@alephium/shared/transactions'
 import { AddressHash } from '@alephium/shared/types'
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import RefreshSpinner from '~/components/RefreshSpinner'
@@ -68,8 +69,10 @@ const WalletTransactionsFlashList = forwardRef(
       [displayedConfirmedTransactions, sentTransactions, forContactAddress]
     )
 
-    const openTransactionModal = (txHash: string) =>
+    const openTransactionModal = (txHash: string) => {
       dispatch(openModal({ name: 'TransactionModal', props: { txHash } }))
+      sendAnalytics({ event: AnalyticsEvent.TRANSACTION_DETAILS_OPENED })
+    }
 
     return (
       <FlashList

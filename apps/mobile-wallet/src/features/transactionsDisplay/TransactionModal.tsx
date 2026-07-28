@@ -1,3 +1,4 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared/transactions'
 import { AddressHash, ExecuteScriptTx } from '@alephium/shared/types'
 import {
@@ -12,6 +13,7 @@ import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
@@ -231,7 +233,10 @@ export const TransactionAmounts = ({ tx, referenceAddress, isLast, skipCaching }
   const isPending = infoType === 'pending'
   const isFtLastRow = isLast && nfts.length === 0 && nsts.length === 0
 
-  const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData: nfts } }))
+  const openNftGridModal = () => {
+    dispatch(openModal({ name: 'NftGridModal', props: { nftsData: nfts } }))
+    sendAnalytics({ event: AnalyticsEvent.NFT_GRID_OPENED })
+  }
 
   return (
     <>
