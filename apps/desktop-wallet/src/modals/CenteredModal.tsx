@@ -30,7 +30,7 @@ export interface CenteredModalProps extends ModalContainerProps {
   Icon?: (() => ReactNode) | LucideIcon
 }
 
-const CenteredModal: FC<CenteredModalProps> = ({
+const CenteredModal = ({
   id,
   title,
   subtitle,
@@ -47,7 +47,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   disableBack,
   Icon,
   ...rest
-}) => {
+}: CenteredModalProps) => {
   const { t } = useTranslation()
   const elRef = useFocusOnMount<HTMLSpanElement>(skipFocusOnMount)
   const dispatch = useAppDispatch()

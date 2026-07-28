@@ -6,9 +6,10 @@ interface InputsSectionProps {
   subtitle?: string
   HeaderActions?: ReactNode
   className?: string
+  children?: ReactNode
 }
 
-const InputsSection: FC<InputsSectionProps> = ({ title, className, HeaderActions, subtitle, children }) => (
+const InputsSection = ({ title, className, HeaderActions, subtitle, children }: InputsSectionProps) => (
   <InputsSectionStyled className={className}>
     {(title || HeaderActions) && (
       <Header>

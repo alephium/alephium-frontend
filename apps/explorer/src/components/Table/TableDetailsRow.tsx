@@ -1,23 +1,25 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { createContext, useContext } from 'react'
+import { createContext, ReactNode, useContext } from 'react'
 import { RiArrowDownSLine } from 'react-icons/ri'
 import styled, { css } from 'styled-components'
 
 interface DetailsRowProps {
   openCondition: boolean
+  children?: ReactNode
 }
 
 interface AnimatedCellProps {
   colSpan?: number
   alignItems?: 'left' | 'right'
   className?: string
+  children?: ReactNode
 }
 
 interface DetailToggleProps {
   isOpen: boolean
 }
 
-export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
+export const TableDetailsRow = ({ children, openCondition }: DetailsRowProps) => (
   <OpenConditionContext.Provider value={openCondition}>
     <RowContainer className="details" open={openCondition}>
       {children}
@@ -25,7 +27,7 @@ export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }
   </OpenConditionContext.Provider>
 )
 
-export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSpan, alignItems = 'left' }) => {
+export const AnimatedCell = ({ children, className, colSpan, alignItems = 'left' }: AnimatedCellProps) => {
   const condition = useContext(OpenConditionContext)
 
   return (

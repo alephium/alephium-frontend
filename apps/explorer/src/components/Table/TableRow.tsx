@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Children } from 'react'
+import { Children, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -12,6 +12,7 @@ interface RowProps {
   onClick?: React.MouseEventHandler<HTMLTableRowElement>
   linkTo?: string
   className?: string
+  children?: ReactNode
 }
 
 const newRowFlash = keyframes`
@@ -28,7 +29,7 @@ const rowVariants = {
   shown: { opacity: 1 }
 }
 
-const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
+const TableRow = ({ children, onClick, linkTo, className }: RowProps) => (
   <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onMouseUp={onClick} className={className}>
     {Children.map(children, (c) =>
       // Let's not use the Children API anymore :)

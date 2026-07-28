@@ -1,4 +1,5 @@
 import { colord } from 'colord'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { HasTooltip } from '@/components/Tooltip'
@@ -14,9 +15,10 @@ interface BadgeProps {
   compact?: boolean
   clickable?: boolean
   className?: string
+  children?: ReactNode
 }
 
-const Badge: FC<HasTooltip<BadgeProps>> = ({ className, children, truncate, tooltip }) => (
+const Badge = ({ className, children, truncate, tooltip }: HasTooltip<BadgeProps>) => (
   <div className={className} data-tooltip-id="default" data-tooltip-content={tooltip}>
     {truncate ? <Truncate>{children}</Truncate> : children}
   </div>

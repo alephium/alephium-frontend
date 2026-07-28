@@ -7,7 +7,7 @@ import { Expirer } from '@walletconnect/core'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SessionTypes, SignClientTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -67,7 +67,7 @@ const initialContext: WalletConnectContextProps = {
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
 
-export const WalletConnectContextProvider: FC = ({ children }) => {
+export const WalletConnectContextProvider = ({ children }: { children?: ReactNode }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()

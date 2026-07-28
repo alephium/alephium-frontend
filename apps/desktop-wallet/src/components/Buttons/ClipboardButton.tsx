@@ -1,5 +1,5 @@
 import { Check, Copy } from 'lucide-react'
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { ReactNode, SyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,16 +12,17 @@ interface ClipboardButtonProps {
   tooltip?: string
   className?: string
   showSnackbarOnCopied?: boolean
+  children?: ReactNode
 }
 
-const ClipboardButton: FC<ClipboardButtonProps> = ({
+const ClipboardButton = ({
   tooltip,
   textToCopy,
   children,
   className,
   disableA11y = false,
   showSnackbarOnCopied = true
-}) => {
+}: ClipboardButtonProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const [hasBeenCopied, setHasBeenCopied] = useState(false)

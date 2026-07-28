@@ -1,5 +1,6 @@
 import { colord } from 'colord'
 import { LucideIcon } from 'lucide-react'
+import { ReactNode } from 'react'
 import styled, { css, DefaultTheme, useTheme } from 'styled-components'
 
 type InfoBoxImportance = 'default' | 'accent' | 'alert' | 'warning'
@@ -17,9 +18,10 @@ export interface InfoBoxProps {
   contrast?: boolean
   align?: 'left' | 'center'
   className?: string
+  children?: ReactNode
 }
 
-const InfoBox: FC<InfoBoxProps> = ({
+const InfoBox = ({
   Icon,
   text,
   label,
@@ -32,7 +34,7 @@ const InfoBox: FC<InfoBoxProps> = ({
   children,
   contrast,
   align = 'center'
-}) => {
+}: InfoBoxProps) => {
   const theme = useTheme()
 
   return (

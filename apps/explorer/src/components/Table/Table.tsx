@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { ReactNode, useRef } from 'react'
 import styled, { css } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
@@ -17,6 +17,7 @@ interface TableProps {
   isLoading?: boolean
   minHeight?: number
   className?: string
+  children?: ReactNode
 }
 
 export interface TDStyle {
@@ -24,7 +25,7 @@ export interface TDStyle {
   style: ReturnType<typeof css>
 }
 
-const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => {
+const Table = ({ children, isLoading, className, ...props }: TableProps) => {
   const tableRef = useRef<HTMLDivElement>(null)
 
   return !isLoading ? (

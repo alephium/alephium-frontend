@@ -10,7 +10,7 @@ interface LanguageSwitchProps {
   className?: string
 }
 
-const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
+const LanguageSwitch = ({ className }: LanguageSwitchProps) => {
   const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en')
 
   useEffect(() => {
