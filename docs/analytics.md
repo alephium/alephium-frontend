@@ -87,6 +87,22 @@ Two things cannot be controlled from the code, and it is worth knowing which:
 - **Historical data.** PostHog events are immutable. Nothing can be scrubbed after the fact, so a
   property that should never have been sent stays until retention expires.
 
+## Known discontinuities (do not read these as signal)
+
+A change that shifts what a value means, rather than its shape, puts a step in the data at the
+release boundary and fails nowhere. Record one here when you ship it, so whoever reads the chart
+months later does not diagnose a correction as a bug. The migration doc has an earlier example in
+[Expect a one-time `Wallet Funded` spike](./analytics-events-migration.md#expect-a-one-time-wallet-funded-spike-and-do-not-read-it-as-signal).
+
+- **`wallet_ordinal`, mobile, 2026-07 onboarding-simplification release.** Wallets created before
+  the multi-wallet migration are in the wallet list but were never assigned an ordinal, so the
+  creation counter restarted at 1 for the next wallet a migrated user created. `getNextWalletOrdinal`
+  ([`apps/mobile-wallet/src/persistent-storage/wallet.ts`](../apps/mobile-wallet/src/persistent-storage/wallet.ts))
+  now floors it at the wallet-list length, so a migrated user's second wallet reports `2` instead of
+  `1`. Ordinals already on disk are never rewritten, so this affects newly created wallets only:
+  expect `wallet_ordinal: 1` to fall and `2+` to rise, in the same release as the onboarding funnel
+  change. Do not attribute either shift to the funnel change.
+
 ## Verifying a change (required)
 
 Typecheck and tests prove **shape**, never **meaning**. A wrong event name, a camelCase key, or a value
