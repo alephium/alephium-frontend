@@ -205,7 +205,10 @@ export const normalizeAnalyticsProps = (props?: AnalyticsProps): AnalyticsProps 
   props?.dapp_host ? { ...props, dapp_host: getDappHost(props.dapp_host) } : props
 
 export const throttleEvent = (callback: () => void, event: string, props?: AnalyticsProps) => {
-  const eventKey = `${event}:${props ? Object.entries(props).map(([key, value]) => `${key}:${value}`) : ''}`
+  // Serialise rather than interpolate: `${value}` renders every object as "[object Object]", which
+  // collapsed all `User identified` captures onto one key regardless of their `$set` payload, so a
+  // capture carrying boot defaults suppressed the corrected one that followed it milliseconds later.
+  const eventKey = `${event}:${props ? JSON.stringify(props) : ''}`
 
   if (!eventThrottleStatus[eventKey]) {
     eventThrottleStatus[eventKey] = true
