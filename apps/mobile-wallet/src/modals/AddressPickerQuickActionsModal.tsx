@@ -1,9 +1,11 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -22,11 +24,13 @@ const AddressPickerQuickActionsModal = memo<AddressPickerQuickActionsModalProps>
   const { t } = useTranslation()
 
   const handleOpenAddressDetailsModal = () => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_details' } })
     openModal({ name: 'AddressDetailsModal', props: { addressHash } })
     dismissModal()
   }
 
   const handleSelectAddress = (e: GestureResponderEvent) => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_select' } })
     onSelectAddress(e)
     dismissModal()
   }
