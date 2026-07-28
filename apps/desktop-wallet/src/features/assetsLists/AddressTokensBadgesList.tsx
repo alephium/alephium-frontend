@@ -1,19 +1,29 @@
 import { AddressHash } from '@alephium/shared/types'
-import { useFetchAddressTokensByType } from '@alephium/shared-react'
+import {
+  addressTokensSearchStringsQuery,
+  useFetchAddressTokensByType,
+  useIsNodeOnline,
+  useNetworkId
+} from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
+import { MIN_SEARCH_TERM_LENGTH } from '@/features/addressFiltering/addressFilteringConstants'
+import { getDisplayedAndHiddenTokenIds } from '@/features/assetsLists/getDisplayedAndHiddenTokenIds'
 
 interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
   addressHash: AddressHash
   maxDisplayedAssets?: number
+  searchTerm?: string
 }
 
 const AddressTokensBadgesList = ({
   addressHash,
   maxDisplayedAssets = 8,
+  searchTerm = '',
   className,
   ...badgeProps
 }: AddressTokensBadgesListProps) => {
@@ -21,25 +31,34 @@ const AddressTokensBadgesList = ({
     data: { listedFts, unlistedFtIds, nftIds, nstIds },
     isLoading: isLoadingTokens
   } = useFetchAddressTokensByType(addressHash)
+  const networkId = useNetworkId()
+  const isNodeOnline = useIsNodeOnline()
 
-  const { displayedStandardTokenIds, hiddenStandardTokensIds } = useMemo(() => {
-    const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds]
+  const { data: tokensSearchStrings } = useQuery({
+    ...addressTokensSearchStringsQuery({ addressHash, networkId, isNodeOnline }),
+    enabled: searchTerm.length >= MIN_SEARCH_TERM_LENGTH
+  })
 
-    return {
-      displayedStandardTokenIds: standardTokens.slice(0, maxDisplayedAssets),
-      hiddenStandardTokensIds: standardTokens.slice(maxDisplayedAssets)
-    }
-  }, [listedFts, maxDisplayedAssets, nftIds, unlistedFtIds])
+  const { displayedTokenIds, hiddenTokenIds } = useMemo(
+    () =>
+      getDisplayedAndHiddenTokenIds({
+        tokenIds: [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds],
+        maxDisplayedTokens: maxDisplayedAssets,
+        searchTerm,
+        tokensSearchStrings
+      }),
+    [listedFts, maxDisplayedAssets, nftIds, searchTerm, tokensSearchStrings, unlistedFtIds]
+  )
 
   if (isLoadingTokens) return <SkeletonLoader height="33.5px" />
 
-  const nbOfAdditionalTokens = hiddenStandardTokensIds.length + nstIds.length
+  const nbOfAdditionalTokens = hiddenTokenIds.length + nstIds.length
 
-  if (displayedStandardTokenIds.length === 0 && nbOfAdditionalTokens === 0) return null
+  if (displayedTokenIds.length === 0 && nbOfAdditionalTokens === 0) return null
 
   return (
     <TokensBadgesListStyled className={className}>
-      {displayedStandardTokenIds.map((tokenId) => (
+      {displayedTokenIds.map((tokenId) => (
         <TokenBadge key={tokenId} tokenId={tokenId} {...badgeProps} />
       ))}
 
