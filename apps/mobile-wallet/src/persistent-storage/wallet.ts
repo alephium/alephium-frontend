@@ -42,6 +42,9 @@ export const generateAndStoreWallet = async (
   const walletId = nanoid()
 
   try {
+    // generateRandomMnemonic throws if the keyring still holds a mnemonic, which a prior wallet switch leaves loaded.
+    keyring.clear()
+
     const mnemonicUint8Array = mnemonicToImport
       ? keyring.importMnemonicString(mnemonicToImport)
       : keyring.generateRandomMnemonic()

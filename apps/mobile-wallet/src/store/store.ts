@@ -16,6 +16,7 @@ import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
 import stakingSlice from '~/features/staking/stakingSlice'
+import swapSlice, { swapListenerMiddleware } from '~/features/swap/swapSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import addressSettingsListenerMiddleware from '~/store/addresses/addressSettingsListenerMiddleware'
 import contactsSlice from '~/store/addresses/contactsSlice'
@@ -42,6 +43,7 @@ export const store = configureStore({
     [authorizedConnectionsSlice.name]: authorizedConnectionsSlice.reducer,
     [dAppMessagesQueueSlice.name]: dAppMessagesQueueSlice.reducer,
     [stakingSlice.name]: stakingSlice.reducer,
+    [swapSlice.name]: swapSlice.reducer,
     [dAppBrowserSlice.name]: dAppBrowserSlice.reducer
   },
   devTools: false,
@@ -54,6 +56,7 @@ export const store = configureStore({
       .prepend(hiddenTokensListenerMiddleware.middleware)
       .prepend(authorizedConnectionsListenerMiddleware.middleware)
       .prepend(addressSettingsListenerMiddleware.middleware)
+      .prepend(swapListenerMiddleware.middleware)
     return middlewares
   }
 })

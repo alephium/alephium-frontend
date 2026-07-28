@@ -7,12 +7,13 @@ export const useFetchAddressTransactionsCount = (addressStr: string) => {
   const networkId = useNetworkId()
   const isExplorerOnline = useIsExplorerOnline()
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     addressTransactionsCountQuery({ addressHash: addressStr, networkId, isExplorerOnline })
   )
 
   return {
     data,
-    isLoading
+    isLoading,
+    isError
   }
 }

@@ -39,6 +39,8 @@ declare module 'styled-components' {
       alert: string
       warning: string
       valid: string
+      send: string
+      receive: string
       highlight: string
       highlightGradient: string
     }

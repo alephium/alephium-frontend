@@ -26,10 +26,12 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 export const formatRelativeTime = (
   timestamp: number | Date,
   locale?: string,
-  style: 'long' | 'short' | 'narrow' = 'long'
+  style: 'long' | 'short' | 'narrow' = 'long',
+  options?: { neverFuture?: boolean }
 ): string => {
   const ms = typeof timestamp === 'number' ? timestamp : timestamp.getTime()
-  const diffMs = ms - Date.now()
+  const rawDiffMs = ms - Date.now()
+  const diffMs = options?.neverFuture ? Math.min(rawDiffMs, 0) : rawDiffMs
   const absDiffMs = Math.abs(diffMs)
 
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style })

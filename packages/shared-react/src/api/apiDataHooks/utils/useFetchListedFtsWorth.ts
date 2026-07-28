@@ -1,5 +1,5 @@
 import { ApiBalances, ListedFT } from '@alephium/shared/types'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useFetchTokenPrices } from '../../../api/apiDataHooks/market/useFetchTokenPrices'
 import { getTokenWorth } from '../../../api/apiDataHooks/utils/getTokenWorth'
@@ -13,16 +13,28 @@ export const useFetchListedFtsWorth = (listedFts: (ListedFT & ApiBalances)[]) =>
     [tokenPrices, listedFts]
   )
 
+  const isWorthIncomplete = isLoadingTokenPrices || (!error && hasMissingTokenPrices(listedFts, tokenPrices))
+
+  // Once a fully-priced worth has been shown, keep displaying it and update it in place instead of dropping back to the
+  // skeleton while price coverage is momentarily incomplete - e.g. right after a wallet switch, where the persisted
+  // cache already holds a value to show. The skeleton is only for the first load, before any worth exists.
+  const [settledWorth, setSettledWorth] = useState<number>()
+
+  useEffect(() => {
+    if (!isWorthIncomplete) setSettledWorth(worth)
+  }, [isWorthIncomplete, worth])
+
+  const hasSettledWorth = settledWorth !== undefined
+
   return {
-    data: worth,
+    data: isWorthIncomplete && hasSettledWorth ? settledWorth : worth,
     error,
-    isLoading: isLoadingTokenPrices || (!error && hasMissingTokenPrices(listedFts, tokenPrices))
+    isLoading: isWorthIncomplete && !hasSettledWorth
   }
 }
 
-// The tokenPrices query key omits the symbols on purpose, so while token discovery is still growing the symbol set the
-// cached price array can be a settled response for an older, smaller set. Computing worth from it flashes a wrong
-// value, so incomplete coverage must count as loading. An entry with a 0 or null price still counts as covered since
-// the API returns one entry per requested symbol.
+// A held token whose symbol has no entry in the cached price array. The tokenPrices query key omits the symbols on
+// purpose, so the cached array can be a settled response for an older, smaller symbol set. An entry with a 0 or null
+// price still counts as covered since the API returns one entry per requested symbol.
 export const hasMissingTokenPrices = (listedFts: Pick<ListedFT, 'symbol'>[], tokenPrices?: TokenPrice[]) =>
   listedFts.some(({ symbol }) => !tokenPrices?.some((tokenPrice) => tokenPrice.symbol === symbol))

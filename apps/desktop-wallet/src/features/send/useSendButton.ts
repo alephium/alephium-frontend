@@ -1,6 +1,6 @@
 import { AnalyticsEvent, SendOrigin } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
-import { AddressHash, TokenId } from '@alephium/shared/types'
+import { AddressHash, AssetAmount, TokenId } from '@alephium/shared/types'
 import {
   useCurrentlyOnlineNetworkId,
   useFetchAddressBalances,
@@ -16,10 +16,17 @@ interface UseSendButtonProps {
   fromAddressHash: AddressHash
   toAddressHash?: AddressHash
   tokenId?: TokenId
+  assetAmounts?: AssetAmount[]
   analyticsOrigin: SendOrigin
 }
 
-const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigin }: UseSendButtonProps) => {
+const useSendButton = ({
+  fromAddressHash,
+  toAddressHash,
+  tokenId,
+  assetAmounts,
+  analyticsOrigin
+}: UseSendButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
@@ -47,7 +54,7 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
     dispatch(
       openModal({
         name: 'SendModal',
-        props: { fromAddress, toAddress: toAddressHash, tokenId: sendToken, origin: analyticsOrigin }
+        props: { fromAddress, toAddress: toAddressHash, tokenId: sendToken, assetAmounts, origin: analyticsOrigin }
       })
     )
     sendAnalytics({ event: AnalyticsEvent.SEND_BUTTON_CLICKED, props: { origin: analyticsOrigin } })

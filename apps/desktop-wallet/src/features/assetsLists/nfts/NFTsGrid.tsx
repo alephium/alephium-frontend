@@ -13,6 +13,7 @@ import Spinner from '@/components/Spinner'
 import usePaginatedNFTs from '@/features/assetsLists/nfts/usePaginatedNfts'
 import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import OfflineMessage from '@/features/offline/OfflineMessage'
+import { useAppSelector } from '@/hooks/redux'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
@@ -21,11 +22,14 @@ export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
     data: { nftIds },
     isLoading
   } = useFetchAddressTokensByType(addressHash)
+  const hiddenTokenIds = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)
+
+  const visibleNftIds = nftIds.filter((nftId) => !hiddenTokenIds.includes(nftId))
 
   return (
     <NFTsGrid
       columns={4}
-      nftIds={nftIds}
+      nftIds={visibleNftIds}
       isLoading={isLoading}
       placeholderText={t("This address doesn't have any NFTs yet.")}
     />

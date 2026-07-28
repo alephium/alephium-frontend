@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { useFetchWalletTokensByType } from '../../../api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '../../../api/queries/priceQueries'
@@ -15,7 +15,9 @@ export const useFetchTokenPrices = () => {
   const {
     data,
     isLoading: isLoadingTokenPrices,
-    error
+    isFetching,
+    error,
+    refetch
   } = useQuery(
     tokensPriceQuery({
       symbols,
@@ -24,6 +26,18 @@ export const useFetchTokenPrices = () => {
       skip: isLoadingFtSymbols
     })
   )
+
+  // tokensPriceQuery keys on (currency, networkId) only, so switching to a wallet that holds different tokens changes
+  // the requested symbols without changing the key and triggers no refetch. Force one whenever the cached prices don't
+  // cover the current symbols, otherwise the worth skeleton hangs until the next refetch interval.
+  const hasUncoveredSymbols =
+    !!data && symbols.some((symbol) => !data.some((tokenPrice) => tokenPrice.symbol === symbol))
+
+  useEffect(() => {
+    if (!isLoadingFtSymbols && !isFetching && !error && hasUncoveredSymbols) {
+      refetch()
+    }
+  }, [error, hasUncoveredSymbols, isFetching, isLoadingFtSymbols, refetch])
 
   return {
     data,

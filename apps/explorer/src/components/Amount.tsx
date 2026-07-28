@@ -62,7 +62,15 @@ const Amount = ({
     }
 
     if (value !== undefined) {
-      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, smartRounding })
+      amount = getAmount({
+        value,
+        isFiat,
+        decimals,
+        nbOfDecimalsToShow,
+        fullPrecision,
+        smartRounding,
+        useSubscriptNotation: true
+      })
 
       if (fadeDecimals && MAGNITUDE_SYMBOL.some((char) => amount.endsWith(char))) {
         quantitySymbol = amount.slice(-1)
@@ -85,31 +93,31 @@ const Amount = ({
       </>
     )
 
-  // Process subscript notation for faded decimals
-  let formattedAmount: React.ReactNode = fractionalPart ? `${integralPart}.${fractionalPart}` : integralPart
-  if (fadeDecimals) {
-    const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
-    if (subscriptMatch) {
-      const subscript = subscriptMatch[1]
-      const [preSubscript, postSubscript] = fractionalPart.split(subscript)
-      formattedAmount = (
-        <>
-          <span>{integralPart}</span>
-          <Decimals>.{preSubscript}</Decimals>
-          <Subscript>{subscript}</Subscript>
-          <span>{postSubscript}</span>
-          {quantitySymbol && <span>{quantitySymbol}</span>}
-        </>
-      )
-    } else {
-      formattedAmount = (
-        <>
-          <span>{integralPart}</span>
-          {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-          {quantitySymbol && <span>{quantitySymbol}</span>}
-        </>
-      )
-    }
+  const subscriptMatch = fractionalPart?.match(/([₀-₉]+)/)
+
+  let formattedAmount: React.ReactNode
+  if (subscriptMatch) {
+    const subscript = subscriptMatch[1]
+    const [preSubscript, postSubscript] = fractionalPart.split(subscript)
+    formattedAmount = (
+      <>
+        <span>{integralPart}</span>
+        <Decimals>.{preSubscript}</Decimals>
+        <Subscript>{subscript}</Subscript>
+        <span>{postSubscript}</span>
+        {quantitySymbol && <span>{quantitySymbol}</span>}
+      </>
+    )
+  } else if (fadeDecimals) {
+    formattedAmount = (
+      <>
+        <span>{integralPart}</span>
+        {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+        {quantitySymbol && <span>{quantitySymbol}</span>}
+      </>
+    )
+  } else {
+    formattedAmount = fractionalPart ? `${integralPart}.${fractionalPart}` : integralPart
   }
 
   return (
@@ -188,8 +196,8 @@ export default styled(Amount)`
       ? color
       : highlight && value !== undefined
         ? value < 0
-          ? theme.global.alert
-          : theme.global.valid
+          ? theme.global.send
+          : theme.global.receive
         : 'inherit'};
   white-space: nowrap;
   font-weight: 600;

@@ -41,6 +41,8 @@ declare module 'styled-components' {
       complementary: string
       alert: string
       valid: string
+      send: string
+      receive: string
       highlightGradient: string
       highlight: string
     }

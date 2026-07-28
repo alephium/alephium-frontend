@@ -26,7 +26,7 @@ const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggl
   const lowPrecisionTimestamp =
     timeInMs < Date.now() - ONE_DAY_MS
       ? new Intl.DateTimeFormat(i18n.language, SIMPLE_DATE_OPTIONS).format(date)
-      : formatRelativeTime(timeInMs, i18n.language)
+      : formatRelativeTime(timeInMs, i18n.language, 'long', { neverFuture: true })
   const customTimestamp = customFormat ? new Intl.DateTimeFormat(i18n.language, customFormat).format(date) : undefined
 
   return (

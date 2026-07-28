@@ -12,6 +12,7 @@ import { storage } from '~/persistent-storage/storage'
 import {
   activateGettingStartedForExistingWallet,
   deleteWallet,
+  generateAndStoreWallet,
   getIsGettingStartedActive,
   storeIsGettingStartedActive
 } from '~/persistent-storage/wallet'
@@ -289,6 +290,25 @@ describe(activateGettingStartedForExistingWallet, () => {
     activateGettingStartedForExistingWallet(testWalletId, false)
 
     expect(getIsGettingStartedActive(testWalletId)).toBe(true)
+  })
+})
+
+describe(generateAndStoreWallet, () => {
+  afterEach(() => {
+    keyring.clear()
+  })
+
+  // Reproduces the post-deletion bug: deleting a wallet switches to a remaining one, which leaves the keyring holding
+  // that wallet's mnemonic. Creating a new wallet must still succeed instead of throwing "already provided".
+  it('creates a new wallet even when the keyring is already holding a mnemonic', async () => {
+    keyring.importMnemonicString(testWalletMnemonicString)
+    expect(keyring['hdWallet']).not.toBeNull()
+
+    const wallet = await generateAndStoreWallet('New wallet')
+
+    expect(wallet.name).toBe('New wallet')
+    expect(wallet.initialAddress.hash).toBeTruthy()
+    expect(keyring['hdWallet']).toBeNull()
   })
 })
 

@@ -9,6 +9,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useWalletSwitch from '~/hooks/useWalletSwitch'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { showToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 const DeleteWalletRow = () => {
@@ -18,6 +19,7 @@ const DeleteWalletRow = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SettingsScreen', undefined>>()
   const walletList = useAppSelector((s) => s.wallets.list)
   const currentWalletId = useAppSelector((s) => s.wallet.id)
+  const deletedWalletName = useAppSelector((s) => s.wallet.name)
   const { switchWallet } = useWalletSwitch()
 
   const handleDeleteButtonPress = () => {
@@ -25,9 +27,19 @@ const DeleteWalletRow = () => {
       const remainingWallets = walletList.filter((w) => w.id !== currentWalletId)
 
       if (remainingWallets.length > 0) {
-        await switchWallet(remainingWallets[0].id)
+        const nextWallet = remainingWallets[0]
+
+        await switchWallet(nextWallet.id)
+        showToast({
+          text1: t('Wallet "{{ deletedWalletName }}" was deleted, switched to "{{ nextWalletName }}"', {
+            deletedWalletName,
+            nextWalletName: nextWallet.name
+          }),
+          type: 'success'
+        })
       } else {
         resetNavigation(navigation, 'LandingScreen')
+        showToast({ text1: t('Wallet "{{ deletedWalletName }}" was deleted', { deletedWalletName }), type: 'success' })
       }
     }
 

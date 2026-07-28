@@ -12,7 +12,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWithBackdrop'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { Spinner } from '~/features/loader/SpinnerModal'
-import i18n from '~/features/localization/i18n'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/legacyWallet'
 import { ShouldClearPin } from '~/types/misc'
@@ -26,8 +25,6 @@ interface DeprecatedAuthenticationModalProps extends ModalWithBackdropProps, Get
 }
 
 const pinLength = 6
-
-const firstInstructionSet: Instruction[] = [{ text: i18n.t('Please enter your pin'), type: 'primary' }]
 
 const errorInstructionSet: Instruction[] = [
   { text: 'Oops, wrong pin!', type: 'error' },
@@ -44,6 +41,8 @@ const DeprecatedAuthenticationModal = ({
 }: DeprecatedAuthenticationModalProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
+
+  const firstInstructionSet: Instruction[] = [{ text: t('Please enter your pin'), type: 'primary' }]
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [deprecatedEncryptedWallet, setDeprecatedEncryptedWallet] = useState<DeprecatedWalletState>()

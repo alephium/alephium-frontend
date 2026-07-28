@@ -24,7 +24,11 @@ root.render(
   <AnalyticsProvider>
     <StrictMode>
       <Provider store={store}>
-        <Router>
+        {/* useTransitions={false} keeps navigations synchronous. The unlock loader (useWalletLock) hides on the
+            first frame after the wallet route mounts, which only lands after that blocking mount when navigation
+            is synchronous; react-router v7's default startTransition hides it a couple of frames early and flashes
+            the unlock form. */}
+        <Router useTransitions={false}>
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <PersistQueryClientContextProvider createPersister={createTanstackIndexedDBPersister}>

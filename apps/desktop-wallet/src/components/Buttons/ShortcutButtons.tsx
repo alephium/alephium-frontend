@@ -1,6 +1,6 @@
 import { AnalyticsEvent, SendOrigin } from '@alephium/shared'
 import { selectAddressByHash, selectDefaultAddressHash } from '@alephium/shared/store'
-import { AddressHash, TokenId } from '@alephium/shared/types'
+import { AddressHash, AssetAmount, TokenId } from '@alephium/shared/types'
 import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
@@ -71,6 +71,22 @@ export const ShortcutButtonsGroupToken = ({ tokenId, ...buttonProps }: ShortcutB
   )
 }
 
+interface ShortcutButtonsGroupNftProps extends ShortcutButtonBaseProps {
+  nftId: TokenId
+  addressHash: AddressHash
+}
+
+export const ShortcutButtonsGroupNft = ({ nftId, addressHash, ...buttonProps }: ShortcutButtonsGroupNftProps) => (
+  <ButtonsContainer>
+    <SendButton
+      addressHash={addressHash}
+      tokenId={nftId}
+      assetAmounts={[{ id: nftId, amount: BigInt(1) }]}
+      {...buttonProps}
+    />
+  </ButtonsContainer>
+)
+
 interface SettingsButtonProps extends ShortcutButtonBaseProps {
   addressHash?: AddressHash
 }
@@ -121,13 +137,15 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsG
 
 interface SendButtonProps extends ShortcutButtonsGroupAddressProps {
   tokenId?: TokenId
+  assetAmounts?: AssetAmount[]
 }
 
-const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButtonProps) => {
+const SendButton = ({ addressHash, tokenId, assetAmounts, color, analyticsOrigin }: SendButtonProps) => {
   const { t } = useTranslation()
   const { tooltipContent, handleClick, cursor } = useSendButton({
     fromAddressHash: addressHash,
     tokenId,
+    assetAmounts,
     analyticsOrigin
   })
 

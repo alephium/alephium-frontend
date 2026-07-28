@@ -1,29 +1,30 @@
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { IconBaseProps } from 'react-icons'
 import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
-import i18n from '@/features/localization/i18n'
 import { OnOff } from '@/types/generics'
 
 interface TimestampExpandButtonProps {
   className?: string
 }
 
-const config: Record<OnOff, { Icon: (props: IconBaseProps) => ReactNode; tooltipContent: string }> = {
-  on: {
-    Icon: RiContractLeftRightLine,
-    tooltipContent: i18n.t('Switch to simple time')
-  },
-  off: {
-    Icon: RiExpandLeftRightLine,
-    tooltipContent: i18n.t('Switch to precise time')
-  }
-}
-
 const TimestampExpandButton = ({ className }: TimestampExpandButtonProps) => {
+  const { t } = useTranslation()
   const { timestampPrecisionMode, setTimestampPrecisionMode } = useSettings()
+
+  const config: Record<OnOff, { Icon: (props: IconBaseProps) => ReactNode; tooltipContent: string }> = {
+    on: {
+      Icon: RiContractLeftRightLine,
+      tooltipContent: t('Switch to simple time')
+    },
+    off: {
+      Icon: RiExpandLeftRightLine,
+      tooltipContent: t('Switch to precise time')
+    }
+  }
 
   const handleClick = () => {
     setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
