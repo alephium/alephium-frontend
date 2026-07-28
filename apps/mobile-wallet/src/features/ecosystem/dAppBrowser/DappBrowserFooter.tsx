@@ -1,5 +1,7 @@
+import { AnalyticsEvent, AnalyticsProps } from '@alephium/shared'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import { useDappBrowserContext } from '~/features/ecosystem/dAppMessaging/DappBrowserContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -12,11 +14,23 @@ interface DappBrowserFooterProps {
 const DappBrowserFooter = ({ canGoBack, canGoForward }: DappBrowserFooterProps) => {
   const webViewRef = useDappBrowserContext()
 
-  const handleGoBack = () => webViewRef.current?.goBack()
+  const captureBrowserAction = (browser_action: AnalyticsProps['browser_action']) =>
+    sendAnalytics({ event: AnalyticsEvent.DAPP_BROWSER_ACTION_PRESSED, props: { browser_action } })
 
-  const handleGoForward = () => webViewRef.current?.goForward()
+  const handleGoBack = () => {
+    captureBrowserAction('back')
+    webViewRef.current?.goBack()
+  }
 
-  const handleReload = () => webViewRef.current?.reload()
+  const handleGoForward = () => {
+    captureBrowserAction('forward')
+    webViewRef.current?.goForward()
+  }
+
+  const handleReload = () => {
+    captureBrowserAction('reload')
+    webViewRef.current?.reload()
+  }
 
   return (
     <BrowserBottomStyled>

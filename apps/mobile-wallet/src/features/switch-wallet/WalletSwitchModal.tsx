@@ -54,6 +54,7 @@ const WalletSwitchModalContent = () => {
 
       try {
         await switchWallet(wallet.id)
+        sendAnalytics({ event: AnalyticsEvent.WALLET_SWITCHED })
       } catch (error) {
         showExceptionToast(error, t('Could not switch wallet'))
       }
