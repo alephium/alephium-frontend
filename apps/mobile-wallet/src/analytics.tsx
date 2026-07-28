@@ -39,7 +39,12 @@ if (__DEV__ && process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true' && isPr
 const posthog = new PostHog(posthogKey, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
-  customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),
+  customAppProperties: (properties) => {
+    const sanitized = { ...properties, $ip: '', $timezone: '' }
+    // Some Android devices leak Build.FINGERPRINT as $os_name (e.g. "samsung/.../release-keys"); force it to "Android".
+    if (typeof sanitized.$os_name === 'string' && sanitized.$os_name.includes('/')) sanitized.$os_name = 'Android'
+    return sanitized
+  },
   captureAppLifecycleEvents: false
 })
 
