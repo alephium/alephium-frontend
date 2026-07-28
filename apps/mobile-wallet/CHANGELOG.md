@@ -1,5 +1,29 @@
 # @alephium/mobile-wallet
 
+## 2.6.0
+
+### Minor Changes
+
+- aed6191: Add a getting started checklist guiding recovery phrase backup and wallet setup
+- aba9a33: Add native token swaps (testnet only)
+- 573f0ee: Support creating Schnorr addresses from the advanced options when adding a new address
+
+### Patch Changes
+
+- 8e3cfd2: Prevent error handling from crashing when a non-Error value is thrown
+- 0e4cbbe: Stop WalletConnect "No matching key" errors from reaching users
+- 77a694e: Show "x ago" instead of "in a day" for recently confirmed transactions
+- 6b4f094: Fix "See address details" doing nothing when long-pressing an address in a picker
+- d76f435: Fix wallet creation failing after deleting a wallet
+- edbeef9: Confirm which wallet was deleted and switched to instead of showing a WalletConnect message
+- 3865a21: Fix the confirmation message shown when setting up a fund password for the first time
+- a7d0e38: Color sent transactions orange instead of red to avoid confusion with failed transactions
+- 4bf0d83: Fix hidden "Show secret recovery phrase" button on large screens in the backup flow
+- 3d4a816: Make onboarding instructions, auto-lock and group-select options, and the required-field error react to language changes
+- b572a5a: Fix wallet worth showing a loading spinner when switching wallets
+- aed6191: Close the payment provider tab and report when it cannot be reached
+- 120405b: Stake from any address without changing the wallet default (testnet only)
+
 ## 2.5.5
 
 ### Patch Changes

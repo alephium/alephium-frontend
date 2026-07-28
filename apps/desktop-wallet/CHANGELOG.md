@@ -1,5 +1,25 @@
 # alephium-desktop-wallet
 
+## 3.3.0
+
+### Minor Changes
+
+- 573f0ee: Support creating Schnorr addresses from the advanced options when adding a new address
+
+### Patch Changes
+
+- 6075b1d: Fix balances and tokens occasionally sticking on stale data after a transaction
+- 97b56dd: Exclude hidden tokens from the address details modal
+- 26137a2: Show the insufficient balance message when a transaction cannot be built
+- 02a67c0: Add a Send button to the NFT details modal
+- a7d0e38: Color outgoing transactions orange instead of red to avoid confusion with failed transactions
+- 3d4a816: Make network-select and transaction time-period options and the required-field error react to language changes
+- 8e3cfd2: Prevent error handling from crashing when a non-Error value is thrown
+- 77a694e: Show "x ago" instead of "in a day" for recently confirmed transactions
+- 162359d: Add an unknown address to your contacts from the transaction details or the sent transaction notification
+- 4e456a3: Let users search addresses by the description of the NFTs they hold
+- 68ba5c6: Show matching search results that were hidden in the "+XX" overflow
+
 ## 3.2.5
 
 ### Patch Changes
