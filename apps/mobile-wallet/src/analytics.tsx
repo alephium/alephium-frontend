@@ -8,6 +8,7 @@ import {
   redactSensitiveData,
   throttleEvent
 } from '@alephium/shared'
+import { selectAllAddresses } from '@alephium/shared/store'
 import { PostHogCaptureOptions } from '@posthog/core'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
@@ -16,6 +17,7 @@ import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
@@ -110,6 +112,13 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
   const theme = useAppSelector((s) => s.settings.theme)
   const currency = useAppSelector((s) => s.settings.currency)
   const networkName = useAppSelector((s) => s.network.name)
+  const language = useAppSelector((s) => s.settings.language)
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+  const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
+  const hasFundPassword = useAppSelector((s) => s.fundPassword.isActive)
+  const walletCount = useAppSelector((s) => s.wallets.list.length)
+  const addressCount = useAppSelector((s) => selectAllAddresses(s).length)
+  const contactCount = useAppSelector((s) => selectAllContacts(s).length)
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
@@ -154,20 +163,34 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
           analytics,
           usesBiometrics,
           deviceSupportsBiometrics,
-          deviceHasEnrolledBiometrics
+          deviceHasEnrolledBiometrics,
+          language,
+          discreetMode,
+          autoLockSeconds,
+          hasFundPassword,
+          walletCount,
+          addressCount,
+          contactCount
         }
       }
     })
   }, [
+    addressCount,
     analytics,
+    autoLockSeconds,
     canCaptureUserProperties,
+    contactCount,
     currency,
     deviceHasEnrolledBiometrics,
     deviceSupportsBiometrics,
+    discreetMode,
+    hasFundPassword,
+    language,
     networkName,
     requireAuth,
     theme,
-    usesBiometrics
+    usesBiometrics,
+    walletCount
   ])
 
   useEffect(() => {
