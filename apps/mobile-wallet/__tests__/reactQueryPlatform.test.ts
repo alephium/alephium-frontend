@@ -1,6 +1,6 @@
 import '~/api/reactQueryPlatform'
 
-import { FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL, ONE_MINUTE_MS } from '@alephium/shared'
+import { ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL, ONE_MINUTE_MS } from '@alephium/shared'
 import { batchers } from '@alephium/shared/api'
 import { addressLatestTransactionQuery, queryClientConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
@@ -125,12 +125,12 @@ describe('reactQueryPlatform', () => {
     })
 
     it('suspends the address polling while the app is in the background', async () => {
-      await withMountedObserver(FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL, async () => {
-        await vi.advanceTimersByTimeAsync(FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL)
+      await withMountedObserver(ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL, async () => {
+        await vi.advanceTimersByTimeAsync(ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL)
         expect(fetchLatestTransaction).toHaveBeenCalledTimes(2)
 
         emitAppStateChange('background')
-        await vi.advanceTimersByTimeAsync(3 * FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL)
+        await vi.advanceTimersByTimeAsync(3 * ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL)
         expect(fetchLatestTransaction).toHaveBeenCalledTimes(2)
       })
     })
