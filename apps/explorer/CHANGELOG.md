@@ -1,5 +1,18 @@
 # @alephium/explorer
 
+## 1.13.0
+
+### Minor Changes
+
+- 8e3cfd2: Prevent error handling from crashing when a non-Error value is thrown
+- 7bb2d7e: Fix explorer address header showing 0 transactions when the count request fails
+- 98f3b35: Stop labelling self-funded transactions as block rewards in address history
+- f67847d: Hide the zero ALPH amount on transactions that only move tokens
+- a7d0e38: Color outgoing transactions orange instead of red to avoid confusion with failed transactions
+- e5d9a81: Shorten tiny token amounts with subscript notation to stop them overflowing
+- 3d4a816: Make the CSV export time-period list and timestamp-toggle tooltips react to language changes
+- 77a694e: Show "x ago" instead of "in a day" for recently confirmed transactions
+
 ## 1.12.2
 
 ### Patch Changes
