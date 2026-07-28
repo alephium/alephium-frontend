@@ -1,6 +1,8 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
@@ -17,10 +19,14 @@ const ThemeRow = () => {
   const toggleTheme = (value: boolean) => {
     setIsThemeSwitchOverlayVisible(true)
 
+    const theme = value ? 'dark' : 'light'
+
     setTimeout(() => {
-      dispatch(themeChanged(value ? 'dark' : 'light'))
+      dispatch(themeChanged(theme))
       setIsThemeSwitchOverlayVisible(false)
     }, 500)
+
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_THEME, props: { theme } })
   }
 
   return (

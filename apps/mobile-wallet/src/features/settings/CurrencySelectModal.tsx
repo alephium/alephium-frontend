@@ -1,9 +1,10 @@
-import { CURRENCIES } from '@alephium/shared'
+import { AnalyticsEvent, CURRENCIES } from '@alephium/shared'
 import { fiatCurrencyChanged } from '@alephium/shared/store'
 import { Currency } from '@alephium/shared/types'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { useModalContext } from '~/features/modals/ModalContext'
@@ -22,6 +23,7 @@ const CurrencySelectModal = memo(() => {
 
   const handleCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_FIAT_CURRENCY, props: { currency } })
     dismissModal()
   }
 

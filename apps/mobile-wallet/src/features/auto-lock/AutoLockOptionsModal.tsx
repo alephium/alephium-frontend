@@ -1,6 +1,8 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
@@ -19,6 +21,7 @@ const AutoLockOptionsModal = memo(() => {
 
   const handleAutoLockChange = (seconds: number) => {
     dispatch(autoLockSecondsChanged(seconds))
+    sendAnalytics({ event: AnalyticsEvent.AUTO_LOCK_CHANGED, props: { auto_lock_seconds: seconds } })
     dismissModal()
   }
 

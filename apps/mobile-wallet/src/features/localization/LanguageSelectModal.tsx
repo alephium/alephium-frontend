@@ -1,5 +1,7 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
@@ -16,6 +18,7 @@ const LanguageSelectModal = memo(() => {
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
+    sendAnalytics({ event: AnalyticsEvent.CHANGED_LANGUAGE, props: { language } })
     dismissModal()
   }
 

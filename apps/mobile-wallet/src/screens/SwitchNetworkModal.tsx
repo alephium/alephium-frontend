@@ -1,9 +1,10 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { networkPresetSwitched } from '@alephium/shared/store'
 import { NetworkNames, NetworkPreset } from '@alephium/shared/types'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
@@ -37,6 +38,8 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
       dispatch(networkPresetSwitched(newNetworkName))
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
+
+      sendAnalytics({ event: AnalyticsEvent.CHANGED_NETWORK, props: { network_name: newNetworkName } })
     }
 
     dismissModal()

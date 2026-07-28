@@ -83,6 +83,7 @@ const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonP
   const dispatch = useAppDispatch()
 
   const handlePress = () => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_settings' } })
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
     onActionCompleted()
   }
@@ -95,7 +96,10 @@ const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonP
 const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
   const { t } = useTranslation()
 
-  const handlePress = () => copyAddressToClipboard(addressHash)
+  const handlePress = () => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_copy' } })
+    copyAddressToClipboard(addressHash)
+  }
 
   return <QuickActionButton title={t('Copy address')} onPress={handlePress} iconProps={{ name: 'copy-outline' }} />
 }
@@ -115,6 +119,7 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
     dispatch(addressSettingsSaved({ addressHash: address.hash, settings: { isDefault: true } }))
     showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
     sendAnalytics({ event: AnalyticsEvent.SET_ADDRESS_AS_DEFAULT, props: { origin: 'quick_actions' } })
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_set_default' } })
   }
 
   return isDefaultAddress ? (
@@ -136,11 +141,10 @@ const AddressExplorerButton = ({ addressHash }: Omit<ActionButtonProps, 'onActio
   const { t } = useTranslation()
   const addressExplorerUrl = useAddressExplorerLink(addressHash)
 
-  return (
-    <QuickActionButton
-      iconProps={{ name: 'open-outline' }}
-      onPress={() => openBrowserAsync(addressExplorerUrl)}
-      title={t('Explorer')}
-    />
-  )
+  const handlePress = () => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_explorer' } })
+    openBrowserAsync(addressExplorerUrl)
+  }
+
+  return <QuickActionButton iconProps={{ name: 'open-outline' }} onPress={handlePress} title={t('Explorer')} />
 }

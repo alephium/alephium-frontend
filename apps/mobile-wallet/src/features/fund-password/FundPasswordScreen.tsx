@@ -63,14 +63,14 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
         dispatch(fundPasswordUseToggled(true))
         showToast({
           text1: t('Saved!'),
-          text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
+          text2: isUsingFundPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
           type: 'success'
         })
 
         navigation.goBack()
 
         sendAnalytics({
-          event: newPassword ? AnalyticsEvent.UPDATED_FUND_PASSWORD : AnalyticsEvent.CREATED_FUND_PASSWORD
+          event: isUsingFundPassword ? AnalyticsEvent.UPDATED_FUND_PASSWORD : AnalyticsEvent.CREATED_FUND_PASSWORD
         })
       } catch (error) {
         showExceptionToast(error, t('Could not save fund password.'))

@@ -1,4 +1,4 @@
-import { networkSettingsPresets } from '@alephium/shared'
+import { AnalyticsEvent, networkSettingsPresets } from '@alephium/shared'
 import { NetworkPreset } from '@alephium/shared/types'
 import { getNetworkNameFromNetworkId } from '@alephium/shared/utils'
 import { useCurrentlyOnlineNetworkId, useWalletConnectNetwork } from '@alephium/shared-react'
@@ -6,6 +6,7 @@ import { ConnectDappMessageData } from '@alephium/wallet-dapp-provider'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import ConnectDappModalHeader from '~/features/ecosystem/modals/ConnectDappModalHeader'
 import NetworkSwitchModalContent from '~/features/ecosystem/modals/NetworkSwitchModalContent'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
@@ -33,6 +34,7 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   if (currentNetworkName === undefined) return null
 
   const handleDeclinePress = () => {
+    sendAnalytics({ event: AnalyticsEvent.DAPP_NETWORK_SWITCH_DECLINED, props: { dapp_host: host } })
     dismissModal()
     onUserDismiss?.()
   }
@@ -40,6 +42,10 @@ const NetworkSwitchModal = memo<NetworkSwitchModalProps>(({ icon, dAppName, host
   const handleSwitchToRequiredNetwork = async () => {
     dispatch(activateAppLoading({ text: t('Switching networks'), bg: 'full', blur: false, minDurationMs: 3000 }))
     await handleSwitchNetworkPress()
+    sendAnalytics({
+      event: AnalyticsEvent.CHANGED_NETWORK,
+      props: { network_name: requiredNetworkName, origin: 'connect_dapp_modal', dapp_host: host }
+    })
     dismissModal()
     dispatch(deactivateAppLoading())
   }

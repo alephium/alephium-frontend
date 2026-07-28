@@ -1,8 +1,9 @@
-import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
+import { AnalyticsEvent, SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -25,6 +26,7 @@ const AuthorizedConnectionsScreen = () => {
   const handleDisconnectPress = (connection: AuthorizedConnection) => {
     vibrate(ImpactStyle.Light)
     dispatch(connectionRemoved(connection))
+    sendAnalytics({ event: AnalyticsEvent.DAPP_AUTHORIZATION_REVOKED, props: { dapp_host: connection.host } })
     showToast({
       text1: t('Revoked connection to {{ host }}', { host: connection.host }),
       type: 'success'

@@ -32,12 +32,16 @@ const TokenQuickActionsModal = memo<TokenQuickActionsModalProps>(({ tokenId }) =
 
   if (!token || !isFT(token)) return
 
-  const handleAssetHide = () => hideToken(tokenId)
+  const handleAssetHide = () => {
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'token_hide' } })
+    hideToken(tokenId)
+  }
 
   const openTokenDetailsModal = () => {
     dismissModal()
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     sendAnalytics({ event: AnalyticsEvent.OPENED_TOKEN_DETAILS_MODAL, props: { origin: 'quick_actions' } })
+    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'token_details' } })
   }
 
   return (
