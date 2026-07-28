@@ -14,7 +14,8 @@ const AppCacheRow = () => {
   const walletId = useAppSelector((s) => s.wallet.id)
 
   const deleteTanstackQueryCache = () => {
-    // Before the reload, which would otherwise kill the app with the event still queued.
+    // Emitted before `reloadAsync` so it reaches the SDK's persisted queue. Best-effort: that write
+    // is not awaited, and neither is the reload.
     sendAnalytics({ event: AnalyticsEvent.APP_CACHE_CLEARED })
 
     queryClient.clear()
