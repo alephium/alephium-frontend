@@ -9,7 +9,12 @@ import {
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/legacyWallet'
 import { storage } from '~/persistent-storage/storage'
-import { deleteWallet } from '~/persistent-storage/wallet'
+import {
+  activateGettingStartedForExistingWallet,
+  deleteWallet,
+  getIsGettingStartedActive,
+  storeIsGettingStartedActive
+} from '~/persistent-storage/wallet'
 import { addWalletToList, createWalletListEntry } from '~/persistent-storage/walletList'
 import {
   getStoredWalletMetadata,
@@ -251,6 +256,39 @@ describe(deleteWallet, () => {
 
     expect(storage.contains(`wallet-metadata-${testWalletId}`)).toBeFalsy()
     expect(storage.contains(`is-new-wallet-${testWalletId}`)).toBeFalsy()
+  })
+})
+
+describe(activateGettingStartedForExistingWallet, () => {
+  const gettingStartedKey = `getting-started-active-${testWalletId}`
+
+  it('activates the checklist for an existing un-backed-up wallet whose flag was never set', () => {
+    activateGettingStartedForExistingWallet(testWalletId, false)
+
+    expect(getIsGettingStartedActive(testWalletId)).toBe(true)
+  })
+
+  it('does not activate for a backed-up (or watch-only) wallet', () => {
+    activateGettingStartedForExistingWallet(testWalletId, true)
+
+    expect(storage.contains(gettingStartedKey)).toBe(false)
+    expect(getIsGettingStartedActive(testWalletId)).toBe(false)
+  })
+
+  it('does not resurrect a checklist the user already dismissed', () => {
+    storeIsGettingStartedActive(testWalletId, false)
+
+    activateGettingStartedForExistingWallet(testWalletId, false)
+
+    expect(getIsGettingStartedActive(testWalletId)).toBe(false)
+  })
+
+  it('leaves an already-active checklist untouched', () => {
+    storeIsGettingStartedActive(testWalletId, true)
+
+    activateGettingStartedForExistingWallet(testWalletId, false)
+
+    expect(getIsGettingStartedActive(testWalletId)).toBe(true)
   })
 })
 

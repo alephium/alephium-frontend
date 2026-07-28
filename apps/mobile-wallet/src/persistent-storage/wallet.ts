@@ -176,13 +176,21 @@ export const getIsWalletFunded = (walletId: string): boolean | undefined =>
 export const storeIsWalletFunded = (walletId: string, isFunded: boolean) =>
   storeWithReportableError(isWalletFundedKey(walletId), isFunded)
 
-// Only wallets created or imported from this feature onward get the flag, so the checklist never
-// appears on established wallets.
 export const getIsGettingStartedActive = (walletId: string): boolean =>
   storage.getBoolean(gettingStartedActiveKey(walletId)) ?? false
 
 export const storeIsGettingStartedActive = (walletId: string, isActive: boolean) =>
   storeWithReportableError(gettingStartedActiveKey(walletId), isActive)
+
+// Existing wallets predate the getting-started flag, so activate it once for any that still have an
+// un-backed-up mnemonic. A stored `false` means the user dismissed it, so only an unset flag is
+// activated; watch-only wallets count as backed up and are skipped by the guard.
+export const activateGettingStartedForExistingWallet = (walletId: string, isMnemonicBackedUp: boolean) => {
+  if (isMnemonicBackedUp) return
+  if (storage.getBoolean(gettingStartedActiveKey(walletId)) !== undefined) return
+
+  storeIsGettingStartedActive(walletId, true)
+}
 
 const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(walletMnemonicKey(walletId), JSON.stringify(mnemonic), true, '')

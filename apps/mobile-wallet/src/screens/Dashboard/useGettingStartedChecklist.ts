@@ -5,7 +5,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { sendAnalytics } from '~/analytics'
 import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import { useAppSelector } from '~/hooks/redux'
-import { getIsGettingStartedActive, storeIsGettingStartedActive } from '~/persistent-storage/wallet'
+import {
+  activateGettingStartedForExistingWallet,
+  getIsGettingStartedActive,
+  storeIsGettingStartedActive
+} from '~/persistent-storage/wallet'
 
 export interface GettingStartedChecklistItem {
   key: GettingStartedItem
@@ -31,7 +35,18 @@ const useGettingStartedChecklist = (): GettingStartedChecklist => {
   const wasVisible = useRef(false)
 
   useEffect(() => {
-    setIsActive(walletId ? getIsGettingStartedActive(walletId) : false)
+    if (!walletId) {
+      setIsActive(false)
+      return
+    }
+
+    // Existing un-backed-up wallets predate the create-time flag; activate once so they get the same
+    // checklist, then read back the (possibly just-set) flag.
+    activateGettingStartedForExistingWallet(walletId, !!isMnemonicBackedUp)
+    setIsActive(getIsGettingStartedActive(walletId))
+  }, [walletId, isMnemonicBackedUp])
+
+  useEffect(() => {
     wasVisible.current = false
   }, [walletId])
 
