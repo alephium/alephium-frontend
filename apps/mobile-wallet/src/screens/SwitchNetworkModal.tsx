@@ -38,9 +38,9 @@ const SwitchNetworkModal = memo<SwitchNetworkModalProps>(({ onCustomNetworkPress
       dispatch(networkPresetSwitched(newNetworkName))
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
-    }
 
-    sendAnalytics({ event: AnalyticsEvent.CHANGED_NETWORK, props: { network_name: newNetworkName } })
+      sendAnalytics({ event: AnalyticsEvent.CHANGED_NETWORK, props: { network_name: newNetworkName } })
+    }
 
     dismissModal()
     dispatch(deactivateAppLoading())

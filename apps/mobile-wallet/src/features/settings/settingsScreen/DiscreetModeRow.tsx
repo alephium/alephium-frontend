@@ -14,7 +14,10 @@ const DiscreetModeRow = () => {
 
   const toggleDiscreetMode = () => {
     dispatch(discreetModeToggled())
-    sendAnalytics({ event: AnalyticsEvent.DISCREET_MODE_TOGGLED, props: { enabled: !discreetMode } })
+    sendAnalytics({
+      event: AnalyticsEvent.DISCREET_MODE_TOGGLED,
+      props: { enabled: !discreetMode, origin: 'app_settings' }
+    })
   }
 
   return (

@@ -54,6 +54,11 @@ const useForgetAddress = ({ addressHash, onConfirm, origin }: UseForgetAddressPr
           }
 
           sendAnalytics({ event: AnalyticsEvent.DELETED_ADDRESS, props: { origin } })
+
+          // Emitted here rather than on the button press so it counts a completed forget, like every
+          // other `quick_action` value, instead of an intent that the confirmation may still cancel.
+          if (origin === 'quick_actions')
+            sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_forget' } })
         }
       }
     ])

@@ -60,8 +60,6 @@ const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonPro
   if (!address) return
 
   const handlePress = () => {
-    sendAnalytics({ event: AnalyticsEvent.QUICK_ACTION_PRESSED, props: { quick_action: 'address_forget' } })
-
     if (!canDeleteAddress)
       Alert.alert(
         t('forgetAddress_one'),

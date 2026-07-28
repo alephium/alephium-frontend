@@ -1,13 +1,15 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { colord } from 'colord'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { openModal } from '~/features/modals/modalActions'
 import { discreetModeToggled } from '~/features/settings/settingsSlice'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
@@ -44,8 +46,15 @@ const BalanceSummary = ({ worth, isLoading, label, error, showDiscreetModeToggle
 const ToggleContainer = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
 
-  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
+  const toggleDiscreetMode = () => {
+    dispatch(discreetModeToggled())
+    sendAnalytics({
+      event: AnalyticsEvent.DISCREET_MODE_TOGGLED,
+      props: { enabled: !discreetMode, origin: 'dashboard' }
+    })
+  }
 
   return (
     <LabelWithToggle>
