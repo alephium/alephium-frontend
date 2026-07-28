@@ -36,10 +36,20 @@ const AddressesDataRows = ({ tx, referenceAddress }: TransactionDisplayProps) =>
   return (
     <>
       <DataList.Row label={t('From')}>
-        <TransactionOriginAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        <TransactionOriginAddressesList
+          tx={tx}
+          referenceAddress={referenceAddress}
+          view="wallet"
+          showAddToContactsButton
+        />
       </DataList.Row>
       <DataList.Row label={t('To')}>
-        <TransactionDestinationAddressesList tx={tx} referenceAddress={referenceAddress} view="wallet" />
+        <TransactionDestinationAddressesList
+          tx={tx}
+          referenceAddress={referenceAddress}
+          view="wallet"
+          showAddToContactsButton
+        />
       </DataList.Row>
     </>
   )

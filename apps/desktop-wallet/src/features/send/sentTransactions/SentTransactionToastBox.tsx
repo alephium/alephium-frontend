@@ -11,6 +11,7 @@ import ActionLink from '@/components/ActionLink'
 import Badge from '@/components/Badge'
 import CircularProgress from '@/components/CircularProgress'
 import HashEllipsed from '@/components/HashEllipsed'
+import AddToContactsButton from '@/features/contacts/AddToContactsButton'
 import { openModal } from '@/features/modals/modalActions'
 import { selectTopModal } from '@/features/modals/modalSelectors'
 import ToastBox from '@/features/toastMessages/ToastBox'
@@ -57,10 +58,14 @@ const SentTransactionToastBox = memo(({ txHash, className }: SentTransactionSnac
       title={message}
       LeftContent={<Progress status={sentTx.status} />}
     >
-      <HashAndDetails>
-        <HashEllipsed hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} truncate />
-        {sentTx.status !== 'sent' && !isExplorerOffline && <DetailsLink hash={txHash} />}
-      </HashAndDetails>
+      <ToastContent>
+        <HashAndDetails>
+          <HashEllipsed hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} truncate />
+          {sentTx.status !== 'sent' && !isExplorerOffline && <DetailsLink hash={txHash} />}
+        </HashAndDetails>
+        {/* toAddress is an empty string for contract and dApp transactions */}
+        {sentTx.toAddress && <AddToContactsButton addressHash={sentTx.toAddress} />}
+      </ToastContent>
     </ToastBox>
   )
 })
@@ -104,9 +109,18 @@ const DetailsLink = ({ hash }: Pick<SentTransaction, 'hash'>) => {
   )
 }
 
+const ToastContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+`
+
 const HashAndDetails = styled.div`
   display: flex;
+  justify-content: space-between;
   gap: 5px;
+  width: 100%;
 `
 
 const CircularProgressStyled = styled(CircularProgress)`
