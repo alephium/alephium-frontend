@@ -1,3 +1,4 @@
+import { NewAddressType } from './types/addresses'
 import { getDappHost } from './utils/dApps'
 
 const eventThrottleStatus: Record<string, boolean> = {}
@@ -81,6 +82,10 @@ export type AnalyticsProps = {
 
   // On `Transaction Failed`.
   failure_reason?: 'insufficient_balance' | 'build_error' | 'submit_error'
+
+  // On `Address Created`: which address type the user picked, so adoption of the advanced grouped
+  // and Schnorr types can be measured against the groupless default.
+  address_type?: NewAddressType
 
   // Third-party service behind a Buy or Swap action.
   provider?: string

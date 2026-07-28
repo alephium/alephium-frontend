@@ -1,5 +1,5 @@
 import { bip39Words } from '@alephium/shared'
-import { hashMessage } from '@alephium/web3'
+import { hashMessage, transactionVerifySignature, verifySignature } from '@alephium/web3'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import {
@@ -296,6 +296,24 @@ describe('keyring', function () {
   it('should fail to sign a message when given an address that is not cached', () => {
     keyring.importMnemonicString(valid24WordMnemonicString)
     expect(() => keyring.signTransaction('hello', 'thisAddressDoesntExist')).toThrow()
+  })
+
+  it('should sign a transaction with a Schnorr address so the signature verifies as Schnorr', () => {
+    keyring.importMnemonicString(valid24WordMnemonicString)
+    const address = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'bip340-schnorr' })
+    const txId = '0041313469a65f07904379d53915d86e5ed4541a7583762de38a1a3fed4ff1bd'
+    const signature = keyring.signTransaction(txId, address.hash)
+
+    expect(transactionVerifySignature(txId, address.publicKey, signature, 'bip340-schnorr')).toBe(true)
+  })
+
+  it('should sign a message with a Schnorr address so the signature verifies as Schnorr', () => {
+    keyring.importMnemonicString(valid24WordMnemonicString)
+    const address = keyring.generateAndCacheAddress({ addressIndex: 0, keyType: 'bip340-schnorr' })
+    const messageHash = hashMessage('hello', 'alephium')
+    const signature = keyring.signMessageHash(messageHash, address.hash)
+
+    expect(verifySignature(messageHash, address.publicKey, signature, 'bip340-schnorr')).toBe(true)
   })
 
   it('should convert Uint8Array mnemonic to string', () => {

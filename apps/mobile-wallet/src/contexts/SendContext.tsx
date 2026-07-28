@@ -97,7 +97,7 @@ export const SendContextProvider = ({
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const { data: groupedAddressesWithEnoughAlphForGas } = useFetchGroupedAddressesWithEnoughAlphForGas()
-  const gasRefillGroupedAddress = groupedAddressesWithEnoughAlphForGas?.find((hash) => hash !== address?.hash)
+  const gasRefillGroupedAddress = groupedAddressesWithEnoughAlphForGas?.find(({ hash }) => hash !== address?.hash)
   const shouldChainTxsForGasRefill = chainedTxProps && chainedTxProps.length > 0 && gasRefillGroupedAddress
 
   const setAssetAmount = useCallback(
@@ -204,7 +204,7 @@ export const SendContextProvider = ({
             const txParams = getGasRefillChainedTxParams(gasRefillGroupedAddress, sendFlowData)
 
             const unsignedData = await throttledClient.txBuilder.buildChainedTx(txParams, [
-              await signer.getPublicKey(gasRefillGroupedAddress),
+              await signer.getPublicKey(gasRefillGroupedAddress.hash),
               await signer.getPublicKey(address.hash)
             ])
 

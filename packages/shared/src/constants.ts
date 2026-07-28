@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_PRICE, GrouplessKeyType } from '@alephium/web3'
+import { DEFAULT_GAS_PRICE, GroupedKeyType, GrouplessKeyType } from '@alephium/web3'
 
 export const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
@@ -38,3 +38,7 @@ export const INFREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL = FIVE_MINUTES_M
 export const PRICES_REFRESH_INTERVAL = FIVE_MINUTES_MS
 
 export const GROUPLESS_ADDRESS_KEY_TYPE = 'gl-secp256k1' as GrouplessKeyType
+
+export const DEFAULT_ADDRESS_KEY_TYPE = 'default' as GroupedKeyType
+
+export const SCHNORR_ADDRESS_KEY_TYPE = 'bip340-schnorr' as GroupedKeyType

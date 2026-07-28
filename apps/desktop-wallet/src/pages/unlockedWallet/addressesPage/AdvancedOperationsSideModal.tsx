@@ -42,7 +42,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
 
   const handleDiscoverAddressesClick = () => {
     discoverAndSaveUsedAddresses({
-      skipIndexesForAddressesWithGroup: allAddressesIndexes.indexesOfAddressesWithGroup,
+      skipIndexesForAddressesWithGroup: allAddressesIndexes.indexesOfDefaultAddresses,
       skipIndexesForGrouplessAddresses: allAddressesIndexes.indexesOfGrouplessAddresses
     })
     sendAnalytics({ event: AnalyticsEvent.ADVANCED_OPERATION_TO_DISCOVER_ADDRESSES_CLICKED })

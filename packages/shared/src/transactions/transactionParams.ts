@@ -128,13 +128,13 @@ export const getTransferTxParams = (data: SendFlowData): SignTransferTxParams =>
 }
 
 export const getGasRefillChainedTxParams = (
-  gasRefillGroupedAddress: string,
+  gasRefillGroupedAddress: AddressWithGroup,
   data: SendFlowData
 ): Array<SignChainedTxParams> => [
   {
     type: 'Transfer',
-    signerAddress: gasRefillGroupedAddress,
-    signerKeyType: 'default',
+    signerAddress: gasRefillGroupedAddress.hash,
+    signerKeyType: gasRefillGroupedAddress.keyType,
     destinations: [{ address: data.fromAddress.hash, attoAlphAmount: MAXIMAL_GAS_FEE }]
   },
   {

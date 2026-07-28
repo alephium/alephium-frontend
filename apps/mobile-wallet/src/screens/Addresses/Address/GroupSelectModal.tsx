@@ -17,7 +17,7 @@ const GroupSelectModal = memo<GroupSelectModalProps>(({ onSelect, selectedGroup 
 
   const groupSelectOptions = Array.from({ length: TOTAL_NUMBER_OF_GROUPS + 1 }, (_, i) => ({
     value: i === 0 ? undefined : i - 1,
-    label: i === 0 ? t('Groupless') : t('Group {{ groupNumber }}', { groupNumber: i - 1 })
+    label: i === 0 ? t('Random') : t('Group {{ groupNumber }}', { groupNumber: i - 1 })
   }))
 
   const onGroupSelect = (group?: number) => {
