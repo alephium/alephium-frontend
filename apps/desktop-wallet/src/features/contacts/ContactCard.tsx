@@ -12,7 +12,7 @@ import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectContactByHash } from '@/storage/addresses/addressesSelectors'
+import { selectContactById } from '@/storage/addresses/addressesSelectors'
 import { useHashToColor } from '@/utils/colors'
 import { getInitials } from '@/utils/misc'
 
@@ -24,7 +24,7 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const { t } = useTranslation()
-  const contact = useAppSelector((s) => selectContactByHash(s, contactId))
+  const contact = useAppSelector((s) => selectContactById(s, contactId))
   const contactColor = useHashToColor(contactId) || theme.global.complementary
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
 
