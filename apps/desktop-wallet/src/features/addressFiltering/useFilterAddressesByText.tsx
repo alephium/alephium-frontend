@@ -1,6 +1,7 @@
 import { useUnsortedAddressesHashes } from '@alephium/shared-react'
 import { useMemo } from 'react'
 
+import { MIN_SEARCH_TERM_LENGTH } from '@/features/addressFiltering/addressFilteringConstants'
 import useFetchAddressesSearchStrings from '@/features/addressFiltering/useFetchAddressesSearchStrings'
 
 export const useFilterAddressesByText = (text = '') => {
@@ -9,12 +10,12 @@ export const useFilterAddressesByText = (text = '') => {
 
   return useMemo(
     () =>
-      text.length < 2
+      text.length < MIN_SEARCH_TERM_LENGTH
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
             const addressSearchableString = addressesSearchStrings[addressHash]
 
-            return addressSearchableString.toLowerCase().includes(text.toLowerCase())
+            return addressSearchableString.toLowerCase().includes(text)
           }),
     [addressesSearchStrings, allAddressHashes, text]
   )

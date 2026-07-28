@@ -11,6 +11,8 @@ import styled from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
+import { MIN_SEARCH_TERM_LENGTH } from '@/features/addressFiltering/addressFilteringConstants'
+import { getDisplayedAndHiddenTokenIds } from '@/features/assetsLists/getDisplayedAndHiddenTokenIds'
 
 interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
   addressHash: AddressHash
@@ -21,7 +23,7 @@ interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
 const AddressTokensBadgesList = ({
   addressHash,
   maxDisplayedAssets = 8,
-  searchTerm,
+  searchTerm = '',
   className,
   ...badgeProps
 }: AddressTokensBadgesListProps) => {
@@ -32,37 +34,31 @@ const AddressTokensBadgesList = ({
   const networkId = useNetworkId()
   const isNodeOnline = useIsNodeOnline()
 
-  const search = searchTerm?.trim().toLowerCase() ?? ''
-  const isSearching = search.length >= 2
-
   const { data: tokensSearchStrings } = useQuery({
     ...addressTokensSearchStringsQuery({ addressHash, networkId, isNodeOnline }),
-    enabled: isSearching
+    enabled: searchTerm.length >= MIN_SEARCH_TERM_LENGTH
   })
 
-  const { displayedStandardTokenIds, hiddenStandardTokensIds } = useMemo(() => {
-    const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds]
-
-    const tokenMatchesSearch = (id: string) => tokensSearchStrings?.[id]?.includes(search) ?? false
-    const matchingTokenIds = isSearching ? standardTokens.filter(tokenMatchesSearch) : []
-    const nonMatchingTokenIds = isSearching ? standardTokens.filter((id) => !tokenMatchesSearch(id)) : standardTokens
-    const remainingSlots = Math.max(maxDisplayedAssets - matchingTokenIds.length, 0)
-
-    return {
-      displayedStandardTokenIds: [...matchingTokenIds, ...nonMatchingTokenIds.slice(0, remainingSlots)],
-      hiddenStandardTokensIds: nonMatchingTokenIds.slice(remainingSlots)
-    }
-  }, [isSearching, listedFts, maxDisplayedAssets, nftIds, search, tokensSearchStrings, unlistedFtIds])
+  const { displayedTokenIds, hiddenTokenIds } = useMemo(
+    () =>
+      getDisplayedAndHiddenTokenIds({
+        tokenIds: [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds],
+        maxDisplayedTokens: maxDisplayedAssets,
+        searchTerm,
+        tokensSearchStrings
+      }),
+    [listedFts, maxDisplayedAssets, nftIds, searchTerm, tokensSearchStrings, unlistedFtIds]
+  )
 
   if (isLoadingTokens) return <SkeletonLoader height="33.5px" />
 
-  const nbOfAdditionalTokens = hiddenStandardTokensIds.length + nstIds.length
+  const nbOfAdditionalTokens = hiddenTokenIds.length + nstIds.length
 
-  if (displayedStandardTokenIds.length === 0 && nbOfAdditionalTokens === 0) return null
+  if (displayedTokenIds.length === 0 && nbOfAdditionalTokens === 0) return null
 
   return (
     <TokensBadgesListStyled className={className}>
-      {displayedStandardTokenIds.map((tokenId) => (
+      {displayedTokenIds.map((tokenId) => (
         <TokenBadge key={tokenId} tokenId={tokenId} {...badgeProps} />
       ))}
 

@@ -21,19 +21,21 @@ const AddressesTabContent = memo(() => {
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
 
-  const unsortedAddressesFilteredByText = useFilterAddressesByText(searchInput.toLowerCase())
+  const searchTerm = searchInput.trim().toLowerCase()
+
+  const unsortedAddressesFilteredByText = useFilterAddressesByText(searchTerm)
   const { data: sortedAddresses } = useFetchAddressesHashesSortedByPreference()
   const { data: addressesWithBalance } = useFetchAddressesHashesWithBalance()
 
   const visibleAddresses = useMemo(() => {
     // Apply text filter
     const textFilteredSet = new Set(unsortedAddressesFilteredByText)
-    const textFiltered = searchInput ? sortedAddresses?.filter((a) => textFilteredSet.has(a)) : sortedAddresses
+    const textFiltered = searchTerm ? sortedAddresses?.filter((a) => textFilteredSet.has(a)) : sortedAddresses
 
     // Apply empty addresses filter
     const balanceSet = new Set(addressesWithBalance)
     return hideEmptyAddresses ? textFiltered?.filter((a) => balanceSet.has(a)) : textFiltered
-  }, [addressesWithBalance, hideEmptyAddresses, searchInput, sortedAddresses, unsortedAddressesFilteredByText])
+  }, [addressesWithBalance, hideEmptyAddresses, searchTerm, sortedAddresses, unsortedAddressesFilteredByText])
 
   const openNewAddressModal = () =>
     dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
@@ -64,7 +66,7 @@ const AddressesTabContent = memo(() => {
               addressHash={addressHash}
               key={addressHash}
               isLast={index === visibleAddresses.length - 1}
-              searchTerm={searchInput}
+              searchTerm={searchTerm}
             />
           ))}
           <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>
