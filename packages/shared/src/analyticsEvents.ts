@@ -137,7 +137,20 @@ export const AnalyticsEvent = {
   // null for never, mobile carries seconds with -1 for never. Same concept, incompatible units - one
   // event would average the two into a number that means nothing.
   AUTO_LOCK_CHANGED: 'Auto Lock Changed',
+  // Backup funnel, in order: Backup Reminder Shown -> Backup Reminder Accepted -> Backup Intro Shown
+  // -> Recovery Phrase Shown -> Mnemonic Verification Started -> Backed-up mnemonic. The intro screen
+  // stays mounted as the flow moves forward, so `Backup Intro Shown` fires once per entry; stepping
+  // back to it re-pushes the later screens, so `Recovery Phrase Shown` and `Mnemonic Verification
+  // Started` fire again. Every step here is subject to `throttleEvent`, which drops a repeat carrying
+  // identical props within 5s, so read all of them per user rather than as counts. `Mnemonic
+  // Verification Abandoned` therefore means "left the verification screen unfinished", not "gave up":
+  // the return leg is `Mnemonic Verification Started` with `resumed: true`.
+  // No entry-point prop on `Backup Intro Shown`: `Backup Reminder Accepted`, `Backup Notification
+  // Pressed` and `Getting Started Item Pressed` already fire on the press that navigates, so split the
+  // funnel by those. Only the fund-password settings row enters unattributed.
   BACKED_UP_MNEMONIC: 'Backed-up mnemonic',
+  BACKUP_EXIT_PROMPT_ANSWERED: 'Backup Exit Prompt Answered',
+  BACKUP_INTRO_SHOWN: 'Backup Intro Shown',
   BACKUP_REMINDER_ACCEPTED: 'Backup Reminder Accepted',
   BACKUP_REMINDER_DISMISSED: 'Backup Reminder Dismissed',
   BACKUP_REMINDER_SHOWN: 'Backup Reminder Shown',
@@ -196,6 +209,8 @@ export const AnalyticsEvent = {
   // One event for every option inside the long-hold quick action modals, split by `quick_action`.
   // The alternative was nine events that no single breakdown could compare.
   QUICK_ACTION_PRESSED: 'Quick Action Pressed',
+  RECOVERY_PHRASE_AUTH_FAILED: 'Recovery Phrase Auth Failed',
+  RECOVERY_PHRASE_SHOWN: 'Recovery Phrase Shown',
   RECREATED_MISSING_WALLET_METADATA_FOR_EXISTING_WALLET: 'Recreated missing wallet metadata for existing wallet',
   REMOVED_DAPP_TO_FAVORITES: 'Removed dApp to favorites',
   SCANNED_ETHEREUM_ADDRESS: 'Scanned Ethereum address',
