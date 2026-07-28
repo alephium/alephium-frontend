@@ -66,6 +66,24 @@ export type OnboardingStep = 'name' | 'import_method' | 'seed_entry' | 'qr_decry
 
 export type GettingStartedItem = 'backup' | 'receive_funds' | 'biometrics'
 
+// Every option offered inside a long-hold quick action modal. Values are prefixed with the entity
+// they act on so one breakdown reads unambiguously across the three modals, without needing to be
+// crossed with `origin` to be understood.
+export type QuickAction =
+  | 'address_set_default'
+  | 'address_copy'
+  | 'address_settings'
+  | 'address_explorer'
+  | 'address_forget'
+  | 'address_details'
+  | 'address_select'
+  | 'token_hide'
+  | 'token_details'
+
+// `unverified_dapp` is the guard declining on the user's behalf, which is a different product signal
+// from the user pressing Reject on the request itself.
+export type RejectionReason = 'user_rejected' | 'unverified_dapp'
+
 export type AnalyticsProps = {
   // Which UI surface the action was triggered from.
   origin?: AnalyticsOrigin
@@ -77,8 +95,10 @@ export type AnalyticsProps = {
   dapp_host?: string
   dapp_name?: string
 
-  // On `Transaction Approved`, which collapses the eight former per-type approval events.
-  tx_type?: 'contract_call' | 'deploy' | 'unsigned' | 'transfer' | 'chained'
+  // On `Transaction Approved` (which collapses the eight former per-type approval events) and on
+  // `Transaction Rejected`. `message` and `consolidate` only ever appear on the rejection side: their
+  // approvals predate this prop and keep their own events, `Message Signed` and `Consolidated UTXOs`.
+  tx_type?: 'contract_call' | 'deploy' | 'unsigned' | 'transfer' | 'chained' | 'message' | 'consolidate'
 
   // On `Transaction Failed`.
   failure_reason?: 'insufficient_balance' | 'build_error' | 'submit_error'
@@ -98,6 +118,21 @@ export type AnalyticsProps = {
 
   // On `Getting Started Item Pressed`.
   checklist_item?: GettingStartedItem
+
+  // On `Quick Action Pressed`.
+  quick_action?: QuickAction
+
+  // On `Transaction Rejected`.
+  rejection_reason?: RejectionReason
+
+  // On `Auto Lock Changed`. Seconds, where -1 means never - see the note on the event.
+  auto_lock_seconds?: number
+
+  // On `Offline Detected`: which backend became unreachable.
+  service?: 'node' | 'explorer' | 'both'
+
+  // On `dApp Browser Action Pressed`: which in-browser chrome control was used.
+  browser_action?: 'back' | 'forward' | 'reload'
 
   // A per-install creation counter, deliberately not the wallet id: it answers first-vs-subsequent
   // without putting a stable per-wallet key on the wire.

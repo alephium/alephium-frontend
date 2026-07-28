@@ -16,6 +16,14 @@
 
 export const AnalyticsEvent = {
   // ── SHARED (identical string in both apps - funnel-ready) ───────
+  // These five shipped on desktop first and mobile adopted the exact desktop string rather than a
+  // tidier one, because the desktop history is years deep and a rename would have split it.
+  CHANGED_FIAT_CURRENCY: 'Changed fiat currency',
+  CHANGED_LANGUAGE: 'Changed language',
+  CHANGED_NETWORK: 'Changed network',
+  CHANGED_THEME: 'Changed theme',
+  WALLET_SWITCHED: 'Wallet switched',
+
   CONSOLIDATED_UTXOS: 'Consolidated UTXOs',
   DELETED_WALLET: 'Deleted wallet',
   DISABLED_ANALYTICS: 'Disabled analytics',
@@ -62,6 +70,12 @@ export const AnalyticsEvent = {
   // Mobile only. Desktop's equivalent toggle keeps its shipped `Enabled/Disabled password requirement`
   // names, because renaming them would split their history.
   AUTHENTICATION_SETTINGS_CHANGED: 'Authentication Settings Changed',
+  // The denominator `Transaction Approved` never had. Carries the same `tx_type` so approve and reject
+  // can be summed into a request count and divided into an approval rate.
+  TRANSACTION_REJECTED: 'Transaction Rejected',
+  TRANSACTION_DETAILS_OPENED: 'Transaction Details Opened',
+  NFT_DETAILS_OPENED: 'NFT Details Opened',
+  DISCREET_MODE_TOGGLED: 'Discreet Mode Toggled',
 
   // ── DESKTOP wallet ──────────────────────────────────────────────
   ADDRESS_ORDER_CHANGED: 'Address order changed',
@@ -76,11 +90,7 @@ export const AnalyticsEvent = {
   AUTO_UPDATE_MODAL_CLICKED_RESTART: 'Auto-update modal: Clicked "Restart"',
   AUTO_UPDATE_MODAL_CLOSED: 'Auto-update modal: Closed',
   CHANGED_DEFAULT_ADDRESS: 'Changed default address',
-  CHANGED_FIAT_CURRENCY: 'Changed fiat currency',
-  CHANGED_LANGUAGE: 'Changed language',
-  CHANGED_NETWORK: 'Changed network',
   CHANGED_NETWORK_FROM_APP_HEADER: 'Changed network from app header',
-  CHANGED_THEME: 'Changed theme',
   CHANGED_WALLET_LOCK_TIME: 'Changed wallet lock time',
   COPIED_ADDRESS_PRIVATE_KEY: 'Copied address private key',
   COULD_NOT_BUILD_TX_CONSOLIDATION_REQUIRED: 'Could not build tx, consolidation required',
@@ -107,7 +117,6 @@ export const AnalyticsEvent = {
   REQUESTED_TESTNET_TOKENS: 'Requested testnet tokens',
   SWEPT_ADDRESS_ASSETS: 'Swept address assets',
   WALLET_SETTINGS_BUTTON_CLICKED: 'Wallet settings button clicked',
-  WALLET_SWITCHED: 'Wallet switched',
 
   // ── MOBILE wallet ───────────────────────────────────────────────
   ACTION_CARD_PRESSED_BTN_TO_BUY: 'Action card: Pressed btn to buy',
@@ -115,6 +124,11 @@ export const AnalyticsEvent = {
   ACTION_CARD_PRESSED_BTN_TO_SWAP: 'Action card: Pressed btn to swap',
   ACTIVATED_BIOMETRICS_FROM_WALLET_CREATION_FLOW: 'Activated biometrics from wallet creation flow',
   ADDED_DAPP_TO_FAVORITES: 'Added dApp to favorites',
+  APP_CACHE_CLEARED: 'App Cache Cleared',
+  // Seconds, and mobile-specific on purpose: desktop's `Changed wallet lock time` carries minutes with
+  // null for never, mobile carries seconds with -1 for never. Same concept, incompatible units - one
+  // event would average the two into a number that means nothing.
+  AUTO_LOCK_CHANGED: 'Auto Lock Changed',
   BACKED_UP_MNEMONIC: 'Backed-up mnemonic',
   BACKUP_REMINDER_ACCEPTED: 'Backup Reminder Accepted',
   BACKUP_REMINDER_DISMISSED: 'Backup Reminder Dismissed',
@@ -161,12 +175,19 @@ export const AnalyticsEvent = {
   MNEMONIC_VERIFICATION_ABANDONED: 'Mnemonic Verification Abandoned',
   MNEMONIC_VERIFICATION_STARTED: 'Mnemonic Verification Started',
   MULTI_WALLET_MIGRATION_COMPLETED: 'Multi-wallet migration completed',
+  NFT_GRID_OPENED: 'NFT Grid Opened',
+  // Fires on the transition into offline, not on every render while offline, so the count is
+  // "how many times connectivity broke" rather than "how long the screen was mounted".
+  OFFLINE_DETECTED: 'Offline Detected',
   OPENED_ADDRESS_QUICK_ACTIONS_MODAL: 'Opened address quick actions modal',
   OPENED_DAPP: 'Opened dApp',
   OPENED_DAPP_DETAILS_MODAL: 'Opened dApp details modal',
   OPENED_FAVORITE_CUSTOM_DAPP: 'Opened favorite custom dApp',
   OPENED_TOKEN_DETAILS_MODAL: 'Opened token details modal',
   OPENED_TOKEN_QUICK_ACTIONS_MODAL: 'Opened token quick actions modal',
+  // One event for every option inside the long-hold quick action modals, split by `quick_action`.
+  // The alternative was nine events that no single breakdown could compare.
+  QUICK_ACTION_PRESSED: 'Quick Action Pressed',
   RECREATED_MISSING_WALLET_METADATA_FOR_EXISTING_WALLET: 'Recreated missing wallet metadata for existing wallet',
   REMOVED_DAPP_TO_FAVORITES: 'Removed dApp to favorites',
   SCANNED_ETHEREUM_ADDRESS: 'Scanned Ethereum address',
@@ -186,6 +207,11 @@ export const AnalyticsEvent = {
   WC_CONNECTED_BY_MANUALLY_PASTING_URI: 'WC: Connected by manually pasting URI',
   WC_SCANNED_WC_QR_CODE: 'WC: Scanned WC QR code',
   WC_SWITCHED_SIGNER_ADDRESS: 'WC: Switched signer address',
+  DAPP_AUTHORIZATION_REVOKED: 'dApp Authorization Revoked',
+  DAPP_BROWSER_ACTION_PRESSED: 'dApp Browser Action Pressed',
+  // A dApp asked to switch network and the user said no, which fails the connection. The accepting
+  // side is `Changed network` with `origin: connect_dapp_modal`.
+  DAPP_NETWORK_SWITCH_DECLINED: 'dApp Network Switch Declined',
   DAPP_HOST_MISMATCH_DETECTED: 'dApp host mismatch detected'
 } as const
 
