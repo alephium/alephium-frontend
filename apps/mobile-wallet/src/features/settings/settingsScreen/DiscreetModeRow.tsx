@@ -1,5 +1,7 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
+import { sendAnalytics } from '~/analytics'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { discreetModeToggled } from '~/features/settings/settingsSlice'
@@ -10,7 +12,10 @@ const DiscreetModeRow = () => {
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const dispatch = useAppDispatch()
 
-  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
+  const toggleDiscreetMode = () => {
+    dispatch(discreetModeToggled())
+    sendAnalytics({ event: AnalyticsEvent.DISCREET_MODE_TOGGLED, props: { enabled: !discreetMode } })
+  }
 
   return (
     <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
