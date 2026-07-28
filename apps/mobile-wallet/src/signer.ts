@@ -1,7 +1,7 @@
 import { AlephiumWalletSigner } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { getBaseAddressStr } from '@alephium/shared/transactions'
-import { AddressHash } from '@alephium/shared/types'
+import { Address, AddressHash } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
 import { Account, transactionSign } from '@alephium/web3'
 
@@ -14,11 +14,19 @@ export class SecureStoreSigner extends AlephiumWalletSigner {
   public getPublicKey = async (addressStr: string): Promise<string> =>
     getAddressAsymetricKey(this.getWalletId(), getBaseAddressStr(addressStr), 'public')
 
-  public signRaw = async (addressStr: string, tx: string): Promise<string> => {
-    const baseAddressStr = getBaseAddressStr(addressStr)
-    const keyType = store.getState().addresses.entities[baseAddressStr]?.keyType
+  protected getAddress = (addressHash: AddressHash): Address => {
+    const address = selectAddressByHash(store.getState(), addressHash)
 
-    return transactionSign(tx, await getAddressAsymetricKey(this.getWalletId(), baseAddressStr, 'private'), keyType)
+    if (!address) throw new Error(`Address not found: ${addressHash}`)
+
+    return address
+  }
+
+  public signRaw = async (addressStr: string, tx: string): Promise<string> => {
+    const addressHash = getBaseAddressStr(addressStr)
+    const { keyType } = this.getAddress(addressHash)
+
+    return transactionSign(tx, await getAddressAsymetricKey(this.getWalletId(), addressHash, 'private'), keyType)
   }
 }
 
@@ -32,12 +40,11 @@ export class SelectedAddressSigner extends SecureStoreSigner {
   }
 
   protected unsafeGetSelectedAccount = async (): Promise<Account> => {
-    const state = store.getState()
-    const addressHash = this.selectAddressHash(state)
-    const address = addressHash ? selectAddressByHash(state, addressHash) : undefined
+    const addressHash = this.selectAddressHash(store.getState())
 
-    if (!address) throw new Error('No address selected')
+    if (!addressHash) throw new Error('No address selected')
 
+    const address = this.getAddress(addressHash)
     const publicKey = await this.getPublicKey(address.hash)
 
     return isGrouplessAddress(address)
