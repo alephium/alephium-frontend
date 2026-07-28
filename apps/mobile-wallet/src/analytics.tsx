@@ -14,6 +14,7 @@ import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 
+import useCaptureOfflineDetection from '~/features/offline/useCaptureOfflineDetection'
 import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
@@ -150,6 +151,8 @@ export const Analytics = ({ children }: { children: ReactNode }) => {
   const contactCount = useAppSelector((s) => selectAllContacts(s).length)
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
+
+  useCaptureOfflineDetection()
 
   const shouldOptOut = !settingsLoadedFromStorage || (__DEV__ && !captureInDev)
   const canCaptureUserProperties = !shouldOptOut && analytics && !!analyticsId
