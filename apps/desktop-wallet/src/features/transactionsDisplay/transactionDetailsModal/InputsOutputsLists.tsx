@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Badge from '@/components/Badge'
+import AddToContactsButton from '@/features/contacts/AddToContactsButton'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import TransactionAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/TransactionAddressBadge'
 import { useAppSelector } from '@/hooks/redux'
@@ -20,9 +21,15 @@ interface InputsListProps extends UseTransactionProps {
   tx: Exclude<UseTransactionProps['tx'], SentTransaction>
   hideLink?: boolean
   truncate?: boolean
+  showAddToContactsButton?: boolean
 }
 
-export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink }: InputsListProps) => {
+export const TransactionOriginAddressesList = ({
+  tx,
+  referenceAddress,
+  hideLink,
+  showAddToContactsButton
+}: InputsListProps) => {
   const { t } = useTranslation()
   const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
@@ -46,11 +53,18 @@ export const TransactionOriginAddressesList = ({ tx, referenceAddress, hideLink 
       {addresses.map((address) => (
         <TransactionAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
+      {addresses.length === 1 && showAddToContactsButton && <AddToContactsButton addressHash={addresses[0]} />}
     </AddressesList>
   )
 }
 
-export const TransactionDestinationAddressesList = ({ tx, referenceAddress, truncate, hideLink }: InputsListProps) => {
+export const TransactionDestinationAddressesList = ({
+  tx,
+  referenceAddress,
+  truncate,
+  hideLink,
+  showAddToContactsButton
+}: InputsListProps) => {
   const txHash = isExecuteScriptTx(tx) ? tx.txId : tx.hash
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, txHash))
 
@@ -74,6 +88,7 @@ export const TransactionDestinationAddressesList = ({ tx, referenceAddress, trun
       {addresses.map((address) => (
         <TransactionAddressBadge address={address} key={address} hideLink={hideLink} />
       ))}
+      {addresses.length === 1 && showAddToContactsButton && <AddToContactsButton addressHash={addresses[0]} />}
     </AddressesList>
   )
 }

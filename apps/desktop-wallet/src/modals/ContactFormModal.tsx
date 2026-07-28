@@ -1,6 +1,6 @@
 import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
 import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared/store'
-import { Contact, ContactFormData } from '@alephium/shared/types'
+import { AddressHash, Contact, ContactFormData } from '@alephium/shared/types'
 import { UserMinus } from 'lucide-react'
 import { memo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -19,14 +19,15 @@ import { isAddressValid, isContactAddressValid, isContactNameValid } from '@/uti
 
 export interface ContactFormModalProps {
   contact?: Contact
+  addressHash?: AddressHash
 }
 
-const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModalProps) => {
+const ContactFormModal = memo(({ id, contact, addressHash }: ModalBaseProp & ContactFormModalProps) => {
   const { t } = useTranslation()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const dispatch = useAppDispatch()
   const { control, handleSubmit, formState } = useForm<ContactFormData>({
-    defaultValues: contact ?? { name: '', address: '', id: undefined },
+    defaultValues: contact ?? { name: '', address: addressHash ?? '', id: undefined },
     mode: 'onChange'
   })
   const { sendAnalytics } = useAnalytics()
