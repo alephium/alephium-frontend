@@ -1,5 +1,5 @@
 import { AnalyticsEvent } from '@alephium/shared'
-import { useFetchAddressesHashesSortedByLastUse } from '@alephium/shared-react'
+import { useFetchAddressesHashesSortedByLastUse, useForegroundAddressPolling } from '@alephium/shared-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -18,6 +18,8 @@ const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
 
   const [selectedAddress, setSelectedAddress] = useState(addressHash)
+
+  useForegroundAddressPolling(selectedAddress)
 
   return (
     <CenteredModal title={t('Receive')} id={id}>
