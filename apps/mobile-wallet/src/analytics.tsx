@@ -24,7 +24,17 @@ const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 // a local .env to point a dev build at a throwaway PostHog project and actually emit events, which
 // is the only way to verify instrumentation end-to-end before shipping it.
 const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY || PUBLIC_POSTHOG_KEY
-const captureInDev = process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true'
+const isProductionProject = posthogKey === PUBLIC_POSTHOG_KEY
+
+// Capturing in dev is only honoured against a throwaway project. A dev build writing to the
+// production project pollutes the very metrics we make product decisions on.
+const captureInDev = process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true' && !isProductionProject
+
+if (__DEV__ && process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true' && isProductionProject) {
+  console.warn(
+    'Analytics: refusing to capture in dev against the production project. Set EXPO_PUBLIC_POSTHOG_KEY to a throwaway project to emit dev events.'
+  )
+}
 
 const posthog = new PostHog(posthogKey, {
   host: PUBLIC_POSTHOG_HOST,

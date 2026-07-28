@@ -29,6 +29,7 @@ import { getRandomLabelColor } from '~/utils/colors'
 const isNewWalletKey = (walletId: string) => `is-new-wallet-${walletId}`
 const isWalletFundedKey = (walletId: string) => `is-wallet-funded-${walletId}`
 const walletOrdinalKey = (walletId: string) => `wallet-ordinal-${walletId}`
+const gettingStartedActiveKey = (walletId: string) => `getting-started-active-${walletId}`
 
 // Never decremented, so deleting a wallet cannot make a later one reuse an ordinal.
 const WALLET_CREATION_COUNTER_KEY = 'wallet-creation-counter'
@@ -177,6 +178,22 @@ export const getIsWalletFunded = (walletId: string): boolean | undefined =>
 
 export const storeIsWalletFunded = (walletId: string, isFunded: boolean) =>
   storeWithReportableError(isWalletFundedKey(walletId), isFunded)
+
+export const getIsGettingStartedActive = (walletId: string): boolean =>
+  storage.getBoolean(gettingStartedActiveKey(walletId)) ?? false
+
+export const storeIsGettingStartedActive = (walletId: string, isActive: boolean) =>
+  storeWithReportableError(gettingStartedActiveKey(walletId), isActive)
+
+// Existing wallets predate the getting-started flag, so activate it once for any that still have an
+// un-backed-up mnemonic. A stored `false` means the user dismissed it, so only an unset flag is
+// activated; watch-only wallets count as backed up and are skipped by the guard.
+export const activateGettingStartedForExistingWallet = (walletId: string, isMnemonicBackedUp: boolean) => {
+  if (isMnemonicBackedUp) return
+  if (storage.getBoolean(gettingStartedActiveKey(walletId)) !== undefined) return
+
+  storeIsGettingStartedActive(walletId, true)
+}
 
 const storeWalletMnemonic = async (walletId: string, mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(walletMnemonicKey(walletId), JSON.stringify(mnemonic), true, '')

@@ -1,11 +1,12 @@
+import { AnalyticsEvent, BuyOrigin } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
-import { useURL } from 'expo-linking'
-import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
+import { openBrowserAsync } from 'expo-web-browser'
 import { memo, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
@@ -17,33 +18,30 @@ import { useAppSelector } from '~/hooks/redux'
 
 interface BuyModalProps {
   receiveAddressHash: AddressHash
+  origin: BuyOrigin
 }
 
-const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
-
-const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
+const BuyModal = memo<BuyModalProps>(({ receiveAddressHash, origin }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
-  const providerUrl = useOnramperUrl(receiveAddressHash)
-  const deeplink = useURL()
+  const { url: providerUrl, isLoading, error } = useOnramperUrl(receiveAddressHash)
   const { dismissModal } = useModalContext()
 
   useEffect(() => {
-    if (deeplink?.includes(CLOSE_ONRAMP_TAB_DEEP_LINK)) {
-      dismissModal()
-      dismissBrowser()
-    }
-  }, [deeplink, dismissModal])
+    sendAnalytics({ event: AnalyticsEvent.BUY_DISCLAIMER_SHOWN, props: { origin, provider: 'onramper' } })
+  }, [origin])
 
   const openProviderUrl = async () => {
-    receiveAddress &&
-      providerUrl &&
-      openBrowserAsync(providerUrl, {
-        createTask: false, // Android: the browser opens within our app without a new task in the task manager
-        toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
-        controlsColor: theme.global.accent // iOS: color of button texts
-      })
+    if (!receiveAddress || !providerUrl) return
+
+    sendAnalytics({ event: AnalyticsEvent.BUY_PROVIDER_OPENED, props: { origin, provider: 'onramper' } })
+
+    openBrowserAsync(providerUrl, {
+      createTask: false, // Android: the browser opens within our app without a new task in the task manager
+      toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
+      controlsColor: theme.global.accent // iOS: color of button texts
+    })
 
     dismissModal()
   }
@@ -64,12 +62,15 @@ const BuyModal = memo<BuyModalProps>(({ receiveAddressHash }) => {
         </Trans>
       </AppText>
 
+      {error && <AppText color="alert">{t('Could not reach the payment provider. Please try again later.')}</AppText>}
+
       <BottomButtons fullWidth backgroundColor="back1">
         <Button
           title={t('I understand')}
-          onPress={providerUrl ? openProviderUrl : undefined}
+          onPress={openProviderUrl}
           variant="highlight"
-          loading={!providerUrl}
+          loading={isLoading}
+          disabled={!providerUrl}
         />
       </BottomButtons>
     </BottomModal>
