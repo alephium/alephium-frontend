@@ -9,10 +9,18 @@
 //    docs/analytics-events-migration.md for the old→new mapping and how to bridge the history
 //    split with a PostHog Action.
 //  - DESKTOP-only / MOBILE-only events have no cross-platform twin and keep their legacy names.
-//  - `Transaction Approved` carries a `tx_type` prop (contract_call | deploy | unsigned |
-//    transfer | chained) instead of a separate event per approval type.
+//  - `Transaction Approved` and `Transaction Rejected` carry a `tx_type` prop (contract_call |
+//    deploy | unsigned | transfer | chained | message | consolidate) instead of a separate event
+//    per type. `message` and `consolidate` only ever appear on the rejection side: their approvals
+//    predate the prop and keep their own events, `Message Signed` and `Consolidated UTXOs`.
 //  - The `event` argument of `sendAnalytics` is typed as `AnalyticsEventName`, so only
 //    values from this catalog can be captured.
+//  - ONE EXCEPTION, and it is not capturable here: the mobile wallet runs posthog-react-native with
+//    `captureAppLifecycleEvents`, so the SDK itself emits `Application Installed`, `Application
+//    Updated`, `Application Opened`, `Application Became Active` and `Application Backgrounded`.
+//    Those names are owned by the SDK - PostHog's session, retention and stickiness tooling keys off
+//    them, so they cannot be renamed into this catalog. `Application Installed` never actually fires,
+//    because opt-in necessarily post-dates install detection.
 
 export const AnalyticsEvent = {
   // ── SHARED (identical string in both apps - funnel-ready) ───────
@@ -176,8 +184,8 @@ export const AnalyticsEvent = {
   MNEMONIC_VERIFICATION_STARTED: 'Mnemonic Verification Started',
   MULTI_WALLET_MIGRATION_COMPLETED: 'Multi-wallet migration completed',
   NFT_GRID_OPENED: 'NFT Grid Opened',
-  // Fires on the transition into offline, not on every render while offline, so the count is
-  // "how many times connectivity broke" rather than "how long the screen was mounted".
+  // Counts how many times connectivity broke, not how long it stayed broken: it fires on entering
+  // an offline state and again only if the affected service changes.
   OFFLINE_DETECTED: 'Offline Detected',
   OPENED_ADDRESS_QUICK_ACTIONS_MODAL: 'Opened address quick actions modal',
   OPENED_DAPP: 'Opened dApp',

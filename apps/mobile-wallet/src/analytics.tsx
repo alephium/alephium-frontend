@@ -41,11 +41,15 @@ if (__DEV__ && process.env.EXPO_PUBLIC_POSTHOG_CAPTURE_IN_DEV === 'true' && isPr
 const posthog = new PostHog(posthogKey, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
-  customAppProperties: (properties) => {
-    const sanitized = { ...properties, $ip: '', $timezone: '' }
-    // Some Android devices leak Build.FINGERPRINT as $os_name (e.g. "samsung/.../release-keys"); force it to "Android".
-    if (typeof sanitized.$os_name === 'string' && sanitized.$os_name.includes('/')) sanitized.$os_name = 'Android'
-    return sanitized
+  customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),
+  // `Application Opened` carries the initial deep link, and this app registers the `wc` and
+  // `alephium` schemes - so that URL can be a WalletConnect pairing URI containing `symKey`, live
+  // key material. `customAppProperties` cannot reach it: it runs once at construction, over app
+  // properties, not per-event ones. `AnalyticsProps` has no `url` key, so deleting it unconditionally
+  // cannot strip anything we send ourselves.
+  before_send: (event) => {
+    if (event?.properties) delete event.properties.url
+    return event
   },
   // Lifecycle events are emitted by the SDK from construction, which happens at module load, before
   // the effect below has read the stored analytics setting. Without `defaultOptIn: false` the SDK is
