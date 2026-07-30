@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-alephium-ci
     steps:
       - name: Check out Git repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
@@ -23,7 +23,7 @@ jobs:
         run: pnpm run lint
 
   typecheck:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-alephium-ci
     steps:
       - name: Check out Git repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
@@ -35,7 +35,7 @@ jobs:
         run: pnpm run typecheck
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-alephium-ci
     steps:
       - name: Check out Git repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
@@ -47,7 +47,7 @@ jobs:
         run: pnpm run test
 
   mobile-provider:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-alephium-ci
     steps:
       - name: Check out Git repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
@@ -67,7 +67,11 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        include:
+          - os: namespace-profile-alephium-ci-macos
+            platform: macos
+          - os: namespace-profile-alephium-ci
+            platform: ubuntu
 
     steps:
       - name: Check out Git repository
@@ -76,16 +80,11 @@ jobs:
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
 
-      - name: Extract platform name
-        id: get-os
-        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Skip desktop wallet signing
         uses: jaywcjlove/github-action-package@6fb8b5f918c1cb2eb3e0416d5b9f45cd4af6ed16 # v2.0.0
         with:
           path: apps/desktop-wallet/package.json
           unset: build.win.sign
 
-      - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
-        run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ steps.get-os.outputs.os }}
+      - name: Building desktop wallet on ${{ matrix.platform }}
+        run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ matrix.platform }}
