@@ -1,9 +1,9 @@
 import { InfiniteData, InfiniteQueryObserver } from '@tanstack/react-query'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { walletTransactionsInfiniteQuery } from '../src/api/queries/transactionQueries'
+import { addressTransactionsPageQuery, walletTransactionsInfiniteQuery } from '../src/api/queries/transactionQueries'
 import { queryClient } from '../src/api/queryClient'
-import { invalidateAddressQueries, invalidateWalletQueries } from '../src/api/queryInvalidation'
+import { invalidateAddressQueries, invalidateAddressTransactions } from '../src/api/queryInvalidation'
 import {
   ADDRESS_HASH,
   alphBalanceQuery,
@@ -267,10 +267,24 @@ describe('gate first-data skip', () => {
   })
 })
 
-describe('invalidateWalletQueries', () => {
-  const walletQuery = () =>
-    walletTransactionsInfiniteQuery({ addressHashes: [ADDRESS_HASH], networkId: NETWORK_ID, isExplorerOnline: true })
+const OTHER_ADDRESS_HASH = 'other-test-address'
 
+const walletQuery = (addressHashes = [ADDRESS_HASH]) =>
+  walletTransactionsInfiniteQuery({ addressHashes, networkId: NETWORK_ID, isExplorerOnline: true })
+
+const observeInfinite = async <TOptions extends { queryKey: readonly unknown[] }>(options: TOptions) => {
+  const observer = new InfiniteQueryObserver(queryClient, options as never)
+
+  trackSubscription(observer.subscribe(() => {}))
+  await vi.waitFor(() => expect(observer.getCurrentResult().isFetching).toBe(false))
+
+  return observer
+}
+
+const transactionCallsFor = (addressHash: string) =>
+  mockExplorer.mocks.transactions.mock.calls.filter(([hash]) => hash === addressHash).length
+
+describe('invalidateAddressTransactions', () => {
   const seedThreePagesOnServer = () => {
     mockExplorer.state.transactionsByPage = {
       1: [confirmedTx('tx-page-1')],
@@ -279,7 +293,7 @@ describe('invalidateWalletQueries', () => {
     }
   }
 
-  it('trims the cached pages to the first one before invalidating', async () => {
+  it('trims the cached wallet list pages to the first one before invalidating', async () => {
     seedThreePagesOnServer()
     await queryClient.fetchInfiniteQuery({ ...walletQuery(), pages: 3 })
 
@@ -288,7 +302,7 @@ describe('invalidateWalletQueries', () => {
 
     const transactionsCallsBefore = mockExplorer.mocks.transactions.mock.calls.length
 
-    await invalidateWalletQueries()
+    await invalidateAddressTransactions(ADDRESS_HASH)
 
     const stateAfter = getState(walletQuery())
     expect((stateAfter.data as InfiniteData<unknown>).pages).toHaveLength(1)
@@ -297,12 +311,10 @@ describe('invalidateWalletQueries', () => {
     expect(mockExplorer.mocks.transactions.mock.calls.length).toBe(transactionsCallsBefore)
   })
 
-  it('refetches only the first page for an active observer, not every loaded page', async () => {
+  it('refetches only the first wallet list page for an active observer, not every loaded page', async () => {
     seedThreePagesOnServer()
 
-    const observer = new InfiniteQueryObserver(queryClient, walletQuery())
-    trackSubscription(observer.subscribe(() => {}))
-    await vi.waitFor(() => expect(observer.getCurrentResult().isFetching).toBe(false))
+    const observer = await observeInfinite(walletQuery())
     await observer.fetchNextPage()
     await observer.fetchNextPage()
 
@@ -311,7 +323,7 @@ describe('invalidateWalletQueries', () => {
     mockExplorer.state.transactionsByPage = { ...mockExplorer.state.transactionsByPage, 1: [confirmedTx('tx-new')] }
     const transactionsCallsBefore = mockExplorer.mocks.transactions.mock.calls.length
 
-    await invalidateWalletQueries()
+    await invalidateAddressTransactions(ADDRESS_HASH)
 
     expect(mockExplorer.mocks.transactions.mock.calls.length).toBe(transactionsCallsBefore + 1)
 
@@ -319,5 +331,25 @@ describe('invalidateWalletQueries', () => {
     expect(data.pages).toHaveLength(1)
     expect(data.pages[0].pageTransactions.map(({ hash }) => hash)).toEqual(['tx-new'])
     expect(getState(walletQuery()).isInvalidated).toBe(false)
+  })
+})
+
+describe('transaction lists in the new tx cascade', () => {
+  it('re-requests the pages of the address that changed and of no other', async () => {
+    await seedGate()
+    await queryClient.fetchQuery(
+      addressTransactionsPageQuery({ addressHash: OTHER_ADDRESS_HASH, page: 1, networkId: NETWORK_ID })
+    )
+
+    const observer = await observeInfinite(walletQuery([ADDRESS_HASH, OTHER_ADDRESS_HASH]))
+
+    expect(transactionCallsFor(ADDRESS_HASH)).toBe(1)
+    expect(transactionCallsFor(OTHER_ADDRESS_HASH)).toBe(1)
+
+    await detectNewTxThroughGate(mockExplorer, 'tx-2')
+    await vi.waitFor(() => expect(observer.getCurrentResult().isFetching).toBe(false))
+
+    expect(transactionCallsFor(ADDRESS_HASH)).toBe(2)
+    expect(transactionCallsFor(OTHER_ADDRESS_HASH)).toBe(1)
   })
 })

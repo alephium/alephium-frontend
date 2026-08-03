@@ -13,6 +13,7 @@ import {
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
+import { isAddressTransactionsPageQueryKey } from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 import { useIsExplorerOffline } from '../network'
 
@@ -118,8 +119,14 @@ export const getPersisterKey = (walletId: string) => 'tanstack-cache-for-wallet-
 
 // Token resolution fallbacks are placeholders for data that could not be fetched, not real data, so they must not
 // outlive the session by being persisted to disk.
+//
+// The per-address transaction pages are excluded for a different reason: the two infinite queries
+// composed from them persist the same transactions already, so keeping the pages too would write
+// every transaction to disk twice, on exactly the many-address wallets where the payload is largest.
 export const shouldDehydrateQuery = (query: Query) =>
-  query.meta?.['isMainnet'] === false || isTokenResolutionFallback(query.state.data)
+  query.meta?.['isMainnet'] === false ||
+  isTokenResolutionFallback(query.state.data) ||
+  isAddressTransactionsPageQueryKey(query.queryKey)
     ? false
     : defaultShouldDehydrateQuery(query)
 

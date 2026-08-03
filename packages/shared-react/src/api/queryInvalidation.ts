@@ -2,10 +2,6 @@ import { AddressHash, isTokenResolutionFallback } from '@alephium/shared/types'
 import { InfiniteData } from '@tanstack/react-query'
 
 import { ADDRESS_DATA } from '../api/queries/addressQueries'
-import {
-  AddressTransactionsInfiniteQueryPageData,
-  WalletTransactionsInfiniteQueryPageParam
-} from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 
 const isAddressDataQuery = (queryKey: readonly unknown[], matchesAddress: (hash: AddressHash) => boolean) =>
@@ -33,10 +29,6 @@ export const invalidateAddressQueries = (addressHash: AddressHash) =>
 export const invalidateAddressesQueries = (addressHashes: Set<AddressHash>) =>
   cancelThenInvalidateAddressQueries((hash) => addressHashes.has(hash))
 
-export const invalidateWalletQueries = async () => {
-  await invalidateWalletTransactionsQuery()
-}
-
 export const invalidateTokenPrices = async () => {
   await queryClient.invalidateQueries({ queryKey: ['tokenPrices', 'currentPrice'] })
 }
@@ -47,34 +39,38 @@ export const invalidateTokenResolutionFallbacks = async () => {
   })
 }
 
-type WalletTransactionsQueryData = InfiniteData<
-  AddressTransactionsInfiniteQueryPageData,
-  WalletTransactionsInfiniteQueryPageParam
->
+const WALLET_TRANSACTIONS_QUERY_KEY = ['wallet', 'transactions']
 
-const invalidateWalletTransactionsQuery = async () => {
-  const queryKey = ['wallet', 'transactions']
+// A new transaction does not only add a row, it pushes every later transaction one place down, so
+// every loaded page below the first is now wrong. The wallet list drops those pages instead of
+// refetching them, because rebuilding page N of that list costs one request per address.
+// See: https://github.com/alephium/alephium-frontend/issues/1475
+//
+// The updater form is deliberate. `setQueriesData` with a fixed value would write the first matching
+// query's pages onto every other query the prefix matches, which for this key means across networks
+// and across address sets.
+const dropPagesAfterFirstThenInvalidateWalletTransactions = async () => {
+  queryClient.setQueriesData<InfiniteData<unknown, unknown>>({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY }, (data) =>
+    data && data.pages.length > 1 ? { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) } : data
+  )
 
-  // We use `getQueriesData` instead of `getQueryData` because we cannot reconstruct the full query key
-  const data = queryClient.getQueriesData({ queryKey })
+  await queryClient.invalidateQueries({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY })
+}
 
-  // Keep only the first page of the wallet transactions query to avoid refetching all loaded pages
-  // See: https://github.com/alephium/alephium-frontend/issues/1475
-  if (data && data[0] && data[0][1]) {
-    const firstPageData = data[0][1] as WalletTransactionsQueryData
+// Both transaction lists read their rows through this address's page queries, so anything that wants
+// fresher transactions has to expire those pages first, or a list rebuilds itself out of the same
+// cache and the refresh does nothing. Cancelling before invalidating is what the address data pass
+// above does and for the same reason: a page fetch already in flight would otherwise resolve with
+// pre-transaction data and clear the invalidation flag, which staleTime Infinity makes permanent.
+// Cancelling strands whichever list was awaiting that page, so the caller below re-drives the list.
+const cancelThenInvalidateAddressTransactionsPages = async (addressHash: AddressHash) => {
+  const queryKey = ['address', addressHash, 'transactions', 'page']
 
-    if (
-      firstPageData?.pages &&
-      firstPageData.pages.length > 0 &&
-      firstPageData?.pageParams &&
-      firstPageData.pageParams.length > 0
-    ) {
-      queryClient.setQueriesData({ queryKey }, () => ({
-        pages: firstPageData.pages.slice(0, 1),
-        pageParams: firstPageData.pageParams.slice(0, 1)
-      }))
-    }
-  }
-
+  await queryClient.cancelQueries({ queryKey })
   await queryClient.invalidateQueries({ queryKey })
+}
+
+export const invalidateAddressTransactions = async (addressHash: AddressHash) => {
+  await cancelThenInvalidateAddressTransactionsPages(addressHash)
+  await dropPagesAfterFirstThenInvalidateWalletTransactions()
 }
