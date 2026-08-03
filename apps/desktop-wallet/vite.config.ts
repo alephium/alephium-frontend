@@ -29,6 +29,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // address-discovery needs ~3s of key derivation and the runner is shared with lint and typecheck
+    testTimeout: 20000,
     setupFiles: ['./src/setupTests.js', '@vitest/web-worker'],
     coverage: {
       reporter: ['text', 'html'],
