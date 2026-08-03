@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/setup-monorepo
 
       - name: Lint, typecheck and test all workspaces
-        run: pnpm exec turbo run lint typecheck test build:deps --continue
+        run: pnpm run check
 
       - name: Verify mobile dApp provider UMD artifact
         working-directory: apps/mobile-wallet
