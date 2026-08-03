@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -19,32 +19,12 @@ jobs:
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
 
-      - name: Lint all workspaces
-        run: pnpm run lint
+      - name: Lint, typecheck and test all workspaces
+        run: pnpm exec turbo run lint typecheck test build:deps --continue
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-
-      - name: 🏗 Setup monorepo
-        uses: ./.github/actions/setup-monorepo
-
-      - name: Check that TypeScript compiles in all workspaces
-        run: pnpm run typecheck
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-
-      - name: 🏗 Setup monorepo
-        uses: ./.github/actions/setup-monorepo
-
-      - name: Run tests in all workspaces
-        run: pnpm run test
+      - name: Verify mobile dApp provider UMD artifact
+        working-directory: apps/mobile-wallet
+        run: node -e "require.resolve('@alephium/wallet-dapp-provider/lib/provider.umd.json')"
 
   audit:
     runs-on: ubuntu-latest
@@ -58,28 +38,19 @@ jobs:
       - name: Audit NPM dependencies
         run: pnpm audit --prod
 
-  mobile-provider:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-
-      - name: 🏗 Setup monorepo
-        uses: ./.github/actions/setup-monorepo
-
-      - name: Build mobile dApp provider and verify UMD artifact
-        working-directory: apps/mobile-wallet
-        run: |
-          pnpm exec turbo build:deps
-          node -e "require.resolve('@alephium/wallet-dapp-provider/lib/provider.umd.json')"
-
   build-desktop-wallet:
-    needs: [typecheck]
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            platform: macos
+          - os: ubuntu-latest
+            platform: ubuntu
+          - os: windows-latest
+            platform: windows
 
     steps:
       - name: Check out Git repository
@@ -87,11 +58,6 @@ jobs:
 
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
-
-      - name: Extract platform name
-        id: get-os
-        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
-        shell: bash
 
       - name: Skip desktop wallet signing
         uses: jaywcjlove/github-action-package@6fb8b5f918c1cb2eb3e0416d5b9f45cd4af6ed16 # v2.0.0
@@ -99,5 +65,5 @@ jobs:
           path: apps/desktop-wallet/package.json
           unset: build.win.sign
 
-      - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
-        run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ steps.get-os.outputs.os }}
+      - name: Building desktop wallet on ${{ matrix.platform }}
+        run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ matrix.platform }}
