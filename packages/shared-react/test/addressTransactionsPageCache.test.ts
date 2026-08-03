@@ -13,7 +13,11 @@ import {
   walletTransactionsInfiniteQuery
 } from '../src/api/queries/transactionQueries'
 import { queryClient } from '../src/api/queryClient'
-import { invalidateAddressesQueries, invalidateAddressTransactions } from '../src/api/queryInvalidation'
+import {
+  invalidateAddressesQueries,
+  refreshAddressTransactions,
+  refreshWalletTransactions
+} from '../src/api/queryInvalidation'
 
 const NETWORK_ID = 4
 const MAINNET_ID = 0
@@ -78,6 +82,9 @@ const walletQuery = (addressHashes: AddressHash[]) =>
 const addressQuery = (addressHash: AddressHash) =>
   addressTransactionsInfiniteQuery({ addressHash, networkId: NETWORK_ID, isExplorerOnline: true })
 
+const pageParamsOf = (queryKey: readonly unknown[]) =>
+  queryClient.getQueryData<InfiniteData<unknown, unknown>>(queryKey as unknown[])?.pageParams
+
 const pagesOf = (queryKey: readonly unknown[]) =>
   queryClient.getQueryData<InfiniteData<unknown, unknown>>(queryKey as unknown[])?.pages
 
@@ -137,7 +144,7 @@ describe('address transactions page cache', () => {
     await fetchWalletPage([A, B, C], firstPage)
     expect(spy).toHaveBeenCalledTimes(3)
 
-    await invalidateAddressTransactions(A)
+    await refreshWalletTransactions([A])
     await fetchWalletPage([A, B, C], firstPage)
 
     expect(callsFor(spy, A)).toBe(2)
@@ -152,7 +159,7 @@ describe('address transactions page cache', () => {
     await queryClient.fetchQuery(pageQuery(A, 2))
     expect(spy).toHaveBeenCalledTimes(2)
 
-    await invalidateAddressTransactions(A)
+    await refreshWalletTransactions([A])
 
     await queryClient.fetchQuery(pageQuery(A, 1))
     await queryClient.fetchQuery(pageQuery(A, 2))
@@ -242,7 +249,35 @@ describe('address transactions page cache', () => {
     })
   })
 
-  describe('refreshing the transaction lists of one address', () => {
+  describe('the wallet list refresh affordance', () => {
+    // The address details list holds pages composed out of the page queries this call just cancelled, so leaving it
+    // valid would have it replay them the next time the modal is opened inside its gc window.
+    it('expires the address details list of the addresses it refreshed, and of no other', async () => {
+      const pages = { pages: [[tx('tx-1')], [tx('tx-2')]], pageParams: [1, 2] }
+
+      queryClient.setQueryData<InfiniteData<unknown, number>>(addressQuery(A).queryKey, pages)
+      queryClient.setQueryData<InfiniteData<unknown, number>>(addressQuery(B).queryKey, pages)
+
+      await refreshWalletTransactions([A])
+
+      expect(queryClient.getQueryState(addressQuery(A).queryKey)?.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(addressQuery(B).queryKey)?.isInvalidated).toBe(false)
+    })
+
+    it('expires only the addresses it was given, leaving the rest of the wallet as cache hits', async () => {
+      const spy = installExplorer(async (addressHash) => [tx(`tx-of-${addressHash}`)])
+
+      await fetchWalletPage([A, B, C], firstPage)
+      expect(spy).toHaveBeenCalledTimes(3)
+
+      await refreshWalletTransactions([A])
+      await fetchWalletPage([A, B, C], firstPage)
+
+      expect(callsFor(spy, A)).toBe(2)
+      expect(callsFor(spy, B)).toBe(1)
+      expect(callsFor(spy, C)).toBe(1)
+    })
+
     it('re-drives a list whose in-flight page fetch it cancels, rather than letting it land stale', async () => {
       const inFlight = deferred()
       let blockNextCall = true
@@ -262,9 +297,9 @@ describe('address transactions page cache', () => {
       unsubscribes.push(observer.subscribe(() => {}))
       await vi.waitFor(() => expect(spy).toHaveBeenCalledTimes(1))
 
-      const invalidation = invalidateAddressTransactions(A)
+      const refresh = refreshWalletTransactions([A])
       inFlight.resolve()
-      await invalidation
+      await refresh
 
       await vi.waitFor(() => expect(observer.getCurrentResult().isFetching).toBe(false))
 
@@ -287,10 +322,86 @@ describe('address transactions page cache', () => {
         pageParams: [{ page: 1 }, { page: 2 }, { page: 3 }]
       })
 
-      await invalidateAddressTransactions(A)
+      await refreshWalletTransactions([A])
 
       expect(pagesOf(walletQuery([A]).queryKey)).toEqual([walletPage('a-1')])
       expect(pagesOf(walletQuery([B]).queryKey)).toEqual([walletPage('b-1')])
+    })
+  })
+
+  describe('the address details refresh affordance', () => {
+    it('keeps every page the address details list has loaded, and refetches them', async () => {
+      const spy = installExplorer(async (addressHash) => [tx(`tx-of-${addressHash}`)])
+
+      await queryClient.fetchInfiniteQuery({ ...addressQuery(A), pages: 3 })
+      expect(pageParamsOf(addressQuery(A).queryKey)).toEqual([1, 2, 3])
+      expect(callsFor(spy, A)).toBe(3)
+
+      await refreshAddressTransactions(A)
+
+      expect(pageParamsOf(addressQuery(A).queryKey)).toEqual([1, 2, 3])
+      expect(queryClient.getQueryState(addressQuery(A).queryKey)?.isInvalidated).toBe(true)
+
+      await queryClient.fetchInfiniteQuery({ ...addressQuery(A), pages: 3 })
+
+      expect(callsFor(spy, A)).toBe(6)
+    })
+
+    it('refreshes the wallet list mounted behind the modal without truncating it', async () => {
+      const walletPage = (marker: string) => ({ pageTransactions: [tx(marker)], addressesWithMoreTxPages: [] })
+
+      queryClient.setQueryData<InfiniteData<unknown, unknown>>(walletQuery([A]).queryKey, {
+        pages: [walletPage('a-1'), walletPage('a-2')],
+        pageParams: [{ page: 1 }, { page: 2 }]
+      })
+
+      await refreshAddressTransactions(A)
+
+      expect(pagesOf(walletQuery([A]).queryKey)).toHaveLength(2)
+      expect(queryClient.getQueryState(walletQuery([A]).queryKey)?.isInvalidated).toBe(true)
+    })
+
+    it('re-drives a wallet list fetch that was awaiting the page it cancels', async () => {
+      const inFlight = deferred()
+      let blockNextCall = true
+
+      const spy = installExplorer(async () => {
+        if (blockNextCall) {
+          blockNextCall = false
+          await inFlight.promise
+
+          return [tx('tx-from-before-the-refresh')]
+        }
+
+        return [tx('tx-from-after-the-refresh')]
+      })
+
+      const observer = new InfiniteQueryObserver(queryClient, walletQuery([A]) as never)
+      unsubscribes.push(observer.subscribe(() => {}))
+      await vi.waitFor(() => expect(spy).toHaveBeenCalledTimes(1))
+
+      const refresh = refreshAddressTransactions(A)
+      inFlight.resolve()
+      await refresh
+
+      await vi.waitFor(() => expect(observer.getCurrentResult().isFetching).toBe(false))
+
+      const pages = observer.getCurrentResult().data?.pages as Array<{ pageTransactions: Array<{ hash: string }> }>
+
+      expect(pages).toHaveLength(1)
+      expect(pages[0].pageTransactions.map(({ hash }) => hash)).toEqual(['tx-from-after-the-refresh'])
+    })
+
+    it('still expires the pages of its own address, so the reload reaches the explorer', async () => {
+      const spy = installExplorer(async (addressHash) => [tx(`tx-of-${addressHash}`)])
+
+      await queryClient.fetchInfiniteQuery(addressQuery(A))
+      expect(callsFor(spy, A)).toBe(1)
+
+      await refreshAddressTransactions(A)
+      await queryClient.fetchInfiniteQuery(addressQuery(A))
+
+      expect(callsFor(spy, A)).toBe(2)
     })
   })
 

@@ -57,20 +57,37 @@ const dropPagesAfterFirstThenInvalidateWalletTransactions = async () => {
   await queryClient.invalidateQueries({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY })
 }
 
-// Both transaction lists read their rows through this address's page queries, so anything that wants
-// fresher transactions has to expire those pages first, or a list rebuilds itself out of the same
-// cache and the refresh does nothing. Cancelling before invalidating is what the address data pass
-// above does and for the same reason: a page fetch already in flight would otherwise resolve with
-// pre-transaction data and clear the invalidation flag, which staleTime Infinity makes permanent.
-// Cancelling strands whichever list was awaiting that page, so the caller below re-drives the list.
-const cancelThenInvalidateAddressTransactionsPages = async (addressHash: AddressHash) => {
-  const queryKey = ['address', addressHash, 'transactions', 'page']
+// Expiring these pages is what makes a refresh issue a request, since both lists rebuild their rows out of them.
+// Cancelling first for the same reason as the address data pass above, and because it strands whichever list was
+// awaiting a cancelled page, every caller below re-drives both lists.
+const cancelThenInvalidateAddressTransactionsPages = async (addressHashes: AddressHash[]) => {
+  for (const addressHash of addressHashes) {
+    const queryKey = ['address', addressHash, 'transactions', 'page']
 
-  await queryClient.cancelQueries({ queryKey })
-  await queryClient.invalidateQueries({ queryKey })
+    await queryClient.cancelQueries({ queryKey })
+    await queryClient.invalidateQueries({ queryKey })
+  }
 }
 
-export const invalidateAddressTransactions = async (addressHash: AddressHash) => {
-  await cancelThenInvalidateAddressTransactionsPages(addressHash)
+// Never truncated like the wallet list: this one covers a single address, so its loaded pages cost one request each
+// to rebuild rather than one per address in the wallet.
+const invalidateAddressTransactionsList = (addressHash: AddressHash) =>
+  queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'infinite'] })
+
+// The wallet list behind the modal is refreshed too, but never truncated, since the user did not ask to lose its rows.
+export const refreshAddressTransactions = async (addressHash: AddressHash) => {
+  await cancelThenInvalidateAddressTransactionsPages([addressHash])
+  await queryClient.invalidateQueries({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY })
+  await invalidateAddressTransactionsList(addressHash)
+}
+
+// Callers pass only the addresses that changed, so this costs one request per such address rather than one per address
+// in the wallet. An empty set means nothing to rebuild, and truncating then would drop scrolled pages for nothing.
+export const refreshWalletTransactions = async (addressHashes: AddressHash[]) => {
+  if (addressHashes.length === 0) return
+
+  await cancelThenInvalidateAddressTransactionsPages(addressHashes)
   await dropPagesAfterFirstThenInvalidateWalletTransactions()
+
+  for (const addressHash of addressHashes) await invalidateAddressTransactionsList(addressHash)
 }

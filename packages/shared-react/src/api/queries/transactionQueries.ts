@@ -8,11 +8,7 @@ import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-q
 import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '../../api/apiUtils'
 import { queryClient } from '../../api/queryClient'
-import {
-  invalidateAddressQueries,
-  invalidateAddressTransactions,
-  invalidateTokenPrices
-} from '../../api/queryInvalidation'
+import { invalidateAddressQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
 import { ADDRESS_DATA, addressAlphBalancesQueryKey } from './addressQueries'
 import { shouldSkip } from './queriesUtils'
 
@@ -50,6 +46,8 @@ export const addressLatestTransactionQuery = ({
 
           // The following block invalidates queries that need to refetch data if a new transaction hash has been
           // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
+          // The transaction lists are deliberately left out, so that an arriving transaction never moves the rows
+          // under someone who is reading them.
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
             const isFirstAddressData =
               cachedData === undefined &&
@@ -60,7 +58,6 @@ export const addressLatestTransactionQuery = ({
             // in-flight requests.
             if (!isFirstAddressData) {
               await invalidateAddressQueries(addressHash)
-              await invalidateAddressTransactions(addressHash)
               await invalidateTokenPrices()
             }
           }

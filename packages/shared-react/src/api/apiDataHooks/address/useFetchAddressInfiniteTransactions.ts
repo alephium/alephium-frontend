@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 
 import { useFetchAddressLatestTransaction } from '../../../api/apiDataHooks/address/useFetchAddressLatestTransaction'
 import { addressTransactionsInfiniteQuery } from '../../../api/queries/transactionQueries'
-import { queryClient } from '../../../api/queryClient'
+import { refreshAddressTransactions } from '../../../api/queryInvalidation'
 import { useIsExplorerOnline, useNetworkId } from '../../../network/networkHooks'
 
 interface UseFetchAddressInfiniteTransactionsProps {
@@ -21,7 +21,8 @@ export const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAdd
 
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(query)
 
-  const refresh = useCallback(() => queryClient.refetchQueries({ queryKey: query.queryKey }), [query.queryKey])
+  // Refetching the list on its own would rebuild it from the pages it is already holding
+  const refresh = useCallback(() => refreshAddressTransactions(addressHash), [addressHash])
 
   const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
