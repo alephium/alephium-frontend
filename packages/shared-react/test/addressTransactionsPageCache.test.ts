@@ -5,7 +5,7 @@ import { ExplorerProvider } from '@alephium/web3'
 import { dehydrate, InfiniteData, InfiniteQueryObserver } from '@tanstack/react-query'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { shouldDehydrateQuery } from '../src/api/persistQueryClientContext'
+import { dehydrateWithFirstTransactionsPageOnly, shouldDehydrateQuery } from '../src/api/persistQueryClientContext'
 import {
   addressTransactionsCountQuery,
   addressTransactionsInfiniteQuery,
@@ -450,6 +450,45 @@ describe('address transactions page cache', () => {
       await queryClient.fetchQuery(pageQuery(A, 1, MAINNET_ID))
 
       expect(dehydrate(queryClient, { shouldDehydrateQuery }).queries).toHaveLength(0)
+    })
+
+    const persistedPagesOf = (queryKey: readonly unknown[]) => {
+      const persisted = dehydrateWithFirstTransactionsPageOnly().queries.find(
+        (query) => JSON.stringify(query.queryKey) === JSON.stringify(queryKey)
+      )
+
+      return (persisted?.state.data as InfiniteData<unknown, unknown> | undefined)?.pages
+    }
+
+    it('writes only the first page of the wallet list, leaving the loaded ones on screen', async () => {
+      installExplorer(async (addressHash) => [tx(`tx-of-${addressHash}`)])
+
+      const wallet = walletTransactionsInfiniteQuery({
+        addressHashes: [A],
+        networkId: MAINNET_ID,
+        isExplorerOnline: true
+      })
+
+      await queryClient.fetchInfiniteQuery({ ...wallet, pages: 3 })
+      expect(pagesOf(wallet.queryKey)).toHaveLength(3)
+
+      expect(persistedPagesOf(wallet.queryKey)).toHaveLength(1)
+      expect(pagesOf(wallet.queryKey)).toHaveLength(3)
+    })
+
+    it('writes only the first page of the address details list', async () => {
+      installExplorer(async (addressHash) => [tx(`tx-of-${addressHash}`)])
+
+      const list = addressTransactionsInfiniteQuery({
+        addressHash: A,
+        networkId: MAINNET_ID,
+        isExplorerOnline: true
+      })
+
+      await queryClient.fetchInfiniteQuery({ ...list, pages: 3 })
+
+      expect(persistedPagesOf(list.queryKey)).toHaveLength(1)
+      expect(pagesOf(list.queryKey)).toHaveLength(3)
     })
 
     it('still persists the transactions count query, whose key starts the same way', async () => {

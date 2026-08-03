@@ -1,9 +1,11 @@
 import { isTokenResolutionFallback } from '@alephium/shared/types'
 import { sleep } from '@alephium/web3'
-import { PersistQueryClientOptions, persistQueryClientSave } from '@tanstack/query-persist-client-core'
+import { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import {
   defaultShouldDehydrateQuery,
+  dehydrate,
   hydrate,
+  InfiniteData,
   IsRestoringProvider,
   OmitKeyof,
   Query,
@@ -13,7 +15,7 @@ import {
 import { Persister } from '@tanstack/react-query-persist-client'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { isAddressTransactionsPageQueryKey } from '../api/queries/transactionQueries'
+import { isAddressTransactionsPageQueryKey, isTransactionsListQueryKey } from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 import { useIsExplorerOffline } from '../network'
 
@@ -63,11 +65,10 @@ export const PersistQueryClientContextProvider = ({
       console.log(`⤵️ saving query client for wallet ${walletId} (${queriesCount} queries)`)
 
       try {
-        await persistQueryClientSave({
-          queryClient,
-          persister: createPersister(getPersisterKey(walletId)),
+        await createPersister(getPersisterKey(walletId)).persistClient({
           buster: CACHE_SCHEMA_VERSION,
-          dehydrateOptions: { shouldDehydrateQuery }
+          timestamp: Date.now(),
+          clientState: dehydrateWithFirstTransactionsPageOnly()
         })
 
         console.log('✅ query client saved')
@@ -129,6 +130,37 @@ export const shouldDehydrateQuery = (query: Query) =>
   isAddressTransactionsPageQueryKey(query.queryKey)
     ? false
     : defaultShouldDehydrateQuery(query)
+
+type DehydratedQuery = ReturnType<typeof dehydrate>['queries'][number]
+
+// Equivalent to persistQueryClientSave, except a transaction list reaches the disk holding only its first page. The
+// pages below it are the bulk of the payload and the most certainly stale by the next unlock, and scrolling refetches
+// them anyway.
+export const dehydrateWithFirstTransactionsPageOnly = () => {
+  const clientState = dehydrate(queryClient, { shouldDehydrateQuery })
+
+  return {
+    ...clientState,
+    queries: clientState.queries.map((query) =>
+      isTransactionsListQueryKey(query.queryKey) ? withFirstPageOnly(query) : query
+    )
+  }
+}
+
+// Copies rather than slices in place, because the dehydrated entry still points at the data the live list is rendering.
+const withFirstPageOnly = (query: DehydratedQuery): DehydratedQuery => {
+  const data = query.state.data as InfiniteData<unknown, unknown> | undefined
+
+  if (data?.pages === undefined || data.pages.length <= 1) return query
+
+  return {
+    ...query,
+    state: {
+      ...query.state,
+      data: { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) }
+    }
+  }
+}
 
 // Bump to force a one-time cold start of the query cache for everyone who updates, e.g. when query keys or cached
 // query shapes change and the persisted entries would otherwise be orphaned or misread. Payloads persisted before the

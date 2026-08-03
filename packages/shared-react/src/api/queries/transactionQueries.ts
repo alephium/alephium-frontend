@@ -104,6 +104,10 @@ export const addressTransactionsPageQuery = ({ addressHash, page, networkId }: A
 export const isAddressTransactionsPageQueryKey = (queryKey: readonly unknown[]) =>
   queryKey[0] === 'address' && queryKey[2] === 'transactions' && queryKey[3] === 'page'
 
+export const isTransactionsListQueryKey = (queryKey: readonly unknown[]) =>
+  (queryKey[0] === 'wallet' && queryKey[1] === 'transactions') ||
+  (queryKey[0] === 'address' && queryKey[2] === 'transactions' && queryKey[3] === 'infinite')
+
 interface AddressTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
   addressHash: AddressHash
 }
