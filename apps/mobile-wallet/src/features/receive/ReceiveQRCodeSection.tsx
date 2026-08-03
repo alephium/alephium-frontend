@@ -1,5 +1,6 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash } from '@alephium/shared/store'
+import { useForegroundAddressPolling } from '@alephium/shared-react'
 import * as Brightness from 'expo-brightness'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +25,8 @@ interface ReceiveQRCodeSectionProps {
 const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const { t } = useTranslation()
+
+  useForegroundAddressPolling(addressHash)
 
   const [permissionResponse, requestPermission] = Brightness.usePermissions()
 

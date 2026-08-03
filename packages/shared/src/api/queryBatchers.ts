@@ -1,31 +1,41 @@
 import { explorer as e } from '@alephium/web3'
 import { Batcher, create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
-import { TOKENS_QUERY_LIMIT } from '../api/limits'
+import { ADDRESSES_QUERY_LIMIT, TOKENS_QUERY_LIMIT } from '../api/limits'
 import { throttledClient } from '../api/throttledClient'
 
 const tokenIdResolver = <T extends { id: string }>(results: T[], queryTokenId: string) =>
   results.find(({ id }) => id === queryTokenId)
 
+// Every fetcher reads throttledClient at call time rather than capturing the method reference when the batcher is
+// created, so a batcher always targets the current client instance even if it outlives a client swap.
 const createTokenTypeBatcher = () =>
   create({
-    fetcher: throttledClient.explorer.tokens.postTokens,
+    fetcher: (ids: string[]) => throttledClient.explorer.tokens.postTokens(ids),
     resolver: (results, queryTokenId) => results.find(({ token }) => token === queryTokenId),
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
   })
 
 const createFTMetadataBatcher = () =>
   create({
-    fetcher: throttledClient.explorer.tokens.postTokensFungibleMetadata,
+    fetcher: (ids: string[]) => throttledClient.explorer.tokens.postTokensFungibleMetadata(ids),
     resolver: tokenIdResolver,
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
   })
 
 const createNFTMetadataBatcher = () =>
   create({
-    fetcher: throttledClient.explorer.tokens.postTokensNftMetadata,
+    fetcher: (ids: string[]) => throttledClient.explorer.tokens.postTokensNftMetadata(ids),
     resolver: tokenIdResolver,
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
+  })
+
+const createAddressLatestTxBatcher = () =>
+  create({
+    fetcher: (hashes: string[]) => throttledClient.explorer.addresses.postAddressesLatestTransactions(hashes),
+    resolver: (results, queryAddressHash) =>
+      results.find(({ address }) => address === queryAddressHash)?.transactionInfo,
+    scheduler: windowedFiniteBatchScheduler({ maxBatchSize: ADDRESSES_QUERY_LIMIT, windowMs: 10 })
   })
 
 // Explicitely annotating types
@@ -35,11 +45,14 @@ class Batchers {
   ftMetadataBatcher: Batcher<e.FungibleTokenMetadata[], string, e.FungibleTokenMetadata | undefined> =
     createFTMetadataBatcher()
   nftMetadataBatcher: Batcher<e.NFTMetadata[], string, e.NFTMetadata | undefined> = createNFTMetadataBatcher()
+  addressLatestTxBatcher: Batcher<e.TransactionInfoPerAddress[], string, e.TransactionInfo | undefined> =
+    createAddressLatestTxBatcher()
 
   init() {
     this.tokenTypeBatcher = createTokenTypeBatcher()
     this.ftMetadataBatcher = createFTMetadataBatcher()
     this.nftMetadataBatcher = createNFTMetadataBatcher()
+    this.addressLatestTxBatcher = createAddressLatestTxBatcher()
   }
 }
 
@@ -64,6 +77,9 @@ export const batchers = {
   },
   get nftMetadataBatcher() {
     return getBatchers().nftMetadataBatcher
+  },
+  get addressLatestTxBatcher() {
+    return getBatchers().addressLatestTxBatcher
   },
   init() {
     getBatchers().init()

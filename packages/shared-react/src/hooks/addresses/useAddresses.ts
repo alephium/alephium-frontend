@@ -1,4 +1,4 @@
-import { MAXIMAL_GAS_FEE, ONE_DAY_MS } from '@alephium/shared'
+import { MAXIMAL_GAS_FEE } from '@alephium/shared'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { AddressHash, AddressWithGroup, TokenId } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
@@ -77,41 +77,6 @@ export const useFetchAddressesHashesWithBalanceSortedByLastUse = (tokenId: Token
   return {
     data: addressesBalances,
     isLoading: isLoadingSortedAddresses || isLoadingAddressesWithBalance
-  }
-}
-
-const ONE_MONTH_IN_MS = 30 * ONE_DAY_MS
-
-export const useFetchAddressesHashesSplitByUseFrequency = () => {
-  const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
-  const allAddressHashes = useUnsortedAddressesHashes()
-  const { data: latestTxs, isLoading: isLoading } = useFetchLatestTransactionOfEachAddress()
-
-  const splitAddressHashes = useMemo(() => {
-    const frequentlyUsedAddressHashes = []
-    let infrequentlyUsedAddressHashes = []
-
-    if (!isNetworkOffline) {
-      for (const { addressHash, latestTx } of latestTxs) {
-        if (latestTx?.timestamp && latestTx.timestamp > Date.now() - ONE_MONTH_IN_MS) {
-          frequentlyUsedAddressHashes.push(addressHash)
-        } else {
-          infrequentlyUsedAddressHashes.push(addressHash)
-        }
-      }
-    } else {
-      infrequentlyUsedAddressHashes = allAddressHashes
-    }
-
-    return {
-      frequentlyUsedAddressHashes,
-      infrequentlyUsedAddressHashes
-    }
-  }, [allAddressHashes, isNetworkOffline, latestTxs])
-
-  return {
-    data: splitAddressHashes,
-    isLoading
   }
 }
 

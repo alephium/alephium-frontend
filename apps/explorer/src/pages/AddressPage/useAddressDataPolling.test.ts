@@ -22,12 +22,17 @@ interface ChainState {
 }
 
 const setChainState = ({ latestTxHash, balance, txCount }: ChainState) => {
-  vi.spyOn(throttledClient.explorer.addresses, 'getAddressesAddressLatestTransaction').mockResolvedValue({
-    hash: latestTxHash,
-    blockHash: 'block-hash',
-    timestamp: 1,
-    coinbase: false
-  } satisfies e.TransactionInfo)
+  vi.spyOn(throttledClient.explorer.addresses, 'postAddressesLatestTransactions').mockResolvedValue([
+    {
+      address: addressHash,
+      transactionInfo: {
+        hash: latestTxHash,
+        blockHash: 'block-hash',
+        timestamp: 1,
+        coinbase: false
+      }
+    }
+  ] satisfies e.TransactionInfoPerAddress[])
   vi.spyOn(throttledClient.explorer.addresses, 'getAddressesAddressBalance').mockResolvedValue({
     balance,
     lockedBalance: '0'
@@ -108,7 +113,7 @@ describe('address page data polling', () => {
       await runPendingWork()
     }
 
-    expect(throttledClient.explorer.addresses.getAddressesAddressLatestTransaction).toHaveBeenCalledTimes(3)
+    expect(throttledClient.explorer.addresses.postAddressesLatestTransactions).toHaveBeenCalledTimes(3)
     expect(throttledClient.explorer.addresses.getAddressesAddressBalance).not.toHaveBeenCalled()
     expect(throttledClient.explorer.addresses.getAddressesAddressTotalTransactions).not.toHaveBeenCalled()
   })

@@ -60,9 +60,17 @@ export const installMockExplorer = () => {
   }
 
   const mocks = {
-    latestTx: vi.fn(async () => {
+    latestTxs: vi.fn(async (addressHashes: string[]) => {
       await tick()
-      return { hash: state.latestTxHash, timestamp: 1 }
+      return addressHashes.map((address) => ({
+        address,
+        transactionInfo: {
+          hash: state.latestTxHash,
+          blockHash: `block-of-${state.latestTxHash}`,
+          timestamp: 1,
+          coinbase: false
+        }
+      }))
     }),
     alphBalance: vi.fn(async () => {
       await tick()
@@ -84,11 +92,18 @@ export const installMockExplorer = () => {
 
   const explorer = {
     addresses: {
-      getAddressesAddressLatestTransaction: mocks.latestTx,
+      postAddressesLatestTransactions: mocks.latestTxs,
       getAddressesAddressBalance: mocks.alphBalance,
       getAddressesAddressTokensBalance: mocks.tokensBalance,
       getAddressesAddressTotalTransactions: mocks.txCount,
       getAddressesAddressTransactions: mocks.transactions
+    },
+    // Reaching any batcher builds the whole Batchers instance, which also reads the token endpoints. Stub them so
+    // construction does not throw; these tests never resolve token metadata, so empty responses are enough.
+    tokens: {
+      postTokens: vi.fn(async () => []),
+      postTokensFungibleMetadata: vi.fn(async () => []),
+      postTokensNftMetadata: vi.fn(async () => [])
     }
   }
 
