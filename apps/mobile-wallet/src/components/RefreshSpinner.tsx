@@ -1,5 +1,12 @@
 import { AddressHash } from '@alephium/shared'
-import { queryClient, useRefreshAddressesBalances, useUnsortedAddressesHashesSet } from '@alephium/shared-react'
+import {
+  queryClient,
+  refreshWalletTransactionsFromCache,
+  useNetworkId,
+  useRefreshAddressesBalances,
+  useUnsortedAddressesHashes,
+  useUnsortedAddressesHashesSet
+} from '@alephium/shared-react'
 import { useCallback, useState } from 'react'
 import { RefreshControl, RefreshControlProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
@@ -17,7 +24,9 @@ const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
 export default RefreshSpinner
 
 const useRefreshAddressesData = () => {
+  const unsortedAddressesHashes = useUnsortedAddressesHashes()
   const unsortedAddressesHashesSet = useUnsortedAddressesHashesSet()
+  const networkId = useNetworkId()
   const { refreshBalances, isFetchingBalances } = useRefreshAddressesBalances()
   const [isRefreshingData, setIsRefreshingData] = useState(false)
 
@@ -35,11 +44,14 @@ const useRefreshAddressesData = () => {
           unsortedAddressesHashesSet.has(query.queryKey[1] as AddressHash)
       })
 
+      // Nothing else brings new transactions into the mobile list, so the pull has to load them itself.
+      await refreshWalletTransactionsFromCache(unsortedAddressesHashes, networkId)
+
       await refreshBalances()
     } finally {
       setIsRefreshingData(false)
     }
-  }, [unsortedAddressesHashesSet, isRefreshingData, refreshBalances])
+  }, [unsortedAddressesHashesSet, unsortedAddressesHashes, networkId, isRefreshingData, refreshBalances])
 
   return {
     refreshData,

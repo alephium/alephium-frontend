@@ -8,7 +8,7 @@ import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-q
 import { SkipProp } from '../../api/apiDataHooks/apiDataHooksTypes'
 import { getQueryConfig } from '../../api/apiUtils'
 import { queryClient } from '../../api/queryClient'
-import { invalidateAddressQueries, invalidateTokenPrices, invalidateWalletQueries } from '../../api/queryInvalidation'
+import { invalidateAddressQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
 import { ADDRESS_DATA, addressAlphBalancesQueryKey } from './addressQueries'
 import { shouldSkip } from './queriesUtils'
 
@@ -46,6 +46,8 @@ export const addressLatestTransactionQuery = ({
 
           // The following block invalidates queries that need to refetch data if a new transaction hash has been
           // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
+          // The transaction lists are deliberately left out, so that an arriving transaction never moves the rows
+          // under someone who is reading them.
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
             const isFirstAddressData =
               cachedData === undefined &&
@@ -56,7 +58,6 @@ export const addressLatestTransactionQuery = ({
             // in-flight requests.
             if (!isFirstAddressData) {
               await invalidateAddressQueries(addressHash)
-              await invalidateWalletQueries()
               await invalidateTokenPrices()
             }
           }
@@ -74,6 +75,39 @@ interface TransactionsInfiniteQueryBaseProps {
   skip?: boolean
 }
 
+interface AddressTransactionsPageQueryProps {
+  addressHash: AddressHash
+  page: number
+  networkId: number
+}
+
+// One page of one address. Both infinite queries below compose their pages out of these, so this is
+// the layer that issues the requests and therefore the one that owns the rate-limit retry budget.
+//
+// It never expires on its own: it is the storage the two lists read through, and a list stays mounted
+// for as long as the user is on that screen. Dropping a page from under a mounted list would put the
+// next incoming transaction back to costing one request per address in the wallet, rather than the
+// single request for the one address whose transactions actually moved.
+export const addressTransactionsPageQuery = ({ addressHash, page, networkId }: AddressTransactionsPageQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'transactions', 'page', { page, networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () =>
+      (
+        await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+          page,
+          limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+        })
+      ).filter(isConfirmedTx)
+  })
+
+export const isAddressTransactionsPageQueryKey = (queryKey: readonly unknown[]) =>
+  queryKey[0] === 'address' && queryKey[2] === 'transactions' && queryKey[3] === 'page'
+
+export const isTransactionsListQueryKey = (queryKey: readonly unknown[]) =>
+  (queryKey[0] === 'wallet' && queryKey[1] === 'transactions') ||
+  (queryKey[0] === 'address' && queryKey[2] === 'transactions' && queryKey[3] === 'infinite')
+
 interface AddressTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
   addressHash: AddressHash
 }
@@ -88,26 +122,19 @@ export const addressTransactionsInfiniteQuery = ({
     queryKey: ['address', addressHash, 'transactions', 'infinite', { networkId }],
     // 5 minutes after the user navigates away from the address details modal, the cached data will be deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    // The page queries this composes own the rate-limit retry budget; retrying here too would nest one budget inside
+    // the other and multiply the time a rate-limited list spends stuck loading.
+    retry: false,
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
-      : async ({ pageParam }) =>
-          (
-            await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-              page: pageParam,
-              limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
-            })
-          ).filter(isConfirmedTx),
+      : ({ pageParam }) =>
+          queryClient.fetchQuery(addressTransactionsPageQuery({ addressHash, page: pageParam, networkId })),
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
   addressHashes: AddressHash[]
-}
-
-export type AddressTransactionsInfiniteQueryPageData = {
-  pageTransactions: e.Transaction[]
-  addressesWithMoreTxPages: AddressHash[]
 }
 
 export type WalletTransactionsInfiniteQueryPageParam = {
@@ -126,19 +153,21 @@ export const walletTransactionsInfiniteQuery = ({
     // When there are no active instances of this query or when addresses are generated/removed the cached data will be
     // deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    // The page queries this composes own the rate-limit retry budget; retrying here too would nest one budget inside
+    // the other and multiply the time a rate-limited list spends stuck loading.
+    retry: false,
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
       : async ({ pageParam }) => {
           const addresses = pageParam.page === 1 ? addressHashes : pageParam.addressesWithMoreTxPages
+          // Going through the cache rather than the explorer directly is what keeps a retry, or a new
+          // transaction on one address, from re-requesting every other address in the wallet.
           const pageResults = await Promise.all(
             addresses.map(async (addressHash) => ({
               addressHash,
-              transactions: (
-                await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-                  page: pageParam.page,
-                  limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
-                })
-              ).filter(isConfirmedTx)
+              transactions: await queryClient.fetchQuery(
+                addressTransactionsPageQuery({ addressHash, page: pageParam.page, networkId })
+              )
             }))
           )
 

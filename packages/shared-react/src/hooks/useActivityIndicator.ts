@@ -1,41 +1,47 @@
-import { explorer as e } from '@alephium/web3'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { useFetchWalletTransactionsInfinite } from '../api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
+import { useFetchLatestTransactionOfEachAddress } from '../api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 
 interface UseActivityIndicatorProps {
   isDisabled: boolean
 }
 
 export const useActivityIndicator = ({ isDisabled }: UseActivityIndicatorProps) => {
-  const { data: fetchedConfirmedTxs, isLoading } = useFetchWalletTransactionsInfinite()
+  const { data: latestTxOfEachAddress, isLoading } = useFetchLatestTransactionOfEachAddress()
 
-  const [prevLatestTxs, setPrevLatestTxs] = useState<e.Transaction[]>([])
+  const [seenTxHashes, setSeenTxHashes] = useState<Set<string>>(new Set())
   const [newTxCountIndicator, setNewTxCountIndicator] = useState(0)
+
+  // Counted from the poll rather than from the list, whose rows arrive in bulk once it can load at all, so a list
+  // recovering from a rate limit would read as a burst of arrivals. The price is one hash per address, so several
+  // transactions arriving on the same address between two polls count as one.
+  const latestTxHashes = useMemo(
+    () => new Set(latestTxOfEachAddress.flatMap(({ latestTx }) => (latestTx ? [latestTx.hash] : []))),
+    [latestTxOfEachAddress]
+  )
 
   useEffect(() => {
     if (isDisabled) setNewTxCountIndicator(0)
   }, [isDisabled])
 
   useEffect(() => {
-    if (fetchedConfirmedTxs.length === 0 || isLoading) {
+    if (latestTxHashes.size === 0 || isLoading) {
       return
     }
 
-    if (prevLatestTxs.length === 0) {
-      setPrevLatestTxs(fetchedConfirmedTxs)
+    if (seenTxHashes.size === 0) {
+      setSeenTxHashes(latestTxHashes)
       return
     }
 
-    const newTxs = fetchedConfirmedTxs.filter((tx) => !prevLatestTxs.find((prevTx) => prevTx.hash === tx.hash))
-    const newTxCount = new Map(newTxs.map((tx) => [tx.hash, tx])).size
+    const newTxCount = [...latestTxHashes].filter((hash) => !seenTxHashes.has(hash)).length
 
     if (newTxCount > 0 && !isDisabled) {
       setNewTxCountIndicator((prev) => prev + newTxCount)
     }
 
-    setPrevLatestTxs(fetchedConfirmedTxs)
-  }, [fetchedConfirmedTxs, isLoading, isDisabled, prevLatestTxs])
+    setSeenTxHashes(latestTxHashes)
+  }, [latestTxHashes, isLoading, isDisabled, seenTxHashes])
 
   return newTxCountIndicator
 }

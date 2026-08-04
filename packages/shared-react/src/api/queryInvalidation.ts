@@ -2,10 +2,6 @@ import { AddressHash, isTokenResolutionFallback } from '@alephium/shared/types'
 import { InfiniteData } from '@tanstack/react-query'
 
 import { ADDRESS_DATA } from '../api/queries/addressQueries'
-import {
-  AddressTransactionsInfiniteQueryPageData,
-  WalletTransactionsInfiniteQueryPageParam
-} from '../api/queries/transactionQueries'
 import { queryClient } from '../api/queryClient'
 
 const isAddressDataQuery = (queryKey: readonly unknown[], matchesAddress: (hash: AddressHash) => boolean) =>
@@ -33,10 +29,6 @@ export const invalidateAddressQueries = (addressHash: AddressHash) =>
 export const invalidateAddressesQueries = (addressHashes: Set<AddressHash>) =>
   cancelThenInvalidateAddressQueries((hash) => addressHashes.has(hash))
 
-export const invalidateWalletQueries = async () => {
-  await invalidateWalletTransactionsQuery()
-}
-
 export const invalidateTokenPrices = async () => {
   await queryClient.invalidateQueries({ queryKey: ['tokenPrices', 'currentPrice'] })
 }
@@ -47,34 +39,55 @@ export const invalidateTokenResolutionFallbacks = async () => {
   })
 }
 
-type WalletTransactionsQueryData = InfiniteData<
-  AddressTransactionsInfiniteQueryPageData,
-  WalletTransactionsInfiniteQueryPageParam
->
+const WALLET_TRANSACTIONS_QUERY_KEY = ['wallet', 'transactions']
 
-const invalidateWalletTransactionsQuery = async () => {
-  const queryKey = ['wallet', 'transactions']
+// A new transaction does not only add a row, it pushes every later transaction one place down, so
+// every loaded page below the first is now wrong. The wallet list drops those pages instead of
+// refetching them, because rebuilding page N of that list costs one request per address.
+// See: https://github.com/alephium/alephium-frontend/issues/1475
+//
+// The updater form is deliberate. `setQueriesData` with a fixed value would write the first matching
+// query's pages onto every other query the prefix matches, which for this key means across networks
+// and across address sets.
+const dropPagesAfterFirstThenInvalidateWalletTransactions = async () => {
+  queryClient.setQueriesData<InfiniteData<unknown, unknown>>({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY }, (data) =>
+    data && data.pages.length > 1 ? { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) } : data
+  )
 
-  // We use `getQueriesData` instead of `getQueryData` because we cannot reconstruct the full query key
-  const data = queryClient.getQueriesData({ queryKey })
+  await queryClient.invalidateQueries({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY })
+}
 
-  // Keep only the first page of the wallet transactions query to avoid refetching all loaded pages
-  // See: https://github.com/alephium/alephium-frontend/issues/1475
-  if (data && data[0] && data[0][1]) {
-    const firstPageData = data[0][1] as WalletTransactionsQueryData
+// Expiring these pages is what makes a refresh issue a request, since both lists rebuild their rows out of them.
+// Cancelling first for the same reason as the address data pass above, and because it strands whichever list was
+// awaiting a cancelled page, every caller below re-drives both lists.
+const cancelThenInvalidateAddressTransactionsPages = async (addressHashes: AddressHash[]) => {
+  for (const addressHash of addressHashes) {
+    const queryKey = ['address', addressHash, 'transactions', 'page']
 
-    if (
-      firstPageData?.pages &&
-      firstPageData.pages.length > 0 &&
-      firstPageData?.pageParams &&
-      firstPageData.pageParams.length > 0
-    ) {
-      queryClient.setQueriesData({ queryKey }, () => ({
-        pages: firstPageData.pages.slice(0, 1),
-        pageParams: firstPageData.pageParams.slice(0, 1)
-      }))
-    }
+    await queryClient.cancelQueries({ queryKey })
+    await queryClient.invalidateQueries({ queryKey })
   }
+}
 
-  await queryClient.invalidateQueries({ queryKey })
+// Never truncated like the wallet list: this one covers a single address, so its loaded pages cost one request each
+// to rebuild rather than one per address in the wallet.
+const invalidateAddressTransactionsList = (addressHash: AddressHash) =>
+  queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'infinite'] })
+
+// The wallet list behind the modal is refreshed too, but never truncated, since the user did not ask to lose its rows.
+export const refreshAddressTransactions = async (addressHash: AddressHash) => {
+  await cancelThenInvalidateAddressTransactionsPages([addressHash])
+  await queryClient.invalidateQueries({ queryKey: WALLET_TRANSACTIONS_QUERY_KEY })
+  await invalidateAddressTransactionsList(addressHash)
+}
+
+// Callers pass only the addresses that changed, so this costs one request per such address rather than one per address
+// in the wallet. An empty set means nothing to rebuild, and truncating then would drop scrolled pages for nothing.
+export const refreshWalletTransactions = async (addressHashes: AddressHash[]) => {
+  if (addressHashes.length === 0) return
+
+  await cancelThenInvalidateAddressTransactionsPages(addressHashes)
+  await dropPagesAfterFirstThenInvalidateWalletTransactions()
+
+  for (const addressHash of addressHashes) await invalidateAddressTransactionsList(addressHash)
 }

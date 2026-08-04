@@ -20,6 +20,7 @@ import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import OfflineMessage from '@/features/offline/OfflineMessage'
+import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
@@ -47,7 +48,9 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-    pagesLoaded
+    pagesLoaded,
+    refresh,
+    showNewTxsMessage
   } = useFetchWalletTransactionsInfinite()
 
   const filteredConfirmedTxs = useMemo(() => {
@@ -82,6 +85,9 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
           </LoadingNewTransactionsPlaceholderRow>
         </TableRow>
       )}
+
+      {showNewTxsMessage && !isFetching && <NewTransactionsButtonRow onClick={refresh} />}
+
       {filteredConfirmedTxs.map((tx) => (
         <TransactionRow
           key={tx.hash}

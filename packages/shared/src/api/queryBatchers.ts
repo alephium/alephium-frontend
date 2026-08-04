@@ -3,6 +3,7 @@ import { Batcher, create, windowedFiniteBatchScheduler } from '@yornaath/batshit
 
 import { ADDRESSES_QUERY_LIMIT, TOKENS_QUERY_LIMIT } from '../api/limits'
 import { throttledClient } from '../api/throttledClient'
+import { isSameBaseAddress } from '../transactions/transactionUtils'
 
 const tokenIdResolver = <T extends { id: string }>(results: T[], queryTokenId: string) =>
   results.find(({ id }) => id === queryTokenId)
@@ -30,11 +31,13 @@ const createNFTMetadataBatcher = () =>
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
   })
 
+// The explorer answers a groupless address with the group of its latest transaction appended ("<address>:3"), which no
+// stored address hash carries, so an exact match would read every groupless address as having no transactions.
 const createAddressLatestTxBatcher = () =>
   create({
     fetcher: (hashes: string[]) => throttledClient.explorer.addresses.postAddressesLatestTransactions(hashes),
     resolver: (results, queryAddressHash) =>
-      results.find(({ address }) => address === queryAddressHash)?.transactionInfo,
+      results.find(({ address }) => isSameBaseAddress(address, queryAddressHash))?.transactionInfo,
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: ADDRESSES_QUERY_LIMIT, windowMs: 10 })
   })
 
