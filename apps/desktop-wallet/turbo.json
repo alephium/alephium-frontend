@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "env": ["DEV", "VITE_USE_LOCAL_ANNOUNCEMENT_FILE", "VITE_VERSION", "VITE_DEV_SERVER_URL", "NODE_ENV"],
-      "passThroughEnv": ["APPIMAGE", "APPDIR"]
+      "passThroughEnv": ["APPIMAGE", "APPDIR"],
+      "outputs": ["build/**", "dist-electron/**"]
     },
     "start:electron": {
       "dependsOn": ["^build"],
@@ -11,16 +12,24 @@
       "persistent": true
     },
     "build:electron:windows": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": false
     },
     "build:electron:macos": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "build:electron:macos:ci": {
+      "dependsOn": ["build"],
+      "cache": false
     },
     "build:electron:ubuntu": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": false
     },
     "build:electron:linux:arm64": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

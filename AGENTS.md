@@ -16,7 +16,8 @@ pnpm test                 # Run all tests
 pnpm lint                 # Lint all packages
 pnpm lint:fix             # Auto-fix lint issues
 pnpm typecheck            # Type-check all packages
-pnpm check                # typecheck + lint + format (full CI check)
+pnpm format               # Reformat all packages with Prettier
+pnpm check                # Exactly what CI's checks job runs (lint + typecheck + test)
 pnpm watch                # Watch mode for all packages (turbo watch-dev)
 pnpm clean                # Clean build artifacts
 ```
