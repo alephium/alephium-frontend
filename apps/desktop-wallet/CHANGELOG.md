@@ -1,5 +1,17 @@
 # alephium-desktop-wallet
 
+## 3.3.1
+
+### Patch Changes
+
+- b052771: Reduce backend requests when polling addresses for new transactions
+- c1d9fb0: Refresh every address once a minute instead of leaving dormant ones on a 5 minute delay
+- 01a71d7: Show incoming transactions within seconds while the Receive modal is open
+- 825dfa2: Offer incoming transactions behind a button instead of refreshing the list while you scroll it
+- 0c05a9a: Open on the most recent transactions instead of restoring every page scrolled through last time
+- 57d4af1: Keep loading the transaction list when a single address is rate limited
+- 57d4af1: Stop the transaction list from briefly showing another network's transactions when a new one arrives
+
 ## 3.3.0
 
 ### Minor Changes
