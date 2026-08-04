@@ -38,7 +38,7 @@ const createAddressLatestTxBatcher = () =>
     fetcher: (hashes: string[]) => throttledClient.explorer.addresses.postAddressesLatestTransactions(hashes),
     resolver: (results, queryAddressHash) =>
       results.find(({ address }) => isSameBaseAddress(address, queryAddressHash))?.transactionInfo,
-    scheduler: windowedFiniteBatchScheduler({ maxBatchSize: ADDRESSES_QUERY_LIMIT, windowMs: 10 })
+    scheduler: windowedFiniteBatchScheduler({ maxBatchSize: ADDRESSES_QUERY_LIMIT, windowMs: 100 })
   })
 
 // Explicitely annotating types
