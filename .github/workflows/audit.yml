@@ -5,7 +5,11 @@ on:
   schedule:
     - cron: '17 4 * * *'
   workflow_dispatch:
-  workflow_call:
+  # Unlike the build, the audit really does depend on nothing but these two files.
+  pull_request:
+    paths:
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
 
 jobs:
   audit:
