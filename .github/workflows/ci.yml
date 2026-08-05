@@ -46,15 +46,20 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            platform: macos
+            task: build:electron:macos:ci
           - os: ubuntu-latest
-            platform: ubuntu
+            task: build:electron:ubuntu
           - os: windows-latest
-            platform: windows
+            task: build:electron:windows
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          # --affected diffs against the base commit, so the history has to reach
+          # it. blob:none keeps that affordable on ~300MB of history.
+          fetch-depth: 0
+          filter: blob:none
 
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
@@ -65,5 +70,10 @@ jobs:
           path: apps/desktop-wallet/package.json
           unset: build.win.sign
 
-      - name: Building desktop wallet on ${{ matrix.platform }}
-        run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ matrix.platform }}
+      # Must run from the repo root. From apps/desktop-wallet, --affected narrows to
+      # that package's own files and reports a packages/shared change as unaffected,
+      # silently skipping the build.
+      - name: Building desktop wallet on ${{ matrix.os }}
+        env:
+          TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: pnpm exec turbo run ${{ matrix.task }} --affected
