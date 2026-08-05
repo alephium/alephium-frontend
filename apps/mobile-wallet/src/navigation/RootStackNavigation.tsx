@@ -50,11 +50,10 @@ import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
+import CreatingWalletScreen from '~/screens/new-wallet/CreatingWalletScreen'
 import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
 import ImportWalletAddressDiscoveryScreen from '~/screens/new-wallet/ImportWalletAddressDiscoveryScreen'
 import ImportWalletSeedScreen from '~/screens/new-wallet/ImportWalletSeedScreen'
-import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
-import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import WatchOnlyAddressScreen from '~/screens/new-wallet/WatchOnlyAddressScreen'
@@ -126,8 +125,11 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
                 <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
                 <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-                <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-                <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+                <RootStack.Screen
+                  name="CreatingWalletScreen"
+                  component={CreatingWalletScreen}
+                  options={{ gestureEnabled: false }}
+                />
                 <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
                 <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                 <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />

@@ -13,7 +13,9 @@ import {
   activateGettingStartedForExistingWallet,
   deleteWallet,
   generateAndStoreWallet,
+  getDefaultWalletName,
   getIsGettingStartedActive,
+  getWalletOrdinal,
   storeIsGettingStartedActive
 } from '~/persistent-storage/wallet'
 import { addWalletToList, createWalletListEntry } from '~/persistent-storage/walletList'
@@ -309,6 +311,58 @@ describe(generateAndStoreWallet, () => {
     expect(wallet.name).toBe('New wallet')
     expect(wallet.initialAddress.hash).toBeTruthy()
     expect(keyring['hdWallet']).toBeNull()
+  })
+})
+
+describe(getDefaultWalletName, () => {
+  afterEach(() => {
+    keyring.clear()
+  })
+
+  it('names the very first wallet after the method', () => {
+    expect(getDefaultWalletName('create')).toBe('Main Wallet')
+    expect(getDefaultWalletName('import')).toBe('Imported Wallet')
+  })
+
+  it('numbers subsequent wallets off the creation counter', () => {
+    addWalletToList(createWalletListEntry(testWalletId, 'Test wallet', 'seed'))
+    storage.set('wallet-creation-counter', 4)
+
+    expect(getDefaultWalletName('create')).toBe('Wallet 5')
+    expect(getDefaultWalletName('import')).toBe('Imported Wallet 5')
+  })
+
+  it('follows the counter as wallets are created', async () => {
+    expect(getDefaultWalletName('create')).toBe('Main Wallet')
+
+    await generateAndStoreWallet(getDefaultWalletName('create'))
+
+    expect(getDefaultWalletName('create')).toBe('Wallet 2')
+
+    await generateAndStoreWallet(getDefaultWalletName('create'))
+
+    expect(getDefaultWalletName('create')).toBe('Wallet 3')
+  })
+
+  // Wallets migrated from a pre-multi-wallet build are in the list but never got an ordinal.
+  it('numbers past wallets that predate the creation counter', async () => {
+    addWalletToList(createWalletListEntry('migrated-wallet', 'My wallet', 'seed'))
+
+    expect(getDefaultWalletName('create')).toBe('Wallet 2')
+    expect(getDefaultWalletName('import')).toBe('Imported Wallet 2')
+
+    const wallet = await generateAndStoreWallet(getDefaultWalletName('create'))
+
+    expect(getWalletOrdinal(wallet.id)).toBe(2)
+    expect(getDefaultWalletName('create')).toBe('Wallet 3')
+  })
+
+  it('goes back to the first-wallet name once every wallet is deleted', async () => {
+    const wallet = await generateAndStoreWallet(getDefaultWalletName('create'))
+
+    await deleteWallet(wallet.id)
+
+    expect(getDefaultWalletName('create')).toBe('Main Wallet')
   })
 })
 

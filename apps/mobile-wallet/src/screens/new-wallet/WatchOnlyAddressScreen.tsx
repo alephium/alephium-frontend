@@ -79,11 +79,10 @@ const WatchOnlyAddressScreen = ({ navigation, ...props }: WatchOnlyAddressScreen
 
   return (
     <ScrollScreen
-      fill
       contentPaddingTop
       hasKeyboard
       keyboardShouldPersistTaps="always"
-      scrollEnabled={false}
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
       headerOptions={{ type: 'stack' }}
       bottomButtonsRender={() => (
         <>
@@ -137,10 +136,7 @@ const WatchOnlyAddressScreen = ({ navigation, ...props }: WatchOnlyAddressScreen
 export default WatchOnlyAddressScreen
 
 const ContentContainer = styled.View`
-  flex: 1;
-  justify-content: center;
   align-items: center;
-  margin-bottom: 50%;
 `
 
 const InputsContainer = styled.View`
