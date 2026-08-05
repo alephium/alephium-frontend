@@ -105,7 +105,7 @@ const Modal = ({ params }: Omit<ModalInstance, 'isClosing' | 'id'>) => {
     case 'BiometricsWarningModal':
       return <BiometricsWarningModal {...params.props} />
     case 'MnemonicModal':
-      return <MnemonicModal {...params.props} />
+      return <MnemonicModal />
     case 'AutoLockOptionsModal':
       return <AutoLockOptionsModal />
     case 'CurrencySelectModal':

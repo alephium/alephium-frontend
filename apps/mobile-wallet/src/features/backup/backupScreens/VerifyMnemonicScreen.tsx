@@ -17,6 +17,8 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWordList'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import { verifiedWordsCountChanged } from '~/features/backup/backupSlice'
+import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { getIsWalletFunded, getWalletOrdinal, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
@@ -34,6 +36,8 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const walletId = useAppSelector((s) => s.wallet.id)
+  const storedVerifiedWordsCount = useAppSelector((s) => s.backup.verifiedWordsCount)
+  const resumeFromWordCount = useRef(storedVerifiedWordsCount)
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
   const randomizedOptions = useRef<string[][]>([])
@@ -55,25 +59,34 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   })
 
   useEffect(() => {
-    try {
-      dangerouslyExportWalletMnemonic(walletId).then((mnemonic) => {
+    dangerouslyExportWalletMnemonic(walletId)
+      .then((mnemonic) => {
         const words = mnemonic.split(' ')
+        // Only the count survives leaving the screen; the words themselves must never be kept anywhere.
+        const resumedWords = words.slice(0, Math.min(resumeFromWordCount.current, words.length))
+
         setMnemonicWords(words)
         randomizedOptions.current = getRandomizedOptions(words, allowedWords.current)
-        setPossibleMatches(randomizedOptions.current[0])
+        setSelectedWords(resumedWords.map((word) => ({ word, timestamp: new Date() })))
+        setPossibleMatches(randomizedOptions.current[resumedWords.length] ?? [])
 
         sendAnalytics({
           event: AnalyticsEvent.MNEMONIC_VERIFICATION_STARTED,
           props: {
             words_total: words.length,
+            words_completed: resumedWords.length,
+            resumed: resumedWords.length > 0,
             is_funded: getIsWalletFunded(walletId) ?? false,
             wallet_ordinal: getWalletOrdinal(walletId)
           }
         })
       })
-    } catch (e) {
-      if (__DEV__) console.error(e)
-    }
+      .catch((error) => {
+        const message = 'Could not export mnemonic'
+
+        showExceptionToast(error, i18n.t(message))
+        sendAnalytics({ type: 'error', error, message, isSensitive: true })
+      })
   }, [walletId])
 
   useEffect(
@@ -97,6 +110,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   const confirmBackup = useCallback(async () => {
     progress.current.completed = true
+    dispatch(verifiedWordsCountChanged(0))
 
     if (!isMnemonicBackedUp) {
       try {
@@ -124,7 +138,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       setShowSuccess(true)
       setTimeout(() => {
         setShowSuccess(false)
-        navigation.navigate('VerificationSuccessScreen')
+        navigation.replace('VerificationSuccessScreen')
       }, 2000)
     }
   }, [confirmBackup, mnemonicWords.length, navigation, randomizedOptions, selectedWords.length])
@@ -148,7 +162,10 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       return
     }
 
-    setSelectedWords(selectedWords.concat([{ word, timestamp: new Date() }]))
+    const newSelectedWords = selectedWords.concat([{ word, timestamp: new Date() }])
+
+    setSelectedWords(newSelectedWords)
+    dispatch(verifiedWordsCountChanged(newSelectedWords.length))
   }
 
   return (

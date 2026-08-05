@@ -20,7 +20,7 @@ const workflowSteps: Record<
 > = {
   receive: ['AddressScreen', 'QRCodeScreen'],
   send: ['DestinationScreen', 'OriginScreen', 'AddressTokensScreen', 'VerifyScreen'],
-  backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
+  backup: ['BackupIntroScreen', 'MnemonicScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 
 const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) => {

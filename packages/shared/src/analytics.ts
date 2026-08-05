@@ -45,6 +45,7 @@ export type AnalyticsOrigin =
   | 'settings'
   | 'notifications'
   | 'auto_lock'
+  | 'backup'
   // dApp entry points. The `:insufficient_funds` suffix marks the failure variant of the flow.
   | 'walletconnect'
   | 'walletconnect:insufficient_funds'
@@ -143,11 +144,17 @@ export type AnalyticsProps = {
   words_completed?: number
   words_total?: number
 
+  // On `Mnemonic Verification Started`.
+  resumed?: boolean
+
+  // On `Backup Exit Prompt Answered`.
+  outcome?: 'continued' | 'left'
+
   // On `Authentication Settings Changed`.
   setting?: 'app_access' | 'transactions'
   enabled?: boolean
 
-  // On the `Error` event.
+  // On the `Error` event, plus `reason` on `Recovery Phrase Auth Failed`.
   message?: string
   reason?: string
   category?: string
