@@ -45,7 +45,7 @@ runs:
         key: turbo-${{ runner.os }}-${{ github.sha }}
         restore-keys: |
           turbo-${{ runner.os }}
-        path: .turbo/cache
+        path: .turbo
 
     - name: 📦 Install dependencies
       run: pnpm install --frozen-lockfile
