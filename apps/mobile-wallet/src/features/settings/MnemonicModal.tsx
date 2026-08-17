@@ -1,50 +1,40 @@
+import { AnalyticsEvent } from '@alephium/shared'
 import { memo, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
-import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
+import { sendAnalytics } from '~/analytics'
+import i18n from '~/features/localization/i18n'
 import BottomModal from '~/features/modals/BottomModal'
-import { useModalContext } from '~/features/modals/ModalContext'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { useAppSelector } from '~/hooks/redux'
 import usePreventScreenCapture from '~/hooks/usePreventScreenCapture'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/walletMnemonic'
+import { showExceptionToast } from '~/utils/layout'
 
-interface MnemonicModalProps {
-  onVerifyPress?: () => void
-}
-
-const MnemonicModal = memo<MnemonicModalProps>(({ onVerifyPress }) => {
-  const { t } = useTranslation()
-  const { dismissModal } = useModalContext()
+const MnemonicModal = memo(() => {
   const walletId = useAppSelector((s) => s.wallet.id)
 
-  const [mnemonic, setMnemonic] = useState<string>()
+  const [mnemonicWords, setMnemonicWords] = useState<string[]>()
 
   useEffect(() => {
-    try {
-      dangerouslyExportWalletMnemonic(walletId).then(setMnemonic)
-    } catch (e) {
-      if (__DEV__) console.error(e)
-    }
+    dangerouslyExportWalletMnemonic(walletId)
+      .then((mnemonic) => {
+        setMnemonicWords(mnemonic.split(' '))
+
+        sendAnalytics({ event: AnalyticsEvent.RECOVERY_PHRASE_SHOWN, props: { origin: 'settings' } })
+      })
+      .catch((error) => {
+        const message = 'Could not export mnemonic'
+
+        showExceptionToast(error, i18n.t(message))
+        sendAnalytics({ type: 'error', error, message, isSensitive: true })
+      })
   }, [walletId])
 
   usePreventScreenCapture()
 
-  const handleVerifyButtonPress = () => {
-    onVerifyPress && onVerifyPress()
-    dismissModal()
-  }
-
   return (
     <BottomModal contentVerticalGap>
-      <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
-
-      {onVerifyPress && (
-        <ScreenSection>
-          <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
-        </ScreenSection>
-      )}
+      <OrderedTable items={mnemonicWords ?? []} />
     </BottomModal>
   )
 })
