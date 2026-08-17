@@ -15,5 +15,6 @@ export const links = {
   github: 'https://github.com/alephium',
   twitter: 'https://twitter.com/alephium',
   ledgerLive: 'https://www.ledger.com/ledger-live',
+  ledgerGrouplessSupport: 'https://github.com/alephium/ledger-alephium/issues/40',
   statusPage: 'https://status.alephium.org'
 }

@@ -1,14 +1,15 @@
 import { selectAddressByHash } from '@alephium/shared/store'
 import { useFetchAddressesHashesWithBalance } from '@alephium/shared-react'
+import { isValidAddress } from '@alephium/web3'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import LedgerGrouplessRecipientWarning from '@/features/ledger/LedgerGrouplessRecipientWarning'
 import AddressInputs from '@/features/send/sendModal/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendModal/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { isAddressValid } from '@/utils/form-validation'
 
 interface SendModalAddressesStepProps {
   data: TransferTxModalData
@@ -38,7 +39,7 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
     (value: string) => {
       setToAddress(
         value,
-        !value ? t('This field is required') : isAddressValid(value) ? '' : t('This address is not valid')
+        !value ? t('This field is required') : isValidAddress(value) ? '' : t('This address is not valid')
       )
     },
     [setToAddress, t]
@@ -62,6 +63,7 @@ const SendModalAddressesStep = ({ data, onSubmit, onCancel }: SendModalAddresses
           onToAddressChange={handleToAddressChange}
           onContactSelect={handleToAddressChange}
         />
+        <LedgerGrouplessRecipientWarning toAddress={toAddress.value} />
       </InputFieldsColumn>
       <ModalFooterButtons>
         <ModalFooterButton
