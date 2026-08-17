@@ -18,6 +18,7 @@ import {
   addWalletToList,
   createWalletListEntry,
   getLastUsedWallet,
+  getWalletList,
   removeWalletFromList,
   walletListExists
 } from '~/persistent-storage/walletList'
@@ -55,8 +56,8 @@ export const generateAndStoreWallet = async (
     const walletMetadata = generateWalletMetadata(walletId, name, initialAddress.hash, isMnemonicBackedUp)
 
     storeWalletMetadata(walletId, walletMetadata)
-    addWalletToList(createWalletListEntry(walletId, name, 'seed'))
     assignWalletOrdinal(walletId)
+    addWalletToList(createWalletListEntry(walletId, name, 'seed'))
 
     return {
       id: walletId,
@@ -89,8 +90,8 @@ export const createWatchOnlyWallet = (name: string, addressHash: string): Wallet
   }
 
   storeWalletMetadata(walletId, metadata)
-  addWalletToList(createWalletListEntry(walletId, name, 'watch-only'))
   assignWalletOrdinal(walletId)
+  addWalletToList(createWalletListEntry(walletId, name, 'watch-only'))
 
   return metadata
 }
@@ -161,11 +162,28 @@ export const persistAddressesMetadata = (walletId: string, addressesMetadata: Ad
 
 export const getWalletOrdinal = (walletId: string): number | undefined => storage.getNumber(walletOrdinalKey(walletId))
 
+// Wallets that predate the counter (the multi-wallet migration seeds the list, not the counter) would
+// otherwise restart it at 1 and collide with a live wallet. Must run before the wallet joins the list.
+const getNextWalletOrdinal = (): number =>
+  Math.max(storage.getNumber(WALLET_CREATION_COUNTER_KEY) ?? 0, getWalletList().length) + 1
+
 const assignWalletOrdinal = (walletId: string) => {
-  const ordinal = (storage.getNumber(WALLET_CREATION_COUNTER_KEY) ?? 0) + 1
+  const ordinal = getNextWalletOrdinal()
 
   storeWithReportableError(WALLET_CREATION_COUNTER_KEY, ordinal)
   storeWithReportableError(walletOrdinalKey(walletId), ordinal)
+}
+
+// Must be called before generateAndStoreWallet, which bumps the creation counter.
+export const getDefaultWalletName = (method: 'create' | 'import'): string => {
+  const isFirstWallet = !walletListExists()
+  const nextOrdinal = getNextWalletOrdinal()
+
+  if (method === 'import') {
+    return isFirstWallet ? i18n.t('Imported Wallet') : i18n.t('Imported Wallet {{ number }}', { number: nextOrdinal })
+  }
+
+  return isFirstWallet ? i18n.t('Main Wallet') : i18n.t('Wallet {{ number }}', { number: nextOrdinal })
 }
 
 export const getIsNewWallet = (walletId: string): boolean | undefined => storage.getBoolean(isNewWalletKey(walletId))

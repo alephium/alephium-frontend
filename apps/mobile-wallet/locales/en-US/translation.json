@@ -625,5 +625,9 @@
   "Random": "Random",
   "Groupless (recommended)": "Groupless (recommended)",
   "Grouped": "Grouped",
-  "Schnorr": "Schnorr"
+  "Schnorr": "Schnorr",
+  "Main Wallet": "Main Wallet",
+  "Wallet {{ number }}": "Wallet {{ number }}",
+  "Imported Wallet": "Imported Wallet",
+  "Imported Wallet {{ number }}": "Imported Wallet {{ number }}"
 }

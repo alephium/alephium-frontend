@@ -8,8 +8,7 @@ type RootStackParamList = {
   LandingScreen?: {
     isAddingWallet?: boolean
   }
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
+  CreatingWalletScreen: undefined
   AddBiometricsScreen: undefined
   NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined

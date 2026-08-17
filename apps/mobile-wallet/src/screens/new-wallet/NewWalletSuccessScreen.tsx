@@ -4,14 +4,16 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import SuccessLottieAnimation from '~/animations/lottie/SuccessLottieAnimation'
-import BottomButtons from '~/components/buttons/BottomButtons'
-import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storeIsNewWallet } from '~/persistent-storage/wallet'
 import { resetNavigation } from '~/utils/navigation'
+
+// The only way off this screen: it has no dismiss button. success.json runs 3s but its last keyframe is
+// at frame 89 (~1.5s), so the remainder is a static hold and cutting it short costs no motion.
+const AUTO_ADVANCE_DELAY = 2000
 
 interface NewWalletSuccessScreenProps
   extends NativeStackScreenProps<RootStackParamList, 'NewWalletSuccessScreen'>,
@@ -30,6 +32,12 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       console.error(e)
     }
   }, [method, walletId])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => resetNavigation(navigation), AUTO_ADVANCE_DELAY)
+
+    return () => clearTimeout(timeout)
+  }, [navigation])
 
   return (
     <Screen safeAreaPadding {...props}>
@@ -50,9 +58,6 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
         stretch
         fontSize={19}
       />
-      <BottomButtons>
-        <Button type="primary" variant="highlight" title={t("Let's go!")} onPress={() => resetNavigation(navigation)} />
-      </BottomButtons>
     </Screen>
   )
 }
