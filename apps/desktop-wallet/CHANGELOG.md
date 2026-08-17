@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 3.3.2
+
+### Patch Changes
+
+- 232931a: Warn Ledger users that the Ledger app cannot send to groupless addresses yet
+- 232931a: Flag an invalid recipient address in the send flow instead of failing when building the transaction
+- aefcdd4: Show a transaction you just sent in the list as soon as it confirms, without asking for it
+
 ## 3.3.1
 
 ### Patch Changes

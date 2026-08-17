@@ -1,5 +1,14 @@
 # @alephium/mobile-wallet
 
+## 2.6.2
+
+### Patch Changes
+
+- fda21fe: Fix unknown address warning when sending funds to your own addresses
+- 28a24fb: Show the recovery phrase on its own screen and keep verification progress when leaving the backup
+- aefcdd4: Replace the pending row of a sent transaction with the confirmed one as soon as it lands
+- d0cd575: Simplify wallet creation to a single tap with an auto-named wallet
+
 ## 2.6.1
 
 ### Patch Changes
