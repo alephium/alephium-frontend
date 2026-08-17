@@ -1,3 +1,5 @@
+import { selectAddressByHash } from '@alephium/shared/store'
+import { getBaseAddressStr } from '@alephium/shared/transactions'
 import { AddressHash } from '@alephium/shared/types'
 import { useFetchAddressLatestTransaction } from '@alephium/shared-react'
 import { colord } from 'colord'
@@ -6,6 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import InfoBox from '~/components/InfoBox'
+import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface UnknownAddressWarningProps {
@@ -16,10 +19,11 @@ const UnknownAddressWarning = ({ addressHash }: UnknownAddressWarningProps) => {
   const { t } = useTranslation()
   const { data, isLoading } = useFetchAddressLatestTransaction(addressHash)
   const theme = useTheme()
+  const address = useAppSelector((s) => selectAddressByHash(s, getBaseAddressStr(addressHash)))
 
   const addressIsActive = !!data?.latestTx?.timestamp
 
-  if (isLoading || addressIsActive) return null
+  if (isLoading || addressIsActive || !!address) return null
 
   return (
     <InfoBoxStyled

@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { useFetchPendingTransaction } from '../../api/apiDataHooks/transaction/useFetchPendingTransaction'
 import { addressLatestTransactionQuery, nodeTransactionStatusQuery } from '../../api/queries/transactionQueries'
 import { queryClient } from '../../api/queryClient'
-import { invalidateAddressQueries, invalidateTokenPrices } from '../../api/queryInvalidation'
+import { invalidateAddressQueries, invalidateTokenPrices, refreshWalletTransactions } from '../../api/queryInvalidation'
 import { useUnsortedAddressesHashes } from '../../hooks/addresses/useUnsortedAddresses'
 import { useIsExplorerOffline, useIsExplorerOnline, useIsNodeOnline, useNetworkId } from '../../network/networkHooks'
 import { useSharedDispatch, useSharedSelector } from '../../redux'
@@ -30,20 +30,24 @@ export const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
 
   // When EB is up, we use the EB to get the tx status
   useEffect(() => {
-    if (!tx || isRichTransaction(tx)) return
+    if (!tx || isRichTransaction(tx) || txIsConfirmed) return
 
     if (isConfirmedTx(tx)) {
       dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: 'confirmed' }))
 
-      findTransactionInternalAddresses(allAddressHashes, tx).forEach((addressHash) => {
+      const internalAddresses = findTransactionInternalAddresses(allAddressHashes, tx)
+
+      internalAddresses.forEach((addressHash) => {
         queryClient.refetchQueries({
           queryKey: addressLatestTransactionQuery({ addressHash, networkId, isExplorerOnline }).queryKey
         })
       })
-    } else {
+
+      refreshWalletTransactions(internalAddresses)
+    } else if (sentTx?.status === 'sent') {
       dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: 'mempooled' }))
     }
-  }, [allAddressHashes, dispatch, isExplorerOnline, networkId, tx])
+  }, [allAddressHashes, dispatch, isExplorerOnline, networkId, txIsConfirmed, sentTx?.status, tx])
 
   // When EB is down, we use the node to get the tx status
   useEffect(() => {
