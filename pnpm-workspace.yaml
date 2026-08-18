@@ -21,7 +21,6 @@ sideEffectsCache: false
 minimumReleaseAge: 10080 # 7 days
 minimumReleaseAgeExclude:
   - '@alephium/*'
-  - brace-expansion # TODO: remove on/after 2026-08-06, when 1.1.18/2.1.4/5.0.9 (published 2026-07-30) clear minimumReleaseAge on their own
 
 auditConfig:
   ignoreGhsas:
@@ -33,6 +32,14 @@ auditConfig:
     # removes react-router-dom and requires Node >=22.22.0 (repo is on 22.14.0).
     # TODO: drop this once we migrate the explorer + desktop wallet to react-router v8 (see #1703).
     - GHSA-qwww-vcr4-c8h2
+    # GHSA-w3rx-r6r6-pgpr / GHSA-5p2g-fcmc-qvqq (image-size ICNS/JXL/HEIF infinite-loop DoS):
+    # image-size has NO patched release - both advisories say `<=2.0.2` and 2.0.2 is still the
+    # latest published version. It only reaches `pnpm audit --prod` because Expo declares metro
+    # (the bundler) as a regular dependency of `expo`; metro reads image dimensions at build time
+    # from assets in this repo, and none of it ships in the app. TODO: drop once image-size
+    # publishes a fix and Expo's metro picks it up.
+    - GHSA-w3rx-r6r6-pgpr
+    - GHSA-5p2g-fcmc-qvqq
 
 patchedDependencies:
   '@expo/cli@55.0.32': patches/@expo__cli@55.0.32.patch # TODO: remove after bumping @expo/cli past 55.0.32 (fixes `expo run:ios --device` "Cannot convert object to primitive value"; fixed upstream, see expo/expo#46114)
@@ -52,19 +59,21 @@ overrides:
   'postcss@<8.5.23': '=8.5.23'
   'fast-xml-parser@<5.7.0': '=5.7.0'
   'uuid@<14.0.0': '>=14.0.0'
-  'js-yaml@<4.3.0': '=4.3.0'
+  'js-yaml@<4.3.1': '=4.3.1'
   'on-headers@<1.1.0': '=1.1.0'
-  'undici@<6.27.0': '=6.27.0'
+  'undici@<6.28.0': '=6.28.0'
   'qs@>=6.11.1 <=6.15.1': '=6.15.2'
-  # dompurify's only consumer is posthog-js, which declares `^3.3.2` - including on the latest
-  # release (1.399.2), so bumping posthog-js does NOT let this override go (an earlier TODO here
-  # claimed it would). It stays until posthog-js raises its own floor past the vulnerable range.
-  'dompurify@<3.4.12': '=3.4.12'
+  # dompurify's only consumer is posthog-js, pinned here at 1.386.6, which declares `^3.3.2`.
+  # posthog-js 1.417.2 declares `^3.4.13`, so this override goes away once we bump posthog-js.
+  'dompurify@<3.4.13': '=3.4.13'
   'tar@<7.5.21': '=7.5.21' # TODO: Remove after updating electron-builder to v26
   'brace-expansion@<1.1.18': '=1.1.18'
   'brace-expansion@>=2.0.0 <2.1.4': '=2.1.4'
   'brace-expansion@>=3.0.0 <5.0.9': '=5.0.9'
   'shell-quote@<1.8.5': '=1.9.0'
+  # @react-navigation/{core,native,routers} pin nanoid to the exact version 3.3.8, so a lockfile
+  # refresh can't reach the fix. Their 7.21+ line relaxes it to ^3.3.11; drop this once we're on that.
+  'nanoid@>=3.0.0 <3.3.18': '=3.3.18'
   'builder-util-runtime@<9.7.0': '=9.7.0'
   # powfi-sdk declares @alephium/web3 as an exact regular dependency instead of a peer, so it pulls
   # in a second copy whenever the workspace pin differs. Two copies means two distinct SignerProvider
