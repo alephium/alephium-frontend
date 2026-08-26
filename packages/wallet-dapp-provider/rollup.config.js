@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import dts from 'rollup-plugin-dts'
-import esbuild from 'rollup-plugin-esbuild'
+import esbuild, { minify } from 'rollup-plugin-esbuild'
 
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
@@ -37,7 +37,9 @@ function UMDtoJSON() {
 
 export default [
   bundle({
-    plugins: [resolve({ preferBuiltins: false }), commonjs(), esbuild(), UMDtoJSON()],
+    // minify() must run before UMDtoJSON(): both are renderChunk hooks and esbuild cannot parse the JSON wrapper.
+    // Its target must match esbuild()'s so minification cannot raise the syntax floor for older WebViews.
+    plugins: [resolve({ preferBuiltins: false }), commonjs(), esbuild(), minify({ target: 'es2020' }), UMDtoJSON()],
     output: [
       {
         file: pkg.main,

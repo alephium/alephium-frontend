@@ -19,8 +19,9 @@ const dAppMessagesQueueSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(receivedDappMessage, (state, action) => {
       dAppMessagesQueueAdapter.addOne(state, {
+        // The message body is dApp-controlled: id and senderHost must stay after the spread so it cannot override them.
         ...action.payload.message,
-        id: new Date().getTime().toString(),
+        id: action.payload.id,
         senderHost: action.payload.senderHost
       })
     })

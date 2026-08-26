@@ -10,7 +10,7 @@ import {
 } from '../transactions/transactionUtils'
 import { AddressHash } from '../types/addresses'
 import { AssetAmount } from '../types/assets'
-import { SignTransferTxModalProps } from '../types/signTxModalTypes'
+import { SignExecuteScriptTxModalProps, SignTransferTxModalProps } from '../types/signTxModalTypes'
 import { AmountDeltas, ExecuteScriptTx, TransactionDirection } from '../types/transactions'
 import { uniq } from '../utils/utils'
 
@@ -148,6 +148,34 @@ export const calculateTransferTxAssetAmounts = (txParams: SignTransferTxModalPro
 
   if (res.tokens.length > 0) {
     assetAmounts.push(...res.tokens)
+  }
+
+  return assetAmounts
+}
+
+// Every id must appear once: ALPH can arrive both as attoAlphAmount and as a token entry, and callers key by id.
+export const calculateExecuteScriptTxAssetAmounts = ({
+  tokens,
+  attoAlphAmount
+}: SignExecuteScriptTxModalProps['txParams']) => {
+  const assetAmounts = [] as Required<AssetAmount>[]
+  let alphAmount = attoAlphAmount ? BigInt(attoAlphAmount) : BigInt(0)
+
+  tokens?.forEach((token) => {
+    if (token.id === ALPH.id) {
+      alphAmount += BigInt(token.amount)
+      return
+    }
+
+    const existingToken = assetAmounts.find(({ id }) => id === token.id)
+
+    existingToken
+      ? (existingToken.amount += BigInt(token.amount))
+      : assetAmounts.push({ id: token.id, amount: BigInt(token.amount) })
+  })
+
+  if (alphAmount > 0) {
+    assetAmounts.push({ id: ALPH.id, amount: alphAmount })
   }
 
   return assetAmounts
