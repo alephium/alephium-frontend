@@ -1,8 +1,7 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
-import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
-import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
-import { ALPH } from '@alephium/token-list'
+import { calculateExecuteScriptTxAssetAmounts, getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
+import { SignExecuteScriptTxModalProps } from '@alephium/shared/types'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -82,7 +81,7 @@ export const SignExecuteScriptTxModalContent = ({
 }: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl' | 'dAppIcon' | 'unsignedData'> & { fees: bigint }) => {
   const { t } = useTranslation()
 
-  const assetAmounts = calculateAssetAmounts(txParams)
+  const assetAmounts = useMemo(() => calculateExecuteScriptTxAssetAmounts(txParams), [txParams])
 
   return (
     <>
@@ -162,19 +161,4 @@ const SimulatedResult = ({
       </Surface>
     </Surface>
   )
-}
-
-const calculateAssetAmounts = (txParams: SignExecuteScriptTxModalProps['txParams']) => {
-  const assetAmounts = [] as AssetAmount[]
-
-  if (txParams.attoAlphAmount) {
-    assetAmounts.push({ id: ALPH.id, amount: BigInt(txParams.attoAlphAmount) })
-  }
-
-  if (txParams.tokens) {
-    const tokens = txParams.tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-    assetAmounts.push(...tokens)
-  }
-
-  return assetAmounts
 }
