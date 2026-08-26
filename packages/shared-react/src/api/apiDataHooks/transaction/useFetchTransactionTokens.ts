@@ -50,16 +50,23 @@ export const useFetchTransactionTokens = (
   })
 
   return {
-    data: useMemo(
-      () => ({
-        fungibleTokens: (alphAmount !== BigInt(0)
-          ? [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens]
-          : tokens.fungibleTokens) as TxFT[],
+    data: useMemo(() => {
+      // ALPH can reach us both as the alph delta and as a token entry, and the lists below are keyed by token id.
+      const alphFromTokens = tokens.fungibleTokens.reduce(
+        (sum, { id, amount }) => (id === ALPH.id ? sum + amount : sum),
+        BigInt(0)
+      )
+      const totalAlphAmount = alphAmount + alphFromTokens
+      const otherFungibleTokens = tokens.fungibleTokens.filter(({ id }) => id !== ALPH.id)
+
+      return {
+        fungibleTokens: (totalAlphAmount !== BigInt(0)
+          ? [{ ...ALPH, amount: totalAlphAmount }, ...otherFungibleTokens]
+          : otherFungibleTokens) as TxFT[],
         nfts: tokens.nfts,
         nsts: tokens.nsts
-      }),
-      [alphAmount, tokens.fungibleTokens, tokens.nfts, tokens.nsts]
-    ),
+      }
+    }, [alphAmount, tokens.fungibleTokens, tokens.nfts, tokens.nsts]),
     isLoading
   }
 }

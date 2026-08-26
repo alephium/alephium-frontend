@@ -1,6 +1,7 @@
 import { ALPH } from '@alephium/token-list'
-import { explorer as e } from '@alephium/web3'
+import { explorer as e, SignExecuteScriptTxParams, SignExecuteScriptTxResult } from '@alephium/web3'
 
+import { signAndSubmitTxResultToSentTx } from '../src/store/sentTransactions/sentTransactionsUtils'
 import {
   addressHasOnlyNegativeAmountDeltas,
   addressHasOnlyPositiveAmountDeltas,
@@ -563,5 +564,29 @@ describe('calculateExecuteScriptTxAssetAmounts', () => {
       { id: tokenId, amount: BigInt(1) }
     ])
     expect(calculateExecuteScriptTxAssetAmounts(txParams({}))).toEqual([])
+  })
+})
+
+describe('signAndSubmitTxResultToSentTx EXECUTE_SCRIPT', () => {
+  const sentTx = (txParams: Partial<SignExecuteScriptTxParams>) =>
+    signAndSubmitTxResultToSentTx({
+      type: 'EXECUTE_SCRIPT',
+      txParams: { signerAddress: refAddress, bytecode: '00', ...txParams } as SignExecuteScriptTxParams,
+      result: { txId: 'tx-hash' } as SignExecuteScriptTxResult
+    })
+
+  it('keeps ALPH out of tokens so the pending row is not rendered twice', () => {
+    const tx = sentTx({ attoAlphAmount: ONE, tokens: [{ id: ALPH.id, amount: ONE_HUNDRED }] })
+
+    expect(tx.amount).toBe((BigInt(ONE) + BigInt(ONE_HUNDRED)).toString())
+    expect(tx.tokens).toEqual([])
+  })
+
+  it('leaves other tokens alone', () => {
+    const tokenId = 'f'.repeat(64)
+    const tx = sentTx({ attoAlphAmount: ONE, tokens: [{ id: tokenId, amount: '7' }] })
+
+    expect(tx.amount).toBe(ONE)
+    expect(tx.tokens).toEqual([{ id: tokenId, amount: '7' }])
   })
 })
