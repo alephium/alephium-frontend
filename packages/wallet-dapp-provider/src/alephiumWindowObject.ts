@@ -341,12 +341,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     }
   }
 
-  #checkTabFocused() {
-    if (!document.hasFocus()) {
-      throw Error('Unsolicited request')
-    }
-  }
-
   #checkParams({ signerAddress }: { signerAddress: Address }): void {
     if (this.#connectedAccount === undefined || this.#connectedNetworkId === undefined) {
       throw Error('No connection')
@@ -355,8 +349,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     if (signerAddress !== this.connectedAccount?.address) {
       throw Error(`Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`)
     }
-
-    this.#checkTabFocused()
   }
 
   async #executeAlephiumTransaction<P extends { signerAddress: Address }>(
