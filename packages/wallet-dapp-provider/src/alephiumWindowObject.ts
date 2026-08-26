@@ -244,7 +244,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const controller = new AbortController()
 
     const result = await Promise.race([
-      waitForMessage('ALPH_SIGN_UNSIGNED_TX_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
       waitForMessage(
         'ALPH_SIGN_UNSIGNED_TX_FAILURE',
         USER_ACTION_TIMEOUT,
@@ -292,7 +297,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const controller = new AbortController()
 
     const result = await Promise.race([
-      waitForMessage('ALPH_SIGN_MESSAGE_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_MESSAGE_SUCCESS',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
       waitForMessage(
         'ALPH_SIGN_MESSAGE_FAILURE',
         USER_ACTION_TIMEOUT,
