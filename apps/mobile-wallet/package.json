@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.6.1",
+  "version": "2.6.3",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "@alephium/keyring": "workspace:*",
     "@alephium/powfi-backend": "0.0.1-rc.16",
-    "@alephium/powfi-sdk": "0.0.1-rc.36",
+    "@alephium/powfi-sdk": "0.0.1-rc.38",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.21",
@@ -94,7 +94,7 @@
     "i18next": "^25.8.13",
     "lottie-react-native": "^7.3.6",
     "moti": "^0.29.0",
-    "nanoid": "^5.1.6",
+    "nanoid": "^5.1.16",
     "posthog-react-native": "^4.37.5",
     "qrloop": "^1.4.1",
     "react": "^19.2.0",
