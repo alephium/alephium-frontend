@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.7.0
+
+### Minor Changes
+
+- b5ef391: Enable swapping and staking on mainnet
+
 ## 2.6.2
 
 ### Patch Changes
