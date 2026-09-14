@@ -6,7 +6,6 @@ import { useTheme } from 'styled-components/native'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
-import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
@@ -26,7 +25,6 @@ const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 const InWalletTabsNavigation = () => {
   const theme = useTheme()
   const { t } = useTranslation()
-  const isStakingEnabled = useIsStakingEnabled()
   const isWatchOnly = useIsWalletWatchOnly()
 
   return (
@@ -58,7 +56,7 @@ const InWalletTabsNavigation = () => {
             )
           }}
         />
-        {isStakingEnabled && !isWatchOnly && (
+        {!isWatchOnly && (
           <InWalletTabs.Screen
             name="StakingScreen"
             component={StakingScreen}

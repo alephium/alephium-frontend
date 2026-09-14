@@ -6,7 +6,6 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
-import useIsStakingEnabled from '~/features/staking/hooks/useIsStakingEnabled'
 import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -20,12 +19,11 @@ const StakingScreen = () => {
   const { t } = useTranslation()
   const addressHash = useAppSelector(selectStakingAddressHash)
   const dispatch = useAppDispatch()
-  const isStakingEnabled = useIsStakingEnabled()
   const hasPendingStakeOrUnstake = useAppSelector((s) => !!s.staking.pendingStakeOrUnstake)
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
 
-  if (!isStakingEnabled || !addressHash) return null
+  if (!addressHash) return null
 
   const handleStakePress = () => dispatch(openModal({ name: 'StakeModal', props: { addressHash } }))
   const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal', props: { addressHash } }))
