@@ -11,8 +11,8 @@ import { SelectedAddressSigner } from '~/signer'
 const stakingSigner = new SelectedAddressSigner(selectStakingAddressHash)
 const swapSigner = new SelectedAddressSigner(selectSwapFromAddressHash)
 
-export const powfiSdk = Powfi.load({ networkId: 'testnet', signer: stakingSigner })
-export const powfiSwapSdk = Powfi.load({ networkId: 'testnet', signer: swapSigner })
+export const powfiSdk = Powfi.load({ networkId: 'mainnet', signer: stakingSigner })
+export const powfiSwapSdk = Powfi.load({ networkId: 'mainnet', signer: swapSigner })
 export const powfiBackend = treaty<App>(process.env.EXPO_PUBLIC_POWFI_BACKEND_HOST || 'http://localhost:4000')
 export const xAlphTokenId = powfiSdk.staking.getConfig().xAlphTokenId
 
