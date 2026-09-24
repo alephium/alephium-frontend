@@ -4,6 +4,7 @@ import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import { powfiSwapSdk } from '~/api/powfi'
+import { SWAP_FEE_RECIPIENT } from '~/features/swap/swapConstants'
 import { selectSwapFromAddressHash } from '~/features/swap/swapSelectors'
 import { SwapQuote } from '~/features/swap/swapTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -15,7 +16,12 @@ const useExecuteSwap = () => {
   const slippage = useAppSelector((s) => s.swap.slippage)
 
   const executeSwap = useCallback(
-    async (quote: SwapQuote, balances: Map<string, bigint>): Promise<SignExecuteScriptTxResult> => {
+    async (
+      quote: SwapQuote,
+      balances: Map<string, bigint>,
+      grossAmount: bigint,
+      feeAmount: bigint
+    ): Promise<SignExecuteScriptTxResult> => {
       if (!fromAddressHash) throw new Error('No address selected for the swap')
 
       // The on-chain min-out protection is derived from quote.slippageBps, so refuse to sign if the
@@ -32,6 +38,8 @@ const useExecuteSwap = () => {
         throw new Error('Either the input or the output amount must be specified')
       }
 
+      const feeParams = feeAmount > 0n ? { fee: feeAmount, feeRecipient: SWAP_FEE_RECIPIENT } : {}
+
       let result: SignExecuteScriptTxResult
 
       if (quote.poolType === 'concentrated') {
@@ -47,11 +55,10 @@ const useExecuteSwap = () => {
           amount: amountSpecified,
           amountIn: inputAmount,
           routePlan: quote.routePlan.map((configIndex) => BigInt(configIndex)),
-          slippage: totalSlippageBps
+          slippage: totalSlippageBps,
+          ...feeParams
         })
       } else {
-        // Deferred platform fee: cpmm.swap exposes no fee/recipient parameter, so none is collected
-        // today. When it does, pass NATIVE_SWAP_FEE_BPS / NATIVE_SWAP_FEE_RECIPIENT here - the fee seam.
         result = await powfiSwapSdk.cpmm.swap(
           {
             tokenInId: quote.inputMint,
@@ -59,7 +66,8 @@ const useExecuteSwap = () => {
             slippageBps: BigInt(quote.slippageBps),
             sender: fromAddressHash,
             amountIn: quote.swapType === 'sell' ? inputAmount : undefined,
-            amountOut: quote.swapType === 'buy' ? outputAmount : undefined
+            amountOut: quote.swapType === 'buy' ? outputAmount : undefined,
+            ...feeParams
           },
           balances
         )
@@ -70,8 +78,8 @@ const useExecuteSwap = () => {
         type: 'EXECUTE_SCRIPT',
         txParams: {
           signerAddress: fromAddressHash,
-          attoAlphAmount: isSwappingFromAlph ? inputAmount.toString() : undefined,
-          tokens: isSwappingFromAlph ? undefined : [{ id: quote.inputMint, amount: inputAmount.toString() }],
+          attoAlphAmount: isSwappingFromAlph ? grossAmount.toString() : undefined,
+          tokens: isSwappingFromAlph ? undefined : [{ id: quote.inputMint, amount: grossAmount.toString() }],
           bytecode: ''
         },
         result

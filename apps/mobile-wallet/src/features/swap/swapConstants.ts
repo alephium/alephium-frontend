@@ -18,11 +18,6 @@ export const SWAP_HIGH_PRICE_IMPACT_PERCENT = 5
 export const SWAP_QUOTE_DEBOUNCE_MS = 200
 export const SWAP_QUOTE_REFETCH_INTERVAL_MS = 30_000
 
-// --- Deferred platform fee ------------------------------------------------------------------
-// The Powfi SDK's cpmm.swap / clmm.swap build, sign and submit a fixed swap script atomically
-// and expose NO fee/recipient parameter (verified at the bytecode level). So no extra fee is
-// collected today. When the SDK adds a fee parameter, set these two values and wire them at the
-// single seam marked in useExecuteSwap.ts — no other change is needed.
-// Intended fee: 0.5% (50 bps).
-export const NATIVE_SWAP_FEE_BPS = 0 // TODO: set to 50 once the SDK supports a swap fee parameter
-export const NATIVE_SWAP_FEE_RECIPIENT: string | undefined = undefined // TODO: set the fee-collection address
+// Platform fee
+export const SWAP_FEE_BPS = 30
+export const SWAP_FEE_RECIPIENT: string | undefined = process.env.EXPO_PUBLIC_SWAP_FEE_RECIPIENT

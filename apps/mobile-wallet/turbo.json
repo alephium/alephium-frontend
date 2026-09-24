@@ -3,7 +3,7 @@
   "tasks": {
     "build:deps": {
       "dependsOn": ["^build"],
-      "env": ["EXPO_PUBLIC_POWFI_BACKEND_HOST"]
+      "env": ["EXPO_PUBLIC_POWFI_BACKEND_HOST", "EXPO_PUBLIC_SWAP_FEE_RECIPIENT"]
     }
   }
 }

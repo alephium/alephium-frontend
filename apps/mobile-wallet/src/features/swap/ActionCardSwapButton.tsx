@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
+import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardSwapButtonProps {
@@ -17,6 +18,9 @@ interface ActionCardSwapButtonProps {
 const ActionCardSwapButton = ({ origin, tokenId, onPress }: ActionCardSwapButtonProps) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const isPowfiEnabled = useIsPowfiEnabled()
+
+  if (!isPowfiEnabled) return null
 
   const handleSwapPress = () => {
     sendAnalytics({ event: AnalyticsEvent.ACTION_CARD_PRESSED_BTN_TO_SWAP, props: { origin, provider: 'Powfi' } })

@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { SWAP_FEE_BPS } from '~/features/swap/swapConstants'
 import { SwapQuote } from '~/features/swap/swapTypes'
 import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface SwapInfoBoardProps {
   quote: SwapQuote
+  feeAmount: bigint // in input token base units
 }
 
 const formatRate = (rate: number) => {
@@ -16,7 +18,7 @@ const formatRate = (rate: number) => {
   return rate >= 1 ? rate.toFixed(4).replace(/\.?0+$/, '') : rate.toPrecision(4)
 }
 
-const SwapInfoBoard = ({ quote }: SwapInfoBoardProps) => {
+const SwapInfoBoard = ({ quote, feeAmount }: SwapInfoBoardProps) => {
   const { t } = useTranslation()
 
   const inputAmount = BigInt(quote.inputAmount)
@@ -50,6 +52,14 @@ const SwapInfoBoard = ({ quote }: SwapInfoBoardProps) => {
         </AppText>
         <AppText size={13} color={priceImpactColor}>{`${priceImpact.toFixed(2)}%`}</AppText>
       </InfoRow>
+      {feeAmount > 0n && (
+        <InfoRow>
+          <AppText color="secondary" size={13}>
+            {t('Service fee')}
+          </AppText>
+          <AppText size={13}>{`${SWAP_FEE_BPS / 100}%`}</AppText>
+        </InfoRow>
+      )}
       <InfoRow>
         <AppText color="secondary" size={13}>
           {isSell ? t('Minimum received') : t('Maximum sold')}
