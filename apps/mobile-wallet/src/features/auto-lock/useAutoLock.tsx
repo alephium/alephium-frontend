@@ -37,7 +37,9 @@ const useAutoLock = (unlockApp: () => Promise<void>) => {
         }
       }
 
-      setAppStateStatus(nextAppState)
+      // iOS reports `inactive` while a system sheet such as the Face ID prompt is on screen and `active` again once it
+      // is dismissed. Ignoring `inactive` stops our own unlock prompt from triggering unlockApp again in an endless loop.
+      if (nextAppState !== 'inactive') setAppStateStatus(nextAppState)
     }
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
