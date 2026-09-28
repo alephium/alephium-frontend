@@ -486,6 +486,8 @@
   "You only have one address. You cannot forget it.": "Bạn chỉ có một địa chỉ. Bạn không thể quên nó được.",
   "Total worth": "Tổng giá trị",
   "Could not load NFT metadata": "Không thể tải thông tin NFT",
+  "Could not load this NFT": "Không thể tải NFT này",
+  "Its media or metadata is unavailable or hosted at a source that could not be reached.": "Media hoặc metadata của mục này không khả dụng, hoặc được lưu trữ tại một nguồn không thể truy cập.",
   "Region": "Vùng",
   "Choose your region to update formats of dates, time, and currencies.": "Chọn khu vực của bạn để cập nhật định dạng ngày, giờ và tiền tệ.",
   "Video thumbnail": "Video thu nhỏ",
@@ -556,5 +558,13 @@
   "Decoded transaction details": "Thông tin giải mã giao dịch",
   "dApp request approved.": "Đã phê duyệt yêu cầu dApp.",
   "dApp request rejected.": "Đã từ chối yêu cầu dApp.",
-  "You can go back to your browser.": "Bạn có thể trở về trình duyệt."
+  "You can go back to your browser.": "Bạn có thể trở về trình duyệt.",
+  "Group (random if unset)": "Nhóm (ngẫu nhiên nếu bỏ trống)",
+  "Address type": "Kiểu địa chỉ",
+  "Groupless (recommended)": "Groupless (khuyên dùng)",
+  "Grouped": "Đã nhóm",
+  "Schnorr": "Schnorr",
+  "Select address type": "Chọn kiểu địa chỉ",
+  "Add to contacts": "Thêm vào danh bạ",
+  "ledgerGrouplessRecipientWarning": "Ứng dụng Alephium Ledger hiện chưa hỗ trợ gửi đến các địa chỉ không có group. Tính năng này đang được phát triển, bạn có thể theo dõi <1>trên GitHub</1>. Việc gửi đến các địa chỉ bắt đầu bằng số 1 vẫn hoạt động như bình thường."
 }
