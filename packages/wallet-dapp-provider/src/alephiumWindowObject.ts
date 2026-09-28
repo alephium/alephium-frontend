@@ -244,7 +244,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const controller = new AbortController()
 
     const result = await Promise.race([
-      waitForMessage('ALPH_SIGN_UNSIGNED_TX_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
       waitForMessage(
         'ALPH_SIGN_UNSIGNED_TX_FAILURE',
         USER_ACTION_TIMEOUT,
@@ -292,7 +297,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const controller = new AbortController()
 
     const result = await Promise.race([
-      waitForMessage('ALPH_SIGN_MESSAGE_SUCCESS', USER_ACTION_TIMEOUT_LONGER, undefined, controller.signal),
+      waitForMessage(
+        'ALPH_SIGN_MESSAGE_SUCCESS',
+        USER_ACTION_TIMEOUT_LONGER,
+        (x) => x.data.actionHash === actionHash,
+        controller.signal
+      ),
       waitForMessage(
         'ALPH_SIGN_MESSAGE_FAILURE',
         USER_ACTION_TIMEOUT,
@@ -331,12 +341,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     }
   }
 
-  #checkTabFocused() {
-    if (!document.hasFocus()) {
-      throw Error('Unsolicited request')
-    }
-  }
-
   #checkParams({ signerAddress }: { signerAddress: Address }): void {
     if (this.#connectedAccount === undefined || this.#connectedNetworkId === undefined) {
       throw Error('No connection')
@@ -345,8 +349,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     if (signerAddress !== this.connectedAccount?.address) {
       throw Error(`Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`)
     }
-
-    this.#checkTabFocused()
   }
 
   async #executeAlephiumTransaction<P extends { signerAddress: Address }>(

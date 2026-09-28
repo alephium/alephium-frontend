@@ -1,10 +1,14 @@
-import { explorer as e } from '@alephium/web3'
+import { ALPH } from '@alephium/token-list'
+import { explorer as e, SignExecuteScriptTxParams, SignExecuteScriptTxResult } from '@alephium/web3'
 
+import { signAndSubmitTxResultToSentTx } from '../src/store/sentTransactions/sentTransactionsUtils'
 import {
   addressHasOnlyNegativeAmountDeltas,
   addressHasOnlyPositiveAmountDeltas,
-  calcTxAmountsDeltaForAddress
+  calcTxAmountsDeltaForAddress,
+  calculateExecuteScriptTxAssetAmounts
 } from '../src/transactions/transactionAmounts'
+import { SignExecuteScriptTxModalProps } from '../src/types/signTxModalTypes'
 import transactions from './fixtures/transactions.json'
 
 const ONE = '1000000000000000000'
@@ -492,5 +496,97 @@ describe('addressHasOnlyNegativeAmountDeltas and addressHasOnlyPositiveAmountDel
       expect(addressHasOnlyNegativeAmountDeltas(pendingTx, refAddress)).toBe(true)
       expect(addressHasOnlyPositiveAmountDeltas(pendingTx, refAddress)).toBe(false)
     })
+  })
+})
+
+describe('calculateExecuteScriptTxAssetAmounts', () => {
+  const txParams = (params: Partial<SignExecuteScriptTxModalProps['txParams']>) =>
+    ({ signerAddress: refAddress, bytecode: '00', ...params }) as SignExecuteScriptTxModalProps['txParams']
+
+  it('merges ALPH sent both as attoAlphAmount and as a token into a single entry', () => {
+    const result = calculateExecuteScriptTxAssetAmounts(
+      txParams({ attoAlphAmount: ONE, tokens: [{ id: ALPH.id, amount: ONE }] })
+    )
+
+    expect(result).toEqual([{ id: ALPH.id, amount: BigInt(ONE) * BigInt(2) }])
+  })
+
+  it('merges a token id repeated in tokens', () => {
+    const tokenId = 'a'.repeat(64)
+    const result = calculateExecuteScriptTxAssetAmounts(
+      txParams({
+        tokens: [
+          { id: tokenId, amount: '2' },
+          { id: tokenId, amount: '3' }
+        ]
+      })
+    )
+
+    expect(result).toEqual([{ id: tokenId, amount: BigInt(5) }])
+  })
+
+  it('never returns the same id twice', () => {
+    const tokenId = 'b'.repeat(64)
+    const result = calculateExecuteScriptTxAssetAmounts(
+      txParams({
+        attoAlphAmount: ONE,
+        tokens: [
+          { id: tokenId, amount: '1' },
+          { id: ALPH.id, amount: ONE },
+          { id: tokenId, amount: '1' }
+        ]
+      })
+    )
+
+    expect(new Set(result.map(({ id }) => id)).size).toBe(result.length)
+  })
+
+  it('keeps tokens in order with ALPH last', () => {
+    const first = 'c'.repeat(64)
+    const second = 'd'.repeat(64)
+    const result = calculateExecuteScriptTxAssetAmounts(
+      txParams({
+        attoAlphAmount: ONE,
+        tokens: [
+          { id: first, amount: '1' },
+          { id: second, amount: '1' }
+        ]
+      })
+    )
+
+    expect(result.map(({ id }) => id)).toEqual([first, second, ALPH.id])
+  })
+
+  it('omits ALPH when no ALPH is sent', () => {
+    const tokenId = 'e'.repeat(64)
+
+    expect(calculateExecuteScriptTxAssetAmounts(txParams({ tokens: [{ id: tokenId, amount: '1' }] }))).toEqual([
+      { id: tokenId, amount: BigInt(1) }
+    ])
+    expect(calculateExecuteScriptTxAssetAmounts(txParams({}))).toEqual([])
+  })
+})
+
+describe('signAndSubmitTxResultToSentTx EXECUTE_SCRIPT', () => {
+  const sentTx = (txParams: Partial<SignExecuteScriptTxParams>) =>
+    signAndSubmitTxResultToSentTx({
+      type: 'EXECUTE_SCRIPT',
+      txParams: { signerAddress: refAddress, bytecode: '00', ...txParams } as SignExecuteScriptTxParams,
+      result: { txId: 'tx-hash' } as SignExecuteScriptTxResult
+    })
+
+  it('keeps ALPH out of tokens so the pending row is not rendered twice', () => {
+    const tx = sentTx({ attoAlphAmount: ONE, tokens: [{ id: ALPH.id, amount: ONE_HUNDRED }] })
+
+    expect(tx.amount).toBe((BigInt(ONE) + BigInt(ONE_HUNDRED)).toString())
+    expect(tx.tokens).toEqual([])
+  })
+
+  it('leaves other tokens alone', () => {
+    const tokenId = 'f'.repeat(64)
+    const tx = sentTx({ attoAlphAmount: ONE, tokens: [{ id: tokenId, amount: '7' }] })
+
+    expect(tx.amount).toBe(ONE)
+    expect(tx.tokens).toEqual([{ id: tokenId, amount: '7' }])
   })
 })

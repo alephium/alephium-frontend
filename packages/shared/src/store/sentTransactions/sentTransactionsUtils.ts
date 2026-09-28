@@ -9,7 +9,7 @@ import type {
   SubmissionResult
 } from '@alephium/web3'
 
-import { calculateTransferTxAssetAmounts } from '../../transactions'
+import { calculateExecuteScriptTxAssetAmounts, calculateTransferTxAssetAmounts } from '../../transactions'
 import { SentTransaction, SweepTxParams } from '../../types/transactions'
 
 type SignAndSubmitTxResultToSentTxProps =
@@ -56,19 +56,21 @@ export const signAndSubmitTxResultToSentTx = ({
         type: 'transfer'
       }
     }
-    case 'EXECUTE_SCRIPT':
+    case 'EXECUTE_SCRIPT': {
+      const assetAmounts = calculateExecuteScriptTxAssetAmounts(txParams)
       return {
         hash: result.txId,
         fromAddress: txParams.signerAddress,
-        amount: txParams.attoAlphAmount ? txParams.attoAlphAmount.toString() : undefined,
-        tokens: txParams.tokens
-          ? txParams.tokens.map((token) => ({ id: token.id, amount: token.amount.toString() }))
-          : undefined,
+        amount: assetAmounts.find(({ id }) => id === ALPH.id)?.amount?.toString(),
+        tokens: assetAmounts
+          .filter(({ id }) => id !== ALPH.id)
+          .map(({ id, amount }) => ({ id, amount: amount.toString() })),
         timestamp: new Date().getTime(),
         status: 'sent',
         type: 'contract',
         toAddress: ''
       }
+    }
     case 'DEPLOY_CONTRACT':
       return {
         hash: result.txId,

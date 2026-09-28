@@ -1,9 +1,8 @@
 import { AnalyticsEvent } from '@alephium/shared'
 import { selectAddressByHash, signAndSubmitTxResultToSentTx, transactionSent } from '@alephium/shared/store'
-import { getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
-import { AssetAmount, SignExecuteScriptTxModalProps } from '@alephium/shared/types'
+import { calculateExecuteScriptTxAssetAmounts, getBaseAddressStr, getTxAddresses } from '@alephium/shared/transactions'
+import { SignExecuteScriptTxModalProps } from '@alephium/shared/types'
 import { isGrouplessAddress } from '@alephium/shared/utils'
-import { ALPH } from '@alephium/token-list'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { ChevronsDown } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
@@ -83,7 +82,7 @@ export const SignExecuteScriptTxModalContent = ({
   dAppUrl,
   unsignedData
 }: Pick<SignExecuteScriptTxModalProps, 'txParams' | 'dAppUrl' | 'unsignedData'> & { fees: bigint }) => {
-  const assetAmounts = useMemo(() => calculateAssetAmounts(txParams), [txParams])
+  const assetAmounts = useMemo(() => calculateExecuteScriptTxAssetAmounts(txParams), [txParams])
   const { t } = useTranslation()
 
   return (
@@ -130,29 +129,6 @@ const SimulatedResult = ({
       )}
     </>
   )
-}
-
-const calculateAssetAmounts = ({ tokens, attoAlphAmount }: SignExecuteScriptTxModalProps['txParams']) => {
-  let assetAmounts: AssetAmount[] = []
-  let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
-
-  if (tokens) {
-    const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-    const alphAssets = assets.filter((asset) => asset.id === ALPH.id)
-    const tokenAssets = assets.filter((asset) => asset.id !== ALPH.id)
-
-    assetAmounts = tokenAssets
-    allAlphAssets = [...allAlphAssets, ...alphAssets]
-  }
-
-  if (allAlphAssets.length > 0) {
-    assetAmounts.push({
-      id: ALPH.id,
-      amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-    })
-  }
-
-  return assetAmounts
 }
 
 const TransactionSummaryStyled = styled(TransactionSummary)`
