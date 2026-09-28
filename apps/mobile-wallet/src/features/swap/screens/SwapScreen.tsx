@@ -1,6 +1,5 @@
 import { MAX_PRICE_IMPACT } from '@alephium/powfi-sdk'
 import { AnalyticsEvent } from '@alephium/shared'
-import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchAddressBalances, useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
@@ -73,7 +72,6 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
   const { tokenIds: pairableTokenIds, isLoading: isLoadingPairs } = useFetchSwappableTokens(fromTokenId)
 
   const fromDecimals = fromToken && isFT(fromToken) ? fromToken.decimals : 0
-  const toDecimals = toToken && isFT(toToken) ? toToken.decimals : 0
   const fromSymbol = fromToken && isFT(fromToken) ? fromToken.symbol : ''
   const toSymbol = toToken && isFT(toToken) ? toToken.symbol : ''
   const maxBalance = fromTokenBalances ? BigInt(fromTokenBalances.availableBalance) : 0n
@@ -121,10 +119,6 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
     confirmation,
     usedNonDefaultAddress
   })
-
-  const toAmountDisplay = quote
-    ? formatAmountForDisplay({ amount: BigInt(quote.outputAmount), amountDecimals: toDecimals })
-    : ''
 
   const balancesMap = useMemo(
     () => new Map((addressBalances ?? []).map((balance) => [balance.id, BigInt(balance.availableBalance)])),
@@ -364,7 +358,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
           editable={false}
           disabled={isPanelLocked}
           tokenId={toTokenId}
-          amount={toAmountDisplay}
+          amount={quote ? BigInt(quote.outputAmount) : ''}
           onSelectTokenPress={openToTokenSelect}
         />
       </SwapPanel>
