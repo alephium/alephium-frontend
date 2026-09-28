@@ -7,6 +7,7 @@ import { useTheme } from 'styled-components/native'
 import FooterMenu from '~/components/footers/FooterMenu'
 import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import { useIsWalletWatchOnly } from '~/features/watchOnlyWallet/useIsWalletWatchOnly'
+import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
@@ -26,6 +27,7 @@ const InWalletTabsNavigation = () => {
   const theme = useTheme()
   const { t } = useTranslation()
   const isWatchOnly = useIsWalletWatchOnly()
+  const isPowfiEnabled = useIsPowfiEnabled()
 
   return (
     <>
@@ -56,7 +58,7 @@ const InWalletTabsNavigation = () => {
             )
           }}
         />
-        {!isWatchOnly && (
+        {isPowfiEnabled && !isWatchOnly && (
           <InWalletTabs.Screen
             name="StakingScreen"
             component={StakingScreen}

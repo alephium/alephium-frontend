@@ -9,6 +9,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
 import StakingAddressSection from '~/screens/Staking/StakingAddressSection'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -22,8 +23,9 @@ const StakingScreen = () => {
   const hasPendingStakeOrUnstake = useAppSelector((s) => !!s.staking.pendingStakeOrUnstake)
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
+  const isPowfiEnabled = useIsPowfiEnabled()
 
-  if (!addressHash) return null
+  if (!isPowfiEnabled || !addressHash) return null
 
   const handleStakePress = () => dispatch(openModal({ name: 'StakeModal', props: { addressHash } }))
   const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal', props: { addressHash } }))

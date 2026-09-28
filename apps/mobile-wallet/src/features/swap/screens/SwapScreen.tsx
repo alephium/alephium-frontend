@@ -26,9 +26,10 @@ import useSwapConfirmation from '~/features/swap/hooks/useSwapConfirmation'
 import useSwapFunnelTracking from '~/features/swap/hooks/useSwapFunnelTracking'
 import useSwapQuote from '~/features/swap/hooks/useSwapQuote'
 import { swapQuoteAnalyticsProps } from '~/features/swap/swapAnalytics'
-import { SWAP_HIGH_PRICE_IMPACT_PERCENT } from '~/features/swap/swapConstants'
+import { SWAP_FEE_RECIPIENT, SWAP_HIGH_PRICE_IMPACT_PERCENT } from '~/features/swap/swapConstants'
 import { classifySwapError } from '~/features/swap/swapErrors'
 import { swapExecutionInitialState, swapExecutionReducer } from '~/features/swap/swapExecutionMachine'
+import { calculateSwapFee } from '~/features/swap/swapFee'
 import { selectSwapFromAddressHash } from '~/features/swap/swapSelectors'
 import { swapFromAddressChanged, swapFromAddressReset } from '~/features/swap/swapSlice'
 import { SwapQuoteError } from '~/features/swap/swapTypes'
@@ -87,6 +88,16 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
     setAmount
   } = useFungibleTokenAmountInput({ maxBalance, decimals: fromDecimals })
 
+  // The fee is taken off the input before the swap is quoted, so the quote is what the user actually gets.
+  const feeAmount = useMemo(
+    () =>
+      !!SWAP_FEE_RECIPIENT && !!amountParsed && !!fromTokenId
+        ? calculateSwapFee({ grossAmount: amountParsed, inputTokenId: fromTokenId })
+        : 0n,
+    [amountParsed, fromTokenId]
+  )
+  const netAmount = amountParsed === undefined ? undefined : amountParsed - feeAmount
+
   const slippageBps = Math.round(slippage * 10000)
   const {
     quote,
@@ -95,7 +106,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
   } = useSwapQuote({
     inputMint: fromTokenId,
     outputMint: toTokenId,
-    amount: amountParsed,
+    amount: netAmount,
     direction: 'sell',
     slippageBps,
     paused: isPanelLocked
@@ -196,12 +207,12 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
   }
 
   const performSwap = async () => {
-    if (!quote) return
+    if (!quote || amountParsed === undefined) return
 
     dispatchExecution({ type: 'SUBMIT' })
 
     try {
-      const result = await executeSwap(quote, balancesMap)
+      const result = await executeSwap(quote, balancesMap, amountParsed, feeAmount)
       sendAnalytics({
         event: AnalyticsEvent.EXECUTED_SWAP,
         props: { provider: 'Powfi', ...swapQuoteAnalyticsProps(quote), used_non_default_address: usedNonDefaultAddress }
@@ -360,7 +371,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
 
       {execution.status !== 'idle' && <SwapProgressStepper execution={execution} confirmation={confirmation} />}
 
-      {execution.status === 'idle' && quote && <SwapInfoBoard quote={quote} />}
+      {execution.status === 'idle' && quote && <SwapInfoBoard quote={quote} feeAmount={feeAmount} />}
     </ScrollScreen>
   )
 }
