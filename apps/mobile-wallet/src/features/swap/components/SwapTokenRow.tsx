@@ -1,4 +1,4 @@
-import { calculateTokenAmountWorth, fromHumanReadableAmount } from '@alephium/shared/numbers'
+import { calculateTokenAmountWorth, formatAmountForDisplay, fromHumanReadableAmount } from '@alephium/shared/numbers'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchToken, useFetchTokenPrice } from '@alephium/shared-react'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -13,7 +13,7 @@ import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/global
 
 interface SwapTokenRowProps {
   label: string
-  amount: string
+  amount: string | bigint // Typed text for the editable row, quote as bigint for the read-only one
   editable: boolean
   tokenId?: TokenId
   onSelectTokenPress: () => void
@@ -22,6 +22,16 @@ interface SwapTokenRowProps {
   formattedBalance?: string
   error?: string
   disabled?: boolean
+}
+
+// The typed amount can be unparseable (e.g. too many decimals)
+const parseAmount = (amount: string, decimals?: number): bigint | undefined => {
+  if (!amount || decimals === undefined) return undefined
+  try {
+    return fromHumanReadableAmount(amount, decimals)
+  } catch {
+    return undefined
+  }
 }
 
 const SwapTokenRow = ({
@@ -41,6 +51,8 @@ const SwapTokenRow = ({
   const { data: token } = useFetchToken(tokenId ?? '')
 
   const tokenSymbol = token && isFT(token) ? token.symbol : undefined
+  const tokenDecimals = token && isFT(token) ? token.decimals : undefined
+  const amountParsed = typeof amount === 'bigint' ? amount : parseAmount(amount, tokenDecimals)
 
   return (
     <Container>
@@ -60,7 +72,7 @@ const SwapTokenRow = ({
       <MainRow>
         {editable ? (
           <AmountInput
-            value={amount}
+            value={typeof amount === 'string' ? amount : ''}
             onChangeText={onAmountChange}
             editable={!disabled}
             placeholder="0"
@@ -69,8 +81,10 @@ const SwapTokenRow = ({
             style={{ color: error ? theme.global.alert : theme.font.primary }}
           />
         ) : (
-          <ReadonlyAmount numberOfLines={1} color={amount && amount !== '0' ? 'primary' : 'tertiary'}>
-            {amount || '0'}
+          <ReadonlyAmount numberOfLines={1} color={amountParsed ? 'primary' : 'tertiary'}>
+            {amountParsed && tokenDecimals !== undefined
+              ? formatAmountForDisplay({ amount: amountParsed, amountDecimals: tokenDecimals })
+              : '0'}
           </ReadonlyAmount>
         )}
 
@@ -91,7 +105,7 @@ const SwapTokenRow = ({
         </TokenSelector>
       </MainRow>
 
-      {tokenId && amount ? <FiatWorth tokenId={tokenId} amount={amount} /> : null}
+      {tokenId && amountParsed ? <FiatWorth tokenId={tokenId} amount={amountParsed} /> : null}
       {error ? (
         <AppText color="alert" size={12}>
           {error}
@@ -105,7 +119,7 @@ export default SwapTokenRow
 
 interface FiatWorthProps {
   tokenId: TokenId
-  amount: string
+  amount: bigint
 }
 
 const FiatWorth = ({ tokenId, amount }: FiatWorthProps) => {
@@ -113,10 +127,9 @@ const FiatWorth = ({ tokenId, amount }: FiatWorthProps) => {
   const symbol = token && isFT(token) ? token.symbol : ''
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
-  if (!token || !isFT(token) || !amount) return null
+  if (!token || !isFT(token)) return null
 
-  const tokenAmount = fromHumanReadableAmount(amount, token.decimals)
-  const worth = calculateTokenAmountWorth(tokenAmount, tokenPrice ?? 0, token.decimals)
+  const worth = calculateTokenAmountWorth(amount, tokenPrice ?? 0, token.decimals)
 
   if (!worth) return null
 
