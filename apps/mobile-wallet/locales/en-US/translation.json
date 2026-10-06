@@ -630,5 +630,11 @@
   "Main Wallet": "Main Wallet",
   "Wallet {{ number }}": "Wallet {{ number }}",
   "Imported Wallet": "Imported Wallet",
-  "Imported Wallet {{ number }}": "Imported Wallet {{ number }}"
+  "Imported Wallet {{ number }}": "Imported Wallet {{ number }}",
+  "This address cannot stake": "This address cannot stake",
+  "Powfi staking only works with groupless addresses and addresses in group 0. Please, select another address.": "Powfi staking only works with groupless addresses and addresses in group 0. Please, select another address.",
+  "Powfi staking only works with groupless addresses and addresses in group 0. Please, create a new groupless address and select it here.": "Powfi staking only works with groupless addresses and addresses in group 0. Please, create a new groupless address and select it here.",
+  "This address cannot swap": "This address cannot swap",
+  "Powfi swaps only work with groupless addresses and addresses in group 0. Please, select another address.": "Powfi swaps only work with groupless addresses and addresses in group 0. Please, select another address.",
+  "Powfi swaps only work with groupless addresses and addresses in group 0. Please, create a new groupless address and select it here.": "Powfi swaps only work with groupless addresses and addresses in group 0. Please, create a new groupless address and select it here."
 }

@@ -10,11 +10,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import { canAddressUsePowfi } from '~/api/powfi'
 import AddressSelectorCard from '~/components/AddressSelectorCard'
 import Button from '~/components/buttons/Button'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
+import SwapAddressGroupWarning from '~/features/swap/components/SwapAddressGroupWarning'
 import SwapFlipButton from '~/features/swap/components/SwapFlipButton'
 import SwapInfoBoard from '~/features/swap/components/SwapInfoBoard'
 import SwapProgressStepper from '~/features/swap/components/SwapProgressStepper'
@@ -29,7 +31,7 @@ import { SWAP_FEE_RECIPIENT, SWAP_HIGH_PRICE_IMPACT_PERCENT } from '~/features/s
 import { classifySwapError } from '~/features/swap/swapErrors'
 import { swapExecutionInitialState, swapExecutionReducer } from '~/features/swap/swapExecutionMachine'
 import { calculateSwapFee } from '~/features/swap/swapFee'
-import { selectSwapFromAddressHash } from '~/features/swap/swapSelectors'
+import { selectSwapFromAddress } from '~/features/swap/swapSelectors'
 import { swapFromAddressChanged, swapFromAddressReset } from '~/features/swap/swapSlice'
 import { SwapQuoteError } from '~/features/swap/swapTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -43,7 +45,8 @@ type SwapScreenProps = StackScreenProps<RootStackParamList, 'SwapScreen'>
 const SwapScreen = ({ route }: SwapScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const fromAddressHash = useAppSelector(selectSwapFromAddressHash)
+  const fromAddress = useAppSelector(selectSwapFromAddress)
+  const fromAddressHash = fromAddress?.hash
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const slippage = useAppSelector((s) => s.swap.slippage)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
@@ -293,8 +296,9 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
     }
   }
 
-  if (!fromAddressHash) return null
+  if (!fromAddress || !fromAddressHash) return null
 
+  const isAddressEligible = canAddressUsePowfi(fromAddress)
   const swapButton = getSwapButton()
 
   return (
@@ -322,7 +326,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
           <Button
             title={swapButton.title}
             onPress={handleSwapPress}
-            disabled={swapButton.disabled}
+            disabled={swapButton.disabled || !isAddressEligible}
             loading={swapButton.loading}
             variant="highlight"
           />
@@ -336,6 +340,8 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
         onPress={openFromAddressSelect}
         disabled={isPanelLocked}
       />
+
+      {!isAddressEligible && <SwapAddressGroupWarning />}
 
       <SwapPanel>
         <SwapTokenRow

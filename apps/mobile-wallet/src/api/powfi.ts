@@ -1,5 +1,7 @@
 import type { App } from '@alephium/powfi-backend'
 import { Powfi } from '@alephium/powfi-sdk'
+import { Address } from '@alephium/shared/types'
+import { isGrouplessAddress } from '@alephium/shared/utils'
 import { treaty } from '@elysiajs/eden'
 
 import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
@@ -14,6 +16,11 @@ const swapSigner = new SelectedAddressSigner(selectSwapFromAddressHash)
 export const powfiSdk = Powfi.load({ networkId: 'mainnet', signer: stakingSigner })
 export const powfiSwapSdk = Powfi.load({ networkId: 'mainnet', signer: swapSigner })
 export const powfiBackend = treaty<App>(process.env.EXPO_PUBLIC_POWFI_BACKEND_HOST || 'http://localhost:4000')
-export const xAlphTokenId = powfiSdk.staking.getConfig().xAlphTokenId
+const stakingConfig = powfiSdk.staking.getConfig()
+export const xAlphTokenId = stakingConfig.xAlphTokenId
+const powfiGroup = stakingConfig.groupIndex
+
+export const canAddressUsePowfi = (address: Address): boolean =>
+  isGrouplessAddress(address) || address.group === powfiGroup
 
 powfiSdk.setCurrentProviders()
