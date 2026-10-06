@@ -4,6 +4,7 @@ import { useForegroundAddressPolling } from '@alephium/shared-react'
 import * as Brightness from 'expo-brightness'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Platform } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled from 'styled-components/native'
 
@@ -31,12 +32,21 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
   const [permissionResponse, requestPermission] = Brightness.usePermissions()
 
   useEffect(() => {
-    if (permissionResponse?.status === 'granted') {
+    if (permissionResponse?.status !== 'granted') return
+
+    let previousBrightness: number | undefined
+
+    Brightness.getBrightnessAsync().then((brightness) => {
+      previousBrightness = brightness
       Brightness.setBrightnessAsync(1)
-    }
+    })
 
     return () => {
-      Brightness.restoreSystemBrightnessAsync()
+      if (Platform.OS === 'ios') {
+        if (previousBrightness !== undefined) Brightness.setBrightnessAsync(previousBrightness)
+      } else {
+        Brightness.restoreSystemBrightnessAsync()
+      }
     }
   }, [permissionResponse?.status])
 
