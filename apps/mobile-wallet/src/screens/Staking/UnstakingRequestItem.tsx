@@ -201,9 +201,12 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
           </DataValue>
         </DataColumn>
 
-        <ProgressBarContainer>
-          <ProgressBar style={{ width: `${progress}%` }} />
-        </ProgressBarContainer>
+        <ProgressColumn>
+          <ProgressLabel>{t('{{percent}}% unlocked', { percent: Math.floor(progress) })}</ProgressLabel>
+          <ProgressBarContainer>
+            <ProgressBar style={{ width: `${progress}%` }} />
+          </ProgressBarContainer>
+        </ProgressColumn>
       </Row>
 
       <ButtonRow>
@@ -295,14 +298,22 @@ const ButtonRow = styled.View`
   gap: 10px;
 `
 
-const ProgressBarContainer = styled.View<{ $fullWidth?: boolean }>`
+const ProgressColumn = styled.View`
+  flex: 1;
+  max-width: 120px;
+  margin-left: 12px;
+  align-self: center;
+  gap: 6px;
+`
+
+const ProgressLabel = styled(DataLabel)`
+  text-align: right;
+`
+
+const ProgressBarContainer = styled.View`
   height: 4px;
   background-color: ${({ theme }) => theme.border.primary};
   border-radius: 2px;
-  flex: 1;
-  align-self: ${({ $fullWidth }) => ($fullWidth ? 'stretch' : 'center')};
-  margin-left: ${({ $fullWidth }) => ($fullWidth ? 0 : 12)}px;
-  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '80px')};
 `
 
 const ProgressBar = styled.View`

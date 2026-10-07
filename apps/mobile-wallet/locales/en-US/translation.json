@@ -554,6 +554,7 @@
   "{{amount}} claimed": "{{amount}} claimed",
   "Full unlock": "Full unlock",
   "Claimable now": "Claimable now",
+  "{{percent}}% unlocked": "{{percent}}% unlocked",
   "Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.": "Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.",
   "Claim": "Claim",
   "Cancel unstaking": "Cancel unstaking",
