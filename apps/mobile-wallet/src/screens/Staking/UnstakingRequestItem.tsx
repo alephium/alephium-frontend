@@ -18,8 +18,9 @@ import {
   UnstakeRequest,
   unstakeVaultRequestsQueryKeyRoot
 } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import useFetchXAlphTokenState from '~/features/staking/hooks/useFetchXAlphTokenState'
 import { vaultActionCompleted } from '~/features/staking/stakingSlice'
-import { isClaimable } from '~/features/staking/stakingUtils'
+import { getCancelUnstakeXAlphOut, isClaimable } from '~/features/staking/stakingUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -38,6 +39,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
+  const { data: xAlphTokenState } = useFetchXAlphTokenState()
 
   const vaultIndex = request.vaultIndex.toString()
   const pendingVaultAction = useAppSelector((s) => s.staking.pendingVaultActions[vaultIndex])
@@ -107,7 +109,28 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   }
 
   const handleCancel = () => {
-    Alert.alert(t('Cancel unstaking'), t('Are you sure you want to cancel this unstaking request?'), [
+    const notYetClaimableAlph = leftToClaim - request.claimableAmount
+    const xAlphOut = getCancelUnstakeXAlphOut(
+      notYetClaimableAlph,
+      xAlphTokenState?.fields.totalXAlphSupply ?? 0n,
+      xAlphTokenState?.fields.totalDepositedAlph ?? 0n
+    )
+    const message = [
+      t('Are you sure you want to cancel this unstaking request?'),
+      t('You will get back {{xAlphAmount}} xALPH and {{alphAmount}} ALPH.', {
+        xAlphAmount: formatAlph(xAlphOut),
+        alphAmount: formatAlph(request.claimableAmount)
+      }),
+      request.withdrawnAmount > 0n
+        ? t('The {{amount}} ALPH you already claimed stays in your wallet.', {
+            amount: formatAlph(request.withdrawnAmount)
+          })
+        : undefined
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+
+    Alert.alert(t('Cancel unstaking'), message, [
       { text: t('No'), style: 'cancel' },
       {
         text: t('Yes, cancel'),

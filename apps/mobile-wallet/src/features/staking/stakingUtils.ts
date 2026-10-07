@@ -29,3 +29,15 @@ export const previewAlphForUnstake = (xAlphAmountAtto: bigint, alphPerXAlph: Dec
     .toDecimalPlaces(4, Decimal.ROUND_DOWN)
     .toString()
 }
+
+/** xALPH returned when cancelling an unstake, computed like `XAlphToken.cancelUnstake`: the ALPH that has not unlocked yet is restaked at the current rate. */
+export const getCancelUnstakeXAlphOut = (
+  notYetClaimableAlph: bigint,
+  totalXAlphSupply: bigint,
+  totalDepositedAlph: bigint
+): bigint => {
+  if (notYetClaimableAlph <= 0n) return 0n
+  if (totalXAlphSupply === 0n || totalDepositedAlph === 0n) return notYetClaimableAlph
+
+  return (notYetClaimableAlph * totalXAlphSupply) / totalDepositedAlph
+}
