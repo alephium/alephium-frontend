@@ -155,6 +155,9 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
               : formatAlph(request.totalAmount)}{' '}
             ALPH
           </DataValue>
+          {request.withdrawnAmount > 0n && (
+            <DataHint>{t('{{amount}} claimed', { amount: `${formatAlph(request.withdrawnAmount)} ALPH` })}</DataHint>
+          )}
         </DataColumn>
         <DataColumn style={{ alignItems: 'flex-end' }}>
           <DataLabel>{t('Full unlock')}</DataLabel>
@@ -256,6 +259,11 @@ const DataLabel = styled(AppText)`
 const DataValue = styled(AppText)`
   font-size: 14px;
   font-weight: 600;
+`
+
+const DataHint = styled(AppText)`
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 const ButtonRow = styled.View`
