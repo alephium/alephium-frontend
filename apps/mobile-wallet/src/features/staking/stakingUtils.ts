@@ -41,3 +41,18 @@ export const getCancelUnstakeXAlphOut = (
 
   return (notYetClaimableAlph * totalXAlphSupply) / totalDepositedAlph
 }
+
+/** Compact time left until an unstake fully unlocks, e.g. "12d 23h" or "4h 59m". Returns '' once unlocked. */
+export const formatUnstakeTimeLeft = (timeLeftMs: number): string => {
+  if (timeLeftMs <= 0) return ''
+
+  const totalMinutes = Math.ceil(timeLeftMs / 60_000)
+  const days = Math.floor(totalMinutes / 1440)
+  const hours = Math.floor((totalMinutes % 1440) / 60)
+  const minutes = totalMinutes % 60
+
+  if (days > 0) return hours > 0 ? `${days}d ${hours}h` : `${days}d`
+  if (hours > 0) return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`
+
+  return `${minutes}m`
+}

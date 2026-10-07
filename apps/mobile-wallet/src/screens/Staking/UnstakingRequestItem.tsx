@@ -20,7 +20,7 @@ import {
 } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
 import useFetchXAlphTokenState from '~/features/staking/hooks/useFetchXAlphTokenState'
 import { vaultActionCompleted } from '~/features/staking/stakingSlice'
-import { getCancelUnstakeXAlphOut, isClaimable } from '~/features/staking/stakingUtils'
+import { formatUnstakeTimeLeft, getCancelUnstakeXAlphOut, isClaimable } from '~/features/staking/stakingUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -58,7 +58,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   const now = Date.now()
   const endTime = Number(request.startTime + request.duration)
   const isFullyUnlocked = now >= endTime
-  const daysLeft = Math.max(0, Math.ceil((endTime - now) / (1000 * 60 * 60 * 24)))
+  const timeLeft = formatUnstakeTimeLeft(endTime - now)
   const progress =
     request.duration > BigInt(0)
       ? Math.min(100, Math.max(0, ((now - Number(request.startTime)) / Number(request.duration)) * 100))
@@ -185,7 +185,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
         <DataColumn style={{ alignItems: 'flex-end' }}>
           <DataLabel>{t('Full unlock')}</DataLabel>
           <DataValue>
-            {new Date(endTime).toLocaleDateString(i18n.language, { dateStyle: 'medium' })} ({daysLeft}d)
+            {new Date(endTime).toLocaleDateString(i18n.language, { dateStyle: 'medium' })}
+            {timeLeft && ` (${timeLeft})`}
           </DataValue>
         </DataColumn>
       </Row>
