@@ -210,7 +210,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
         <Button
           title={t('Claim')}
           onPress={onClaimPress}
-          disabled={!canClaim || isClaiming || !!pendingVaultAction}
+          disabled={isClaiming || !!pendingVaultAction}
           loading={isClaiming || pendingVaultAction?.type === 'claim'}
           variant="accent"
           short
