@@ -549,6 +549,8 @@
   "xALPH amount": "xALPH amount",
   "You will receive (over 30 days)": "You will receive (over 30 days)",
   "Pending unstakings": "Pending unstakings",
+  "Left to claim": "Left to claim",
+  "{{amount}} of {{total}}": "{{amount}} of {{total}}",
   "Full unlock": "Full unlock",
   "Claimable now": "Claimable now",
   "Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.": "Amount is too low to be claimed just yet ({{claimableAmount}}). Please try again later.",

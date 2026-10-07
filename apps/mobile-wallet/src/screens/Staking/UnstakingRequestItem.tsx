@@ -63,6 +63,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
       : 0
 
   const canClaim = isClaimable(request.claimableAmount)
+  const leftToClaim = request.totalAmount - request.withdrawnAmount
 
   const onClaimPress = async () => {
     if (isClaiming) return
@@ -144,9 +145,15 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
       )}
       <Row>
         <DataColumn>
-          <DataLabel>{t('Amount')}</DataLabel>
+          <DataLabel>{t('Left to claim')}</DataLabel>
           <DataValue>
-            {formatAmountForDisplay({ amount: request.totalAmount, amountDecimals: ALPH.decimals })} ALPH
+            {request.withdrawnAmount > 0n
+              ? t('{{amount}} of {{total}}', {
+                  amount: formatAlph(leftToClaim),
+                  total: formatAlph(request.totalAmount)
+                })
+              : formatAlph(request.totalAmount)}{' '}
+            ALPH
           </DataValue>
         </DataColumn>
         <DataColumn style={{ alignItems: 'flex-end' }}>
@@ -200,6 +207,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
 }
 
 export default UnstakingRequestItem
+
+const formatAlph = (amount: bigint) => formatAmountForDisplay({ amount, amountDecimals: ALPH.decimals })
 
 interface VaultActionConfirmationPollerProps {
   txHash: string
