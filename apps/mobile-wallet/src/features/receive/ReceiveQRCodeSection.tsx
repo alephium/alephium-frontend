@@ -4,6 +4,7 @@ import { useForegroundAddressPolling } from '@alephium/shared-react'
 import * as Brightness from 'expo-brightness'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AppState, Platform } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled from 'styled-components/native'
 
@@ -31,12 +32,45 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
   const [permissionResponse, requestPermission] = Brightness.usePermissions()
 
   useEffect(() => {
-    if (permissionResponse?.status === 'granted') {
+    if (permissionResponse?.status !== 'granted') return
+
+    if (Platform.OS !== 'ios') {
+      Brightness.setBrightnessAsync(1)
+
+      return () => {
+        Brightness.restoreSystemBrightnessAsync()
+      }
+    }
+
+    let previousBrightness: number | undefined
+    let isUnmounted = false
+
+    const increaseBrightness = async () => {
+      const brightness = await Brightness.getBrightnessAsync()
+
+      if (isUnmounted || AppState.currentState !== 'active') return
+
+      previousBrightness = brightness
       Brightness.setBrightnessAsync(1)
     }
 
+    const restoreBrightness = () => {
+      if (previousBrightness === undefined) return
+
+      Brightness.setBrightnessAsync(previousBrightness)
+      previousBrightness = undefined
+    }
+
+    increaseBrightness()
+
+    const appStateSubscription = AppState.addEventListener('change', (state) =>
+      state === 'active' ? increaseBrightness() : restoreBrightness()
+    )
+
     return () => {
-      Brightness.restoreSystemBrightnessAsync()
+      isUnmounted = true
+      appStateSubscription.remove()
+      restoreBrightness()
     }
   }, [permissionResponse?.status])
 
