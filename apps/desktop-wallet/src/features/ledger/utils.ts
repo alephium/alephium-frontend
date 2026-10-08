@@ -100,7 +100,12 @@ export class LedgerAlephium extends AccountDiscovery {
       : initialAddressIndex
     let newAddressData = await this._deriveAddress(nextAddressIndex, keyType, props.group)
 
-    while (canHaveTargetGroup(props) && props.group !== undefined && newAddressData.group !== props.group) {
+    // When given a target group, the device scans forward from the requested index until it finds an address in that
+    // group. It doesn't know which indexes the wallet already uses, so it can land on one of them.
+    while (
+      skipAddressIndexes.includes(newAddressData.index) ||
+      (canHaveTargetGroup(props) && props.group !== undefined && newAddressData.group !== props.group)
+    ) {
       nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
       newAddressData = await this._deriveAddress(nextAddressIndex, keyType, props.group)
     }
