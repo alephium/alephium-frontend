@@ -1,15 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
+import { canAddressUsePowfi } from '~/api/powfi'
 import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
-import { selectStakingAddressHash } from '~/features/staking/stakingSelectors'
+import { selectStakingAddress } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
+import StakingAddressGroupWarning from '~/screens/Staking/StakingAddressGroupWarning'
 import StakingAddressSection from '~/screens/Staking/StakingAddressSection'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -18,14 +20,18 @@ import UnstakingRequestsList from './UnstakingRequestsList'
 
 const StakingScreen = () => {
   const { t } = useTranslation()
-  const addressHash = useAppSelector(selectStakingAddressHash)
+  const address = useAppSelector(selectStakingAddress)
   const dispatch = useAppDispatch()
   const hasPendingStakeOrUnstake = useAppSelector((s) => !!s.staking.pendingStakeOrUnstake)
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
   const isPowfiEnabled = useIsPowfiEnabled()
 
-  if (!isPowfiEnabled || !addressHash) return null
+  if (!isPowfiEnabled || !address) return null
+
+  const addressHash = address.hash
+  const isAddressEligible = canAddressUsePowfi(address)
+  const areActionsDisabled = hasPendingStakeOrUnstake || !isAddressEligible
 
   const handleStakePress = () => dispatch(openModal({ name: 'StakeModal', props: { addressHash } }))
   const handleUnstakePress = () => dispatch(openModal({ name: 'UnstakeModal', props: { addressHash } }))
@@ -39,20 +45,22 @@ const StakingScreen = () => {
         <ContentContainer>
           <StakingAddressSection />
 
+          {!isAddressEligible && <StakingAddressGroupWarning />}
+
           <StakingCard addressHash={addressHash} />
 
           <ButtonsRow>
             <Button
               title={t('Stake')}
               onPress={handleStakePress}
-              disabled={hasPendingStakeOrUnstake}
+              disabled={areActionsDisabled}
               flex
               style={{ backgroundColor: theme.global.palette3 }}
             />
             <Button
               title={t('Unstake')}
               onPress={handleUnstakePress}
-              disabled={hasPendingStakeOrUnstake}
+              disabled={areActionsDisabled}
               type="secondary"
               variant="default"
               flex
