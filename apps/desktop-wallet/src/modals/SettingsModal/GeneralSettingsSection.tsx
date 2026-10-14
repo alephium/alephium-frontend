@@ -2,6 +2,7 @@ import { AnalyticsEvent } from '@alephium/shared'
 import { fiatCurrencyChanged } from '@alephium/shared/store'
 import { Currency } from '@alephium/shared/types'
 import { queryClient } from '@alephium/shared-react'
+import { deleteTokenLogosDB } from '@alephium/shared-react/images'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
@@ -137,6 +138,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     try {
       deleteThumbnailsDB()
       await deleteNftImagesDB()
+      await deleteTokenLogosDB()
     } catch (e) {
       console.error(e)
     }

@@ -4,7 +4,8 @@
   "private": true,
   "main": "./src/index.tsx",
   "exports": {
-    ".": "./src/index.tsx"
+    ".": "./src/index.tsx",
+    "./images": "./src/images/index.ts"
   },
   "type": "module",
   "sideEffects": [
@@ -41,6 +42,7 @@
     "@tanstack/react-query-persist-client": "^5.81.2",
     "@testing-library/react": "^14.0.0",
     "@types/react": "~19.1.10",
+    "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.8.9",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
