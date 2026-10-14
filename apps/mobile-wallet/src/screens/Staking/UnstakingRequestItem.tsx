@@ -18,8 +18,9 @@ import {
   UnstakeRequest,
   unstakeVaultRequestsQueryKeyRoot
 } from '~/features/staking/hooks/useFetchAddressUnstakeRequests'
+import useFetchXAlphTokenState from '~/features/staking/hooks/useFetchXAlphTokenState'
 import { vaultActionCompleted } from '~/features/staking/stakingSlice'
-import { isClaimable } from '~/features/staking/stakingUtils'
+import { formatUnstakeTimeLeft, getCancelUnstakeXAlphOut, isClaimable } from '~/features/staking/stakingUtils'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -38,6 +39,7 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const [isClaiming, setIsClaiming] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
+  const { data: xAlphTokenState } = useFetchXAlphTokenState()
 
   const vaultIndex = request.vaultIndex.toString()
   const pendingVaultAction = useAppSelector((s) => s.staking.pendingVaultActions[vaultIndex])
@@ -56,13 +58,14 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   const now = Date.now()
   const endTime = Number(request.startTime + request.duration)
   const isFullyUnlocked = now >= endTime
-  const daysLeft = Math.max(0, Math.ceil((endTime - now) / (1000 * 60 * 60 * 24)))
+  const timeLeft = formatUnstakeTimeLeft(endTime - now)
   const progress =
     request.duration > BigInt(0)
       ? Math.min(100, Math.max(0, ((now - Number(request.startTime)) / Number(request.duration)) * 100))
       : 0
 
   const canClaim = isClaimable(request.claimableAmount)
+  const leftToClaim = request.totalAmount - request.withdrawnAmount
 
   const onClaimPress = async () => {
     if (isClaiming) return
@@ -106,7 +109,28 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
   }
 
   const handleCancel = () => {
-    Alert.alert(t('Cancel unstaking'), t('Are you sure you want to cancel this unstaking request?'), [
+    const notYetClaimableAlph = leftToClaim - request.claimableAmount
+    const xAlphOut = getCancelUnstakeXAlphOut(
+      notYetClaimableAlph,
+      xAlphTokenState?.fields.totalXAlphSupply ?? 0n,
+      xAlphTokenState?.fields.totalDepositedAlph ?? 0n
+    )
+    const message = [
+      t('Are you sure you want to cancel this unstaking request?'),
+      t('You will get back {{xAlphAmount}} xALPH and {{alphAmount}} ALPH.', {
+        xAlphAmount: formatAlph(xAlphOut),
+        alphAmount: formatAlph(request.claimableAmount)
+      }),
+      request.withdrawnAmount > 0n
+        ? t('The {{amount}} ALPH you already claimed stays in your wallet.', {
+            amount: formatAlph(request.withdrawnAmount)
+          })
+        : undefined
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+
+    Alert.alert(t('Cancel unstaking'), message, [
       { text: t('No'), style: 'cancel' },
       {
         text: t('Yes, cancel'),
@@ -144,15 +168,25 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
       )}
       <Row>
         <DataColumn>
-          <DataLabel>{t('Amount')}</DataLabel>
+          <DataLabel>{t('Left to claim')}</DataLabel>
           <DataValue>
-            {formatAmountForDisplay({ amount: request.totalAmount, amountDecimals: ALPH.decimals })} ALPH
+            {request.withdrawnAmount > 0n
+              ? t('{{amount}} of {{total}}', {
+                  amount: formatAlph(leftToClaim),
+                  total: formatAlph(request.totalAmount)
+                })
+              : formatAlph(request.totalAmount)}{' '}
+            ALPH
           </DataValue>
+          {request.withdrawnAmount > 0n && (
+            <DataHint>{t('{{amount}} claimed', { amount: `${formatAlph(request.withdrawnAmount)} ALPH` })}</DataHint>
+          )}
         </DataColumn>
         <DataColumn style={{ alignItems: 'flex-end' }}>
           <DataLabel>{t('Full unlock')}</DataLabel>
           <DataValue>
-            {new Date(endTime).toLocaleDateString(i18n.language, { dateStyle: 'medium' })} ({daysLeft}d)
+            {new Date(endTime).toLocaleDateString(i18n.language, { dateStyle: 'medium' })}
+            {timeLeft && ` (${timeLeft})`}
           </DataValue>
         </DataColumn>
       </Row>
@@ -167,16 +201,19 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
           </DataValue>
         </DataColumn>
 
-        <ProgressBarContainer>
-          <ProgressBar style={{ width: `${progress}%` }} />
-        </ProgressBarContainer>
+        <ProgressColumn>
+          <ProgressLabel>{t('{{percent}}% unlocked', { percent: Math.floor(progress) })}</ProgressLabel>
+          <ProgressBarContainer>
+            <ProgressBar style={{ width: `${progress}%` }} />
+          </ProgressBarContainer>
+        </ProgressColumn>
       </Row>
 
       <ButtonRow>
         <Button
           title={t('Claim')}
           onPress={onClaimPress}
-          disabled={!canClaim || isClaiming || !!pendingVaultAction}
+          disabled={isClaiming || !!pendingVaultAction}
           loading={isClaiming || pendingVaultAction?.type === 'claim'}
           variant="accent"
           short
@@ -200,6 +237,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
 }
 
 export default UnstakingRequestItem
+
+const formatAlph = (amount: bigint) => formatAmountForDisplay({ amount, amountDecimals: ALPH.decimals })
 
 interface VaultActionConfirmationPollerProps {
   txHash: string
@@ -249,19 +288,32 @@ const DataValue = styled(AppText)`
   font-weight: 600;
 `
 
+const DataHint = styled(AppText)`
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.tertiary};
+`
+
 const ButtonRow = styled.View`
   flex-direction: row;
   gap: 10px;
 `
 
-const ProgressBarContainer = styled.View<{ $fullWidth?: boolean }>`
+const ProgressColumn = styled.View`
+  flex: 1;
+  max-width: 120px;
+  margin-left: 12px;
+  align-self: center;
+  gap: 6px;
+`
+
+const ProgressLabel = styled(DataLabel)`
+  text-align: right;
+`
+
+const ProgressBarContainer = styled.View`
   height: 4px;
   background-color: ${({ theme }) => theme.border.primary};
   border-radius: 2px;
-  flex: 1;
-  align-self: ${({ $fullWidth }) => ($fullWidth ? 'stretch' : 'center')};
-  margin-left: ${({ $fullWidth }) => ($fullWidth ? 0 : 12)}px;
-  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '80px')};
 `
 
 const ProgressBar = styled.View`

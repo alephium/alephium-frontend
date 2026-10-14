@@ -49,7 +49,7 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
     <Container>
       <TitleRow>
         <SectionTitle color="secondary">
-          {t('Pending unstakings')} ({unstakeRequests.length})
+          {t('Unstaking in progress')} ({unstakeRequests.length})
         </SectionTitle>
         {pendingStakeOrUnstake?.type === 'unstake' && (
           <PendingStakingActionPollerIndicator
@@ -72,7 +72,7 @@ const UnstakingRequestsList = ({ addressHash }: UnstakingRequestsListProps) => {
           ))}
         </ListContainer>
       ) : (
-        <EmptyText color="secondary">{isLoading ? '...' : t('No pending unstakings')}</EmptyText>
+        <EmptyText color="secondary">{isLoading ? '...' : t('No unstaking in progress')}</EmptyText>
       )}
     </Container>
   )
