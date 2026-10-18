@@ -1,5 +1,29 @@
 # @alephium/mobile-wallet
 
+## 2.8.0
+
+### Minor Changes
+
+- 9e2772c: Added service fee
+
+### Patch Changes
+
+- f268239: Fix endless Face ID prompts when unlocking fails or is cancelled on iOS
+- b2b83ef: Speed up dApp page loads by minifying the code injected into the in-app browser
+- 0505cce: Show ALPH once with the full amount when approving a dApp contract call
+- c9421aa: Stop a dApp signature from being handed to the wrong pending request
+- 4ea5dbd: Stop dropping a dApp request when two of them arrive at the same moment
+- 59de636: Restore screen brightness after closing the Receive screen on iOS
+- 81aedcb: Fix crash when a swap quote returns 1,000 tokens or more
+- b2f1037: Show one combined ALPH amount for a swap instead of two separate rows
+- 5543836: Show what you get back when cancelling an unstake request
+- c7e7d0b: Explain why an unstake request cannot be claimed yet when its claimable amount is too low
+- 6cf8622: Show the already claimed ALPH on each unstake request
+- 64e5648: Show how much of an unstake request is left to claim after partial claims
+- 2f384bc: Show the unlocked percentage on unstake requests
+- 64b24de: Show the hours left on unstake requests that unlock within a day, and stop showing "0d" once they have unlocked
+- 30f1319: Rename "Pending unstakings" to "Unstaking in progress"
+
 ## 2.7.0
 
 ### Minor Changes
