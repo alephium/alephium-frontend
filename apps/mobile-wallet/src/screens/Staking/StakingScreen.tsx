@@ -1,3 +1,5 @@
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -9,6 +11,7 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
 import StakingAddressGroupWarning from '~/features/staking/components/StakingAddressGroupWarning'
 import { selectStakingAddress } from '~/features/staking/stakingSelectors'
+import { stakingAddressReset } from '~/features/staking/stakingSlice'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
@@ -26,6 +29,12 @@ const StakingScreen = () => {
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const theme = useTheme()
   const isPowfiEnabled = useIsPowfiEnabled()
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(stakingAddressReset())
+    }, [dispatch])
+  )
 
   if (!isPowfiEnabled || !address) return null
 

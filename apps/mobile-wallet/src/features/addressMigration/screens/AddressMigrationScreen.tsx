@@ -13,7 +13,6 @@ import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
 import {
   addressMigrationExecutionInitialState,
   addressMigrationExecutionReducer
@@ -73,9 +72,8 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_CONFIRMED, props: { origin } })
 
     dispatch(addressSettingsSaved({ addressHash: execution.toAddressHash, settings: { isDefault: true } }))
-    dispatch(addressMigrated({ fromAddressHash, toAddressHash: execution.toAddressHash }))
     navigation.goBack()
-  }, [dispatch, execution, fromAddressHash, navigation, origin])
+  }, [dispatch, execution, navigation, origin])
 
   const handleTxConflicted = useCallback(
     () =>
