@@ -1,36 +1,30 @@
 import { selectAllAddresses } from '@alephium/shared/store'
-import { colord } from 'colord'
+import { AddressHash } from '@alephium/shared/types'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from 'styled-components/native'
 
 import { canAddressUsePowfi } from '~/api/powfi'
-import AppText from '~/components/AppText'
-import InfoBox from '~/components/InfoBox'
+import AddressMigrationWarning from '~/features/addressMigration/components/AddressMigrationWarning'
 import { useAppSelector } from '~/hooks/redux'
 
-const SwapAddressGroupWarning = () => {
+interface SwapAddressGroupWarningProps {
+  addressHash: AddressHash
+}
+
+const SwapAddressGroupWarning = ({ addressHash }: SwapAddressGroupWarningProps) => {
   const { t } = useTranslation()
-  const theme = useTheme()
   const hasEligibleAddress = useAppSelector((s) => selectAllAddresses(s).some(canAddressUsePowfi))
 
   return (
-    <InfoBox
-      narrow
+    <AddressMigrationWarning
       title={t('This address cannot swap')}
-      iconName="alert-circle"
-      bgColor={colord(theme.global.warning).alpha(0.15).toHex()}
-      iconColor={theme.global.warning}
-    >
-      <AppText>
-        {hasEligibleAddress
-          ? t(
-              'Powfi swaps only work with groupless addresses and addresses in group 0. Please, select another address.'
-            )
-          : t(
-              'Powfi swaps only work with groupless addresses and addresses in group 0. Please, create a new groupless address and select it here.'
-            )}
-      </AppText>
-    </InfoBox>
+      description={
+        hasEligibleAddress
+          ? t("Swapping requires Alephium's new address type. Select another address, or get one now.")
+          : t("Swapping requires Alephium's new address type.")
+      }
+      addressHash={addressHash}
+      origin="swap"
+    />
   )
 }
 

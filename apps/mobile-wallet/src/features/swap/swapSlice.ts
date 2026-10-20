@@ -1,6 +1,7 @@
 import { AddressHash } from '@alephium/shared/types'
 import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
 import { DEFAULT_SWAP_SLIPPAGE } from '~/features/swap/swapConstants'
 import { storeSwapSlippage } from '~/features/swap/swapPersistentStorage'
 
@@ -33,6 +34,11 @@ const swapSlice = createSlice({
     swapFromAddressReset: (state) => {
       state.fromAddressHash = undefined
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addressMigrated, (state, { payload }) => {
+      state.fromAddressHash = payload.toAddressHash
+    })
   }
 })
 

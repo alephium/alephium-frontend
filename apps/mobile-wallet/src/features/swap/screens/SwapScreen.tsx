@@ -341,7 +341,7 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
         disabled={isPanelLocked}
       />
 
-      {!isAddressEligible && <SwapAddressGroupWarning />}
+      {!isAddressEligible && <SwapAddressGroupWarning addressHash={fromAddressHash} />}
 
       <SwapPanel>
         <SwapTokenRow

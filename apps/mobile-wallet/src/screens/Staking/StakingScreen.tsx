@@ -7,11 +7,11 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { openModal } from '~/features/modals/modalActions'
+import StakingAddressGroupWarning from '~/features/staking/components/StakingAddressGroupWarning'
 import { selectStakingAddress } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useIsPowfiEnabled from '~/hooks/useIsPowfiEnabled'
-import StakingAddressGroupWarning from '~/screens/Staking/StakingAddressGroupWarning'
 import StakingAddressSection from '~/screens/Staking/StakingAddressSection'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -45,7 +45,7 @@ const StakingScreen = () => {
         <ContentContainer>
           <StakingAddressSection />
 
-          {!isAddressEligible && <StakingAddressGroupWarning />}
+          {!isAddressEligible && <StakingAddressGroupWarning addressHash={addressHash} />}
 
           <StakingCard addressHash={addressHash} />
 
