@@ -45,6 +45,9 @@ const stakingSlice = createSlice({
     },
     stakingAddressChanged: (state, action: PayloadAction<AddressHash>) => {
       state.selectedAddressHash = action.payload
+    },
+    stakingAddressReset: (state) => {
+      state.selectedAddressHash = undefined
     }
   }
 })
@@ -56,5 +59,6 @@ export const {
   stakeOrUnstakeCompleted,
   vaultActionStarted,
   vaultActionCompleted,
-  stakingAddressChanged
+  stakingAddressChanged,
+  stakingAddressReset
 } = stakingSlice.actions
