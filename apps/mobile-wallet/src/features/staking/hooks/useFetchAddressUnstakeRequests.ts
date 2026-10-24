@@ -46,6 +46,7 @@ const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeR
         })
       )
     },
+    select: toUnstakeRequests,
     staleTime: 60_000,
     refetchInterval: 60_000
   })
@@ -61,3 +62,15 @@ const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeR
 }
 
 export default useFetchAddressUnstakeRequests
+
+const toUnstakeRequests = (requests: UnstakeRequest[]) => requests.map(toUnstakeRequest)
+
+const toUnstakeRequest = (request: UnstakeRequest): UnstakeRequest => ({
+  ...request,
+  vaultIndex: BigInt(request.vaultIndex),
+  claimableAmount: BigInt(request.claimableAmount),
+  totalAmount: BigInt(request.totalAmount),
+  startTime: BigInt(request.startTime),
+  duration: BigInt(request.duration),
+  withdrawnAmount: BigInt(request.withdrawnAmount)
+})

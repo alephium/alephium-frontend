@@ -112,8 +112,8 @@ const UnstakingRequestItem = ({ request, addressHash }: UnstakingRequestItemProp
     const notYetClaimableAlph = leftToClaim - request.claimableAmount
     const xAlphOut = getCancelUnstakeXAlphOut(
       notYetClaimableAlph,
-      xAlphTokenState?.fields.totalXAlphSupply ?? 0n,
-      xAlphTokenState?.fields.totalDepositedAlph ?? 0n
+      BigInt(xAlphTokenState?.fields.totalXAlphSupply ?? 0n),
+      BigInt(xAlphTokenState?.fields.totalDepositedAlph ?? 0n)
     )
     const message = [
       t('Are you sure you want to cancel this unstaking request?'),
