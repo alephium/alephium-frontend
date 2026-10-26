@@ -1,6 +1,8 @@
 import { AddressHash } from '@alephium/shared/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
+
 const sliceName = 'staking'
 
 type PendingStakeOrUnstake = {
@@ -45,10 +47,12 @@ const stakingSlice = createSlice({
     },
     stakingAddressChanged: (state, action: PayloadAction<AddressHash>) => {
       state.selectedAddressHash = action.payload
-    },
-    stakingAddressReset: (state) => {
-      state.selectedAddressHash = undefined
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addressMigrated, (state, { payload }) => {
+      if (state.selectedAddressHash === payload.fromAddressHash) state.selectedAddressHash = payload.toAddressHash
+    })
   }
 })
 
@@ -59,6 +63,5 @@ export const {
   stakeOrUnstakeCompleted,
   vaultActionStarted,
   vaultActionCompleted,
-  stakingAddressChanged,
-  stakingAddressReset
+  stakingAddressChanged
 } = stakingSlice.actions

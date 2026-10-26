@@ -4,9 +4,8 @@ import { selectDefaultAddressHash } from '@alephium/shared/store'
 import { isFT, TokenId } from '@alephium/shared/types'
 import { useFetchAddressBalances, useFetchAddressSingleTokenBalances, useFetchToken } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useMemo, useReducer, useState } from 'react'
+import { useMemo, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -53,12 +52,6 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { executeSwap } = useExecuteSwap()
-
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(swapFromAddressReset())
-    }, [dispatch])
-  )
 
   const [fromTokenId, setFromTokenId] = useState<TokenId | undefined>(route.params?.initialFromTokenId ?? ALPH.id)
   const [toTokenId, setToTokenId] = useState<TokenId | undefined>(undefined)
