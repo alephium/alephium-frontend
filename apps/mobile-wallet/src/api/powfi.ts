@@ -18,7 +18,7 @@ export const powfiSwapSdk = Powfi.load({ networkId: 'mainnet', signer: swapSigne
 export const powfiBackend = treaty<App>(process.env.EXPO_PUBLIC_POWFI_BACKEND_HOST || 'http://localhost:4000')
 const stakingConfig = powfiSdk.staking.getConfig()
 export const xAlphTokenId = stakingConfig.xAlphTokenId
-const powfiGroup = stakingConfig.groupIndex
+export const powfiGroup = stakingConfig.groupIndex
 
 export const canAddressUsePowfi = (address: Address): boolean =>
   isGrouplessAddress(address) || address.group === powfiGroup

@@ -180,9 +180,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
       style={{ paddingHorizontal: DEFAULT_MARGIN }}
       headerOptions={{ type: 'stack', headerTitle: t('New address type') }}
       screenTitle={t('Get the new address type')}
-      screenIntro={t(
-        "Your assets will be moved to Alephium's new address type, which works everywhere in the ecosystem."
-      )}
+      screenIntro={t("Your assets will be moved to Alephium's new address type (groupless).")}
       bottomButtonsRender={() => (
         <Button
           title={execution.status === 'error' ? t('Try again') : t('Migrate')}

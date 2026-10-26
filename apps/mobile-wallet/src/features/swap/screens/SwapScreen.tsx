@@ -10,13 +10,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import { canAddressUsePowfi } from '~/api/powfi'
+import { canAddressUsePowfi, powfiGroup } from '~/api/powfi'
 import AddressSelectorCard from '~/components/AddressSelectorCard'
 import Button from '~/components/buttons/Button'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import AddressMigrationWarning from '~/features/addressMigration/components/AddressMigrationWarning'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
-import SwapAddressGroupWarning from '~/features/swap/components/SwapAddressGroupWarning'
 import SwapFlipButton from '~/features/swap/components/SwapFlipButton'
 import SwapInfoBoard from '~/features/swap/components/SwapInfoBoard'
 import SwapProgressStepper from '~/features/swap/components/SwapProgressStepper'
@@ -341,7 +341,17 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
         disabled={isPanelLocked}
       />
 
-      {!isAddressEligible && <SwapAddressGroupWarning addressHash={fromAddressHash} />}
+      {!isAddressEligible && (
+        <AddressMigrationWarning
+          title={t('This address cannot swap')}
+          description={t(
+            "Swapping works with Alephium's new address type (groupless), or a legacy address on group 0."
+          )}
+          addressHash={fromAddressHash}
+          origin="swap"
+          group={powfiGroup}
+        />
+      )}
 
       <SwapPanel>
         <SwapTokenRow

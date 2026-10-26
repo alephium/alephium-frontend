@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
-import { canAddressUsePowfi } from '~/api/powfi'
+import { canAddressUsePowfi, powfiGroup } from '~/api/powfi'
 import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
+import AddressMigrationWarning from '~/features/addressMigration/components/AddressMigrationWarning'
 import { openModal } from '~/features/modals/modalActions'
-import StakingAddressGroupWarning from '~/features/staking/components/StakingAddressGroupWarning'
 import { selectStakingAddress } from '~/features/staking/stakingSelectors'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -45,7 +45,17 @@ const StakingScreen = () => {
         <ContentContainer>
           <StakingAddressSection />
 
-          {!isAddressEligible && <StakingAddressGroupWarning addressHash={addressHash} />}
+          {!isAddressEligible && (
+            <AddressMigrationWarning
+              title={t('This address cannot stake')}
+              description={t(
+                "Staking works with Alephium's new address type (groupless), or a legacy address on group 0."
+              )}
+              addressHash={addressHash}
+              origin="staking"
+              group={powfiGroup}
+            />
+          )}
 
           <StakingCard addressHash={addressHash} />
 
