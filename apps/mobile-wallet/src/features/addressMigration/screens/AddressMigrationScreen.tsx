@@ -3,7 +3,7 @@ import { addressSettingsSaved, selectAddressByHash } from '@alephium/shared/stor
 import { isInsufficientFundsError } from '@alephium/shared/utils'
 import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -20,7 +20,7 @@ import {
 } from '~/features/addressMigration/addressMigrationExecutionMachine'
 import AddressMigrationProgressStepper from '~/features/addressMigration/components/AddressMigrationProgressStepper'
 import MigrationTxPoller from '~/features/addressMigration/components/MigrationTxPoller'
-import useAreMigrationTxsConfirmed from '~/features/addressMigration/hooks/useAreMigrationTxsConfirmed'
+import useConfirmedMigrationTxsCount from '~/features/addressMigration/hooks/useConfirmedMigrationTxsCount'
 import useFetchMigrationSweepFee from '~/features/addressMigration/hooks/useFetchMigrationSweepFee'
 import useMigrationDestinationAddress from '~/features/addressMigration/hooks/useMigrationDestinationAddress'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
@@ -52,7 +52,8 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   })
 
   const txHashes = execution.status === 'submitted' ? execution.txHashes : []
-  const areTxsConfirmed = useAreMigrationTxsConfirmed(txHashes)
+  const confirmedTxsCount = useConfirmedMigrationTxsCount(txHashes)
+  const [conflictedTxHashes, setConflictedTxHashes] = useState<string[]>([])
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.totalBalance) === 0n
 
@@ -63,9 +64,20 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   })
 
   useEffect(() => {
-    if (execution.status === 'submitted' && (execution.txHashes.length === 0 || areTxsConfirmed))
+    if (execution.status !== 'submitted') return
+
+    const txsCount = execution.txHashes.length
+
+    if (txsCount === 0 || confirmedTxsCount === txsCount) {
       dispatchExecution({ type: 'CONFIRMED' })
-  }, [areTxsConfirmed, execution])
+    } else if (confirmedTxsCount + conflictedTxHashes.length === txsCount) {
+      dispatchExecution({
+        type: 'FAILED',
+        message: t('A transaction could not be included in a block. Please, try again.'),
+        someTxsBroadcast: true
+      })
+    }
+  }, [conflictedTxHashes.length, confirmedTxsCount, execution, t])
 
   useEffect(() => {
     if (execution.status !== 'done') return
@@ -78,13 +90,8 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   }, [dispatch, execution, fromAddressHash, navigation, origin])
 
   const handleTxConflicted = useCallback(
-    () =>
-      dispatchExecution({
-        type: 'FAILED',
-        message: t('A transaction could not be included in a block. Please, try again.'),
-        someTxsBroadcast: true
-      }),
-    [t]
+    (txHash: string) => setConflictedTxHashes((hashes) => (hashes.includes(txHash) ? hashes : [...hashes, txHash])),
+    []
   )
 
   const openDestinationSelect = () =>
@@ -102,6 +109,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     if (!fromAddress) return
 
     dispatchExecution({ type: 'PREPARE' })
+    setConflictedTxHashes([])
 
     let toAddressHash: string
     const createdNewAddress = !destination
