@@ -8,7 +8,7 @@ const useOnramperUrl = (receiveAddressHash: AddressHash) => {
   const { data: signature, isLoading } = useFetchOnramperSignature(receiveAddressHash)
 
   if (signature && !isLoading) {
-    return getOnramperUrl({ receiveAddressHash, signature, options: { themeName: theme.name } })
+    return getOnramperUrl({ signature, options: { themeName: theme.name } })
   }
 
   return undefined
