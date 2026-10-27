@@ -4,15 +4,18 @@ import { AddressHash } from '@alephium/shared/types'
 import { isInsufficientFundsError } from '@alephium/shared/utils'
 import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
+import { colord } from 'colord'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { sendSweepTransactions } from '~/api/transactions'
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ErrorDetails from '~/components/ErrorDetails'
+import InfoBox from '~/components/InfoBox'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
 import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
@@ -38,6 +41,7 @@ type AddressMigrationScreenProps = StackScreenProps<RootStackParamList, 'Address
 const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenProps) => {
   const { fromAddressHash, origin } = route.params
   const { t } = useTranslation()
+  const theme = useTheme()
   const dispatch = useAppDispatch()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
@@ -62,7 +66,11 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.availableBalance) === 0n
 
-  const { fee, error: feeEstimationError } = useFetchMigrationSweepFee({
+  const {
+    fee,
+    error: feeEstimationError,
+    refetch: refetchFee
+  } = useFetchMigrationSweepFee({
     fromAddress,
     toAddressHash: destinationHash,
     enabled: !isLoadingAlphBalances && !hasNothingToMigrate
@@ -179,7 +187,9 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     }
   }
 
-  const handleMigratePress = () => {
+  const handleMigratePress = async () => {
+    if (feeEstimationError && (await refetchFee()).error) return
+
     sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_INITIATED, props: { origin } })
 
     triggerBiometricsAuthGuard({
@@ -192,7 +202,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
   const isInProgress = execution.status !== 'idle' && execution.status !== 'error'
   const isBlocked = !!feeEstimationError && isInsufficientFundsError(feeEstimationError)
-  const isFeeEstimated = hasNothingToMigrate || fee !== undefined
+  const isEstimatePending = !hasNothingToMigrate && fee === undefined && !feeEstimationError
 
   return (
     <ScrollScreen
@@ -206,7 +216,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
         <Button
           title={execution.status === 'error' ? t('Try again') : t('Migrate')}
           onPress={handleMigratePress}
-          disabled={isInProgress || isBlocked || isLoadingAlphBalances || !isFeeEstimated}
+          disabled={isInProgress || isBlocked || isLoadingAlphBalances || isEstimatePending}
           loading={isInProgress}
           variant="highlight"
         />
@@ -249,6 +259,19 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
             'This address does not have enough ALPH to pay for the transfer fee. Send it a little ALPH and try again.'
           )}
         </AppText>
+      )}
+
+      {!!feeEstimationError && !isBlocked && (
+        <InfoBox
+          narrow
+          title={t('Could not prepare the transfer')}
+          iconName="alert-circle"
+          bgColor={colord(theme.global.alert).alpha(0.1).toHex()}
+          iconColor={theme.global.alert}
+        >
+          <AppText>{t('Check your connection and try again.')}</AppText>
+          <ErrorDetails details={getHumanReadableError(feeEstimationError, '')} />
+        </InfoBox>
       )}
 
       {execution.status === 'error' && execution.someTxsBroadcast && (

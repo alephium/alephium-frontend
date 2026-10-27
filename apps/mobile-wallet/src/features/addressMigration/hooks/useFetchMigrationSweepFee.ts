@@ -13,7 +13,7 @@ interface UseFetchMigrationSweepFeeProps {
 const useFetchMigrationSweepFee = ({ fromAddress, toAddressHash, enabled = true }: UseFetchMigrationSweepFeeProps) => {
   const networkId = useNetworkId()
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['addressMigrationSweepFee', networkId, fromAddress?.hash, toAddressHash],
     queryFn: () =>
       fetchSweepTransactionsFees({
@@ -26,7 +26,7 @@ const useFetchMigrationSweepFee = ({ fromAddress, toAddressHash, enabled = true 
     staleTime: 60_000
   })
 
-  return { fee: data, error, isLoading }
+  return { fee: data, error, isLoading, refetch }
 }
 
 export default useFetchMigrationSweepFee

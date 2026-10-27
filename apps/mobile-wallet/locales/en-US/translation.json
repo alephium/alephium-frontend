@@ -657,6 +657,7 @@
   "Migration completed": "Migration completed",
   "Could not create the new address": "Could not create the new address",
   "Could not prepare the transfer": "Could not prepare the transfer",
+  "Check your connection and try again.": "Check your connection and try again.",
   "Could not transfer your assets": "Could not transfer your assets",
   "A transaction could not be included in a block. Please, try again.": "A transaction could not be included in a block. Please, try again."
 }

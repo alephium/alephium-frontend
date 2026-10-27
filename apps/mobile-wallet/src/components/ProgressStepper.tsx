@@ -1,11 +1,11 @@
 import Lucide from '@react-native-vector-icons/lucide/static'
-import { ReactNode, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { ReactNode } from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
+import ErrorDetails from '~/components/ErrorDetails'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export type StepState = 'pending' | 'active' | 'done' | 'error'
 
@@ -24,9 +24,7 @@ interface ProgressStepProps {
 }
 
 export const ProgressStep = ({ state, title, subtitle, details, isLast }: ProgressStepProps) => {
-  const { t } = useTranslation()
   const theme = useTheme()
-  const [showDetails, setShowDetails] = useState(false)
 
   const nodeColors: Record<StepState, { bg: string; border: string }> = {
     done: { bg: theme.global.valid, border: theme.global.valid },
@@ -62,22 +60,7 @@ export const ProgressStep = ({ state, title, subtitle, details, isLast }: Progre
           ) : null}
         </SubtitleSlot>
 
-        {details ? (
-          <>
-            <DetailsToggle onPress={() => setShowDetails((v) => !v)} hitSlop={6}>
-              <AppText size={12} color="accent" semiBold>
-                {showDetails ? t('Hide details') : t('Show details')}
-              </AppText>
-            </DetailsToggle>
-            {showDetails && (
-              <DetailsBox>
-                <AppText size={11} color="tertiary">
-                  {details}
-                </AppText>
-              </DetailsBox>
-            )}
-          </>
-        ) : null}
+        {details ? <ErrorDetails details={details} /> : null}
       </TextColumn>
     </StepRow>
   )
@@ -126,16 +109,4 @@ const TextColumn = styled.View<{ isLast?: boolean }>`
 // Always reserve one line for the subtitle so the box height stays constant as steps change state.
 const SubtitleSlot = styled.View`
   min-height: 16px;
-`
-
-const DetailsToggle = styled.Pressable`
-  align-self: flex-start;
-  margin-top: 6px;
-`
-
-const DetailsBox = styled.View`
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
 `
