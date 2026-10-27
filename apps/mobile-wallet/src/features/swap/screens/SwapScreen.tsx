@@ -345,7 +345,8 @@ const SwapScreen = ({ route }: SwapScreenProps) => {
         <AddressMigrationWarning
           title={t('This address cannot swap')}
           description={t(
-            "Swapping works with Alephium's new address type (groupless), or a legacy address on group 0."
+            "Swapping works with Alephium's new address type (groupless), or a legacy address on group {{ group }}.",
+            { group: powfiGroup }
           )}
           addressHash={fromAddressHash}
           origin="swap"

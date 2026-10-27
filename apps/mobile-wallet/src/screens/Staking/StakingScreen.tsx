@@ -49,7 +49,8 @@ const StakingScreen = () => {
             <AddressMigrationWarning
               title={t('This address cannot stake')}
               description={t(
-                "Staking works with Alephium's new address type (groupless), or a legacy address on group 0."
+                "Staking works with Alephium's new address type (groupless), or a legacy address on group {{ group }}.",
+                { group: powfiGroup }
               )}
               addressHash={addressHash}
               origin="staking"
