@@ -1,3 +1,4 @@
+import { addressDeleted, walletSwitchedMobile } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
@@ -36,9 +37,16 @@ const swapSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(addressMigrated, (state, { payload }) => {
-      if (state.fromAddressHash === payload.fromAddressHash) state.fromAddressHash = payload.toAddressHash
-    })
+    builder
+      .addCase(addressMigrated, (state, { payload }) => {
+        if (state.fromAddressHash === payload.fromAddressHash) state.fromAddressHash = payload.toAddressHash
+      })
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        if (state.fromAddressHash === addressHash) state.fromAddressHash = undefined
+      })
+      .addCase(walletSwitchedMobile, (state) => {
+        state.fromAddressHash = undefined
+      })
   }
 })
 

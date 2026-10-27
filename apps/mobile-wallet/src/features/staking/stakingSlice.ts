@@ -1,3 +1,4 @@
+import { addressDeleted, walletSwitchedMobile } from '@alephium/shared/store'
 import { AddressHash } from '@alephium/shared/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
@@ -50,9 +51,14 @@ const stakingSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(addressMigrated, (state, { payload }) => {
-      if (state.selectedAddressHash === payload.fromAddressHash) state.selectedAddressHash = payload.toAddressHash
-    })
+    builder
+      .addCase(addressMigrated, (state, { payload }) => {
+        if (state.selectedAddressHash === payload.fromAddressHash) state.selectedAddressHash = payload.toAddressHash
+      })
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        if (state.selectedAddressHash === addressHash) state.selectedAddressHash = undefined
+      })
+      .addCase(walletSwitchedMobile, () => initialState)
   }
 })
 
