@@ -18,7 +18,7 @@ interface AddressMigrationWarningProps {
   description: string
   addressHash: AddressHash
   origin: AddressMigrationOrigin
-  group?: AddressGroup
+  group: AddressGroup
 }
 
 const AddressMigrationWarning = ({ title, description, addressHash, origin, group }: AddressMigrationWarningProps) => {

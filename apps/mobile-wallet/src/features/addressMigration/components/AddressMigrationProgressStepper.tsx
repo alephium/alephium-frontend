@@ -1,4 +1,3 @@
-import { formatAmountForDisplay } from '@alephium/shared/numbers'
 import { useTranslation } from 'react-i18next'
 
 import { ProgressStep, ProgressStepper, StepState } from '~/components/ProgressStepper'
@@ -14,7 +13,6 @@ const AddressMigrationProgressStepper = ({ execution }: AddressMigrationProgress
   const { t } = useTranslation()
 
   const error = execution.status === 'error' ? execution : undefined
-  const fee = execution.status === 'signing' || execution.status === 'submitted' ? execution.fee : undefined
   const currentIndex = ORDER.indexOf(error ? error.failedAt : execution.status)
 
   const getStepState = (step: AddressMigrationStep): StepState => {
@@ -44,13 +42,7 @@ const AddressMigrationProgressStepper = ({ execution }: AddressMigrationProgress
       <ProgressStep
         state={moveState}
         title={t('Moving your assets')}
-        subtitle={
-          moveState === 'error'
-            ? error?.message
-            : fee !== undefined
-              ? t('Network fee: {{ fee }} ALPH', { fee: formatAmountForDisplay({ amount: fee }) })
-              : undefined
-        }
+        subtitle={moveState === 'error' ? error?.message : undefined}
         details={moveState === 'error' ? error?.details : undefined}
       />
       <ProgressStep

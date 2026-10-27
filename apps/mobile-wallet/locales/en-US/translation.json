@@ -653,7 +653,6 @@
   "Preparing migration": "Preparing migration",
   "Setting up your new address": "Setting up your new address",
   "Moving your assets": "Moving your assets",
-  "Network fee: {{ fee }} ALPH": "Network fee: {{ fee }} ALPH",
   "Confirming transactions": "Confirming transactions",
   "Migration completed": "Migration completed",
   "Could not create the new address": "Could not create the new address",

@@ -8,11 +8,12 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import { fetchSweepTransactionsFees, sendSweepTransactions } from '~/api/transactions'
+import { sendSweepTransactions } from '~/api/transactions'
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
 import {
   addressMigrationExecutionInitialState,
@@ -23,6 +24,7 @@ import MigrationTxPoller from '~/features/addressMigration/components/MigrationT
 import useConfirmedMigrationTxsCount from '~/features/addressMigration/hooks/useConfirmedMigrationTxsCount'
 import useFetchMigrationSweepFee from '~/features/addressMigration/hooks/useFetchMigrationSweepFee'
 import useMigrationDestinationAddress from '~/features/addressMigration/hooks/useMigrationDestinationAddress'
+import SignModalFeesRow from '~/features/ecosystem/modals/SignModalFeesRow'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -57,7 +59,11 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.totalBalance) === 0n
 
-  const { error: feeEstimationError, isLoading: isEstimatingFee } = useFetchMigrationSweepFee({
+  const {
+    fee,
+    error: feeEstimationError,
+    isLoading: isEstimatingFee
+  } = useFetchMigrationSweepFee({
     fromAddress,
     toAddressHash: destination?.hash ?? fromAddressHash,
     enabled: !isLoadingAlphBalances && !hasNothingToMigrate
@@ -111,6 +117,16 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     dispatchExecution({ type: 'PREPARE' })
     setConflictedTxHashes([])
 
+    if (feeEstimationError) {
+      sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'build_error' } })
+      dispatchExecution({
+        type: 'FAILED',
+        message: t('Could not prepare the transfer'),
+        details: getHumanReadableError(feeEstimationError, '')
+      })
+      return
+    }
+
     let toAddressHash: string
     const createdNewAddress = !destination
 
@@ -126,27 +142,14 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
       return
     }
 
+    dispatchExecution({ type: 'PREPARED', toAddressHash, fee: fee ?? 0n })
+
     if (hasNothingToMigrate) {
-      dispatchExecution({ type: 'PREPARED', toAddressHash, fee: 0n })
       dispatchExecution({ type: 'SUBMITTED', txHashes: [] })
       return
     }
 
     const txParams = { signerAddress: fromAddressHash, signerKeyType: fromAddress.keyType, toAddress: toAddressHash }
-
-    try {
-      const fee = await fetchSweepTransactionsFees(txParams)
-
-      dispatchExecution({ type: 'PREPARED', toAddressHash, fee })
-    } catch (error) {
-      sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'build_error' } })
-      dispatchExecution({
-        type: 'FAILED',
-        message: t('Could not prepare the transfer'),
-        details: getHumanReadableError(error, '')
-      })
-      return
-    }
 
     try {
       const results = await sendSweepTransactions(txParams)
@@ -223,6 +226,12 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
           <AppText color="secondary">{t('A new address will be created for you.')}</AppText>
         )}
       </Section>
+
+      {fee !== undefined && (
+        <Surface>
+          <SignModalFeesRow fees={fee} />
+        </Surface>
+      )}
 
       {isBlocked && (
         <AppText color="alert">
