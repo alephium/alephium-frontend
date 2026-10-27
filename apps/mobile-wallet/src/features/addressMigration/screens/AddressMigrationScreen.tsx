@@ -60,7 +60,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   const [conflictedTxHashes, setConflictedTxHashes] = useState<string[]>([])
   const wasDefaultAddressRef = useRef(false)
 
-  const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.totalBalance) === 0n
+  const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.availableBalance) === 0n
 
   const {
     fee,
