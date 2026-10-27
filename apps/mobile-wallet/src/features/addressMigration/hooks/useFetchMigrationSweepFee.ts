@@ -6,7 +6,7 @@ import { fetchSweepTransactionsFees } from '~/api/transactions'
 
 interface UseFetchMigrationSweepFeeProps {
   fromAddress?: Address
-  toAddressHash: AddressHash
+  toAddressHash?: AddressHash
   enabled?: boolean
 }
 
@@ -19,9 +19,9 @@ const useFetchMigrationSweepFee = ({ fromAddress, toAddressHash, enabled = true 
       fetchSweepTransactionsFees({
         signerAddress: fromAddress!.hash,
         signerKeyType: fromAddress!.keyType,
-        toAddress: toAddressHash
+        toAddress: toAddressHash!
       }),
-    enabled: enabled && !!fromAddress,
+    enabled: enabled && !!fromAddress && !!toAddressHash,
     retry: false,
     staleTime: 60_000
   })

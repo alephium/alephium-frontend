@@ -43,7 +43,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
-  const { destination, grouplessAddresses, selectDestination, resolveDestinationAddressHash } =
+  const { destination, destinationHash, grouplessAddresses, selectDestination, resolveDestinationAddressHash } =
     useMigrationDestinationAddress()
 
   const [execution, dispatchExecution] = useReducer(
@@ -62,13 +62,9 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.availableBalance) === 0n
 
-  const {
-    fee,
-    error: feeEstimationError,
-    isLoading: isEstimatingFee
-  } = useFetchMigrationSweepFee({
+  const { fee, error: feeEstimationError } = useFetchMigrationSweepFee({
     fromAddress,
-    toAddressHash: destination?.hash ?? fromAddressHash,
+    toAddressHash: destinationHash,
     enabled: !isLoadingAlphBalances && !hasNothingToMigrate
   })
 
@@ -196,6 +192,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
   const isInProgress = execution.status !== 'idle' && execution.status !== 'error'
   const isBlocked = !!feeEstimationError && isInsufficientFundsError(feeEstimationError)
+  const isFeeEstimated = hasNothingToMigrate || fee !== undefined
 
   return (
     <ScrollScreen
@@ -209,7 +206,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
         <Button
           title={execution.status === 'error' ? t('Try again') : t('Migrate')}
           onPress={handleMigratePress}
-          disabled={isInProgress || isBlocked || isLoadingAlphBalances || isEstimatingFee}
+          disabled={isInProgress || isBlocked || isLoadingAlphBalances || !isFeeEstimated}
           loading={isInProgress}
           variant="highlight"
         />
