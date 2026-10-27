@@ -1,9 +1,10 @@
 import { AnalyticsEvent, getHumanReadableError } from '@alephium/shared'
-import { addressSettingsSaved, selectAddressByHash } from '@alephium/shared/store'
+import { addressSettingsSaved, selectAddressByHash, selectDefaultAddressHash } from '@alephium/shared/store'
+import { AddressHash } from '@alephium/shared/types'
 import { isInsufficientFundsError } from '@alephium/shared/utils'
 import { useFetchAddressBalancesAlph } from '@alephium/shared-react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -39,6 +40,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
+  const defaultAddressHash = useAppSelector(selectDefaultAddressHash)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { destination, grouplessAddresses, selectDestination, resolveDestinationAddressHash } =
@@ -56,6 +58,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   const txHashes = execution.status === 'submitted' ? execution.txHashes : []
   const confirmedTxsCount = useConfirmedMigrationTxsCount(txHashes)
   const [conflictedTxHashes, setConflictedTxHashes] = useState<string[]>([])
+  const wasDefaultAddressRef = useRef(false)
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.totalBalance) === 0n
 
@@ -89,11 +92,18 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     if (execution.status !== 'done') return
 
     sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_CONFIRMED, props: { origin } })
-
-    dispatch(addressSettingsSaved({ addressHash: execution.toAddressHash, settings: { isDefault: true } }))
-    dispatch(addressMigrated({ fromAddressHash, toAddressHash: execution.toAddressHash }))
     navigation.goBack()
-  }, [dispatch, execution, fromAddressHash, navigation, origin])
+  }, [execution, navigation, origin])
+
+  const updateSelectedAddress = useCallback(
+    (toAddressHash: AddressHash) => {
+      if (wasDefaultAddressRef.current)
+        dispatch(addressSettingsSaved({ addressHash: toAddressHash, settings: { isDefault: true } }))
+
+      dispatch(addressMigrated({ fromAddressHash, toAddressHash }))
+    },
+    [dispatch, fromAddressHash]
+  )
 
   const handleTxConflicted = useCallback(
     (txHash: string) => setConflictedTxHashes((hashes) => (hashes.includes(txHash) ? hashes : [...hashes, txHash])),
@@ -116,6 +126,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
 
     dispatchExecution({ type: 'PREPARE' })
     setConflictedTxHashes([])
+    wasDefaultAddressRef.current = fromAddressHash === defaultAddressHash
 
     if (feeEstimationError) {
       sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'build_error' } })
@@ -145,6 +156,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
     dispatchExecution({ type: 'PREPARED', toAddressHash, fee: fee ?? 0n })
 
     if (hasNothingToMigrate) {
+      updateSelectedAddress(toAddressHash)
       dispatchExecution({ type: 'SUBMITTED', txHashes: [] })
       return
     }
@@ -158,6 +170,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
         event: AnalyticsEvent.ADDRESS_MIGRATION_EXECUTED,
         props: { origin, created_new_address: createdNewAddress }
       })
+      updateSelectedAddress(toAddressHash)
       dispatchExecution({ type: 'SUBMITTED', txHashes: results.map(({ txId }) => txId) })
     } catch (error) {
       sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'submit_error' } })
