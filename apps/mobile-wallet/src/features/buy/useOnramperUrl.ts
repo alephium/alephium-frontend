@@ -10,7 +10,6 @@ const useOnramperUrl = (receiveAddressHash: AddressHash) => {
   const url =
     signature && !isLoading
       ? getOnramperUrl({
-          receiveAddressHash,
           signature,
           options: {
             themeName: theme.name,

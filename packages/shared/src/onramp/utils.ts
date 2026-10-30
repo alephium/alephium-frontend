@@ -1,8 +1,6 @@
-import { AddressHash } from '../types'
-
-const ALPH_CODE = 'alph_alph'
-const ONRAMPER_CLIENT_UUID = 'pk_prod_01JJSAZY2D3XSZ614FKBC5EXYE'
 export const ONRAMP_TARGET_LOCATION = 'https://alephium.org/onramp-callback/'
+
+export type OnramperSignedParams = Record<string, string>
 
 interface OnramperUrlThemeOptions {
   themeName: string
@@ -12,23 +10,17 @@ interface OnramperUrlThemeOptions {
 }
 
 interface OnramperSignatureOptions {
-  receiveAddressHash: AddressHash
-  signature: string
+  signature: OnramperSignedParams
   options: OnramperUrlThemeOptions
 }
 
-// See https://docs.onramper.com/docs/supported-widget-parameters
-export const getOnramperUrl = ({ receiveAddressHash, signature, options }: OnramperSignatureOptions) =>
-  'https://buy.onramper.com/' +
-  '?mode=buy' +
-  `&onlyCryptos=${ALPH_CODE}` +
-  `&successRedirectUrl=${encodeURIComponent(ONRAMP_TARGET_LOCATION)}` +
-  `&${getOnramperSignContent(receiveAddressHash)}` +
-  `&apiKey=${ONRAMPER_CLIENT_UUID}` +
-  `&themeName=${options.themeName}` +
-  (options.containerColor ? `&containerColor=${options.containerColor}` : '') +
-  (options.primaryTextColor ? `&primaryTextColor=${options.primaryTextColor}` : '') +
-  (options.primaryColor ? `&primaryColor=${options.primaryColor}` : '') +
-  `&signature=${signature}`
+export const getOnramperUrl = ({ signature, options }: OnramperSignatureOptions) => {
+  const params = new URLSearchParams(signature)
 
-export const getOnramperSignContent = (receiveAddressHash: AddressHash) => `wallets=${ALPH_CODE}:${receiveAddressHash}`
+  params.set('themeName', options.themeName)
+  if (options.containerColor) params.set('containerColor', options.containerColor)
+  if (options.primaryTextColor) params.set('primaryTextColor', options.primaryTextColor)
+  if (options.primaryColor) params.set('primaryColor', options.primaryColor)
+
+  return `https://buy.onramper.com/?${params}`
+}
