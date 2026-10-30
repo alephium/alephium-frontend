@@ -2,6 +2,7 @@ import { AddressHash } from '@alephium/shared/types'
 import { useQuery } from '@tanstack/react-query'
 
 import { powfiSdk } from '~/api/powfi'
+import { PersistedBigInts } from '~/features/staking/stakingUtils'
 
 export interface UnstakeRequest {
   vaultIndex: bigint
@@ -13,6 +14,8 @@ export interface UnstakeRequest {
   contractAddress: string
 }
 
+type PersistedUnstakeRequest = PersistedBigInts<UnstakeRequest>
+
 export const unstakeVaultRequestsQueryKeyRoot = ['unstakeVaultRequests'] as const
 
 interface UseFetchAddressUnstakeRequestsProps {
@@ -20,7 +23,11 @@ interface UseFetchAddressUnstakeRequestsProps {
 }
 
 const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeRequestsProps) => {
-  const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
+  const { data, error, isError, isLoading, isRefetching, refetch } = useQuery<
+    PersistedUnstakeRequest[],
+    Error,
+    UnstakeRequest[]
+  >({
     queryKey: [...unstakeVaultRequestsQueryKeyRoot, powfiSdk.network.id, addressHash],
     queryFn: async () => {
       const activeIndexes = await powfiSdk.staking.getActiveUnstakeVaultIndexes(addressHash)
@@ -46,6 +53,7 @@ const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeR
         })
       )
     },
+    select: toUnstakeRequests,
     staleTime: 60_000,
     refetchInterval: 60_000
   })
@@ -61,3 +69,15 @@ const useFetchAddressUnstakeRequests = ({ addressHash }: UseFetchAddressUnstakeR
 }
 
 export default useFetchAddressUnstakeRequests
+
+const toUnstakeRequests = (requests: PersistedUnstakeRequest[]) => requests.map(toUnstakeRequest)
+
+const toUnstakeRequest = (request: PersistedUnstakeRequest): UnstakeRequest => ({
+  ...request,
+  vaultIndex: BigInt(request.vaultIndex),
+  claimableAmount: BigInt(request.claimableAmount),
+  totalAmount: BigInt(request.totalAmount),
+  startTime: BigInt(request.startTime),
+  duration: BigInt(request.duration),
+  withdrawnAmount: BigInt(request.withdrawnAmount)
+})

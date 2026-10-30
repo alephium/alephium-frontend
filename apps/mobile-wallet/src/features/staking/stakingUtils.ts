@@ -56,3 +56,6 @@ export const formatUnstakeTimeLeft = (timeLeftMs: number): string => {
 
   return `${minutes}m`
 }
+
+/** Query data as restored from the persisted query cache, which stores bigints as strings */
+export type PersistedBigInts<T> = { [K in keyof T]: T[K] extends bigint ? bigint | string : T[K] }
