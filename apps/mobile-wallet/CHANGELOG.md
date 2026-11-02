@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 2.8.1
+
+### Patch Changes
+
+- 4de5db9: Updated Onramper integration to Sign V2
+- 88cbf7f: Fix blank screen when opening the staking page with an unstaking request in progress
+
 ## 2.8.0
 
 ### Minor Changes
