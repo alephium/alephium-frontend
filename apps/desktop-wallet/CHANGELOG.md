@@ -1,5 +1,12 @@
 # alephium-desktop-wallet
 
+## 3.3.3
+
+### Patch Changes
+
+- a3d5b8a: Fix generating a Ledger address in a group that already has an address
+- 4de5db9: Updated Onramper integration to Sign V2
+
 ## 3.3.2
 
 ### Patch Changes
