@@ -8,9 +8,9 @@ export interface TimeInterval {
 
 // Raw Date.now() boundaries make every poll and every viewer request a unique, uncacheable URL. Flooring to the minute
 // gives all viewers one shared URL an edge cache can collapse, while keeping the data at most a minute stale.
-const BUCKET_SIZE_MS = ONE_MINUTE_MS
+export const BUCKET_SIZE_MS = ONE_MINUTE_MS
 
-const floorToBucket = (timestamp: number) => timestamp - (timestamp % BUCKET_SIZE_MS)
+export const floorToBucket = (timestamp: number) => timestamp - (timestamp % BUCKET_SIZE_MS)
 
 export const getTimeIntervals = (timeInterval: explorer.IntervalType, now: number = Date.now()): TimeInterval => {
   const to = floorToBucket(now)
