@@ -1,5 +1,4 @@
 ---
-'@alephium/mobile-wallet': patch
 'alephium-desktop-wallet': patch
 ---
 
