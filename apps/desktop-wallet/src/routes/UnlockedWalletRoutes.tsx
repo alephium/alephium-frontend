@@ -1,7 +1,7 @@
 import { ApiContextProvider, useAddressesDataPolling, useRecoverTokenResolutionFallbacks } from '@alephium/shared-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router'
 
 import usePrefetchQueries from '@/api/usePrefetchQueries'
 import { useAppSelector } from '@/hooks/redux'

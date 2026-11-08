@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import styled, { css } from 'styled-components'
 
 import { blocksQueries } from '@/api/blocks/blocksApi'

@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import styled, { createGlobalStyle } from 'styled-components'
 
 import Button from '@/components/Button'

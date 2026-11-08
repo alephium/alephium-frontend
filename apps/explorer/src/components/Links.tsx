@@ -2,7 +2,7 @@ import { AssetAmount } from '@alephium/shared/types'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { ReactNode } from 'react'
 import { RiExternalLinkLine } from 'react-icons/ri'
-import { Link, LinkProps } from 'react-router-dom'
+import { Link, LinkProps } from 'react-router'
 import styled, { css, useTheme } from 'styled-components'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'

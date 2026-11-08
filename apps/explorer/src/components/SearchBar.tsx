@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiSearchLine } from 'react-icons/ri'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 
 import { useSnackbar } from '@/hooks/useSnackbar'

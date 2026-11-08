@@ -5,7 +5,7 @@ import { addressFromTokenId } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { RiInformationFill } from 'react-icons/ri'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import styled, { css } from 'styled-components'
 
 import AssetLogo from '@/components/AssetLogo'

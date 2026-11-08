@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 const useTableDetailsState = (defaultState: boolean) => {
   const [detailOpen, setDetailOpen] = useState(defaultState)
