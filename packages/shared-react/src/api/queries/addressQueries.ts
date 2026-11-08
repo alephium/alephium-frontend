@@ -344,3 +344,21 @@ export const addressNftsQuery = ({ addressHash, networkId, isNodeOnline, skip }:
           return nfts
         }
   })
+
+// Ask for a complete set: silently truncated UTXOs could omit the next lock expiry.
+export const addressLockTimesQuery = ({ addressHash, networkId, isNodeOnline, skip }: AddressNodeQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, ADDRESS_DATA, 'lock-times', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    queryFn: shouldSkip(isNodeOnline, skip)
+      ? skipToken
+      : async ({ signal }) => {
+          const { utxos } = await throttledClient.node.addresses.getAddressesAddressUtxos(
+            addressHash,
+            { 'error-if-exceed-max-utxos': true },
+            { signal }
+          )
+
+          return utxos.flatMap(({ lockTime }) => (lockTime && Number.isFinite(lockTime) ? [lockTime] : []))
+        }
+  })
