@@ -16,15 +16,23 @@ const isAddressDataQuery = (queryKey: readonly unknown[], matchesAddress: (hash:
 // resolves with pre-change data and clears the invalidation flag. cancelQueries drops any in-flight fetch first, then
 // invalidateQueries with cancelRefetch:false lets each consumer dedupe onto its dependency's fetch instead of
 // cancelling it. This converges regardless of cache insertion order, so no dependency-level ordering is needed.
-const cancelThenInvalidateAddressQueries = async (matchesAddress: (hash: AddressHash) => boolean) => {
-  const predicate = (query: { queryKey: readonly unknown[] }) => isAddressDataQuery(query.queryKey, matchesAddress)
+const cancelThenInvalidateAddressQueries = async (
+  matchesAddress: (hash: AddressHash) => boolean,
+  networkId?: number
+) => {
+  const predicate = (query: { queryKey: readonly unknown[] }) =>
+    isAddressDataQuery(query.queryKey, matchesAddress) &&
+    (networkId === undefined ||
+      query.queryKey.some(
+        (part) => typeof part === 'object' && part !== null && 'networkId' in part && part.networkId === networkId
+      ))
 
   await queryClient.cancelQueries({ predicate })
   await queryClient.invalidateQueries({ predicate }, { cancelRefetch: false })
 }
 
-export const invalidateAddressQueries = (addressHash: AddressHash) =>
-  cancelThenInvalidateAddressQueries((hash) => hash === addressHash)
+export const invalidateAddressQueries = (addressHash: AddressHash, networkId?: number) =>
+  cancelThenInvalidateAddressQueries((hash) => hash === addressHash, networkId)
 
 export const invalidateAddressesQueries = (addressHashes: Set<AddressHash>) =>
   cancelThenInvalidateAddressQueries((hash) => addressHashes.has(hash))
