@@ -3,6 +3,11 @@ import { queryOptions } from '@tanstack/react-query'
 import client from '@/api/client'
 
 export const blocksQueries = {
+  list: (page: number, limit: number) =>
+    queryOptions({
+      queryKey: ['blocks', 'list', page, limit],
+      queryFn: ({ signal }) => client.explorer.blocks.getBlocks({ page, limit }, { signal })
+    }),
   block: {
     one: (blockHash: string) =>
       queryOptions({
