@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 import styled from 'styled-components'
 
 import { queries } from '@/api'

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // https://github.com/microsoft/TypeScript/issues/24929
 
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 const useQueryParams = <T extends string[] | string>(
   paramNames: T

@@ -3,7 +3,7 @@ import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { useEffect } from 'react'
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router'
 import styled, { ThemeProvider } from 'styled-components'
 
 import { getNetworkSettings } from '@/api/getNetworkSettings'

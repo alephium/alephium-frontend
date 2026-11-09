@@ -1,5 +1,5 @@
 import { useActivityIndicator, useFetchWalletTransactionsInfinite } from '@alephium/shared-react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import styled from 'styled-components'
 
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'

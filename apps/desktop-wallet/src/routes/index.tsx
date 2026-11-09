@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 
 import ConnectLedgerInstructionsPage from '@/features/ledger/ConnectLedgerInstructionsPage'
 import CheckWordsIntroPage from '@/pages/NewWallet/CheckWordsIntroPage'

@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import styled, { css, keyframes, useTheme } from 'styled-components'
 
 import SearchBar from '@/components/SearchBar'

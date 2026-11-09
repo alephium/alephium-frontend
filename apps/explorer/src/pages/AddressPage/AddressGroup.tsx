@@ -3,7 +3,7 @@ import { getBaseAddressStr } from '@alephium/shared/transactions'
 import { getAddressExplorerPagePath } from '@alephium/shared-react'
 import { isGrouplessAddress, isGrouplessAddressWithoutGroupIndex } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 
 import Menu from '@/components/Menu'
