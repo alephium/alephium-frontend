@@ -12,12 +12,14 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import { sendSweepTransactions } from '~/api/transactions'
 import AddressBox from '~/components/AddressBox'
+import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ErrorDetails from '~/components/ErrorDetails'
 import InfoBox from '~/components/InfoBox'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
+import Row from '~/components/Row'
 import { addressMigrated } from '~/features/addressMigration/addressMigrationActions'
 import {
   addressMigrationExecutionInitialState,
@@ -65,6 +67,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   const wasDefaultAddressRef = useRef(false)
 
   const hasNothingToMigrate = !!alphBalances && BigInt(alphBalances.availableBalance) === 0n
+  const lockedBalance = alphBalances ? BigInt(alphBalances.lockedBalance) : 0n
 
   const {
     fee,
@@ -248,9 +251,19 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
         )}
       </Section>
 
-      {fee !== undefined && (
+      {(lockedBalance > 0n || fee !== undefined) && (
         <Surface>
-          <SignModalFeesRow fees={fee} />
+          {lockedBalance > 0n && (
+            <Row
+              title={t('Locked ALPH')}
+              subtitle={t('Will not be migrated')}
+              titleColor="secondary"
+              isLast={fee === undefined}
+            >
+              <Amount value={lockedBalance} suffix="ALPH" medium />
+            </Row>
+          )}
+          {fee !== undefined && <SignModalFeesRow fees={fee} />}
         </Surface>
       )}
 
