@@ -125,22 +125,12 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
       })
     )
 
-  const migrate = async () => {
+  const migrate = async (estimatedFee: bigint) => {
     if (!fromAddress) return
 
     dispatchExecution({ type: 'PREPARE' })
     setConflictedTxHashes([])
     wasDefaultAddressRef.current = fromAddressHash === defaultAddressHash
-
-    if (feeEstimationError) {
-      sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'build_error' } })
-      dispatchExecution({
-        type: 'FAILED',
-        message: t('Could not prepare the transfer'),
-        details: getHumanReadableError(feeEstimationError, '')
-      })
-      return
-    }
 
     let toAddressHash: string
     const createdNewAddress = !destination
@@ -157,7 +147,7 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
       return
     }
 
-    dispatchExecution({ type: 'PREPARED', toAddressHash, fee: fee ?? 0n })
+    dispatchExecution({ type: 'PREPARED', toAddressHash, fee: estimatedFee })
 
     if (hasNothingToMigrate) {
       updateSelectedAddress(toAddressHash)
@@ -188,13 +178,24 @@ const AddressMigrationScreen = ({ navigation, route }: AddressMigrationScreenPro
   }
 
   const handleMigratePress = async () => {
-    if (feeEstimationError && (await refetchFee()).error) return
-
     sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_INITIATED, props: { origin } })
+
+    let estimatedFee = fee
+
+    if (feeEstimationError) {
+      const { data, error } = await refetchFee()
+
+      if (error) {
+        sendAnalytics({ event: AnalyticsEvent.ADDRESS_MIGRATION_FAILED, props: { origin, error_code: 'build_error' } })
+        return
+      }
+
+      estimatedFee = data
+    }
 
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
-      successCallback: () => triggerFundPasswordAuthGuard({ successCallback: migrate })
+      successCallback: () => triggerFundPasswordAuthGuard({ successCallback: () => migrate(estimatedFee ?? 0n) })
     })
   }
 
