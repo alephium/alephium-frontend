@@ -1,9 +1,5 @@
-import { selectSentTransactionByHash, sentTransactionStatusChanged } from '@alephium/shared/store'
-import { nodeTransactionStatusQuery, useIsNodeOnline, useNetworkId, usePendingTxPolling } from '@alephium/shared-react'
-import { useQuery } from '@tanstack/react-query'
+import { usePendingTxPolling } from '@alephium/shared-react'
 import { useEffect, useRef } from 'react'
-
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 interface MigrationTxPollerProps {
   txHash: string
@@ -11,29 +7,16 @@ interface MigrationTxPollerProps {
 }
 
 const MigrationTxPoller = ({ txHash, onTxConflicted }: MigrationTxPollerProps) => {
-  const dispatch = useAppDispatch()
-  const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
-  const networkId = useNetworkId()
-  const isNodeOnline = useIsNodeOnline()
   const conflictReportedRef = useRef(false)
 
-  usePendingTxPolling(txHash)
-
-  const { data: nodeTxStatus } = useQuery(
-    nodeTransactionStatusQuery({ txHash, networkId, isNodeOnline, skip: sentTx?.status === 'confirmed' })
-  )
+  const txStatus = usePendingTxPolling(txHash)
 
   useEffect(() => {
-    if (nodeTxStatus === 'Conflicted' && !conflictReportedRef.current) {
+    if (txStatus === 'Conflicted' && !conflictReportedRef.current) {
       conflictReportedRef.current = true
       onTxConflicted(txHash)
     }
-  }, [nodeTxStatus, onTxConflicted, txHash])
-
-  useEffect(() => {
-    if (nodeTxStatus === 'Confirmed' && sentTx && sentTx.status !== 'confirmed')
-      dispatch(sentTransactionStatusChanged({ hash: txHash, status: 'confirmed' }))
-  }, [dispatch, nodeTxStatus, sentTx, txHash])
+  }, [txStatus, onTxConflicted, txHash])
 
   return null
 }
