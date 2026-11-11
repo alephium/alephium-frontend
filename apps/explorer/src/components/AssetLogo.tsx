@@ -1,5 +1,7 @@
+import { useCachedTokenLogo } from '@alephium/shared-react/images'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { RiCopperCoinLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
@@ -40,13 +42,7 @@ const AssetLogo = (props: AssetLogoProps) => {
       {assetId === ALPH.id ? (
         <FramedImage borderRadius="full" isAlph />
       ) : assetType === 'fungible' ? (
-        metadata.verified ? (
-          <FramedImage src={metadata.logoURI} borderRadius="full" />
-        ) : metadata.name ? (
-          <TokenInitials>{metadata.name.substring(0, 2)}</TokenInitials>
-        ) : (
-          <RiCopperCoinLine color={theme.font.secondary} size="72%" />
-        )
+        <FungibleTokenLogo logoURI={metadata.verified ? metadata.logoURI : undefined} name={metadata.name} />
       ) : assetType === 'non-fungible' ? (
         <NFTThumbnail src={nftImageSrc} size={props.size} border borderRadius={3} />
       ) : (
@@ -74,6 +70,31 @@ const AssetLogo = (props: AssetLogoProps) => {
       )}
     </AssetLogoStyled>
   )
+}
+
+interface FungibleTokenLogoProps {
+  logoURI?: string
+  name?: string
+}
+
+const FungibleTokenLogo = ({ logoURI, name }: FungibleTokenLogoProps) => {
+  const theme = useTheme()
+  const { src, isLoading } = useCachedTokenLogo(logoURI)
+  const [erroredSrc, setErroredSrc] = useState<string>()
+
+  if (isLoading) return <ImageFrame style={{ borderRadius: '100%' }} />
+
+  // Falling through to the initials keeps a dead or rate-limited image host from rendering as a broken image.
+  if (src && src !== erroredSrc)
+    return (
+      <ImageFrame style={{ borderRadius: '100%', padding: 3 }}>
+        <LogoImage src={src} onError={() => setErroredSrc(src)} />
+      </ImageFrame>
+    )
+
+  if (name) return <TokenInitials>{name.substring(0, 2)}</TokenInitials>
+
+  return <RiCopperCoinLine color={theme.font.secondary} size="72%" />
 }
 
 const FramedImage = ({
@@ -120,6 +141,14 @@ const Image = styled.div`
   background-position: center;
   height: 100%;
   width: 100%;
+`
+
+// The frame insets the logo by its padding, so the frame's own rounding never reaches the artwork's corners.
+const LogoImage = styled.img`
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 100%;
 `
 
 const ImageFrame = styled.div<{ isAlph?: boolean }>`

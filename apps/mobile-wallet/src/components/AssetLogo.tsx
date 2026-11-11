@@ -3,6 +3,7 @@ import { useFetchToken } from '@alephium/shared-react'
 import { TokenInfo } from '@alephium/token-list'
 import Lucide from '@react-native-vector-icons/lucide/static'
 import { Image } from 'expo-image'
+import { useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -18,16 +19,27 @@ interface AssetLogoProps {
 const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
   const { data: token } = useFetchToken(assetId)
+  const [erroredLogoUri, setErroredLogoUri] = useState<string>()
 
   if (!token) return null
+
+  const logoUri = isListedFT(token) ? token.logoURI : undefined
+  // Falling through to the initials keeps a dead or rate-limited image host from rendering as an empty circle.
+  const showLogo = !!logoUri && logoUri !== erroredLogoUri
 
   return isNFT(token) ? (
     <NFTImage nftId={assetId} size={size} />
   ) : (
-    <AssetLogoStyled {...{ assetId, style, size }} hasLogo={isListedFT(token)}>
-      {isListedFT(token) ? (
+    <AssetLogoStyled {...{ assetId, style, size }} hasLogo={showLogo}>
+      {showLogo ? (
         <LogoImageContainer>
-          <LogoImage source={{ uri: token.logoURI }} transition={500} contentFit="contain" contentPosition="center" />
+          <LogoImage
+            source={{ uri: logoUri }}
+            transition={500}
+            contentFit="contain"
+            contentPosition="center"
+            onError={() => setErroredLogoUri(logoUri)}
+          />
         </LogoImageContainer>
       ) : isFT(token) ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
