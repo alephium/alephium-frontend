@@ -143,5 +143,10 @@
   "Group {{ number }}": "Group {{ number }}",
   "Group transfer": "Group transfer",
   "Conflicted": "Conflicted",
-  "Conflicted transaction": "Conflicted transaction"
+  "Conflicted transaction": "Conflicted transaction",
+  "Search type": "Search type",
+  "Automatic": "Automatic",
+  "Contract ID": "Contract ID",
+  "Search for a contract ID...": "Search for a contract ID...",
+  "A contract ID must contain exactly 64 hexadecimal characters.": "A contract ID must contain exactly 64 hexadecimal characters."
 }
