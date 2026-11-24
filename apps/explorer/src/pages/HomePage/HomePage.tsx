@@ -22,16 +22,14 @@ import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import Waves from '@/components/Wave/Waves'
-import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
 
-import useBlockListData, { BLOCKS_PER_PAGE, BLOCKS_REFRESH_INTERVAL } from './useBlockListData'
-import useStatisticsData from './useStatisticsData'
+import { BLOCKS_PER_PAGE, useHomePageBlocks, useHomePageStatistics } from './useHomePageQueries'
 
-type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
+type VectorStatisticsKey = keyof ReturnType<typeof useHomePageStatistics>['vector']
 
 const HomePage = () => {
   const { t } = useTranslation()
@@ -43,26 +41,11 @@ const HomePage = () => {
 
   const [timeInterval, setTimeInterval] = useState(explorer.IntervalType.Daily)
 
+  const { blockList, blockPageLoading, newBlockHashes } = useHomePageBlocks(currentPageNumber, isAppVisible)
   const {
-    getBlocks,
-    blockPageLoading,
-    data: { blockList, newBlockHashes }
-  } = useBlockListData(currentPageNumber)
-
-  const {
-    refreshStatistics,
-    data: {
-      scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
-      vector
-    }
-  } = useStatisticsData(timeInterval)
-
-  const vectorData = vector
-
-  useInterval(refreshStatistics, 10 * 1000, !isAppVisible)
-
-  // Poll the latest blocks on their own faster cadence so the list keeps up with the chain's block rate.
-  useInterval(() => getBlocks(1, false), BLOCKS_REFRESH_INTERVAL, !isAppVisible || currentPageNumber !== 1)
+    scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
+    vector: vectorData
+  } = useHomePageStatistics(timeInterval, isAppVisible)
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, '', 'hash')
 
