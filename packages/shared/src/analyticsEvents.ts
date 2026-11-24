@@ -54,6 +54,14 @@ export const AnalyticsEvent = {
   WALLET_NAME_EDITED: 'Wallet Name Edited',
   ADDRESS_CREATED: 'Address Created',
   ADDRESS_SETTINGS_EDITED: 'Address Settings Edited',
+  // Groupless migration funnel (mobile). OFFERED fires when a blocked screen shows the invitation,
+  // INITIATED when the user accepts, EXECUTED when the sweep is broadcast, CONFIRMED when every
+  // sweep tx is mined.
+  ADDRESS_MIGRATION_OFFERED: 'Address Migration Offered',
+  ADDRESS_MIGRATION_INITIATED: 'Address Migration Initiated',
+  ADDRESS_MIGRATION_EXECUTED: 'Address Migration Executed',
+  ADDRESS_MIGRATION_CONFIRMED: 'Address Migration Confirmed',
+  ADDRESS_MIGRATION_FAILED: 'Address Migration Failed',
   CONTACT_CREATED: 'Contact Created',
   CONTACT_EDITED: 'Contact Edited',
   CONTACT_DELETED: 'Contact Deleted',

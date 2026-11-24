@@ -9,12 +9,15 @@ import { useModalContext } from '~/features/modals/ModalContext'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void
+  addressHashes?: AddressHash[]
 }
 
-const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress }) => {
-  const { data } = useFetchAddressesHashesSortedByLastUse()
+const SelectAddressModal = memo<SelectAddressModalProps>(({ onAddressPress, addressHashes }) => {
+  const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
   const { dismissModal } = useModalContext()
   const { t } = useTranslation()
+
+  const data = addressHashes ? sortedAddressHashes.filter((hash) => addressHashes.includes(hash)) : sortedAddressHashes
 
   const handleAddressPress = (addressHash: AddressHash) => {
     dismissModal()

@@ -28,6 +28,7 @@ export type AnalyticsOrigin =
   | 'token_details'
   | 'addresses_screen'
   | 'staking'
+  | 'swap'
   | 'contact'
   // Components and surfaces
   | 'quick_actions'
@@ -60,6 +61,8 @@ export type SendOrigin = Extract<
 >
 
 export type BuyOrigin = Extract<AnalyticsOrigin, 'dashboard' | 'address_details' | 'token_details'>
+
+export type AddressMigrationOrigin = Extract<AnalyticsOrigin, 'swap' | 'staking'>
 
 // No `intro` step: `Onboarding Started` already fires on the press that navigates there. No
 // address-discovery step: `Wallet Imported` fires before that screen.
@@ -107,6 +110,10 @@ export type AnalyticsProps = {
   // On `Address Created`: which address type the user picked, so adoption of the advanced grouped
   // and Schnorr types can be measured against the groupless default.
   address_type?: NewAddressType
+
+  // On the groupless migration funnel: whether the migration had to derive a new groupless address
+  // or moved the funds into one the wallet already had.
+  created_new_address?: boolean
 
   // Third-party service behind a Buy or Swap action.
   provider?: string

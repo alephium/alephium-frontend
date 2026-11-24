@@ -12,6 +12,7 @@ import { useTheme } from 'styled-components/native'
 import { Analytics, captureScreen, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContextProvider'
+import AddressMigrationScreen from '~/features/addressMigration/screens/AddressMigrationScreen'
 import HiddenTokensScreen from '~/features/assetsDisplay/hideTokens/HiddenTokensScreen'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import AuthorizedConnectionsScreen from '~/features/ecosystem/authorizedConnections/AuthorizedConnectionsScreen'
@@ -140,6 +141,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="HiddenTokensScreen" component={HiddenTokensScreen} />
                 <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
                 <RootStack.Screen name="SwapScreen" component={SwapScreen} />
+                <RootStack.Screen name="AddressMigrationScreen" component={AddressMigrationScreen} />
                 <RootStack.Screen
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}

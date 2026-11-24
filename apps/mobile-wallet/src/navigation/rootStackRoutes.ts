@@ -1,4 +1,4 @@
-import { SendOrigin } from '@alephium/shared'
+import { AddressMigrationOrigin, SendOrigin } from '@alephium/shared'
 import { AddressHash } from '@alephium/shared/types'
 import { Token } from '@alephium/web3'
 
@@ -56,6 +56,10 @@ type RootStackParamList = {
   }
   SwapScreen?: {
     initialFromTokenId?: Token['id']
+  }
+  AddressMigrationScreen: {
+    fromAddressHash: AddressHash
+    origin: AddressMigrationOrigin
   }
   HiddenTokensScreen: undefined
   AuthorizedConnectionsScreen: undefined
