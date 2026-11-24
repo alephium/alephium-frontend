@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import styled from 'styled-components'
 
 import Waves from '@/components/Wave/Waves'

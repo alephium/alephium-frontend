@@ -2,7 +2,7 @@ import { colord } from 'colord'
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import styled from 'styled-components'
 
 import TextButton from '@/components/Buttons/TextButton'

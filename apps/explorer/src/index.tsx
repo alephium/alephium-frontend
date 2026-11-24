@@ -5,7 +5,7 @@ import isPropValid from '@emotion/is-prop-valid'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { BrowserRouter, HashRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router'
 import { StyleSheetManager } from 'styled-components'
 
 import NotificationBar from '@/components/NotificationBar'

@@ -1,7 +1,7 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
 import { walletUnlockedDesktop } from '@alephium/shared/store'
 import { getPersisterKey, usePersistQueryClientContext } from '@alephium/shared-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { newLedgerDeviceConnected } from '@/features/ledger/ledgerActions'
 import { generateUuidFromInitialAddress } from '@/features/ledger/utils'

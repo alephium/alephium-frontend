@@ -24,14 +24,6 @@ minimumReleaseAgeExclude:
 
 auditConfig:
   ignoreGhsas:
-    # GHSA-qwww-vcr4-c8h2 (react-router RSC-mode CSRF): only affects React Router's
-    # RSC / framework mode, where a server executes router actions. Both the explorer
-    # and the desktop wallet use react-router purely declaratively (BrowserRouter /
-    # HashRouter + Routes/Route, no loaders/actions/server), so the vuln is not
-    # reachable. The only patched release is react-router 8.3.0, a major bump that
-    # removes react-router-dom and requires Node >=22.22.0 (repo is on 22.14.0).
-    # TODO: drop this once we migrate the explorer + desktop wallet to react-router v8 (see #1703).
-    - GHSA-qwww-vcr4-c8h2
     # GHSA-w3rx-r6r6-pgpr / GHSA-5p2g-fcmc-qvqq (image-size ICNS/JXL/HEIF infinite-loop DoS):
     # image-size has NO patched release - both advisories say `<=2.0.2` and 2.0.2 is still the
     # latest published version. It only reaches `pnpm audit --prod` because Expo declares metro

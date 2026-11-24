@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { HashRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router'
 import { StyleSheetManager } from 'styled-components'
 
 import App from '@/App'
@@ -26,7 +26,7 @@ root.render(
       <Provider store={store}>
         {/* useTransitions={false} keeps navigations synchronous. The unlock loader (useWalletLock) hides on the
             first frame after the wallet route mounts, which only lands after that blocking mount when navigation
-            is synchronous; react-router v7's default startTransition hides it a couple of frames early and flashes
+            is synchronous; React Router's default startTransition hides it a couple of frames early and flashes
             the unlock form. */}
         <Router useTransitions={false}>
           <Suspense fallback="loading">

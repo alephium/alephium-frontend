@@ -2,7 +2,7 @@ import { getHumanReadableError } from '@alephium/shared'
 import { Power, Unplug } from 'lucide-react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'

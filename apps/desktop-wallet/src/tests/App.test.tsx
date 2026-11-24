@@ -1,7 +1,7 @@
 import '@/features/localization/i18n'
 
 // import { act, fireEvent, screen, waitFor } from '@testing-library/react'
-// import { HashRouter as Router } from 'react-router-dom'
+// import { HashRouter as Router } from 'react-router'
 // import { PartialDeep } from 'type-fest'
 import { vi } from 'vitest'
 
