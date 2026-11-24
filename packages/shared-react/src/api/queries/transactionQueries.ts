@@ -215,9 +215,11 @@ export const confirmedTransactionQuery = ({
 }: ConfirmedTransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
-    // When the user navigates away from the transaction details modal for 5 minutes or when a sent tx confirms the
-    // cached data will be deleted.
-    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    // The explorer can return pending transactions or accepted ones whose inputs are not resolved yet.
+    // Keep refreshing those while details are open; only fully confirmed transactions remain fresh indefinitely.
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    staleTime: ({ state: { data } }) => (data && isConfirmedTx(data) ? Infinity : 0),
+    refetchInterval: ({ state: { data } }) => (data && !isConfirmedTx(data) ? 3000 : false),
     queryFn: shouldSkip(isExplorerOnline, skip)
       ? skipToken
       : () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash),

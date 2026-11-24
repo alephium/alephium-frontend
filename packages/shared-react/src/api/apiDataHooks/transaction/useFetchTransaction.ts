@@ -1,5 +1,5 @@
 import { selectSentTransactionByHash } from '@alephium/shared/store'
-import { isRichTransaction } from '@alephium/shared/transactions'
+import { isConfirmedTx, isRichTransaction } from '@alephium/shared/transactions'
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchTransactionProps } from '../../../api/apiDataHooks/transaction/transactionTypes'
@@ -25,10 +25,12 @@ export const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) 
     skip: skip || !isPendingTx
   })
 
+  // Until we can convert RichTransaction to Transaction, node-only data cannot be shown in transaction details.
+  const explorerPendingTx = pendingTx && !isRichTransaction(pendingTx) ? pendingTx : undefined
+
   return {
-    // Until we find an easy way to convert a RichTransaction to a Transaction, we need to return undefined for
-    // RichTransactions which will disable the display of any transaction details component when the EB is down.
-    data: confirmedTx ?? (pendingTx && !isRichTransaction(pendingTx) ? pendingTx : undefined),
+    // A disabled confirmed query can still expose cached pending data. Do not let it mask the sent transaction poll.
+    data: confirmedTx && isConfirmedTx(confirmedTx) ? confirmedTx : explorerPendingTx ?? confirmedTx,
     isLoading: isLoadingConfirmedTx || isLoadingPendingTx
   }
 }
